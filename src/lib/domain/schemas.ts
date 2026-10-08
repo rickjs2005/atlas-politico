@@ -96,7 +96,15 @@ export const citacaoSchema = z.strictObject({
   evidencia: texto,
 });
 
+/**
+ * Quem conferiu o registro contra as fontes. `assistida-por-ia` é a
+ * conferência feita por um modelo de IA; `humana` só é usada quando uma pessoa
+ * de fato revisou. O tipo é obrigatório para as duas nunca se confundirem.
+ */
+export const TIPOS_DE_REVISAO = ["assistida-por-ia", "humana"] as const;
+
 const revisaoSchema = z.strictObject({
+  tipo: z.enum(TIPOS_DE_REVISAO),
   revisadoPor: texto,
   revisadoEm: dataCompletaSchema,
   observacoes: texto.optional(),

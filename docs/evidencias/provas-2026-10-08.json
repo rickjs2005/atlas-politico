@@ -1,0 +1,1380 @@
+[
+ {
+  "registro": "pessoa:lula",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "na cidade de Garanhuns",
+   "curso de torneiro mecânico do Senai",
+   "Em 10 de fevereiro de 1980, Lula fundou o PT"
+  ]
+ },
+ {
+  "registro": "pessoa:lula",
+  "fonteId": "agencia-senado-2023-posse",
+  "prova": [
+   "entre 1º de janeiro de 2003 e 1º de janeiro de 2011",
+   "deu posse neste domingo (1º) a Luiz Inácio Lula da Silva"
+  ]
+ },
+ {
+  "registro": "pessoa:lula",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "(Constituinte), 1987-1991, SP, PT"
+  ]
+ },
+ {
+  "registro": "pessoa:lula",
+  "fonteId": "tse-noticia-2026-primeiro-turno",
+  "prova": [
+   "Candidato à reeleição"
+  ]
+ },
+ {
+  "registro": "pessoa:flavio-bolsonaro",
+  "fonteId": "senado-dados-abertos-flavio",
+  "prova": [
+   "\"NomeCompletoParlamentar\": \"Flávio Nantes Bolsonaro\"",
+   "\"DataNascimento\": \"1981-04-30\"",
+   "\"Naturalidade\": \"Resende\""
+  ]
+ },
+ {
+  "registro": "pessoa:flavio-bolsonaro",
+  "fonteId": "senado-dados-abertos-flavio-mandatos",
+  "prova": [
+   "\"UfParlamentar\": \"RJ\"",
+   "\"DataInicio\": \"2019-02-01\""
+  ]
+ },
+ {
+  "registro": "pessoa:flavio-bolsonaro",
+  "fonteId": "agencia-brasil-2026-perfil-flavio",
+  "prova": [
+   "É o filho mais velho do ex-presidente Jair Bolsonaro",
+   "sendo reeleito nas eleições seguintes em 2006, 2010 e 2014",
+   "Candidato do Partido Liberal à Presidência da República"
+  ]
+ },
+ {
+  "registro": "pessoa:flavio-bolsonaro",
+  "fonteId": "agencia-senado-2019-perfil-flavio",
+  "prova": [
+   "bacharel em direito"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-do-sindicato-dos-metalurgicos",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 1975, foi eleito presidente do sindicato",
+   "Em 78, Lula foi reeleito presidente do sindicato"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-do-sindicato-dos-metalurgicos",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "São Bernardo do Campo, SP, 1975",
+   "São Bernardo do Campo, SP, 1978"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-do-pt-1980-1988",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "Presidente, Partido dos Trabalhadores, São Paulo, SP, 1980 - 1988"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-do-pt-1990-1994",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "Presidente, Partido dos Trabalhadores, São Paulo, SP, 1990 - 1994"
+  ]
+ },
+ {
+  "registro": "mandato:lula-deputado-federal-1987-1991",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "(Constituinte), 1987-1991, SP, PT",
+   "Dt. Posse: 01/02/1987"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-da-republica-2003-2007",
+  "fonteId": "agencia-senado-2023-posse",
+  "prova": [
+   "entre 1º de janeiro de 2003 e 1º de janeiro de 2011"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-da-republica-2003-2007",
+  "fonteId": "agencia-camara-2007-discurso-de-posse",
+  "prova": [
+   "01/01/2007",
+   "Quatro anos atrás, nesta Casa, em um primeiro de janeiro"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-da-republica-2007-2011",
+  "fonteId": "agencia-camara-2007-discurso-de-posse",
+  "prova": [
+   "01/01/2007",
+   "Quatro anos atrás, nesta Casa, em um primeiro de janeiro"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-da-republica-2007-2011",
+  "fonteId": "agencia-senado-2023-posse",
+  "prova": [
+   "entre 1º de janeiro de 2003 e 1º de janeiro de 2011"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-da-republica-2023",
+  "fonteId": "agencia-senado-2023-posse",
+  "prova": [
+   "deu posse neste domingo (1º) a Luiz Inácio Lula da Silva"
+  ]
+ },
+ {
+  "registro": "mandato:lula-presidente-da-republica-2023",
+  "fonteId": "tse-noticia-2026-primeiro-turno",
+  "prova": [
+   "exerce seu terceiro mandato (2023-2026)"
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-deputado-estadual-2003-2019",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "Iniciou a carreira pública como deputado estadual em 2003",
+   "Saiu da Assembleia Legislativa em 2019 para o Senado"
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-deputado-estadual-2003-2019",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"cargo\": \"Deputado Estadual\"",
+   "\"situacaoTotalizacao\": \"Eleito por QP\""
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-deputado-estadual-2003-2019",
+  "fonteId": "tse-candidatos-2002",
+  "prova": [
+   "FLAVIO NANTES BOLSONARO"
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-senador-2019",
+  "fonteId": "senado-dados-abertos-flavio-mandatos",
+  "prova": [
+   "\"DescricaoParticipacao\": \"Titular\"",
+   "\"DataInicio\": \"2019-02-01\"",
+   "\"DataFim\": \"2027-01-31\""
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-senador-2019",
+  "fonteId": "senado-perfil-flavio",
+  "prova": [
+   "Titular Em exercício"
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-terceiro-secretario-do-senado",
+  "fonteId": "senado-dados-abertos-flavio-cargos",
+  "prova": [
+   "\"DescricaoCargo\": \"3º SECRETÁRIO\"",
+   "\"DataInicio\": \"2019-02-06\"",
+   "\"DataFim\": \"2020-12-14\""
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-vice-lider-do-governo-no-congresso",
+  "fonteId": "senado-dados-abertos-flavio-liderancas",
+  "prova": [
+   "\"UnidadeLideranca\": \"Liderança do Governo no Congresso Nacional\"",
+   "\"DataDesignacao\": \"2020-04-06\""
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-lider-do-patriota-no-senado",
+  "fonteId": "senado-dados-abertos-flavio-liderancas",
+  "prova": [
+   "\"SiglaPartido\": \"PATRIOTA\"",
+   "\"DataDesignacao\": \"2021-06-04\"",
+   "\"DataFim\": \"2021-11-29\""
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-lider-do-pl-no-senado",
+  "fonteId": "senado-dados-abertos-flavio-liderancas",
+  "prova": [
+   "\"DataDesignacao\": \"2022-06-10\"",
+   "\"DataDesignacao\": \"2023-02-01\"",
+   "\"DataFim\": \"2023-02-16\""
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-lider-da-minoria-no-congresso",
+  "fonteId": "senado-dados-abertos-flavio-liderancas",
+  "prova": [
+   "\"UnidadeLideranca\": \"Liderança da Minoria no Congresso Nacional\"",
+   "\"DataDesignacao\": \"2023-04-05\"",
+   "\"DataFim\": \"2025-02-26\""
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-presidente-da-comissao-de-seguranca-publica",
+  "fonteId": "senado-dados-abertos-flavio-cargos",
+  "prova": [
+   "\"NomeComissao\": \"Comissão de Segurança Pública\"",
+   "\"DescricaoCargo\": \"PRESIDENTE\"",
+   "\"DataInicio\": \"2025-02-19\""
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-presidente-da-comissao-de-seguranca-publica",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "preside a Comissão de Segurança Pública (CSP)"
+  ]
+ },
+ {
+  "registro": "filiacao:lula-pt",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 10 de fevereiro de 1980, Lula fundou o PT"
+  ]
+ },
+ {
+  "registro": "filiacao:lula-pt",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "\"sigla\": \"PT\"",
+   "\"partido\": \"PT\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-ppb",
+  "fonteId": "tse-candidatos-2002",
+  "prova": [
+   "FLAVIO NANTES BOLSONARO",
+   "PARTIDO PROGRESSISTA BRASILEIRO"
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-pp",
+  "fonteId": "tse-divulgacand-2014-flavio",
+  "prova": [
+   "\"sigla\": \"PP\"",
+   "\"nome\": \"Partido Progressista\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-pp",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"partido\": \"PP\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-psc",
+  "fonteId": "tse-divulgacand-2016-flavio",
+  "prova": [
+   "\"sigla\": \"PSC\"",
+   "\"nome\": \"Partido Social Cristão\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-psl",
+  "fonteId": "tse-divulgacand-2018-flavio",
+  "prova": [
+   "\"sigla\": \"PSL\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-psl",
+  "fonteId": "senado-dados-abertos-flavio-filiacoes",
+  "prova": [
+   "\"SiglaPartido\": \"PSL\"",
+   "\"DataDesfiliacao\": \"2019-11-19\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-republicanos",
+  "fonteId": "agencia-brasil-2020-denuncia-mprj",
+  "prova": [
+   "senador Flávio Bolsonaro (Republicanos-RJ)"
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-republicanos",
+  "fonteId": "senado-manual-republicanos-patriota",
+  "prova": [
+   "Flávio Bolsonaro muda do partido REPUBLICANOS para o partido PATRIOTA"
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-republicanos",
+  "fonteId": "senado-dados-abertos-flavio-filiacoes",
+  "prova": [
+   "\"DataFiliacao\": \"2021-05-31\"",
+   "\"SiglaPartido\": \"S/Partido\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-patriota",
+  "fonteId": "senado-dados-abertos-flavio-filiacoes",
+  "prova": [
+   "\"SiglaPartido\": \"PATRIOTA\"",
+   "\"DataFiliacao\": \"2021-05-31\"",
+   "\"DataDesfiliacao\": \"2021-11-29\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-pl",
+  "fonteId": "senado-dados-abertos-flavio-filiacoes",
+  "prova": [
+   "\"SiglaPartido\": \"PL\"",
+   "\"DataFiliacao\": \"2021-11-30\""
+  ]
+ },
+ {
+  "registro": "filiacao:flavio-bolsonaro-pl",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"sigla\": \"PL\""
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1975-eleito-presidente-do-sindicato",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 1975, foi eleito presidente do sindicato com 92 por cento dos votos",
+   "passando a representar 100 mil trabalhadores",
+   "Lula foi eleito suplente",
+   "tornou-se primeiro-secretário"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1975-eleito-presidente-do-sindicato",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "São Bernardo do Campo, SP, 1975",
+   "São Bernardo do Campo, SP, 1978"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1979-greve-dos-metalurgicos-do-abc",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em março de 79, 170 mil metalúrgicos pararam o ABC paulista",
+   "após 10 anos sem greves operárias",
+   "pensasse pela primeira vez em criar um Partido dos Trabalhadores"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1980-fundacao-do-pt",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 10 de fevereiro de 1980, Lula fundou o PT",
+   "abertura política lenta e gradual"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1980-fundacao-do-pt",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "Presidente, Partido dos Trabalhadores, São Paulo, SP, 1980 - 1988",
+   "Presidente, Partido dos Trabalhadores, São Paulo, SP, 1990 - 1994"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1980-prisao-pela-lei-de-seguranca-nacional",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "intervenção do Governo Federal no sindicato",
+   "a prisão de Lula e outros dirigentes sindicais, com base na Lei de Segurança Nacional",
+   "Foram 31 dias de prisão"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1986-eleito-deputado-federal-constituinte",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 1986, foi eleito o deputado federal mais votado do país"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1986-eleito-deputado-federal-constituinte",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "(Constituinte), 1987-1991, SP, PT",
+   "Dt. Posse: 01/02/1987",
+   "Comissão de Sistematização: Titular",
+   "Líder do PT, 1987 e 1988"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1989-primeira-candidatura-a-presidencia",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "disputar a Presidência da República em 1989, após 29 anos sem eleição direta",
+   "Perdeu a disputa, no segundo turno, por pequena diferença de votos"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1989-primeira-candidatura-a-presidencia",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "perdendo no segundo turno para Fernando Collor, em 1989"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1994-derrota-na-eleicao-presidencial",
+  "fonteId": "tse-candidatos-1994",
+  "prova": [
+   "\"03/10/1994\"",
+   "LUIZ INACIO LULA DA SILVA",
+   "FERNANDO HENRIQUE CARDOSO",
+   "NÃO ELEITO"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1994-derrota-na-eleicao-presidencial",
+  "fonteId": "tse-candidatos-1998",
+  "prova": [
+   "\"04/10/1998\"",
+   "UNIÃO DO POVO MUDA BRASIL",
+   "FERNANDO HENRIQUE CARDOSO"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1994-derrota-na-eleicao-presidencial",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 1994 e 1998, Lula voltou a se candidatar a presidente da República e foi derrotado por Fernando Henrique Cardoso"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2002-eleito-presidente",
+  "fonteId": "tse-candidatos-2002",
+  "prova": [
+   "\"27/10/2002\"",
+   "\"06/10/2002\"",
+   "LULA PRESIDENTE",
+   "PT / PL / PC do B / PMN / PCB"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2002-eleito-presidente",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 27 de outubro de 2002, aos 57 anos de idade, com quase 53 milhões de votos",
+   "senador José Alencar, do PL de Minas Gerais"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2002-eleito-presidente",
+  "fonteId": "agencia-senado-2023-posse",
+  "prova": [
+   "entre 1º de janeiro de 2003 e 1º de janeiro de 2011"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2006-reeleito-presidente",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "No dia 29 de outubro de 2006",
+   "foi reeleito presidente da República com mais de 58 milhões de votos",
+   "novamente na companhia do vice José Alencar"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2006-reeleito-presidente",
+  "fonteId": "tse-divulgacand-2006-lula",
+  "prova": [
+   "A FORÇA DO POVO",
+   "GERALDO ALCKMIN",
+   "\"sigla\": \"PSDB\""
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2006-reeleito-presidente",
+  "fonteId": "agencia-camara-2007-discurso-de-posse",
+  "prova": [
+   "01/01/2007",
+   "Quatro anos atrás, nesta Casa, em um primeiro de janeiro"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2006-reeleito-presidente",
+  "fonteId": "agencia-senado-2023-posse",
+  "prova": [
+   "entre 1º de janeiro de 2003 e 1º de janeiro de 2011",
+   "tomou posse o vice-presidente Geraldo Alckmin"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2006-reeleito-presidente",
+  "fonteId": "tse-noticia-2026-primeiro-turno",
+  "prova": [
+   "tem como candidato a vice-presidente o médico e ex-governador de São Paulo Geraldo Alckmin (PSB)"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2016-nomeacao-para-a-casa-civil-suspensa",
+  "fonteId": "stf-noticia-2016-casa-civil",
+  "prova": [
+   "deferiu medida liminar para suspender a eficácia da nomeação de Luiz Inácio Lula da Silva para o cargo de ministro chefe da Casa Civil",
+   "18/03/2016",
+   "Partido Popular Socialista (PPS)",
+   "desvio de finalidade",
+   "Praça dos Três Poderes, Brasília"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2017-condenacao-em-primeira-instancia",
+  "fonteId": "agencia-brasil-2017-sentenca-triplex",
+  "prova": [
+   "condenou nesta quarta-feira (12) o ex-presidente Luiz Inácio Lula da Silva a nove anos e seis meses de prisão por corrupção passiva e lavagem de dinheiro",
+   "poderá recorrer da decisão em liberdade",
+   "Publicado em 12/07/2017"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2017-condenacao-em-primeira-instancia",
+  "fonteId": "stf-noticia-2021-fachin-anula",
+  "prova": [
+   "anulação de todas as decisões tomadas pela 13ª Vara Federal de Curitiba (PR)"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2017-condenacao-em-primeira-instancia",
+  "fonteId": "stf-noticia-2021-plenario-suspeicao",
+  "prova": [
+   "declarou a suspeição do ex-juiz Sergio Moro"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-tribunal-confirma-condenacao",
+  "fonteId": "trf4-noticia-2018-apelacao",
+  "prova": [
+   "confirmou hoje (24/1), por unanimidade, a condenação do ex-presidente Luiz Inácio Lula da Silva",
+   "passando a pena de nove anos e seis meses para 12 anos e um mês de reclusão"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-tribunal-confirma-condenacao",
+  "fonteId": "agencia-brasil-2018-trf4",
+  "prova": [
+   "Tribunal Regional Federal da 4ª Região, em Porto Alegre"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-tribunal-confirma-condenacao",
+  "fonteId": "tse-noticia-2018-registro-lula",
+  "prova": [
+   "a condenação do ex-presidente em segunda instância torna a inelegibilidade"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-tribunal-confirma-condenacao",
+  "fonteId": "agencia-brasil-2019-stj-reduz-pena",
+  "prova": [
+   "decidiu hoje (23), por unanimidade, reduzir a pena do ex-presidente",
+   "de 12 anos e um mês para 8 anos e 10 meses de prisão",
+   "Publicado em 23/04/2019"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-tribunal-confirma-condenacao",
+  "fonteId": "stf-noticia-2021-fachin-anula",
+  "prova": [
+   "ficam anuladas as condenações proferidas"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-prisao-em-curitiba",
+  "fonteId": "agencia-brasil-2018-chegada-pf",
+  "prova": [
+   "acaba de chegar ao prédio da Superintendência da Polícia Federal (PF) em Curitiba",
+   "Publicado em 07/04/2018",
+   "sala especial"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-prisao-em-curitiba",
+  "fonteId": "agencia-brasil-2019-deixa-carceragem",
+  "prova": [
+   "Lula estava preso desde 7 de abril do ano passado pela condenação no caso do triplex",
+   "580 dias"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-prisao-em-curitiba",
+  "fonteId": "agencia-brasil-2019-juiz-manda-soltar",
+  "prova": [
+   "foi confirmada e a pena aumentada pelo Tribunal Regional Federal da 4ª Região (TRF4)"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-registro-de-candidatura-indeferido",
+  "fonteId": "tse-noticia-2018-registro-lula",
+  "prova": [
+   "indeferiu, por maioria de votos (6 a 1), o registro de candidatura do ex-presidente Luiz Inácio Lula da Silva",
+   "com base na Lei da Ficha Limpa",
+   "(5 a 2)",
+   "sessão extraordinária dessa sexta-feira (31)",
+   "01/09/2018 02:15",
+   "Brasília/DF"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2018-registro-de-candidatura-indeferido",
+  "fonteId": "tse-divulgacand-2018-lula",
+  "prova": [
+   "\"descricaoSituacao\": \"Indeferido\"",
+   "Ficha limpa (LC 64/90)",
+   "FERNANDO HADDAD",
+   "PT / PC do B / PROS"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2019-saida-da-prisao",
+  "fonteId": "agencia-brasil-2019-juiz-manda-soltar",
+  "prova": [
+   "determinou há pouco a soltura do ex-presidente Luiz Inácio Lula da Silva",
+   "juiz Danilo Pereira Júnior",
+   "derrubou a validade da execução provisória de condenações criminais",
+   "Publicado em 08/11/2019"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2019-saida-da-prisao",
+  "fonteId": "agencia-brasil-2019-deixa-carceragem",
+  "prova": [
+   "deixou há pouco a carceragem da Polícia Federal (PF) em Curitiba",
+   "Publicado em 08/11/2019"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2021-stf-anula-condenacoes",
+  "fonteId": "stf-noticia-2021-fachin-anula",
+  "prova": [
+   "determinou, nesta segunda-feira (8), a anulação de todas as decisões tomadas pela 13ª Vara Federal de Curitiba (PR) nas ações penais contra o ex-presidente Luiz Inácio Lula da Silva",
+   "08/03/2021",
+   "Triplex do Guarujá",
+   "Sítio de Atibaia",
+   "sede do Instituto Lula",
+   "doações ao Instituto Lula",
+   "Praça dos Três Poderes, Brasília"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2021-stf-anula-condenacoes",
+  "fonteId": "stf-noticia-2021-plenario-confirma",
+  "prova": [
+   "Por 8 votos a 3",
+   "rejeitou recurso (agravo regimental) da Procuradoria-Geral da República (PGR)",
+   "15/04/2021"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2021-stf-anula-condenacoes",
+  "fonteId": "stf-noticia-2021-competencia-df",
+  "prova": [
+   "cabe à Justiça Federal do Distrito Federal julgar os processos",
+   "22/04/2021"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2021-stf-anula-condenacoes",
+  "fonteId": "stf-noticia-2021-segunda-turma-suspeicao",
+  "prova": [
+   "concedeu Habeas Corpus (HC 164493) para reconhecer a suspeição do ex-juiz Sérgio Moro",
+   "23/03/2021"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2021-stf-anula-condenacoes",
+  "fonteId": "stf-noticia-2021-plenario-suspeicao",
+  "prova": [
+   "manteve, nesta quarta-feira (23), a decisão da Segunda Turma",
+   "23/06/2021"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2021-stf-anula-condenacoes",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "que recuperou os direitos políticos"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2022-eleito-presidente-pela-terceira-vez",
+  "fonteId": "tse-noticia-2022-totalizacao",
+  "prova": [
+   "Lula obteve 60.345.999 votos (50,90% dos votos válidos)",
+   "58.206.354 votos (49,10% dos votos válidos)",
+   "Ainda na noite de domingo (30)",
+   "Coligação Brasil da Esperança"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2022-eleito-presidente-pela-terceira-vez",
+  "fonteId": "tse-noticia-2022-proclamacao",
+  "prova": [
+   "proclamou eleitos para os cargos de presidente e vice-presidente da República",
+   "aprovação, por unanimidade, do relatório final de totalização",
+   "06/12/2022"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2022-eleito-presidente-pela-terceira-vez",
+  "fonteId": "agencia-brasil-2022-chapa-lula-alckmin",
+  "prova": [
+   "oficializaram hoje (21) a candidatura do ex-presidente da República Luiz Inácio Lula da Silva",
+   "Geraldo Alckmin como vice-presidente",
+   "Publicado em 21/07/2022"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2022-eleito-presidente-pela-terceira-vez",
+  "fonteId": "agencia-senado-2023-posse",
+  "prova": [
+   "deu posse neste domingo (1º) a Luiz Inácio Lula da Silva",
+   "primeiro governante do Executivo federal a conquistar três vitórias em eleições diretas"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2023-intervencao-federal-no-distrito-federal",
+  "fonteId": "agencia-senado-2023-intervencao",
+  "prova": [
+   "A intervenção foi determinada no final da tarde de domingo (8) pelo presidente da República, Luiz Inácio Lula da Silva, por meio do Decreto 11.377, de 2023",
+   "validou a intervenção federal na área de segurança pública do Distrito Federal",
+   "10/01/2023"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2023-intervencao-federal-no-distrito-federal",
+  "fonteId": "agencia-brasil-2024-cronologia-8-de-janeiro",
+  "prova": [
+   "17h50 – De Araraquara (SP), o presidente Lula decreta intervenção federal na Secretaria de Segurança Pública do DF"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2023-intervencao-federal-no-distrito-federal",
+  "fonteId": "agencia-brasil-2023-senado-confirma-intervencao",
+  "prova": [
+   "teve oito votos contrários dos senadores Flávio Bolsonaro (PL-RJ)"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2026-convencao-do-pt",
+  "fonteId": "agencia-brasil-2026-convencao-pt",
+  "prova": [
+   "formalizou a candidatura de Luiz Inácio Lula da Silva à Presidência da República, em convenção neste domingo (2) no Expo Center Norte, na zona norte de São Paulo",
+   "Geraldo Alckmin, do PSB, compõe a chapa",
+   "PSB, PCdoB, PV, PDT, PSOL e Rede",
+   "Publicado em 02/08/2026"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2026-convencao-do-pt",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "\"nomeColigacao\": \"BRASIL PRONTO PRA MAIS\"",
+   "\"descricaoSituacao\": \"Deferido\""
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2026-convencao-do-pt",
+  "fonteId": "tse-noticia-2026-registros",
+  "prova": [
+   "Luiz Inácio Lula da Silva (PT) e Geraldo Alckmin (PSB)",
+   "por unanimidade",
+   "02/09/2026"
+  ]
+ },
+ {
+  "registro": "acontecimento:eleicao-2026-primeiro-turno",
+  "fonteId": "tse-noticia-2026-primeiro-turno",
+  "prova": [
+   "Com 99,99% das urnas apuradas até 0h11 desta segunda-feira (5)",
+   "Flávio recebeu 56.104.268 votos, o equivalente a 47,03% dos votos válidos",
+   "Lula obteve 53.876.617 votos",
+   "disputa o cargo pela primeira vez",
+   "Alfredo Gaspar (PL)",
+   "Geraldo Alckmin (PSB)",
+   "05/10/2026"
+  ]
+ },
+ {
+  "registro": "acontecimento:eleicao-2026-primeiro-turno",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "A nova votação ocorrerá dia 25 de outubro"
+  ]
+ },
+ {
+  "registro": "acontecimento:eleicao-2026-primeiro-turno",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"descricaoTotalizacao\": \"2º turno\""
+  ]
+ },
+ {
+  "registro": "acontecimento:eleicao-2026-primeiro-turno",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "\"descricaoTotalizacao\": \"2º turno\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2002-eleito-deputado-estadual",
+  "fonteId": "tse-candidatos-2002",
+  "prova": [
+   "FLAVIO NANTES BOLSONARO",
+   "\"06/10/2002\"",
+   "\"PPB\"",
+   "PARTIDO ISOLADO",
+   "DEPUTADO ESTADUAL"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2002-eleito-deputado-estadual",
+  "fonteId": "agencia-brasil-2026-perfil-flavio",
+  "prova": [
+   "A estreia nas urnas ocorreu em 2002, quando foi eleito deputado estadual no Rio de Janeiro"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2002-eleito-deputado-estadual",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "Iniciou a carreira pública como deputado estadual em 2003"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2006-reeleito-deputado-estadual",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"nrAno\": 2006",
+   "\"cargo\": \"Deputado Estadual\"",
+   "\"partido\": \"PP\"",
+   "\"situacaoTotalizacao\": \"Eleito\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2006-reeleito-deputado-estadual",
+  "fonteId": "agencia-brasil-2026-perfil-flavio",
+  "prova": [
+   "sendo reeleito nas eleições seguintes em 2006, 2010 e 2014"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2010-reeleito-deputado-estadual",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"nrAno\": 2010",
+   "\"cargo\": \"Deputado Estadual\"",
+   "\"partido\": \"PP\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2010-reeleito-deputado-estadual",
+  "fonteId": "agencia-brasil-2026-perfil-flavio",
+  "prova": [
+   "sendo reeleito nas eleições seguintes em 2006, 2010 e 2014"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2014-reeleito-deputado-estadual",
+  "fonteId": "tse-divulgacand-2014-flavio",
+  "prova": [
+   "\"descricaoTotalizacao\": \"Eleito por QP\"",
+   "\"nome\": \"Deputado Estadual\"",
+   "\"sigla\": \"PP\"",
+   "\"st_REELEICAO\": true"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2014-reeleito-deputado-estadual",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "Saiu da Assembleia Legislativa em 2019 para o Senado"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2016-candidatura-a-prefeitura-do-rio",
+  "fonteId": "tse-divulgacand-2016-flavio",
+  "prova": [
+   "\"nomeUrna\": \"FLÁVIO BOLSONARO\"",
+   "\"nome\": \"Prefeito\"",
+   "\"sigla\": \"PSC\"",
+   "\"numero\": 20",
+   "\"descricaoTotalizacao\": \"Não eleito\"",
+   "O RIO PRECISA DE FORÇA PARA MUDAR",
+   "\"composicaoColigacao\": \"PSC / PRP\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2016-candidatura-a-prefeitura-do-rio",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"cargo\": \"Prefeito\"",
+   "\"partido\": \"PSC\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2016-candidatura-a-prefeitura-do-rio",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "Saiu da Assembleia Legislativa em 2019 para o Senado"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2018-eleito-senador",
+  "fonteId": "tse-divulgacand-2018-flavio",
+  "prova": [
+   "\"descricaoTotalizacao\": \"Eleito\"",
+   "\"sigla\": \"PSL\"",
+   "\"numero\": 177",
+   "PAULO MARINHO",
+   "LEONARDO RODRIGUES"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2018-eleito-senador",
+  "fonteId": "agencia-senado-2019-perfil-flavio",
+  "prova": [
+   "foi o candidato mais votado na disputa por uma vaga ao Senado pelo Rio de Janeiro",
+   "31,3% dos votos válidos",
+   "O filho do presidente da República, Jair Bolsonaro",
+   "18/01/2019"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2018-eleito-senador",
+  "fonteId": "senado-dados-abertos-flavio-mandatos",
+  "prova": [
+   "\"DataInicio\": \"2019-02-01\"",
+   "\"DataFim\": \"2027-01-31\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2019-terceiro-secretario-do-senado",
+  "fonteId": "senado-dados-abertos-flavio-cargos",
+  "prova": [
+   "\"DescricaoCargo\": \"3º SECRETÁRIO\"",
+   "\"DataInicio\": \"2019-02-06\"",
+   "\"DataFim\": \"2020-12-14\"",
+   "Comissão Mista da Medida Provisória nº 866, de 2018",
+   "\"DataInicio\": \"2019-03-27\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2019-terceiro-secretario-do-senado",
+  "fonteId": "senado-dados-abertos-flavio-mandatos",
+  "prova": [
+   "\"DataInicio\": \"2019-02-01\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2019-terceiro-secretario-do-senado",
+  "fonteId": "senado-perfil-flavio",
+  "prova": [
+   "Senado Federal - Praça dos Três Poderes - Brasília DF"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2019-saida-do-psl",
+  "fonteId": "senado-dados-abertos-flavio-filiacoes",
+  "prova": [
+   "\"DataDesfiliacao\": \"2019-11-19\"",
+   "\"SiglaPartido\": \"S/Partido\"",
+   "\"DataFiliacao\": \"2019-11-20\"",
+   "\"DataDesfiliacao\": \"2021-05-30\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2019-saida-do-psl",
+  "fonteId": "tse-divulgacand-2018-flavio",
+  "prova": [
+   "\"sigla\": \"PSL\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2019-saida-do-psl",
+  "fonteId": "agencia-brasil-2020-denuncia-mprj",
+  "prova": [
+   "senador Flávio Bolsonaro (Republicanos-RJ)"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2019-saida-do-psl",
+  "fonteId": "senado-manual-republicanos-patriota",
+  "prova": [
+   "Flávio Bolsonaro muda do partido REPUBLICANOS para o partido PATRIOTA"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2020-denuncia-do-ministerio-publico",
+  "fonteId": "agencia-brasil-2020-denuncia-mprj",
+  "prova": [
+   "informou, na madrugada de hoje (4), que ajuizou denúncia contra o senador Flávio Bolsonaro",
+   "lavagem de dinheiro, peculato, apropriação indébita e organização criminosa",
+   "os crimes teriam ocorrido entre os anos de 2007 e 2018",
+   "A denúncia foi oferecida em 19 de outubro",
+   "a defesa do senador diz que a denúncia não se sustenta",
+   "desprovida de qualquer indício de prova",
+   "o senador informou que não cometeu nenhuma irregularidade",
+   "Publicado em 04/11/2020"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2020-denuncia-do-ministerio-publico",
+  "fonteId": "agencia-brasil-2022-tjrj-rejeita-denuncia",
+  "prova": [
+   "rejeitou a denúncia do Ministério Público (MP) contra o senador Flávio Bolsonaro",
+   "O próprio MP pediu a extinção da denúncia"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2020-denuncia-do-ministerio-publico",
+  "fonteId": "brasil-de-fato-2026-quebra-de-sigilos",
+  "prova": [
+   "não chegou a ser julgada no mérito"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-filiacao-ao-patriota",
+  "fonteId": "senado-dados-abertos-flavio-filiacoes",
+  "prova": [
+   "\"SiglaPartido\": \"PATRIOTA\"",
+   "\"DataFiliacao\": \"2021-05-31\"",
+   "\"DataDesfiliacao\": \"2021-11-29\"",
+   "\"DataFiliacao\": \"2021-11-30\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-filiacao-ao-patriota",
+  "fonteId": "senado-dados-abertos-flavio-liderancas",
+  "prova": [
+   "\"DataDesignacao\": \"2021-06-04\"",
+   "\"DataFim\": \"2021-11-29\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-filiacao-ao-patriota",
+  "fonteId": "senado-manual-republicanos-patriota",
+  "prova": [
+   "Flávio Bolsonaro muda do partido REPUBLICANOS para o partido PATRIOTA"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao",
+  "fonteId": "agencia-brasil-2021-stj-anula-decisoes",
+  "prova": [
+   "A Quinta Turma do Superior Tribunal de Justiça (STJ) anulou hoje (9) as decisões da primeira instância da Justiça do Rio de Janeiro",
+   "juiz Flavio Itabaiana, da 27ª Vara Criminal do Rio",
+   "somente o TJRJ poderia tomar decisões sobre o caso",
+   "Em fevereiro, o STJ também anulou a quebra de sigilo bancário e fiscal de aproximadamente 90 investigados",
+   "Publicado em 09/11/2021"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao",
+  "fonteId": "mprj-2021-recurso-stj",
+  "prova": [
+   "apresentou, neste sábado (20/03), recurso extraordinário contra a deliberação da Quinta Turma do Superior Tribunal de Justiça (STJ)",
+   "por quatro votos a um",
+   "Publicado em 20/03/2021"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-filiacao-ao-pl",
+  "fonteId": "senado-dados-abertos-flavio-filiacoes",
+  "prova": [
+   "\"SiglaPartido\": \"PL\"",
+   "\"DataFiliacao\": \"2021-11-30\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-filiacao-ao-pl",
+  "fonteId": "agencia-senado-2021-filiacao-pl",
+  "prova": [
+   "destacou a filiação do senador Flávio Bolsonaro, no dia anterior, ao Partido Liberal (PL)",
+   "presidente da República, Jair Bolsonaro",
+   "01/12/2021"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-filiacao-ao-pl",
+  "fonteId": "senado-dados-abertos-flavio-liderancas",
+  "prova": [
+   "\"DataDesignacao\": \"2022-06-10\"",
+   "\"DataFim\": \"2023-02-16\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2021-filiacao-ao-pl",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"sigla\": \"PL\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2022-tribunal-rejeita-denuncia",
+  "fonteId": "agencia-brasil-2022-tjrj-rejeita-denuncia",
+  "prova": [
+   "rejeitou a denúncia do Ministério Público (MP) contra o senador Flávio Bolsonaro",
+   "A decisão, divulgada nesta segunda-feira (16), foi tomada pelo Órgão Especial",
+   "O próprio MP pediu a extinção da denúncia",
+   "a rejeição da denúncia por falta de justa causa não impede o retorno das investigações",
+   "A defesa entende que o caso está encerrado",
+   "Publicado em 16/05/2022"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2022-tribunal-rejeita-denuncia",
+  "fonteId": "cartacapital-2025-caso-rachadinha",
+  "prova": [
+   "Em abril de 2023, o STJ admitiu o recurso e o enviou ao STF",
+   "Gilmar Mendes negou recursos do Ministério Público para reabrir a apuração",
+   "O processo tramita sob segredo de justiça",
+   "06.12.2025"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2022-tribunal-rejeita-denuncia",
+  "fonteId": "brasil-de-fato-2026-quebra-de-sigilos",
+  "prova": [
+   "não chegou a ser julgada no mérito"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2022-lider-do-pl-no-senado",
+  "fonteId": "senado-dados-abertos-flavio-liderancas",
+  "prova": [
+   "\"UnidadeLideranca\": \"Liderança de Partido no Senado Federal\"",
+   "\"DataDesignacao\": \"2022-06-10\"",
+   "\"DataDesignacao\": \"2023-02-01\"",
+   "\"DataFim\": \"2023-02-16\"",
+   "\"UnidadeLideranca\": \"Liderança do Governo no Congresso Nacional\"",
+   "\"DataDesignacao\": \"2020-04-06\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2022-lider-do-pl-no-senado",
+  "fonteId": "senado-perfil-flavio",
+  "prova": [
+   "Senado Federal - Praça dos Três Poderes - Brasília DF"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2023-lider-da-minoria-no-congresso",
+  "fonteId": "senado-dados-abertos-flavio-liderancas",
+  "prova": [
+   "\"UnidadeLideranca\": \"Liderança da Minoria no Congresso Nacional\"",
+   "\"DataDesignacao\": \"2023-04-05\"",
+   "\"DataFim\": \"2025-02-26\"",
+   "\"DataDesignacao\": \"2025-03-10\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2023-lider-da-minoria-no-congresso",
+  "fonteId": "agencia-senado-2023-posse",
+  "prova": [
+   "deu posse neste domingo (1º) a Luiz Inácio Lula da Silva"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2023-lider-da-minoria-no-congresso",
+  "fonteId": "senado-perfil-flavio",
+  "prova": [
+   "Senado Federal - Praça dos Três Poderes - Brasília DF"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2024-relatoria-das-saidas-temporarias",
+  "fonteId": "agencia-senado-2024-saidas-temporarias",
+  "prova": [
+   "2.253/2022 que restringe o benefício da saída temporária para presos condenados",
+   "relatado pelo senador Flávio Bolsonaro (PL-RJ)",
+   "foi alterado para permitir as saídas de presos que estudam",
+   "62 votos favoráveis, dois contrários e uma abstenção",
+   "20/02/2024"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2024-relatoria-das-saidas-temporarias",
+  "fonteId": "agencia-senado-2024-veto-saidas-temporarias",
+  "prova": [
+   "um veto do presidente Luiz Inácio Lula da Silva",
+   "que foi derrubado em sessão com senadores e deputados federais",
+   "Lei 14.843, de 2024",
+   "28/05/2024"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2024-relatoria-das-saidas-temporarias",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "Flávio foi o relator do texto que resultou na Lei 14.843, de 2024"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2024-relatoria-das-saidas-temporarias",
+  "fonteId": "senado-perfil-flavio",
+  "prova": [
+   "Senado Federal - Praça dos Três Poderes - Brasília DF"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2025-presidente-da-comissao-de-seguranca-publica",
+  "fonteId": "senado-dados-abertos-flavio-cargos",
+  "prova": [
+   "\"NomeComissao\": \"Comissão de Segurança Pública\"",
+   "\"DescricaoCargo\": \"PRESIDENTE\"",
+   "\"DataInicio\": \"2025-02-19\""
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2025-presidente-da-comissao-de-seguranca-publica",
+  "fonteId": "agencia-senado-2019-perfil-flavio",
+  "prova": [
+   "atuou em especial nas áreas de segurança pública"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2025-presidente-da-comissao-de-seguranca-publica",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "preside a Comissão de Segurança Pública (CSP)"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2025-presidente-da-comissao-de-seguranca-publica",
+  "fonteId": "senado-perfil-flavio",
+  "prova": [
+   "Senado Federal - Praça dos Três Poderes - Brasília DF"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2025-indicacao-para-a-presidencia",
+  "fonteId": "cartacapital-2025-caso-rachadinha",
+  "prova": [
+   "nesta sexta-feira 5, de que o ex-presidente Jair Bolsonaro (PL) teria escolhido o senador como seu candidato à Presidência em 2026",
+   "06.12.2025"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2025-indicacao-para-a-presidencia",
+  "fonteId": "gazeta-do-povo-2026-candidatura-flavio",
+  "prova": [
+   "anunciada em 5 de dezembro",
+   "inicialmente gerou dúvidas e críticas entre lideranças partidárias",
+   "Tarcísio de Freitas",
+   "30/09/2026"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2025-indicacao-para-a-presidencia",
+  "fonteId": "agencia-senado-2026-segundo-turno",
+  "prova": [
+   "A escolha de Flávio como candidato do Partido Liberal (PL) partiu de seu pai, o ex-presidente Jair Bolsonaro",
+   "posteriormente condenado pelo Supremo Tribunal Federal (STF) por tentativa de golpe de Estado"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2026-convencao-do-pl",
+  "fonteId": "agencia-brasil-2026-convencao-pl",
+  "prova": [
+   "formalizou, na tarde deste sábado (25), em São Paulo, a candidatura de Flávio Bolsonaro à Presidência da República",
+   "Mercado Pago Hall, na Arena Pacaembu",
+   "Publicado em 25/07/2026"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2026-convencao-do-pl",
+  "fonteId": "agencia-brasil-2026-perfil-flavio",
+  "prova": [
+   "Alfredo Gaspar (PL-AL)"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2026-convencao-do-pl",
+  "fonteId": "agencia-brasil-2026-filiacao-restabelecida",
+  "prova": [
+   "determinou que a filiação do senador Flávio Bolsonaro ao PL seja restabelecida",
+   "não foi fruto de hackeamento do sistema de filiação partidária",
+   "Publicado em 13/08/2026"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2026-convencao-do-pl",
+  "fonteId": "tse-noticia-2026-registros",
+  "prova": [
+   "Flávio Bolsonaro e Alfredo Gaspar (PL)",
+   "por unanimidade",
+   "02/09/2026"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2026-convencao-do-pl",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"descricaoSituacao\": \"Deferido\""
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1982-candidatura-ao-governo-de-sao-paulo",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "disputou naquele ano o Governo de São Paulo"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1984-campanha-das-diretas-ja",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 84 participou, como uma das principais lideranças, da campanha das",
+   "participou da fundação da CUT"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-2019-condenacao-no-caso-do-sitio-de-atibaia",
+  "fonteId": "stf-noticia-2021-fachin-anula",
+  "prova": [
+   "Sítio de Atibaia"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2018-relatorio-do-coaf",
+  "fonteId": "cartacapital-2025-caso-rachadinha",
+  "prova": [
+   "Em 2018, um relatório do Conselho de Controle de Atividades Financeiras apontou uma movimentação atípica de 1,2 milhão de reais na conta do ex-assessor Fabrício Queiroz"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2020-filiacao-ao-republicanos",
+  "fonteId": "agencia-brasil-2020-denuncia-mprj",
+  "prova": [
+   "senador Flávio Bolsonaro (Republicanos-RJ)"
+  ]
+ },
+ {
+  "registro": "acontecimento:flavio-bolsonaro-2020-filiacao-ao-republicanos",
+  "fonteId": "senado-manual-republicanos-patriota",
+  "prova": [
+   "Flávio Bolsonaro muda do partido REPUBLICANOS para o partido PATRIOTA"
+  ]
+ }
+]

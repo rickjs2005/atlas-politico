@@ -1,0 +1,47 @@
+{
+  "versao": "0.1.0",
+  "dataDeCorte": "2026-10-08",
+  "revisao": {
+    "tipo": "assistida-por-ia",
+    "revisadoPor": "Claude, modelo de IA da Anthropic",
+    "revisadoEm": "2026-10-08",
+    "observacoes": "Edição preliminar. Todos os registros foram conferidos contra os documentos citados em uma segunda passagem assistida por IA. Revisão humana pendente."
+  },
+  "cobertura": [
+    {
+      "pessoaId": "lula",
+      "periodo": {
+        "inicio": {
+          "tipo": "data",
+          "valor": "1975",
+          "precisao": "ano"
+        },
+        "fim": {
+          "tipo": "em-curso"
+        }
+      },
+      "observacao": "Acontecimentos de 1975 a 2026. Não há acontecimentos com data em 1981-1985, 1990-1993, 1995-2001 e 2007-2015: são lacunas de pesquisa desta edição, e não ausência de atividade."
+    },
+    {
+      "pessoaId": "flavio-bolsonaro",
+      "periodo": {
+        "inicio": {
+          "tipo": "data",
+          "valor": "2002",
+          "precisao": "ano"
+        },
+        "fim": {
+          "tipo": "em-curso"
+        }
+      },
+      "observacao": "Acontecimentos de 2002 a 2026. O período na Assembleia Legislativa do Rio de Janeiro, de 2003 a 2018, está coberto apenas pelas eleições: propostas, votações e comissões da Alerj não foram pesquisadas nesta edição."
+    }
+  ],
+  "alteracoes": [
+    {
+      "data": "2026-10-08",
+      "descricao": "Primeiro conjunto de conteúdo: 39 acontecimentos, 15 mandatos e funções, 8 filiações partidárias, 9 lugares, 59 fontes e 2 imagens.",
+      "itens": []
+    }
+  ]
+}

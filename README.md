@@ -2,7 +2,7 @@
 
 Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa e acontecimentos acompanhados das fontes que os sustentam. Projeto de portfólio da MilWeb.
 
-**Estágio atual:** fase 1 de 10 concluída (arquitetura e fundação). Ainda não há conteúdo real. As páginas mostram a estrutura do atlas, e uma tela de prova técnica, restrita ao desenvolvimento, exercita mapa, lista e painel com dados sintéticos. O que está pronto e o que falta está em [docs/STATUS.md](docs/STATUS.md).
+**Estágio atual:** fases 1 e 2 de 10 concluídas (fundação e primeiro conjunto de conteúdo). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. A interface ainda é estrutural: páginas de perfil e de acontecimento, mais uma tela de prova técnica do mapa, restrita ao desenvolvimento. O que está pronto e o que falta está em [docs/STATUS.md](docs/STATUS.md).
 
 ## Requisitos
 
@@ -71,6 +71,7 @@ npm run preview   # serve out/ em http://localhost:4311
 | `npm run verify:export` | Confere `out/`: páginas previstas, nenhuma rota de desenvolvimento, nenhum dado sintético |
 | `npm run check` | Os cinco acima, em sequência |
 | `npm run test:e2e` | Tela de prova em um Chromium real (Playwright). Sobe o próprio servidor na porta 4310 |
+| `npm run content:coverage` | Relatório do conteúdo por pessoa, categoria e década, com lacunas e rascunhos (não valida nada) |
 
 Antes de qualquer entrega: `npm run check` e `npm run test:e2e`.
 
@@ -107,5 +108,8 @@ tests/
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): camadas, fluxo de dados, rotas e estado.
 - [docs/DATA_MODEL.md](docs/DATA_MODEL.md): entidades, relacionamentos e regras de datas, lugares e revisão.
 - [docs/DECISIONS.md](docs/DECISIONS.md): decisões adotadas e seus motivos.
-- [docs/STATUS.md](docs/STATUS.md): conclusão da fase 1, limitações e preparação para a fase 2.
-- [content/README.md](content/README.md): contrato dos arquivos de conteúdo.
+- [docs/STATUS.md](docs/STATUS.md): situação de cada fase, limitações e preparação para a próxima.
+- [docs/SOURCES.md](docs/SOURCES.md): catálogo das fontes e critérios de uso.
+- [docs/EDITORIAL.md](docs/EDITORIAL.md): critérios de seleção, redação, revisão e correção.
+- [docs/CONTENT-REVIEW.md](docs/CONTENT-REVIEW.md): itens conferidos, cobertura, divergências e pendências.
+- [content/README.md](content/README.md): contrato dos arquivos de conteúdo e como editar.

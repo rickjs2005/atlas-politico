@@ -19,7 +19,7 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
     }
   },
   {
@@ -42,7 +42,7 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
     }
   },
   {
@@ -73,7 +73,7 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
     }
   },
   {
@@ -96,7 +96,7 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
     }
   },
   {
@@ -119,7 +119,7 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
     }
   },
   {
@@ -142,7 +142,7 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
     }
   },
   {
@@ -165,7 +165,7 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": { "tipo": "assistida-por-ia", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
     }
   },
   {

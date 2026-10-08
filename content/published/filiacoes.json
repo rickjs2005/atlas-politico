@@ -1,0 +1,300 @@
+[
+  {
+    "id": "lula-pt",
+    "pessoaId": "lula",
+    "partido": {
+      "sigla": "PT",
+      "nome": "Partido dos Trabalhadores"
+    },
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "1980-02-10",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "em-curso"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Sétimo parágrafo da biografia",
+        "evidencia": "Fundou o PT em 10 de fevereiro de 1980."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Ficha do candidato: partido e eleições anteriores",
+        "evidencia": "Candidato pelo PT em 2006, 2018, 2022 e 2026."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-ppb",
+    "pessoaId": "flavio-bolsonaro",
+    "partido": {
+      "sigla": "PPB",
+      "nome": "Partido Progressista Brasileiro"
+    },
+    "periodo": {
+      "inicio": {
+        "tipo": "desconhecida"
+      },
+      "fim": {
+        "tipo": "desconhecida"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "tse-candidatos-2002",
+        "localizacao": "Arquivo consulta_cand_2002_RJ.csv, linha do candidato de número 11120",
+        "evidencia": "Concorreu pelo PPB em 2002. As datas de filiação e de saída não constam."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-pp",
+    "pessoaId": "flavio-bolsonaro",
+    "partido": {
+      "sigla": "PP",
+      "nome": "Partido Progressista"
+    },
+    "periodo": {
+      "inicio": {
+        "tipo": "desconhecida"
+      },
+      "fim": {
+        "tipo": "desconhecida"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "tse-divulgacand-2014-flavio",
+        "localizacao": "Ficha do candidato: partido",
+        "evidencia": "Candidato pelo Partido Progressista (PP) em 2014."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de eleições anteriores da ficha do candidato",
+        "evidencia": "Concorreu pelo PP também em 2006 e 2010. As datas de filiação e de saída não constam."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-psc",
+    "pessoaId": "flavio-bolsonaro",
+    "partido": {
+      "sigla": "PSC",
+      "nome": "Partido Social Cristão"
+    },
+    "periodo": {
+      "inicio": {
+        "tipo": "desconhecida"
+      },
+      "fim": {
+        "tipo": "desconhecida"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "tse-divulgacand-2016-flavio",
+        "localizacao": "Ficha do candidato: partido",
+        "evidencia": "Concorreu pelo Partido Social Cristão (PSC) em 2016. As datas de filiação e de saída não constam."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-psl",
+    "pessoaId": "flavio-bolsonaro",
+    "partido": {
+      "sigla": "PSL",
+      "nome": "Partido Social Liberal"
+    },
+    "periodo": {
+      "inicio": {
+        "tipo": "desconhecida"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2019-11-19",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "tse-divulgacand-2018-flavio",
+        "localizacao": "Ficha do candidato: partido",
+        "evidencia": "Concorreu pelo PSL em 2018. A data de filiação não consta."
+      },
+      {
+        "fonteId": "senado-dados-abertos-flavio-filiacoes",
+        "localizacao": "Filiação ao PSL",
+        "evidencia": "Desfiliação em 19 de novembro de 2019. O Senado registra o início em 1º de janeiro de 2019, data posterior à candidatura pelo partido."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-republicanos",
+    "pessoaId": "flavio-bolsonaro",
+    "partido": {
+      "sigla": "Republicanos",
+      "nome": "Republicanos"
+    },
+    "periodo": {
+      "inicio": {
+        "tipo": "desconhecida"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2021-05",
+        "precisao": "mes"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2020-denuncia-mprj",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Identificado como senador do Republicanos em 4 de novembro de 2020."
+      },
+      {
+        "fonteId": "senado-manual-republicanos-patriota",
+        "localizacao": "Título do registro de modificação",
+        "evidencia": "Mudança do Republicanos para o Patriota."
+      },
+      {
+        "fonteId": "senado-dados-abertos-flavio-filiacoes",
+        "localizacao": "Filiação ao Patriota",
+        "evidencia": "A filiação ao Patriota, que encerra a passagem pelo Republicanos, é de 31 de maio de 2021. Os dados abertos não registram o Republicanos e mostram 'S/Partido' no período."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-patriota",
+    "pessoaId": "flavio-bolsonaro",
+    "partido": {
+      "sigla": "Patriota",
+      "nome": "Patriota"
+    },
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2021-05-31",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2021-11-29",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-filiacoes",
+        "localizacao": "Filiação ao Patriota",
+        "evidencia": "Filiado de 31 de maio a 29 de novembro de 2021."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-pl",
+    "pessoaId": "flavio-bolsonaro",
+    "partido": {
+      "sigla": "PL",
+      "nome": "Partido Liberal"
+    },
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2021-11-30",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "em-curso"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-filiacoes",
+        "localizacao": "Filiação ao PL",
+        "evidencia": "Filiado desde 30 de novembro de 2021, sem data de desfiliação."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Ficha do candidato: partido",
+        "evidencia": "Candidato pelo PL em 2026."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  }
+]

@@ -1,0 +1,1827 @@
+[
+  {
+    "id": "lula-1975-eleito-presidente-do-sindicato",
+    "slug": "lula-1975-eleito-presidente-do-sindicato",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é eleito presidente do Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema",
+    "data": {
+      "valor": "1975",
+      "precisao": "ano"
+    },
+    "categoria": "mandatos-e-funcoes",
+    "resumo": "Em 1975, Lula foi eleito presidente do Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema com 92% dos votos e passou a representar 100 mil trabalhadores.",
+    "contexto": "Ele havia entrado na diretoria do sindicato em 1969, como suplente, e se tornado primeiro-secretário em 1972. Foi reeleito presidente em 1978. As fontes consultadas não informam o dia nem o mês da eleição, e por isso o registro tem precisão de ano.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "sao-bernardo-do-campo"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Quinto parágrafo da biografia",
+        "evidencia": "Eleição para presidente do sindicato em 1975, com 92% dos votos e 100 mil trabalhadores representados; cargos anteriores em 1969 e 1972."
+      },
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Lista de atividades sindicais",
+        "evidencia": "Cargos no sindicato em 1969, 1972, 1975 e 1978, com sede em São Bernardo do Campo (SP)."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-1979-greve-dos-metalurgicos-do-abc",
+    "slug": "lula-1979-greve-dos-metalurgicos-do-abc",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Greve de 170 mil metalúrgicos paralisa o ABC paulista",
+    "data": {
+      "valor": "1979-03",
+      "precisao": "mes"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em março de 1979, 170 mil metalúrgicos pararam o ABC paulista. Lula presidia o sindicato da categoria em São Bernardo do Campo e Diadema.",
+    "contexto": "Segundo a biografia publicada pela Presidência da República, as primeiras paralisações ocorreram em 1978, depois de dez anos sem greves operárias no país. O mesmo texto afirma que a repressão policial ao movimento e a falta de representantes dos trabalhadores no Congresso levaram Lula a pensar, pela primeira vez, em criar um partido. O ponto no mapa é o município-sede do sindicato; a fonte situa a greve no ABC paulista, sem indicar um município.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "sao-bernardo-do-campo"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Sexto parágrafo da biografia",
+        "evidencia": "Greve de março de 1979 com 170 mil metalúrgicos, primeiras paralisações em 1978 e origem da ideia de criar um partido."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-1980-prisao-pela-lei-de-seguranca-nacional",
+    "slug": "lula-1980-prisao-pela-lei-de-seguranca-nacional",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é preso com base na Lei de Segurança Nacional durante greve",
+    "data": {
+      "valor": "1980",
+      "precisao": "ano"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 1980, uma nova greve dos metalúrgicos levou à intervenção do governo federal no sindicato e à prisão de Lula e de outros dirigentes sindicais, com base na Lei de Segurança Nacional. Ele ficou 31 dias preso.",
+    "contexto": "A prisão ocorreu durante o regime militar, no mesmo ano da fundação do PT. A biografia publicada pela Presidência não informa as datas de início e fim da prisão nem o local, e por isso o registro tem precisão de ano e não tem ponto no mapa.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Sétimo parágrafo da biografia",
+        "evidencia": "Intervenção no sindicato, prisão com base na Lei de Segurança Nacional e duração de 31 dias."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-1980-fundacao-do-pt",
+    "slug": "lula-1980-fundacao-do-pt",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula participa da fundação do Partido dos Trabalhadores",
+    "data": {
+      "valor": "1980-02-10",
+      "precisao": "dia"
+    },
+    "categoria": "partidos-e-aliancas",
+    "resumo": "Em 10 de fevereiro de 1980, Lula fundou o PT, ao lado de outros sindicalistas, intelectuais, políticos e representantes de movimentos sociais, entre eles lideranças rurais e religiosas.",
+    "contexto": "O país vivia um processo de abertura política conduzido pelos militares, ainda no poder. A Câmara dos Deputados registra que Lula presidiu o partido de 1980 a 1988 e de 1990 a 1994. As fontes consultadas não informam onde ocorreu o ato de fundação.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Sétimo parágrafo da biografia",
+        "evidencia": "Data da fundação do PT, quem participou e contexto de abertura política."
+      },
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Lista de atividades partidárias",
+        "evidencia": "Presidente do PT de 1980 a 1988 e de 1990 a 1994."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-1986-eleito-deputado-federal-constituinte",
+    "slug": "lula-1986-eleito-deputado-federal-constituinte",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é eleito deputado federal constituinte por São Paulo",
+    "data": {
+      "valor": "1986",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 1986, Lula foi eleito deputado federal por São Paulo, pelo PT, para a Assembleia Nacional Constituinte. Segundo a biografia publicada pela Presidência, foi o deputado federal mais votado do país.",
+    "contexto": "Tomou posse em 1º de fevereiro de 1987 e exerceu o mandato na legislatura de 1987 a 1991. Na Constituinte, foi titular da Comissão de Sistematização e suplente da Subcomissão dos Negros, Populações Indígenas, Pessoas Deficientes e Minorias. Foi líder do PT em 1987 e 1988. É o único mandato dele registrado na Câmara dos Deputados.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-de-sao-paulo"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Oitavo parágrafo da biografia",
+        "evidencia": "Eleito em 1986 o deputado federal mais votado do país, para a Assembleia Constituinte."
+      },
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Seções Mandatos, Atividades partidárias e Assembleia Nacional Constituinte",
+        "evidencia": "Mandato de 1987 a 1991 por São Paulo, posse em 1º de fevereiro de 1987, comissões na Constituinte e liderança do PT."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-1989-primeira-candidatura-a-presidencia",
+    "slug": "lula-1989-primeira-candidatura-a-presidencia",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula disputa a Presidência pela primeira vez e perde no segundo turno",
+    "data": {
+      "valor": "1989",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 1989, na primeira eleição direta para presidente da República em 29 anos, Lula foi o candidato do PT e perdeu a disputa no segundo turno.",
+    "contexto": "A biografia publicada pela Presidência descreve a derrota como ocorrida por pequena diferença de votos. A Agência Senado registra que o adversário no segundo turno foi Fernando Collor. Os dados de candidatura do TSE consultados começam em 1994, e por isso o registro tem precisão de ano.",
+    "localizacao": {
+      "tipo": "nacional"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Nono parágrafo da biografia",
+        "evidencia": "Candidatura do PT em 1989, após 29 anos sem eleição direta, e derrota no segundo turno."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Lula",
+        "evidencia": "Adversário no segundo turno de 1989."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-1994-derrota-na-eleicao-presidencial",
+    "slug": "lula-1994-derrota-na-eleicao-presidencial",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é derrotado por Fernando Henrique Cardoso na eleição presidencial",
+    "data": {
+      "valor": "1994-10-03",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 3 de outubro de 1994, Lula disputou a Presidência da República pelo PT e não foi eleito. Fernando Henrique Cardoso (PSDB) venceu no primeiro turno.",
+    "contexto": "Foi a segunda candidatura presidencial de Lula. Em 4 de outubro de 1998 ele concorreu de novo, pela coligação União do Povo Muda Brasil, e Fernando Henrique Cardoso voltou a vencer no primeiro turno.",
+    "localizacao": {
+      "tipo": "nacional"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-candidatos-1994",
+        "localizacao": "Arquivo consulta_cand_1994_BR.csv, linhas dos candidatos a presidente de números 13 e 45",
+        "evidencia": "Data da eleição, partido e situação de totalização no primeiro turno: Lula não eleito, Fernando Henrique Cardoso eleito."
+      },
+      {
+        "fonteId": "tse-candidatos-1998",
+        "localizacao": "Arquivo consulta_cand_1998_BR.csv, linhas dos candidatos a presidente de números 13 e 45",
+        "evidencia": "Eleição de 4 de outubro de 1998: Lula não eleito pela coligação União do Povo Muda Brasil, Fernando Henrique Cardoso eleito no primeiro turno."
+      },
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Nono parágrafo da biografia",
+        "evidencia": "Candidaturas de 1994 e 1998, ambas com derrota para Fernando Henrique Cardoso."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2002-eleito-deputado-estadual",
+    "slug": "flavio-bolsonaro-2002-eleito-deputado-estadual",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro é eleito deputado estadual no Rio de Janeiro",
+    "data": {
+      "valor": "2002-10-06",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 6 de outubro de 2002, Flávio Bolsonaro foi eleito deputado estadual no Rio de Janeiro pelo PPB. Foi sua primeira eleição.",
+    "contexto": "Os dados de candidatura do TSE registram que ele concorreu com o número 11120, sem coligação, e que teria 21 anos na data da posse. Segundo a Agência Senado, iniciou o mandato de deputado estadual em 2003.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-do-rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-candidatos-2002",
+        "localizacao": "Arquivo consulta_cand_2002_RJ.csv, linha do candidato de número 11120",
+        "evidencia": "Data da eleição, cargo, partido, ausência de coligação, idade na posse e situação de eleito."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-perfil-flavio",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Primeira eleição disputada."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Flávio Bolsonaro",
+        "evidencia": "Início do mandato em 2003."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2002-eleito-presidente",
+    "slug": "lula-2002-eleito-presidente",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é eleito presidente da República",
+    "data": {
+      "valor": "2002-10-27",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 27 de outubro de 2002, no segundo turno, Lula foi eleito presidente da República, com quase 53 milhões de votos.",
+    "contexto": "Concorreu pela coligação Lula Presidente (PT, PL, PCdoB, PMN e PCB), com o senador José Alencar, do PL de Minas Gerais, como candidato a vice. No primeiro turno, em 6 de outubro, a totalização do TSE registrou a passagem ao segundo turno. Tinha 57 anos. Tomou posse em 1º de janeiro de 2003.",
+    "localizacao": {
+      "tipo": "nacional"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-candidatos-2002",
+        "localizacao": "Arquivo consulta_cand_2002_BR.csv, linhas do candidato de número 13 nos dois turnos",
+        "evidencia": "Datas dos turnos, coligação e situação de totalização: segundo turno em 6 de outubro e eleito em 27 de outubro."
+      },
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Parágrafos sobre a convenção e a eleição de 2002",
+        "evidencia": "Votos, idade e candidato a vice."
+      },
+      {
+        "fonteId": "agencia-senado-2023-posse",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Início do primeiro mandato em 1º de janeiro de 2003."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2006-reeleito-deputado-estadual",
+    "slug": "flavio-bolsonaro-2006-reeleito-deputado-estadual",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro é reeleito deputado estadual",
+    "data": {
+      "valor": "2006",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 2006, Flávio Bolsonaro foi reeleito deputado estadual no Rio de Janeiro, pelo PP.",
+    "contexto": "Foi a segunda das quatro eleições consecutivas que venceu para a Assembleia Legislativa. A ficha do TSE consultada informa o ano, o cargo, o partido e o resultado, sem a data da votação, e por isso o acontecimento tem precisão de ano.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-do-rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de eleições anteriores da ficha do candidato: item de 2006",
+        "evidencia": "Deputado estadual pelo PP no Rio de Janeiro em 2006, com situação de eleito."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-perfil-flavio",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Reeleito em 2006, 2010 e 2014."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2006-reeleito-presidente",
+    "slug": "lula-2006-reeleito-presidente",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é reeleito presidente da República",
+    "data": {
+      "valor": "2006-10-29",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 29 de outubro de 2006, Lula foi reeleito presidente da República com mais de 58 milhões de votos, novamente com José Alencar como vice.",
+    "contexto": "Concorreu pela coligação A Força do Povo. O candidato do PSDB naquela eleição foi Geraldo Alckmin, que em 2022 e 2026 seria seu companheiro de chapa. Lula tomou posse do segundo mandato em 1º de janeiro de 2007 e deixou a Presidência em 1º de janeiro de 2011.",
+    "localizacao": {
+      "tipo": "nacional"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Último parágrafo da biografia",
+        "evidencia": "Data da reeleição, votos e candidato a vice."
+      },
+      {
+        "fonteId": "tse-divulgacand-2006-lula",
+        "localizacao": "Lista de candidatos a presidente em 2006: linhas de Lula e de Geraldo Alckmin",
+        "evidencia": "Coligação de Lula, situação de eleito e candidatura de Geraldo Alckmin pelo PSDB."
+      },
+      {
+        "fonteId": "agencia-camara-2007-discurso-de-posse",
+        "localizacao": "Data da publicação e primeiro parágrafo do discurso",
+        "evidencia": "Posse do segundo mandato em 1º de janeiro de 2007."
+      },
+      {
+        "fonteId": "agencia-senado-2023-posse",
+        "localizacao": "Primeiro e terceiro parágrafos",
+        "evidencia": "Fim do segundo mandato em 1º de janeiro de 2011 e Geraldo Alckmin como vice empossado em 2023."
+      },
+      {
+        "fonteId": "tse-noticia-2026-primeiro-turno",
+        "localizacao": "Parágrafo sobre Lula",
+        "evidencia": "Geraldo Alckmin como candidato a vice em 2026."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2010-reeleito-deputado-estadual",
+    "slug": "flavio-bolsonaro-2010-reeleito-deputado-estadual",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro é reeleito deputado estadual pela segunda vez",
+    "data": {
+      "valor": "2010",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 2010, Flávio Bolsonaro foi reeleito deputado estadual no Rio de Janeiro, de novo pelo PP.",
+    "contexto": "Foi a terceira eleição seguida para a Assembleia Legislativa. A ficha do TSE consultada informa o ano, o cargo, o partido e o resultado, sem a data da votação, e por isso o acontecimento tem precisão de ano.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-do-rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de eleições anteriores da ficha do candidato: item de 2010",
+        "evidencia": "Deputado estadual pelo PP no Rio de Janeiro em 2010, com situação de eleito."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-perfil-flavio",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Reeleito em 2006, 2010 e 2014."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2014-reeleito-deputado-estadual",
+    "slug": "flavio-bolsonaro-2014-reeleito-deputado-estadual",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro conquista o quarto mandato de deputado estadual",
+    "data": {
+      "valor": "2014",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 2014, Flávio Bolsonaro foi reeleito deputado estadual no Rio de Janeiro pelo PP. Na ficha do TSE, a situação registrada é \"Eleito por QP\".",
+    "contexto": "Foi o quarto mandato consecutivo na Assembleia Legislativa, de onde saiu em 2019 para o Senado. A ficha do TSE consultada não informa a data da votação, e por isso o acontecimento tem precisão de ano.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-do-rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-divulgacand-2014-flavio",
+        "localizacao": "Ficha do candidato: cargo, partido, número e situação",
+        "evidencia": "Deputado estadual pelo PP no Rio de Janeiro em 2014, candidato à reeleição, com situação \"Eleito por QP\"."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Flávio Bolsonaro",
+        "evidencia": "Saída da Assembleia Legislativa em 2019."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2016-candidatura-a-prefeitura-do-rio",
+    "slug": "flavio-bolsonaro-2016-candidatura-a-prefeitura-do-rio",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro disputa a Prefeitura do Rio de Janeiro e não é eleito",
+    "data": {
+      "valor": "2016",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 2016, Flávio Bolsonaro concorreu a prefeito do Rio de Janeiro pelo PSC, com o número 20, e não foi eleito.",
+    "contexto": "A coligação, formada por PSC e PRP, se chamava O Rio Precisa de Força para Mudar. Nos registros do TSE consultados, foi a única candidatura dele a um cargo do Executivo antes de 2026. Dois anos antes, ele havia sido reeleito deputado estadual pelo PP, e seguiu na Assembleia Legislativa até 2019.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-divulgacand-2016-flavio",
+        "localizacao": "Ficha do candidato: cargo, partido, número, coligação e situação",
+        "evidencia": "Candidato a prefeito pelo PSC, com o número 20, coligação com o PRP e situação de não eleito."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de eleições anteriores da ficha do candidato",
+        "evidencia": "Histórico de candidaturas de 2006 a 2026, com uma única disputa de cargo do Executivo antes de 2026."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Flávio Bolsonaro",
+        "evidencia": "Permanência na Assembleia Legislativa até 2019."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2016-nomeacao-para-a-casa-civil-suspensa",
+    "slug": "lula-2016-nomeacao-para-a-casa-civil-suspensa",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "STF suspende a nomeação de Lula para a Casa Civil",
+    "data": {
+      "valor": "2016-03-18",
+      "precisao": "dia"
+    },
+    "categoria": "mandatos-e-funcoes",
+    "resumo": "Em 18 de março de 2016, o ministro Gilmar Mendes, do STF, concedeu liminar que suspendeu a eficácia da nomeação de Lula para o cargo de ministro-chefe da Casa Civil.",
+    "contexto": "A decisão foi tomada em mandados de segurança do PPS e do PSDB. Os partidos alegavam que a nomeação, feita pela presidente Dilma Rousseff, teve desvio de finalidade: retirar da 13ª Vara Federal de Curitiba um procedimento criminal contra Lula, já que ministros de Estado têm foro no STF. A liminar também manteve os procedimentos criminais na primeira instância.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "stf-noticia-2016-casa-civil",
+        "localizacao": "Texto da notícia e data de publicação",
+        "evidencia": "Liminar que suspendeu a nomeação, autores dos mandados de segurança e alegação de desvio de finalidade."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2017-condenacao-em-primeira-instancia",
+    "slug": "lula-2017-condenacao-em-primeira-instancia",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é condenado em primeira instância no caso do triplex",
+    "data": {
+      "valor": "2017-07-12",
+      "precisao": "dia"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 12 de julho de 2017, o juiz federal Sérgio Moro condenou Lula a nove anos e seis meses de prisão por corrupção passiva e lavagem de dinheiro, no processo sobre um apartamento triplex em Guarujá (SP). A sentença permitia recorrer em liberdade.",
+    "contexto": "A condenação foi confirmada em segunda instância em janeiro de 2018, com aumento da pena. Em 2021, o STF anulou as decisões da 13ª Vara Federal de Curitiba nas ações contra Lula, por considerar aquele juízo incompetente, e declarou a suspeição do juiz no caso do triplex.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "curitiba"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2017-sentenca-triplex",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Condenação, pena, crimes e possibilidade de recorrer em liberdade."
+      },
+      {
+        "fonteId": "stf-noticia-2021-fachin-anula",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Anulação das decisões da 13ª Vara Federal de Curitiba, sede do juízo que proferiu a sentença."
+      },
+      {
+        "fonteId": "stf-noticia-2021-plenario-suspeicao",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Suspeição do ex-juiz no caso do triplex, mantida pelo plenário."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2018-eleito-senador",
+    "slug": "flavio-bolsonaro-2018-eleito-senador",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro é eleito senador pelo Rio de Janeiro",
+    "data": {
+      "valor": "2018",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 2018, Flávio Bolsonaro foi eleito senador pelo Rio de Janeiro, pelo PSL. Segundo a Agência Senado, foi o candidato mais votado do estado para o cargo, com 31,3% dos votos válidos.",
+    "contexto": "Concorreu com o número 177, tendo Paulo Marinho e Leonardo Rodrigues como suplentes. O mandato começou em 1º de fevereiro de 2019 e vai até 31 de janeiro de 2027. Em janeiro de 2019, a Agência Senado o apresentava como filho do presidente da República, Jair Bolsonaro.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-do-rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-divulgacand-2018-flavio",
+        "localizacao": "Ficha do candidato: cargo, partido, número, suplentes e situação",
+        "evidencia": "Eleito senador pelo PSL, com o número 177 e dois suplentes."
+      },
+      {
+        "fonteId": "agencia-senado-2019-perfil-flavio",
+        "localizacao": "Parágrafo Eleição/atuação e data de publicação",
+        "evidencia": "Mais votado para o Senado no Rio de Janeiro, com 31,3% dos votos válidos; filho do presidente da República."
+      },
+      {
+        "fonteId": "senado-dados-abertos-flavio-mandatos",
+        "localizacao": "Mandato 532: legislaturas e exercícios",
+        "evidencia": "Mandato de 1º de fevereiro de 2019 a 31 de janeiro de 2027."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2018-tribunal-confirma-condenacao",
+    "slug": "lula-2018-tribunal-confirma-condenacao",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "TRF4 confirma a condenação de Lula e aumenta a pena",
+    "data": {
+      "valor": "2018-01-24",
+      "precisao": "dia"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 24 de janeiro de 2018, a 8ª Turma do Tribunal Regional Federal da 4ª Região confirmou por unanimidade a condenação de Lula por corrupção passiva e lavagem de dinheiro e elevou a pena de nove anos e seis meses para 12 anos e um mês de reclusão.",
+    "contexto": "A condenação em segunda instância foi o fundamento citado no TSE para declarar Lula inelegível em 2018 e precedeu sua prisão, em abril daquele ano. Em abril de 2019, a Quinta Turma do STJ manteve a condenação e reduziu a pena para 8 anos e 10 meses. As condenações foram anuladas pelo STF em 2021.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "porto-alegre"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "trf4-noticia-2018-apelacao",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Confirmação unânime da condenação e nova pena."
+      },
+      {
+        "fonteId": "agencia-brasil-2018-trf4",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Sede do tribunal em Porto Alegre."
+      },
+      {
+        "fonteId": "tse-noticia-2018-registro-lula",
+        "localizacao": "Trecho sobre o voto do relator",
+        "evidencia": "A condenação em segunda instância como fundamento da inelegibilidade."
+      },
+      {
+        "fonteId": "agencia-brasil-2019-stj-reduz-pena",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Redução da pena pela Quinta Turma do STJ em 23 de abril de 2019."
+      },
+      {
+        "fonteId": "stf-noticia-2021-fachin-anula",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Anulação das condenações em 2021."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2018-prisao-em-curitiba",
+    "slug": "lula-2018-prisao-em-curitiba",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é preso e levado à Polícia Federal em Curitiba",
+    "data": {
+      "valor": "2018-04-07",
+      "precisao": "dia"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 7 de abril de 2018, Lula chegou à Superintendência da Polícia Federal em Curitiba para começar a cumprir a pena do caso do triplex. Ficou preso até 8 de novembro de 2019.",
+    "contexto": "A prisão decorreu da condenação confirmada pelo TRF4 em janeiro de 2018. Lula ficou em uma sala reservada na sede da Polícia Federal. Segundo a Agência Brasil, a prisão durou 580 dias.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "curitiba"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2018-chegada-pf",
+        "localizacao": "Primeiros parágrafos e data de publicação",
+        "evidencia": "Chegada à Superintendência da Polícia Federal em Curitiba e sala reservada."
+      },
+      {
+        "fonteId": "agencia-brasil-2019-deixa-carceragem",
+        "localizacao": "Primeiro e terceiro parágrafos",
+        "evidencia": "Preso desde 7 de abril de 2018, por 580 dias, pela condenação no caso do triplex."
+      },
+      {
+        "fonteId": "agencia-brasil-2019-juiz-manda-soltar",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Condenação confirmada pelo TRF4 em janeiro de 2018."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2018-registro-de-candidatura-indeferido",
+    "slug": "lula-2018-registro-de-candidatura-indeferido",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "TSE indefere o registro da candidatura de Lula à Presidência",
+    "data": {
+      "valor": "2018-08-31",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em sessão extraordinária iniciada em 31 de agosto de 2018, o plenário do TSE indeferiu, por 6 votos a 1, o registro da candidatura de Lula à Presidência da República, com base na Lei da Ficha Limpa.",
+    "contexto": "O relator, ministro Luís Roberto Barroso, declarou a inelegibilidade de Lula. Por 5 votos a 2, o tribunal permitiu à coligação O Povo Feliz de Novo (PT, PCdoB e Pros) substituir o candidato em dez dias e proibiu Lula de praticar atos de campanha. O TSE publicou o resultado na madrugada de 1º de setembro. Fernando Haddad era o candidato a vice na chapa registrada.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-noticia-2018-registro-lula",
+        "localizacao": "Primeiros parágrafos, data de publicação e rodapé",
+        "evidencia": "Placar, fundamento, substituição do candidato, proibição de atos de campanha e data da sessão."
+      },
+      {
+        "fonteId": "tse-divulgacand-2018-lula",
+        "localizacao": "Ficha do candidato: situação, motivos e vice",
+        "evidencia": "Registro indeferido por Ficha Limpa, coligação e candidato a vice."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2019-terceiro-secretario-do-senado",
+    "slug": "flavio-bolsonaro-2019-terceiro-secretario-do-senado",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro assume a 3ª Secretaria da Mesa do Senado",
+    "data": {
+      "valor": "2019-02-06",
+      "precisao": "dia"
+    },
+    "categoria": "mandatos-e-funcoes",
+    "resumo": "Em 6 de fevereiro de 2019, cinco dias depois de iniciar o mandato, Flávio Bolsonaro passou a ocupar o cargo de 3º secretário da Comissão Diretora do Senado Federal.",
+    "contexto": "Os dados abertos do Senado registram o cargo de 6 de fevereiro de 2019 a 14 de dezembro de 2020. No mesmo ano, em 27 de março, ele foi designado relator da comissão mista da Medida Provisória 866, de 2018.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-cargos",
+        "localizacao": "Cargos na Comissão Diretora e na comissão mista da MP 866/2018",
+        "evidencia": "Período como 3º secretário e designação como relator."
+      },
+      {
+        "fonteId": "senado-dados-abertos-flavio-mandatos",
+        "localizacao": "Mandato 532, bloco Exercicios",
+        "evidencia": "Início do exercício do mandato em 1º de fevereiro de 2019."
+      },
+      {
+        "fonteId": "senado-perfil-flavio",
+        "localizacao": "Rodapé da página",
+        "evidencia": "Sede do Senado Federal em Brasília."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2019-saida-da-prisao",
+    "slug": "lula-2019-saida-da-prisao",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula deixa a prisão em Curitiba",
+    "data": {
+      "valor": "2019-11-08",
+      "precisao": "dia"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 8 de novembro de 2019, a Justiça Federal em Curitiba determinou a soltura de Lula, que deixou a carceragem da Polícia Federal no mesmo dia.",
+    "contexto": "A decisão, do juiz Danilo Pereira Júnior, atendeu a pedido da defesa baseado no julgamento do STF da véspera, que derrubou a execução provisória de condenações criminais, conhecida como prisão após a segunda instância. Lula estava preso desde 7 de abril de 2018.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "curitiba"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2019-juiz-manda-soltar",
+        "localizacao": "Primeiro e segundo parágrafos e data de publicação",
+        "evidencia": "Ordem de soltura, juiz responsável e relação com o julgamento do STF da véspera."
+      },
+      {
+        "fonteId": "agencia-brasil-2019-deixa-carceragem",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Saída da carceragem da Polícia Federal no mesmo dia."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2019-saida-do-psl",
+    "slug": "flavio-bolsonaro-2019-saida-do-psl",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro deixa o PSL",
+    "data": {
+      "valor": "2019-11-19",
+      "precisao": "dia"
+    },
+    "categoria": "partidos-e-aliancas",
+    "resumo": "Em 19 de novembro de 2019, Flávio Bolsonaro se desfiliou do PSL, partido pelo qual havia sido eleito senador no ano anterior, segundo os dados abertos do Senado.",
+    "contexto": "Os mesmos dados o registram como sem partido de 20 de novembro de 2019 a 30 de maio de 2021. Nesse intervalo, porém, a Agência Brasil o identificou como senador do Republicanos, em novembro de 2020, e o Manual de Comunicação do Senado registra a mudança dele do Republicanos para o Patriota. A data de filiação ao Republicanos não foi localizada nas fontes consultadas.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-filiacoes",
+        "localizacao": "Filiações ao PSL e registro 'S/Partido'",
+        "evidencia": "Desfiliação do PSL em 19 de novembro de 2019 e registro sem partido de 20 de novembro de 2019 a 30 de maio de 2021."
+      },
+      {
+        "fonteId": "tse-divulgacand-2018-flavio",
+        "localizacao": "Ficha do candidato: partido",
+        "evidencia": "Eleito senador pelo PSL em 2018."
+      },
+      {
+        "fonteId": "agencia-brasil-2020-denuncia-mprj",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Identificado como senador do Republicanos em 4 de novembro de 2020."
+      },
+      {
+        "fonteId": "senado-manual-republicanos-patriota",
+        "localizacao": "Título do registro de modificação",
+        "evidencia": "Mudança do Republicanos para o Patriota."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2020-denuncia-do-ministerio-publico",
+    "slug": "flavio-bolsonaro-2020-denuncia-do-ministerio-publico",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Ministério Público do Rio denuncia Flávio Bolsonaro no caso das “rachadinhas”",
+    "data": {
+      "valor": "2020-11-04",
+      "precisao": "dia"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 4 de novembro de 2020, o Ministério Público do Rio de Janeiro informou ter apresentado denúncia contra Flávio Bolsonaro, o ex-assessor Fabrício Queiroz e outras 15 pessoas ao Órgão Especial do Tribunal de Justiça do Rio. A acusação era de lavagem de dinheiro, peculato, apropriação indébita e organização criminosa.",
+    "contexto": "A investigação tratava de suposto esquema de “rachadinha” na Assembleia Legislativa do Rio de Janeiro no período em que Flávio era deputado estadual; segundo o Ministério Público, os fatos teriam ocorrido entre 2007 e 2018. A denúncia havia sido oferecida em 19 de outubro. A defesa afirmou que a acusação não se sustentava e era desprovida de indício de prova, e o senador declarou que não cometeu irregularidade. A denúncia foi rejeitada pelo Tribunal de Justiça em 2022, a pedido do próprio Ministério Público, e não chegou a ser julgada no mérito.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-do-rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2020-denuncia-mprj",
+        "localizacao": "Primeiros cinco parágrafos e data de publicação",
+        "evidencia": "Denúncia, denunciados, crimes apontados, período dos fatos, data do oferecimento e manifestações da defesa e do senador."
+      },
+      {
+        "fonteId": "agencia-brasil-2022-tjrj-rejeita-denuncia",
+        "localizacao": "Primeiro e segundo parágrafos",
+        "evidencia": "Rejeição da denúncia em 2022, a pedido do próprio Ministério Público."
+      },
+      {
+        "fonteId": "brasil-de-fato-2026-quebra-de-sigilos",
+        "localizacao": "Parágrafo sobre a denúncia",
+        "evidencia": "A denúncia não foi julgada no mérito."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2021-stf-anula-condenacoes",
+    "slug": "lula-2021-stf-anula-condenacoes",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "STF anula as condenações de Lula na Lava Jato",
+    "data": {
+      "valor": "2021-03-08",
+      "precisao": "dia"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 8 de março de 2021, o ministro Edson Fachin, do STF, anulou todas as decisões da 13ª Vara Federal de Curitiba nas ações penais contra Lula, inclusive as condenações, por entender que aquele juízo não era competente para os casos.",
+    "contexto": "A decisão atingiu quatro processos: triplex do Guarujá, sítio de Atibaia, sede do Instituto Lula e doações ao Instituto Lula. Em 15 de abril de 2021, o plenário rejeitou por 8 votos a 3 o recurso da Procuradoria-Geral da República e, em 22 de abril, definiu que os processos caberiam à Justiça Federal do Distrito Federal. Em 23 de março, a Segunda Turma havia declarado a suspeição do ex-juiz Sergio Moro no caso do triplex, entendimento mantido pelo plenário em 23 de junho. Segundo a Agência Senado, com a anulação Lula recuperou os direitos políticos.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "stf-noticia-2021-fachin-anula",
+        "localizacao": "Primeiros parágrafos, lista dos processos e data de publicação",
+        "evidencia": "Anulação das decisões e das condenações, e os quatro processos atingidos."
+      },
+      {
+        "fonteId": "stf-noticia-2021-plenario-confirma",
+        "localizacao": "Subtítulo, primeiro parágrafo e data de publicação",
+        "evidencia": "Confirmação pelo plenário por 8 votos a 3, em 15 de abril de 2021."
+      },
+      {
+        "fonteId": "stf-noticia-2021-competencia-df",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Competência da Justiça Federal do Distrito Federal, definida em 22 de abril de 2021."
+      },
+      {
+        "fonteId": "stf-noticia-2021-segunda-turma-suspeicao",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Suspeição declarada pela Segunda Turma em 23 de março de 2021."
+      },
+      {
+        "fonteId": "stf-noticia-2021-plenario-suspeicao",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Manutenção da suspeição pelo plenário em 23 de junho de 2021."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Lula",
+        "evidencia": "Recuperação dos direitos políticos depois da anulação."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2021-filiacao-ao-patriota",
+    "slug": "flavio-bolsonaro-2021-filiacao-ao-patriota",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro se filia ao Patriota",
+    "data": {
+      "valor": "2021-05-31",
+      "precisao": "dia"
+    },
+    "categoria": "partidos-e-aliancas",
+    "resumo": "Em 31 de maio de 2021, Flávio Bolsonaro se filiou ao Patriota, segundo os dados abertos do Senado. O Manual de Comunicação do Senado registra a mudança como saída do Republicanos.",
+    "contexto": "Ele foi líder do Patriota no Senado de 4 de junho a 29 de novembro de 2021. A filiação durou seis meses: em 30 de novembro de 2021 ele passou para o PL.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-filiacoes",
+        "localizacao": "Filiações ao Patriota e ao PL",
+        "evidencia": "Filiação ao Patriota de 31 de maio a 29 de novembro de 2021 e filiação ao PL em 30 de novembro."
+      },
+      {
+        "fonteId": "senado-dados-abertos-flavio-liderancas",
+        "localizacao": "Liderança de Partido no Senado Federal (Patriota)",
+        "evidencia": "Líder do Patriota de 4 de junho a 29 de novembro de 2021."
+      },
+      {
+        "fonteId": "senado-manual-republicanos-patriota",
+        "localizacao": "Título do registro de modificação",
+        "evidencia": "Mudança do Republicanos para o Patriota."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao",
+    "slug": "flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "STJ anula decisões da primeira instância na investigação das “rachadinhas”",
+    "data": {
+      "valor": "2021-11-09",
+      "precisao": "dia"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 9 de novembro de 2021, a Quinta Turma do Superior Tribunal de Justiça anulou as decisões da primeira instância da Justiça do Rio de Janeiro nas investigações sobre o suposto esquema de “rachadinha” na Assembleia Legislativa.",
+    "contexto": "O colegiado aceitou recurso da defesa de Flávio Bolsonaro: como ele era deputado estadual na época dos fatos apontados pelo Ministério Público, somente o Tribunal de Justiça do Rio poderia decidir sobre o caso. As decisões anuladas eram do juiz Flávio Itabaiana, da 27ª Vara Criminal. Em fevereiro de 2021, a mesma turma havia anulado, por falta de fundamentação, a quebra de sigilo bancário e fiscal de cerca de 90 investigados; o Ministério Público do Rio recorreu dessa decisão em 20 de março de 2021. O registro não tem ponto no mapa porque a sede do tribunal não consta nos documentos lidos.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2021-stj-anula-decisoes",
+        "localizacao": "Três primeiros parágrafos e data de publicação",
+        "evidencia": "Anulação das decisões da primeira instância, juiz responsável, fundamento e decisão anterior de fevereiro."
+      },
+      {
+        "fonteId": "mprj-2021-recurso-stj",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Recurso do Ministério Público, em 20 de março de 2021, contra a anulação das quebras de sigilo, decidida por quatro votos a um."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2021-filiacao-ao-pl",
+    "slug": "flavio-bolsonaro-2021-filiacao-ao-pl",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro se filia ao PL",
+    "data": {
+      "valor": "2021-11-30",
+      "precisao": "dia"
+    },
+    "categoria": "partidos-e-aliancas",
+    "resumo": "Em 30 de novembro de 2021, Flávio Bolsonaro se filiou ao Partido Liberal, legenda pela qual disputa a Presidência em 2026.",
+    "contexto": "A Agência Senado registrou a filiação no dia seguinte, em pronunciamento do senador Carlos Portinho (PL-RJ), que citou também o então presidente Jair Bolsonaro como integrante do partido. Flávio foi líder do PL no Senado de 10 de junho de 2022 a 16 de fevereiro de 2023.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-filiacoes",
+        "localizacao": "Filiação ao PL",
+        "evidencia": "Filiado ao PL desde 30 de novembro de 2021."
+      },
+      {
+        "fonteId": "agencia-senado-2021-filiacao-pl",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Filiação ao PL no dia anterior ao pronunciamento de 1º de dezembro de 2021; Jair Bolsonaro citado como integrante do partido."
+      },
+      {
+        "fonteId": "senado-dados-abertos-flavio-liderancas",
+        "localizacao": "Liderança de Partido no Senado Federal (PL)",
+        "evidencia": "Líder do PL de 10 de junho de 2022 a 16 de fevereiro de 2023."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Ficha do candidato: partido",
+        "evidencia": "Candidato pelo PL em 2026."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2022-tribunal-rejeita-denuncia",
+    "slug": "flavio-bolsonaro-2022-tribunal-rejeita-denuncia",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Tribunal de Justiça do Rio rejeita a denúncia contra Flávio Bolsonaro",
+    "data": {
+      "valor": "2022-05-16",
+      "precisao": "dia"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 16 de maio de 2022, foi divulgada a decisão do Órgão Especial do Tribunal de Justiça do Rio de Janeiro que rejeitou a denúncia do Ministério Público contra Flávio Bolsonaro no caso das “rachadinhas”.",
+    "contexto": "O próprio Ministério Público havia pedido a extinção da denúncia, depois que as provas usadas na acusação foram anuladas pelo STJ e pelo STF. Segundo a decisão, a rejeição por falta de justa causa não impede a retomada das investigações. A defesa declarou considerar o caso encerrado. De acordo com reportagem da CartaCapital de dezembro de 2025, o Ministério Público recorreu para retomar a apuração, o STJ enviou o recurso ao STF em abril de 2023 e, em fevereiro de 2025, o ministro Gilmar Mendes negou os recursos; o processo tramita em segredo de justiça. A denúncia não foi julgada no mérito.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-do-rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2022-tjrj-rejeita-denuncia",
+        "localizacao": "Cinco primeiros parágrafos e data de publicação",
+        "evidencia": "Rejeição da denúncia, pedido do Ministério Público, efeito da decisão e manifestação da defesa."
+      },
+      {
+        "fonteId": "cartacapital-2025-caso-rachadinha",
+        "localizacao": "Parágrafos finais e data de publicação",
+        "evidencia": "Recurso do Ministério Público, envio ao STF em abril de 2023, decisão de fevereiro de 2025 e segredo de justiça."
+      },
+      {
+        "fonteId": "brasil-de-fato-2026-quebra-de-sigilos",
+        "localizacao": "Parágrafo sobre a denúncia",
+        "evidencia": "A denúncia não foi julgada no mérito."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2022-lider-do-pl-no-senado",
+    "slug": "flavio-bolsonaro-2022-lider-do-pl-no-senado",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro assume a liderança do PL no Senado",
+    "data": {
+      "valor": "2022-06-10",
+      "precisao": "dia"
+    },
+    "categoria": "atuacao-institucional",
+    "resumo": "Em 10 de junho de 2022, Flávio Bolsonaro foi designado líder do PL no Senado Federal.",
+    "contexto": "Os dados abertos do Senado registram duas designações seguidas, na passagem entre legislaturas: de 10 de junho de 2022 a 31 de janeiro de 2023 e de 1º a 16 de fevereiro de 2023. No mesmo período ele era vice-líder do Governo no Congresso Nacional, função registrada de 6 de abril de 2020 a 31 de janeiro de 2023.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-liderancas",
+        "localizacao": "Lideranças do PL no Senado e do Governo no Congresso Nacional",
+        "evidencia": "Designações como líder do PL e como vice-líder do Governo no Congresso."
+      },
+      {
+        "fonteId": "senado-perfil-flavio",
+        "localizacao": "Rodapé da página",
+        "evidencia": "Sede do Senado Federal em Brasília."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2022-eleito-presidente-pela-terceira-vez",
+    "slug": "lula-2022-eleito-presidente-pela-terceira-vez",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula é eleito presidente da República pela terceira vez",
+    "data": {
+      "valor": "2022-10-30",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 30 de outubro de 2022, no segundo turno, Lula foi eleito presidente da República com 60.345.999 votos (50,90% dos válidos), contra 58.206.354 (49,10%) de Jair Bolsonaro.",
+    "contexto": "Concorreu pela coligação Brasil da Esperança, com Geraldo Alckmin como vice; a chapa havia sido oficializada pelo PT em 21 de julho de 2022. O TSE proclamou o resultado em 6 de dezembro, depois de aprovar por unanimidade o relatório final de totalização. Lula tomou posse em 1º de janeiro de 2023, em sessão do Congresso Nacional, e se tornou, segundo a Agência Senado, o primeiro governante do Executivo federal com três vitórias em eleições diretas.",
+    "localizacao": {
+      "tipo": "nacional"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-noticia-2022-totalizacao",
+        "localizacao": "Parágrafo sobre a disputa presidencial",
+        "evidencia": "Votos e percentuais finais dos dois candidatos, com todas as seções totalizadas."
+      },
+      {
+        "fonteId": "tse-noticia-2022-proclamacao",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Proclamação dos eleitos em 6 de dezembro de 2022, após aprovação unânime do relatório final."
+      },
+      {
+        "fonteId": "agencia-brasil-2022-chapa-lula-alckmin",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Oficialização da chapa com Geraldo Alckmin em 21 de julho de 2022."
+      },
+      {
+        "fonteId": "agencia-senado-2023-posse",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Posse em 1º de janeiro de 2023 e três vitórias em eleições diretas."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2023-intervencao-federal-no-distrito-federal",
+    "slug": "lula-2023-intervencao-federal-no-distrito-federal",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula decreta intervenção federal na segurança pública do Distrito Federal",
+    "data": {
+      "valor": "2023-01-08",
+      "precisao": "dia"
+    },
+    "categoria": "atuacao-institucional",
+    "resumo": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de segurança pública do Distrito Federal, por meio do Decreto 11.377, depois da invasão e depredação das sedes do Congresso Nacional, da Presidência da República e do STF.",
+    "contexto": "Segundo cronologia da Agência Brasil, o decreto foi assinado às 17h50, de Araraquara (SP), onde o presidente estava. O Senado validou a intervenção em 10 de janeiro. A Agência Brasil registra oito votos contrários no Senado, entre eles o do senador Flávio Bolsonaro (PL-RJ).",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "araraquara",
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-senado-2023-intervencao",
+        "localizacao": "Primeiro e segundo parágrafos",
+        "evidencia": "Decreto 11.377, motivo da intervenção e validação pelo Senado em 10 de janeiro."
+      },
+      {
+        "fonteId": "agencia-brasil-2024-cronologia-8-de-janeiro",
+        "localizacao": "Item das 17h50 da cronologia",
+        "evidencia": "Horário e local da assinatura do decreto."
+      },
+      {
+        "fonteId": "agencia-brasil-2023-senado-confirma-intervencao",
+        "localizacao": "Parágrafo sobre a votação",
+        "evidencia": "Oito votos contrários no Senado, entre eles o de Flávio Bolsonaro."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2023-lider-da-minoria-no-congresso",
+    "slug": "flavio-bolsonaro-2023-lider-da-minoria-no-congresso",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro se torna líder da Minoria no Congresso Nacional",
+    "data": {
+      "valor": "2023-04-05",
+      "precisao": "dia"
+    },
+    "categoria": "atuacao-institucional",
+    "resumo": "Em 5 de abril de 2023, Flávio Bolsonaro foi designado líder da Minoria no Congresso Nacional, função que exerceu até 26 de fevereiro de 2025.",
+    "contexto": "A designação ocorreu no primeiro ano do terceiro mandato de Lula na Presidência. Em 10 de março de 2025, ele passou a vice-líder da Minoria no Congresso.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-liderancas",
+        "localizacao": "Liderança da Minoria no Congresso Nacional",
+        "evidencia": "Líder de 5 de abril de 2023 a 26 de fevereiro de 2025 e vice-líder desde 10 de março de 2025."
+      },
+      {
+        "fonteId": "agencia-senado-2023-posse",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Posse de Lula em 1º de janeiro de 2023."
+      },
+      {
+        "fonteId": "senado-perfil-flavio",
+        "localizacao": "Rodapé da página",
+        "evidencia": "Sede do Senado Federal em Brasília."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2024-relatoria-das-saidas-temporarias",
+    "slug": "flavio-bolsonaro-2024-relatoria-das-saidas-temporarias",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Senado aprova projeto relatado por Flávio Bolsonaro que restringe saídas temporárias de presos",
+    "data": {
+      "valor": "2024-02-20",
+      "precisao": "dia"
+    },
+    "categoria": "atuacao-institucional",
+    "resumo": "Em 20 de fevereiro de 2024, o Senado aprovou o Projeto de Lei 2.253/2022, relatado por Flávio Bolsonaro, que restringe a saída temporária de presos condenados. Foram 62 votos favoráveis, dois contrários e uma abstenção.",
+    "contexto": "O texto previa a revogação total do benefício e foi alterado para manter as saídas de presos que estudam. Segundo a Agência Senado, o projeto resultou na Lei 14.843, de 2024. O presidente Lula vetou parte do texto, e o Congresso derrubou o veto em 28 de maio de 2024.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-senado-2024-saidas-temporarias",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Aprovação do projeto, relatoria, alteração do texto e placar."
+      },
+      {
+        "fonteId": "agencia-senado-2024-veto-saidas-temporarias",
+        "localizacao": "Primeiro e segundo parágrafos e data de publicação",
+        "evidencia": "Veto do presidente Lula e derrubada pelo Congresso em 28 de maio de 2024."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Flávio Bolsonaro",
+        "evidencia": "Relator do texto que resultou na Lei 14.843, de 2024."
+      },
+      {
+        "fonteId": "senado-perfil-flavio",
+        "localizacao": "Rodapé da página",
+        "evidencia": "Sede do Senado Federal em Brasília."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2025-presidente-da-comissao-de-seguranca-publica",
+    "slug": "flavio-bolsonaro-2025-presidente-da-comissao-de-seguranca-publica",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro assume a presidência da Comissão de Segurança Pública do Senado",
+    "data": {
+      "valor": "2025-02-19",
+      "precisao": "dia"
+    },
+    "categoria": "mandatos-e-funcoes",
+    "resumo": "Em 19 de fevereiro de 2025, Flávio Bolsonaro se tornou presidente da Comissão de Segurança Pública do Senado Federal.",
+    "contexto": "Segurança pública é uma das áreas em que a Agência Senado situa sua atuação desde a Assembleia Legislativa do Rio de Janeiro. Em outubro de 2026, a agência ainda o registrava na presidência da comissão.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "brasilia"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-cargos",
+        "localizacao": "Cargo na Comissão de Segurança Pública (CSP)",
+        "evidencia": "Presidente desde 19 de fevereiro de 2025."
+      },
+      {
+        "fonteId": "agencia-senado-2019-perfil-flavio",
+        "localizacao": "Parágrafo Eleição/atuação",
+        "evidencia": "Atuação como deputado estadual nas áreas de segurança pública, administração penitenciária e defesa civil."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Flávio Bolsonaro",
+        "evidencia": "Em outubro de 2026 presidia a comissão."
+      },
+      {
+        "fonteId": "senado-perfil-flavio",
+        "localizacao": "Rodapé da página",
+        "evidencia": "Sede do Senado Federal em Brasília."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2025-indicacao-para-a-presidencia",
+    "slug": "flavio-bolsonaro-2025-indicacao-para-a-presidencia",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro é indicado pelo pai como candidato do PL à Presidência",
+    "data": {
+      "valor": "2025-12-05",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 5 de dezembro de 2025, tornou-se pública a escolha de Flávio Bolsonaro como candidato do PL à Presidência da República em 2026, por indicação de seu pai, o ex-presidente Jair Bolsonaro.",
+    "contexto": "A data consta de reportagens da CartaCapital, publicada no dia seguinte, e da Gazeta do Povo. Segundo a Gazeta do Povo, a escolha gerou no início dúvidas e críticas de lideranças que defendiam outros nomes da direita, como o governador de São Paulo, Tarcísio de Freitas. A Agência Senado registra que a escolha partiu de Jair Bolsonaro, declarado inelegível pelo TSE e posteriormente condenado pelo STF por tentativa de golpe de Estado. Não foi localizado documento oficial sobre o anúncio; o registro se apoia em jornalismo com data e veículo identificados.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "cartacapital-2025-caso-rachadinha",
+        "localizacao": "Primeiro parágrafo e data de publicação",
+        "evidencia": "Notícia, em 5 de dezembro de 2025, da escolha de Flávio Bolsonaro como candidato."
+      },
+      {
+        "fonteId": "gazeta-do-povo-2026-candidatura-flavio",
+        "localizacao": "Primeiros parágrafos e data de publicação",
+        "evidencia": "Escolha anunciada em 5 de dezembro e reação inicial de lideranças."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a escolha do candidato",
+        "evidencia": "A escolha partiu de Jair Bolsonaro, declarado inelegível pelo TSE e depois condenado pelo STF."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2026-convencao-do-pl",
+    "slug": "flavio-bolsonaro-2026-convencao-do-pl",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "PL oficializa a candidatura de Flávio Bolsonaro à Presidência",
+    "data": {
+      "valor": "2026-07-25",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 25 de julho de 2026, o PL formalizou a candidatura de Flávio Bolsonaro à Presidência da República, em convenção nacional realizada no Mercado Pago Hall, na Arena Pacaembu, em São Paulo.",
+    "contexto": "O candidato a vice é o deputado federal Alfredo Gaspar (PL-AL). Em 13 de agosto, o presidente do TSE, ministro Nunes Marques, mandou restabelecer a filiação de Flávio ao PL, depois que ele apareceu filiado ao partido Missão no sistema da Justiça Eleitoral; segundo o tribunal, houve uso indevido das credenciais daquela legenda, e não invasão do sistema. O TSE aprovou o registro da chapa por unanimidade em 2 de setembro de 2026.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "sao-paulo"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2026-convencao-pl",
+        "localizacao": "Primeiro e segundo parágrafos e data de publicação",
+        "evidencia": "Data e local da convenção que formalizou a candidatura."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-perfil-flavio",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Candidato a vice."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-filiacao-restabelecida",
+        "localizacao": "Primeiros parágrafos, nota do TSE e data de publicação",
+        "evidencia": "Ordem para restabelecer a filiação ao PL e explicação do tribunal."
+      },
+      {
+        "fonteId": "tse-noticia-2026-registros",
+        "localizacao": "Primeiros parágrafos e data de publicação",
+        "evidencia": "Aprovação unânime do registro da chapa em 2 de setembro de 2026."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Ficha do candidato: situação",
+        "evidencia": "Registro deferido."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-2026-convencao-do-pt",
+    "slug": "lula-2026-convencao-do-pt",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "PT oficializa a candidatura de Lula à reeleição",
+    "data": {
+      "valor": "2026-08-02",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 2 de agosto de 2026, o PT formalizou a candidatura de Lula à Presidência da República, em convenção no Expo Center Norte, em São Paulo. Geraldo Alckmin (PSB) foi mantido como candidato a vice.",
+    "contexto": "Segundo a Agência Brasil, o PT tem como aliados PSB, PCdoB, PV, PDT, PSOL e Rede. No registro do TSE, a coligação se chama Brasil Pronto Pra Mais. O tribunal aprovou o registro da chapa por unanimidade em 2 de setembro de 2026.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "sao-paulo"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2026-convencao-pt",
+        "localizacao": "Primeiro e segundo parágrafos e data de publicação",
+        "evidencia": "Data, local, candidato a vice e partidos aliados."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Ficha do candidato: coligação e situação",
+        "evidencia": "Nome da coligação e registro deferido."
+      },
+      {
+        "fonteId": "tse-noticia-2026-registros",
+        "localizacao": "Primeiros parágrafos e data de publicação",
+        "evidencia": "Aprovação unânime do registro da chapa em 2 de setembro de 2026."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "eleicao-2026-primeiro-turno",
+    "slug": "eleicao-2026-primeiro-turno",
+    "pessoaIds": [
+      "flavio-bolsonaro",
+      "lula"
+    ],
+    "titulo": "Flávio Bolsonaro e Lula passam ao segundo turno da eleição presidencial",
+    "data": {
+      "valor": "2026-10-04",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "No primeiro turno da eleição presidencial, em 4 de outubro de 2026, Flávio Bolsonaro (PL) e Lula (PT) foram os dois mais votados e passaram ao segundo turno. Com 99,99% das urnas apuradas, o TSE registrava 56.104.268 votos para Flávio Bolsonaro (47,03% dos válidos) e 53.876.617 para Lula (45,16%).",
+    "contexto": "Os números são da apuração divulgada pelo TSE à 0h11 de 5 de outubro e podem diferir da totalização final. Flávio Bolsonaro, senador pelo Rio de Janeiro, disputa a Presidência pela primeira vez, com o deputado federal Alfredo Gaspar (PL) como candidato a vice. Lula, que exerce o terceiro mandato, é candidato à reeleição, com Geraldo Alckmin (PSB) como vice. Segundo a Agência Senado, o segundo turno foi marcado para 25 de outubro de 2026, depois da data de corte desta edição.",
+    "localizacao": {
+      "tipo": "nacional"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-noticia-2026-primeiro-turno",
+        "localizacao": "Primeiros parágrafos e data de publicação",
+        "evidencia": "Votos e percentuais com 99,99% das urnas apuradas, candidatos a vice e situação de cada candidato."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Data do segundo turno."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Ficha do candidato: situação de totalização",
+        "evidencia": "Situação registrada: segundo turno."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Ficha do candidato: situação de totalização",
+        "evidencia": "Situação registrada: segundo turno."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  }
+]

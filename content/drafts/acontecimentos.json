@@ -1,0 +1,178 @@
+[
+  {
+    "id": "lula-1982-candidatura-ao-governo-de-sao-paulo",
+    "slug": "lula-1982-candidatura-ao-governo-de-sao-paulo",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula disputa o governo de São Paulo",
+    "data": {
+      "valor": "1982",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 1982, Lula disputou o governo do estado de São Paulo pelo PT.",
+    "contexto": "Item em pesquisa. A biografia publicada pela Presidência cita a candidatura, mas não informa a data nem o resultado da eleição.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-de-sao-paulo"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Oitavo parágrafo da biografia",
+        "evidencia": "Candidatura ao governo de São Paulo em 1982."
+      }
+    ],
+    "editorial": {
+      "estado": "rascunho",
+      "pendencias": [
+        "Localizar o resultado oficial da eleição de 1982 no TSE ou no TRE-SP.",
+        "Confirmar a data da votação."
+      ]
+    }
+  },
+  {
+    "id": "lula-1984-campanha-das-diretas-ja",
+    "slug": "lula-1984-campanha-das-diretas-ja",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula participa da campanha das Diretas Já",
+    "data": {
+      "valor": "1984",
+      "precisao": "ano"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 1984, Lula participou da campanha das Diretas Já para a Presidência da República.",
+    "contexto": "Item em pesquisa. A biografia publicada pela Presidência o descreve como uma das principais lideranças da campanha e cita, no ano anterior, a participação na fundação da CUT. Faltam atos, datas e lugares documentados.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Oitavo parágrafo da biografia",
+        "evidencia": "Participação na campanha das Diretas Já em 1984 e na fundação da CUT em agosto de 1983."
+      }
+    ],
+    "editorial": {
+      "estado": "rascunho",
+      "pendencias": [
+        "Localizar fonte complementar com atos, datas e lugares da campanha.",
+        "Avaliar se a fundação da CUT, em agosto de 1983, deve ser um acontecimento próprio."
+      ]
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2018-relatorio-do-coaf",
+    "slug": "flavio-bolsonaro-2018-relatorio-do-coaf",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Relatório do Coaf aponta movimentação atípica de ex-assessor",
+    "data": {
+      "valor": "2018",
+      "precisao": "ano"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "Em 2018, segundo a CartaCapital, um relatório do Conselho de Controle de Atividades Financeiras apontou movimentação atípica de 1,2 milhão de reais na conta de Fabrício Queiroz, ex-assessor de Flávio Bolsonaro na Assembleia Legislativa do Rio.",
+    "contexto": "Item em pesquisa. O relatório é apontado como origem da investigação que levou à denúncia de 2020. Falta localizar documento oficial e a data em que o relatório se tornou público.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-do-rio-de-janeiro"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "cartacapital-2025-caso-rachadinha",
+        "localizacao": "Parágrafo sobre o relatório de 2018",
+        "evidencia": "Relatório do Coaf de 2018 e valor da movimentação atípica."
+      }
+    ],
+    "editorial": {
+      "estado": "rascunho",
+      "pendencias": [
+        "Localizar documento oficial sobre o relatório (Coaf, Ministério Público Federal ou Ministério Público do Rio).",
+        "Confirmar a data em que o relatório se tornou público."
+      ]
+    }
+  },
+  {
+    "id": "lula-2019-condenacao-no-caso-do-sitio-de-atibaia",
+    "slug": "lula-2019-condenacao-no-caso-do-sitio-de-atibaia",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Processo do sítio de Atibaia",
+    "data": {
+      "valor": "2019",
+      "precisao": "ano"
+    },
+    "categoria": "marcos-historicos",
+    "resumo": "O processo sobre o sítio de Atibaia foi um dos quatro em que as decisões da 13ª Vara Federal de Curitiba contra Lula foram anuladas pelo STF em 2021.",
+    "contexto": "Item em pesquisa. A notícia do STF lista o processo entre os anulados, mas os documentos sobre a sentença e o julgamento em segunda instância ainda não foram lidos. O ano de 2019 é provisório.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "stf-noticia-2021-fachin-anula",
+        "localizacao": "Lista dos processos atingidos",
+        "evidencia": "O processo do sítio de Atibaia está entre os quatro anulados."
+      }
+    ],
+    "editorial": {
+      "estado": "rascunho",
+      "pendencias": [
+        "Ler os documentos da sentença e do julgamento no TRF4 e confirmar datas e penas.",
+        "Decidir se o caso entra como acontecimento próprio ou no contexto da anulação de 2021."
+      ]
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-2020-filiacao-ao-republicanos",
+    "slug": "flavio-bolsonaro-2020-filiacao-ao-republicanos",
+    "pessoaIds": [
+      "flavio-bolsonaro"
+    ],
+    "titulo": "Flávio Bolsonaro se filia ao Republicanos",
+    "data": {
+      "valor": "2020",
+      "precisao": "ano"
+    },
+    "categoria": "partidos-e-aliancas",
+    "resumo": "Flávio Bolsonaro esteve filiado ao Republicanos entre a saída do PSL, em novembro de 2019, e a filiação ao Patriota, em maio de 2021.",
+    "contexto": "Item em pesquisa. A Agência Brasil o identifica como senador do Republicanos em 4 de novembro de 2020 e o Manual de Comunicação do Senado registra a mudança do Republicanos para o Patriota, mas os dados abertos do Senado mostram 'S/Partido' no período. A data de filiação não foi localizada, e o ano de 2020 é provisório.",
+    "localizacao": {
+      "tipo": "desconhecida"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-brasil-2020-denuncia-mprj",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Identificado como senador do Republicanos em 4 de novembro de 2020."
+      },
+      {
+        "fonteId": "senado-manual-republicanos-patriota",
+        "localizacao": "Título do registro de modificação",
+        "evidencia": "Mudança do Republicanos para o Patriota."
+      }
+    ],
+    "editorial": {
+      "estado": "rascunho",
+      "pendencias": [
+        "Localizar a data de filiação ao Republicanos em registro da Justiça Eleitoral ou em notícia do Senado.",
+        "Esclarecer por que os dados abertos do Senado registram 'S/Partido' no período."
+      ]
+    }
+  }
+]

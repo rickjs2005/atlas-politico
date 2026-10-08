@@ -97,8 +97,11 @@ export function EventPanel({ event, headingLevel = 3 }: EventPanelProps) {
 
       {editorial.estado === "revisado" && (
         <p className="border-t border-line pt-3 text-sm text-ink-soft">
-          Revisado por {editorial.revisao.revisadoPor} em{" "}
+          {editorial.revisao.tipo === "humana"
+            ? `Revisado por ${editorial.revisao.revisadoPor} em `
+            : `Conferido com as fontes, com assistência de IA (${editorial.revisao.revisadoPor}), em `}
           {formatDate({ valor: editorial.revisao.revisadoEm, precisao: "dia" })}.
+          {editorial.revisao.tipo === "assistida-por-ia" && " Revisão humana pendente."}
         </p>
       )}
     </article>

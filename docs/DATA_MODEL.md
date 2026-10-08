@@ -214,16 +214,28 @@ Uma lista de lugares vazia não é aceita. Acontecimentos sem ponto continuam na
 ### Estado editorial
 
 ```json
-{ "estado": "revisado", "revisao": { "revisadoPor": "Nome", "revisadoEm": "2026-10-08" } }
+{
+  "estado": "revisado",
+  "revisao": { "tipo": "assistida-por-ia", "revisadoPor": "Nome", "revisadoEm": "2026-10-08" }
+}
 ```
 
 | Estado | Campos | Vai para as páginas |
 |---|---|---|
 | `rascunho` | `pendencias` opcional | Não |
 | `em-revisao` | `pendencias` opcional | Não |
-| `revisado` | `revisao` obrigatória: quem e quando | Sim |
+| `revisado` | `revisao` obrigatória: tipo, quem e quando | Sim |
 
 Vale para os registros factuais: pessoa, mandato, filiação e acontecimento.
+
+`revisao.tipo` é obrigatório e tem dois valores:
+
+| Tipo | Significado |
+|---|---|
+| `assistida-por-ia` | A conferência contra as fontes foi feita por um modelo de IA. O site mostra "Revisão humana pendente" |
+| `humana` | Uma pessoa conferiu as fontes e aprovou o texto. Só se registra quando aconteceu |
+
+A revisão da edição (`edicao.revisao`) usa o mesmo formato.
 
 1. **Revisado exige evidência.** Um registro revisado precisa de ao menos uma citação, e toda citação diz onde está o trecho e o que ele sustenta.
 2. **Rascunho pode estar incompleto de fontes.** É o estado de quem ainda está pesquisando.
@@ -248,12 +260,26 @@ A comparação entre as duas trajetórias depende de três garantias do modelo:
 | Referências: `pessoaId`, `pessoaIds`, `lugarIds`, `fonteId`, `retratoId`, `imagemId`, cobertura | `checkIntegrity` | Na leitura do conteúdo |
 | Acontecimento até a data de corte | `checkIntegrity` | Na leitura do conteúdo |
 | Só revisados, sem sintéticos | `checkPublication` | Ao ler `content/published/` |
+| Rascunhos válidos, coerentes com o publicado e com pendência escrita | Teste "content/drafts do repositório" | Em `npm run test` |
+| Arquivo de cada imagem cadastrada existe em `public/` | Teste "content/published do repositório" | Em `npm run test` |
+| Rascunho sem página e publicado com página | `scripts/check-export.mjs` | Depois do build |
 | Arquivo fora do contrato, JSON ilegível | `loadContentSet` | Na leitura do conteúdo |
 | Nenhum dado sintético na saída | `scripts/check-export.mjs` | Depois do build |
 
 Todas falham com a lista completa de problemas, cada um com o caminho do registro e do campo, por exemplo `lugares["brasilia"].latitude`.
 
-Ficam para a fase 3: relatório de campos incompletos, índices por pessoa, ano, categoria e lugar, conferência dos `itens` do registro de alterações, verificação de que os arquivos de imagem existem, sobreposição de mandatos e filiações, e o comando que promove rascunhos revisados.
+Ficam para a fase 3: relatório de campos incompletos, índices por pessoa, ano, categoria e lugar, conferência dos `itens` do registro de alterações, sobreposição de mandatos e filiações, e o comando que promove rascunhos revisados.
+
+## Como o primeiro conjunto usa o modelo
+
+Notas da fase 2, para quem for editar o conteúdo:
+
+- **Rascunhos:** `content/drafts/acontecimentos.json` é uma coleção parcial. Os rascunhos citam pessoas, lugares e fontes de `content/published/`.
+- **Filiação sem data documentada:** quando só se sabe que a pessoa concorreu por um partido em certos anos, o período fica com início e fim `desconhecida`, e a citação diz em que eleições o partido aparece.
+- **Cargo com vários mandatos seguidos e datas de posse não documentadas:** um único registro, com o período total e a observação no nome do cargo. É o caso dos quatro mandatos de deputado estadual.
+- **Lugar de decisão judicial:** o município-sede do tribunal, quando aparece no documento lido.
+- **Eleição estadual:** o lugar é a unidade da federação, com precisão `uf`.
+- **Acontecimento compartilhado:** `pessoaIds` em ordem alfabética.
 
 ## Exemplo
 

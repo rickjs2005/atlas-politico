@@ -1,0 +1,544 @@
+[
+  {
+    "id": "lula-presidente-do-sindicato-dos-metalurgicos",
+    "pessoaId": "lula",
+    "cargo": "Presidente",
+    "instituicao": "Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "1975",
+        "precisao": "ano"
+      },
+      "fim": {
+        "tipo": "desconhecida"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Quinto e sexto parágrafos da biografia",
+        "evidencia": "Eleito presidente do sindicato em 1975 e reeleito em 1978. O texto não informa quando deixou o cargo."
+      },
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Lista de atividades sindicais",
+        "evidencia": "Presidente do sindicato em 1975 e 1978."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-presidente-do-pt-1980-1988",
+    "pessoaId": "lula",
+    "cargo": "Presidente",
+    "instituicao": "Partido dos Trabalhadores (PT)",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "1980",
+        "precisao": "ano"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "1988",
+        "precisao": "ano"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Lista de atividades partidárias",
+        "evidencia": "Presidente do PT de 1980 a 1988."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-presidente-do-pt-1990-1994",
+    "pessoaId": "lula",
+    "cargo": "Presidente",
+    "instituicao": "Partido dos Trabalhadores (PT)",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "1990",
+        "precisao": "ano"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "1994",
+        "precisao": "ano"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Lista de atividades partidárias",
+        "evidencia": "Presidente do PT de 1990 a 1994."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-deputado-federal-1987-1991",
+    "pessoaId": "lula",
+    "cargo": "Deputado federal constituinte (SP)",
+    "instituicao": "Câmara dos Deputados",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "1987-02-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "1991",
+        "precisao": "ano"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Seção Mandatos (na Câmara dos Deputados) e registro da 48ª Legislatura",
+        "evidencia": "Mandato de 1987 a 1991 por São Paulo, pelo PT, com posse em 1º de fevereiro de 1987."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-presidente-da-republica-2003-2007",
+    "pessoaId": "lula",
+    "cargo": "Presidente da República (primeiro mandato)",
+    "instituicao": "Presidência da República",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2003-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2007-01-01",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "agencia-senado-2023-posse",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Esteve à frente do Palácio do Planalto de 1º de janeiro de 2003 a 1º de janeiro de 2011."
+      },
+      {
+        "fonteId": "agencia-camara-2007-discurso-de-posse",
+        "localizacao": "Data da publicação e primeiro parágrafo do discurso",
+        "evidencia": "Posse do segundo mandato em 1º de janeiro de 2007, quatro anos depois da primeira."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-presidente-da-republica-2007-2011",
+    "pessoaId": "lula",
+    "cargo": "Presidente da República (segundo mandato)",
+    "instituicao": "Presidência da República",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2007-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2011-01-01",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "agencia-camara-2007-discurso-de-posse",
+        "localizacao": "Data da publicação e primeiro parágrafo do discurso",
+        "evidencia": "Posse do segundo mandato em 1º de janeiro de 2007."
+      },
+      {
+        "fonteId": "agencia-senado-2023-posse",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Deixou a Presidência em 1º de janeiro de 2011."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-presidente-da-republica-2023",
+    "pessoaId": "lula",
+    "cargo": "Presidente da República (terceiro mandato)",
+    "instituicao": "Presidência da República",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2023-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "em-curso"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "agencia-senado-2023-posse",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Posse em 1º de janeiro de 2023."
+      },
+      {
+        "fonteId": "tse-noticia-2026-primeiro-turno",
+        "localizacao": "Parágrafo sobre Lula",
+        "evidencia": "Em outubro de 2026 exercia o terceiro mandato."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-deputado-estadual-2003-2019",
+    "pessoaId": "flavio-bolsonaro",
+    "cargo": "Deputado estadual (quatro mandatos consecutivos)",
+    "instituicao": "Assembleia Legislativa do Estado do Rio de Janeiro (Alerj)",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2003",
+        "precisao": "ano"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2019",
+        "precisao": "ano"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Flávio Bolsonaro",
+        "evidencia": "Deputado estadual a partir de 2003; saiu da Assembleia Legislativa em 2019 para o Senado."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de eleições anteriores da ficha do candidato",
+        "evidencia": "Eleito deputado estadual em 2006, 2010 e 2014."
+      },
+      {
+        "fonteId": "tse-candidatos-2002",
+        "localizacao": "Arquivo consulta_cand_2002_RJ.csv, linha do candidato de número 11120",
+        "evidencia": "Eleito deputado estadual em 2002."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-senador-2019",
+    "pessoaId": "flavio-bolsonaro",
+    "cargo": "Senador (RJ)",
+    "instituicao": "Senado Federal",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2019-02-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "em-curso"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-mandatos",
+        "localizacao": "Mandato 532: legislaturas e exercícios",
+        "evidencia": "Titular pelo Rio de Janeiro nas legislaturas 56 e 57, de 1º de fevereiro de 2019 a 31 de janeiro de 2027, em exercício desde o início."
+      },
+      {
+        "fonteId": "senado-perfil-flavio",
+        "localizacao": "Quadro Chapa",
+        "evidencia": "Em exercício na data de acesso."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-terceiro-secretario-do-senado",
+    "pessoaId": "flavio-bolsonaro",
+    "cargo": "3º secretário da Comissão Diretora",
+    "instituicao": "Senado Federal",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2019-02-06",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2020-12-14",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-cargos",
+        "localizacao": "Cargo na Comissão Diretora do Senado Federal (CDIR)",
+        "evidencia": "3º secretário de 6 de fevereiro de 2019 a 14 de dezembro de 2020."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-vice-lider-do-governo-no-congresso",
+    "pessoaId": "flavio-bolsonaro",
+    "cargo": "Vice-líder do Governo no Congresso Nacional",
+    "instituicao": "Congresso Nacional",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2020-04-06",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2023-01-31",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-liderancas",
+        "localizacao": "Liderança do Governo no Congresso Nacional",
+        "evidencia": "Vice-líder de 6 de abril de 2020 a 31 de janeiro de 2023."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-lider-do-patriota-no-senado",
+    "pessoaId": "flavio-bolsonaro",
+    "cargo": "Líder do Patriota no Senado",
+    "instituicao": "Senado Federal",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2021-06-04",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2021-11-29",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-liderancas",
+        "localizacao": "Liderança de Partido no Senado Federal (Patriota)",
+        "evidencia": "Líder de 4 de junho a 29 de novembro de 2021."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-lider-do-pl-no-senado",
+    "pessoaId": "flavio-bolsonaro",
+    "cargo": "Líder do PL no Senado",
+    "instituicao": "Senado Federal",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2022-06-10",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2023-02-16",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-liderancas",
+        "localizacao": "Liderança de Partido no Senado Federal (PL), duas designações seguidas",
+        "evidencia": "Líder de 10 de junho de 2022 a 31 de janeiro de 2023 e de 1º a 16 de fevereiro de 2023."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-lider-da-minoria-no-congresso",
+    "pessoaId": "flavio-bolsonaro",
+    "cargo": "Líder da Minoria no Congresso Nacional",
+    "instituicao": "Congresso Nacional",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2023-04-05",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2025-02-26",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-liderancas",
+        "localizacao": "Liderança da Minoria no Congresso Nacional",
+        "evidencia": "Líder de 5 de abril de 2023 a 26 de fevereiro de 2025."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-presidente-da-comissao-de-seguranca-publica",
+    "pessoaId": "flavio-bolsonaro",
+    "cargo": "Presidente da Comissão de Segurança Pública",
+    "instituicao": "Senado Federal",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2025-02-19",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "em-curso"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-cargos",
+        "localizacao": "Cargo na Comissão de Segurança Pública (CSP)",
+        "evidencia": "Presidente desde 19 de fevereiro de 2025, sem data de fim registrada."
+      },
+      {
+        "fonteId": "agencia-senado-2026-segundo-turno",
+        "localizacao": "Parágrafo sobre a carreira de Flávio Bolsonaro",
+        "evidencia": "Em outubro de 2026 presidia a comissão."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  }
+]

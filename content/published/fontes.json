@@ -1,0 +1,702 @@
+[
+  {
+    "id": "planalto-biografia-lula",
+    "titulo": "Biografia completa de Luiz Inácio Lula da Silva (Galeria dos Ex-Presidentes)",
+    "autoria": "Presidência da República, Secretaria-Geral",
+    "url": "https://www.gov.br/secretariageral/pt-br/centrais-de-conteudo/biblioteca-da-pr/galeria-dos-ex-presidentes/luiz-inacio-lula-da-silva/biografia-completa",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2022-02-24",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "camara-biografia-lula",
+    "titulo": "Biografia do deputado federal Luiz Inácio Lula da Silva",
+    "autoria": "Câmara dos Deputados",
+    "url": "https://www.camara.leg.br/deputados/139289/biografia",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-candidatos-1994",
+    "titulo": "Repositório de dados eleitorais: candidatos de 1994 (consulta_cand_1994)",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_1994.zip",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-02-13",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-candidatos-1998",
+    "titulo": "Repositório de dados eleitorais: candidatos de 1998 (consulta_cand_1998)",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_1998.zip",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-05-25",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-candidatos-2002",
+    "titulo": "Repositório de dados eleitorais: candidatos de 2002 (consulta_cand_2002)",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/consulta_cand/consulta_cand_2002.zip",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-05-25",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-divulgacand-2006-lula",
+    "titulo": "DivulgaCandContas: candidatura de Lula a presidente em 2006",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2006/14423/BR/23",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-divulgacand-2018-lula",
+    "titulo": "DivulgaCandContas: candidatura de Lula a presidente em 2018",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2018/2022802018/BR/280000625869",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2018-09-17",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-divulgacand-2026-lula",
+    "titulo": "DivulgaCandContas: candidatura de Lula a presidente em 2026",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2026/20322002026/BR/280002542548",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-05",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-divulgacand-2014-flavio",
+    "titulo": "DivulgaCandContas: candidatura de Flávio Bolsonaro a deputado estadual em 2014",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2014/680/RJ/190000000095",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2018-07-12",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-divulgacand-2016-flavio",
+    "titulo": "DivulgaCandContas: candidatura de Flávio Bolsonaro a prefeito do Rio de Janeiro em 2016",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2016/2/60011/190000011736",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2018-07-12",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-divulgacand-2018-flavio",
+    "titulo": "DivulgaCandContas: candidatura de Flávio Bolsonaro a senador em 2018",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2018/2022802018/RJ/190000614721",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-12-14",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-divulgacand-2026-flavio",
+    "titulo": "DivulgaCandContas: candidatura de Flávio Bolsonaro a presidente em 2026",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2026/20322002026/BR/280002551544",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-noticia-2018-registro-lula",
+    "titulo": "TSE indefere pedido de registro de candidatura de Lula à Presidência da República",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/comunicacao/noticias/2018/Setembro/tse-indefere-pedido-de-registro-de-candidatura-de-lula-a-presidencia-da-republica",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2018-09-01",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-noticia-2022-totalizacao",
+    "titulo": "100% das seções totalizadas: confira como ficou o quadro eleitoral após o 2º turno",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/comunicacao/noticias/2022/Outubro/100-das-secoes-totalizadas-confira-como-ficou-o-quadro-eleitoral-apos-o-2o-turno",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2022-10-31",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-noticia-2022-proclamacao",
+    "titulo": "TSE proclama eleitos presidente e vice-presidente da República Luiz Inácio Lula da Silva e Geraldo Alckmin",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/comunicacao/noticias/2022/Dezembro/tse-proclama-eleitos-presidente-e-vice-presidente-da-republica-luiz-inacio-lula-da-silva-e-geraldo-alckmin",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2022-12-06",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-noticia-2026-registros",
+    "titulo": "TSE valida seis registros de candidatura à Presidência da República",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/comunicacao/noticias/2026/Setembro/tse-valida-seis-registros-de-candidatura-a-presidencia-da-republica",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-09-02",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "tse-noticia-2026-primeiro-turno",
+    "titulo": "Flávio Bolsonaro (PL) e Lula (PT) vão disputar o 2º turno para a Presidência da República",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/comunicacao/noticias/2026/Outubro/flavio-bolsonaro-e-lula-vao-disputar-o-2o-turno-para-a-presidencia-da-republica",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-05",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "stf-noticia-2016-casa-civil",
+    "titulo": "Ministro suspende nomeação de Lula para Casa Civil e mantém processo na 1ª instância",
+    "autoria": "Supremo Tribunal Federal",
+    "url": "https://noticias.stf.jus.br/postsnoticias/ministro-suspende-nomeacao-de-lula-para-casa-civil-e-mantem-processo-na-1a-instancia/",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2016-03-18",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "stf-noticia-2021-fachin-anula",
+    "titulo": "Fachin anula condenações de Lula e manda ações penais para Justiça Federal do DF",
+    "autoria": "Supremo Tribunal Federal",
+    "url": "https://noticias.stf.jus.br/postsnoticias/fachin-anula-condenacoes-de-lula-e-manda-acoes-penais-para-justica-federal-do-df/",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-03-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "stf-noticia-2021-plenario-confirma",
+    "titulo": "STF confirma anulação de condenações do ex-presidente Lula na Lava Jato",
+    "autoria": "Supremo Tribunal Federal",
+    "url": "https://noticias.stf.jus.br/postsnoticias/stf-confirma-anulacao-de-condenacoes-do-ex-presidente-lula-na-lava-jato/",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-04-15",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "stf-noticia-2021-competencia-df",
+    "titulo": "Plenário fixa competência da Justiça Federal do DF para julgar processos contra ex-presidente Lula",
+    "autoria": "Supremo Tribunal Federal",
+    "url": "https://portal.stf.jus.br/noticias/verNoticiaDetalhe.asp?idConteudo=464566&ori=1",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-04-22",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "stf-noticia-2021-segunda-turma-suspeicao",
+    "titulo": "2ª Turma reconhece parcialidade de ex-juiz Sérgio Moro na condenação de Lula no caso Triplex",
+    "autoria": "Supremo Tribunal Federal",
+    "url": "https://portal.stf.jus.br/noticias/verNoticiaDetalhe.asp?idConteudo=462854&ori=1",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-03-23",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "stf-noticia-2021-plenario-suspeicao",
+    "titulo": "STF confirma suspeição de Sergio Moro na ação do triplex do Guarujá",
+    "autoria": "Supremo Tribunal Federal",
+    "url": "https://portal.stf.jus.br/noticias/verNoticiaDetalhe.asp?idConteudo=468086&ori=1",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-06-23",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "trf4-noticia-2018-apelacao",
+    "titulo": "Operação Lava Jato: TRF4 confirma condenação do ex-presidente Luiz Inácio Lula da Silva",
+    "autoria": "Tribunal Regional Federal da 4ª Região",
+    "url": "https://www.trf4.jus.br/trf4/controlador.php?acao=noticia_visualizar&id_noticia=13418",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2018-01-24",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2017-sentenca-triplex",
+    "titulo": "Moro condena Lula a nove anos e seis meses de prisão no caso triplex",
+    "autoria": "Agência Brasil (Ivan Richard Esposito)",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2017-07/ex-presidente-lula-e-condenado-nove-anos-e-seis-meses-de-prisao",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2017-07-12",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2018-trf4",
+    "titulo": "Por 3 a 0, desembargadores do TRF4 mantêm condenação de Lula no caso triplex",
+    "autoria": "Agência Brasil",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2018-01/desembargadores-do-trf4-mantem-condenacao-de-lula-no-caso-triplex",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2018-01-24",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2018-chegada-pf",
+    "titulo": "Lula chega à Polícia Federal em Curitiba para começar a cumprir pena",
+    "autoria": "Agência Brasil",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2018-04/lula-chega-policia-federal-em-curitiba-para-comecar-cumprir-pena",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2018-04-07",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2019-stj-reduz-pena",
+    "titulo": "STJ reduz pena de Lula de 12 para 8 anos de prisão no caso do triplex",
+    "autoria": "Agência Brasil",
+    "url": "https://agenciabrasil.ebc.com.br/justica/noticia/2019-04/maioria-do-stj-decide-reduzir-pena-do-ex-presidente-lula",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2019-04-23",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2019-juiz-manda-soltar",
+    "titulo": "Após decisão do STF, juiz manda soltar ex-presidente Lula",
+    "autoria": "Agência Brasil (André Richter)",
+    "url": "https://agenciabrasil.ebc.com.br/justica/noticia/2019-11/apos-decisao-do-stf-juiz-manda-soltar-ex-presidente-lula",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2019-11-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2019-deixa-carceragem",
+    "titulo": "Lula deixa carceragem da PF em Curitiba",
+    "autoria": "Agência Brasil (André Richter)",
+    "url": "https://agenciabrasil.ebc.com.br/justica/noticia/2019-11/lula-deixa-carceragem-da-pf-em-curitiba",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2019-11-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2022-chapa-lula-alckmin",
+    "titulo": "PT oficializa chapa Lula-Alckmin para disputar a Presidência",
+    "autoria": "Agência Brasil (Flávia Albuquerque)",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2022-07/pt-oficializa-chapa-lula-alckmin-para-disputar-presidencia",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2022-07-21",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-senado-2023-posse",
+    "titulo": "Congresso empossa Lula e Alckmin na Presidência da República",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2023/01/01/congresso-empossa-lula-e-alckmin-na-presidencia-da-republica",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2023-01-01",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-senado-2023-intervencao",
+    "titulo": "Intervenção federal na segurança pública do DF vai a promulgação",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2023/01/10/intervencao-federal-na-seguranca-publica-do-df-vai-a-promulgacao",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2023-01-10",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2023-senado-confirma-intervencao",
+    "titulo": "Senado confirma intervenção federal na segurança pública do DF",
+    "autoria": "Agência Brasil",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2023-01/senado-confirma-intervencao-federal-na-seguranca-publica-do-df",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2023-01-10",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2024-cronologia-8-de-janeiro",
+    "titulo": "Relembre o passo a passo da tentativa de golpe no 8/1",
+    "autoria": "Agência Brasil",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2024-01/relembre-o-passo-passo-da-tentativa-de-golpe-no-81",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2024-01-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-camara-2007-discurso-de-posse",
+    "titulo": "Veja a íntegra do discurso de posse do presidente Lula",
+    "autoria": "Agência Câmara de Notícias",
+    "url": "https://www.camara.leg.br/noticias/93776-veja-a-integra-do-discurso-de-posse-do-presidente-lula",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2007-01-01",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2026-convencao-pt",
+    "titulo": "PT oficializa candidatura de Lula à Presidência",
+    "autoria": "Agência Brasil (Ana Graziela Aguiar, TV Brasil)",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2026-08/pt-oficializa-candidatura-de-lula-presidencia",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-08-02",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2026-convencao-pl",
+    "titulo": "PL oficializa candidatura de Flávio Bolsonaro à Presidência",
+    "autoria": "Agência Brasil (Maura Martins, TV Brasil)",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2026-07/pl-oficializa-candidatura-de-flavio-bolsonaro-presidencia",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-07-25",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2026-filiacao-restabelecida",
+    "titulo": "TSE determina que filiação de Flávio ao PL seja restabelecida",
+    "autoria": "Agência Brasil (André Richter)",
+    "url": "https://agenciabrasil.ebc.com.br/justica/noticia/2026-08/tse-determina-que-filiacao-de-flavio-ao-pl-seja-restabelecida",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-08-13",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2026-perfil-flavio",
+    "titulo": "Filho mais velho de Bolsonaro, Flávio disputa a Presidência pelo PL",
+    "autoria": "Agência Brasil (Pedro Peduzzi)",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2026-08/filho-mais-velho-de-bolsonaro-flavio-disputa-presidencia-pelo-pl",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-08-17",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-senado-2026-segundo-turno",
+    "titulo": "Flávio Bolsonaro e Lula disputam o segundo turno das eleições para presidente",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2026/10/04/flavio-bolsonaro-e-lula-disputam-o-segundo-turno-das-eleicoes-para-presidente",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-04",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "senado-dados-abertos-flavio",
+    "titulo": "Dados Abertos do Senado: detalhe do senador Flávio Bolsonaro (código 5894)",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/senador/5894",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "senado-dados-abertos-flavio-mandatos",
+    "titulo": "Dados Abertos do Senado: mandatos do senador Flávio Bolsonaro",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/mandatos",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "senado-dados-abertos-flavio-filiacoes",
+    "titulo": "Dados Abertos do Senado: filiações partidárias do senador Flávio Bolsonaro",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/filiacoes",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "senado-dados-abertos-flavio-cargos",
+    "titulo": "Dados Abertos do Senado: cargos do senador Flávio Bolsonaro",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/cargos",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "senado-dados-abertos-flavio-liderancas",
+    "titulo": "Dados Abertos do Senado: cargos de liderança do senador Flávio Bolsonaro",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/liderancas",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "senado-perfil-flavio",
+    "titulo": "Perfil do senador Flávio Bolsonaro",
+    "autoria": "Senado Federal",
+    "url": "https://www25.senado.leg.br/pt_BR/web/senadores/senador/-/perfil/5894",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-senado-2019-perfil-flavio",
+    "titulo": "Flávio Bolsonaro (PSL)",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2019/01/18/flavio-bolsonaro-psl",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2019-01-18",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-senado-2021-filiacao-pl",
+    "titulo": "Portinho destaca filiação de Flávio Bolsonaro ao Partido Liberal",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2021/12/01/portinho-destaca-filiacao-de-flavio-bolsonaro-ao-partido-liberal",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-12-01",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "senado-manual-republicanos-patriota",
+    "titulo": "Flávio Bolsonaro muda do partido REPUBLICANOS para o partido PATRIOTA (registro de modificação do Manual de Comunicação)",
+    "autoria": "Senado Federal, Secretaria de Comunicação Social",
+    "url": "https://www12.senado.leg.br/manualdecomunicacao/senadores/modificacoes/flavio-bolsonaro-muda-do-partido-republicanos-para-o-partido-patriota",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-senado-2024-saidas-temporarias",
+    "titulo": "Senado aprova restrição a 'saidões' de presos; texto volta para a Câmara",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2024/02/20/senado-aprova-restricao-as-saidinhas-de-presos-texto-volta-para-a-camara",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2024-02-20",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-senado-2024-veto-saidas-temporarias",
+    "titulo": "Pela segunda vez, Congresso acaba com saídas temporárias de presos em feriados",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2024/05/28/pela-segunda-vez-congresso-acaba-com-saidas-temporarias-de-presos-em-feriados",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2024-05-28",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2020-denuncia-mprj",
+    "titulo": "MP do Rio denuncia 17 investigados por lavagem de dinheiro e peculato",
+    "autoria": "Agência Brasil (Vitor Abdala)",
+    "url": "https://agenciabrasil.ebc.com.br/justica/noticia/2020-11/mp-do-rio-denuncia-17-investigados-por-lavagem-de-dinheiro-e-peculato",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2020-11-04",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "mprj-2021-recurso-stj",
+    "titulo": "MPRJ recorre contra decisão do STJ que anulou quebras de sigilo",
+    "autoria": "Ministério Público do Estado do Rio de Janeiro",
+    "url": "https://portalsei.mprj.mp.br/web/guest/visualizar?noticiaId=103126",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-03-20",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2021-stj-anula-decisoes",
+    "titulo": "STJ anula decisões de juiz sobre rachadinha na Alerj",
+    "autoria": "Agência Brasil",
+    "url": "https://agenciabrasil.ebc.com.br/justica/noticia/2021-11/stj-anula-decisoes-de-juiz-sobre-rachadinha-na-alerj",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2021-11-09",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "agencia-brasil-2022-tjrj-rejeita-denuncia",
+    "titulo": "Justiça do Rio arquiva processo de caso de supostas rachadinhas",
+    "autoria": "Agência Brasil (Vladimir Platonow)",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2022-05/justica-do-rio-arquiva-processo-de-caso-de-supostas-rachadinhas",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2022-05-16",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "cartacapital-2025-caso-rachadinha",
+    "titulo": "O que aconteceu com o caso da 'rachadinha' de Flávio Bolsonaro, suposto candidato em 2026",
+    "autoria": "CartaCapital",
+    "url": "https://www.cartacapital.com.br/politica/o-que-aconteceu-com-o-caso-da-rachadinha-de-flavio-bolsonaro-suposto-candidato-em-2026/",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2025-12-06",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "brasil-de-fato-2026-quebra-de-sigilos",
+    "titulo": "Gilmar Mendes mantém quebra de sigilos de investigada por 'rachadinha' em gabinete de Flávio Bolsonaro",
+    "autoria": "Brasil de Fato",
+    "url": "https://www.brasildefato.com.br/2026/09/29/gilmar-mendes-mantem-quebra-de-sigilos-de-investigada-por-rachadinha-em-gabinete-de-flavio-bolsonaro/",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-09-29",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "gazeta-do-povo-2026-candidatura-flavio",
+    "titulo": "Após crise, Flávio chega ao 1º turno como principal nome da direita",
+    "autoria": "Gazeta do Povo (Wesley Oliveira)",
+    "url": "https://www.gazetadopovo.com.br/eleicoes/2026/da-escolha-de-bolsonaro-a-consolidacao-na-direita-como-foi-construida-candidatura-de-flavio/",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-09-30",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-08"
+  }
+]

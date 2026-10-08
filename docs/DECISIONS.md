@@ -156,12 +156,55 @@ Registro das decisões da fase 1, com o motivo de cada uma. Decisão nova entra 
 
 **Consequência.** Remover na fase 10. Está listado em STATUS.md.
 
+## D-22. O tipo de revisão é um campo obrigatório
+
+**Decisão (fase 2).** `revisao.tipo` passou a ser obrigatório, com dois valores: `assistida-por-ia` e `humana`. Vale para a revisão de cada registro e para a da edição.
+
+**Motivo.** O primeiro conjunto foi conferido contra as fontes por um modelo de IA. Sem um campo próprio, essa conferência ficaria registrada com as mesmas palavras de uma revisão feita por uma pessoa. A fase 2 exige que revisão humana só seja registrada quando de fato ocorrer.
+
+**Consequência.** O site mostra "Revisão humana pendente" nos registros e no aviso de edição. Um teste falha se algum registro do conjunto publicado aparecer como revisão humana antes de ela existir; ele deve ser ajustado na primeira revisão humana. A regra de publicação não mudou: entra o que está `revisado`, de qualquer tipo. Exigir revisão humana para o lançamento é decisão da fase 9.
+
+## D-23. Rascunhos são uma coleção parcial de acontecimentos
+
+**Decisão (fase 2).** `content/drafts/` guarda só `acontecimentos.json`. Os rascunhos citam pessoas, lugares e fontes que já estão no conjunto publicado.
+
+**Motivo.** Duplicar pessoas, lugares e fontes em duas pastas criaria duas versões do mesmo cadastro. Os registros de referência não fazem afirmações que dependam de revisão própria.
+
+**Consequência.** Rascunho não pode ser validado sozinho. O teste "content/drafts do repositório" valida os rascunhos junto com o conjunto publicado e exige que todo rascunho diga o que falta. `verify:export` confere que nenhum rascunho virou página. O comando que promove um rascunho é trabalho da fase 3.
+
+## D-24. Fichas do TSE: endereço público cadastrado, leitura pelo serviço REST
+
+**Decisão (fase 2).** As candidaturas de 2006 em diante foram lidas no serviço REST do DivulgaCandContas. O endereço cadastrado em cada fonte é o da ficha pública equivalente, que o próprio serviço informa. As de 1994, 1998 e 2002 vieram dos arquivos `consulta_cand` do repositório de dados eleitorais.
+
+**Motivo.** O serviço devolve os dados em formato que permite conferir campo a campo. A ficha pública é o endereço que um leitor consegue abrir.
+
+**Consequência.** A citação indica o campo ou a linha consultada. Eleições anteriores a 1994 não têm arquivo no repositório consultado e ficaram com precisão de ano.
+
+## D-25. Lugares pelo centroide do IBGE
+
+**Decisão (fase 2).** Todas as coordenadas vêm do campo `centroide` da API de malhas geográficas do IBGE, para municípios e para unidades da federação. Decisão de tribunal usa o município-sede quando ele aparece no documento lido.
+
+**Motivo.** É uma fonte oficial, consultável por código do município, sem depender de base de terceiros. O centroide é o centro do polígono, e não a sede urbana.
+
+**Consequência.** Todo lugar tem precisão `municipio` ou `uf` e aparece como aproximação. Em municípios extensos, o ponto pode ficar longe do centro urbano. A fase 6 decide se usa outra base para a escala de cidade.
+
+## D-26. Trechos de evidência guardados fora do conteúdo
+
+**Decisão (fase 2).** A lista dos trechos literais que sustentam cada citação fica em `docs/evidencias/provas-2026-10-08.json`, e não dentro dos registros.
+
+**Motivo.** O contrato de conteúdo já tem `localizacao` e `evidencia` em cada citação. Os trechos literais servem à conferência, e não à leitura no site, e incluem citações curtas de reportagens.
+
+**Consequência.** A conferência desta fase usou scripts temporários e cópias locais dos documentos, que não estão no repositório. Tornar isso um comando é item da fase 3.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
 |---|---|
 | Como os scripts de conteúdo vão importar os schemas TypeScript (Node com remoção de tipos, ou via Vitest) | Fase 3 |
 | Esquema mais tolerante para rascunhos incompletos | Fase 3 |
+| Comando de promoção de rascunhos e verificador de evidências | Fase 3 |
+| Exigir revisão humana como condição de publicação | Fase 9 |
+| Canal público de correção e quem assina a revisão humana | Decisão do responsável pelo projeto |
 | Base cartográfica, glyphs locais e rótulos do mapa | Fase 6 |
 | Pontos como camada de círculos ou como marcadores HTML focáveis pelo teclado | Fase 6 |
 | Paleta, tipografia e sincronia entre tokens CSS e cores do mapa | Fase 4 |

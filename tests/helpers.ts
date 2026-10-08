@@ -6,6 +6,8 @@ import type { ExplorerData } from "@/lib/state/selectors";
 
 export const FIXTURES_DIR = path.resolve("tests/fixtures/sintetico");
 export const PUBLISHED_DIR = path.resolve("content/published");
+export const DRAFTS_DIR = path.resolve("content/drafts");
+export const PUBLIC_DIR = path.resolve("public");
 
 /** Cópia nova do conjunto sintético a cada chamada, para o teste poder alterar. */
 export function loadFixtures(): Conjunto {

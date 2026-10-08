@@ -1,12 +1,16 @@
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
+import { z } from "zod";
 
 import { InvalidContentError, loadContentSet, loadPublishedSet } from "@/lib/content/load";
+import { checkIntegrity } from "@/lib/domain/integrity";
+import { PROFILES } from "@/lib/domain/profiles";
+import { acontecimentoSchema, conjuntoSchema } from "@/lib/domain/schemas";
 
-import { FIXTURES_DIR, PUBLISHED_DIR } from "./helpers";
+import { DRAFTS_DIR, FIXTURES_DIR, PUBLIC_DIR, PUBLISHED_DIR } from "./helpers";
 
 const temporarias: string[] = [];
 
@@ -110,6 +114,83 @@ describe("content/published do repositório", () => {
     for (const nome of arquivos) {
       const conteudo = readFileSync(path.join(PUBLISHED_DIR, nome), "utf8");
       expect(conteudo, nome).not.toMatch(/sint[eé]tico|exemplo\.invalid/i);
+    }
+  });
+
+  it("tem os dois perfis da primeira edição, cada um com 15 a 20 acontecimentos", () => {
+    const conjunto = loadPublishedSet(PUBLISHED_DIR);
+    expect(conjunto.edicao).not.toBeNull();
+
+    for (const perfil of PROFILES) {
+      const pessoa = conjunto.pessoas.find((item) => item.slug === perfil.slug);
+      expect(pessoa, perfil.slug).toBeDefined();
+
+      const total = conjunto.acontecimentos.filter((item) =>
+        item.pessoaIds.includes(pessoa!.id),
+      ).length;
+      expect(total, perfil.slug).toBeGreaterThanOrEqual(15);
+      expect(total, perfil.slug).toBeLessThanOrEqual(20);
+    }
+  });
+
+  it("não registra revisão humana que não aconteceu", () => {
+    // Enquanto ninguém revisar o conjunto, toda revisão é assistida por IA.
+    // Este teste deve ser ajustado quando a primeira revisão humana for registrada.
+    const conjunto = loadPublishedSet(PUBLISHED_DIR);
+    const registros = [
+      ...conjunto.pessoas,
+      ...conjunto.mandatos,
+      ...conjunto.filiacoes,
+      ...conjunto.acontecimentos,
+    ];
+    for (const registro of registros) {
+      expect(registro.editorial.estado, registro.id).toBe("revisado");
+      if (registro.editorial.estado === "revisado") {
+        expect(registro.editorial.revisao.tipo, registro.id).toBe("assistida-por-ia");
+      }
+    }
+    expect(conjunto.edicao?.revisao.tipo).toBe("assistida-por-ia");
+  });
+
+  it("toda imagem cadastrada tem o arquivo em public/", () => {
+    for (const imagem of loadPublishedSet(PUBLISHED_DIR).imagens) {
+      expect(existsSync(path.join(PUBLIC_DIR, imagem.arquivo)), imagem.arquivo).toBe(true);
+    }
+  });
+});
+
+describe("content/drafts do repositório", () => {
+  // Os rascunhos são coleções parciais: citam pessoas, lugares e fontes do
+  // conjunto publicado. Por isso são validados junto com ele.
+  const readDrafts = () => {
+    const arquivo = path.join(DRAFTS_DIR, "acontecimentos.json");
+    return existsSync(arquivo) ? (JSON.parse(readFileSync(arquivo, "utf8")) as unknown[]) : [];
+  };
+
+  it("só aceita o arquivo de acontecimentos em rascunho", () => {
+    const arquivos = readdirSync(DRAFTS_DIR).filter((nome) => nome.endsWith(".json"));
+    expect(arquivos.filter((nome) => nome !== "acontecimentos.json")).toEqual([]);
+  });
+
+  it("os rascunhos são válidos e se encaixam no conjunto publicado", () => {
+    const publicado = loadContentSet(PUBLISHED_DIR);
+    expect(publicado).not.toBeNull();
+
+    const combinado = conjuntoSchema.safeParse({
+      ...publicado,
+      acontecimentos: [...publicado!.acontecimentos, ...readDrafts()],
+    });
+    expect(combinado.error?.issues ?? []).toEqual([]);
+    expect(checkIntegrity(combinado.data!)).toEqual([]);
+  });
+
+  it("nenhum rascunho está marcado como revisado, e todos dizem o que falta", () => {
+    const rascunhos = z.array(acontecimentoSchema).parse(readDrafts());
+    for (const rascunho of rascunhos) {
+      expect(rascunho.editorial.estado, rascunho.id).not.toBe("revisado");
+      if (rascunho.editorial.estado !== "revisado") {
+        expect(rascunho.editorial.pendencias?.length ?? 0, rascunho.id).toBeGreaterThan(0);
+      }
     }
   });
 });

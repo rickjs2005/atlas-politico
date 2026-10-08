@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "verify:export": "node scripts/check-export.mjs",
+    "content:coverage": "node scripts/content-coverage.mjs",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run verify:export"
   },
   "dependencies": {

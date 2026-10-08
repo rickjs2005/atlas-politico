@@ -27,7 +27,7 @@ const REGRAS = [
   {
     titulo: "Revisão",
     texto:
-      "A pesquisa começa como rascunho. Só entra nas páginas o que foi revisado, com o nome de quem revisou e a data. Cada edição do conteúdo informa a data de corte e o que mudou.",
+      "A pesquisa começa como rascunho. Só entra nas páginas o que foi conferido com as fontes, com a indicação de quem conferiu e a data. Cada registro diz se a conferência foi assistida por IA ou feita por uma pessoa, e a revisão humana só é registrada quando de fato aconteceu. Cada edição do conteúdo informa a data de corte e o que mudou.",
   },
 ];
 

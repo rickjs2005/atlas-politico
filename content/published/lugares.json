@@ -1,0 +1,120 @@
+[
+  {
+    "id": "brasilia",
+    "nome": "Brasília",
+    "pais": "BR",
+    "municipio": {
+      "nome": "Brasília",
+      "uf": "DF",
+      "codigoIbge": "5300108"
+    },
+    "longitude": -47.7969,
+    "latitude": -15.7812,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados do município 5300108: centroide do polígono. Consulta em 08/10/2026."
+  },
+  {
+    "id": "sao-paulo",
+    "nome": "São Paulo",
+    "pais": "BR",
+    "municipio": {
+      "nome": "São Paulo",
+      "uf": "SP",
+      "codigoIbge": "3550308"
+    },
+    "longitude": -46.6481,
+    "latitude": -23.6501,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados do município 3550308: centroide do polígono. Consulta em 08/10/2026."
+  },
+  {
+    "id": "sao-bernardo-do-campo",
+    "nome": "São Bernardo do Campo",
+    "pais": "BR",
+    "municipio": {
+      "nome": "São Bernardo do Campo",
+      "uf": "SP",
+      "codigoIbge": "3548708"
+    },
+    "longitude": -46.5508,
+    "latitude": -23.813,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados do município 3548708: centroide do polígono. Consulta em 08/10/2026."
+  },
+  {
+    "id": "curitiba",
+    "nome": "Curitiba",
+    "pais": "BR",
+    "municipio": {
+      "nome": "Curitiba",
+      "uf": "PR",
+      "codigoIbge": "4106902"
+    },
+    "longitude": -49.2882,
+    "latitude": -25.4779,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados do município 4106902: centroide do polígono. Consulta em 08/10/2026."
+  },
+  {
+    "id": "porto-alegre",
+    "nome": "Porto Alegre",
+    "pais": "BR",
+    "municipio": {
+      "nome": "Porto Alegre",
+      "uf": "RS",
+      "codigoIbge": "4314902"
+    },
+    "longitude": -51.1644,
+    "latitude": -30.0953,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados do município 4314902: centroide do polígono. Consulta em 08/10/2026."
+  },
+  {
+    "id": "rio-de-janeiro",
+    "nome": "Rio de Janeiro",
+    "pais": "BR",
+    "municipio": {
+      "nome": "Rio de Janeiro",
+      "uf": "RJ",
+      "codigoIbge": "3304557"
+    },
+    "longitude": -43.458,
+    "latitude": -22.9255,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados do município 3304557: centroide do polígono. Consulta em 08/10/2026."
+  },
+  {
+    "id": "araraquara",
+    "nome": "Araraquara",
+    "pais": "BR",
+    "municipio": {
+      "nome": "Araraquara",
+      "uf": "SP",
+      "codigoIbge": "3503208"
+    },
+    "longitude": -48.1813,
+    "latitude": -21.7916,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados do município 3503208: centroide do polígono. Consulta em 08/10/2026."
+  },
+  {
+    "id": "estado-do-rio-de-janeiro",
+    "nome": "Estado do Rio de Janeiro",
+    "pais": "BR",
+    "municipio": null,
+    "longitude": -42.6524,
+    "latitude": -22.1885,
+    "precisaoGeografica": "uf",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados da unidade da federação 33: centroide do polígono. Consulta em 08/10/2026."
+  },
+  {
+    "id": "estado-de-sao-paulo",
+    "nome": "Estado de São Paulo",
+    "pais": "BR",
+    "municipio": null,
+    "longitude": -48.734,
+    "latitude": -22.2635,
+    "precisaoGeografica": "uf",
+    "origemCoordenadas": "IBGE, API de malhas geográficas v3, metadados da unidade da federação 35: centroide do polígono. Consulta em 08/10/2026."
+  }
+]

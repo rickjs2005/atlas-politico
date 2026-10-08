@@ -50,6 +50,28 @@ for (const proibido of FORBIDDEN_PATHS) {
   }
 }
 
+// Rascunho não vira página: nenhum slug de content/drafts pode ter rota.
+const draftsFile = path.resolve("content", "drafts", "acontecimentos.json");
+const rascunhos = existsSync(draftsFile)
+  ? JSON.parse(readFileSync(draftsFile, "utf8").replace(/^﻿/, ""))
+  : [];
+for (const rascunho of rascunhos) {
+  if (existsSync(path.join(OUT_DIR, "acontecimentos", rascunho.slug))) {
+    problemas.push(`Rascunho exportado como página: acontecimentos/${rascunho.slug}/`);
+  }
+}
+
+// Todo acontecimento publicado tem a sua página.
+const publishedFile = path.resolve("content", "published", "acontecimentos.json");
+const publicados = existsSync(publishedFile)
+  ? JSON.parse(readFileSync(publishedFile, "utf8").replace(/^﻿/, ""))
+  : [];
+for (const publicado of publicados) {
+  if (!existsSync(path.join(OUT_DIR, "acontecimentos", publicado.slug, "index.html"))) {
+    problemas.push(`Acontecimento publicado sem página: acontecimentos/${publicado.slug}/`);
+  }
+}
+
 const arquivos = listFiles(OUT_DIR);
 let conferidos = 0;
 
@@ -73,5 +95,6 @@ if (problemas.length > 0) {
 const paginas = arquivos.filter((arquivo) => arquivo.endsWith(".html")).length;
 console.log(
   `Saída estática conferida: ${arquivos.length} arquivos, ${paginas} páginas HTML, ` +
-    `${conferidos} arquivos de texto sem dados sintéticos e sem rotas de desenvolvimento.`,
+    `${conferidos} arquivos de texto sem dados sintéticos e sem rotas de desenvolvimento. ` +
+    `${publicados.length} acontecimentos publicados com página, ${rascunhos.length} rascunhos sem página.`,
 );

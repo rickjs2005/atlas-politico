@@ -78,11 +78,11 @@ fonte → rascunho → revisão → validação → conjunto publicado → build
 
 | Etapa | Onde | Situação |
 |---|---|---|
-| Fonte | Páginas institucionais e bases públicas | Catálogo na fase 2 |
-| Rascunho | `content/drafts/` | Pasta reservada. Formato dos registros já definido |
-| Revisão | Estado editorial de cada registro (`rascunho`, `em-revisao`, `revisado`) | Modelado e validado |
+| Fonte | Páginas institucionais e bases públicas | Catálogo feito na fase 2 (SOURCES.md) |
+| Rascunho | `content/drafts/acontecimentos.json` | Em uso desde a fase 2: coleção parcial, que cita registros do conjunto publicado |
+| Revisão | Estado editorial de cada registro (`rascunho`, `em-revisao`, `revisado`) e tipo da revisão (`assistida-por-ia`, `humana`) | Modelado e validado. Na edição 0.1.0 toda revisão é assistida por IA |
 | Validação | Schemas + `checkIntegrity` + `checkPublication` | Implementado. Relatórios e índices na fase 3 |
-| Conjunto publicado | `content/published/` | Leitor implementado. Comando de promoção na fase 3 |
+| Conjunto publicado | `content/published/` | Edição 0.1.0 publicada na fase 2. Comando de promoção na fase 3 |
 | Build | `next build` | Implementado. Conteúdo inválido interrompe o build |
 
 Regras que já valem:
@@ -97,7 +97,7 @@ Regras que já valem:
 |---|---|---|---|
 | `/` | `src/app/page.tsx` | | Estrutural: propósito, perfis, situação da edição |
 | `/politicos/lula`, `/politicos/flavio-bolsonaro` | `src/app/politicos/[slug]/page.tsx` | `generateStaticParams` a partir de `PROFILES` | Estrutural. Mostra resumo e acontecimentos quando houver conteúdo |
-| `/acontecimentos/[slug]` | `src/app/acontecimentos/[slug]/page.published.tsx` | `generateStaticParams` a partir dos acontecimentos publicados | Implementada e desligada até existir conteúdo (ver abaixo) |
+| `/acontecimentos/[slug]` | `src/app/acontecimentos/[slug]/page.published.tsx` | `generateStaticParams` a partir dos acontecimentos publicados | Implementada. Ligou sozinha na fase 2, com o primeiro conteúdo (ver abaixo) |
 | `/comparar` | `src/app/comparar/page.tsx` | | Estrutural: regras da comparação |
 | `/metodologia` | `src/app/metodologia/page.tsx` | | Preliminar: regras que o modelo já garante |
 | 404 | `src/app/not-found.tsx` | | Com a identidade do projeto. Vira `out/404.html` |

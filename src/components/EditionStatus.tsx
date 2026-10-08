@@ -12,11 +12,15 @@ export function EditionStatus({ edicao }: { edicao: Edicao | null }) {
     );
   }
 
+  const revisadoEm = formatDate({ valor: edicao.revisao.revisadoEm, precisao: "dia" });
+
   return (
     <p className="text-sm text-ink-soft">
       Edição {edicao.versao} · registros até{" "}
-      {formatDate({ valor: edicao.dataDeCorte, precisao: "dia" })} · última revisão em{" "}
-      {formatDate({ valor: edicao.revisao.revisadoEm, precisao: "dia" })}
+      {formatDate({ valor: edicao.dataDeCorte, precisao: "dia" })} ·{" "}
+      {edicao.revisao.tipo === "humana"
+        ? `última revisão em ${revisadoEm}`
+        : `conferência com as fontes assistida por IA em ${revisadoEm}; revisão humana pendente`}
     </p>
   );
 }

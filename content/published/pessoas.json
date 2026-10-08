@@ -1,0 +1,78 @@
+[
+  {
+    "id": "lula",
+    "slug": "lula",
+    "nome": "Lula",
+    "resumo": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE), é presidente da República desde 2023, cargo que também ocupou de 2003 a 2011. Metalúrgico formado pelo Senai, presidiu o Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema, foi um dos fundadores do PT em 1980 e deputado federal constituinte por São Paulo. Em 2026 disputa a reeleição.",
+    "retratoId": "retrato-lula",
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Primeiro parágrafo da biografia e parágrafos sobre o Senai, o sindicato e o PT",
+        "evidencia": "Local de nascimento, formação de torneiro mecânico no Senai, presidência do sindicato e fundação do PT em 1980."
+      },
+      {
+        "fonteId": "agencia-senado-2023-posse",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Períodos na Presidência: de 1º de janeiro de 2003 a 1º de janeiro de 2011 e posse do terceiro mandato em 2023."
+      },
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Seção Mandatos (na Câmara dos Deputados)",
+        "evidencia": "Deputado federal constituinte por São Paulo, de 1987 a 1991, pelo PT."
+      },
+      {
+        "fonteId": "tse-noticia-2026-primeiro-turno",
+        "localizacao": "Parágrafo sobre Lula",
+        "evidencia": "Exerce o terceiro mandato e é candidato à reeleição em 2026."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro",
+    "slug": "flavio-bolsonaro",
+    "nome": "Flávio Bolsonaro",
+    "resumo": "Flávio Nantes Bolsonaro, nascido em Resende (RJ) em 30 de abril de 1981, é senador pelo Rio de Janeiro desde 2019. Antes, foi deputado estadual, eleito em 2002 e reeleito em 2006, 2010 e 2014. Bacharel em direito, é o filho mais velho do ex-presidente Jair Bolsonaro. Em 2026 disputa a Presidência da República pelo PL.",
+    "retratoId": "retrato-flavio-bolsonaro",
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio",
+        "localizacao": "Blocos IdentificacaoParlamentar e DadosBasicosParlamentar",
+        "evidencia": "Nome completo, data de nascimento e naturalidade."
+      },
+      {
+        "fonteId": "senado-dados-abertos-flavio-mandatos",
+        "localizacao": "Mandato 532, bloco Exercicios",
+        "evidencia": "Exercício do mandato de senador pelo Rio de Janeiro desde 1º de fevereiro de 2019."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-perfil-flavio",
+        "localizacao": "Primeiro e terceiro parágrafos",
+        "evidencia": "Filho mais velho de Jair Bolsonaro, eleito deputado estadual em 2002 e reeleito em 2006, 2010 e 2014, candidato do PL à Presidência."
+      },
+      {
+        "fonteId": "agencia-senado-2019-perfil-flavio",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Bacharel em direito."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-08",
+        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+      }
+    }
+  }
+]

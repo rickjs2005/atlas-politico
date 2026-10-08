@@ -2,6 +2,7 @@
   "versao": "0.0.1",
   "dataDeCorte": "2026-10-08",
   "revisao": {
+    "tipo": "humana",
     "revisadoPor": "Fixture sintética",
     "revisadoEm": "2026-10-08",
     "observacoes": "[SINTÉTICO] Revisão fictícia, só para o conjunto de teste ter o formato de uma edição."

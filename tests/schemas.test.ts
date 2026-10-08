@@ -9,7 +9,7 @@ import {
 
 const revisado = {
   estado: "revisado",
-  revisao: { revisadoPor: "Revisor de teste", revisadoEm: "2026-10-08" },
+  revisao: { tipo: "humana", revisadoPor: "Revisor de teste", revisadoEm: "2026-10-08" },
 };
 const citacao = {
   fonteId: "fonte-de-teste",
@@ -149,6 +149,19 @@ describe("estado editorial e evidência", () => {
         }),
       ).success,
     ).toBe(false);
+  });
+
+  it("revisão precisa declarar se foi assistida por IA ou humana", () => {
+    const revisao = { revisadoPor: "Revisor", revisadoEm: "2026-10-08" };
+    const withType = (tipo?: string) =>
+      acontecimentoSchema.safeParse(
+        acontecimento({ editorial: { estado: "revisado", revisao: { ...revisao, tipo } } }),
+      ).success;
+
+    expect(withType("assistida-por-ia")).toBe(true);
+    expect(withType("humana")).toBe(true);
+    expect(withType(undefined)).toBe(false);
+    expect(withType("automatica")).toBe(false);
   });
 
   it("citação precisa dizer onde está a evidência e o que ela sustenta", () => {

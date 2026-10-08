@@ -93,6 +93,18 @@ test("datas parciais e falta de lugar aparecem como são", async ({ page }) => {
   await expect(painel(page)).toContainText("1º de março de 2024");
 });
 
+test("o painel distingue revisão humana de conferência assistida por IA", async ({ page }) => {
+  await openWithMap(page);
+
+  await item(page, "03").click();
+  await expect(painel(page)).toContainText("Revisado por Fixture sintética");
+  await expect(painel(page)).not.toContainText("Revisão humana pendente");
+
+  await item(page, "07").click();
+  await expect(painel(page)).toContainText("com assistência de IA (Fixture sintética)");
+  await expect(painel(page)).toContainText("Revisão humana pendente");
+});
+
 test("clicar em um ponto do mapa seleciona o acontecimento", async ({ page }) => {
   await openWithMap(page);
 
