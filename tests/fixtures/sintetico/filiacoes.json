@@ -1,0 +1,22 @@
+[
+  {
+    "id": "sintetico-filiacao-a1",
+    "pessoaId": "sintetico-pessoa-a",
+    "partido": { "sigla": "PTESTE", "nome": "[SINTÉTICO] Partido de teste" },
+    "periodo": {
+      "inicio": { "tipo": "data", "valor": "1992-06", "precisao": "mes" },
+      "fim": { "tipo": "em-curso" }
+    },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Seção de teste 3",
+        "evidencia": "[SINTÉTICO] Trecho fictício com a data de filiação."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

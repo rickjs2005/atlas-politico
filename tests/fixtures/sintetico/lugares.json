@@ -1,0 +1,62 @@
+[
+  {
+    "id": "sintetico-lugar-norte",
+    "nome": "Lugar de teste Norte",
+    "pais": "BR",
+    "municipio": { "nome": "Município de teste Norte" },
+    "longitude": -60,
+    "latitude": -3,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "[SINTÉTICO] Coordenada arbitrária em números redondos; não é o centro de um município real."
+  },
+  {
+    "id": "sintetico-lugar-nordeste",
+    "nome": "Lugar de teste Nordeste",
+    "pais": "BR",
+    "municipio": null,
+    "longitude": -40,
+    "latitude": -8,
+    "precisaoGeografica": "uf",
+    "origemCoordenadas": "[SINTÉTICO] Coordenada arbitrária em números redondos."
+  },
+  {
+    "id": "sintetico-lugar-centro",
+    "nome": "Lugar de teste Centro",
+    "pais": "BR",
+    "municipio": { "nome": "Município de teste Centro" },
+    "longitude": -50,
+    "latitude": -14,
+    "precisaoGeografica": "local",
+    "origemCoordenadas": "[SINTÉTICO] Coordenada arbitrária em números redondos."
+  },
+  {
+    "id": "sintetico-lugar-sudeste",
+    "nome": "Lugar de teste Sudeste",
+    "pais": "BR",
+    "municipio": { "nome": "Município de teste Sudeste" },
+    "longitude": -45,
+    "latitude": -21,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "[SINTÉTICO] Coordenada arbitrária em números redondos."
+  },
+  {
+    "id": "sintetico-lugar-sul",
+    "nome": "Lugar de teste Sul",
+    "pais": "BR",
+    "municipio": { "nome": "Município de teste Sul" },
+    "longitude": -52,
+    "latitude": -28,
+    "precisaoGeografica": "municipio",
+    "origemCoordenadas": "[SINTÉTICO] Coordenada arbitrária em números redondos."
+  },
+  {
+    "id": "sintetico-lugar-exterior",
+    "nome": "Lugar de teste no exterior",
+    "pais": "ZZ",
+    "municipio": null,
+    "longitude": -20,
+    "latitude": 20,
+    "precisaoGeografica": "pais",
+    "origemCoordenadas": "[SINTÉTICO] Ponto arbitrário no oceano, fora do Brasil, para testar lugares de outro país."
+  }
+]

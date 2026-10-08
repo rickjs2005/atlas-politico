@@ -1,0 +1,26 @@
+[
+  {
+    "id": "sintetico-fonte-01",
+    "titulo": "[SINTÉTICO] Documento de teste 01",
+    "autoria": "Instituição de teste",
+    "url": "https://exemplo.invalid/documento-de-teste-01",
+    "dataDocumento": { "tipo": "data", "valor": "2020-05", "precisao": "mes" },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "sintetico-fonte-02",
+    "titulo": "[SINTÉTICO] Documento de teste 02",
+    "autoria": "Autor de teste",
+    "url": "https://exemplo.invalid/documento-de-teste-02",
+    "dataDocumento": { "tipo": "desconhecida" },
+    "acessadoEm": "2026-10-08"
+  },
+  {
+    "id": "sintetico-fonte-03",
+    "titulo": "[SINTÉTICO] Documento de teste 03",
+    "autoria": "Instituição de teste",
+    "url": "https://exemplo.invalid/documento-de-teste-03",
+    "dataDocumento": { "tipo": "data", "valor": "2019-03-14", "precisao": "dia" },
+    "acessadoEm": "2026-10-08"
+  }
+]

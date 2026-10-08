@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/*
+  Base visual da fase 1: tokens neutros, tipografia do sistema e foco visível.
+  Paleta final, tipos e a identidade equivalente dos dois perfis são decisões
+  da fase 4. As cores do mapa repetem estes tokens em
+  src/features/map/style.ts.
+*/
+:root {
+  --atlas-paper: #f6f3ec;
+  --atlas-surface: #ffffff;
+  --atlas-ink: #1b1a17;
+  --atlas-ink-soft: #57534a;
+  --atlas-line: #d8d2c4;
+  --atlas-accent: #17495a;
+  --atlas-mark: #b3470d;
+  --atlas-mark-soft: #fbeee3;
+  --atlas-notice: #fff3d1;
+  --atlas-notice-ink: #4a3800;
+  --atlas-map: #dfe8ea;
+}
+
+@theme inline {
+  --color-paper: var(--atlas-paper);
+  --color-surface: var(--atlas-surface);
+  --color-ink: var(--atlas-ink);
+  --color-ink-soft: var(--atlas-ink-soft);
+  --color-line: var(--atlas-line);
+  --color-accent: var(--atlas-accent);
+  --color-mark: var(--atlas-mark);
+  --color-mark-soft: var(--atlas-mark-soft);
+  --color-notice: var(--atlas-notice);
+  --color-notice-ink: var(--atlas-notice-ink);
+  --color-map: var(--atlas-map);
+
+  /* Fontes do sistema: nenhuma fonte é baixada no build nem no navegador. */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--atlas-paper);
+    color: var(--atlas-ink);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--atlas-mark);
+    outline-offset: 2px;
+  }
+
+  /* O canvas do mapa fica dentro de uma moldura que corta o que passa da
+     borda, então o anel de foco é desenhado para dentro. */
+  .maplibregl-canvas:focus-visible {
+    outline-offset: -3px;
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+}

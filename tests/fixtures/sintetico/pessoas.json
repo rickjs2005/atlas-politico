@@ -1,0 +1,38 @@
+[
+  {
+    "id": "sintetico-pessoa-a",
+    "slug": "sintetico-pessoa-a",
+    "nome": "Pessoa Sintética A",
+    "resumo": "[SINTÉTICO] Perfil de teste, sem relação com qualquer pessoa real.",
+    "retratoId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Seção de teste 1",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria o resumo do perfil."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-pessoa-b",
+    "slug": "sintetico-pessoa-b",
+    "nome": "Pessoa Sintética B",
+    "resumo": "[SINTÉTICO] Segundo perfil de teste, sem relação com qualquer pessoa real.",
+    "retratoId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Seção de teste 1",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria o resumo do perfil."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

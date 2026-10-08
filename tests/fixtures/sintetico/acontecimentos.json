@@ -1,0 +1,188 @@
+[
+  {
+    "id": "sintetico-evento-01",
+    "slug": "sintetico-evento-01",
+    "pessoaIds": ["sintetico-pessoa-a"],
+    "titulo": "[SINTÉTICO] Acontecimento de teste 01, com data de ano",
+    "data": { "valor": "1994", "precisao": "ano" },
+    "categoria": "eleicoes",
+    "resumo": "[SINTÉTICO] Registro fictício com precisão de ano e um único lugar.",
+    "contexto": "[SINTÉTICO] Texto de contexto fictício. Serve para conferir a leitura no painel.",
+    "localizacao": { "tipo": "lugares", "lugarIds": ["sintetico-lugar-norte"] },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Página de teste 4, parágrafo 2",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria o ano e o lugar."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-evento-02",
+    "slug": "sintetico-evento-02",
+    "pessoaIds": ["sintetico-pessoa-a"],
+    "titulo": "[SINTÉTICO] Acontecimento de teste 02, com data de mês",
+    "data": { "valor": "2003-03", "precisao": "mes" },
+    "categoria": "mandatos-e-funcoes",
+    "resumo": "[SINTÉTICO] Registro fictício com precisão de mês.",
+    "contexto": "[SINTÉTICO] Texto de contexto fictício. O dia não é conhecido e não deve aparecer na tela.",
+    "localizacao": { "tipo": "lugares", "lugarIds": ["sintetico-lugar-centro"] },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Página de teste 7",
+        "evidencia": "[SINTÉTICO] Trecho fictício que informa só o mês."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-evento-03",
+    "slug": "sintetico-evento-03",
+    "pessoaIds": ["sintetico-pessoa-a", "sintetico-pessoa-b"],
+    "titulo": "[SINTÉTICO] Acontecimento de teste 03, com duas pessoas e dois lugares",
+    "data": { "valor": "2011-06-15", "precisao": "dia" },
+    "categoria": "atuacao-institucional",
+    "resumo": "[SINTÉTICO] Registro fictício ligado às duas pessoas de teste e a dois lugares.",
+    "contexto": "[SINTÉTICO] Texto de contexto fictício. Ao selecionar, o mapa deve enquadrar os dois pontos.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": ["sintetico-lugar-sudeste", "sintetico-lugar-sul"]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-03",
+        "localizacao": "Seção de teste 2",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria a data completa."
+      },
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Anexo de teste A",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria os dois lugares."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-evento-04",
+    "slug": "sintetico-evento-04",
+    "pessoaIds": ["sintetico-pessoa-b"],
+    "titulo": "[SINTÉTICO] Acontecimento de teste 04, de abrangência nacional",
+    "data": { "valor": "2012", "precisao": "ano" },
+    "categoria": "partidos-e-aliancas",
+    "resumo": "[SINTÉTICO] Registro fictício sem ponto municipal, por ter abrangência nacional.",
+    "contexto": "[SINTÉTICO] Texto de contexto fictício. Deve aparecer na lista e no painel, sem ponto no mapa.",
+    "localizacao": { "tipo": "nacional" },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Seção de teste 5",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria o registro."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-evento-05",
+    "slug": "sintetico-evento-05",
+    "pessoaIds": ["sintetico-pessoa-b"],
+    "titulo": "[SINTÉTICO] Acontecimento de teste 05, com data completa",
+    "data": { "valor": "2018-08-22", "precisao": "dia" },
+    "categoria": "eleicoes",
+    "resumo": "[SINTÉTICO] Registro fictício com data completa e um lugar.",
+    "contexto": "[SINTÉTICO] Texto de contexto fictício.",
+    "localizacao": { "tipo": "lugares", "lugarIds": ["sintetico-lugar-nordeste"] },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-03",
+        "localizacao": "Seção de teste 6",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria a data e o lugar."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-evento-06",
+    "slug": "sintetico-evento-06",
+    "pessoaIds": ["sintetico-pessoa-b"],
+    "titulo": "[SINTÉTICO] Acontecimento de teste 06, sem lugar documentado",
+    "data": { "valor": "2021-02", "precisao": "mes" },
+    "categoria": "marcos-historicos",
+    "resumo": "[SINTÉTICO] Registro fictício cujo lugar não consta nas fontes.",
+    "contexto": "[SINTÉTICO] Texto de contexto fictício. A tela deve dizer que o lugar não está documentado.",
+    "localizacao": { "tipo": "desconhecida" },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Seção de teste 8",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria o registro, sem informar o lugar."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-evento-07",
+    "slug": "sintetico-evento-07",
+    "pessoaIds": ["sintetico-pessoa-a"],
+    "titulo": "[SINTÉTICO] Acontecimento de teste 07, em outro país",
+    "data": { "valor": "2024-03-01", "precisao": "dia" },
+    "categoria": "atuacao-institucional",
+    "resumo": "[SINTÉTICO] Registro fictício em um lugar fora do Brasil.",
+    "contexto": "[SINTÉTICO] Texto de contexto fictício. A coordenada tem precisão de país.",
+    "localizacao": { "tipo": "lugares", "lugarIds": ["sintetico-lugar-exterior"] },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Página de teste 12",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria a data e o país."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-evento-08",
+    "slug": "sintetico-evento-08",
+    "pessoaIds": ["sintetico-pessoa-a"],
+    "titulo": "[SINTÉTICO] Acontecimento de teste 08, ainda em rascunho",
+    "data": { "valor": "2025", "precisao": "ano" },
+    "categoria": "marcos-historicos",
+    "resumo": "[SINTÉTICO] Registro fictício em rascunho. Não deve aparecer em nenhuma tela.",
+    "contexto": "[SINTÉTICO] Texto de contexto fictício.",
+    "localizacao": { "tipo": "lugares", "lugarIds": ["sintetico-lugar-centro"] },
+    "imagemId": null,
+    "fontes": [],
+    "editorial": {
+      "estado": "rascunho",
+      "pendencias": ["[SINTÉTICO] Falta localizar a fonte primária."]
+    }
+  }
+]

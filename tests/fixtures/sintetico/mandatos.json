@@ -1,0 +1,65 @@
+[
+  {
+    "id": "sintetico-mandato-a1",
+    "pessoaId": "sintetico-pessoa-a",
+    "cargo": "[SINTÉTICO] Cargo de teste",
+    "instituicao": "Instituição de teste",
+    "periodo": {
+      "inicio": { "tipo": "data", "valor": "2003-02-01", "precisao": "dia" },
+      "fim": { "tipo": "data", "valor": "2006", "precisao": "ano" }
+    },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Seção de teste 2",
+        "evidencia": "[SINTÉTICO] Trecho fictício com início e fim do mandato."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-mandato-b1",
+    "pessoaId": "sintetico-pessoa-b",
+    "cargo": "[SINTÉTICO] Cargo de teste com início não documentado",
+    "instituicao": "Instituição de teste",
+    "periodo": {
+      "inicio": { "tipo": "desconhecida" },
+      "fim": { "tipo": "data", "valor": "2015-03", "precisao": "mes" }
+    },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Seção de teste 2",
+        "evidencia": "[SINTÉTICO] Trecho fictício que informa só o fim do mandato."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-mandato-b2",
+    "pessoaId": "sintetico-pessoa-b",
+    "cargo": "[SINTÉTICO] Cargo de teste em curso",
+    "instituicao": "Instituição de teste",
+    "periodo": {
+      "inicio": { "tipo": "data", "valor": "2019", "precisao": "ano" },
+      "fim": { "tipo": "em-curso" }
+    },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-03",
+        "localizacao": "Seção de teste 1",
+        "evidencia": "[SINTÉTICO] Trecho fictício que informa o início do mandato."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "versao": "0.0.1",
+  "dataDeCorte": "2026-10-08",
+  "revisao": {
+    "revisadoPor": "Fixture sintética",
+    "revisadoEm": "2026-10-08",
+    "observacoes": "[SINTÉTICO] Revisão fictícia, só para o conjunto de teste ter o formato de uma edição."
+  },
+  "cobertura": [
+    {
+      "pessoaId": "sintetico-pessoa-a",
+      "periodo": {
+        "inicio": { "tipo": "data", "valor": "1990", "precisao": "ano" },
+        "fim": { "tipo": "em-curso" }
+      }
+    },
+    {
+      "pessoaId": "sintetico-pessoa-b",
+      "periodo": {
+        "inicio": { "tipo": "data", "valor": "2010", "precisao": "ano" },
+        "fim": { "tipo": "em-curso" }
+      },
+      "observacao": "[SINTÉTICO] Cobertura mais curta de propósito, para exercitar a comparação com períodos diferentes."
+    }
+  ],
+  "alteracoes": [
+    {
+      "data": "2026-10-08",
+      "descricao": "[SINTÉTICO] Conjunto de teste criado para a prova técnica da fase 1.",
+      "itens": []
+    }
+  ]
+}
