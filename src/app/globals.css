@@ -244,14 +244,3 @@
     grid-area: painel;
   }
 }
-
-/* Estilo do MapLibre: controles no desenho do atlas. */
-.maplibregl-ctrl-group {
-  border-radius: 2px !important;
-  box-shadow: 0 0 0 1px var(--atlas-ink-faint) !important;
-  background: var(--atlas-paper-raised) !important;
-}
-
-.maplibregl-ctrl-group button + button {
-  border-top: 1px solid var(--atlas-line) !important;
-}

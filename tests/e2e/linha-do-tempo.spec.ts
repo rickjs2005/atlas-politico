@@ -711,7 +711,7 @@ test.describe("leitura independente do mapa", () => {
     const esperados = noRecorte(deLula, 2016, 2019);
     await page.goto(`${LULA}?de=2016&ate=2019`);
 
-    await expect(mapa(page).getByText("O mapa não pôde ser exibido neste navegador.")).toBeVisible();
+    await expect(mapa(page).getByText("O mapa não pôde ser exibido agora.")).toBeVisible();
     await expect(itens(page)).toHaveCount(esperados.length);
     await expect(marcas(page)).toHaveCount(esperados.length);
 
@@ -720,7 +720,7 @@ test.describe("leitura independente do mapa", () => {
       (soma, evento) => soma + (evento.localizacao.tipo === "lugares" ? evento.localizacao.lugarIds.length : 0),
       0,
     );
-    await expect(mapa(page).getByRole("button")).toHaveCount(pontos);
+    await expect(mapa(page).locator("[data-ponto]")).toHaveCount(pontos);
 
     const alvo = esperados[0]!;
     await marcas(page).and(page.locator(`[data-slug="${alvo.slug}"]`)).click();

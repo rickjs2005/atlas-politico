@@ -155,29 +155,17 @@ test.describe("exploração em tela larga", () => {
     await expect(leitura(page).getByRole("heading", { name: comPonto.titulo })).toBeVisible();
   });
 
-  test("clicar em um ponto do mapa abre o acontecimento", async ({ page }) => {
-    // Selecionar pela lista leva o ponto ao centro do mapa; depois de fechar,
-    // a câmera fica onde está, e o clique no centro tem de selecionar de novo.
-    const umLugar = deLula.find(
-      (item) => item.localizacao.tipo === "lugares" && item.localizacao.lugarIds.length === 1,
-    )!;
-    await lista(page).getByRole("button", { name: umLugar.titulo }).click();
-    await leitura(page).getByRole("button", { name: "Fechar" }).click();
+  test("clicar em um marcador do mapa abre o acontecimento", async ({ page }) => {
+    // Um lugar com um acontecimento só: o marcador o seleciona direto. Os
+    // lugares com vários abrem uma lista (tests/e2e/mapa.spec.ts).
+    const sozinho = mapa(page).locator("button[data-marker][aria-pressed]").first();
+    const slug = (await sozinho.getAttribute("data-events"))!;
+    const aberto = deLula.find((item) => item.slug === slug)!;
+    expect(aberto.localizacao.tipo).toBe("lugares");
 
-    const caixa = await canvas(page).boundingBox();
-    if (!caixa) throw new Error("Canvas do mapa sem dimensões.");
-    await expect(async () => {
-      await page.mouse.click(caixa.x + caixa.width / 2, caixa.y + caixa.height / 2);
-      await expect(lista(page).locator('button[aria-pressed="true"]')).toHaveCount(1, { timeout: 500 });
-    }).toPass({ timeout: 10_000 });
-
-    // Pontos do mesmo lugar ou de municípios vizinhos se sobrepõem nesta escala:
-    // o clique abre o de cima. Vale qualquer acontecimento com ponto, desde que
-    // lista e painel mostrem o mesmo.
-    const id = await lista(page).locator('button[aria-pressed="true"]').getAttribute("id");
-    const aberto = deLula.find((item) => `item-${item.slug}` === id);
-    expect(aberto?.localizacao.tipo).toBe("lugares");
-    await expect(leitura(page).getByRole("heading", { name: aberto!.titulo })).toBeVisible();
+    await sozinho.click();
+    await expect(lista(page).locator('button[aria-pressed="true"]')).toHaveAttribute("id", `item-${slug}`);
+    await expect(leitura(page).getByRole("heading", { name: aberto.titulo })).toBeVisible();
   });
 
   test("acontecimento sem ponto no mapa continua na lista e no painel", async ({ page }) => {
@@ -412,8 +400,8 @@ test.describe("falha do mapa", () => {
     await page.route(/maplibre-gl.*\.js(\?|$)/, (route) => route.abort());
     await page.goto(PERFIL);
 
-    await expect(mapa(page).getByText("O mapa não pôde ser exibido neste navegador.")).toBeVisible();
-    await mapa(page).getByRole("button").first().click();
+    await expect(mapa(page).getByText("O mapa não pôde ser exibido agora.")).toBeVisible();
+    await mapa(page).locator("[data-ponto]").first().click();
     await expect(lista(page).locator('button[aria-pressed="true"]')).toHaveCount(1);
     await expect(leitura(page).getByRole("heading", { level: 3 }).first()).toBeVisible();
   });

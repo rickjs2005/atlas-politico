@@ -138,7 +138,7 @@ test.describe("estados", () => {
     for (const device of ["computador", "celular"] as const) {
       await prepare(page, device, PERFIL);
       if (device === "celular") await page.getByRole("button", { name: "Mapa", exact: true }).click();
-      await expect(page.getByText("O mapa não pôde ser exibido neste navegador.")).toBeVisible();
+      await expect(page.getByText(/O mapa não pôde ser exibido/)).toBeVisible();
       await shot(page, "10-estado-mapa-indisponivel", device);
     }
   });

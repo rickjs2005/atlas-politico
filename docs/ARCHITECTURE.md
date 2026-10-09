@@ -1,6 +1,6 @@
 # Arquitetura
 
-Descreve o que está implementado até a fase 5 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem quatro: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md) e [TIMELINE.md](TIMELINE.md).
+Descreve o que está implementado até a fase 6 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem cinco: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md) e [MAP.md](MAP.md).
 
 ## Visão geral
 
@@ -104,10 +104,11 @@ As fronteiras são verificadas, e não só combinadas:
 | `AtlasUrlStateProvider`, `EventList`, `Timeline`, `MapView` | Navegador | Idem, dentro do `Explorer`. No HTML do build saem com o estado inicial; o endereço é lido depois da hidratação |
 | `RouterWatcher` | Só navegador | Único uso de `useSearchParams`, isolado em um `Suspense` sem saída visual, para a exploração continuar inteira no HTML gerado |
 | `AtlasStateProvider` | Navegador | Estado em memória, para as telas de prova e os testes |
-| `MapCanvas` (MapLibre) | Só navegador | Carregado por `next/dynamic` com `ssr: false`. Não aparece no HTML do servidor |
+| `MapCanvas` (MapLibre) | Só navegador | Carregado por `next/dynamic` com `ssr: false`. Não aparece no HTML do servidor. A instância é criada uma vez; filtros e seleção não a recriam |
+| Contornos da base (`terra.geojson`, `estados-br.geojson`) | Só navegador | Arquivos próprios, publicados pelo bundler em `/_next/static/media/` e pedidos ao próprio site |
 | Worker do MapLibre | Só navegador | Arquivo próprio, publicado pelo bundler em `/_next/static/media/` |
 
-O mapa é o único ponto que exige `window` e WebGL. Ele fica atrás do `MapView`, que cuida do carregamento, do estado "Carregando o mapa…" e da troca pela lista de lugares quando o mapa falha. Nenhuma página depende do mapa para ser lida.
+O mapa é o único ponto que exige `window` e WebGL. Ele fica atrás do `MapView`, que cuida do carregamento, do estado "Carregando o mapa…", da troca pela lista de lugares quando o mapa falha e da nova tentativa. Nenhuma página depende do mapa para ser lida.
 
 ## Fluxo do conteúdo
 
@@ -217,22 +218,26 @@ Regras (ao carregar, recarregar, voltar ou avançar):
 
 | Funcionalidade | Recebe | Devolve | Não faz |
 |---|---|---|---|
-| `features/map` | Coleção GeoJSON do recorte (os pontos gerados, recortados por `filterPoints`) e o slug selecionado | `onSelect(slug)` ao clicar em um ponto | Não filtra, não guarda seleção, não lê conteúdo, não monta os pontos |
+| `features/map` | Coleção GeoJSON do recorte (os pontos gerados, recortados por `filterPoints`), os acontecimentos do recorte sem ponto (`listUnplaced`) e o slug selecionado | `onSelect(slug)` ao escolher um acontecimento, pelo marcador ou pelo seletor | Não filtra, não guarda seleção, não lê conteúdo, não monta os pontos, não escreve no endereço |
 | `features/events` | Lista de acontecimentos e as lacunas do conjunto, ou um acontecimento resolvido | `onSelect(slug)` na lista | Não conhece o mapa, não calcula lacunas |
 | `features/timeline` | Domínio de anos, acontecimentos do recorte, período e categorias em vigor, cargos e partidos do período | `onSelect(slug)` nas marcas; `onChange` e `onPeriodChange` do período; `onToggle` das categorias | Não fala com o mapa, não guarda recorte, não escreve no endereço |
 | `features/comparison` | Uma faixa por pessoa: acontecimentos, mandatos, filiações, cobertura e lacunas | Apenas apresentação | Não calcula nota nem ranking |
 
-As funcionalidades não se importam entre si. Quem as junta é a página, por meio do estado central: a lista despacha `selectEvent`, o provider escreve o endereço e recalcula o recorte, e o mapa recebe o novo slug selecionado. O clique no mapa percorre o mesmo caminho. O que o mapa pode assumir desse contrato está em [TIMELINE.md](TIMELINE.md), seção Contrato com o mapa.
+As funcionalidades não se importam entre si. Quem as junta é a página, por meio do estado central: a lista despacha `selectEvent`, o provider escreve o endereço e recalcula o recorte, e o mapa recebe o novo slug selecionado. O clique no mapa percorre o mesmo caminho. O contrato está em [TIMELINE.md](TIMELINE.md), seção Contrato com o mapa, e o que o mapa faz com ele, em [MAP.md](MAP.md).
 
 Dentro de `features/map`:
 
 - Os pontos não são montados aqui. Vêm de `generated/dados/geo/`, feitos pelo gerador com `src/lib/data/points.ts`: um ponto por lugar documentado; abrangência nacional e lugar desconhecido não geram ponto.
-- `style.ts` monta o estilo local: mar, grade, terra, Brasil em foco, divisas dos estados, fronteiras, pontos na cor da categoria e duas camadas para a seleção. Sem tiles, sprites ou glyphs.
-- `palette.ts` repete, para o WebGL, as cores que vêm dos tokens CSS. Um teste confere a sincronia.
-- `base/` guarda os contornos do Natural Earth 1:50m, base provisória até a fase 6 (D-43).
+- `places.ts` (puro) transforma os pontos em lugares e os lugares em marcadores, juntando os que se cobririam na escala em vigor.
+- `camera.ts` (puro) guarda os limites da base, os tetos de zoom por precisão e as regras de enquadramento.
+- `style.ts` monta o estilo local, só da base: mar, grade, terra, Brasil em foco, divisas dos estados e fronteiras. Sem tiles, sprites ou glyphs.
+- `palette.ts` repete, para o WebGL, as seis cores da base que vêm dos tokens CSS. Um teste confere a sincronia.
+- `base/` guarda os contornos do Natural Earth 1:50m, a base do mapa (D-58).
 - `graticule.ts` gera a grade de meridianos e paralelos.
-- `MapCanvas.tsx` cria o mapa, sincroniza dados e seleção e move a câmera.
-- `MapView.tsx` carrega o `MapCanvas` só no navegador, mostra o carregamento e a lista de lugares em caso de falha.
+- `MapCanvas.tsx` cria a instância do MapLibre, põe os marcadores sobre o canvas, aplica as regras de câmera e trata a perda de contexto.
+- `PlaceMarker.tsx`, `PlaceChooser.tsx`, `MapControls.tsx` e `MapLegend.tsx` são apresentação, sem MapLibre: o marcador, o seletor de acontecimentos de um marcador, os controles e a legenda.
+- `MapFallback.tsx` é a lista de lugares que assume quando o mapa falha.
+- `MapView.tsx` é a fronteira: carrega o `MapCanvas` só no navegador, mostra o carregamento e decide entre o mapa e a lista de lugares.
 
 ## Espaços reservados
 
@@ -241,14 +246,14 @@ Dentro de `features/map`:
 | `content/drafts/` | Registros em pesquisa e importações | Em uso desde a fase 2 |
 | `content/published/` | A edição revisada | Em uso desde a fase 2 |
 | `scripts/` | Comandos de dados (`data.mts`, com `register.mjs`), conferência e pré-visualização da saída | Em uso desde a fase 3 |
-| `public/geo/` | A base cartográfica definitiva e, se adotados, os glyphs do mapa. A base provisória da fase 4 fica em `src/features/map/base/` | 6 |
 | `public/media/` | Retratos e imagens de acontecimentos | Em uso desde a fase 2 |
 | `src/app/fonts/` | Fontes tipográficas locais | Em uso desde a fase 4 |
 | `src/features/timeline/` | Linha do tempo, controles do recorte, escolha de período no eixo e cargos e partidos do período | Em uso desde a fase 4; completa na fase 5 |
+| `src/features/map/` | Mapa, base de contornos, marcadores, seletor, câmera e falhas | Em uso desde a fase 1; completo na fase 6 |
 | `src/features/comparison/` | Faixas das trajetórias na mesma escala. Ligação com o estado central e o endereço | Base na fase 4; completa na 7 |
-| `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova, as quatro telas e a navegação temporal com o endereço, em três larguras | Em uso; cresce até a fase 9 |
+| `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova, as quatro telas, a navegação temporal com o endereço e o mapa sincronizado, em três larguras | Em uso; cresce até a fase 9 |
 
-`public/geo/` e `public/media/` têm um `.gitkeep` cada, que é copiado para `out/`. São arquivos vazios; saem quando os arquivos reais entrarem.
+A pasta `public/geo/`, reservada na fase 1 para a base do mapa, deixou de existir na fase 6: os contornos ficam em `src/features/map/base/` e são publicados pelo bundler (D-58).
 
 ## Evolução para banco e painel editorial
 

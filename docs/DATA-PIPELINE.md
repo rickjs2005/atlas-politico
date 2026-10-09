@@ -274,7 +274,7 @@ Regras:
 
 `dados/geo/pessoas/<slug>.geojson` traz o recorte de cada pessoa, com as mesmas propriedades. Um acontecimento compartilhado aparece nos dois arquivos.
 
-`pessoaIds` é uma lista. Serve para filtrar no JavaScript, que é como a interface filtra hoje (`filterPoints`). Expressões de estilo do MapLibre não leem listas dentro de propriedades; se a fase 6 quiser filtrar na camada, usa `eventId` contra o conjunto de acontecimentos visíveis.
+`pessoaIds` é uma lista. Serve para filtrar no JavaScript, que é como a interface filtra hoje (`filterPoints`). A fase 6 manteve o filtro no JavaScript: o mapa recebe os pontos já recortados e os junta por `placeId`, um marcador por lugar ([MAP.md](MAP.md)).
 
 ## Consultas
 

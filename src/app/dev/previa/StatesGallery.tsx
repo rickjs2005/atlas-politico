@@ -16,7 +16,9 @@ import { PeriodLane } from "@/components/time/PeriodLane";
 import { EventList } from "@/features/events/EventList";
 import { EventPanel } from "@/features/events/EventPanel";
 import { clipGaps } from "@/features/events/chronology";
-import { MapFallback } from "@/features/map/MapView";
+import { MapFallback } from "@/features/map/MapFallback";
+import { MapLegend } from "@/features/map/MapLegend";
+import { MarkerSymbol } from "@/features/map/PlaceMarker";
 import { CategoryFilter } from "@/features/timeline/CategoryFilter";
 import { PeriodContext } from "@/features/timeline/PeriodContext";
 import { PeriodControl } from "@/features/timeline/PeriodControl";
@@ -329,14 +331,47 @@ export function StatesGallery({ data }: { data: AtlasData }) {
         </Specimen>
 
         <Specimen
+          title="Marcadores do mapa (fase 6)"
+          note="Um marcador por lugar. Um acontecimento: forma e cor da categoria. Vários: a quantidade de acontecimentos. Tracejado: só o estado é conhecido. Anel de acento: onde fica o acontecimento aberto. Anel de tinta: a lista daquele marcador está aberta."
+        >
+          <ul className="flex flex-wrap items-center gap-x-8 gap-y-4 text-xs text-ink-soft">
+            {CATEGORIAS.map((categoria) => (
+              <li key={categoria} className="flex items-center gap-2">
+                <MarkerSymbol categoria={categoria} count={1} />
+              </li>
+            ))}
+            <li className="flex items-center gap-2">
+              <MarkerSymbol count={4} /> vários
+            </li>
+            <li className="flex items-center gap-2">
+              <MarkerSymbol categoria="eleicoes" count={1} broad /> só o estado
+            </li>
+            <li className="flex items-center gap-2">
+              <MarkerSymbol count={7} broad /> só o estado, vários
+            </li>
+            <li className="flex items-center gap-2">
+              <MarkerSymbol count={3} selected /> selecionado
+            </li>
+            <li className="flex items-center gap-2">
+              <MarkerSymbol count={3} open /> lista aberta
+            </li>
+          </ul>
+          <div className="relative h-56 border border-ink-faint bg-map-sea">
+            <MapLegend single="eleicoes" multiple broad selected className="absolute bottom-0 left-0" />
+          </div>
+        </Specimen>
+
+        <Specimen
           title="Mapa indisponível"
-          note="Sem WebGL, sem o pacote do mapa ou sem resposta em 15 segundos: os lugares do recorte viram lista, com a mesma seleção."
+          note="Sem WebGL, sem o pacote do mapa, sem os contornos, sem resposta em 15 segundos ou com o contexto gráfico perdido: os lugares do recorte viram lista, com a mesma seleção, e a tela oferece nova tentativa quando ela faz sentido."
         >
           <div className="h-80">
             <MapFallback
               features={filterPoints(data.pontos, noRecorte.slice(0, 6))}
               selectedSlug={selecionado}
               onSelect={setSelecionado}
+              reason="base"
+              onRetry={() => {}}
             />
           </div>
         </Specimen>

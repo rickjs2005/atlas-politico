@@ -72,3 +72,35 @@ export function filterPoints(
     features: colecao.features.filter((ponto) => ids.has(ponto.properties.eventId)),
   };
 }
+
+/** Um acontecimento sem ponto no mapa, com o motivo. */
+export interface UnplacedEvent {
+  eventId: string;
+  slug: string;
+  titulo: string;
+  categoria: Acontecimento["categoria"];
+  data: Acontecimento["data"];
+  /** `nacional`: abrangência nacional. `desconhecida`: lugar não documentado. */
+  motivo: "nacional" | "desconhecida";
+}
+
+/**
+ * Os acontecimentos de um recorte que não geram ponto, na ordem recebida. O
+ * mapa não inventa um lugar para eles: mostra quantos são e dá acesso a cada
+ * um, com o motivo.
+ */
+export function listUnplaced(acontecimentos: readonly Acontecimento[]): UnplacedEvent[] {
+  return acontecimentos.flatMap((acontecimento) => {
+    if (acontecimento.localizacao.tipo === "lugares") return [];
+    return [
+      {
+        eventId: acontecimento.id,
+        slug: acontecimento.slug,
+        titulo: acontecimento.titulo,
+        categoria: acontecimento.categoria,
+        data: acontecimento.data,
+        motivo: acontecimento.localizacao.tipo,
+      },
+    ];
+  });
+}

@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { CATEGORY_VISUAL } from "@/components/Category";
-import { CATEGORY_COLORS, PALETTE_TOKENS } from "@/features/map/palette";
+import { PALETTE_TOKENS } from "@/features/map/palette";
 import { CATEGORIAS } from "@/lib/domain/categories";
 import { PROFILES } from "@/lib/domain/profiles";
 
@@ -52,8 +52,12 @@ describe("tokens e mapa", () => {
     }
   });
 
-  it("toda categoria tem cor no mapa e forma própria na interface", () => {
-    expect(Object.keys(CATEGORY_COLORS).sort()).toEqual([...CATEGORIAS].sort());
+  it("o mapa só repete as cores da base: marcador é HTML e usa os tokens direto", () => {
+    expect(Object.keys(PALETTE_TOKENS).every((nome) => nome.startsWith("--atlas-map-"))).toBe(true);
+  });
+
+  it("toda categoria tem forma própria na interface, e o mapa usa a mesma", () => {
+    expect(Object.keys(CATEGORY_VISUAL).sort()).toEqual([...CATEGORIAS].sort());
     const formas = CATEGORIAS.map((categoria) => CATEGORY_VISUAL[categoria].forma);
     // A categoria não depende da cor: nenhuma forma se repete.
     expect(new Set(formas).size).toBe(CATEGORIAS.length);

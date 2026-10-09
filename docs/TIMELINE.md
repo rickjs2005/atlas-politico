@@ -230,15 +230,14 @@ A linha do tempo e o mapa não se conhecem. Os dois leem o mesmo provider, por `
 | `selected` | `Acontecimento` ou `null` | O acontecimento selecionado, sempre dentro de `visible` |
 | `dispatch` | função | `selectEvent`, `setPeriod`, `toggleCategory`, `clearCategories`, `clearFilters` |
 
-Como o mapa consome hoje, e como a fase 6 deve consumir:
+Como o mapa consome o contrato, desde a fase 6 ([MAP.md](MAP.md)):
 
-- **Pontos do recorte:** `filterPoints(data.pontos, visible)` devolve a coleção GeoJSON só com os pontos dos acontecimentos visíveis. Cada ponto tem `eventId`, `placeId` e `acontecimentoSlug`. Para filtrar uma camada já carregada, sem refazer a coleção, basta `visibleIds`.
+- **Pontos do recorte:** `filterPoints(data.pontos, visible)` devolve a coleção GeoJSON só com os pontos dos acontecimentos visíveis. Cada ponto tem `eventId`, `placeId` e `acontecimentoSlug`. O mapa junta os pontos por lugar e desenha um marcador por lugar; não usa `visibleIds`, que continua exposto para quem precisar filtrar sem refazer a coleção.
+- **Acontecimentos sem ponto:** `listUnplaced(visible)` devolve os do recorte que não geram ponto, com o motivo. O mapa dá acesso a eles pelo botão **sem ponto no mapa**.
 - **Seleção para o mapa:** `state.acontecimento`, entregue a `MapView` como `selectedSlug`.
 - **Seleção vinda do mapa:** `MapView` chama `onSelect(slug)`, e a exploração despacha `selectEvent`. É o mesmo caminho da lista e da linha do tempo, com a mesma entrada no histórico.
-- **Garantias que o mapa pode assumir:** o selecionado sempre está em `visible`; um acontecimento aparece uma vez em `visible`, mesmo com vários lugares; `visible` muda uma vez por ação, inclusive no arraste de período.
-- **O que fica com a fase 6:** pontos sobrepostos, movimento de câmera, formas de categoria e pontos alcançáveis pelo teclado. Nada disso pede mudança no estado nem no endereço.
-
-`MapView` e `MapCanvas` não foram alterados no comportamento. A lista de lugares que substitui o mapa em caso de falha recebe os mesmos pontos do recorte.
+- **Garantias que o mapa assume:** o selecionado sempre está em `visible`; um acontecimento aparece uma vez em `visible`, mesmo com vários lugares; `visible` muda uma vez por ação, inclusive no arraste de período.
+- **O que o mapa não faz:** não filtra, não guarda seleção e não escreve no endereço. A câmera e o seletor de lugares são estado local dele e não vão para o endereço.
 
 ## Verificações
 

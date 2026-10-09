@@ -105,26 +105,36 @@ test("o painel distingue revisão humana de conferência assistida por IA", asyn
   await expect(painel(page)).toContainText("Revisão humana pendente");
 });
 
-test("clicar em um ponto do mapa seleciona o acontecimento", async ({ page }) => {
+test("clicar em um marcador do mapa seleciona o acontecimento", async ({ page }) => {
   await openWithMap(page);
-
-  // Selecionar pela lista leva o ponto ao centro do mapa. Desfazer a seleção
-  // deixa a câmera onde está, e o clique no centro tem de selecionar de novo.
-  await item(page, "02").click();
-  await expect(painel(page)).toContainText("março de 2003");
-  await item(page, "02").click();
   await expect(painel(page)).toContainText("Escolha um acontecimento");
 
-  const caixa = await canvas(page).boundingBox();
-  if (!caixa) throw new Error("Canvas do mapa sem dimensões.");
+  // O lugar do acontecimento 02 tem só ele: o marcador o seleciona direto.
+  const marcador = mapa(page).getByRole("button", { name: /^Lugar de teste Centro: / });
+  await expect(marcador).toHaveAttribute("aria-pressed", "false");
+  await marcador.click();
 
-  await expect(async () => {
-    await page.mouse.click(caixa.x + caixa.width / 2, caixa.y + caixa.height / 2);
-    await expect(item(page, "02")).toHaveAttribute("aria-pressed", "true", { timeout: 500 });
-  }).toPass({ timeout: 10_000 });
-
+  await expect(item(page, "02")).toHaveAttribute("aria-pressed", "true");
+  await expect(marcador).toHaveAttribute("aria-pressed", "true");
   await expect(painel(page)).toContainText("março de 2003");
   await page.screenshot({ path: `${SCREENS}/03-selecao-pelo-mapa.png` });
+});
+
+test("um lugar fora da área do mapa não some: fica na lista do próprio mapa", async ({ page }) => {
+  await openWithMap(page);
+
+  // O lugar de teste no exterior não cabe na base, que cobre a América do Sul.
+  await expect(mapa(page).locator("[data-marker]").filter({ hasText: "exterior" })).toHaveCount(0);
+  await mapa(page).getByRole("button", { name: /sem ponto no mapa/ }).click();
+  const lista = mapa(page).locator("[data-chooser]");
+  await expect(lista).toContainText("Lugar de teste no exterior");
+  await expect(lista).toContainText("fora da área que este mapa cobre");
+  await expect(lista).toContainText("Abrangência nacional");
+  await expect(lista).toContainText("Lugar não documentado");
+
+  await lista.getByRole("button", { name: /Acontecimento de teste 07/ }).click();
+  await expect(item(page, "07")).toHaveAttribute("aria-pressed", "true");
+  await expect(mapa(page)).toContainText("fora da área que este mapa cobre: Lugar de teste no exterior");
 });
 
 test("trocar a pessoa mantém lista, mapa e painel no mesmo recorte", async ({ page }) => {
@@ -171,7 +181,9 @@ test("sem WebGL, a lista de lugares assume e a seleção continua", async ({ pag
   await simular.click();
   await expect(mapa(page).getByText("O mapa não pôde ser exibido neste navegador.")).toBeVisible();
   await expect(canvas(page)).toHaveCount(0);
-  await expect(mapa(page).getByRole("button")).toHaveCount(6);
+  // Um item por ponto. Sem WebGL não há o que tentar de novo.
+  await expect(mapa(page).locator("[data-ponto]")).toHaveCount(6);
+  await expect(mapa(page).getByRole("button", { name: /Tentar de novo|Recarregar/ })).toHaveCount(0);
 
   await mapa(page).getByRole("button", { name: /Lugar de teste Nordeste/ }).click();
   await expect(item(page, "05")).toHaveAttribute("aria-pressed", "true");
@@ -190,7 +202,8 @@ test("se o pacote do mapa não baixa, a lista de lugares assume", async ({ page 
   await page.route(/maplibre-gl.*\.js(\?|$)/, (route) => route.abort());
   await page.goto(PROVA);
 
-  await expect(mapa(page).getByText("O mapa não pôde ser exibido neste navegador.")).toBeVisible();
+  await expect(mapa(page).getByText("O mapa não pôde ser exibido agora.")).toBeVisible();
+  await expect(mapa(page).getByRole("button", { name: "Recarregar a página" })).toBeVisible();
   await item(page, "01").click();
   await expect(painel(page)).toContainText("1994");
 });
@@ -201,9 +214,10 @@ test("se o worker do mapa não carrega, a lista de lugares assume ao fim da espe
   await page.goto(PROVA);
 
   await expect(page.getByText("Carregando o mapa…")).toBeVisible();
-  await expect(mapa(page).getByText("O mapa não pôde ser exibido neste navegador.")).toBeVisible({
+  await expect(mapa(page).getByText("O mapa não pôde ser exibido agora.")).toBeVisible({
     timeout: 25_000,
   });
+  await expect(mapa(page).getByRole("button", { name: "Tentar de novo" })).toBeVisible();
   await mapa(page).getByRole("button", { name: /Lugar de teste Norte/ }).click();
   await expect(painel(page)).toContainText("1994");
 });

@@ -9,7 +9,200 @@ Atualizado em 9 de outubro de 2026.
 | 3. Camada de dados e preparação do backend | Concluída em 08/10/2026 |
 | 4. Experiência e direção visual | Concluída em 08/10/2026, com prévia navegável |
 | 5. Aplicação e linha do tempo | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
-| 6 a 10 | Não iniciadas |
+| 6. Mapa sincronizado | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
+| 7 a 10 | Não iniciadas |
+
+## Fase 6 (mapa sincronizado)
+
+Entrega: o mapa ligado ao recorte e à seleção da exploração, com conteúdo real. Um marcador por lugar documentado, seleção nos dois sentidos, uma lista para os acontecimentos que dividem um lugar, acesso aos que não têm ponto e a leitura preservada quando o mapa falha. A especificação está em [MAP.md](MAP.md); o comportamento de cada controle, em [INTERACTIONS.md](INTERACTIONS.md); as decisões, em [DECISIONS.md](DECISIONS.md), de D-58 a D-65; as capturas, em [capturas/fase-6/](capturas/README.md).
+
+Para abrir: `npm run dev` e `http://localhost:3000/politicos/lula/`. Em tela estreita, o mapa fica na vista **Mapa**. Exemplos de endereço estão em MAP.md e no README.
+
+### Critério de conclusão do plano
+
+"Mapa, lista e painel permanecem sincronizados; acontecimentos sem lugar municipal continuam acessíveis; falha de WebGL preserva a leitura do conteúdo."
+
+O pedido da fase escreveu o mesmo critério com mais alcance: "mapa, lista, linha do tempo e painel mostram o mesmo recorte e seleção; todos os acontecimentos continuam consultáveis; uma falha do mapa preserva a leitura do conteúdo". A tabela segue esta versão.
+
+| Parte do critério | Situação | Como foi conferido |
+| --- | --- | --- |
+| Mapa, lista, linha do tempo e painel mostram o mesmo recorte e seleção | Atendido | O mapa não filtra nem guarda seleção: recebe os pontos que a exploração já recortou e o acontecimento aberto. Os testes de navegador comparam, com filtros combinados, os acontecimentos dos marcadores com os da lista e com a conta feita sobre os dados gerados. Conferem a seleção vinda do marcador, da lista do marcador, da lista de acontecimentos, da linha do tempo e do endereço, inclusive depois de recarregar, voltar e avançar. Conferem também que mover a câmera não muda a seleção nem o endereço |
+| Todos os acontecimentos continuam consultáveis | Atendido | O lugar com vários acontecimentos abre uma lista com todos, em qualquer zoom. Os 13 sem ponto ficam no botão **sem ponto no mapa** e continuam na lista e na linha do tempo. Um teste percorre cada marcador e confere que o número é o de acontecimentos distintos e que cada acontecimento aparece em todos os seus lugares |
+| Uma falha do mapa preserva a leitura do conteúdo | Atendido | Cinco falhas tratadas e testadas em navegador: sem WebGL, pacote que não chega, mapa que não termina de carregar, contornos que não carregam e perda do contexto gráfico. Em todas, filtros, endereço, lista, linha do tempo e painel continuam, e a lista de lugares assume a área do mapa |
+
+### Passos do plano e situação de cada um
+
+| Passo | Situação |
+| --- | --- |
+| 1. Base geográfica local e estilo do mapa | Feito. A base da fase 4 foi adotada, com origem, licença e transformações registradas, e o estilo ficou só com a base (D-58) |
+| 2. Plotar os acontecimentos com localização documentada | Feito: um marcador por lugar, com o nome ao lado. Na edição, 26 acontecimentos em 9 lugares |
+| 3. Foco e seleção nos dois sentidos | Feito: o marcador e a lista dele selecionam; a lista de acontecimentos, a linha do tempo e o endereço destacam todos os lugares do acontecimento |
+| 4. Agrupar ou permitir escolher pontos sobrepostos | Feito: um marcador por lugar, lugares próximos juntos e uma lista para escolher (D-60) |
+| 5. Pontos de acordo com pessoa, período e categoria | O recorte já vinha da fase 5. Nesta, os marcadores, os números e o botão dos sem ponto o acompanham, com teste de filtros combinados |
+| 6. Limites de zoom | Feito: de 2 a 6, câmera presa à área da base e teto pela precisão do lugar na aproximação automática (D-58, D-61) |
+| 7. Câmera e gestos em computador e celular | Feito: a câmera só anda quando precisa; gestos livres na exploração e cooperativos na página do acontecimento. Conferido com toque emulado; falta aparelho real |
+| 8. Lista e detalhes utilizáveis quando o mapa falhar | Feito: cinco falhas, com mensagem, saída e a lista de lugares (D-64) |
+
+### O que foi entregue
+
+- **Marcadores por lugar,** em HTML sobre a base: a forma e a cor da categoria quando o lugar tem um acontecimento, a quantidade quando tem vários, contorno tracejado quando só o estado é conhecido, e o nome do lugar ao lado.
+- **Lista de um marcador,** para lugares com vários acontecimentos e para lugares próximos: data na precisão do registro, título, categoria e lugar. Folha embaixo em celular, quadro no canto nas demais larguras.
+- **Seleção nos dois sentidos,** pelo mesmo estado e pelo mesmo endereço da fase 5. O acontecimento com dois lugares destaca os dois.
+- **Sem ponto no mapa:** botão com a quantidade, que abre a lista dos acontecimentos de abrangência nacional, sem lugar documentado ou fora da área da base, com o motivo. O mapa avisa quando o acontecimento aberto não tem ponto e quando o recorte não tem nenhum.
+- **Câmera** que enquadra o recorte ao abrir, só se move quando a seleção ou o recorte ficam fora da vista, respeita quem moveu o mapa e não se aproxima sozinha além do que a precisão do lugar sustenta.
+- **Controles** de aproximar, afastar e enquadrar, e **legenda** com os símbolos em uso e o aviso de base simplificada.
+- **Limites da base:** zoom de 2 a 6 e câmera dentro da área que os contornos cobrem.
+- **Página do acontecimento** com o mesmo mapa, só para leitura: marcadores com nome e gestos cooperativos, para a página continuar rolando.
+- **Falhas** com mensagem por causa, **Tentar de novo** ou **Recarregar a página**, e a lista de lugares agrupada por lugar.
+- **Base documentada:** origem, licença, resolução e transformações em `src/features/map/base/README.md`. A pasta `public/geo/` foi removida.
+- **Guia de estados** (`/dev/previa/`) com os marcadores e a falha da base.
+- **Capturas** da fase e o comando que as refaz: `npm run capture:map`.
+
+### Arquivos
+
+Comparação com o estado da fase 5: 43 arquivos de código e de documentação (12 novos, 30 alterados e 1 removido), mais 21 capturas.
+
+| Onde | O quê |
+| --- | --- |
+| `docs/` | Novo: MAP.md e `capturas/fase-6/` (21 imagens). Atualizados: ARCHITECTURE.md, DATA-PIPELINE.md, DECISIONS.md, DESIGN-SYSTEM.md, INTERACTIONS.md, TIMELINE.md, UX.md, STATUS.md e `capturas/README.md` |
+| `src/features/map/` | Novos: `places.ts`, `camera.ts`, `PlaceMarker.tsx`, `PlaceChooser.tsx`, `MapControls.tsx`, `MapLegend.tsx` e `MapFallback.tsx`. Reescritos: `MapCanvas.tsx` e `MapView.tsx`. Atualizados: `style.ts` e `palette.ts` (só a base) e `base/README.md` |
+| `src/lib/data/` | `points.ts`: `listUnplaced` |
+| `src/app/` | `politicos/[slug]/Explorer.tsx` (entrega ao mapa os sem ponto e o cartão), `acontecimentos/[slug]/EventLocator.tsx` (gestos cooperativos), `dev/prova/ProofScreen.tsx`, `dev/previa/StatesGallery.tsx` e `globals.css` (saiu o estilo dos controles do MapLibre) |
+| `tests/` | Novos: `map-places.test.ts`, `map-camera.test.ts`, `e2e/mapa.spec.ts` e `e2e/mapa.capture.ts`. Atualizados: `map.test.ts`, `design.test.ts`, `e2e/previa.spec.ts`, `e2e/linha-do-tempo.spec.ts`, `e2e/prova.spec.ts` e os dois roteiros de captura anteriores |
+| Raiz | `package.json` (`capture:map`), README.md, `.claude/project-state.md` e a remoção de `public/geo/.gitkeep` |
+
+`content/` não foi alterado, nenhuma dependência foi acrescentada, e as imagens de `docs/capturas/fase-4/` e `fase-5/` não foram refeitas.
+
+### Jornada implementada e o que segue em demonstração
+
+Implementado, com dados reais e teste de navegador:
+
+- Marcadores do recorte, com filtros de período e de categoria combinados.
+- Seleção pelo marcador, pela lista do marcador, pela lista de acontecimentos, pela linha do tempo e pelo endereço.
+- Lugar com vários acontecimentos e lugares vizinhos no zoom máximo, com todos os itens acessíveis.
+- Acontecimento com dois lugares, com os dois destacados.
+- Acontecimento sem ponto, aberto pelo mapa, e recorte sem nenhum ponto.
+- Câmera: enquadramento inicial, seleção à vista e fora da vista, mapa movido pela pessoa e retorno pelo botão de enquadrar.
+- Limites de zoom, com os botões desativados no limite.
+- Teclado: marcadores, lista do marcador, controles e legenda.
+- Falhas: contornos, contexto gráfico, pacote, tempo de espera e navegador sem WebGL.
+- Celular: folha embaixo, cartão, áreas de toque e troca de vista.
+- Página do acontecimento: mapa de leitura e rolagem da página.
+
+Com dados sintéticos, em `/dev/prova/`: lugar fora da área que a base cobre.
+
+Em demonstração, com o contrato de cada um em INTERACTIONS.md: comparação ligada ao estado e ao endereço, retorno da página do acontecimento com o recorte de antes, rótulos da base, lugares fora da América do Sul, fonte indisponível e imagem de acontecimento.
+
+### O que a fase 5 deixou para esta fase
+
+| Ponto | Como ficou |
+| --- | --- |
+| Base definitiva, rótulos e glyphs (D-43) | Base adotada, sem rótulos próprios. Os nomes no mapa são os dos lugares do conteúdo, em HTML (D-58) |
+| Agrupar ou listar os pontos sobrepostos | Os dois: um marcador por lugar, lugares próximos juntos e uma lista para escolher (D-60) |
+| Rever foco e seleção com pontos sobrepostos | O clique em um lugar com vários acontecimentos não escolhe nenhum: abre a lista |
+| Limites de navegação | Zoom de 2 a 6 e câmera presa à área da base |
+| Conviver com o cartão do mapa em celular | A lista do marcador toma o lugar do cartão enquanto está aberta, e a câmera conta o que cada um cobre |
+| Forma da categoria no mapa e pontos pelo teclado | Feitos, com os marcadores em HTML (D-59) |
+| Buscar o GeoJSON por endereço (D-28) | Não foi preciso: o mapa continua recebendo os pontos pela página |
+
+### Problemas achados na conferência e corrigidos
+
+A conferência foi feita abrindo a exploração em um Chromium, em computador, tablet e celular, capturando as telas e olhando cada captura.
+
+| Problema | Correção |
+| --- | --- |
+| O mapa aparecia em branco: o MapLibre impõe `position: relative` ao próprio contêiner, e a altura dele virava zero | O contêiner passou a ter altura e largura explícitas |
+| O enquadramento sem pontos passava da área que a base cobre | Caixa corrigida; um teste confere que ela cabe na área |
+| Um lugar fora da América do Sul não teria como ser desenhado com a câmera presa à base | Fica fora do mapa e entra na lista **sem ponto no mapa**, com o nome |
+| Depois de um zoom, a ordem do Tab deixava de seguir a dos lugares. Aparecia no servidor de desenvolvimento, com os marcadores do MapLibre | Marcadores como elementos do React, em um portal dentro do contêiner do canvas (D-59) |
+| O contorno tracejado, no disco com número, parecia uma engrenagem | O tracejado fica por fora do disco, e a legenda só o mostra quando algum marcador o usa |
+| Abrir a lista de um marcador recentrava o mapa | A câmera desloca só o que falta para o marcador sair de baixo da lista |
+| Quando um filtro fechava a lista do marcador, o foco saltava para o marcador | O foco só volta quando a lista é fechada por dentro: Esc, **Fechar** ou a escolha de um item |
+| Em celular, com o mapa escondido em outra vista, a câmera enquadrava um quadro sem tamanho | As regras de câmera esperam o mapa voltar à tela |
+| Em tablet, os controles tinham 36 pixels | 44 pixels em telas estreitas e médias, 36 em tela larga |
+| O aviso de acontecimento sem ponto cobria o marcador mais ao norte, e em tablet o botão dos sem ponto encostava nele | Os avisos ficam ao lado do botão, e o enquadramento deixa a faixa de cima livre quando o quadro tem altura para isso |
+| Em celular, o nome de um lugar à direita passava por baixo dos controles | O enquadramento deixa mais espaço à direita |
+| Em computador, a lista do marcador cobria o resumo da legenda e deixava à mostra a borda do botão dos sem ponto | O quadro cobre o botão e para antes da legenda |
+| O anel de seleção encostava no nome do lugar | O nome ficou 4 pixels mais afastado do marcador |
+| Com o fundo da legenda aberta opaco, a base do mapa sumia ao lado dela no navegador dos testes | O fundo é quase opaco, e dois testes comparam o mapa pixel a pixel (MAP.md, seção Falhas) |
+| A tela de prova não entregava ao mapa os acontecimentos sem ponto | Passou a entregar |
+| O número do botão **sem ponto no mapa** contaria um acontecimento que tem marcador, quando ele tivesse um lugar dentro da área e outro fora | A conta passou a ser dos acontecimentos sem nenhum marcador; um teste confere. O caso não existe na edição |
+| O estilo dos controles do MapLibre ficou sem uso em `globals.css` | Removido |
+| Seis testes das fases anteriores dependiam do mapa antigo: clique no centro do canvas, contagem de botões e texto da falha | Reescritos para o mapa novo |
+
+### Verificações executadas
+
+Todas em 09/10/2026, com Node 24.15.0 no Windows 11.
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run lint` | Sem problemas |
+| `npm run typecheck` | Sem erros |
+| `npm run test` | 435 testes passando, em 21 arquivos. Eram 382 em 19 |
+| `npm run build` | 47 páginas HTML, como antes |
+| `npm run verify:export` | 264 arquivos; 39 acontecimentos com página, 5 rascunhos sem página, nenhum dado sintético, nenhuma rota de desenvolvimento |
+| `npm run test:e2e` | 124 testes passando: 14 da prova sintética, 7 dos dados reais, 28 da prévia, 40 da navegação temporal e 35 do mapa. Eram 88 |
+| `npm run capture:map` | 21 capturas, conferidas uma a uma |
+| Saída estática, servida por `npm run preview` | Marcadores do recorte, seleção pelo marcador e pela lista do marcador, seleção restaurada ao recarregar, acontecimento sem ponto aberto pelo mapa e mapa da página do acontecimento: todos como no servidor de desenvolvimento. Os contornos e o worker saem de `/_next/static/media/`, com os tipos `application/geo+json` e `text/javascript`. Nenhum pedido a outro domínio |
+| Larguras conferidas pelas capturas | 1440×900, 1280×720, 768×1024 e 390×844 |
+| Teclado e foco | Tab pelos marcadores, de norte a sul; Enter abre a lista; Tab, Enter e Esc dentro dela; foco devolvido ao marcador; controles e legenda com nome e foco visível |
+| Toque | Em 390×844, com toque emulado: áreas de 44 pixels nos marcadores, nos controles e no botão dos sem ponto; folha, cartão e troca de vista |
+| Movimento | Os testes rodam com movimento reduzido, como nas fases anteriores. Um teste roda com o movimento ligado e confere que a câmera chega ao lugar selecionado |
+| Instância do mapa | Um teste confere que o canvas é o mesmo elemento depois de várias mudanças de filtro e de seleção |
+| Perda de contexto | Simulada com a extensão `WEBGL_lose_context`: o aviso aparece, o mapa retoma quando o contexto volta e, sem retomada, a lista assume em 5 segundos |
+
+Dezenove regras foram quebradas de propósito, uma por vez, para confirmar que os testes falham. Sete nas regras puras: número do marcador contando pontos, lugares vizinhos sem agrupar, destaque só no primeiro lugar, sem ponto contando quem tem marcador, teto de zoom pelo lugar mais preciso, "à vista" ignorando o que cobre o mapa e acontecimento sem lugar documentado fora da lista dos sem ponto. Doze no navegador: clique escolhendo o primeiro acontecimento, recorte sempre recentrando, seleção sempre movendo a câmera, seleção nunca movendo, filtro recriando o mapa, falha dos contornos ignorada, contexto perdido sem saída, foco sem voltar ao marcador, zoom sem limite, sem ponto fora do mapa, página do acontecimento com gestos livres e legenda aberta com fundo opaco. Em todos os casos algum teste falhou, e o código foi restaurado.
+
+### Implementado e não verificado
+
+- **Navegador com janela visível, Firefox e Safari.** Tudo foi conferido em um Chromium sem interface, com WebGL por software. O desenho com placa de vídeo real e o comportamento em outro motor não foram vistos.
+- **Celular e tablet reais.** As larguras e o toque foram emulados. A pinça, o arraste com o dedo e os dois dedos dos gestos cooperativos não foram exercitados.
+- **Roda do mouse e pinça na exploração.** São do MapLibre. Os testes cobrem os botões, o arraste com o ponteiro e a roda na página do acontecimento.
+- **Teclado do canvas.** As setas e as teclas `+` e `-` com o foco no mapa são do MapLibre e não têm teste próprio.
+- **Perda real do contexto gráfico.** Só a simulada pela extensão do navegador.
+- **Quadros opacos sobre o mapa, com placa de vídeo.** O defeito da base que some ao lado de um quadro opaco só foi visto no Chromium sem interface. Não se sabe se existe em um navegador comum.
+- **Leitor de tela.** Os nomes dos marcadores, os estados dos botões e os avisos foram conferidos pela estrutura, e não com NVDA, VoiceOver ou TalkBack.
+- **Aviso de lugar fora da área para quem também tem marcador.** A conta tem teste de regra; a frase no mapa não foi vista no navegador, porque nem a edição nem os dados sintéticos têm esse caso.
+- **Hospedagem real.** A saída estática foi servida só pelo servidor local. O tipo MIME do worker (`.mjs`) e dos contornos (`.geojson`) em outro servidor fica para a fase 10.
+- **Desempenho.** O peso do pacote do mapa e o tempo até o primeiro desenho não foram medidos. É da fase 8.
+
+### Pendências reais
+
+1. **Revisão humana de todo o conteúdo.** Continua sendo a principal.
+2. **Decisões do responsável pelo projeto, herdadas:** nome definitivo, retrato em cinza e recortado (D-42) e canal público de correção.
+3. **Conferência em aparelho e em navegador reais,** como listado acima. É o que mais importa conferir antes de mostrar o mapa a alguém.
+4. **Lugares vizinhos seguem juntos no zoom máximo.** São Paulo e São Bernardo do Campo dividem um marcador em qualquer escala que a base sustenta. A lista os separa por lugar; o mapa, não.
+5. **A base não tem rótulos.** Quem não conhece o mapa do Brasil se orienta pelos nomes dos lugares do recorte e pelas divisas dos estados (D-58).
+6. **Lugares fora da América do Sul não são desenhados.** Nenhum existe na edição. O caminho está em `src/features/map/base/README.md`.
+7. **A câmera não vai para o endereço.** Um link compartilhado abre com o enquadramento do recorte, e não com a posição de quem o copiou.
+8. **Em janela baixa, um aviso pode cobrir um marcador.** Com o quadro do mapa abaixo de 320 pixels de altura, o enquadramento não reserva a faixa de cima, para não encolher o mapa (MAP.md, seção Câmera).
+9. **Estado inicial por um instante,** herdado da fase 5 (D-49). Quem chega por um link com um acontecimento vê primeiro o mapa sem destaque. Fica para a fase 8.
+10. **A página do acontecimento volta sem o recorte, e a comparação não usa o endereço.** São da fase 7.
+11. **As capturas das fases 4 e 5 mostram o mapa antigo.** Não foram refeitas; `docs/capturas/README.md` avisa.
+12. **Saída estática em hospedagem simples.** Os pedidos de pré-carregamento de segmento do Next continuam dando 404 no servidor de `npm run preview`. A navegação funciona. O build publica também o worker de desenvolvimento do MapLibre, de 1,1 MB, que nenhuma página pede; tirar esse arquivo é da fase 8.
+13. **Vídeo de demonstração** não gravado, como nas fases anteriores.
+14. **Lacunas de conteúdo herdadas** (lista na seção da fase 3).
+
+### Preparação para a fase 7 (comparação, páginas e fontes)
+
+O critério da fase 7, no plano: links de acontecimentos abrem direto, recarregar preserva a consulta relevante, e a comparação respeita cargos e períodos diferentes, sem apresentar a quantidade de registros como medida de desempenho. Situação de cada passo:
+
+| Passo da fase 7 | O que já existe | O que falta |
+| --- | --- | --- |
+| 1. Comparação das duas trajetórias em um mesmo intervalo | A tela `/comparar/`, da fase 4, com o período em estado local | Ligar ao estado e ao endereço |
+| 2. Cargos, filiações e acontecimentos de cada pessoa | As colunas por pessoa e as listas de cargos e partidos, que a fase 5 passou a compartilhar com a exploração | Rever com o recorte vindo do endereço |
+| 3. Mesma escala temporal e cobertura explicada | Feito na fase 4 (D-47) | Conferir com período e categorias no endereço |
+| 4. Páginas estáticas por perfil e por acontecimento | 2 perfis e 39 acontecimentos, gerados no build | Rever o conteúdo de cada página |
+| 5. Fontes, créditos e data de revisão nas páginas | A página do acontecimento lista as fontes, a nota de revisão e os créditos das imagens | Conferir o que falta nos perfis |
+| 6. Cópia de link e retorno à exploração | O endereço já é a consulta. O retorno leva só o acontecimento | Botão de copiar e retorno com o recorte de antes |
+| 7. Metodologia e instruções para sugerir uma correção | A página `/metodologia/` existe, com os créditos da base do mapa | Revisar o texto e escrever o caminho de correção, que depende de decisão do responsável |
+
+Pontos de atenção para quem continuar:
+
+- O mapa da página do acontecimento é o mesmo componente, com `gestures="cooperativos"` e sem `onSelect`. Se a comparação ganhar um mapa, o contrato é o mesmo: pontos já recortados e, se houver seleção, o slug.
+- `MapView` aceita o que está no recorte e nada mais. Um recorte com as duas pessoas não precisa de mudança no mapa: os pontos de um acontecimento compartilhado já são um só por lugar.
+- O retorno da página do acontecimento com o recorte pede que a exploração entregue a consulta ao link da página, ou que a página a leia do histórico. As regras do endereço estão em `src/lib/state/url-state.ts`.
+- Os testes de `tests/e2e/mapa.spec.ts` montam as expectativas a partir dos dados gerados, e por isso acompanham uma edição nova. O roteiro de capturas, não: ele cita acontecimentos e lugares pelo identificador.
 
 ## Fase 5 (aplicação e linha do tempo)
 
@@ -156,7 +349,7 @@ Dez regras foram quebradas de propósito, uma por vez, para confirmar que os tes
 4. **Fechar a leitura cria uma entrada no histórico.** Abrir e fechar vários acontecimentos alonga o caminho de volta. A regra é a da arquitetura; vale rever com pessoas usando, na fase 9.
 5. **A página do acontecimento volta sem o recorte.** O link **Trajetória de (pessoa)** leva só o acontecimento. O botão voltar do navegador devolve a consulta inteira. É da fase 7.
 6. **A comparação ainda não usa o endereço.** É da fase 7.
-7. **Pontos sobrepostos no mapa.** Brasília reúne 9 pontos e o estado do Rio de Janeiro, 7. É da fase 6.
+7. **Pontos sobrepostos no mapa.** Brasília reúne 9 pontos e o estado do Rio de Janeiro, 7. Resolvido na fase 6 (D-60).
 8. **Barras de cargo estreitas sem rótulo no desenho.** O nome agora está por extenso no bloco do período, mas a barra continua muda.
 9. **Saída estática em hospedagem simples.** Os pedidos de pré-carregamento de segmento do Next continuam dando 404 no servidor de `npm run preview`, como na fase 4. A navegação funciona.
 10. **Servidor de desenvolvimento e `globals.css`.** Em duas ocasiões desta fase o servidor continuou entregando o CSS anterior depois de uma mudança no arquivo; em uma delas, o arquivo tinha voltado a um conteúdo que já tivera. Reiniciar `npm run dev` resolveu. O build não é afetado.
@@ -515,7 +708,7 @@ O que a fase 2 pediu à fase 3, e o que foi feito:
 
 Concluída em 08/10/2026 e registrada no commit `9be1013`. O que ela entregou está em ARCHITECTURE.md, DATA_MODEL.md e DECISIONS.md. Pontos da fase 1 que seguem abertos:
 
-- O mapa só foi verificado em Chromium sem interface, inclusive na fase 4. Falta abrir a exploração em uma janela visível do Chrome.
+- O mapa só foi verificado em Chromium sem interface, inclusive nas fases 4 e 6. Falta abrir a exploração em uma janela visível do Chrome.
 - Firefox, Safari, celular real e leitor de tela não foram testados.
 - Hospedagem real, incluindo o tipo MIME de `.mjs`, fica para a fase 10.
 - `npm audit`, conferido de novo em 08/10/2026: nenhuma vulnerabilidade em produção; 5 altas na cadeia do lint, que não vai para o site.
@@ -524,4 +717,4 @@ Concluída em 08/10/2026 e registrada no commit `9be1013`. O que ela entregou es
 
 ## Próximo passo
 
-Fase 6: mapa sincronizado. A fase 5 termina aqui; a fase 6 só começa com o próximo comando. Nada foi publicado, e o site continua com `noindex`.
+Fase 7: comparação, páginas e fontes. A fase 6 termina aqui; a fase 7 só começa com o próximo comando. Nada foi publicado, e o site continua com `noindex`.

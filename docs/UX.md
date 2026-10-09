@@ -1,6 +1,6 @@
 # Experiência
 
-Fases 4 e 5. Descreve a direção visual, as quatro telas, como a composição muda com a largura da tela e como percorrer o atlas. A navegação temporal da exploração, com a consulta no endereço, está em [TIMELINE.md](TIMELINE.md). A base visual está em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); os comportamentos, os estados e o que ainda é demonstração, em [INTERACTIONS.md](INTERACTIONS.md).
+Fases 4, 5 e 6. Descreve a direção visual, as quatro telas, como a composição muda com a largura da tela e como percorrer o atlas. A navegação temporal da exploração, com a consulta no endereço, está em [TIMELINE.md](TIMELINE.md), e o mapa, em [MAP.md](MAP.md). A base visual está em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); os comportamentos, os estados e o que ainda é demonstração, em [INTERACTIONS.md](INTERACTIONS.md).
 
 ## Como abrir a prévia
 
@@ -65,11 +65,11 @@ Uma área de trabalho com cinco partes que leem o mesmo estado:
 | --- | --- |
 | Recorte | Quem (retrato, nome, troca de pessoa), quando (período) e o quê (categorias, com a quantidade de registros em cada uma) |
 | Lista | O período consultado e a quantidade de registros; os cargos e partidos do período, em um bloco que abre e fecha; e os acontecimentos do recorte em ordem cronológica: ano em destaque, título, categoria, o que falta em uma data parcial, o aviso de quem não tem ponto no mapa e as lacunas do conjunto no lugar dos anos |
-| Mapa | Um ponto por acontecimento e lugar, na cor da categoria, com o Brasil em tom mais claro e as divisas dos estados |
+| Mapa | Um marcador por lugar documentado, com o nome ao lado: a forma da categoria, quando há um acontecimento, ou a quantidade, quando há vários. O Brasil em tom mais claro, com as divisas dos estados. Controles, legenda e acesso aos acontecimentos sem ponto |
 | Linha do tempo | Uma marca por acontecimento, na forma da categoria, e as faixas de cargos e de partidos sobre o mesmo eixo. O eixo aceita clique (um ano) e arraste (um intervalo) |
 | Painel de leitura | O perfil da pessoa, enquanto nada está aberto; o acontecimento selecionado, quando há um |
 
-A relação entre as partes é explícita: o mesmo acontecimento fica marcado na lista (fundo e filete de acento), no mapa (ponto maior com anel), na linha do tempo (anel e haste até o eixo) e aberto no painel. O recorte vale para as três vistas ao mesmo tempo, e a linha do tempo hachura o que ficou fora do período.
+A relação entre as partes é explícita: o mesmo acontecimento fica marcado na lista (fundo e filete de acento), no mapa (anel de acento nos marcadores dos lugares dele), na linha do tempo (anel e haste até o eixo) e aberto no painel. O recorte vale para as três vistas ao mesmo tempo, e a linha do tempo hachura o que ficou fora do período.
 
 O período, as categorias e o acontecimento aberto ficam no endereço: o que está na tela pode ser recarregado, enviado por link e percorrido com voltar e avançar.
 
@@ -124,9 +124,10 @@ Em telas médias e largas, a área de trabalho tem altura mínima de 640 px. Em 
 
 - **Pessoa e período sempre escritos.** O bloco de recorte fica preso ao topo e diz quem, de que ano a que ano e quais categorias, mesmo com os filtros recolhidos. Um ponto no botão **Filtros** avisa que há recorte ativo.
 - **Mapa, lista e detalhes têm vistas próprias.** A alternância tem três botões de 44 px de altura. Abrir um acontecimento pela lista troca a lista pela leitura; **Fechar** devolve a lista e o foco ao item de onde se saiu.
-- **No mapa, a seleção não tira a pessoa do mapa.** Tocar em um ponto ou em uma marca da linha do tempo mostra um cartão sobre a parte de baixo do mapa, com a data, o título e dois botões: **Ler** e **Fechar**. O enquadramento deixa os pontos selecionados acima do cartão.
+- **No mapa, a seleção não tira a pessoa do mapa.** Tocar em um marcador de um acontecimento, ou em uma marca da linha do tempo, mostra um cartão sobre a parte de baixo do mapa, com a data, o título e dois botões: **Ler** e **Fechar**. O enquadramento deixa os lugares selecionados acima do cartão.
+- **Marcador com vários acontecimentos abre uma folha** na parte de baixo do mapa, com a lista deles. O mapa desloca o mínimo para o marcador continuar à vista acima da folha. Escolhido um, o cartão toma o lugar dela.
 - **O mapa cabe na tela.** Na vista do mapa não há rolagem vertical da página sob o dedo: arrastar move o mapa. A linha do tempo fica acima dele.
-- **Áreas de toque:** botões, abas, itens de lista, campos, categorias e a troca de pessoa têm 44 px ou mais de altura. As exceções são as marcas da linha do tempo, com 24 px, e o eixo, com 28 px: são atalhos. Todo acontecimento também está na lista, com área inteira, e todo período pode ser escolhido pelos campos.
+- **Áreas de toque:** botões, abas, itens de lista, campos, categorias, a troca de pessoa, os marcadores do mapa, os controles dele e os itens do seletor têm 44 px ou mais de altura. As exceções são as marcas da linha do tempo, com 24 px, e o eixo, com 28 px: são atalhos. Todo acontecimento também está na lista, com área inteira, e todo período pode ser escolhido pelos campos.
 - **O botão voltar do aparelho fecha a leitura** e devolve a lista ou o mapa, porque abrir um acontecimento cria uma entrada no histórico.
 - **Leitura sem mapa:** a lista e a leitura não dependem do mapa. Com o mapa indisponível, a vista do mapa vira uma lista de lugares que seleciona do mesmo jeito.
 - **Faixas largas rolam para o lado,** com a rolagem contida na própria faixa: a página não anda junto. A da comparação começa nos anos recentes e traz o aviso escrito.
@@ -140,8 +141,8 @@ Nada foi alterado em `content/`. O que o conjunto atual não tem aparece na pré
 | Lacuna | Efeito na prévia |
 | --- | --- |
 | Nenhum acontecimento tem imagem | O painel e a página não mostram figura. O estado com imagem está desenhado no guia de estados, com uma área reservada, e não foi visto com uma foto real |
-| Todas as coordenadas são aproximações (centro de município ou de estado) | O mapa traz a nota "Pontos aproximados" e cada lugar diz a precisão. Acontecimentos do mesmo município ou de municípios vizinhos se sobrepõem em um ponto |
-| 13 dos 39 acontecimentos não têm ponto | Aparecem na lista com o aviso e o motivo, e o painel diz por quê |
+| Todas as coordenadas são aproximações (centro de município ou de estado) | A legenda do mapa diz "pontos aproximados", e cada lugar diz a precisão. Os acontecimentos de um mesmo lugar dividem um marcador, que abre a lista deles |
+| 13 dos 39 acontecimentos não têm ponto | Aparecem na lista com o aviso e o motivo, o painel diz por quê, e o mapa dá acesso a eles pelo botão **sem ponto no mapa** |
 | Toda a revisão é assistida por IA | Entrada, painel, página e metodologia repetem "Revisão humana pendente" |
 | Cobertura de Flávio Bolsonaro começa em 2002 e a de Lula em 1975 | A comparação mostra 27 anos como "fora da cobertura desta edição" |
 | Lacunas de período de Lula (1981 a 1985, 1990 a 1993, 1995 a 2001, 2007 a 2015) | Aparecem como "sem registros" na linha do tempo da comparação e por extenso na coluna da pessoa |
@@ -166,4 +167,4 @@ Para a versão em celular (390×844): entrada, cartão, aba **Mapa**, toque em u
 
 ## Capturas
 
-As capturas reais ficam em [`docs/capturas/`](capturas/README.md): as da prévia, em `fase-4/`, e as da navegação temporal, em `fase-5/`. O índice e os comandos que as refazem estão em [`docs/capturas/README.md`](capturas/README.md).
+As capturas reais ficam em [`docs/capturas/`](capturas/README.md): as da prévia, em `fase-4/`, as da navegação temporal, em `fase-5/`, e as do mapa, em `fase-6/`. O índice e os comandos que as refazem estão em [`docs/capturas/README.md`](capturas/README.md).

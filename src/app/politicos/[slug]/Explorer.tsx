@@ -30,7 +30,7 @@ import { PeriodContext } from "@/features/timeline/PeriodContext";
 import { PeriodControl } from "@/features/timeline/PeriodControl";
 import { Timeline } from "@/features/timeline/Timeline";
 import { getCoverage, getCoveredSpan, getCutYear, listGaps, type YearSpan } from "@/lib/data/coverage";
-import { filterPoints } from "@/lib/data/points";
+import { filterPoints, listUnplaced } from "@/lib/data/points";
 import {
   filterEvents,
   getEventView,
@@ -163,6 +163,8 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
     () => new Set(pontos.features.map((ponto) => ponto.properties.eventId)).size,
     [pontos],
   );
+  // Abrangência nacional ou lugar não documentado: o mapa dá acesso a eles sem inventar um ponto.
+  const semPonto = useMemo(() => listUnplaced(visible), [visible]);
 
   const mandatos = data.conjunto.mandatos.filter((item) => item.pessoaId === pessoa.id);
   const filiacoes = data.conjunto.filiacoes.filter((item) => item.pessoaId === pessoa.id);
@@ -527,44 +529,45 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
               features={pontos}
               selectedSlug={state.acontecimento}
               onSelect={(slug) => openEvent(slug, "mapa")}
-              // O cartão do acontecimento cobre a parte de baixo do mapa.
-              bottomInset={cartao ? 150 : 0}
+              unplaced={semPonto}
+              // Cartão do acontecimento selecionado, só no mapa em tela
+              // estreita. O mapa enquadra a seleção acima dele.
+              overlay={
+                selected && cartao ? (
+                  <div className="animate-enter border border-ink bg-raised p-3 shadow-[0_8px_24px_-12px_rgb(0_0_0/0.4)]">
+                    <div className="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-x-3">
+                      <DateMark data={selected.data} showPrecision />
+                      <div className="min-w-0">
+                        <p className="font-serif text-[1.0625rem] font-medium leading-snug">{selected.titulo}</p>
+                        {noPointNote(selected) !== null && (
+                          <p className="mt-1 text-xs italic text-ink-soft">{noPointNote(selected)}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFolded(null);
+                          focusTitle();
+                        }}
+                        className="h-11 flex-1 bg-ink px-4 text-sm font-medium text-paper"
+                      >
+                        Ler
+                      </button>
+                      <button
+                        type="button"
+                        onClick={closeEvent}
+                        className="h-11 border border-ink-faint px-4 text-sm font-medium"
+                      >
+                        Fechar
+                      </button>
+                    </div>
+                  </div>
+                ) : null
+              }
             />
           </div>
-
-          {/* Cartão do acontecimento selecionado, só no mapa em tela estreita. */}
-          {selected && cartao && (
-            <div className="absolute inset-x-2 bottom-2 z-10 animate-enter border border-ink bg-raised p-3 shadow-[0_8px_24px_-12px_rgb(0_0_0/0.4)] md:hidden">
-              <div className="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-x-3">
-                <DateMark data={selected.data} showPrecision />
-                <div className="min-w-0">
-                  <p className="font-serif text-[1.0625rem] font-medium leading-snug">{selected.titulo}</p>
-                  {noPointNote(selected) !== null && (
-                    <p className="mt-1 text-xs italic text-ink-soft">{noPointNote(selected)}</p>
-                  )}
-                </div>
-              </div>
-              <div className="mt-2 flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFolded(null);
-                    focusTitle();
-                  }}
-                  className="h-11 flex-1 bg-ink px-4 text-sm font-medium text-paper"
-                >
-                  Ler
-                </button>
-                <button
-                  type="button"
-                  onClick={closeEvent}
-                  className="h-11 border border-ink-faint px-4 text-sm font-medium"
-                >
-                  Fechar
-                </button>
-              </div>
-            </div>
-          )}
         </section>
 
         {/* Painel de leitura */}

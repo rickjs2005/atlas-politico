@@ -1,6 +1,6 @@
 # Sistema de design
 
-Fases 4 e 5. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. A fase 5 não criou token nem cor: acrescentou componentes sobre a mesma base. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
+Fases 4, 5 e 6. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. As fases 5 e 6 não criaram token nem cor: acrescentaram componentes sobre a mesma base. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
 
 Regra geral: **os tokens de `src/app/globals.css` são a única origem das cores, das famílias e das medidas de movimento.** Os componentes usam as classes geradas a partir deles (`bg-paper`, `text-ink-soft`, `font-serif`). Cor escrita direto em um componente é erro.
 
@@ -23,7 +23,7 @@ Regra geral: **os tokens de `src/app/globals.css` são a única origem das cores
 
 | Token | Valor | Uso |
 | --- | --- | --- |
-| `--atlas-accent` | `#b24a00` | Só seleção: filete do item selecionado, anel da marca, ponto selecionado no mapa, indicador de filtro ativo e o intervalo em andamento no arraste do eixo |
+| `--atlas-accent` | `#b24a00` | Só seleção: filete do item selecionado, anel da marca, anel do marcador selecionado no mapa, indicador de filtro ativo e o intervalo em andamento no arraste do eixo |
 | `--atlas-accent-soft` | `#f8e4cf` | Fundo do item selecionado e da seleção de texto |
 | `--atlas-notice` | `#f1e4bd` | Aviso de conteúdo provisório |
 | `--atlas-cat-mandatos` | `#36567a` | Mandatos e funções |
@@ -45,7 +45,7 @@ O acento é a cor mais visível da interface, e é laranja queimado de propósit
 | `--atlas-map-state` | `#cfc9b9` | Divisas dos estados |
 | `--atlas-map-grid` | `#c9d2cf` | Meridianos e paralelos |
 
-O mapa é desenhado por WebGL, que não lê variáveis CSS. As cores dele repetem os tokens em `src/features/map/palette.ts`, e `tests/design.test.ts` falha se os dois lados deixarem de bater.
+A base do mapa é desenhada por WebGL, que não lê variáveis CSS. As seis cores dela repetem os tokens em `src/features/map/palette.ts`, e `tests/design.test.ts` falha se os dois lados deixarem de bater. Os marcadores são HTML e usam os tokens direto: cor de categoria, tinta e acento.
 
 ### Contraste
 
@@ -111,7 +111,7 @@ O texto de leitura não ocupa a largura da tela: na página do acontecimento o r
 
 - **Margem lateral** (`--atlas-gutter`): 16 px; 24 px a partir de 768 px; 32 px a partir de 1280 px.
 - **Altura do cabeçalho** (`--atlas-header-h`): 56 px; 64 px a partir de 768 px. A área de trabalho da exploração calcula a própria altura a partir dela.
-- **Cantos retos** em painéis, cartões, botões e campos. O redondo aparece só onde a forma é o sinal: a marca circular de categoria, o anel de seleção da linha do tempo e os pontos do mapa. Os controles do mapa têm raio de 2 px.
+- **Cantos retos** em painéis, cartões, botões e campos. O redondo aparece só onde a forma é o sinal: a marca circular de categoria, o anel de seleção da linha do tempo e os marcadores do mapa.
 - **Sem sombras de elevação.** A separação é por linha e por tom de papel. As duas exceções são elementos que flutuam sobre outro conteúdo: o painel do menu em tela estreita e o cartão sobre o mapa.
 - **Linhas:** régua de tinta de 1 px para abrir e fechar blocos principais; linha clara para dividir itens; tracejado para o que não está documentado.
 - **Hachura diagonal** para o que está fora ou falta: fora do período escolhido, na linha do tempo; fora da cobertura da edição, na comparação; e a linha de lacuna, na lista.
@@ -131,7 +131,7 @@ Cada categoria tem uma forma, uma cor e um nome. As três coisas vêm de `src/co
 
 - `CategoryMark` desenha só a forma e é decorativa: quem a usa informa a categoria em texto ou em rótulo acessível.
 - `CategoryLabel` junta a forma e o nome.
-- No mapa a forma ainda é sempre o círculo, e a categoria aparece pela cor e pelo texto do painel. Formas no mapa pedem ícones próprios e ficam para a fase 6.
+- No mapa, o marcador de um lugar com um acontecimento só leva a mesma forma e a mesma cor, sobre um disco de papel. Com vários acontecimentos, o marcador mostra a quantidade, e a categoria de cada um aparece na lista que ele abre.
 
 ## O que é incerto
 
@@ -145,8 +145,11 @@ O que as fontes não documentam tem desenho próprio, sempre o mesmo:
 | Período sem nenhuma data | Não vira barra | "Sem datas documentadas: PP, PPB, PSC." |
 | Cargo cujo período talvez toque a data | Fica fora do painel do acontecimento; aparece no perfil e na comparação | "presença no período não documentada" |
 | Cargo ou partido que talvez toque o período consultado | Seção à parte no bloco do período, com borda tracejada à esquerda | "Presença incerta no período" e as datas conhecidas de cada registro |
-| Coordenada aproximada | Nota fixa no canto do mapa | "Pontos aproximados: centro do município ou do estado" e a precisão ao lado de cada lugar |
-| Acontecimento sem lugar | Sem ponto | "sem ponto no mapa (abrangência nacional)" ou "(lugar não documentado)" |
+| Coordenada aproximada | Resumo da legenda, sempre à vista no canto do mapa | "Legenda · pontos aproximados"; aberta, "Todo ponto é o centro de um município ou de um estado, e não um endereço"; e a precisão ao lado de cada lugar |
+| Lugar conhecido só pelo estado | Marcador de contorno tracejado, no centro do estado | "aproximação: unidade da federação" |
+| Acontecimento sem lugar | Sem marcador; botão **N sem ponto no mapa** | "sem ponto no mapa (abrangência nacional)" ou "(lugar não documentado)" |
+| Lugar fora da área que a base cobre | Sem marcador; entra na mesma lista | "fora da área que este mapa cobre" |
+| Base simplificada | Zoom limitado a 6 e câmera presa à área da base | "A base é de contornos simplificados (Natural Earth, 1:50 milhões), sem cidades nem estradas" |
 | Trecho sem pesquisa | Hachura | "fora da cobertura desta edição" |
 | Lacuna dentro da cobertura | Colchete tracejado, na comparação; linha hachurada, na lista | "sem registros"; na lista, "sem registros do atlas nesta edição" |
 | Revisão | Frase em toda leitura | "Revisão humana pendente." |
@@ -212,12 +215,35 @@ A linha de lacuna não é selecionável: fundo rebaixado com a hachura, os anos 
 
 | Parte | Arquivo | Notas |
 | --- | --- | --- |
-| `MapView` | `src/features/map/MapView.tsx` | Moldura, carregamento, nota de aproximação e a troca pela lista de lugares na falha |
-| `MapCanvas` | `src/features/map/MapCanvas.tsx` | O MapLibre em si, carregado só no navegador |
-| Estilo | `src/features/map/style.ts` | Mar, grade, terra, Brasil em foco, estados, fronteiras, pontos e seleção |
-| Base | `src/features/map/base/` | Contornos do Natural Earth 1:50m, em domínio público. Provisória até a fase 6 |
+| `MapView` | `src/features/map/MapView.tsx` | Moldura, carregamento e a troca pela lista de lugares na falha, com nova tentativa |
+| `MapCanvas` | `src/features/map/MapCanvas.tsx` | O MapLibre em si, carregado só no navegador, com os marcadores por cima |
+| `PlaceMarker`, `MarkerSymbol` | `src/features/map/PlaceMarker.tsx` | O marcador de um lugar, ou de lugares próximos, e o símbolo dele sozinho |
+| `PlaceChooser` | `src/features/map/PlaceChooser.tsx` | Lista dos acontecimentos de um marcador, ou dos que não têm ponto |
+| `MapControls` | `src/features/map/MapControls.tsx` | Aproximar, afastar e enquadrar os lugares do recorte |
+| `MapLegend` | `src/features/map/MapLegend.tsx` | Os símbolos em uso e o aviso de base simplificada |
+| `MapFallback` | `src/features/map/MapFallback.tsx` | A lista de lugares que substitui o mapa |
+| Estilo | `src/features/map/style.ts` | Mar, grade, terra, Brasil em foco, estados e fronteiras |
+| Base | `src/features/map/base/` | Contornos do Natural Earth 1:50m, em domínio público |
 
-O ponto tem 6,5 px de raio, com contorno de papel. O selecionado tem 9 px, na cor de acento, com um anel de 17 px em volta.
+**Marcador.** Área de toque de 44 px, redonda, com o símbolo no centro e o nome do lugar ao lado, em 11 px, com um halo de papel.
+
+| Estado | Desenho |
+| --- | --- |
+| Um acontecimento | Disco de papel de 24 px, com borda de tinta, e a forma da categoria na cor dela |
+| Vários acontecimentos | Disco de tinta de 28 px, com borda de papel, e a quantidade em números de mesma largura |
+| Só o estado é conhecido | Contorno tracejado: a borda do disco de papel, ou um contorno por fora do disco de tinta |
+| Selecionado | Anel de acento de 3 px, afastado do símbolo por 2 px de papel |
+| Seletor aberto | Anel de tinta de 2 px, com o mesmo afastamento |
+| Sob o ponteiro | Cresce 10% |
+| Em foco | Anel de foco do atlas, em volta da área de toque |
+
+Lugares próximos dividem um marcador, e o texto ao lado passa a dizer quantos são: "2 lugares".
+
+**Seletor.** Quadro de papel elevado com borda de tinta, e uma das duas sombras do atlas, porque flutua sobre o mapa. Cabeçalho com o rótulo "No mapa", o nome do lugar em serifada e a quantidade. Um trecho por lugar, com o nome em negrito e a precisão da coordenada. Cada acontecimento é um botão de 44 px ou mais: data, título em serifada e categoria com a forma. O selecionado usa o mesmo filete e o mesmo fundo de acento da lista de acontecimentos. Em tela estreita é uma folha de lado a lado, na parte de baixo do mapa; nas demais, um quadro de 320 px no canto esquerdo.
+
+**Controles.** Três botões empilhados, de papel elevado com borda, 44 px em telas estreitas e médias e 36 px em tela larga. Desativado: traço na cor de linha.
+
+**Legenda.** Resumo de uma linha, sempre à vista ("Legenda · pontos aproximados"). Aberta, mostra só os símbolos que o recorte em vigor usa, cada um com o próprio `MarkerSymbol`, e o texto sobre a base. O fundo é papel elevado a 95%, e a 98% com a legenda aberta: nunca opaco, pelo motivo descrito em MAP.md.
 
 ## Equivalência
 

@@ -218,7 +218,7 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Motivo.** O plano pede pasta exclusiva para o que é gerado e que os arquivos editoriais sejam preservados. Versionar a saída criaria uma segunda cópia do conteúdo, que poderia ficar para trás; ignorá-la, com a geração embutida nos comandos, não tem esse risco. O plano reservava `public/geo/` para arquivos do mapa, mas tudo em `public/` é copiado para o site: gerar ali exporia os arquivos por endereço próprio antes de alguém decidir isso.
 
-**Consequência.** Os dados chegam ao navegador pelas páginas, por props. Se a fase 6 preferir que o mapa busque o GeoJSON por endereço, basta copiar `dados/geo/` para `public/` no build. `content/published/` continua sendo conteúdo editado à mão; o "conjunto publicado" que as páginas leem passou a ser o gerado.
+**Consequência.** Os dados chegam ao navegador pelas páginas, por props. A fase 6 manteve assim: o mapa recebe os pontos já recortados e não busca o GeoJSON por endereço (D-58). `content/published/` continua sendo conteúdo editado à mão; o "conjunto publicado" que as páginas leem passou a ser o gerado.
 
 ## D-29. Elegibilidade: pasta e estado; dependência quebrada é erro
 
@@ -306,7 +306,7 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Motivo.** O acento é a cor mais visível da interface. A primeira versão desta fase usava um vermelho terroso; em um atlas sobre Lula e Flávio Bolsonaro, vermelho vivo, azul vivo e o par verde e amarelo lembram identidades partidárias, e a troca foi feita antes da entrega. Forma e nome nas categorias atendem a quem não distingue as cores.
 
-**Consequência.** As cores do mapa repetem os tokens em `src/features/map/palette.ts`, porque o WebGL não lê variáveis CSS; `tests/design.test.ts` falha se os dois lados divergirem e confere o contraste mínimo de cada par em uso. No mapa a categoria ainda aparece só pela cor (fase 6).
+**Consequência.** As cores do mapa repetem os tokens em `src/features/map/palette.ts`, porque o WebGL não lê variáveis CSS; `tests/design.test.ts` falha se os dois lados divergirem e confere o contraste mínimo de cada par em uso. Desde a fase 6, só a base do mapa repete tokens, e o marcador leva a forma da categoria (D-59).
 
 ## D-40. Um tema só, claro
 
@@ -333,6 +333,8 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 **Consequência.** Os arquivos em `public/media/retratos/` não foram alterados: o tratamento é de CSS, na exibição. A licença do retrato de Lula (CC BY 2.0) permite adaptação com atribuição e indicação da mudança. A condição registrada para o retrato de Flávio Bolsonaro é "uso livre com crédito", da Agência Senado, sem cláusula escrita sobre adaptação: a exibição em cinza e recortada fica como ponto a confirmar pelo responsável pelo projeto. Se a resposta for não, basta tirar três classes de `Portrait.tsx`, e os dois retratos voltam a aparecer em cores. Preparar versões menores e em outro formato é da fase 8.
 
 ## D-43. Base provisória do mapa: Natural Earth 1:50m
+
+*Substituída pela D-58 na fase 6.*
 
 **Decisão (fase 4).** A terra, as fronteiras e as divisas dos estados vêm de dois arquivos GeoJSON derivados do Natural Earth 1:50m, recortados para a América do Sul e guardados em `src/features/map/base/`. O Brasil aparece em tom mais claro. Não há rótulos.
 
@@ -454,20 +456,83 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Consequência.** O contrato de cada item está em INTERACTIONS.md, e o do mapa em TIMELINE.md.
 
+## D-58. A base do mapa é o Natural Earth 1:50m, com a câmera presa ao que ela cobre
+
+**Decisão (fase 6).** Os dois arquivos de contornos da fase 4 foram adotados como a base do atlas, sem rótulos. A câmera fica dentro da caixa que a base cobre (longitude de -93 a -30, latitude de -57 a 16), o zoom vai de 2 a 6, e não há rotação nem inclinação. A pasta `public/geo/`, reservada na fase 1, foi removida.
+
+**Motivo.** O mapa precisa mostrar a posição de um município ou de um estado dentro do país, e toda coordenada do conteúdo é o centro de um município ou de um estado. Uma base mais detalhada, em 1:10 milhões ou em tiles, sugeriria uma precisão que os pontos não têm, e custaria alguns megabytes ou um serviço de terceiros. Rótulos pedem arquivos de glyphs; os nomes que importam são os dos lugares do conteúdo, e eles vão em HTML. Fora da caixa a base não tem terra, e a câmera mostraria mar onde há continente. Além do zoom 6, o litoral e as divisas viram segmentos de reta.
+
+**Consequência.** Substitui a D-43. Os contornos chegam ao navegador pelo bundler, com o nome marcado pelo conteúdo, e não por `public/`. O mapa continua recebendo os pontos pela página (D-28). Um lugar fora da caixa não é desenhado e tem tratamento próprio (D-62). Origem, licença e transformações estão em `src/features/map/base/README.md`.
+
+## D-59. Marcadores em HTML, um por lugar; o WebGL desenha só a base
+
+**Decisão (fase 6).** Os lugares são botões do React, postos por um portal dentro do contêiner do canvas do MapLibre e mantidos sobre a coordenada a cada movimento da câmera. As camadas de círculos da fase 4 saíram do estilo.
+
+**Motivo.** A edição tem 9 lugares, e nessa quantidade o HTML não pesa. Ele dá o que uma camada de círculos não dá: foco e nome para teclado e leitor de tela, área de toque de 44 pixels, a forma da categoria pelo mesmo componente da lista e o nome do lugar sem glyphs. Uma camada WebGL pediria uma segunda estrutura, paralela, só para o teclado. Os marcadores do próprio MapLibre (`Marker`) foram testados e descartados: cada um anexa o seu elemento ao fim do contêiner, e no servidor de desenvolvimento, em que o React refaz os efeitos de um componente recém-montado, a ordem do Tab deixava de seguir a dos lugares depois de um reagrupamento.
+
+**Consequência.** `palette.ts` ficou só com as seis cores da base. A ordem do teclado é a do documento: de norte a sul. A posição dos marcadores é escrita direto no estilo de cada elemento, sem passar pelo estado, para o arraste não renderizar a árvore a cada quadro. Vale rever se uma edição futura puser centenas de lugares à vista ao mesmo tempo.
+
+## D-60. Sobreposição: um marcador por lugar, lugares próximos juntos e uma lista para escolher
+
+**Decisão (fase 6).** Os pontos de um mesmo lugar formam um marcador. Lugares que, na escala em vigor, ficariam a menos de 44 pixels um do outro dividem um marcador, e o agrupamento é refeito ao fim de cada zoom. O marcador com mais de um acontecimento mostra a quantidade de acontecimentos distintos e, acionado, abre uma lista com todos. Nada é selecionado sem a escolha da pessoa.
+
+**Motivo.** As coordenadas são do lugar: todos os acontecimentos de um lugar caem no mesmo ponto, e nenhum zoom os separa. Espalhar os pontos em volta do lugar desenharia posições que nenhuma fonte documenta. O agrupamento do MapLibre conta pontos (`point_count`), e um acontecimento com dois lugares no mesmo grupo seria contado duas vezes. Abrir o acontecimento de cima, como na fase 4, escondia os demais. Uma lista serve do mesmo jeito ao ponteiro, ao toque, ao teclado e ao leitor de tela.
+
+**Consequência.** Fecha os dois pontos em aberto da fase 4 sobre os pontos do mapa. As regras são funções puras em `places.ts`, testadas sem navegador. São Paulo e São Bernardo do Campo continuam juntos no zoom máximo, e a lista os separa por lugar. O texto ao lado de um marcador que reúne lugares diz quantos são.
+
+## D-61. A câmera só anda quando precisa, e quem move o mapa fica no controle
+
+**Decisão (fase 6).** O mapa enquadra o recorte ao abrir. Ao mudar o recorte, só se move se algum lugar ficou fora da vista e a pessoa ainda não moveu o mapa. Ao selecionar, só se move se o lugar não está à vista. A aproximação automática tem teto pela precisão do lugar: 6 para local específico, 5,5 para centro de município, 4,5 para estado e 3,5 para país. Mover a câmera nunca altera a seleção.
+
+**Motivo.** Um mapa que se recentra a cada filtro tira de quem o usa a noção de onde estava; um que nunca se move deixa a seleção fora da tela. Aproximar até o limite sobre o centro de um estado faria o ponto parecer um endereço. O plano pede que o controle manual seja preservado e que a câmera não mude o acontecimento selecionado.
+
+**Consequência.** As regras ficam em `camera.ts`, puras e testadas. **Enquadrar os lugares do recorte** devolve o enquadramento e volta a acompanhar o recorte. O que está sob o cartão do acontecimento ou sob a lista aberta não conta como à vista. Com o mapa escondido, em outra vista do celular, as regras esperam ele voltar à tela. Um enquadramento reserva espaço à direita, para os nomes dos lugares e os controles, e em cima, para o botão dos acontecimentos sem ponto e os avisos; em um quadro baixo a faixa de cima não é reservada. A câmera não vai para o endereço.
+
+## D-62. Sem ponto e fora da área: acessíveis pelo mapa, sem marcador inventado
+
+**Decisão (fase 6).** Os acontecimentos de abrangência nacional, os sem lugar documentado e os que só têm lugar fora da área da base ficam em um botão no canto do mapa, **N sem ponto no mapa**, que abre a mesma lista dos marcadores, com o motivo de cada grupo. O mapa também avisa quando o acontecimento aberto não tem ponto e quando o recorte não tem nenhum.
+
+**Motivo.** 13 dos 39 acontecimentos da edição não têm ponto. Um marcador no centro do país para "abrangência nacional" seria lido como um lugar, e o plano proíbe inventar um município para preencher uma coordenada ausente. Sem o botão, quem está na vista do mapa em celular não saberia que o recorte tem mais do que os marcadores mostram.
+
+**Consequência.** `listUnplaced`, em `src/lib/data/points.ts`, devolve os acontecimentos sem ponto com o motivo. O número do botão conta acontecimentos sem nenhum marcador: quem tem um lugar fora da área e outro dentro dela aparece no marcador de dentro. Nenhum lugar da edição está fora da área; esse caso é coberto com os dados sintéticos de `/dev/prova/`.
+
+## D-63. Controles do atlas, legenda recolhida e gestos cooperativos só onde a página rola
+
+**Decisão (fase 6).** Aproximar, afastar e enquadrar são botões do atlas, e não os controles do MapLibre. A legenda fica recolhida, com o resumo "Legenda · pontos aproximados" sempre à vista. Na exploração os gestos são livres. Na página do acontecimento, o mapa usa gestos cooperativos (dois dedos, ou Ctrl e a roda), e os marcadores são imagens com nome, e não botões.
+
+**Motivo.** Os controles do MapLibre trazem estilo próprio, área de toque menor do que os 44 pixels do atlas e nomes em inglês por padrão. Na exploração em celular o mapa ocupa a tela abaixo do cabeçalho, e não existe rolagem da página para disputar com o arraste. A página do acontecimento rola, e um mapa de gestos livres prenderia o dedo ou a roda de quem só quer descer a página. A legenda aberta cobriria uma parte do mapa em tela estreita.
+
+**Consequência.** Os controles têm 44 pixels em telas estreitas e médias e 36 em tela larga. O aviso dos gestos cooperativos é do MapLibre, com o texto em português. A legenda mostra só os símbolos que o recorte em vigor usa, e o fundo dela nunca é opaco de todo: no navegador dos testes, um quadro opaco que aparecia sobre o mapa parado fazia a base sumir ao lado dele (MAP.md). O crédito da base aparece na legenda, na página de metodologia e no README da pasta; o controle de atribuição do MapLibre fica desligado.
+
+## D-64. Falha do mapa: cinco causas, a lista de lugares no lugar dele e nova tentativa
+
+**Decisão (fase 6).** O mapa trata cinco falhas: navegador sem WebGL, pacote do mapa que não chegou, contornos que não carregaram, carregamento que passa de 15 segundos e contexto gráfico perdido sem retomada em 5 segundos. Em todas, a área do mapa mostra o motivo, a saída possível (**Tentar de novo** ou **Recarregar a página**) e a lista dos lugares do recorte, com os acontecimentos selecionáveis.
+
+**Motivo.** O critério da fase é que uma falha do mapa preserve a leitura. A fase 4 já trocava o mapa por uma lista em três causas, sem saída e sem dizer qual era. A perda de contexto acontece em uso real, quando o navegador recolhe a memória gráfica de uma aba em segundo plano, e o MapLibre costuma se recuperar sozinho: por isso o aviso vem antes da troca.
+
+**Consequência.** **Tentar de novo** monta o mapa do zero; a seleção e o recorte não se perdem, porque não são do mapa. Sem WebGL não há saída oferecida, porque repetir não muda o navegador. A lista de lugares é agrupada por lugar, como o mapa.
+
+## D-65. O que ficou fora desta fase
+
+**Decisão (fase 6).** Não foram feitos: rótulos da base, com nomes de estados e de países; contorno mundial para lugares fora da América do Sul; posição da câmera no endereço; comparação ligada ao estado e ao endereço; retorno da página do acontecimento com o recorte de antes; botão de copiar o endereço; página de metodologia; e medição de desempenho.
+
+**Motivo.** O pedido da fase é o mapa sincronizado. Comparação, páginas compartilháveis e metodologia são a fase 7 do plano, e desempenho, a fase 8. Rótulos pedem glyphs locais, e nenhum lugar da edição fica fora da área da base.
+
+**Consequência.** O que segue em demonstração está em INTERACTIONS.md. O caminho para um lugar fora da América do Sul está descrito em `src/features/map/base/README.md`.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
 |---|---|
 | Comando de promoção de rascunhos e verificador de evidências (D-36) | Quando o volume de conteúdo pedir |
-| Buscar o GeoJSON por endereço, em vez de recebê-lo pela página (D-28) | Fase 6 |
 | Exigir revisão humana como condição de publicação | Fase 9 |
 | Canal público de correção e quem assina a revisão humana | Decisão do responsável pelo projeto |
-| Base cartográfica definitiva, glyphs locais e rótulos do mapa (D-43) | Fase 6 |
-| Pontos como camada de círculos ou como marcadores HTML focáveis pelo teclado | Fase 6 |
-| Pontos sobrepostos: agrupar ou listar por lugar | Fase 6 |
 | Arquivos de segmento do Next na saída estática, pedidos com ponto e gravados em pastas (STATUS.md) | Fase 8 ou 10 |
 | Nome definitivo do atlas (o rodapé diz "nome provisório") | Decisão do responsável pelo projeto |
 | Exibir em cinza e recortado o retrato cuja condição de uso é "livre com crédito" (D-42) | Decisão do responsável pelo projeto |
 | Como evitar o instante de estado inicial para quem chega por um link com consulta (D-49) | Fase 8 |
 | Fechar a leitura criando entrada no histórico ou voltando nele (D-50) | Fase 9, com pessoas usando |
 | Ligar a comparação ao estado e ao endereço, e levar o recorte no retorno da página do acontecimento | Fase 7 |
+| Rótulos da base do mapa, com glyphs locais (D-58) | Quando uma edição pedir nomes de estados ou de países |
+| Contorno mundial, para lugares fora da América do Sul (D-62) | Quando o conteúdo tiver o primeiro lugar fora da área |
+| Peso do pacote do mapa e momento de carregá-lo | Fase 8 |

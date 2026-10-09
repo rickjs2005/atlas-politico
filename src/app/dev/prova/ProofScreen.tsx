@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import { EventList } from "@/features/events/EventList";
 import { EventPanel } from "@/features/events/EventPanel";
 import { MapView } from "@/features/map/MapView";
-import { filterPoints } from "@/lib/data/points";
+import { filterPoints, listUnplaced } from "@/lib/data/points";
 import { getEventView } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
 import { AtlasStateProvider, useAtlas } from "@/lib/state/AtlasStateProvider";
@@ -67,6 +67,7 @@ function ProofLayout({ draftCount, variant }: Omit<ProofScreenProps, "data">) {
 
   // Os pontos vêm prontos do gerador; aqui só se recortam os do recorte visível.
   const features = useMemo(() => filterPoints(data.pontos, visible), [data.pontos, visible]);
+  const unplaced = useMemo(() => listUnplaced(visible), [visible]);
   const resolved = useMemo(
     () => (selected ? getEventView(data, selected) : null),
     [selected, data],
@@ -188,6 +189,7 @@ function ProofLayout({ draftCount, variant }: Omit<ProofScreenProps, "data">) {
               features={features}
               selectedSlug={state.acontecimento}
               onSelect={selectEvent}
+              unplaced={unplaced}
             />
           </div>
         </section>

@@ -1,28 +1,42 @@
 "use client";
 
-// Fronteira entre o resto da interface e o mapa. Cuida de três coisas que o
-// MapCanvas não deve saber: carregar o MapLibre só no navegador, mostrar o
-// estado de carregamento e trocar o mapa por uma lista de lugares quando ele
-// falha (sem WebGL, pacote que não baixou, mapa que não responde).
+// Fronteira entre o resto da interface e o mapa. Cuida do que o MapCanvas não
+// deve saber: carregar o MapLibre só no navegador, mostrar o carregamento e
+// trocar o mapa por uma lista de lugares quando ele falha (sem WebGL, pacote
+// que não baixou, contornos que não carregaram, mapa que não responde,
+// contexto gráfico perdido). Em qualquer desses casos, quem usa o mapa
+// continua recebendo a mesma seleção.
 
 import dynamic from "next/dynamic";
 import { Component, useEffect, useRef, useState, type ReactNode } from "react";
 
-import { CategoryMark } from "@/components/Category";
+import type { UnplacedEvent } from "@/lib/data/points";
 import type { EventPointCollection } from "@/lib/data/types";
-import { GEO_PRECISION_LABELS, formatCoordinates } from "@/lib/domain/geo";
+
+import { MapFallback, type MapFailure } from "./MapFallback";
 
 const MapCanvas = dynamic(() => import("./MapCanvas"), { ssr: false });
 
-interface MapViewProps {
+export interface MapViewProps {
+  /** Os pontos do recorte. O mapa não filtra: desenha o que recebe. */
   features: EventPointCollection;
   selectedSlug: string | null;
-  onSelect: (slug: string) => void;
-  /** Faixa inferior do mapa coberta por outro elemento, em pixels: a seleção é enquadrada acima dela. */
-  bottomInset?: number;
+  /** Sem esta função o mapa só mostra os lugares: não há o que selecionar. */
+  onSelect?: (slug: string) => void;
+  /** Acontecimentos do recorte sem ponto, para o acesso a eles pelo mapa. */
+  unplaced?: readonly UnplacedEvent[];
+  /**
+   * Conteúdo posto sobre a parte de baixo do mapa, como o cartão do
+   * acontecimento em tela estreita. O mapa mede a altura dele e enquadra a
+   * seleção acima; enquanto o seletor de lugares está aberto, ele cede o espaço.
+   */
+  overlay?: ReactNode;
+  /**
+   * `cooperativos`: o mapa está em uma página que rola. Mover pede dois dedos,
+   * ou Ctrl e a rolagem, para o gesto de rolar a página não ficar preso nele.
+   */
+  gestures?: "livres" | "cooperativos";
 }
-
-type MapStatus = "loading" | "ready" | "failed";
 
 /** Pega o que estoura na renderização, como a falha ao baixar o pacote do mapa. */
 class MapBoundary extends Component<
@@ -44,9 +58,22 @@ class MapBoundary extends Component<
   }
 }
 
-export function MapView({ features, selectedSlug, onSelect, bottomInset = 0 }: MapViewProps) {
-  const [status, setStatus] = useState<MapStatus>("loading");
+export function MapView({
+  features,
+  selectedSlug,
+  onSelect,
+  unplaced,
+  overlay,
+  gestures = "livres",
+}: MapViewProps) {
+  const [ready, setReady] = useState(false);
+  const [failure, setFailure] = useState<MapFailure | null>(null);
+  // Cada tentativa monta o mapa de novo, do zero.
+  const [attempt, setAttempt] = useState(0);
+  const [chooserOpen, setChooserOpen] = useState(false);
+  const [overlayHeight, setOverlayHeight] = useState(0);
   const frame = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   // O mapa só é montado quando a moldura aparece na tela. Em telas estreitas
   // ele fica em uma vista própria: enquanto a pessoa está na lista, o pacote
   // do mapa nem é baixado, e a espera pelo carregamento não começa a contar.
@@ -60,83 +87,86 @@ export function MapView({ features, selectedSlug, onSelect, bottomInset = 0 }: M
     });
     observer.observe(moldura);
     return () => observer.disconnect();
-  }, [shown]);
+  }, [shown, failure]);
 
-  const fail = (erro: Error) => {
+  // A faixa que o conteúdo sobreposto cobre: some quando ele some ou é escondido.
+  useEffect(() => {
+    const alvo = overlayRef.current;
+    if (!alvo) return;
+    const observer = new ResizeObserver(([entrada]) => {
+      const altura = entrada?.contentRect.height ?? 0;
+      // Soma a folga entre o conteúdo e a borda de baixo do mapa.
+      setOverlayHeight(altura > 0 ? Math.round(altura) + 16 : 0);
+    });
+    observer.observe(alvo);
+    return () => observer.disconnect();
+  }, [failure]);
+
+  const fail = (reason: MapFailure, erro: Error) => {
     console.warn("Mapa indisponível:", erro.message);
-    setStatus("failed");
+    setReady(false);
+    setChooserOpen(false);
+    setFailure(reason);
   };
 
-  if (status === "failed") {
-    return <MapFallback features={features} selectedSlug={selectedSlug} onSelect={onSelect} />;
+  const retry = () => {
+    setFailure(null);
+    setAttempt((atual) => atual + 1);
+  };
+
+  if (failure !== null) {
+    return (
+      <div className="flex h-full min-h-64 flex-col md:min-h-40">
+        <div className="min-h-0 flex-1">
+          <MapFallback
+            features={features}
+            selectedSlug={selectedSlug}
+            onSelect={onSelect}
+            reason={failure}
+            onRetry={retry}
+          />
+        </div>
+        {overlay && (
+          <div className="border-x border-b border-ink-faint bg-raised p-2 md:hidden">{overlay}</div>
+        )}
+      </div>
+    );
   }
 
   return (
-    <div ref={frame} className="relative h-full min-h-64 overflow-hidden border border-ink-faint bg-map-sea md:min-h-40">
+    <div
+      ref={frame}
+      className="relative h-full min-h-64 overflow-hidden border border-ink-faint bg-map-sea md:min-h-40"
+    >
       {shown && (
-        <MapBoundary onError={fail}>
+        <MapBoundary key={attempt} onError={(erro) => fail("pacote", erro)}>
           <MapCanvas
             features={features}
             selectedSlug={selectedSlug}
             onSelect={onSelect}
-            bottomInset={bottomInset}
-            onReady={() => setStatus("ready")}
+            unplaced={unplaced}
+            bottomInset={chooserOpen ? 0 : overlayHeight}
+            cooperative={gestures === "cooperativos"}
+            onReady={() => setReady(true)}
             onFailure={fail}
+            onChooserChange={setChooserOpen}
           />
         </MapBoundary>
       )}
-      {status === "loading" && (
+      {!ready && (
         <p role="status" className="absolute inset-0 grid place-items-center text-sm text-ink-soft">
           Carregando o mapa…
         </p>
       )}
-      {status === "ready" && (
-        <p className="pointer-events-none absolute bottom-0 left-0 max-w-[calc(100%_-_3rem)] bg-raised/85 px-2 py-1 text-[0.6875rem] leading-tight text-ink-soft">
-          Pontos aproximados: centro do município ou do estado
-        </p>
-      )}
+      {/* O conteúdo sobreposto fica montado mesmo escondido, para a medida acompanhar. */}
+      <div
+        ref={overlayRef}
+        hidden={chooserOpen || !overlay}
+        className="absolute inset-x-2 bottom-2 z-20 md:hidden"
+      >
+        {overlay}
+      </div>
     </div>
   );
 }
 
-/** Leitura alternativa: os mesmos lugares, em texto, com a mesma seleção. */
-export function MapFallback({ features, selectedSlug, onSelect }: MapViewProps) {
-  return (
-    <div className="relative h-full min-h-64 overflow-y-auto border border-ink-faint bg-raised p-4 md:min-h-40">
-      <p role="status" className="text-sm">
-        <strong>O mapa não pôde ser exibido neste navegador.</strong> Os lugares do recorte
-        atual seguem em lista, e a seleção continua funcionando.
-      </p>
-      {features.features.length === 0 ? (
-        <p className="mt-3 text-sm text-ink-soft">Nenhum lugar documentado neste recorte.</p>
-      ) : (
-        <ul className="mt-3 divide-y divide-line border-y border-line">
-          {features.features.map(({ properties, geometry }) => {
-            const [longitude = 0, latitude = 0] = geometry.coordinates;
-            const selecionado = properties.acontecimentoSlug === selectedSlug;
-            return (
-              <li key={`${properties.eventId}@${properties.placeId}`}>
-                <button
-                  type="button"
-                  aria-pressed={selecionado}
-                  onClick={() => onSelect(properties.acontecimentoSlug)}
-                  className="grid w-full grid-cols-[1rem_minmax(0,1fr)] gap-x-2 border-l-[3px] border-transparent px-2 py-2.5 text-left text-sm hover:bg-paper aria-pressed:border-accent aria-pressed:bg-accent-soft"
-                >
-                  <CategoryMark categoria={properties.categoria} size={10} className="mt-1" />
-                  <span className="min-w-0">
-                    <span className="block font-medium">{properties.lugarNome}</span>
-                    <span className="block text-ink-soft">{properties.titulo}</span>
-                    <span className="numerals block text-xs text-ink-soft">
-                      {formatCoordinates({ longitude, latitude })} ·{" "}
-                      {GEO_PRECISION_LABELS[properties.precisaoGeografica]}
-                    </span>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  );
-}

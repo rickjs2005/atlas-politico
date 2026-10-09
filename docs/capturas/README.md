@@ -6,10 +6,11 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | --- | --- | --- | --- |
 | `fase-4/` | A prévia das quatro telas | `npm run capture:preview` | `tests/e2e/previa.capture.ts` |
 | `fase-5/` | A navegação temporal: linha do tempo, lista, painel e a consulta no endereço | `npm run capture:timeline` | `tests/e2e/linha-do-tempo.capture.ts` |
+| `fase-6/` | O mapa sincronizado: marcadores, lista de um lugar, seleção, legenda e falhas | `npm run capture:map` | `tests/e2e/mapa.capture.ts` |
 
-Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts` e `tests/e2e/linha-do-tempo.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
+Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts` e `tests/e2e/mapa.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
 
-As imagens de `fase-4/` são as da fase 4 e não foram refeitas na fase 5. A exploração mudou desde então: a lista ganhou o cabeçalho com o período, o bloco de cargos e partidos e as linhas de lacuna, e a barra ganhou a troca de pessoa. Para o estado atual da exploração, valem as de `fase-5/`.
+As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeitas depois. A exploração mudou desde a fase 4: a lista ganhou o cabeçalho com o período, o bloco de cargos e partidos e as linhas de lacuna, e a barra ganhou a troca de pessoa. O mapa mudou na fase 6: nas imagens anteriores, cada ponto é um círculo, sem nome, sem controles e sem legenda. Para o mapa atual, valem as de `fase-6/`; para o resto da exploração, as de `fase-5/`.
 
 ## Larguras
 
@@ -20,6 +21,25 @@ As imagens de `fase-4/` são as da fase 4 e não foram refeitas na fase 5. A exp
 | `--tablet` | 768×1024 |
 | `--celular` | 390×844 |
 | `--celular-estreito` | 360×800 |
+
+## Fase 6
+
+| Arquivo | O que mostra | Endereço | Larguras |
+| --- | --- | --- | --- |
+| `01-recorte-no-mapa` | Um marcador por lugar, com o nome ao lado; controles, botão dos acontecimentos sem ponto e resumo da legenda | `/politicos/lula/` | Computador, tablet e celular |
+| `02-seletor-de-lugar` | A lista de um marcador com vários acontecimentos: quadro no canto em computador, folha embaixo em celular | Clique em Brasília (computador) e no marcador do estado do Rio de Janeiro, em `/politicos/flavio-bolsonaro/` (celular) | Computador e celular |
+| `03-selecao-com-dois-lugares` | Um acontecimento com dois lugares, aberto pelo endereço: os dois marcadores com o anel | `?acontecimento=lula-2023-intervencao-federal-no-distrito-federal` | Computador |
+| `04-selecao-pelo-mapa` | Seleção feita no mapa: painel aberto em computador; cartão com **Ler** e **Fechar** em celular | Clique em um marcador de um acontecimento (computador); escolha na folha (celular) | Computador e celular |
+| `05-sem-ponto-no-mapa` | A lista dos acontecimentos sem ponto, agrupados pelo motivo | Botão **sem ponto no mapa** | Computador e celular |
+| `06-aberto-sem-ponto` | Acontecimento de abrangência nacional aberto: nenhum marcador destacado e o aviso no mapa | `?acontecimento=lula-2002-eleito-presidente` | Computador |
+| `07-lugares-vizinhos-no-zoom-maximo` | Dois municípios vizinhos que continuam em um marcador no zoom máximo, com a lista separada por lugar | `?acontecimento=lula-1975-eleito-presidente-do-sindicato`, aproximado até o limite | Computador |
+| `08-legenda` | A legenda aberta, com os símbolos em uso e o aviso sobre a base | `?acontecimento=lula-2023-intervencao-federal-no-distrito-federal` | Computador e celular |
+| `09-recorte-sem-pontos` | Recorte em que nenhum acontecimento tem ponto: o território e o aviso | `/politicos/flavio-bolsonaro/?de=2021&ate=2021` | Computador |
+| `10-contornos-nao-carregaram` | Falha da base: mensagem, **Tentar de novo** e a lista de lugares | `?de=2016&ate=2019`, com os contornos bloqueados | Computador |
+| `11-desenho-interrompido` | Contexto gráfico perdido: o aviso sobre o mapa, antes de a lista assumir | Perda de contexto simulada | Computador |
+| `12-mapa-indisponivel` | Pacote do mapa bloqueado, na vista do mapa em celular | `/politicos/lula/`, com o pacote bloqueado | Celular |
+| `13-janela-baixa` | Janela de 720 px de altura: marcadores, controles e legenda cabem na parte do mapa | `/politicos/flavio-bolsonaro/` | Computador baixo |
+| `14-pagina-do-acontecimento` | O mapa de localização da página, com os dois lugares | `/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/` | Computador e celular |
 
 ## Fase 5
 

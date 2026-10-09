@@ -137,7 +137,7 @@ test.describe("painel e seleção", () => {
   test("leitura sem o mapa", async ({ page }) => {
     await page.route(/maplibre-gl.*\.js(\?|$)/, (route) => route.abort());
     await prepare(page, "computador", `${LULA}?de=2016&ate=2019&acontecimento=${ABERTO}`);
-    await expect(page.getByText("O mapa não pôde ser exibido neste navegador.")).toBeVisible();
+    await expect(page.getByText(/O mapa não pôde ser exibido/)).toBeVisible();
     await shot(page, "11-leitura-sem-o-mapa", "computador");
   });
 

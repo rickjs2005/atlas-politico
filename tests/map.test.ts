@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { buildGraticule } from "@/features/map/graticule";
-import { CATEGORY_COLORS } from "@/features/map/palette";
-import { MAP_LAYERS, MAP_SOURCES, buildBaseStyle, selectionFilter } from "@/features/map/style";
-import { buildEventPoints, filterPoints } from "@/lib/data/points";
-import { CATEGORIAS } from "@/lib/domain/categories";
+import { MAP_LAYERS, MAP_SOURCES, buildBaseStyle } from "@/features/map/style";
+import { buildEventPoints, filterPoints, listUnplaced } from "@/lib/data/points";
 import { formatCoordinates, isInsideBrazilBox, toPosition } from "@/lib/domain/geo";
 
 import { loadAtlasData } from "./helpers";
@@ -147,39 +145,50 @@ describe("grade e estilo locais", () => {
     });
   });
 
-  it("os pontos ficam acima da base, e a seleção acima dos pontos", () => {
-    const ordem = buildBaseStyle().layers.map((camada) => camada.id);
-    expect(ordem).toEqual([
+  it("o WebGL desenha só a base: os lugares são marcadores da página", () => {
+    const estilo = buildBaseStyle();
+    expect(estilo.layers.map((camada) => camada.id)).toEqual([
       MAP_LAYERS.mar,
       MAP_LAYERS.grade,
       MAP_LAYERS.terra,
       MAP_LAYERS.terraEmFoco,
       MAP_LAYERS.estados,
       MAP_LAYERS.fronteiras,
-      MAP_LAYERS.pontos,
-      MAP_LAYERS.halo,
-      MAP_LAYERS.selecionado,
+    ]);
+    expect(Object.keys(estilo.sources)).toEqual([
+      MAP_SOURCES.grade,
+      MAP_SOURCES.terra,
+      MAP_SOURCES.estados,
+    ]);
+    // Sem camada de texto nem de símbolo: nada no estilo pede glyphs ou sprite.
+    expect(estilo.layers.some((camada) => camada.type === "symbol")).toBe(false);
+  });
+});
+
+describe("acontecimentos sem ponto", () => {
+  it("lista os de abrangência nacional e os sem lugar, com o motivo, na ordem recebida", () => {
+    expect(listUnplaced(acontecimentos).map(({ slug, motivo }) => ({ slug, motivo }))).toEqual([
+      { slug: "sintetico-evento-04", motivo: "nacional" },
+      { slug: "sintetico-evento-06", motivo: "desconhecida" },
     ]);
   });
 
-  it("a cor do ponto cobre todas as categorias", () => {
-    const pontos = buildBaseStyle().layers.find((camada) => camada.id === MAP_LAYERS.pontos);
-    const cor = JSON.stringify(pontos && "paint" in pontos ? pontos.paint : null);
-    for (const categoria of CATEGORIAS) {
-      expect(cor).toContain(`"${categoria}","${CATEGORY_COLORS[categoria]}"`);
-    }
+  it("leva o que distingue um do outro: título, categoria e a data como está no conteúdo", () => {
+    const [nacional] = listUnplaced(acontecimentos);
+    const original = acontecimentos.find((item) => item.slug === nacional?.slug);
+    expect(nacional).toMatchObject({
+      eventId: original?.id,
+      titulo: original?.titulo,
+      categoria: original?.categoria,
+      data: original?.data,
+    });
   });
 
-  it("a seleção tem anel além da cor, e nasce sem casar com nenhum ponto", () => {
-    const camadas = buildBaseStyle().layers;
-    for (const id of [MAP_LAYERS.halo, MAP_LAYERS.selecionado]) {
-      const camada = camadas.find((item) => item.id === id);
-      expect(camada && "filter" in camada ? camada.filter : null).toEqual(selectionFilter(null));
+  it("quem tem lugar documentado não entra, e a soma fecha com os pontos", () => {
+    const semPonto = new Set(listUnplaced(acontecimentos).map((item) => item.eventId));
+    const comPonto = new Set(data.pontos.features.map((ponto) => ponto.properties.eventId));
+    for (const acontecimento of acontecimentos) {
+      expect(semPonto.has(acontecimento.id)).not.toBe(comPonto.has(acontecimento.id));
     }
-  });
-
-  it("o filtro de seleção não casa com nada quando não há seleção", () => {
-    expect(selectionFilter(null)).toEqual(["==", ["get", "acontecimentoSlug"], ""]);
-    expect(selectionFilter("um-slug")).toEqual(["==", ["get", "acontecimentoSlug"], "um-slug"]);
   });
 });
