@@ -138,12 +138,19 @@ test("as páginas de perfil e de acontecimento leem os dados gerados", async ({ 
   const seus = acontecimentos.filter((item) => item.pessoaIds.includes(pessoa.id));
 
   await page.goto(`/politicos/${pessoa.slug}/`);
-  const links = page.getByRole("list").filter({ has: page.getByRole("link", { name: seus[0]!.titulo }) });
-  await expect(links.getByRole("listitem")).toHaveCount(seus.length);
+  const itens = lista(page).getByRole("listitem");
+  await expect(itens).toHaveCount(seus.length);
   // A ordem da página é a do conjunto gerado: cronológica.
-  await expect(links.getByRole("link")).toHaveText(seus.map((item) => item.titulo));
+  for (const [indice, item] of seus.entries()) {
+    await expect(itens.nth(indice)).toContainText(item.titulo);
+  }
 
-  await page.getByRole("link", { name: seus[0]!.titulo }).click();
+  // Da lista ao painel de leitura, e do painel à página do acontecimento.
+  await lista(page).getByRole("button", { name: seus[0]!.titulo }).click();
+  await page
+    .getByRole("region", { name: "Leitura" })
+    .getByRole("link", { name: "Abrir a página do acontecimento" })
+    .click();
   await expect(page).toHaveURL(new RegExp(`/acontecimentos/${seus[0]!.slug}/$`));
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(seus[0]!.titulo);
   await expect(page.getByText("Revisão humana pendente")).toBeVisible();

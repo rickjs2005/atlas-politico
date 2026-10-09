@@ -30,7 +30,17 @@ import {
 // build, e o mapa continua sem depender de CDN.
 setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).href);
 
+// Os contornos da base provisória saem pelo mesmo caminho: arquivos do
+// projeto, publicados pelo build e pedidos ao próprio site.
+const BASE_MAP_URLS = {
+  terra: new URL("./base/terra.geojson", import.meta.url).href,
+  estados: new URL("./base/estados-br.geojson", import.meta.url).href,
+};
+
 const LOAD_TIMEOUT_MS = 15_000;
+
+/** Duração do movimento de câmera ao selecionar (docs/INTERACTIONS.md). */
+const CAMERA_MS = 500;
 
 const MAP_LOCALE = {
   "Map.Title": "Mapa dos acontecimentos",
@@ -42,6 +52,8 @@ export interface MapCanvasProps {
   features: EventPointCollection;
   selectedSlug: string | null;
   onSelect: (slug: string) => void;
+  /** Faixa inferior do mapa coberta por outro elemento, em pixels. */
+  bottomInset?: number;
   onReady: () => void;
   onFailure: (reason: Error) => void;
 }
@@ -54,6 +66,7 @@ export default function MapCanvas({
   features,
   selectedSlug,
   onSelect,
+  bottomInset = 0,
   onReady,
   onFailure,
 }: MapCanvasProps) {
@@ -74,7 +87,7 @@ export default function MapCanvas({
     try {
       instance = new MapLibreMap({
         container,
-        style: buildBaseStyle(),
+        style: buildBaseStyle(BASE_MAP_URLS),
         bounds: INITIAL_BOUNDS,
         fitBoundsOptions: { padding: 24 },
         minZoom: 1,
@@ -141,15 +154,9 @@ export default function MapCanvas({
     map?.getSource<GeoJSONSource>(MAP_SOURCES.acontecimentos)?.setData(features);
   }, [map, features]);
 
-  useEffect(() => {
-    if (!map) return;
-    map.setFilter(MAP_LAYERS.selecionado, selectionFilter(selectedSlug));
-    if (selectedSlug === null) return;
-
-    const pontos = features.features
-      .filter((feature) => feature.properties.acontecimentoSlug === selectedSlug)
-      .map((feature) => feature.geometry.coordinates as [number, number]);
-
+  // Leva a câmera aos pontos do acontecimento selecionado. Lê a faixa coberta
+  // no momento da seleção: se ela mudar depois, a câmera não se mexe de novo.
+  const frameSelection = useEffectEvent((alvo: MapLibreMap, pontos: [number, number][]) => {
     // Acontecimento sem ponto (abrangência nacional, lugar não documentado):
     // a câmera fica onde está. O MapLibre já pula a animação quando o sistema
     // pede movimento reduzido.
@@ -157,7 +164,13 @@ export default function MapCanvas({
     if (!primeiro) return;
 
     if (demais.length === 0) {
-      map.easeTo({ center: primeiro, zoom: Math.max(map.getZoom(), 4) });
+      // O ponto fica no centro da área livre, acima da faixa coberta.
+      alvo.easeTo({
+        center: primeiro,
+        zoom: Math.max(alvo.getZoom(), 4),
+        offset: [0, -bottomInset / 2],
+        duration: CAMERA_MS,
+      });
       return;
     }
 
@@ -167,7 +180,29 @@ export default function MapCanvas({
       [Math.min(...longitudes), Math.min(...latitudes)],
       [Math.max(...longitudes), Math.max(...latitudes)],
     ];
-    map.fitBounds(enquadramento, { padding: 72, maxZoom: 6 });
+    // Zoom contido: a base não tem rótulos, e de perto o contorno deixa de situar o ponto.
+    alvo.fitBounds(enquadramento, {
+      padding: { top: 56, right: 56, left: 56, bottom: 56 + bottomInset },
+      maxZoom: 4.5,
+      // Deslocamento direto, com a mesma duração do caso de um ponto só, em
+      // vez do voo com afastamento que é o padrão do MapLibre.
+      linear: true,
+      duration: CAMERA_MS,
+    });
+  });
+
+  useEffect(() => {
+    if (!map) return;
+    map.setFilter(MAP_LAYERS.selecionado, selectionFilter(selectedSlug));
+    map.setFilter(MAP_LAYERS.halo, selectionFilter(selectedSlug));
+    if (selectedSlug === null) return;
+
+    frameSelection(
+      map,
+      features.features
+        .filter((feature) => feature.properties.acontecimentoSlug === selectedSlug)
+        .map((feature) => feature.geometry.coordinates as [number, number]),
+    );
   }, [map, selectedSlug, features]);
 
   return <div ref={containerRef} className="h-full w-full" />;

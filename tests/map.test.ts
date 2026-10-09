@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { buildGraticule } from "@/features/map/graticule";
-import { buildBaseStyle, selectionFilter } from "@/features/map/style";
+import { CATEGORY_COLORS } from "@/features/map/palette";
+import { MAP_LAYERS, MAP_SOURCES, buildBaseStyle, selectionFilter } from "@/features/map/style";
 import { buildEventPoints, filterPoints } from "@/lib/data/points";
+import { CATEGORIAS } from "@/lib/domain/categories";
 import { formatCoordinates, isInsideBrazilBox, toPosition } from "@/lib/domain/geo";
 
 import { loadAtlasData } from "./helpers";
@@ -133,6 +135,47 @@ describe("grade e estilo locais", () => {
     expect(JSON.stringify(estilo)).not.toMatch(/https?:|\/\//);
     expect(estilo.glyphs).toBeUndefined();
     expect(estilo.sprite).toBeUndefined();
+  });
+
+  it("a base de terra e de estados vem dos endereços que quem monta o mapa informa", () => {
+    const estilo = buildBaseStyle({ terra: "/base/terra.geojson", estados: "/base/estados.geojson" });
+    expect(estilo.sources[MAP_SOURCES.terra]).toMatchObject({ type: "geojson", data: "/base/terra.geojson" });
+    expect(estilo.sources[MAP_SOURCES.estados]).toMatchObject({ type: "geojson", data: "/base/estados.geojson" });
+    // Sem os endereços, as duas fontes ficam vazias e o mapa ainda monta.
+    expect(buildBaseStyle().sources[MAP_SOURCES.terra]).toMatchObject({
+      data: { type: "FeatureCollection", features: [] },
+    });
+  });
+
+  it("os pontos ficam acima da base, e a seleção acima dos pontos", () => {
+    const ordem = buildBaseStyle().layers.map((camada) => camada.id);
+    expect(ordem).toEqual([
+      MAP_LAYERS.mar,
+      MAP_LAYERS.grade,
+      MAP_LAYERS.terra,
+      MAP_LAYERS.terraEmFoco,
+      MAP_LAYERS.estados,
+      MAP_LAYERS.fronteiras,
+      MAP_LAYERS.pontos,
+      MAP_LAYERS.halo,
+      MAP_LAYERS.selecionado,
+    ]);
+  });
+
+  it("a cor do ponto cobre todas as categorias", () => {
+    const pontos = buildBaseStyle().layers.find((camada) => camada.id === MAP_LAYERS.pontos);
+    const cor = JSON.stringify(pontos && "paint" in pontos ? pontos.paint : null);
+    for (const categoria of CATEGORIAS) {
+      expect(cor).toContain(`"${categoria}","${CATEGORY_COLORS[categoria]}"`);
+    }
+  });
+
+  it("a seleção tem anel além da cor, e nasce sem casar com nenhum ponto", () => {
+    const camadas = buildBaseStyle().layers;
+    for (const id of [MAP_LAYERS.halo, MAP_LAYERS.selecionado]) {
+      const camada = camadas.find((item) => item.id === id);
+      expect(camada && "filter" in camada ? camada.filter : null).toEqual(selectionFilter(null));
+    }
   });
 
   it("o filtro de seleção não casa com nada quando não há seleção", () => {

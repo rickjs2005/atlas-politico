@@ -3,6 +3,7 @@
 // partir da validação, para existir mesmo quando há erro e a publicação está
 // bloqueada. Não tem horário: a mesma entrada gera o mesmo relatório.
 
+import { MIN_GAP_YEARS, findGaps } from "@/lib/data/coverage";
 import { buildEventPoints } from "@/lib/data/points";
 import { CATEGORIAS, CATEGORY_LABELS, type Categoria } from "@/lib/domain/categories";
 import { formatDate, yearOf, type Precisao } from "@/lib/domain/dates";
@@ -12,9 +13,6 @@ import { compareByDate, compareText } from "@/lib/domain/order";
 import { MOTIVOS_DE_EXCLUSAO, type BuildResult, type Excluded } from "./build";
 import { countBySeverity, formatDiagnostic, type Diagnostic, type Severidade } from "./diagnostics";
 import { COLECOES_FACTUAIS, ENTIDADE_DA_COLECAO } from "./sources";
-
-/** Anos seguidos sem acontecimento para a lacuna entrar no relatório. */
-export const MIN_GAP_YEARS = 4;
 
 /** Um item do registro de trechos conferidos (docs/evidencias). */
 export interface EvidenceEntry {
@@ -126,19 +124,15 @@ export function buildCoverageReport(
     }
 
     // Lacunas: do início da cobertura (ou do primeiro registro) até a data de corte.
+    // A regra é a mesma que a interface usa (src/lib/data/coverage.ts).
     const inicio =
       cobertura?.periodo.inicio.tipo === "data"
         ? yearOf(cobertura.periodo.inicio)
         : (anos[0] ?? null);
-    const marcos = [...new Set(anos)].sort((a, b) => a - b);
-    const lacunas: PersonCoverage["lacunas"] = [];
-    if (inicio !== null && anoDeCorte !== null) {
-      let anterior = inicio - 1;
-      for (const marco of [...marcos, anoDeCorte + 1]) {
-        if (marco - anterior - 1 >= MIN_GAP_YEARS) lacunas.push({ de: anterior + 1, ate: marco - 1 });
-        anterior = Math.max(anterior, marco);
-      }
-    }
+    const lacunas =
+      inicio !== null && anoDeCorte !== null && inicio <= anoDeCorte
+        ? findGaps(anos, { de: inicio, ate: anoDeCorte })
+        : [];
 
     return {
       id: pessoa.id,

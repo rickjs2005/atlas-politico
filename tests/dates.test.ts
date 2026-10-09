@@ -4,8 +4,12 @@ import {
   analyzeDate,
   calcInterval,
   compareDates,
+  describePrecision,
   findPeriodProblem,
   formatDate,
+  formatDateParts,
+  formatPeriod,
+  formatPeriodYears,
   intervalsOverlap,
   yearRangeInterval,
   type DataHistorica,
@@ -118,6 +122,53 @@ describe("apresentação", () => {
 
   it("escreve o primeiro dia do mês como 1º", () => {
     expect(formatDate(data("2024-03-01", "dia"))).toBe("1º de março de 2024");
+  });
+
+  it("separa o ano do complemento, sem completar o que a data não informa", () => {
+    expect(formatDateParts(data("1994", "ano"))).toEqual({ ano: "1994", complemento: null });
+    expect(formatDateParts(data("2003-03", "mes"))).toEqual({ ano: "2003", complemento: "mar" });
+    expect(formatDateParts(data("2011-06-15", "dia"))).toEqual({ ano: "2011", complemento: "15 jun" });
+    expect(formatDateParts(data("2024-03-01", "dia"))).toEqual({ ano: "2024", complemento: "1º mar" });
+  });
+
+  it("avisa quando a data é parcial, e não diz nada quando o dia é conhecido", () => {
+    expect(describePrecision(data("1994", "ano"))).toBe("Só o ano está documentado.");
+    expect(describePrecision(data("2003-03", "mes"))).toBe("O dia não está documentado.");
+    expect(describePrecision(data("2011-06-15", "dia"))).toBeNull();
+  });
+});
+
+describe("apresentação de períodos", () => {
+  const desconhecida = { tipo: "desconhecida" } as const;
+  const emCurso = { tipo: "em-curso" } as const;
+
+  it("escreve cada limite na precisão conhecida", () => {
+    expect(formatPeriod({ inicio: limite("2003-02-01", "dia"), fim: limite("2006", "ano") })).toBe(
+      "1º de fevereiro de 2003 a 2006",
+    );
+    expect(formatPeriod({ inicio: limite("2019", "ano"), fim: emCurso })).toBe("desde 2019");
+    expect(formatPeriod({ inicio: limite("2010", "ano"), fim: limite("2010", "ano") })).toBe("2010");
+  });
+
+  it("diz qual limite não está documentado, em vez de inventar um", () => {
+    expect(formatPeriod({ inicio: desconhecida, fim: limite("2015-03", "mes") })).toBe(
+      "até março de 2015; início não documentado",
+    );
+    expect(formatPeriod({ inicio: limite("1975", "ano"), fim: desconhecida })).toBe(
+      "a partir de 1975; fim não documentado",
+    );
+    expect(formatPeriod({ inicio: desconhecida, fim: desconhecida })).toBe("período não documentado");
+    expect(formatPeriod({ inicio: desconhecida, fim: emCurso })).toBe("em curso; início não documentado");
+  });
+
+  it("resume o período em anos para espaços estreitos", () => {
+    expect(formatPeriodYears({ inicio: limite("2003-02-01", "dia"), fim: limite("2006", "ano") })).toBe(
+      "2003–2006",
+    );
+    expect(formatPeriodYears({ inicio: limite("2019", "ano"), fim: emCurso })).toBe("desde 2019");
+    expect(formatPeriodYears({ inicio: desconhecida, fim: limite("2015-03", "mes") })).toBe("?–2015");
+    expect(formatPeriodYears({ inicio: limite("1975", "ano"), fim: desconhecida })).toBe("1975–?");
+    expect(formatPeriodYears({ inicio: desconhecida, fim: desconhecida })).toBe("sem datas");
   });
 });
 

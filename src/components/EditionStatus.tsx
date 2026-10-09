@@ -2,10 +2,10 @@ import { formatDate } from "@/lib/domain/dates";
 import type { Edicao } from "@/lib/domain/types";
 
 /** Diz qual conjunto de conteúdo a página está exibindo, ou que ainda não há nenhum. */
-export function EditionStatus({ edicao }: { edicao: Edicao | null }) {
+export function EditionStatus({ edicao, className = "" }: { edicao: Edicao | null; className?: string }) {
   if (edicao === null) {
     return (
-      <p className="rounded-md border border-line bg-notice px-4 py-3 text-sm text-notice-ink">
+      <p className={`border border-line-strong bg-notice px-4 py-3 text-sm ${className}`}>
         <strong>Em construção.</strong> Nenhuma edição de conteúdo foi publicada ainda. As páginas
         mostram a estrutura do atlas; os acontecimentos entram depois de pesquisados e revisados.
       </p>
@@ -15,7 +15,7 @@ export function EditionStatus({ edicao }: { edicao: Edicao | null }) {
   const revisadoEm = formatDate({ valor: edicao.revisao.revisadoEm, precisao: "dia" });
 
   return (
-    <p className="text-sm text-ink-soft">
+    <p className={`text-sm text-ink-soft ${className}`}>
       Edição {edicao.versao} · registros até{" "}
       {formatDate({ valor: edicao.dataDeCorte, precisao: "dia" })} ·{" "}
       {edicao.revisao.tipo === "humana"

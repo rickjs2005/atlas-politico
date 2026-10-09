@@ -2,7 +2,7 @@
 
 Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa e acontecimentos acompanhados das fontes que os sustentam. Projeto de portfólio da MilWeb.
 
-**Estágio atual:** fases 1 a 3 de 10 concluídas (fundação, primeiro conjunto de conteúdo e camada de dados). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. A interface ainda é estrutural: páginas de perfil e de acontecimento, mais duas telas de prova técnica restritas ao desenvolvimento. O que está pronto e o que falta está em [docs/STATUS.md](docs/STATUS.md).
+**Estágio atual:** fases 1 a 4 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados e experiência e direção visual). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e uma prévia navegável das quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
 
 ## Requisitos
 
@@ -29,10 +29,10 @@ O Node 22.18 é o mínimo porque os comandos de dados rodam o TypeScript do proj
 | zod | 4.6.5 | Schemas do conteúdo |
 | server-only | 0.0.1 | Impede que a leitura de conteúdo vá para o navegador |
 | vitest | 5.0.3 | Testes das regras de dados, do pipeline e de estado |
-| @playwright/test | 1.63.0 | Testes de navegador das telas de prova |
+| @playwright/test | 1.63.0 | Testes de navegador e capturas da prévia |
 | eslint, eslint-config-next | 9.39.5, 16.4.0 | Lint e fronteiras entre camadas |
 
-A fase 3 não acrescentou nenhuma dependência.
+As fases 3 e 4 não acrescentaram nenhuma dependência. As fontes tipográficas (`src/app/fonts/`) e os contornos do mapa (`src/features/map/base/`) da fase 4 são arquivos do projeto, com a licença de cada um descrita na própria pasta.
 
 ## Instalação
 
@@ -49,6 +49,16 @@ npm run dev
 Gera os dados e abre em http://localhost:3000. Com erro no conteúdo, o comando para antes de subir o servidor e mostra o que corrigir.
 
 Com o servidor aberto, editar um arquivo de `content/` e recarregar a página basta: os dados são gerados de novo. Se a edição tiver erro, a página mostra os diagnósticos.
+
+As quatro telas da prévia (docs/UX.md):
+
+| Tela | Endereço |
+|---|---|
+| Entrada | http://localhost:3000/ |
+| Exploração | http://localhost:3000/politicos/lula/ e http://localhost:3000/politicos/flavio-bolsonaro/ |
+| Acontecimento | http://localhost:3000/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/ |
+| Comparação | http://localhost:3000/comparar/ |
+| Guia de estados, só em desenvolvimento | http://localhost:3000/dev/previa/ |
 
 Telas de prova técnica, que só existem com `npm run dev` e não entram no build de produção:
 
@@ -101,11 +111,12 @@ npm run preview   # serve out/ em http://localhost:4311
 |---|---|
 | `npm run lint` | ESLint, incluindo as fronteiras entre camadas |
 | `npm run typecheck` | Gera os tipos de rota e roda o `tsc` |
-| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado e mapa (Vitest) |
+| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, mapa, linha do tempo, cobertura e base visual, com o contraste das cores (Vitest) |
 | `npm run build` | Gera os dados e o site. Falha se o conteúdo estiver inválido |
 | `npm run verify:export` | Confere `out/`: páginas previstas, uma página por acontecimento publicado e nenhuma por rascunho, nenhuma rota de desenvolvimento, nenhum dado sintético |
 | `npm run check` | Os cinco acima, em sequência |
-| `npm run test:e2e` | As duas telas de prova e as páginas de perfil e de acontecimento em um Chromium real (Playwright). Sobe o próprio servidor na porta 4310 |
+| `npm run test:e2e` | As telas de prova e as quatro telas da prévia em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
+| `npm run capture:preview` | Refaz as capturas de `docs/capturas/fase-4/`. Não confere nada: só registra as telas |
 
 Antes de qualquer entrega: `npm run check` e `npm run test:e2e`.
 
@@ -116,19 +127,19 @@ content/
   published/     a edição: registros revisados, editados à mão
   drafts/        pesquisa em andamento e importações
 generated/       dados gerados por `npm run data:build` (fora do Git)
-docs/            arquitetura, modelo de dados, pipeline, decisões e status
+docs/            arquitetura, dados, experiência, decisões, status e capturas
 public/
-  geo/           base cartográfica local (fase 6)
-  media/         imagens e fontes tipográficas locais
+  geo/           base cartográfica definitiva (fase 6)
+  media/         retratos e imagens
 scripts/         comandos de dados, conferência e pré-visualização da saída
 src/
-  app/           rotas e páginas
-  components/    componentes visuais compartilhados
+  app/           rotas e páginas; fontes tipográficas em app/fonts/
+  components/    base visual: retrato, data, categoria, fontes, peças da linha do tempo
   features/
     events/      lista e leitura de acontecimentos
-    map/         mapa e estilo local
-    timeline/    reservado (fase 5)
-    comparison/  reservado (fase 7)
+    map/         mapa, estilo local e contornos da base provisória
+    timeline/    linha do tempo, período e categorias
+    comparison/  trajetórias na mesma escala
   lib/
     domain/      regras e contratos de dados, sem I/O
     data/        formato dos dados públicos, índices, pontos e consultas
@@ -146,6 +157,10 @@ tests/
 - [docs/DATA_MODEL.md](docs/DATA_MODEL.md): entidades, relacionamentos e regras de datas, lugares e revisão.
 - [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md): validação, elegibilidade, dados gerados, consultas, importação e como atualizar o conteúdo.
 - [docs/DATA-REPORT.md](docs/DATA-REPORT.md): relatório de cobertura da edição atual, gerado por `npm run data:report`.
+- [docs/UX.md](docs/UX.md): direção visual, as quatro telas, composição por largura e roteiro de demonstração.
+- [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md): tokens, tipografia, categorias e componentes.
+- [docs/INTERACTIONS.md](docs/INTERACTIONS.md): seleção, teclado, estados, movimento e o que ainda é demonstração.
+- [docs/capturas/](docs/capturas/README.md): capturas reais da prévia.
 - [docs/DECISIONS.md](docs/DECISIONS.md): decisões adotadas e seus motivos.
 - [docs/STATUS.md](docs/STATUS.md): situação de cada fase, limitações e preparação para a próxima.
 - [docs/SOURCES.md](docs/SOURCES.md): catálogo das fontes e critérios de uso.

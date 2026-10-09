@@ -1,53 +1,132 @@
 @import "tailwindcss";
 
 /*
-  Base visual da fase 1: tokens neutros, tipografia do sistema e foco visível.
-  Paleta final, tipos e a identidade equivalente dos dois perfis são decisões
-  da fase 4. As cores do mapa repetem estes tokens em
-  src/features/map/style.ts.
+  Identidade visual do atlas (fase 4): um atlas editorial em tons de papel, com
+  o grafite como tinta. A descrição de cada escolha está em
+  docs/DESIGN-SYSTEM.md.
+
+  As cores do mapa são desenhadas por WebGL, que não lê variáveis CSS. Elas
+  repetem estes tokens em src/features/map/palette.ts, e um teste confere que
+  os dois lados continuam iguais (tests/design.test.ts).
 */
 :root {
-  --atlas-paper: #f6f3ec;
-  --atlas-surface: #ffffff;
-  --atlas-ink: #1b1a17;
-  --atlas-ink-soft: #57534a;
-  --atlas-line: #d8d2c4;
-  --atlas-accent: #17495a;
-  --atlas-mark: #b3470d;
-  --atlas-mark-soft: #fbeee3;
-  --atlas-notice: #fff3d1;
-  --atlas-notice-ink: #4a3800;
-  --atlas-map: #dfe8ea;
+  /* Superfícies: papel */
+  --atlas-paper: #f3efe6;
+  --atlas-paper-raised: #fbf9f4;
+  --atlas-paper-sunken: #e8e3d6;
+
+  /* Tinta: grafite */
+  --atlas-ink: #1b1c1a;
+  --atlas-ink-soft: #4a4c45;
+  --atlas-ink-faint: #62645b;
+
+  /* Linhas */
+  --atlas-line: #d6d0c0;
+  --atlas-line-strong: #b7b09d;
+
+  /* Acento: só para seleção. Laranja queimado, longe do vermelho, do azul e do
+     verde e amarelo, que neste recorte têm leitura partidária. */
+  --atlas-accent: #b24a00;
+  --atlas-accent-soft: #f8e4cf;
+
+  /* Aviso de conteúdo provisório */
+  --atlas-notice: #f1e4bd;
+
+  /* Categorias: sempre acompanhadas de forma e de texto */
+  --atlas-cat-mandatos: #36567a;
+  --atlas-cat-eleicoes: #8f5d00;
+  --atlas-cat-partidos: #7b3d6c;
+  --atlas-cat-atuacao: #24695b;
+  --atlas-cat-marcos: #3b3e40;
+
+  /* Mapa */
+  --atlas-map-sea: #dbe3e1;
+  --atlas-map-land: #ebe6da;
+  --atlas-map-land-focus: #f8f5ee;
+  --atlas-map-border: #8f958d;
+  --atlas-map-state: #cfc9b9;
+  --atlas-map-grid: #c9d2cf;
+
+  /* Medidas de composição */
+  --atlas-header-h: 3.5rem;
+  --atlas-gutter: 1rem;
+
+  /* Movimento: curto e discreto (docs/INTERACTIONS.md) */
+  --atlas-ease: cubic-bezier(0.2, 0, 0, 1);
+  --atlas-fast: 120ms;
+  --atlas-base: 180ms;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --atlas-header-h: 4rem;
+    --atlas-gutter: 1.5rem;
+  }
+}
+
+@media (min-width: 80rem) {
+  :root {
+    --atlas-gutter: 2rem;
+  }
 }
 
 @theme inline {
   --color-paper: var(--atlas-paper);
-  --color-surface: var(--atlas-surface);
+  --color-raised: var(--atlas-paper-raised);
+  --color-sunken: var(--atlas-paper-sunken);
   --color-ink: var(--atlas-ink);
   --color-ink-soft: var(--atlas-ink-soft);
+  --color-ink-faint: var(--atlas-ink-faint);
   --color-line: var(--atlas-line);
+  --color-line-strong: var(--atlas-line-strong);
   --color-accent: var(--atlas-accent);
-  --color-mark: var(--atlas-mark);
-  --color-mark-soft: var(--atlas-mark-soft);
+  --color-accent-soft: var(--atlas-accent-soft);
   --color-notice: var(--atlas-notice);
-  --color-notice-ink: var(--atlas-notice-ink);
-  --color-map: var(--atlas-map);
+  --color-map-sea: var(--atlas-map-sea);
 
-  /* Fontes do sistema: nenhuma fonte é baixada no build nem no navegador. */
+  --color-cat-mandatos: var(--atlas-cat-mandatos);
+  --color-cat-eleicoes: var(--atlas-cat-eleicoes);
+  --color-cat-partidos: var(--atlas-cat-partidos);
+  --color-cat-atuacao: var(--atlas-cat-atuacao);
+  --color-cat-marcos: var(--atlas-cat-marcos);
+
+  /* As famílias vêm de arquivos locais (src/app/fonts), carregados em layout.tsx. */
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, Cambria, "Times New Roman", serif;
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    var(--font-franklin), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial,
     sans-serif;
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --ease-atlas: var(--atlas-ease);
+
+  --animate-enter: atlas-enter var(--atlas-base) var(--atlas-ease) both;
+}
+
+@keyframes atlas-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @layer base {
+  html {
+    scroll-padding-top: 1rem;
+  }
+
   body {
     background-color: var(--atlas-paper);
     color: var(--atlas-ink);
+    font-feature-settings: "kern", "liga";
+    text-rendering: optimizeLegibility;
   }
 
+  /* Foco sempre visível: anel de tinta, afastado do elemento. */
   :focus-visible {
-    outline: 3px solid var(--atlas-mark);
+    outline: 2px solid var(--atlas-ink);
     outline-offset: 2px;
   }
 
@@ -58,6 +137,119 @@
   }
 
   a {
-    text-underline-offset: 0.2em;
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: from-font;
   }
+
+  ::selection {
+    background-color: var(--atlas-accent-soft);
+    color: var(--atlas-ink);
+  }
+
+  /* Quem pede menos movimento recebe as mesmas mudanças, sem a transição. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Rótulo pequeno em caixa alta: nome de seção, legenda de campo. */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* Números da cronologia: alinhados e de mesma largura. */
+@utility numerals {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum", "lnum";
+}
+
+/* Texto de leitura longa. */
+@utility reading {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
+/* Largura útil das páginas, com a margem lateral do projeto. */
+@utility page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 82rem;
+  padding-inline: var(--atlas-gutter);
+}
+
+/*
+  Área de trabalho da exploração (docs/UX.md, seção Composição por largura).
+  Estreita: uma vista por vez, em coluna. Média: lista ou painel à esquerda,
+  mapa e linha do tempo à direita. Larga: lista, mapa com linha do tempo e
+  painel, lado a lado.
+*/
+.explorer-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 48rem) {
+  .explorer-grid {
+    display: grid;
+    grid-template-columns: 22rem minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "lado mapa"
+      "lado tempo";
+  }
+
+  .explorer-lista,
+  .explorer-painel {
+    grid-area: lado;
+  }
+
+  .explorer-mapa {
+    grid-area: mapa;
+  }
+
+  .explorer-tempo {
+    grid-area: tempo;
+  }
+}
+
+@media (min-width: 80rem) {
+  .explorer-grid {
+    grid-template-columns: 22rem minmax(0, 1fr) 27rem;
+    grid-template-areas:
+      "lista mapa painel"
+      "lista tempo painel";
+  }
+
+  .explorer-lista {
+    grid-area: lista;
+  }
+
+  .explorer-painel {
+    grid-area: painel;
+  }
+}
+
+/* Estilo do MapLibre: controles no desenho do atlas. */
+.maplibregl-ctrl-group {
+  border-radius: 2px !important;
+  box-shadow: 0 0 0 1px var(--atlas-ink-faint) !important;
+  background: var(--atlas-paper-raised) !important;
+}
+
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid var(--atlas-line) !important;
 }

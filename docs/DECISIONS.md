@@ -1,6 +1,6 @@
 # Decisões
 
-Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21), fase 2 (D-22 a D-26) e fase 3 (D-27 a D-36). Decisão nova entra no fim, com número novo. Decisão revista ganha uma linha "Revista em", sem apagar o texto original.
+Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21), fase 2 (D-22 a D-26), fase 3 (D-27 a D-36) e fase 4 (D-37 a D-48). Decisão nova entra no fim, com número novo. Decisão revista ganha uma linha "Revista em", sem apagar o texto original.
 
 ## D-01. Uma aplicação Next.js com exportação estática, gerenciada por npm
 
@@ -284,6 +284,102 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Consequência.** A conferência de trechos continua sendo a fotografia de 8 de outubro de 2026 em `docs/evidencias/`. O relatório informa quantas citações de registros elegíveis têm trecho registrado ali.
 
+## D-37. Direção visual: atlas editorial em tons de papel
+
+**Decisão (fase 4).** Uma direção só: superfícies em tons de papel, texto em grafite, hierarquia por tipografia, alinhamento e linhas finas. O mapa ocupa a coluna central da exploração, as datas abrem cada item em destaque e o painel de leitura tem ordem fixa. Os tokens ficam em `src/app/globals.css` e são a única origem das cores.
+
+**Motivo.** O plano pede um atlas editorial com paleta contida. Papel e tinta resolvem a hierarquia sem cor, e deixam a cor livre para duas funções: seleção e categoria. Entre grafite e papel, o papel foi escolhido porque os retratos e o mapa precisam de um fundo claro para serem tratados do mesmo jeito.
+
+**Consequência.** Os nomes de cor da fase 1 (`surface`, `mark`, `notice-ink`) deixaram de existir. Detalhes em DESIGN-SYSTEM.md.
+
+## D-38. Os perfis aparecem em ordem alfabética
+
+**Decisão (fase 4).** `PROFILES` passou a listar Flávio Bolsonaro e Lula, nessa ordem, e essa é a ordem do menu, da entrada, da comparação e da página 404.
+
+**Motivo.** A fase 3 deixou em aberto a ordem dos perfis na interface. Qualquer outra regra (cargo atual, tempo de trajetória, quantidade de registros) seria uma escolha editorial sobre quem vem primeiro. A ordem alfabética é a mesma regra dos textos (EDITORIAL.md).
+
+**Consequência.** Um teste confere a ordem. Um terceiro perfil entra na posição que o nome pedir.
+
+## D-39. Um acento, laranja queimado, só para seleção; categoria com forma, cor e nome
+
+**Decisão (fase 4).** O acento (`#b24a00`) marca só o que está selecionado. Cada categoria tem uma forma (quadrado, círculo, losango, triângulo, cruz), uma cor escura e pouco saturada, e o nome escrito. Não há cor por pessoa nem por partido.
+
+**Motivo.** O acento é a cor mais visível da interface. A primeira versão desta fase usava um vermelho terroso; em um atlas sobre Lula e Flávio Bolsonaro, vermelho vivo, azul vivo e o par verde e amarelo lembram identidades partidárias, e a troca foi feita antes da entrega. Forma e nome nas categorias atendem a quem não distingue as cores.
+
+**Consequência.** As cores do mapa repetem os tokens em `src/features/map/palette.ts`, porque o WebGL não lê variáveis CSS; `tests/design.test.ts` falha se os dois lados divergirem e confere o contraste mínimo de cada par em uso. No mapa a categoria ainda aparece só pela cor (fase 6).
+
+## D-40. Um tema só, claro
+
+**Decisão (fase 4).** Não há tema escuro nesta edição.
+
+**Motivo.** Os retratos são mesclados ao papel por multiplicação, o que só funciona sobre fundo claro, e os pares de contraste foram medidos nesta combinação. Um segundo tema dobraria a conferência visual sem mudar o que o atlas informa.
+
+**Consequência.** O ponto em aberto "tema escuro", da fase 1, fica encerrado para esta edição. Reabrir pede outro tratamento dos retratos e outra medição de contraste.
+
+## D-41. Newsreader e Libre Franklin, em arquivos locais
+
+**Decisão (fase 4).** Duas famílias variáveis, em `src/app/fonts/`, carregadas por `next/font/local`: Newsreader para títulos e leitura, Libre Franklin para interface e números. Só o subconjunto latino.
+
+**Motivo.** O plano pede tipografia expressiva nos títulos, texto confortável e números claros. As duas têm licença OFL 1.1, que permite redistribuir os arquivos. Servir do próprio site mantém a regra de não pedir nada a terceiros e evita depender de um servidor de fontes no build.
+
+**Consequência.** Três arquivos, cerca de 310 KB no total. A serifada não é pré-carregada e entra com um substituto de medidas ajustadas; afinar o carregamento é da fase 8.
+
+## D-42. Retratos em tons de cinza, na mesma moldura
+
+**Decisão (fase 4).** Os dois retratos oficiais são exibidos em tons de cinza, mesclados ao papel, recortados pelo topo em uma moldura 4:5 (ou quadrada, nas miniaturas). O crédito diz o tratamento: "Exibida em tons de cinza e recortada". Sem arquivo, a moldura mostra as iniciais.
+
+**Motivo.** As duas fotos têm cores e fundos muito diferentes: uma com a bandeira do estado ao fundo, outra com a faixa presidencial. Em cores, uma pesa mais que a outra na página.
+
+**Consequência.** Os arquivos em `public/media/retratos/` não foram alterados: o tratamento é de CSS, na exibição. A licença do retrato de Lula (CC BY 2.0) permite adaptação com atribuição e indicação da mudança. A condição registrada para o retrato de Flávio Bolsonaro é "uso livre com crédito", da Agência Senado, sem cláusula escrita sobre adaptação: a exibição em cinza e recortada fica como ponto a confirmar pelo responsável pelo projeto. Se a resposta for não, basta tirar três classes de `Portrait.tsx`, e os dois retratos voltam a aparecer em cores. Preparar versões menores e em outro formato é da fase 8.
+
+## D-43. Base provisória do mapa: Natural Earth 1:50m
+
+**Decisão (fase 4).** A terra, as fronteiras e as divisas dos estados vêm de dois arquivos GeoJSON derivados do Natural Earth 1:50m, recortados para a América do Sul e guardados em `src/features/map/base/`. O Brasil aparece em tom mais claro. Não há rótulos.
+
+**Motivo.** A base da fase 1 era só uma grade de meridianos e paralelos, e os pontos ficavam sem referência. O Natural Earth é de domínio público e cabe em 255 KB, o que permite continuar sem tiles e sem pedir nada a terceiros. Rótulos exigem arquivos de glyphs, que são decisão da fase 6.
+
+**Consequência.** O zoom ao selecionar é contido (até 4,5), porque de perto um contorno sem nomes deixa de situar o ponto. `buildBaseStyle(base)` isola a base: a fase 6 pode trocá-la sem mexer em quem usa o mapa.
+
+## D-44. A prévia são as rotas reais, mais um guia de estados só em desenvolvimento
+
+**Decisão (fase 4).** As quatro telas foram construídas nas rotas do atlas (`/`, `/politicos/<slug>/`, `/acontecimentos/<slug>/`, `/comparar/`), com os dados gerados. Os estados que o conteúdo atual não produz ficam em `/dev/previa/`, que usa a extensão `.dev.tsx` e não entra no build.
+
+**Motivo.** O critério do plano é o fluxo funcionar com o conteúdo real. Uma prévia em rotas à parte teria de ser refeita na fase 5. O guia separado evita inventar dados no conteúdo só para mostrar um estado.
+
+**Consequência.** As páginas de perfil e de acontecimento da fase 2 foram substituídas. As telas de prova das fases 1 e 3 (`/dev/prova/`, `/dev/dados/`) continuam, com as classes novas.
+
+## D-45. Uma estrutura de página para as três larguras; em tela estreita, uma vista por vez
+
+**Decisão (fase 4).** A exploração tem um HTML só. Dois atributos calculados (`data-pane` e `data-side`) e o CSS decidem o que aparece: uma vista por vez até 767 px, duas colunas até 1279 px e três colunas a partir daí. Em tela estreita e média, a leitura substitui a lista em vez de abrir por cima dela.
+
+**Motivo.** Um painel sobreposto em celular esconde o que o originou e precisa de armadilha de foco, fundo escurecido e gesto de fechar. Trocar a vista mantém a ordem do documento, o foco e a rolagem previsíveis. Um HTML só evita montar o mapa duas vezes.
+
+**Consequência.** O mapa só é montado quando sua moldura aparece na tela: quem fica na lista, em celular, não baixa o pacote do mapa. Na vista do mapa em celular, a seleção mostra um cartão sobre o mapa em vez de trocar de vista.
+
+## D-46. O endereço é lido na chegada; a escrita fica para a fase 5
+
+**Decisão (fase 4).** A exploração lê a query string uma vez, ao carregar, e restaura período, categorias e acontecimento. Filtrar ou selecionar não altera o endereço. A página do acontecimento volta para a exploração com `?acontecimento=<slug>`.
+
+**Motivo.** O retorno com a seleção é parte do fluxo pedido nesta fase. Escrever no endereço e responder ao histórico é a ligação que o plano coloca na fase 5, e fazê-la pela metade criaria dois comportamentos para voltar.
+
+**Consequência.** A leitura usa `useSyncExternalStore`, porque a página é gerada no build sem query string. Um parâmetro inválido é descartado sozinho.
+
+## D-47. A comparação não soma, não ordena e diz o que não foi pesquisado
+
+**Decisão (fase 4).** As duas trajetórias aparecem sobre o mesmo eixo, com a mesma altura mínima. O trecho anterior à cobertura de uma pessoa é hachurado e escrito como "fora da cobertura desta edição"; as lacunas dentro da cobertura, como "sem registros". Toda quantidade é dita como "registros do atlas". O período da tela é estado local.
+
+**Motivo.** A cobertura de uma trajetória começa em 1975 e a da outra em 2002. Sem dizer isso, a tela sugeriria 27 anos sem atividade. O plano proíbe nota ou conclusão de desempenho pelo volume de registros.
+
+**Consequência.** `src/lib/data/coverage.ts` reúne cobertura e lacunas, usadas pela interface e pelo relatório de dados. Ligar a comparação ao estado central e ao endereço é da fase 7.
+
+## D-48. O que ficou fora desta fase
+
+**Decisão (fase 4).** Não foram feitos: escrita do estado no endereço e histórico, período por arraste, zoom ou agrupamento na linha do tempo, agrupamento de pontos sobrepostos, formas de categoria e rótulos no mapa, pontos focáveis pelo teclado, filtro de categoria na comparação, tema escuro e versões otimizadas das imagens.
+
+**Motivo.** O pedido da fase é a experiência e a direção visual, com uma prévia navegável. Cada item acima pertence a uma fase posterior do plano (5, 6, 7 ou 8) e tem contrato escrito em INTERACTIONS.md.
+
+**Consequência.** A prévia funciona com os dados reais nos fluxos principais; o que é demonstração está listado, item por item.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
@@ -292,7 +388,9 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 | Buscar o GeoJSON por endereço, em vez de recebê-lo pela página (D-28) | Fase 6 |
 | Exigir revisão humana como condição de publicação | Fase 9 |
 | Canal público de correção e quem assina a revisão humana | Decisão do responsável pelo projeto |
-| Base cartográfica, glyphs locais e rótulos do mapa | Fase 6 |
+| Base cartográfica definitiva, glyphs locais e rótulos do mapa (D-43) | Fase 6 |
 | Pontos como camada de círculos ou como marcadores HTML focáveis pelo teclado | Fase 6 |
-| Paleta, tipografia e sincronia entre tokens CSS e cores do mapa | Fase 4 |
-| Tema escuro | Fase 4 |
+| Pontos sobrepostos: agrupar ou listar por lugar | Fase 6 |
+| Arquivos de segmento do Next na saída estática, pedidos com ponto e gravados em pastas (STATUS.md) | Fase 8 ou 10 |
+| Nome definitivo do atlas (o rodapé diz "nome provisório") | Decisão do responsável pelo projeto |
+| Exibir em cinza e recortado o retrato cuja condição de uso é "livre com crédito" (D-42) | Decisão do responsável pelo projeto |

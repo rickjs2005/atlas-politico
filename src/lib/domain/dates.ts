@@ -179,6 +179,70 @@ export function formatDate(data: DataHistorica): string {
   return `${dia === 1 ? "1º" : dia} de ${nomeDoMes} de ${ano}`;
 }
 
+const MESES_ABREVIADOS = [
+  "jan",
+  "fev",
+  "mar",
+  "abr",
+  "mai",
+  "jun",
+  "jul",
+  "ago",
+  "set",
+  "out",
+  "nov",
+  "dez",
+] as const;
+
+/**
+ * A data em duas partes, para a composição em que o ano vem em destaque: o ano
+ * e, ao lado, só o que a precisão sustenta (`10 fev`, `mar` ou nada).
+ */
+export function formatDateParts(data: DataHistorica): { ano: string; complemento: string | null } {
+  const { ano, mes, dia } = assertValid(data);
+  if (mes === null) return { ano: String(ano), complemento: null };
+  const nomeDoMes = MESES_ABREVIADOS[mes - 1];
+  return {
+    ano: String(ano),
+    complemento: dia === null ? `${nomeDoMes}` : `${dia === 1 ? "1º" : dia} ${nomeDoMes}`,
+  };
+}
+
+/** Frase que avisa quando a data é parcial; `null` quando o dia é conhecido. */
+export function describePrecision(data: DataHistorica): string | null {
+  if (data.precisao === "ano") return "Só o ano está documentado.";
+  if (data.precisao === "mes") return "O dia não está documentado.";
+  return null;
+}
+
+/**
+ * Período por extenso, com cada limite na precisão conhecida. Limite
+ * desconhecido é dito como desconhecido, e `em-curso` como vigente na data de
+ * corte.
+ */
+export function formatPeriod(periodo: Periodo): string {
+  const { inicio, fim } = periodo;
+  const de = inicio.tipo === "data" ? formatDate(inicio) : null;
+  const ate = fim.tipo === "data" ? formatDate(fim) : null;
+
+  if (de !== null && ate !== null) return de === ate ? de : `${de} a ${ate}`;
+  if (de !== null) return fim.tipo === "em-curso" ? `desde ${de}` : `a partir de ${de}; fim não documentado`;
+  if (ate !== null) return `até ${ate}; início não documentado`;
+  return fim.tipo === "em-curso" ? "em curso; início não documentado" : "período não documentado";
+}
+
+/** O mesmo período em anos, para espaços estreitos: `2003–2007`, `desde 2019`, `até 2015`. */
+export function formatPeriodYears(periodo: Periodo): string {
+  const { inicio, fim } = periodo;
+  const de = inicio.tipo === "data" ? yearOf(inicio) : null;
+  const ate = fim.tipo === "data" ? yearOf(fim) : null;
+
+  if (de !== null && ate !== null) return de === ate ? String(de) : `${de}–${ate}`;
+  if (de !== null) return fim.tipo === "em-curso" ? `desde ${de}` : `${de}–?`;
+  if (ate !== null) return `?–${ate}`;
+  return fim.tipo === "em-curso" ? "em curso" : "sem datas";
+}
+
 /**
  * Limites de um período em números de cálculo. `null` marca o limite que não
  * está documentado. `em-curso` vale até a data de corte da edição, que é o

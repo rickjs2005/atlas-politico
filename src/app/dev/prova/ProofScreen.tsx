@@ -91,23 +91,23 @@ function ProofLayout({ draftCount, variant }: Omit<ProofScreenProps, "data">) {
   };
 
   const filterButton =
-    "rounded-md border border-line bg-surface px-3 py-1.5 text-sm hover:border-accent aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-surface";
+    "min-h-9 border border-line-strong bg-raised px-3 text-sm hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-paper";
 
   return (
-    <div className="space-y-6">
+    <div className="page space-y-6 py-8">
       <header className="space-y-3">
-        <h1 className="font-serif text-3xl leading-tight">
+        <h1 className="font-serif text-4xl font-medium leading-tight tracking-tight">
           {variant === "real" ? "Prova técnica com os dados gerados" : "Prova técnica"}
         </h1>
         {variant === "real" ? (
-          <p className="rounded-md border border-line bg-notice px-4 py-3 text-sm text-notice-ink">
+          <p className="border border-line-strong bg-notice px-4 py-3 text-sm">
             <strong>Dados reais{edicao ? ` da edição ${edicao.versao}` : ""}.</strong> Conjunto,
             índices e pontos do mapa lidos de <code>generated/</code>, como o build os lê. A
             conferência do conteúdo foi assistida por IA, e a revisão humana está pendente. A tela
             existe só no servidor de desenvolvimento.
           </p>
         ) : (
-          <p className="rounded-md border border-line bg-notice px-4 py-3 text-sm text-notice-ink">
+          <p className="border border-line-strong bg-notice px-4 py-3 text-sm">
             <strong>Dados sintéticos.</strong> Todos os registros desta tela foram criados para
             teste e não descrevem pessoas, lugares ou fatos reais. A tela existe só no servidor de
             desenvolvimento e não entra no build de produção.
@@ -166,14 +166,19 @@ function ProofLayout({ draftCount, variant }: Omit<ProofScreenProps, "data">) {
 
       <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)_22rem]">
         <section aria-labelledby="prova-lista" className="lg:-m-1.5 lg:max-h-[36rem] lg:overflow-y-auto lg:p-1.5">
-          <h2 id="prova-lista" className="mb-2 font-serif text-xl">
+          <h2 id="prova-lista" className="eyebrow mb-2 text-ink-soft">
             Acontecimentos
           </h2>
-          <EventList items={visible} selectedSlug={state.acontecimento} onSelect={selectEvent} />
+          <EventList
+            items={visible}
+            selectedSlug={state.acontecimento}
+            onSelect={selectEvent}
+            people={data.conjunto.pessoas}
+          />
         </section>
 
         <section aria-labelledby="prova-mapa">
-          <h2 id="prova-mapa" className="mb-2 font-serif text-xl">
+          <h2 id="prova-mapa" className="eyebrow mb-2 text-ink-soft">
             Mapa
           </h2>
           {/* Altura fixa: o mapa não muda de tamanho quando o painel cresce. */}
@@ -188,7 +193,7 @@ function ProofLayout({ draftCount, variant }: Omit<ProofScreenProps, "data">) {
         </section>
 
         <section aria-labelledby="prova-painel" aria-live="polite">
-          <h2 id="prova-painel" className="mb-2 font-serif text-xl">
+          <h2 id="prova-painel" className="eyebrow mb-2 text-ink-soft">
             Detalhes
           </h2>
           <EventPanel event={resolved} />

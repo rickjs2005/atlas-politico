@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { EditionStatus } from "@/components/EditionStatus";
 import { getAtlasData } from "@/lib/content/published";
-import { filterEvents, findPersonBySlug } from "@/lib/data/queries";
-import { formatDate } from "@/lib/domain/dates";
+import { findPersonBySlug } from "@/lib/data/queries";
+import { sliceForPerson } from "@/lib/data/slice";
 import { PROFILES, findProfile } from "@/lib/domain/profiles";
+
+import { Explorer } from "./Explorer";
 
 // As rotas de perfil vêm do escopo da edição (PROFILES), não do conteúdo: a
 // página existe mesmo antes de haver registros revisados, e diz isso.
@@ -30,38 +31,26 @@ export default async function ProfilePage({ params }: PageProps<"/politicos/[slu
 
   const data = getAtlasData();
   const pessoa = findPersonBySlug(data, slug);
-  const acontecimentos = pessoa ? filterEvents(data, { pessoaIds: [pessoa.id] }) : [];
+
+  if (pessoa === null) {
+    return (
+      <div className="page space-y-4 py-12">
+        <h1 className="font-serif text-5xl font-medium tracking-tight">{perfil.nome}</h1>
+        <EditionStatus edicao={data.conjunto.edicao} />
+        <p className="max-w-2xl text-ink-soft">
+          Ainda não há registros revisados deste perfil no conjunto publicado. A ausência de
+          registros aqui indica o estágio da pesquisa, e não ausência de atividade pública.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8">
-      <header className="max-w-3xl space-y-4">
-        <h1 className="font-serif text-4xl leading-tight">{perfil.nome}</h1>
-        {pessoa && <p className="text-lg">{pessoa.resumo}</p>}
-        <EditionStatus edicao={data.conjunto.edicao} />
-      </header>
-
-      <section aria-labelledby="acontecimentos" className="space-y-3">
-        <h2 id="acontecimentos" className="font-serif text-2xl">
-          Acontecimentos
-        </h2>
-        {acontecimentos.length === 0 ? (
-          <p className="max-w-3xl text-ink-soft">
-            Ainda não há acontecimentos revisados deste perfil no conjunto publicado. A ausência de
-            registros aqui indica o estágio da pesquisa, e não ausência de atividade pública.
-          </p>
-        ) : (
-          <ol className="space-y-2">
-            {acontecimentos.map((item) => (
-              <li key={item.id}>
-                <span className="text-sm text-ink-soft">{formatDate(item.data)} · </span>
-                <Link href={`/acontecimentos/${item.slug}`} className="underline">
-                  {item.titulo}
-                </Link>
-              </li>
-            ))}
-          </ol>
-        )}
-      </section>
-    </div>
+    <Explorer
+      // A página carrega só os registros desta trajetória.
+      data={sliceForPerson(data, pessoa.id)}
+      pessoaId={pessoa.id}
+      others={PROFILES.filter((item) => item.slug !== slug)}
+    />
   );
 }

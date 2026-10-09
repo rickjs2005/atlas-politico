@@ -13,9 +13,11 @@
 import type { Categoria } from "@/lib/domain/categories";
 import {
   YEAR_BOUNDS,
+  calcInterval,
   calcPeriodBounds,
   classifyOverlap,
   yearRangeInterval,
+  type DataHistorica,
   type Periodo,
   type PeriodOverlap,
 } from "@/lib/domain/dates";
@@ -26,6 +28,7 @@ import type {
   Edicao,
   Filiacao,
   Fonte,
+  Imagem,
   Lugar,
   Mandato,
   Pessoa,
@@ -188,6 +191,26 @@ export function listMandates(data: AtlasData, filtro: PeriodFilter): PeriodMatch
   return matchPeriods(data, registros, filtro.periodo);
 }
 
+/**
+ * Cargos e funções da pessoa na data de um acontecimento. A data entra com a
+ * precisão que tem: para um acontecimento de que só se sabe o ano, valem os
+ * cargos de qualquer momento daquele ano.
+ */
+export function listMandatesAt(
+  data: AtlasData,
+  pessoaId: string,
+  quando: DataHistorica,
+): PeriodMatch<Mandato>[] {
+  const corte = data.conjunto.edicao?.dataDeCorte;
+  if (corte === undefined) return [];
+
+  const intervalo = calcInterval(quando);
+  return recordsOf(data.conjunto.mandatos, data.indices.mandatos, pessoaId).flatMap((registro) => {
+    const situacao = classifyOverlap(calcPeriodBounds(registro.periodo, corte), intervalo);
+    return situacao === "nenhuma" ? [] : [{ registro, situacao }];
+  });
+}
+
 export function listAffiliations(data: AtlasData, filtro: PeriodFilter): PeriodMatch<Filiacao>[] {
   const registros = recordsOf(data.conjunto.filiacoes, data.indices.filiacoes, filtro.pessoaId);
   return matchPeriods(data, registros, filtro.periodo);
@@ -217,6 +240,13 @@ export function getSources(
     const fonte = posicao === undefined ? undefined : data.conjunto.fontes[posicao];
     return fonte === undefined ? [] : [{ citacao, fonte }];
   });
+}
+
+/** Imagem pelo `id`; `null` quando o registro não tem imagem ou ela não foi publicada. */
+export function getImage(data: AtlasData, imagemId: string | null): Imagem | null {
+  if (imagemId === null) return null;
+  const posicao = lookup(data.indices.imagens.porId, imagemId);
+  return posicao === undefined ? null : (data.conjunto.imagens[posicao] ?? null);
 }
 
 /** Acontecimentos documentados em um lugar, em ordem cronológica. */

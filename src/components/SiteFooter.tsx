@@ -3,13 +3,20 @@ import Link from "next/link";
 export function SiteFooter() {
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-x-8 gap-y-1 px-4 py-6 text-sm text-ink-soft">
+      <div className="page flex flex-wrap justify-between gap-x-8 gap-y-2 py-6 text-sm text-ink-soft">
         <p>Atlas Político (nome provisório) · um projeto MilWeb</p>
-        <p>
-          <Link href="/metodologia" className="underline">
-            Como o atlas trata fontes, datas e lugares
-          </Link>
-        </p>
+        <ul className="flex flex-wrap gap-x-6 gap-y-1">
+          <li>
+            <Link href="/metodologia" className="underline decoration-line-strong hover:decoration-ink">
+              Metodologia e fontes
+            </Link>
+          </li>
+          <li>
+            <Link href="/metodologia#creditos" className="underline decoration-line-strong hover:decoration-ink">
+              Créditos
+            </Link>
+          </li>
+        </ul>
       </div>
     </footer>
   );

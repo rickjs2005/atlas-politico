@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Os testes de navegador exercitam a tela de prova, que só existe no servidor
-// de desenvolvimento. Porta própria, para não disputar com um `npm run dev`
-// que já esteja aberto.
+// Os testes de navegador rodam contra o servidor de desenvolvimento, que tem
+// as telas de prova além das rotas do atlas. Porta própria, para não disputar
+// com um `npm run dev` que já esteja aberto.
 const PORT = 4310;
 
 export default defineConfig({
@@ -20,7 +20,16 @@ export default defineConfig({
   },
   projects: [
     {
+      // `npm run test:e2e`
       name: "chromium",
+      testMatch: "**/*.spec.ts",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+    },
+    {
+      // `npm run capture:preview`: grava as capturas de docs/capturas/. Fica
+      // fora dos testes: capturar não confere nada, só registra.
+      name: "capturas",
+      testMatch: "**/*.capture.ts",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
     },
   ],

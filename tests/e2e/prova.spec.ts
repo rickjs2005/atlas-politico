@@ -134,7 +134,8 @@ test("trocar a pessoa mantém lista, mapa e painel no mesmo recorte", async ({ p
   await item(page, "05").click();
   await expect(painel(page)).toContainText("22 de agosto de 2018");
 
-  await page.getByRole("button", { name: "Pessoa Sintética A" }).click();
+  // `exact`: os itens da lista também dizem de quem é cada acontecimento.
+  await page.getByRole("button", { name: "Pessoa Sintética A", exact: true }).click();
 
   await expect(lista(page).getByRole("button")).toHaveCount(4);
   await expect(page.getByText("4 acontecimentos no recorte · 5 pontos no mapa")).toBeVisible();
