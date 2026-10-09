@@ -1,10 +1,12 @@
 // Capturas da prévia da fase 4, para docs/capturas/fase-4/. Rode com
 // `npm run capture:preview`. Não é teste: não confere nada, só registra as
-// telas nas quatro larguras de referência.
+// telas nas quatro larguras de referência. As imagens guardadas são as da
+// fase 4: rodar de novo as refaz com a interface atual. Para conferir o
+// roteiro sem mexer nelas, aponte CAPTURE_DIR para outra pasta.
 
 import { expect, test, type Page } from "@playwright/test";
 
-const OUT = "docs/capturas/fase-4";
+const OUT = process.env.CAPTURE_DIR ?? "docs/capturas/fase-4";
 
 const VIEWPORTS = {
   computador: { width: 1440, height: 900 },

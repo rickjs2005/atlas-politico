@@ -2,26 +2,39 @@
 
 // Guia de estados da prévia: cada componente da base visual nos estados que a
 // interface precisa prever, com dados reais da edição. Existe só no servidor
-// de desenvolvimento e serve de referência para as fases 5 a 8.
+// de desenvolvimento e serve de referência para as fases 5 a 8. Os estados da
+// navegação temporal (fase 5) estão marcados no título.
 
 import { useState } from "react";
 
 import { CategoryLabel } from "@/components/Category";
 import { DateMark } from "@/components/DateMark";
+import { PersonSwitch } from "@/components/PersonSwitch";
 import { Portrait } from "@/components/Portrait";
 import { SourceList } from "@/components/SourceList";
 import { PeriodLane } from "@/components/time/PeriodLane";
 import { EventList } from "@/features/events/EventList";
 import { EventPanel } from "@/features/events/EventPanel";
+import { clipGaps } from "@/features/events/chronology";
 import { MapFallback } from "@/features/map/MapView";
 import { CategoryFilter } from "@/features/timeline/CategoryFilter";
+import { PeriodContext } from "@/features/timeline/PeriodContext";
 import { PeriodControl } from "@/features/timeline/PeriodControl";
 import { Timeline } from "@/features/timeline/Timeline";
-import { getCoveredSpan } from "@/lib/data/coverage";
+import { getCoveredSpan, listGaps } from "@/lib/data/coverage";
 import { filterPoints } from "@/lib/data/points";
-import { filterEvents, getEventView, getImage, getSources, listMandatesAt } from "@/lib/data/queries";
+import {
+  filterEvents,
+  getEventView,
+  getImage,
+  getSources,
+  listAffiliations,
+  listMandates,
+  listMandatesAt,
+} from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
 import { CATEGORIAS, type Categoria } from "@/lib/domain/categories";
+import { formatYearRange } from "@/lib/domain/dates";
 
 function Specimen({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
@@ -45,6 +58,7 @@ export function StatesGallery({ data }: { data: AtlasData }) {
   const [selecionado, setSelecionado] = useState<string | null>(todos[1]?.slug ?? null);
   const [periodo, setPeriodo] = useState<{ de: number | null; ate: number | null }>({ de: 2016, ate: null });
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [contextoAberto, setContextoAberto] = useState(true);
 
   const noRecorte = filterEvents(data, { pessoaIds: [pessoa.id], periodo, categorias });
   const exemplos = {
@@ -57,6 +71,8 @@ export function StatesGallery({ data }: { data: AtlasData }) {
   const fontes = exemplos.dia ? getEventView(data, exemplos.dia).citacoes : [];
   const mandatosDaOutra = data.conjunto.mandatos.filter((item) => item.pessoaId === outra.id);
   const filiacoesDaOutra = data.conjunto.filiacoes.filter((item) => item.pessoaId === outra.id);
+  // Um ano com mudança de partido e registros de datas incompletas.
+  const anoDeExemplo = { de: 2021, ate: 2021 };
 
   return (
     <div className="space-y-10">
@@ -75,6 +91,38 @@ export function StatesGallery({ data }: { data: AtlasData }) {
               ),
           )}
         </ul>
+        <p className="text-sm text-ink-soft">
+          Em lista cronológica (fase 5), a data parcial diz por escrito o que falta:
+        </p>
+        <ul className="flex flex-wrap gap-x-10 gap-y-4">
+          {([exemplos.dia, exemplos.mes, exemplos.ano] as const).map(
+            (item) =>
+              item && (
+                <li key={item.id}>
+                  <DateMark data={item.data} showPrecision />
+                </li>
+              ),
+          )}
+        </ul>
+      </Specimen>
+
+      <Specimen
+        title="Troca de pessoa (fase 5)"
+        note="Os perfis aparecem sempre todos, em ordem alfabética e com o mesmo desenho. O que está aberto fica marcado; o outro é um link que leva o recorte junto. Tamanho de toque e tamanho compacto."
+      >
+        <div className="flex flex-wrap items-center gap-x-10 gap-y-3">
+          {(["toque", "compacto"] as const).map((size) => (
+            <PersonSwitch
+              key={size}
+              size={size}
+              options={data.conjunto.pessoas.map((item) => ({
+                slug: item.slug,
+                nome: item.nome,
+                href: item.id === pessoa.id ? null : `/politicos/${item.slug}/?de=2019&ate=2022`,
+              }))}
+            />
+          ))}
+        </div>
       </Specimen>
 
       <Specimen
@@ -118,7 +166,7 @@ export function StatesGallery({ data }: { data: AtlasData }) {
 
       <Specimen
         title="Linha do tempo"
-        note="Marcas com a forma da categoria. Data parcial ganha um traço que cobre o mês ou o ano inteiro. O trecho fora do período fica hachurado. Barra tracejada e sem ponta indica limite não documentado."
+        note="Marcas com a forma da categoria. Data parcial ganha um traço que cobre o mês ou o ano inteiro. O trecho fora do período fica hachurado. Barra tracejada e sem ponta indica limite não documentado. Desde a fase 5, marcas próximas sobem de fileira conforme a largura do eixo, e clicar em um ano ou arrastar sobre o eixo escolhe o período."
       >
         <div className="border border-line bg-raised pb-2">
           <Timeline
@@ -128,6 +176,7 @@ export function StatesGallery({ data }: { data: AtlasData }) {
             selectedSlug={selecionado}
             onSelect={setSelecionado}
             periodo={periodo}
+            onPeriodChange={(de, ate) => setPeriodo({ de, ate })}
             dataDeCorte={corte}
             label={`Linha do tempo de ${pessoa.nome}`}
             lanes={[
@@ -185,6 +234,35 @@ export function StatesGallery({ data }: { data: AtlasData }) {
           note="Item normal, item selecionado (filete e fundo de acento, mais o estado no botão) e item sem ponto no mapa."
         >
           <EventList items={noRecorte.slice(0, 5)} selectedSlug={selecionado} onSelect={setSelecionado} />
+        </Specimen>
+
+        <Specimen
+          title="Lista com lacunas e ordem em aberto (fase 5)"
+          note="Período sem registro vira uma linha hachurada, no lugar dos anos que ocupa. O registro só com o ano, ao lado de outro do mesmo ano, diz que a ordem entre eles não está documentada."
+        >
+          <div className="max-h-[28rem] overflow-y-auto border border-line">
+            <EventList
+              items={todos}
+              selectedSlug={selecionado}
+              onSelect={setSelecionado}
+              gaps={clipGaps(listGaps(data, pessoa.id), dominio)}
+            />
+          </div>
+        </Specimen>
+
+        <Specimen
+          title="Cargos e partidos do período (fase 5)"
+          note={`${outra.nome}, ${formatYearRange(anoDeExemplo.de, anoDeExemplo.ate)}: o que as datas provam fica separado do que elas não decidem. Registro sem início ou sem fim aparece como presença incerta.`}
+        >
+          <div className="border border-line bg-paper">
+            <PeriodContext
+              periodLabel={formatYearRange(anoDeExemplo.de, anoDeExemplo.ate)}
+              mandatos={listMandates(data, { pessoaId: outra.id, periodo: anoDeExemplo })}
+              filiacoes={listAffiliations(data, { pessoaId: outra.id, periodo: anoDeExemplo })}
+              open={contextoAberto}
+              onToggle={setContextoAberto}
+            />
+          </div>
         </Specimen>
 
         <Specimen

@@ -3,11 +3,12 @@
 // A filtragem em si é das consultas (`@/lib/data/queries`); aqui só se traduz
 // o estado da exploração para um filtro.
 
+import type { YearSpan } from "@/lib/data/coverage";
 import { filterEvents, findPersonBySlug } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
 import type { Acontecimento } from "@/lib/domain/types";
 
-import { atlasReducer, type AtlasAction, type AtlasState } from "./atlas-state";
+import { atlasReducer, fitPeriod, type AtlasAction, type AtlasState } from "./atlas-state";
 
 export function selectVisibleEvents(data: AtlasData, state: AtlasState): Acontecimento[] {
   // Na comparação entram as duas trajetórias; fora dela, só a pessoa em foco.
@@ -41,8 +42,27 @@ export function reconcileSelection(state: AtlasState, visible: Acontecimento[]):
   return { ...state, acontecimento: null };
 }
 
-/** Transição completa: aplica a ação e garante a regra de consistência. */
-export function transition(state: AtlasState, action: AtlasAction, data: AtlasData): AtlasState {
-  const next = atlasReducer(state, action);
-  return reconcileSelection(next, selectVisibleEvents(data, next));
+/**
+ * Deixa o estado coerente com os dados: o período dentro do que a edição
+ * cobre, quando a cobertura é informada, e a seleção dentro do recorte.
+ */
+export function settle(state: AtlasState, data: AtlasData, cobertura?: YearSpan | null): AtlasState {
+  let ajustado = state;
+  if (cobertura) {
+    const periodo = fitPeriod(state.periodo, cobertura);
+    if (periodo.de !== state.periodo.de || periodo.ate !== state.periodo.ate) {
+      ajustado = { ...state, periodo };
+    }
+  }
+  return reconcileSelection(ajustado, selectVisibleEvents(data, ajustado));
+}
+
+/** Transição completa: aplica a ação e garante as regras de consistência. */
+export function transition(
+  state: AtlasState,
+  action: AtlasAction,
+  data: AtlasData,
+  cobertura?: YearSpan | null,
+): AtlasState {
+  return settle(atlasReducer(state, action), data, cobertura);
 }

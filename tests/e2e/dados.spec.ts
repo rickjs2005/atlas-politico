@@ -138,7 +138,8 @@ test("as páginas de perfil e de acontecimento leem os dados gerados", async ({ 
   const seus = acontecimentos.filter((item) => item.pessoaIds.includes(pessoa.id));
 
   await page.goto(`/politicos/${pessoa.slug}/`);
-  const itens = lista(page).getByRole("listitem");
+  // Só os acontecimentos: a lista também tem linhas de lacuna.
+  const itens = lista(page).locator("li[data-acontecimento]");
   await expect(itens).toHaveCount(seus.length);
   // A ordem da página é a do conjunto gerado: cronológica.
   for (const [indice, item] of seus.entries()) {

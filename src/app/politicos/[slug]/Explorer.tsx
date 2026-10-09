@@ -3,6 +3,11 @@
 // Exploração de uma trajetória: contexto da pessoa, recorte, lista, mapa,
 // linha do tempo e painel de leitura, todos lendo o mesmo estado.
 //
+// O estado (período, categorias e acontecimento aberto) fica no endereço:
+// abrir um link, recarregar, voltar e avançar restauram a mesma consulta
+// (docs/TIMELINE.md). O que é só apresentação fica aqui: a vista ativa, se a
+// leitura está aberta e se os filtros estão à vista.
+//
 // A composição muda com a largura (docs/UX.md):
 //   estreita  uma vista por vez: lista, mapa ou leitura;
 //   média     lista ou leitura à esquerda; mapa e linha do tempo à direita;
@@ -10,52 +15,86 @@
 // O HTML é um só. Quem decide o que aparece em cada largura é o CSS, a partir
 // de dois atributos calculados aqui: `data-pane` e `data-side`.
 
-import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { DateMark } from "@/components/DateMark";
+import { PersonSwitch } from "@/components/PersonSwitch";
 import { Portrait } from "@/components/Portrait";
 import { ProfilePanel } from "@/components/ProfilePanel";
 import { EventList, eventItemId, noPointNote } from "@/features/events/EventList";
 import { EventPanel } from "@/features/events/EventPanel";
+import { clipGaps } from "@/features/events/chronology";
 import { MapView } from "@/features/map/MapView";
 import { CategoryFilter } from "@/features/timeline/CategoryFilter";
+import { PeriodContext } from "@/features/timeline/PeriodContext";
 import { PeriodControl } from "@/features/timeline/PeriodControl";
 import { Timeline } from "@/features/timeline/Timeline";
-import { getCoverage, getCoveredSpan, getCutYear } from "@/lib/data/coverage";
+import { getCoverage, getCoveredSpan, getCutYear, listGaps, type YearSpan } from "@/lib/data/coverage";
 import { filterPoints } from "@/lib/data/points";
 import {
   filterEvents,
   getEventView,
   getImage,
   getSources,
+  listAffiliations,
+  listMandates,
   listMandatesAt,
 } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
 import { CATEGORIAS, CATEGORY_LABELS, type Categoria } from "@/lib/domain/categories";
+import { formatDate, formatYearRange } from "@/lib/domain/dates";
 import type { Pessoa } from "@/lib/domain/types";
-import { AtlasStateProvider, useAtlas } from "@/lib/state/AtlasStateProvider";
-import { INITIAL_STATE } from "@/lib/state/atlas-state";
-import { parseAtlasParams } from "@/lib/state/url-params";
+import { useAtlas } from "@/lib/state/AtlasStateProvider";
+import { AtlasUrlStateProvider } from "@/lib/state/AtlasUrlStateProvider";
+import { hasFilters, type AtlasAction } from "@/lib/state/atlas-state";
+import { transition } from "@/lib/state/selectors";
+import { serializeAtlasParams } from "@/lib/state/url-params";
+import { carryToPerson } from "@/lib/state/url-state";
 
 type Tab = "lista" | "mapa" | "perfil";
+
+/** Um perfil do atlas, como a troca de pessoa precisa dele. */
+export interface ProfileLink {
+  slug: string;
+  nome: string;
+  /** `id` da pessoa no conjunto; `null` enquanto o perfil não tem registros. */
+  id: string | null;
+  /** Anos que a edição cobre para a pessoa. */
+  cobertura: YearSpan | null;
+}
 
 interface ExplorerProps {
   /** Dados já recortados para esta pessoa. */
   data: AtlasData;
   pessoaId: string;
-  /** Os outros perfis do atlas, para a troca de pessoa. */
-  others: readonly { slug: string; nome: string }[];
+  /** Todos os perfis do atlas, na ordem da interface. */
+  profiles: readonly ProfileLink[];
 }
 
-export function Explorer({ data, pessoaId, others }: ExplorerProps) {
+const pathOf = (slug: string) => `/politicos/${slug}`;
+
+export function Explorer({ data, pessoaId, profiles }: ExplorerProps) {
   const pessoa = data.conjunto.pessoas.find((item) => item.id === pessoaId);
+  // Anos que podem ser consultados: a cobertura da edição para a pessoa.
+  const dominio = useMemo(() => {
+    const coberto = getCoveredSpan(data, pessoaId);
+    const corte = getCutYear(data) ?? new Date().getFullYear();
+    return coberto ?? { de: corte - 10, ate: corte };
+  }, [data, pessoaId]);
+
   if (!pessoa) return null;
 
   return (
-    <AtlasStateProvider data={data} initialState={{ ...INITIAL_STATE, pessoa: pessoa.slug }}>
-      <Workspace pessoa={pessoa} others={others} />
-    </AtlasStateProvider>
+    <AtlasUrlStateProvider
+      // Outra pessoa é outra exploração: nada de apresentação é herdado.
+      key={pessoa.id}
+      data={data}
+      pessoa={pessoa.slug}
+      path={pathOf(pessoa.slug)}
+      cobertura={dominio}
+    >
+      <Workspace pessoa={pessoa} dominio={dominio} profiles={profiles} />
+    </AtlasUrlStateProvider>
   );
 }
 
@@ -69,54 +108,44 @@ const tabId = (tab: Tab) => `vista-${tab}`;
 const isWide = () => window.matchMedia("(min-width: 80rem)").matches;
 const isNarrow = () => !window.matchMedia("(min-width: 48rem)").matches;
 
-// A query string é lida uma vez, na chegada: nesta fase nada a altera depois.
-const subscribeToNothing = () => () => {};
-const readSearch = () => window.location.search;
-
 /** Leva o foco a um elemento depois que a tela termina de mudar. */
 function focusAfterRender(target: () => HTMLElement | null) {
   requestAnimationFrame(() => target()?.focus());
 }
 
-function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["others"] }) {
+const reset = "font-medium text-ink-soft underline decoration-line-strong hover:text-ink";
+
+interface WorkspaceProps {
+  pessoa: Pessoa;
+  dominio: YearSpan;
+  profiles: ExplorerProps["profiles"];
+}
+
+function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
   const { state, dispatch, data, visible, selected } = useAtlas();
   const [tab, setTab] = useState<Tab>("lista");
-  // `null`: a pessoa ainda não abriu nem fechou nada nesta visita.
-  const [readingChoice, setReading] = useState<boolean | null>(null);
+  // Acontecimento que está marcado mas com a leitura fechada: o cartão sobre o
+  // mapa, em tela estreita, ou a seleção mantida ao trocar de vista. Fora
+  // disso, quem está selecionado está sendo lido, inclusive ao chegar por um
+  // endereço ou ao voltar no histórico.
+  const [folded, setFolded] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  // O bloco de cargos e partidos do período começa recolhido, com o resumo à
+  // vista: a lista de acontecimentos vem primeiro.
+  const [contextOpen, setContextOpen] = useState(false);
+  // A consulta em que uma mudança de recorte fechou o acontecimento que estava
+  // aberto. O aviso vale enquanto a consulta for essa: some ao voltar no
+  // histórico ou ao mudar o recorte de novo.
+  const [droppedAt, setDroppedAt] = useState<string | null>(null);
+  const dropped = droppedAt !== null && droppedAt === serializeAtlasParams(state);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const focusTitle = () => focusAfterRender(() => titleRef.current);
 
-  // Chegada por um endereço com recorte, como o link de volta da página de um
-  // acontecimento. Na página gerada no build não há query string: o navegador
-  // a entrega depois, e o recorte é restaurado a partir dela. A escrita do
-  // estado no endereço e o histórico são da fase 5.
-  const search = useSyncExternalStore(subscribeToNothing, readSearch, () => "");
-  const arrival = useMemo(() => parseAtlasParams(new URLSearchParams(search)), [search]);
-  useEffect(() => {
-    const informado =
-      arrival.acontecimento !== null ||
-      arrival.categorias.length > 0 ||
-      arrival.periodo.de !== null ||
-      arrival.periodo.ate !== null;
-    if (informado) {
-      dispatch({ type: "restore", state: { ...INITIAL_STATE, pessoa: pessoa.slug, ...arrival } });
-    }
-  }, [arrival, dispatch, pessoa.slug]);
-
-  // Quem chega com um acontecimento no endereço chega lendo.
-  const reading = readingChoice ?? arrival.acontecimento !== null;
-  const lendo = reading && selected !== null;
+  const lendo = selected !== null && folded !== selected.slug;
   const pane = lendo || tab === "perfil" ? "leitura" : tab;
   const side = pane === "leitura" ? "leitura" : "lista";
-  // Selecionado sem estar em leitura: só acontece na vista do mapa em tela estreita.
+  // Selecionado sem estar em leitura: o cartão sobre o mapa, em tela estreita.
   const cartao = selected !== null && !lendo;
-
-  const dominio = useMemo(() => {
-    const coberto = getCoveredSpan(data, pessoa.id);
-    const corte = getCutYear(data) ?? new Date().getFullYear();
-    return coberto ?? { de: corte - 10, ate: corte };
-  }, [data, pessoa.id]);
 
   const todos = useMemo(() => filterEvents(data, { pessoaIds: [pessoa.id] }), [data, pessoa.id]);
   const contagem = useMemo(() => {
@@ -140,13 +169,60 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
   const retrato = getImage(data, pessoa.retratoId);
   const dataDeCorte = data.conjunto.edicao?.dataDeCorte ?? null;
 
-  const filtrado =
-    state.categorias.length > 0 || state.periodo.de !== null || state.periodo.ate !== null;
-  const periodoTexto = `${state.periodo.de ?? dominio.de}–${state.periodo.ate ?? dominio.ate}`;
+  // O período consultado, com os dois lados preenchidos.
+  const recorte = useMemo(
+    () => ({ de: state.periodo.de ?? dominio.de, ate: state.periodo.ate ?? dominio.ate }),
+    [state.periodo, dominio],
+  );
+  const periodoAtivo = state.periodo.de !== null || state.periodo.ate !== null;
+  const filtrado = hasFilters(state);
+  const periodoTexto = formatYearRange(recorte.de, recorte.ate);
+  const coberturaTexto = formatYearRange(dominio.de, dominio.ate);
   const categoriasTexto =
     state.categorias.length === 0
       ? "todas as categorias"
       : state.categorias.map((categoria) => CATEGORY_LABELS[categoria].toLowerCase()).join(", ");
+  const registrosTexto = `${visible.length} ${visible.length === 1 ? "registro do atlas" : "registros do atlas"}`;
+
+  // Cargos e partidos que tocam o período, e as lacunas do conjunto dentro dele.
+  const noPeriodo = useMemo(
+    () => ({
+      mandatos: listMandates(data, { pessoaId: pessoa.id, periodo: state.periodo }),
+      filiacoes: listAffiliations(data, { pessoaId: pessoa.id, periodo: state.periodo }),
+      lacunas: clipGaps(listGaps(data, pessoa.id), recorte),
+    }),
+    [data, pessoa.id, state.periodo, recorte],
+  );
+  // A troca de pessoa leva o recorte junto; o acontecimento aberto só segue
+  // quando também é do outro perfil.
+  const switchOptions = profiles.map((perfil) => {
+    if (perfil.slug === pessoa.slug) return { slug: perfil.slug, nome: perfil.nome, href: null };
+    const query =
+      perfil.id === null
+        ? ""
+        : serializeAtlasParams(carryToPerson(state, selected, { id: perfil.id, cobertura: perfil.cobertura }));
+    return {
+      slug: perfil.slug,
+      nome: perfil.nome,
+      href: `${pathOf(perfil.slug)}/${query === "" ? "" : `?${query}`}`,
+    };
+  });
+
+  /** Muda o recorte. Se o acontecimento aberto sair dele, a tela diz. */
+  const applyFilter = (action: AtlasAction) => {
+    const proximo = transition(state, action, data, dominio);
+    const fechou = state.acontecimento !== null && proximo.acontecimento === null;
+    setDroppedAt(fechou ? serializeAtlasParams(proximo) : null);
+    dispatch(action);
+  };
+
+  const choosePeriod = (de: number, ate: number) => {
+    // Clicar de novo no ano que já está escolhido desfaz o período.
+    const mesmoAno = de === ate && recorte.de === de && recorte.ate === ate;
+    applyFilter(mesmoAno ? { type: "setPeriod", de: null, ate: null } : { type: "setPeriod", de, ate });
+  };
+
+  const clearFilters = () => applyFilter({ type: "clearFilters" });
 
   // Abrir pela lista ou pela linha do tempo leva à leitura. Em tela larga o
   // painel já está ao lado, e o foco fica onde a pessoa está.
@@ -155,20 +231,30 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
   // mapa, venha ela de um ponto ou de uma marca da linha do tempo: sair do
   // mapa a cada toque faria a pessoa perder o lugar.
   const openEvent = (slug: string | null, origem: "lista" | "tempo" | "mapa" = "lista") => {
-    dispatch({ type: "selectEvent", slug });
     const noMapaEstreito = isNarrow() && (origem === "mapa" || (origem === "tempo" && tab === "mapa"));
-    if (slug === null || noMapaEstreito) {
-      setReading(false);
+
+    // O item está marcado, mas a leitura foi fechada ao trocar de vista:
+    // acioná-lo de novo abre a leitura, em vez de desfazer a seleção.
+    if (slug === null && selected !== null && folded === selected.slug && !noMapaEstreito && !isWide()) {
+      setFolded(null);
+      focusTitle();
       return;
     }
-    setReading(true);
+
+    setDroppedAt(null);
+    dispatch({ type: "selectEvent", slug });
+    if (slug === null) return;
+    if (noMapaEstreito) {
+      setFolded(slug);
+      return;
+    }
+    setFolded(null);
     if (!isWide()) focusTitle();
   };
 
   const closeEvent = () => {
     const slug = state.acontecimento;
     dispatch({ type: "selectEvent", slug: null });
-    setReading(false);
     // O foco volta para onde a leitura começou: o item da lista ou a vista do mapa.
     if (slug !== null) {
       const id = tab === "mapa" && isNarrow() ? tabId("mapa") : eventItemId(slug);
@@ -178,14 +264,11 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
 
   const chooseTab = (next: Tab) => {
     setTab(next);
-    setReading(false);
+    if (selected === null) return;
     // "Perfil" mostra o resumo da pessoa: o acontecimento aberto é fechado.
+    // "Lista" e "Mapa" fecham a leitura e mantêm o acontecimento marcado.
     if (next === "perfil") dispatch({ type: "selectEvent", slug: null });
-  };
-
-  const clearFilters = () => {
-    dispatch({ type: "setPeriod", de: null, ate: null });
-    dispatch({ type: "clearCategories" });
+    else setFolded(selected.slug);
   };
 
   return (
@@ -222,18 +305,7 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
             <p className="numerals truncate text-xs text-ink-soft xl:hidden">
               {periodoTexto} · {categoriasTexto}
             </p>
-            <ul className="hidden gap-x-3 text-xs xl:flex">
-              {others.map((outro) => (
-                <li key={outro.slug}>
-                  <Link
-                    href={`/politicos/${outro.slug}`}
-                    className="text-ink-soft underline decoration-line-strong hover:text-ink hover:decoration-ink"
-                  >
-                    Ver {outro.nome}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <PersonSwitch options={switchOptions} size="compacto" className="mt-1 hidden xl:block" />
           </div>
         </div>
 
@@ -253,24 +325,33 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
           )}
         </button>
 
-        {/* Quando e o quê. */}
+        {/* Quem (onde não cabe ao lado do nome), quando e o quê. */}
         <div
           id="filtros"
           className={`flex-wrap items-end gap-x-8 gap-y-3 max-xl:col-span-2 max-xl:pt-3 xl:flex xl:px-4 xl:py-3 ${
             filtersOpen ? "flex" : "hidden"
           }`}
         >
+          <div className="max-xl:w-full xl:hidden">
+            <p className="eyebrow mb-1.5 text-ink-soft">Trajetória</p>
+            <PersonSwitch options={switchOptions} />
+          </div>
           <PeriodControl
             domain={dominio}
             periodo={state.periodo}
-            onChange={(de, ate) => dispatch({ type: "setPeriod", de, ate })}
+            onChange={(de, ate) => applyFilter({ type: "setPeriod", de, ate })}
           />
           <CategoryFilter
             selected={state.categorias}
             counts={contagem}
-            onToggle={(categoria) => dispatch({ type: "toggleCategory", categoria })}
-            onClear={() => dispatch({ type: "clearCategories" })}
+            onToggle={(categoria) => applyFilter({ type: "toggleCategory", categoria })}
+            onClear={() => applyFilter({ type: "clearCategories" })}
           />
+          {filtrado && (
+            <button type="button" onClick={clearFilters} className={`h-11 px-2 text-sm xl:hidden ${reset}`}>
+              Limpar filtros
+            </button>
+          )}
         </div>
       </section>
 
@@ -294,15 +375,19 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
         ))}
       </div>
 
+      {/* O que mudou, para quem ouve a página: o acontecimento aberto ou o recorte. */}
       <p className="sr-only" aria-live="polite">
-        {selected ? `Aberto: ${selected.titulo}` : ""}
+        {selected
+          ? `Aberto: ${selected.titulo}`
+          : `${dropped ? "O acontecimento aberto ficou fora do recorte e foi fechado. " : ""}${registrosTexto} em ${periodoTexto}, ${categoriasTexto}.`}
       </p>
 
       <div className="explorer-grid min-h-0 flex-1">
         {/* Linha do tempo */}
         <section
           aria-labelledby="titulo-tempo"
-          className="explorer-tempo order-1 border-b border-line bg-raised pb-2 max-md:group-data-[pane=leitura]/x:hidden md:border-b-0 md:border-t md:border-ink"
+          // Em janela baixa, a linha do tempo rola por dentro, sem cobrir o mapa.
+          className="explorer-tempo relative order-1 border-b border-line bg-raised pb-2 max-md:group-data-[pane=leitura]/x:hidden md:min-h-0 md:overflow-y-auto md:border-b-0 md:border-t md:border-ink"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 px-3 pt-2">
             <h2 id="titulo-tempo" className="eyebrow whitespace-nowrap text-ink-soft">
@@ -320,6 +405,7 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
             selectedSlug={state.acontecimento}
             onSelect={(slug) => openEvent(slug, "tempo")}
             periodo={state.periodo}
+            onPeriodChange={choosePeriod}
             lanes={[
               {
                 rotulo: "Cargos e funções",
@@ -343,6 +429,12 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
             dataDeCorte={dataDeCorte}
             label={`Linha do tempo de ${pessoa.nome}`}
           />
+          <p className="px-3 pt-1.5 text-[0.6875rem] leading-tight text-ink-soft">
+            <span className="md:hidden">Toque em um ano do eixo para ver só aquele ano.</span>
+            <span className="max-md:hidden">
+              Clique em um ano do eixo para ver só aquele ano, ou arraste para escolher um intervalo.
+            </span>
+          </p>
         </section>
 
         {/* Lista */}
@@ -352,13 +444,47 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
           // absoluta; sem isso ele escapa da área com rolagem e estica a página.
           className="explorer-lista relative order-2 hidden min-h-0 overflow-y-auto border-line max-md:group-data-[pane=lista]/x:block md:border-r md:max-xl:group-data-[side=lista]/x:block xl:block"
         >
-          <h2 id="titulo-lista" className="eyebrow sticky top-0 z-10 bg-paper px-3 pb-2 pt-3 text-ink-soft max-md:static">
-            Acontecimentos
-          </h2>
+          {/* O que está sendo consultado: período, quantidade e cobertura. */}
+          <div className="sticky top-0 z-10 bg-paper px-3 pb-2.5 pt-3 max-md:static">
+            <div className="flex min-h-4 items-center justify-between gap-3">
+              <h2 id="titulo-lista" className="eyebrow text-ink-soft">
+                Acontecimentos
+              </h2>
+              {filtrado && (
+                <button type="button" onClick={clearFilters} className={`-my-3.5 py-3.5 text-xs ${reset}`}>
+                  Limpar filtros
+                </button>
+              )}
+            </div>
+            <p className="numerals mt-1.5 text-sm">
+              <span className="font-semibold">{periodoTexto}</span> · {registrosTexto}
+            </p>
+            <p className="text-xs text-ink-soft">
+              {periodoAtivo
+                ? `Recorte de ${coberturaTexto}, o período que a edição cobre.`
+                : "Todo o período que a edição cobre."}
+              {state.categorias.length > 0 && ` Só ${categoriasTexto}.`}
+            </p>
+            {dropped && (
+              <p className="mt-1.5 border-l-2 border-ink-faint pl-2 text-xs text-ink-soft">
+                O acontecimento que estava aberto ficou fora deste recorte e foi fechado.
+              </p>
+            )}
+          </div>
+
+          <PeriodContext
+            periodLabel={periodoTexto}
+            mandatos={noPeriodo.mandatos}
+            filiacoes={noPeriodo.filiacoes}
+            open={contextOpen}
+            onToggle={setContextOpen}
+          />
+
           <EventList
             items={visible}
             selectedSlug={state.acontecimento}
             onSelect={openEvent}
+            gaps={noPeriodo.lacunas}
             emptyMessage={
               <div className="space-y-2 px-3">
                 <p className="font-medium text-ink">Nenhum registro do atlas neste recorte.</p>
@@ -378,6 +504,13 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
               </div>
             }
           />
+
+          {dataDeCorte !== null && (
+            <p className="px-3 py-3 text-xs text-ink-soft">
+              A edição cobre de {dominio.de} a {formatDate({ valor: dataDeCorte, precisao: "dia" })}.
+              Trecho sem registro é lacuna da pesquisa, e não ausência de atividade.
+            </p>
+          )}
         </section>
 
         {/* Mapa */}
@@ -403,7 +536,7 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
           {selected && cartao && (
             <div className="absolute inset-x-2 bottom-2 z-10 animate-enter border border-ink bg-raised p-3 shadow-[0_8px_24px_-12px_rgb(0_0_0/0.4)] md:hidden">
               <div className="grid grid-cols-[4.25rem_minmax(0,1fr)] gap-x-3">
-                <DateMark data={selected.data} />
+                <DateMark data={selected.data} showPrecision />
                 <div className="min-w-0">
                   <p className="font-serif text-[1.0625rem] font-medium leading-snug">{selected.titulo}</p>
                   {noPointNote(selected) !== null && (
@@ -415,7 +548,7 @@ function Workspace({ pessoa, others }: { pessoa: Pessoa; others: ExplorerProps["
                 <button
                   type="button"
                   onClick={() => {
-                    setReading(true);
+                    setFolded(null);
                     focusTitle();
                   }}
                   className="h-11 flex-1 bg-ink px-4 text-sm font-medium text-paper"

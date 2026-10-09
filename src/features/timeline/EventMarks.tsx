@@ -30,8 +30,16 @@ interface EventMarksProps {
 }
 
 export const MARK_ROW_HEIGHT = 24;
+/** Espaço que uma marca ocupa no eixo, em pixels: o botão de 24 px e a folga. */
+export const MARK_SLOT_PX = 26;
+/** Fração do eixo usada quando ninguém mediu a largura: a da faixa mínima, de 40rem. */
+const DEFAULT_MARK_WIDTH = MARK_SLOT_PX / 616;
 
-export function markRows(domain: TimeDomain, allEvents: readonly Acontecimento[], markWidth = 0.032) {
+export function markRows(
+  domain: TimeDomain,
+  allEvents: readonly Acontecimento[],
+  markWidth = DEFAULT_MARK_WIDTH,
+) {
   return placeMarks(domain, allEvents, markWidth);
 }
 
@@ -42,7 +50,7 @@ export function EventMarks({
   selectedSlug,
   onSelect,
   label,
-  markWidth = 0.032,
+  markWidth = DEFAULT_MARK_WIDTH,
 }: EventMarksProps) {
   const container = useRef<HTMLDivElement>(null);
   const { marcas, fileiras } = markRows(domain, allEvents, markWidth);
@@ -76,7 +84,8 @@ export function EventMarks({
       role="toolbar"
       aria-label={label}
       aria-orientation="horizontal"
-      className="relative"
+      // Acima da hachura do período, que cobre só o eixo e o fundo.
+      className="relative z-[2]"
       style={{ height: altura }}
     >
       {exibidas.map(({ item, span, centro, fileira }, indice) => {

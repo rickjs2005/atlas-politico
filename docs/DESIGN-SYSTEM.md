@@ -1,6 +1,6 @@
 # Sistema de design
 
-Fase 4. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
+Fases 4 e 5. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. A fase 5 não criou token nem cor: acrescentou componentes sobre a mesma base. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
 
 Regra geral: **os tokens de `src/app/globals.css` são a única origem das cores, das famílias e das medidas de movimento.** Os componentes usam as classes geradas a partir deles (`bg-paper`, `text-ink-soft`, `font-serif`). Cor escrita direto em um componente é erro.
 
@@ -23,7 +23,7 @@ Regra geral: **os tokens de `src/app/globals.css` são a única origem das cores
 
 | Token | Valor | Uso |
 | --- | --- | --- |
-| `--atlas-accent` | `#b24a00` | Só seleção: filete do item selecionado, anel da marca, ponto selecionado no mapa, indicador de filtro ativo |
+| `--atlas-accent` | `#b24a00` | Só seleção: filete do item selecionado, anel da marca, ponto selecionado no mapa, indicador de filtro ativo e o intervalo em andamento no arraste do eixo |
 | `--atlas-accent-soft` | `#f8e4cf` | Fundo do item selecionado e da seleção de texto |
 | `--atlas-notice` | `#f1e4bd` | Aviso de conteúdo provisório |
 | `--atlas-cat-mandatos` | `#36567a` | Mandatos e funções |
@@ -59,6 +59,7 @@ Medido pela fórmula da WCAG 2.x, sobre as três superfícies de papel (papel, e
 | Acento | 4,7 · 5,2 · 4,2 | 3:1 para marca gráfica |
 | Categorias | de 4,4 a 10,2 | 3:1 para marca gráfica |
 | Papel sobre tinta (botão invertido) | 14,9 | 4,5:1 para texto |
+| Papel sobre acento (rótulo do arraste no eixo) | 4,7 | 4,5:1 para texto |
 
 A tinta tênue estava em `#686a61` e dava 4,29:1 sobre o papel rebaixado. O teste de contraste acusou, e o valor foi escurecido. As cores de categoria e o acento nunca são cor de texto: colorem a forma, e o nome vem escrito em tinta ao lado.
 
@@ -113,7 +114,7 @@ O texto de leitura não ocupa a largura da tela: na página do acontecimento o r
 - **Cantos retos** em painéis, cartões, botões e campos. O redondo aparece só onde a forma é o sinal: a marca circular de categoria, o anel de seleção da linha do tempo e os pontos do mapa. Os controles do mapa têm raio de 2 px.
 - **Sem sombras de elevação.** A separação é por linha e por tom de papel. As duas exceções são elementos que flutuam sobre outro conteúdo: o painel do menu em tela estreita e o cartão sobre o mapa.
 - **Linhas:** régua de tinta de 1 px para abrir e fechar blocos principais; linha clara para dividir itens; tracejado para o que não está documentado.
-- **Hachura diagonal** para o que está fora: fora do período escolhido, na linha do tempo, e fora da cobertura da edição, na comparação.
+- **Hachura diagonal** para o que está fora ou falta: fora do período escolhido, na linha do tempo; fora da cobertura da edição, na comparação; e a linha de lacuna, na lista.
 - **Área de toque mínima:** 44 px de altura para botões, abas, campos e itens de lista em telas estreitas e médias. Em tela larga, os filtros da barra usam 36 px.
 
 ## Categorias
@@ -138,14 +139,16 @@ O que as fontes não documentam tem desenho próprio, sempre o mesmo:
 
 | Situação | Desenho | Texto |
 | --- | --- | --- |
-| Data de que só se sabe o ano ou o mês | Só o ano, ou mês e ano. Na linha do tempo, um traço sob a marca cobre o ano ou o mês inteiro | "Só o ano está documentado." ou "O dia não está documentado." |
+| Data de que só se sabe o ano ou o mês | Só o ano, ou mês e ano. Na linha do tempo, um traço sob a marca cobre o ano ou o mês inteiro | "Só o ano está documentado." ou "O dia não está documentado."; na lista, "só o ano" ou "sem o dia" sob o ano |
+| Ordem entre dois registros que as datas não decidem | Aviso em itálico no registro menos preciso | "ordem dentro de 1980 não documentada" |
 | Período com um limite desconhecido | Barra tracejada, que se apaga do lado sem data | "a partir de 1975; fim não documentado" |
 | Período sem nenhuma data | Não vira barra | "Sem datas documentadas: PP, PPB, PSC." |
 | Cargo cujo período talvez toque a data | Fica fora do painel do acontecimento; aparece no perfil e na comparação | "presença no período não documentada" |
+| Cargo ou partido que talvez toque o período consultado | Seção à parte no bloco do período, com borda tracejada à esquerda | "Presença incerta no período" e as datas conhecidas de cada registro |
 | Coordenada aproximada | Nota fixa no canto do mapa | "Pontos aproximados: centro do município ou do estado" e a precisão ao lado de cada lugar |
 | Acontecimento sem lugar | Sem ponto | "sem ponto no mapa (abrangência nacional)" ou "(lugar não documentado)" |
 | Trecho sem pesquisa | Hachura | "fora da cobertura desta edição" |
-| Lacuna dentro da cobertura | Colchete tracejado | "sem registros" |
+| Lacuna dentro da cobertura | Colchete tracejado, na comparação; linha hachurada, na lista | "sem registros"; na lista, "sem registros do atlas nesta edição" |
 | Revisão | Frase em toda leitura | "Revisão humana pendente." |
 
 ## Componentes
@@ -161,18 +164,22 @@ Todos em `src/components/` (base, sem estado) ou em `src/features/` (ligados a u
 | `PortraitCredit` | `src/components/Portrait.tsx` | Crédito e o tratamento aplicado: "Exibida em tons de cinza e recortada" |
 | `ProfilePanel` | `src/components/ProfilePanel.tsx` | Perfil no painel: retrato, resumo, cargos e funções, partidos, cobertura da edição e fontes do perfil |
 | `SiteNav` | `src/components/SiteNav.tsx` | Destinos do cabeçalho, com os perfis em ordem alfabética |
+| `PersonSwitch` | `src/components/PersonSwitch.tsx` | Troca de pessoa dentro da exploração. Todos os perfis, em ordem alfabética e com o mesmo desenho: o aberto em tinta, com `aria-current`, e os outros como links. Dois tamanhos: de toque (44 px) e compacto (24 px), para a barra em tela larga |
 
 ### Marcações temporais
 
 | Componente | Arquivo | Notas |
 | --- | --- | --- |
-| `DateMark` | `src/components/DateMark.tsx` | Ano em destaque e, abaixo ou ao lado, só o que a precisão sustenta. Leitores de tela recebem a data por extenso |
+| `DateMark` | `src/components/DateMark.tsx` | Ano em destaque e, abaixo ou ao lado, só o que a precisão sustenta. Leitores de tela recebem a data por extenso. Com `showPrecision`, para listas cronológicas, diz o que falta na data parcial |
 | `TimeAxis` | `src/components/time/TimeAxis.tsx` | Régua, um traço por ano e rótulos em anos redondos. A quantidade de rótulos depende da largura do próprio eixo |
-| `EventMarks` | `src/features/timeline/EventMarks.tsx` | Marcas selecionáveis, em fileiras quando as datas se aproximam |
+| `EventMarks` | `src/features/timeline/EventMarks.tsx` | Marcas selecionáveis, em fileiras quando as datas se aproximam. Cada marca reserva 26 px do eixo |
+| `PeriodBrush` | `src/features/timeline/PeriodBrush.tsx` | Camada sobre o eixo: rótulo de tinta com o ano sob o ponteiro e, no arraste, faixa e rótulo de acento com o intervalo |
+| `PeriodContext` | `src/features/timeline/PeriodContext.tsx` | Bloco que abre e fecha, com os cargos e os partidos do período e a presença incerta à parte |
+| `MandateList`, `AffiliationList` | `src/components/PeriodRecords.tsx` | Cargos e partidos por extenso, com as datas de cada um. Servem à exploração e à comparação |
 | `EventMarkLinks` | `src/components/time/EventMarkLinks.tsx` | As mesmas marcas, como links para a página de cada acontecimento |
 | `PeriodLane` | `src/components/time/PeriodLane.tsx` | Cargos ou partidos como barras sobre o eixo |
-| `PeriodShade` | `src/components/time/PeriodShade.tsx` | Hachura sobre o que está fora do período |
-| `Timeline` | `src/features/timeline/Timeline.tsx` | Junta marcas, eixo, hachura e faixas; rola na horizontal em tela estreita |
+| `PeriodShade` | `src/components/time/PeriodShade.tsx` | Hachura sobre o que está fora do período. Passa por cima do eixo e por baixo das marcas |
+| `Timeline` | `src/features/timeline/Timeline.tsx` | Junta marcas, eixo, hachura, escolha de período e faixas; mede a própria largura; rola na horizontal em tela estreita |
 | `PeriodControl` | `src/features/timeline/PeriodControl.tsx` | Dois campos de ano, "De" e "Até", e o botão de desfazer |
 | `CategoryFilter` | `src/features/timeline/CategoryFilter.tsx` | Um botão de alternância por categoria, com forma, nome e quantidade |
 | `TrajectoryLanes` | `src/features/comparison/TrajectoryLanes.tsx` | Uma faixa por pessoa sobre o mesmo eixo, com cobertura e lacunas |
@@ -183,10 +190,12 @@ A geometria (posição de datas e períodos, fileiras, rótulos de ano) é de fu
 
 | Componente | Arquivo | Notas |
 | --- | --- | --- |
-| `EventList` | `src/features/events/EventList.tsx` | Lista selecionável. Item: `DateMark`, título, `CategoryLabel`, nomes (quando há mais de uma trajetória) e o aviso de quem não tem ponto |
+| `EventList` | `src/features/events/EventList.tsx` | Lista selecionável. Item: `DateMark` com o aviso de data parcial, título, `CategoryLabel`, nomes (quando há mais de uma trajetória), o aviso de ordem em aberto e o de quem não tem ponto. Entre os itens, as linhas de lacuna |
 | `EventLinkList` | `src/features/events/EventLinkList.tsx` | A mesma composição, como links, para a comparação |
 
 Estados do item: normal, sob o ponteiro (fundo elevado), em foco (anel de tinta) e selecionado (filete de acento à esquerda e fundo de acento suave, mais `aria-pressed`).
+
+A linha de lacuna não é selecionável: fundo rebaixado com a hachura, os anos em números e o texto em itálico sobre uma tarja de papel, para a hachura não passar pelas letras.
 
 ### Painel de leitura
 

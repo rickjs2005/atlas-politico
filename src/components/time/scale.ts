@@ -53,6 +53,29 @@ export function positionOfYear(domain: TimeDomain, ano: number): number {
 }
 
 /**
+ * O ano que ocupa uma posição do eixo, de 0 a 1. É o caminho inverso de
+ * `positionOfYear`, usado para saber em que ano está o ponteiro. Fora do eixo,
+ * vale o ano da ponta mais próxima.
+ */
+export function yearAtPosition(domain: TimeDomain, posicao: number): number {
+  if (!(posicao > 0)) return domain.de;
+  for (let ano = domain.ate; ano > domain.de; ano -= 1) {
+    if (positionOfYear(domain, ano) <= posicao) return ano;
+  }
+  return domain.de;
+}
+
+/**
+ * Recorte de anos entre dois pontos do eixo, na ordem certa. É o que um
+ * arraste escolhe: do ano em que começou ao ano em que está.
+ */
+export function yearsBetween(domain: TimeDomain, a: number, b: number): TimeDomain {
+  const primeiro = yearAtPosition(domain, a);
+  const segundo = yearAtPosition(domain, b);
+  return { de: Math.min(primeiro, segundo), ate: Math.max(primeiro, segundo) };
+}
+
+/**
  * Anos que recebem rótulo. O passo é escolhido entre 1, 2, 5, 10 e 20 para
  * caber em `maximo` rótulos; os rótulos caem em anos redondos do passo.
  */

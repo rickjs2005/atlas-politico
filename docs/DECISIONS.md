@@ -358,6 +358,8 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 ## D-46. O endereço é lido na chegada; a escrita fica para a fase 5
 
+*Substituída pela D-49 na fase 5.*
+
 **Decisão (fase 4).** A exploração lê a query string uma vez, ao carregar, e restaura período, categorias e acontecimento. Filtrar ou selecionar não altera o endereço. A página do acontecimento volta para a exploração com `?acontecimento=<slug>`.
 
 **Motivo.** O retorno com a seleção é parte do fluxo pedido nesta fase. Escrever no endereço e responder ao histórico é a ligação que o plano coloca na fase 5, e fazê-la pela metade criaria dois comportamentos para voltar.
@@ -380,6 +382,78 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Consequência.** A prévia funciona com os dados reais nos fluxos principais; o que é demonstração está listado, item por item.
 
+## D-49. O endereço é a fonte do estado da exploração
+
+**Decisão (fase 5).** Na exploração, período, categorias e acontecimento aberto não ficam em um estado React: são derivados da query string a cada renderização, por uma função pura (`stateFromSearch`). Uma ação calcula o próximo estado e escreve o endereço que o representa, com `window.history.pushState` ou `replaceState`. Voltar, avançar, recarregar e abrir um link direto passam pelo mesmo caminho. O provider anterior, com o estado em memória, continua existindo para as telas de prova.
+
+**Motivo.** Manter duas cópias, uma no estado e outra no endereço, exige dois efeitos de sincronização e uma regra para decidir quem vence quando os dois mudam. Com uma cópia só não existe ciclo de atualização a evitar. A alternativa do Next, `useSearchParams`, tira da pré-renderização tudo o que estiver até o `Suspense` mais próximo: a lista de acontecimentos deixaria de vir no HTML gerado. A documentação do Next 16.4 descreve a History API nativa como integrada ao roteador.
+
+**Consequência.** O HTML do build continua trazendo a exploração inteira, no estado inicial, e o endereço é lido depois da hidratação, com `useSyncExternalStore`. `useSearchParams` aparece uma vez, em um componente sem saída visual (`RouterWatcher`), para perceber as navegações do roteador que não disparam `popstate`; um teste falha sem ele. Quem chega por um link com consulta vê o estado inicial até o JavaScript carregar. Substitui a D-46.
+
+## D-50. Histórico: escolha cria entrada, ajuste contínuo não
+
+**Decisão (fase 5).** Selecionar ou fechar um acontecimento, marcar uma categoria e limpar filtros criam uma entrada no histórico. O arraste no eixo não altera o estado enquanto dura e cria uma entrada ao soltar. Mudanças seguidas do período, com menos de um segundo entre elas, substituem a entrada. A correção de um endereço fora da forma canônica sempre substitui.
+
+**Motivo.** O botão voltar deve desfazer a última escolha, e não dezenas de posições intermediárias. Um campo de ano percorrido com as setas do teclado dispara uma mudança por ano. A regra escrita na fase 1 ("substituir durante o arraste e criar ao soltar") apagaria a entrada anterior ao arraste: a primeira substituição cairia sobre ela.
+
+**Consequência.** A regra é uma função pura, `chooseHistoryMode`, testada com tempos simulados. Voltar ou avançar encerra a sequência: o ajuste seguinte cria uma entrada. Fechar a leitura cria uma entrada em vez de voltar no histórico, e por isso abrir e fechar vários acontecimentos alonga o caminho de volta.
+
+## D-51. Período dentro da cobertura; um lado no limite fica aberto
+
+**Decisão (fase 5).** Os anos que podem ser consultados são a cobertura da edição para a pessoa. Um lado do período igual ao limite da cobertura, ou além dele, fica aberto (`null`). Um período inteiro fora da cobertura é descartado. Vale para os campos, para o eixo e para o endereço.
+
+**Motivo.** Sem isso, o mesmo recorte teria duas formas de escrever ("1975 a 2010" e "até 2010"), e o botão de desfazer apareceria para um período que já é o inteiro. Um período fora da cobertura não tem o que mostrar nem como aparecer nos campos.
+
+**Consequência.** Um lado aberto acompanha a edição: "desde 2019" passará a incluir os anos que uma edição nova cobrir. Um endereço com período fora da cobertura abre com todo o período e é reescrito.
+
+## D-52. A troca de pessoa leva o recorte
+
+**Decisão (fase 5).** O link para o outro perfil, dentro da exploração, leva as categorias e o período, este ajustado à cobertura do outro perfil. O acontecimento aberto só segue quando também é da outra pessoa. Os links do menu levam ao perfil sem recorte.
+
+**Motivo.** Quem consulta 2019 a 2022 em uma trajetória e troca de pessoa quer, na maioria das vezes, ver o mesmo intervalo na outra. Levar um acontecimento que não é do outro perfil abriria um painel incompatível.
+
+**Consequência.** A página do perfil informa ao navegador, de cada perfil, o `id` e os anos cobertos. O link não é pré-carregado, porque o endereço muda a cada filtro. A troca aparece igual nos dois perfis, com os nomes em ordem alfabética.
+
+## D-53. Linha do tempo de eixo fixo, com fileiras medidas; sem zoom nem agrupamento
+
+**Decisão (fase 5).** O eixo cobre sempre a cobertura inteira. Marcas próximas sobem de fileira, e o espaço que cada uma reserva é calculado com a largura real do eixo, medida no navegador. O período pode ser escolhido no eixo, com clique (um ano) ou arraste (um intervalo). Não há zoom nem agrupamento de marcas.
+
+**Motivo.** A fase 4 deixou em aberto como tratar anos cheios. Com no máximo três registros no mesmo ano e vinte por trajetória, as fileiras resolvem sem esconder nenhum registro atrás de um número. Um eixo que muda de escala com o filtro tiraria a referência de onde o período fica na trajetória. Com a largura fixa de antes, as áreas de clique das marcas se cobriam em colunas estreitas.
+
+**Consequência.** A quantidade de fileiras muda com a largura, e a linha do tempo pode crescer uma ou duas fileiras logo depois de carregar. A hachura do período passa por baixo das marcas. Reabrir a decisão faz sentido se uma edição futura passar de algumas dezenas de registros por trajetória.
+
+## D-54. A lista diz o que a ordem não diz
+
+**Decisão (fase 5).** A lista cronológica mantém a ordem da camada de dados e acrescenta três avisos: a data parcial diz o que falta ("só o ano", "sem o dia"); o registro cuja posição as datas não decidem diz "ordem dentro de (ano) não documentada"; e cada período de quatro anos ou mais sem registro vira uma linha hachurada, no lugar dos anos.
+
+**Motivo.** Uma lista sempre põe um item antes do outro. Um registro só com o ano abre o ano por regra de ordenação, e na edição 0.1.0 isso põe um acontecimento de 1980 antes de outro que as fontes datam de fevereiro do mesmo ano, sem que a ordem entre os dois esteja documentada. Sem as lacunas, 1980 e 1986 aparecem vizinhos, como se nada faltasse entre eles.
+
+**Consequência.** As lacunas são do conjunto inteiro da pessoa, e não do filtro: marcar uma categoria não cria lacunas. A lista passou a ter itens que não são acontecimentos, e os testes contam os acontecimentos por atributo.
+
+## D-55. Cargos e partidos do período em bloco recolhido, com a presença incerta à parte
+
+**Decisão (fase 5).** Acima da lista há um bloco que abre e fecha, com os cargos e os partidos que tocam o período consultado. O que as datas provam fica em uma lista; o que tem início ou fim desconhecido, e pode ou não tocar o período, fica em outra, com borda tracejada. O bloco começa recolhido, com o resumo à vista.
+
+**Motivo.** O plano pede os cargos e as filiações documentados para o período, e as faixas sob o eixo não aparecem em tela estreita nem dizem as datas. Aberto por padrão, o bloco empurrava os acontecimentos para fora da tela nos períodos longos: 13 registros antes do primeiro acontecimento, em uma das trajetórias.
+
+**Consequência.** A classificação vem das consultas da fase 3 (`situacao`). O mesmo componente de lista serve à comparação. O rótulo das barras estreitas, pendente da fase 4, passa a ter equivalente por extenso.
+
+## D-56. Em janela baixa, o mapa mantém a sua parte
+
+**Decisão (fase 5).** Em telas médias e largas, o mapa fica com pelo menos 40% da altura da área de trabalho. A linha do tempo ocupa o que precisa do restante e, se não couber, rola por dentro.
+
+**Motivo.** Achado na conferência desta fase: em uma janela de 1280×720, a barra de filtros ocupa duas linhas, a linha do tempo pedia mais altura do que sobrava e o mapa, com altura mínima própria, era desenhado por cima dela.
+
+**Consequência.** A altura mínima do quadro do mapa caiu de 256 para 160 pixels nessas larguras. Um teste confere a janela de 1280×720.
+
+## D-57. O que ficou fora desta fase
+
+**Decisão (fase 5).** Não foram feitos: zoom na linha do tempo, ligação da comparação com o estado e o endereço, retorno da página do acontecimento com o recorte de antes, botão de copiar o endereço, pontos sobrepostos, formas e rótulos no mapa, pontos pelo teclado e medição de desempenho.
+
+**Motivo.** O pedido da fase é a navegação temporal. Mapa, comparação com páginas e fontes, e acabamento com desempenho são as fases 6, 7 e 8 do plano.
+
+**Consequência.** O contrato de cada item está em INTERACTIONS.md, e o do mapa em TIMELINE.md.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
@@ -394,3 +468,6 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 | Arquivos de segmento do Next na saída estática, pedidos com ponto e gravados em pastas (STATUS.md) | Fase 8 ou 10 |
 | Nome definitivo do atlas (o rodapé diz "nome provisório") | Decisão do responsável pelo projeto |
 | Exibir em cinza e recortado o retrato cuja condição de uso é "livre com crédito" (D-42) | Decisão do responsável pelo projeto |
+| Como evitar o instante de estado inicial para quem chega por um link com consulta (D-49) | Fase 8 |
+| Fechar a leitura criando entrada no histórico ou voltando nele (D-50) | Fase 9, com pessoas usando |
+| Ligar a comparação ao estado e ao endereço, e levar o recorte no retorno da página do acontecimento | Fase 7 |

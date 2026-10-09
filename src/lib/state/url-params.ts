@@ -17,6 +17,9 @@ import { normalizePeriod, type AtlasState } from "./atlas-state";
 
 export type UrlState = Pick<AtlasState, "periodo" | "categorias" | "acontecimento">;
 
+/** Parâmetros que o atlas lê e escreve, na ordem em que aparecem no endereço. */
+export const ATLAS_PARAMS = ["de", "ate", "categorias", "acontecimento"] as const;
+
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function parseYear(valor: string | null): number | null {
@@ -52,4 +55,20 @@ export function serializeAtlasParams(state: UrlState): string {
   }
 
   return partes.join("&");
+}
+
+/**
+ * A query string que o endereço deve ter para o estado, sem o `?`. Os
+ * parâmetros do atlas vêm primeiro, na forma canônica; os que o atlas não
+ * conhece (como os de campanha, `utm_*`) são mantidos depois, na ordem em que
+ * estavam. Aplicar de novo ao próprio resultado não muda nada.
+ */
+export function mergeAtlasParams(search: string, state: UrlState): string {
+  const conhecidos: readonly string[] = ATLAS_PARAMS;
+  const outros: string[] = [];
+  for (const [chave, valor] of new URLSearchParams(search)) {
+    if (conhecidos.includes(chave)) continue;
+    outros.push(`${encodeURIComponent(chave)}=${encodeURIComponent(valor)}`);
+  }
+  return [serializeAtlasParams(state), ...outros].filter((parte) => parte !== "").join("&");
 }

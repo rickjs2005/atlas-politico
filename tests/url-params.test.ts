@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { parseAtlasParams, serializeAtlasParams, type UrlState } from "@/lib/state/url-params";
+import {
+  mergeAtlasParams,
+  parseAtlasParams,
+  serializeAtlasParams,
+  type UrlState,
+} from "@/lib/state/url-params";
 
 const parse = (query: string) => parseAtlasParams(new URLSearchParams(query));
 
@@ -66,5 +71,30 @@ describe("escrita dos parâmetros de URL", () => {
     for (const estado of estados) {
       expect(parse(serializeAtlasParams(estado))).toEqual(estado);
     }
+  });
+});
+
+describe("escrita sobre um endereço que já tem parâmetros", () => {
+  const estado: UrlState = {
+    periodo: { de: 2003, ate: 2010 },
+    categorias: ["eleicoes"],
+    acontecimento: null,
+  };
+
+  it("troca os parâmetros do atlas e mantém os outros, depois deles", () => {
+    expect(mergeAtlasParams("?utm_source=rede&de=1999&acontecimento=antigo&ref=x", estado)).toBe(
+      "de=2003&ate=2010&categorias=eleicoes&utm_source=rede&ref=x",
+    );
+  });
+
+  it("com o estado padrão, sobram só os parâmetros alheios", () => {
+    expect(mergeAtlasParams("?de=2003&utm_source=rede", VAZIO)).toBe("utm_source=rede");
+    expect(mergeAtlasParams("?de=2003", VAZIO)).toBe("");
+  });
+
+  it("codifica o que não é do atlas sem mudar o valor", () => {
+    const escrito = mergeAtlasParams("?q=a+b%26c", VAZIO);
+    expect(new URLSearchParams(escrito).get("q")).toBe("a b&c");
+    expect(mergeAtlasParams("?" + escrito, VAZIO)).toBe(escrito);
   });
 });

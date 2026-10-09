@@ -1,6 +1,6 @@
 # Experiência
 
-Fase 4. Descreve a direção visual, as quatro telas, como a composição muda com a largura da tela e como percorrer a prévia. A base visual está em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); os comportamentos, os estados e o que ainda é demonstração, em [INTERACTIONS.md](INTERACTIONS.md).
+Fases 4 e 5. Descreve a direção visual, as quatro telas, como a composição muda com a largura da tela e como percorrer o atlas. A navegação temporal da exploração, com a consulta no endereço, está em [TIMELINE.md](TIMELINE.md). A base visual está em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); os comportamentos, os estados e o que ainda é demonstração, em [INTERACTIONS.md](INTERACTIONS.md).
 
 ## Como abrir a prévia
 
@@ -64,12 +64,14 @@ Uma área de trabalho com cinco partes que leem o mesmo estado:
 | Parte | O que mostra |
 | --- | --- |
 | Recorte | Quem (retrato, nome, troca de pessoa), quando (período) e o quê (categorias, com a quantidade de registros em cada uma) |
-| Lista | Os acontecimentos do recorte em ordem cronológica: ano em destaque, título, categoria e o aviso de quem não tem ponto no mapa |
+| Lista | O período consultado e a quantidade de registros; os cargos e partidos do período, em um bloco que abre e fecha; e os acontecimentos do recorte em ordem cronológica: ano em destaque, título, categoria, o que falta em uma data parcial, o aviso de quem não tem ponto no mapa e as lacunas do conjunto no lugar dos anos |
 | Mapa | Um ponto por acontecimento e lugar, na cor da categoria, com o Brasil em tom mais claro e as divisas dos estados |
-| Linha do tempo | Uma marca por acontecimento, na forma da categoria, e as faixas de cargos e de partidos sobre o mesmo eixo |
+| Linha do tempo | Uma marca por acontecimento, na forma da categoria, e as faixas de cargos e de partidos sobre o mesmo eixo. O eixo aceita clique (um ano) e arraste (um intervalo) |
 | Painel de leitura | O perfil da pessoa, enquanto nada está aberto; o acontecimento selecionado, quando há um |
 
 A relação entre as partes é explícita: o mesmo acontecimento fica marcado na lista (fundo e filete de acento), no mapa (ponto maior com anel), na linha do tempo (anel e haste até o eixo) e aberto no painel. O recorte vale para as três vistas ao mesmo tempo, e a linha do tempo hachura o que ficou fora do período.
+
+O período, as categorias e o acontecimento aberto ficam no endereço: o que está na tela pode ser recarregado, enviado por link e percorrido com voltar e avançar.
 
 ### Acontecimento (`/acontecimentos/<slug>/`)
 
@@ -99,15 +101,15 @@ Os pontos de mudança são 768 px (`md`) e 1280 px (`xl`). O HTML da exploraçã
 | | Estreita (até 767 px) | Média (768 a 1279 px) | Larga (1280 px ou mais) |
 | --- | --- | --- | --- |
 | Composição | Uma vista por vez | Duas colunas: 352 px e o restante | Três colunas: 352 px, o restante e 432 px |
-| Recorte | Preso ao topo: retrato, nome e o recorte em vigor escrito. Filtros recolhidos atrás do botão **Filtros**. A troca de pessoa é pelo menu | O mesmo, sem ficar preso | Barra inteira à vista: pessoa sobre a coluna da lista, com o atalho para o outro perfil; período e categorias em linha |
+| Recorte | Preso ao topo: retrato, nome e o recorte em vigor escrito. Atrás do botão **Filtros**: troca de pessoa, período, categorias e **Limpar filtros** | O mesmo, sem ficar preso | Barra inteira à vista: pessoa sobre a coluna da lista, com a troca de pessoa sob o nome; período e categorias em linha |
 | Alternância | **Lista**, **Mapa**, **Perfil** | **Lista**, **Perfil** (o mapa está sempre à vista) | Não há |
 | Lista | Vista própria, com a rolagem da página | Coluna esquerda, com rolagem própria | Coluna esquerda, com rolagem própria |
 | Mapa | Vista própria, na altura que sobra da tela | Coluna direita, em cima | Coluna central, em cima |
-| Linha do tempo | Acima da lista e do mapa, com rolagem horizontal; só marcas e eixo | Coluna direita, embaixo, com cargos e partidos | Coluna central, embaixo, com cargos e partidos |
+| Linha do tempo | Acima da lista e do mapa, com rolagem horizontal; só marcas e eixo. Com um período, rola até o trecho escolhido | Coluna direita, embaixo, com cargos e partidos | Coluna central, embaixo, com cargos e partidos |
 | Leitura | Substitui a vista, em tela inteira, com **Fechar** | Substitui a lista na coluna esquerda | Painel fixo à direita; mostra o perfil quando nada está aberto |
 | Altura | A página rola; na vista do mapa, a área ocupa a tela abaixo do cabeçalho | A área ocupa a tela abaixo do cabeçalho; lista e leitura rolam por dentro | O mesmo |
 
-Em telas médias e largas, a área de trabalho tem altura mínima de 640 px. Em uma janela mais baixa do que isso, a página volta a rolar em vez de espremer o mapa.
+Em telas médias e largas, a área de trabalho tem altura mínima de 640 px. Em uma janela mais baixa do que isso, a página volta a rolar em vez de espremer o mapa. Dentro da área, o mapa fica com pelo menos 40% da altura; se a linha do tempo não couber no restante, ela rola por dentro (conferido em 1280×720).
 
 ### Demais telas
 
@@ -124,11 +126,12 @@ Em telas médias e largas, a área de trabalho tem altura mínima de 640 px. Em 
 - **Mapa, lista e detalhes têm vistas próprias.** A alternância tem três botões de 44 px de altura. Abrir um acontecimento pela lista troca a lista pela leitura; **Fechar** devolve a lista e o foco ao item de onde se saiu.
 - **No mapa, a seleção não tira a pessoa do mapa.** Tocar em um ponto ou em uma marca da linha do tempo mostra um cartão sobre a parte de baixo do mapa, com a data, o título e dois botões: **Ler** e **Fechar**. O enquadramento deixa os pontos selecionados acima do cartão.
 - **O mapa cabe na tela.** Na vista do mapa não há rolagem vertical da página sob o dedo: arrastar move o mapa. A linha do tempo fica acima dele.
-- **Áreas de toque:** botões, abas, itens de lista, campos e categorias têm 44 px ou mais de altura. A exceção são as marcas da linha do tempo, com 24 px: são um atalho, e todo acontecimento também está na lista, com área inteira.
+- **Áreas de toque:** botões, abas, itens de lista, campos, categorias e a troca de pessoa têm 44 px ou mais de altura. As exceções são as marcas da linha do tempo, com 24 px, e o eixo, com 28 px: são atalhos. Todo acontecimento também está na lista, com área inteira, e todo período pode ser escolhido pelos campos.
+- **O botão voltar do aparelho fecha a leitura** e devolve a lista ou o mapa, porque abrir um acontecimento cria uma entrada no histórico.
 - **Leitura sem mapa:** a lista e a leitura não dependem do mapa. Com o mapa indisponível, a vista do mapa vira uma lista de lugares que seleciona do mesmo jeito.
 - **Faixas largas rolam para o lado,** com a rolagem contida na própria faixa: a página não anda junto. A da comparação começa nos anos recentes e traz o aviso escrito.
 
-Larguras conferidas: 1440×900, 768×1024, 390×844 e 360×800. Um teste percorre as cinco rotas em 360, 390 e 768 px e falha se o conteúdo passar da largura da tela.
+Larguras conferidas: 1440×900, 1280×720, 768×1024, 390×844 e 360×800. Um teste percorre as cinco rotas em 360, 390 e 768 px e falha se o conteúdo passar da largura da tela.
 
 ## Lacunas de conteúdo que afetam a prévia
 
@@ -163,4 +166,4 @@ Para a versão em celular (390×844): entrada, cartão, aba **Mapa**, toque em u
 
 ## Capturas
 
-As capturas reais da prévia ficam em [`docs/capturas/fase-4/`](capturas/fase-4/) e são refeitas com `npm run capture:preview`. O índice está em [`docs/capturas/README.md`](capturas/README.md).
+As capturas reais ficam em [`docs/capturas/`](capturas/README.md): as da prévia, em `fase-4/`, e as da navegação temporal, em `fase-5/`. O índice e os comandos que as refazem estão em [`docs/capturas/README.md`](capturas/README.md).

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { EditionStatus } from "@/components/EditionStatus";
 import { getAtlasData } from "@/lib/content/published";
+import { getCoveredSpan } from "@/lib/data/coverage";
 import { findPersonBySlug } from "@/lib/data/queries";
 import { sliceForPerson } from "@/lib/data/slice";
 import { PROFILES, findProfile } from "@/lib/domain/profiles";
@@ -45,12 +46,24 @@ export default async function ProfilePage({ params }: PageProps<"/politicos/[slu
     );
   }
 
+  // O que a troca de pessoa precisa saber de cada perfil: o `id`, para saber se
+  // o acontecimento aberto também é dele, e a cobertura, para ajustar o período.
+  const profiles = PROFILES.map((item) => {
+    const registro = findPersonBySlug(data, item.slug);
+    return {
+      slug: item.slug,
+      nome: item.nome,
+      id: registro?.id ?? null,
+      cobertura: registro === null ? null : getCoveredSpan(data, registro.id),
+    };
+  });
+
   return (
     <Explorer
       // A página carrega só os registros desta trajetória.
       data={sliceForPerson(data, pessoa.id)}
       pessoaId={pessoa.id}
-      others={PROFILES.filter((item) => item.slug !== slug)}
+      profiles={profiles}
     />
   );
 }

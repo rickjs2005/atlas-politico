@@ -38,6 +38,8 @@ const CELULAR = { width: 390, height: 844 };
 
 // `exact`: o canvas do mapa também é uma região, chamada "Mapa dos acontecimentos".
 const lista = (page: Page) => page.getByRole("region", { name: "Acontecimentos", exact: true });
+// Só os acontecimentos: a lista também tem linhas de lacuna (fase 5).
+const itens = (page: Page) => lista(page).locator("li[data-acontecimento]");
 const leitura = (page: Page) => page.getByRole("region", { name: "Leitura" });
 const tempo = (page: Page) => page.getByRole("region", { name: "Linha do tempo" });
 const mapa = (page: Page) => page.getByRole("region", { name: "Mapa", exact: true });
@@ -108,7 +110,7 @@ test.describe("exploração em tela larga", () => {
   });
 
   test("lista, mapa, linha do tempo e painel aparecem lado a lado, sem rolagem da página", async ({ page }) => {
-    await expect(lista(page).getByRole("listitem")).toHaveCount(deLula.length);
+    await expect(itens(page)).toHaveCount(deLula.length);
     await expect(tempo(page).locator("button[data-mark]")).toHaveCount(deLula.length);
     await expect(leitura(page).getByRole("heading", { name: lula.nome, exact: true })).toBeVisible();
     await expect(mapa(page)).toBeVisible();
@@ -219,7 +221,7 @@ test.describe("exploração em tela larga", () => {
     await expect(tempo(page)).toContainText("0 acontecimentos");
 
     await lista(page).getByRole("button", { name: "Limpar período e categorias" }).click();
-    await expect(lista(page).getByRole("listitem")).toHaveCount(deLula.length);
+    await expect(itens(page)).toHaveCount(deLula.length);
   });
 
   test("filtrar por categoria recorta lista e linha do tempo, e a barra não muda de altura", async ({ page }) => {
@@ -228,7 +230,7 @@ test.describe("exploração em tela larga", () => {
     const eleicoes = deLula.filter((item) => item.categoria === "eleicoes");
 
     await recorte.getByRole("button", { name: /^Eleições/ }).click();
-    await expect(lista(page).getByRole("listitem")).toHaveCount(eleicoes.length);
+    await expect(itens(page)).toHaveCount(eleicoes.length);
     await expect(tempo(page).locator("button[data-mark]")).toHaveCount(eleicoes.length);
     expect(await heightOf(recorte)).toBe(antes);
 
@@ -237,7 +239,7 @@ test.describe("exploração em tela larga", () => {
 
     await recorte.getByRole("button", { name: "Mostrar todas" }).click();
     await recorte.getByRole("button", { name: "Todo o período" }).click();
-    await expect(lista(page).getByRole("listitem")).toHaveCount(deLula.length);
+    await expect(itens(page)).toHaveCount(deLula.length);
   });
 
   test("do painel à página do acontecimento, à fonte e de volta com a seleção", async ({ page }) => {
@@ -510,7 +512,7 @@ test.describe("largura e páginas de apoio", () => {
     await page.goto(`${PERFIL}?acontecimento=nao-existe&de=abcd&categorias=eleicoes,inventada`);
 
     const eleicoes = deLula.filter((item) => item.categoria === "eleicoes");
-    await expect(lista(page).getByRole("listitem")).toHaveCount(eleicoes.length);
+    await expect(itens(page)).toHaveCount(eleicoes.length);
     await expect(page.getByRole("button", { name: /^Eleições/ })).toHaveAttribute("aria-pressed", "true");
     // Sem acontecimento válido, o painel fica no perfil.
     await expect(leitura(page).getByRole("heading", { name: lula.nome, exact: true })).toBeVisible();

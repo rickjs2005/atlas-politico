@@ -10,7 +10,9 @@ import {
   positionOfYear,
   spanOfDate,
   spanOfYears,
+  yearAtPosition,
   yearLabels,
+  yearsBetween,
   type TimeDomain,
 } from "@/components/time/scale";
 import type { DataHistorica, Periodo } from "@/lib/domain/dates";
@@ -153,5 +155,36 @@ describe("marcas de acontecimentos", () => {
     const todos = placeMarks(eixo, itens, 0.03).marcas.map((marca) => [marca.item.id, marca.fileira]);
     const deNovo = placeMarks(eixo, [...itens], 0.03).marcas.map((marca) => [marca.item.id, marca.fileira]);
     expect(deNovo).toEqual(todos);
+  });
+});
+
+describe("do ponteiro ao ano", () => {
+  it("devolve o ano que ocupa a posição", () => {
+    expect(yearAtPosition(eixo, 0)).toBe(2000);
+    expect(yearAtPosition(eixo, 0.05)).toBe(2000);
+    expect(yearAtPosition(eixo, 0.55)).toBe(2005);
+    expect(yearAtPosition(eixo, 0.999)).toBe(2009);
+  });
+
+  it("é o caminho inverso da posição do ano", () => {
+    for (let ano = eixo.de; ano <= eixo.ate; ano += 1) {
+      const { inicio, largura } = spanOfYears(eixo, ano, ano);
+      expect(yearAtPosition(eixo, inicio)).toBe(ano);
+      expect(yearAtPosition(eixo, inicio + largura / 2)).toBe(ano);
+    }
+  });
+
+  it("fora do eixo, vale o ano da ponta", () => {
+    expect(yearAtPosition(eixo, -0.3)).toBe(2000);
+    expect(yearAtPosition(eixo, 1)).toBe(2009);
+    expect(yearAtPosition(eixo, 4)).toBe(2009);
+    expect(yearAtPosition(eixo, Number.NaN)).toBe(2000);
+  });
+
+  it("um clique escolhe um ano; um arraste, o intervalo, em qualquer sentido", () => {
+    expect(yearsBetween(eixo, 0.55, 0.55)).toEqual({ de: 2005, ate: 2005 });
+    expect(yearsBetween(eixo, 0.25, 0.75)).toEqual({ de: 2002, ate: 2007 });
+    expect(yearsBetween(eixo, 0.75, 0.25)).toEqual({ de: 2002, ate: 2007 });
+    expect(yearsBetween(eixo, -1, 2)).toEqual({ de: 2000, ate: 2009 });
   });
 });

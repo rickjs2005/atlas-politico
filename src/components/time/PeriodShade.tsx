@@ -16,8 +16,10 @@ export function PeriodShade({ domain, periodo }: PeriodShadeProps) {
 
   const recorte = spanOfYears(domain, de, Math.max(de, ate));
   const fim = recorte.inicio + recorte.largura;
+  // Fica sobre o eixo e sob as marcas (`z-[2]` em `EventMarks`): a marca de um
+  // acontecimento do recorte nunca aparece hachurada, mesmo colada ao limite.
   const sombra =
-    "pointer-events-none absolute inset-y-0 bg-paper/70 [background-image:repeating-linear-gradient(135deg,transparent_0_5px,var(--atlas-line)_5px_6px)]";
+    "pointer-events-none absolute inset-y-0 z-[1] bg-paper/70 [background-image:repeating-linear-gradient(135deg,transparent_0_5px,var(--atlas-line)_5px_6px)]";
 
   return (
     <div aria-hidden="true">

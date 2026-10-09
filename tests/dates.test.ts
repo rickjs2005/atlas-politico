@@ -10,6 +10,7 @@ import {
   formatDateParts,
   formatPeriod,
   formatPeriodYears,
+  formatYearRange,
   intervalsOverlap,
   yearRangeInterval,
   type DataHistorica,
@@ -218,5 +219,16 @@ describe("períodos", () => {
     expect(
       findPeriodProblem({ inicio: limite("2019", "ano"), fim: { tipo: "em-curso" } }),
     ).toBeNull();
+  });
+});
+
+describe("recorte de anos por extenso", () => {
+  it("um ano só é escrito uma vez", () => {
+    expect(formatYearRange(2018, 2018)).toBe("2018");
+  });
+
+  it("um intervalo vai do menor ao maior", () => {
+    expect(formatYearRange(2003, 2010)).toBe("2003–2010");
+    expect(formatYearRange(2010, 2003)).toBe("2003–2010");
   });
 });

@@ -1,10 +1,10 @@
 # Arquitetura
 
-Descreve o que está implementado até a fase 4 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem três: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) e [INTERACTIONS.md](INTERACTIONS.md).
+Descreve o que está implementado até a fase 5 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem quatro: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md) e [TIMELINE.md](TIMELINE.md).
 
 ## Visão geral
 
-Uma única aplicação Next.js (App Router) que vira um site de arquivos estáticos. O conteúdo é JSON versionado dentro do projeto. Um gerador local valida o conteúdo, seleciona o que é elegível e grava os dados públicos. No build, as páginas leem só esses dados e geram HTML. No navegador, a exploração (lista, mapa, painel) recebe os mesmos dados e trabalha sobre um estado único.
+Uma única aplicação Next.js (App Router) que vira um site de arquivos estáticos. O conteúdo é JSON versionado dentro do projeto. Um gerador local valida o conteúdo, seleciona o que é elegível e grava os dados públicos. No build, as páginas leem só esses dados e geram HTML. No navegador, a exploração (lista, mapa, linha do tempo, painel) recebe os mesmos dados e trabalha sobre um estado único, guardado no endereço.
 
 ```
 content/published/  content/drafts/  public/media/
@@ -22,7 +22,7 @@ páginas em src/app (Server Components)        props com AtlasData: conjunto, í
 HTML estático por rota em out/                             │
                                                            ▼
                                       exploração no navegador (Client Components)
-                                      AtlasStateProvider: estado + recorte visível
+                                      AtlasUrlStateProvider: endereço ⇄ estado + recorte visível
                                         ├─ EventList   lista
                                         ├─ Timeline    linha do tempo e recorte
                                         ├─ MapView ──▶ MapCanvas (MapLibre)
@@ -38,7 +38,7 @@ HTML estático por rota em out/                             │
 | Dados públicos | `src/lib/data/` | Formato do que as páginas consomem, índices, pontos do mapa e consultas | Ler arquivos, usar o Zod em tempo de execução, usar React |
 | Pipeline | `src/lib/publication/` | Validação com diagnósticos, elegibilidade, montagem dos dados, relatório de cobertura, plano de importação | Ler arquivos, usar React |
 | Disco | `src/lib/content/` | Ler `content/`, gravar e ler `generated/`, sondar arquivos de mídia, orquestrar os comandos | Ser importada por código do navegador |
-| Estado | `src/lib/state/` | Estado da exploração, seletores, parâmetros de URL, provider | Ler arquivos, importar Zod em tempo de execução |
+| Estado | `src/lib/state/` | Estado da exploração, seletores, parâmetros de URL, regras do endereço e do histórico, e os dois providers (memória e endereço) | Ler arquivos, importar Zod em tempo de execução |
 | Funcionalidades | `src/features/` | Mapa, acontecimentos, linha do tempo, comparação | Ler arquivos, guardar seleção própria |
 | Componentes | `src/components/` | Base visual compartilhada: cabeçalho, rodapé, retrato, cartão de pessoa, data, categoria, fontes, revisão, perfil e as peças da linha do tempo (`time/`) | Ler arquivos, guardar estado da exploração |
 | Rotas | `src/app/` | Páginas. Único lugar que chama `getAtlasData()` e entrega os dados por props | |
@@ -101,7 +101,9 @@ As fronteiras são verificadas, e não só combinadas:
 | `EventPanel`, `ProfilePanel` | Build ou navegador | Apresentação pura. Servem à página e ao painel |
 | `SiteNav` | Navegador | Só o abrir e fechar do menu em tela estreita |
 | `Explorer` (exploração) e `Comparison` (comparação) | Navegador | Client Components. Recebem os dados por props, são pré-renderizados no HTML e hidratados |
-| `AtlasStateProvider`, `EventList`, `Timeline`, `MapView` | Navegador | Idem, dentro do `Explorer` |
+| `AtlasUrlStateProvider`, `EventList`, `Timeline`, `MapView` | Navegador | Idem, dentro do `Explorer`. No HTML do build saem com o estado inicial; o endereço é lido depois da hidratação |
+| `RouterWatcher` | Só navegador | Único uso de `useSearchParams`, isolado em um `Suspense` sem saída visual, para a exploração continuar inteira no HTML gerado |
+| `AtlasStateProvider` | Navegador | Estado em memória, para as telas de prova e os testes |
 | `MapCanvas` (MapLibre) | Só navegador | Carregado por `next/dynamic` com `ssr: false`. Não aparece no HTML do servidor |
 | Worker do MapLibre | Só navegador | Arquivo próprio, publicado pelo bundler em `/_next/static/media/` |
 
@@ -132,10 +134,10 @@ Regras que valem:
 
 ## Rotas
 
-| Rota | Arquivo | Parâmetros | Situação na fase 4 |
+| Rota | Arquivo | Parâmetros | Situação |
 |---|---|---|---|
 | `/` | `src/app/page.tsx` | | Entrada: propósito, recorte da edição, escolha de pessoa e as duas trajetórias na mesma escala |
-| `/politicos/flavio-bolsonaro`, `/politicos/lula` | `src/app/politicos/[slug]/page.tsx`, com `Explorer.tsx` | `generateStaticParams` a partir de `PROFILES` | Exploração: recorte, lista, mapa, linha do tempo e painel. A página recorta os dados da pessoa (`sliceForPerson`) antes de entregá-los |
+| `/politicos/flavio-bolsonaro`, `/politicos/lula` | `src/app/politicos/[slug]/page.tsx`, com `Explorer.tsx` | `generateStaticParams` a partir de `PROFILES`; consulta em `de`, `ate`, `categorias` e `acontecimento` | Exploração: recorte, lista, mapa, linha do tempo e painel, com a consulta no endereço (fase 5). A página recorta os dados da pessoa (`sliceForPerson`) antes de entregá-los |
 | `/acontecimentos/[slug]` | `src/app/acontecimentos/[slug]/page.published.tsx`, com `EventLocator.tsx` | `generateStaticParams` a partir dos acontecimentos dos dados gerados | Leitura completa, com ficha lateral e mapa de localização (ver abaixo) |
 | `/comparar` | `src/app/comparar/page.tsx`, com `Comparison.tsx` | | Comparação na mesma escala, com período local à tela |
 | `/metodologia` | `src/app/metodologia/page.tsx` | | Regras de datas, lugares, fontes, revisão e cobertura, e os créditos |
@@ -165,53 +167,62 @@ Definido em `src/lib/state/atlas-state.ts`.
 | `acontecimento` | slug ou `null` | Acontecimento aberto no painel |
 | `comparar` | booleano | Modo de comparação: as duas trajetórias no mesmo recorte |
 
-Ações: `selectPerson`, `setPeriod`, `toggleCategory`, `clearCategories`, `selectEvent`, `setComparison`, `restore`.
+Ações: `selectPerson`, `setPeriod`, `toggleCategory`, `clearCategories`, `clearFilters`, `selectEvent`, `setComparison`, `restore`.
 
 Seletores puros, em `selectors.ts`:
 
 - `selectVisibleEvents(dados, estado)`: acontecimentos do recorte, em ordem cronológica. Traduz o estado em um filtro e chama `filterEvents`, das consultas; a regra de filtragem existe em um lugar só.
 - `selectSelectedEvent(visiveis, estado)`: o acontecimento aberto.
-- `reconcileSelection` e `transition`: aplicam a regra de consistência.
+- `settle(estado, dados, cobertura)`: ajusta o período à cobertura da edição (`fitPeriod`) e aplica a regra de consistência.
+- `transition(estado, ação, dados, cobertura)`: aplica a ação e chama `settle`.
 
-**Regra de consistência.** O acontecimento selecionado sempre pertence ao recorte visível. Se um filtro o esconde, a seleção é desfeita. Como lista, mapa e painel leem o mesmo `visible` e o mesmo `selected` do `AtlasStateProvider`, eles não têm como mostrar recortes diferentes.
+**Regra de consistência.** O acontecimento selecionado sempre pertence ao recorte visível. Se um filtro o esconde, a seleção é desfeita. Como lista, mapa e painel leem o mesmo `visible` e o mesmo `selected` do provider, eles não têm como mostrar recortes diferentes.
+
+**Onde o estado fica.** Dois providers entregam o mesmo contrato (`useAtlas()`: `state`, `dispatch`, `data`, `visible`, `visibleIds` e `selected`):
+
+| Provider | Onde o estado fica | Quem usa |
+| --- | --- | --- |
+| `AtlasUrlStateProvider` | No endereço. O estado é derivado da query string a cada renderização, e `dispatch` escreve um endereço novo | A exploração (`/politicos/<slug>`) |
+| `AtlasStateProvider` | Em memória, com `useReducer` | As telas de prova (`/dev/prova`, `/dev/dados`) |
 
 ## Parâmetros de URL e restauração
 
-Implementado na fase 1: a tradução pura entre estado e query string (`url-params.ts`), com testes. Desde a fase 4 a exploração lê o endereço uma vez, ao carregar, e restaura o recorte (D-46). Escrever ao mudar e reagir a voltar e avançar é da fase 5.
+A tradução entre estado e query string existe desde a fase 1 (`url-params.ts`). A fase 4 passou a ler o endereço na chegada, e a fase 5 fechou o ciclo: o endereço é a fonte do estado da exploração, com escrita, voltar e avançar. O funcionamento completo, com exemplos, está em [TIMELINE.md](TIMELINE.md), seção Endereço.
 
 A rota define quem e como; a query string define o recorte:
 
 | Origem | Informação |
 |---|---|
 | `/politicos/<slug>` | `pessoa` igual ao slug, `comparar` desligado |
-| `/comparar` | `comparar` ligado |
+| `/comparar` | `comparar` ligado (a tela ainda usa estado local; a ligação é da fase 7) |
 | `?de=AAAA&ate=AAAA` | Período. Um único ano usa o mesmo valor nos dois |
 | `?categorias=a,b` | Categorias, separadas por vírgula |
 | `?acontecimento=<slug>` | Acontecimento aberto |
 
-Exemplo: `/politicos/lula/?de=2003&ate=2010&categorias=eleicoes&acontecimento=<slug>`.
+Exemplo: `/politicos/lula/?de=2016&ate=2019&categorias=marcos-historicos&acontecimento=lula-2018-prisao-em-curitiba`.
 
-Regras de restauração (ao carregar, recarregar, voltar ou avançar):
+Regras (ao carregar, recarregar, voltar ou avançar):
 
-1. O endereço é a fonte da verdade. O estado é remontado a partir da rota e da query string com a ação `restore`.
+1. O endereço é a fonte da verdade. O estado é derivado dele por `stateFromSearch`, uma função pura; não há uma segunda cópia para sincronizar.
 2. A leitura é tolerante. Cada parâmetro inválido é descartado sozinho, sem derrubar os demais: ano fora do formato, categoria desconhecida, slug malformado.
 3. Um período informado ao contrário (`de=2010&ate=2003`) é lido na ordem certa.
-4. Se o `acontecimento` não existe no conjunto ou fica fora do recorte pedido, a seleção é descartada e os filtros são mantidos.
-5. A escrita é canônica: ordem fixa (`de`, `ate`, `categorias`, `acontecimento`) e valores padrão omitidos. O mesmo estado gera sempre o mesmo endereço.
-6. Seleções discretas (acontecimento, categoria, pessoa, comparação) criam uma entrada no histórico, para o botão voltar desfazer a última escolha. Ajustes contínuos, como arrastar o período, substituem a entrada atual e só criam uma nova ao soltar.
-7. Em exportação estática a query string só existe no navegador. O HTML gerado no build mostra o estado padrão, e o `Explorer` lê o endereço depois, com `useSyncExternalStore`.
-8. A página de um acontecimento (`/acontecimentos/<slug>`) é o endereço para compartilhar. O link de volta à exploração leva `?acontecimento=<slug>` para a página do perfil.
+4. O período fica dentro do que a edição cobre para a pessoa. Um lado no limite da cobertura, ou além dele, fica aberto; um período inteiro fora dela é descartado.
+5. Se o `acontecimento` não existe no conjunto, é de outro perfil ou fica fora do recorte pedido, a seleção é descartada e os filtros são mantidos.
+6. A escrita é canônica: ordem fixa (`de`, `ate`, `categorias`, `acontecimento`) e valores padrão omitidos. O mesmo estado gera sempre o mesmo endereço. Um endereço fora dessa forma é reescrito no lugar, com `replaceState`. Parâmetros que o atlas não conhece são mantidos.
+7. Escolhas discretas (acontecimento, categoria, limpar filtros) criam uma entrada no histórico, para o botão voltar desfazer a última escolha. O arraste no eixo não altera o endereço enquanto dura e cria uma entrada ao soltar. Mudanças seguidas do período, com menos de um segundo entre elas, substituem a entrada (`chooseHistoryMode`).
+8. Em exportação estática a query string só existe no navegador. O HTML gerado no build mostra o estado padrão, e o provider lê o endereço depois da hidratação, com `useSyncExternalStore`. A escrita usa `window.history.pushState` e `replaceState`, que o Next integra ao roteador.
+9. A página de um acontecimento (`/acontecimentos/<slug>`) é o endereço para compartilhar. O link de volta à exploração leva `?acontecimento=<slug>` para a página do perfil.
 
 ## Limites entre as funcionalidades
 
 | Funcionalidade | Recebe | Devolve | Não faz |
 |---|---|---|---|
 | `features/map` | Coleção GeoJSON do recorte (os pontos gerados, recortados por `filterPoints`) e o slug selecionado | `onSelect(slug)` ao clicar em um ponto | Não filtra, não guarda seleção, não lê conteúdo, não monta os pontos |
-| `features/events` | Lista de acontecimentos, ou um acontecimento resolvido | `onSelect(slug)` na lista | Não conhece o mapa |
-| `features/timeline` | Domínio de anos, acontecimentos do recorte, período e categorias em vigor | `onSelect(slug)` nas marcas; `onChange` do período; `onToggle` das categorias | Não fala com o mapa, não guarda recorte |
+| `features/events` | Lista de acontecimentos e as lacunas do conjunto, ou um acontecimento resolvido | `onSelect(slug)` na lista | Não conhece o mapa, não calcula lacunas |
+| `features/timeline` | Domínio de anos, acontecimentos do recorte, período e categorias em vigor, cargos e partidos do período | `onSelect(slug)` nas marcas; `onChange` e `onPeriodChange` do período; `onToggle` das categorias | Não fala com o mapa, não guarda recorte, não escreve no endereço |
 | `features/comparison` | Uma faixa por pessoa: acontecimentos, mandatos, filiações, cobertura e lacunas | Apenas apresentação | Não calcula nota nem ranking |
 
-As funcionalidades não se importam entre si. Quem as junta é a página, por meio do estado central: a lista despacha `selectEvent`, o provider recalcula o recorte, e o mapa recebe o novo slug selecionado. O clique no mapa percorre o mesmo caminho.
+As funcionalidades não se importam entre si. Quem as junta é a página, por meio do estado central: a lista despacha `selectEvent`, o provider escreve o endereço e recalcula o recorte, e o mapa recebe o novo slug selecionado. O clique no mapa percorre o mesmo caminho. O que o mapa pode assumir desse contrato está em [TIMELINE.md](TIMELINE.md), seção Contrato com o mapa.
 
 Dentro de `features/map`:
 
@@ -233,9 +244,9 @@ Dentro de `features/map`:
 | `public/geo/` | A base cartográfica definitiva e, se adotados, os glyphs do mapa. A base provisória da fase 4 fica em `src/features/map/base/` | 6 |
 | `public/media/` | Retratos e imagens de acontecimentos | Em uso desde a fase 2 |
 | `src/app/fonts/` | Fontes tipográficas locais | Em uso desde a fase 4 |
-| `src/features/timeline/` | Linha do tempo e controles do recorte. Arraste de período, zoom e ligação com o endereço | Base na fase 4; completa na 5 |
+| `src/features/timeline/` | Linha do tempo, controles do recorte, escolha de período no eixo e cargos e partidos do período | Em uso desde a fase 4; completa na fase 5 |
 | `src/features/comparison/` | Faixas das trajetórias na mesma escala. Ligação com o estado central e o endereço | Base na fase 4; completa na 7 |
-| `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova e as quatro telas da prévia, em três larguras | Em uso; cresce até a fase 9 |
+| `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova, as quatro telas e a navegação temporal com o endereço, em três larguras | Em uso; cresce até a fase 9 |
 
 `public/geo/` e `public/media/` têm um `.gitkeep` cada, que é copiado para `out/`. São arquivos vazios; saem quando os arquivos reais entrarem.
 

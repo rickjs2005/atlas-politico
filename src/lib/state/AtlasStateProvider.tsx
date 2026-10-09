@@ -1,7 +1,11 @@
 "use client";
 
-// Estado central da exploração. Quem estiver abaixo deste provider lê o mesmo
+// Estado central da exploração. Quem estiver abaixo de um provider lê o mesmo
 // estado e o mesmo recorte visível; ninguém guarda seleção por conta própria.
+//
+// Há dois providers, com o mesmo contrato para quem consome (`useAtlas`):
+//   - este, que guarda o estado em memória (telas de prova e testes);
+//   - `AtlasUrlStateProvider`, que deriva o estado do endereço (exploração).
 
 import {
   createContext,
@@ -9,7 +13,6 @@ import {
   useContext,
   useMemo,
   useReducer,
-  type Dispatch,
   type ReactNode,
 } from "react";
 
@@ -24,16 +27,34 @@ import {
   transition,
 } from "./selectors";
 
-interface AtlasContextValue {
+export interface AtlasContextValue {
+  /** Pessoa, período, categorias e acontecimento aberto. */
   state: AtlasState;
-  dispatch: Dispatch<AtlasAction>;
+  dispatch: (action: AtlasAction) => void;
   data: AtlasData;
   /** Acontecimentos do recorte atual, em ordem cronológica. */
   visible: Acontecimento[];
+  /** `id` dos acontecimentos do recorte, na mesma ordem: o que o mapa filtra. */
+  visibleIds: readonly string[];
   selected: Acontecimento | null;
 }
 
-const AtlasContext = createContext<AtlasContextValue | null>(null);
+export const AtlasContext = createContext<AtlasContextValue | null>(null);
+
+/** O que sai do estado e dos dados: recorte e seleção vêm sempre do mesmo lugar. */
+export function deriveAtlasView(
+  data: AtlasData,
+  state: AtlasState,
+): Omit<AtlasContextValue, "dispatch"> {
+  const visible = selectVisibleEvents(data, state);
+  return {
+    state,
+    data,
+    visible,
+    visibleIds: visible.map((item) => item.id),
+    selected: selectSelectedEvent(visible, state),
+  };
+}
 
 interface AtlasStateProviderProps {
   data: AtlasData;
@@ -54,10 +75,7 @@ export function AtlasStateProvider({
     reconcileSelection(inicial, selectVisibleEvents(data, inicial)),
   );
 
-  const value = useMemo<AtlasContextValue>(() => {
-    const visible = selectVisibleEvents(data, state);
-    return { state, dispatch, data, visible, selected: selectSelectedEvent(visible, state) };
-  }, [data, state]);
+  const value = useMemo(() => ({ ...deriveAtlasView(data, state), dispatch }), [data, state]);
 
   return <AtlasContext value={value}>{children}</AtlasContext>;
 }
@@ -65,7 +83,7 @@ export function AtlasStateProvider({
 export function useAtlas(): AtlasContextValue {
   const value = useContext(AtlasContext);
   if (value === null) {
-    throw new Error("useAtlas precisa estar dentro de <AtlasStateProvider>.");
+    throw new Error("useAtlas precisa estar dentro de um provider do estado do atlas.");
   }
   return value;
 }

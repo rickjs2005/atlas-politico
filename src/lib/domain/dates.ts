@@ -243,6 +243,11 @@ export function formatPeriodYears(periodo: Periodo): string {
   return fim.tipo === "em-curso" ? "em curso" : "sem datas";
 }
 
+/** Um recorte de anos por extenso: `2018` para um ano só, `2003–2010` para um intervalo. */
+export function formatYearRange(de: number, ate: number): string {
+  return de === ate ? String(de) : `${Math.min(de, ate)}–${Math.max(de, ate)}`;
+}
+
 /**
  * Limites de um período em números de cálculo. `null` marca o limite que não
  * está documentado. `em-curso` vale até a data de corte da edição, que é o

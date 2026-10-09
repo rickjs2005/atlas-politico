@@ -72,7 +72,7 @@ export function MapView({ features, selectedSlug, onSelect, bottomInset = 0 }: M
   }
 
   return (
-    <div ref={frame} className="relative h-full min-h-64 overflow-hidden border border-ink-faint bg-map-sea">
+    <div ref={frame} className="relative h-full min-h-64 overflow-hidden border border-ink-faint bg-map-sea md:min-h-40">
       {shown && (
         <MapBoundary onError={fail}>
           <MapCanvas
@@ -102,7 +102,7 @@ export function MapView({ features, selectedSlug, onSelect, bottomInset = 0 }: M
 /** Leitura alternativa: os mesmos lugares, em texto, com a mesma seleção. */
 export function MapFallback({ features, selectedSlug, onSelect }: MapViewProps) {
   return (
-    <div className="relative h-full min-h-64 overflow-y-auto border border-ink-faint bg-raised p-4">
+    <div className="relative h-full min-h-64 overflow-y-auto border border-ink-faint bg-raised p-4 md:min-h-40">
       <p role="status" className="text-sm">
         <strong>O mapa não pôde ser exibido neste navegador.</strong> Os lugares do recorte
         atual seguem em lista, e a seleção continua funcionando.

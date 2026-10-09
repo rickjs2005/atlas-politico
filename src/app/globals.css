@@ -206,7 +206,9 @@
   .explorer-grid {
     display: grid;
     grid-template-columns: 22rem minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) auto;
+    /* O mapa fica com pelo menos 40% da altura. A linha do tempo ocupa o que
+       precisa do restante; em janela baixa, ela rola por dentro. */
+    grid-template-rows: minmax(40%, 1fr) minmax(0, auto);
     grid-template-areas:
       "lado mapa"
       "lado tempo";

@@ -2,7 +2,7 @@
 
 Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa e acontecimentos acompanhados das fontes que os sustentam. Projeto de portfólio da MilWeb.
 
-**Estágio atual:** fases 1 a 4 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados e experiência e direção visual). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e uma prévia navegável das quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
+**Estágio atual:** fases 1 a 5 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados, experiência e direção visual, e aplicação com linha do tempo). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e as quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. A fase 5 tornou a exploração navegável no tempo: escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, abrir um acontecimento e ler os detalhes, com a consulta inteira no endereço. Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
 
 ## Requisitos
 
@@ -32,7 +32,7 @@ O Node 22.18 é o mínimo porque os comandos de dados rodam o TypeScript do proj
 | @playwright/test | 1.63.0 | Testes de navegador e capturas da prévia |
 | eslint, eslint-config-next | 9.39.5, 16.4.0 | Lint e fronteiras entre camadas |
 
-As fases 3 e 4 não acrescentaram nenhuma dependência. As fontes tipográficas (`src/app/fonts/`) e os contornos do mapa (`src/features/map/base/`) da fase 4 são arquivos do projeto, com a licença de cada um descrita na própria pasta.
+As fases 3, 4 e 5 não acrescentaram nenhuma dependência. As fontes tipográficas (`src/app/fonts/`) e os contornos do mapa (`src/features/map/base/`) da fase 4 são arquivos do projeto, com a licença de cada um descrita na própria pasta.
 
 ## Instalação
 
@@ -50,7 +50,7 @@ Gera os dados e abre em http://localhost:3000. Com erro no conteúdo, o comando 
 
 Com o servidor aberto, editar um arquivo de `content/` e recarregar a página basta: os dados são gerados de novo. Se a edição tiver erro, a página mostra os diagnósticos.
 
-As quatro telas da prévia (docs/UX.md):
+As quatro telas (docs/UX.md):
 
 | Tela | Endereço |
 |---|---|
@@ -59,6 +59,18 @@ As quatro telas da prévia (docs/UX.md):
 | Acontecimento | http://localhost:3000/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/ |
 | Comparação | http://localhost:3000/comparar/ |
 | Guia de estados, só em desenvolvimento | http://localhost:3000/dev/previa/ |
+
+Na exploração, o período, as categorias e o acontecimento aberto ficam no endereço. O que está na tela pode ser recarregado, enviado por link e percorrido com voltar e avançar (docs/TIMELINE.md):
+
+| Consulta | Endereço |
+|---|---|
+| Um ano | http://localhost:3000/politicos/lula/?de=2018&ate=2018 |
+| Um intervalo e duas categorias | http://localhost:3000/politicos/lula/?de=2016&ate=2022&categorias=eleicoes,marcos-historicos |
+| Um acontecimento aberto, dentro de um intervalo | http://localhost:3000/politicos/lula/?de=2016&ate=2019&acontecimento=lula-2018-prisao-em-curitiba |
+| Um ano com mudança de partido | http://localhost:3000/politicos/flavio-bolsonaro/?de=2021&ate=2021 |
+| Um período sem registros | http://localhost:3000/politicos/lula/?de=1996&ate=2001 |
+
+Parâmetros: `de` e `ate` (ano com quatro dígitos), `categorias` (identificadores separados por vírgula) e `acontecimento` (slug). Um parâmetro inválido é descartado sozinho, e o endereço é corrigido no lugar.
 
 Telas de prova técnica, que só existem com `npm run dev` e não entram no build de produção:
 
@@ -111,12 +123,13 @@ npm run preview   # serve out/ em http://localhost:4311
 |---|---|
 | `npm run lint` | ESLint, incluindo as fronteiras entre camadas |
 | `npm run typecheck` | Gera os tipos de rota e roda o `tsc` |
-| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, mapa, linha do tempo, cobertura e base visual, com o contraste das cores (Vitest) |
+| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, endereço e histórico, mapa, linha do tempo, lista cronológica, cobertura e base visual, com o contraste das cores (Vitest) |
 | `npm run build` | Gera os dados e o site. Falha se o conteúdo estiver inválido |
 | `npm run verify:export` | Confere `out/`: páginas previstas, uma página por acontecimento publicado e nenhuma por rascunho, nenhuma rota de desenvolvimento, nenhum dado sintético |
 | `npm run check` | Os cinco acima, em sequência |
-| `npm run test:e2e` | As telas de prova e as quatro telas da prévia em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
-| `npm run capture:preview` | Refaz as capturas de `docs/capturas/fase-4/`. Não confere nada: só registra as telas |
+| `npm run test:e2e` | As telas de prova, as quatro telas e a navegação temporal com o endereço, em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
+| `npm run capture:timeline` | Refaz as capturas de `docs/capturas/fase-5/`. Não confere nada: só registra as telas |
+| `npm run capture:preview` | Refaz as capturas de `docs/capturas/fase-4/` com a interface atual |
 
 Antes de qualquer entrega: `npm run check` e `npm run test:e2e`.
 
@@ -134,18 +147,18 @@ public/
 scripts/         comandos de dados, conferência e pré-visualização da saída
 src/
   app/           rotas e páginas; fontes tipográficas em app/fonts/
-  components/    base visual: retrato, data, categoria, fontes, peças da linha do tempo
+  components/    base visual: retrato, data, categoria, fontes, troca de pessoa, peças da linha do tempo
   features/
-    events/      lista e leitura de acontecimentos
+    events/      lista cronológica, lacunas e leitura de acontecimentos
     map/         mapa, estilo local e contornos da base provisória
-    timeline/    linha do tempo, período e categorias
+    timeline/    linha do tempo, período, categorias e cargos e partidos do período
     comparison/  trajetórias na mesma escala
   lib/
     domain/      regras e contratos de dados, sem I/O
     data/        formato dos dados públicos, índices, pontos e consultas
     publication/ validação, elegibilidade, relatório e importação, sem I/O
     content/     leitura de content/ e leitura e gravação de generated/
-    state/       estado compartilhado, seletores e parâmetros de URL
+    state/       estado compartilhado, seletores, endereço e histórico
 tests/
   fixtures/sintetico/   dados de teste, todos marcados como sintéticos
   e2e/                  testes de navegador
@@ -160,7 +173,8 @@ tests/
 - [docs/UX.md](docs/UX.md): direção visual, as quatro telas, composição por largura e roteiro de demonstração.
 - [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md): tokens, tipografia, categorias e componentes.
 - [docs/INTERACTIONS.md](docs/INTERACTIONS.md): seleção, teclado, estados, movimento e o que ainda é demonstração.
-- [docs/capturas/](docs/capturas/README.md): capturas reais da prévia.
+- [docs/TIMELINE.md](docs/TIMELINE.md): navegação temporal: troca de pessoa, filtros, datas, seleção, endereço, histórico e o contrato com o mapa.
+- [docs/capturas/](docs/capturas/README.md): capturas reais das telas, por fase.
 - [docs/DECISIONS.md](docs/DECISIONS.md): decisões adotadas e seus motivos.
 - [docs/STATUS.md](docs/STATUS.md): situação de cada fase, limitações e preparação para a próxima.
 - [docs/SOURCES.md](docs/SOURCES.md): catálogo das fontes e critérios de uso.

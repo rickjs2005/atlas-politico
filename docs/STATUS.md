@@ -1,14 +1,189 @@
 # Status
 
-Atualizado em 8 de outubro de 2026.
+Atualizado em 9 de outubro de 2026.
 
 | Fase do plano | Situação |
 | --- | --- |
 | 1. Arquitetura e fundação | Concluída em 08/10/2026 |
 | 2. Pesquisa e primeiro conjunto de conteúdo | Concluída em 08/10/2026, com revisão assistida por IA e pendências listadas abaixo |
 | 3. Camada de dados e preparação do backend | Concluída em 08/10/2026 |
-| 4. Experiência e direção visual | Concluída em 08/10/2026, com prévia navegável e itens em demonstração listados abaixo |
-| 5 a 10 | Não iniciadas |
+| 4. Experiência e direção visual | Concluída em 08/10/2026, com prévia navegável |
+| 5. Aplicação e linha do tempo | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
+| 6 a 10 | Não iniciadas |
+
+## Fase 5 (aplicação e linha do tempo)
+
+Entrega: a navegação temporal da exploração, com conteúdo real. Escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, selecionar um acontecimento e ler os detalhes, com a consulta inteira no endereço. A especificação está em [TIMELINE.md](TIMELINE.md); o comportamento de cada controle, em [INTERACTIONS.md](INTERACTIONS.md); as decisões, em [DECISIONS.md](DECISIONS.md), de D-49 a D-57; as capturas, em [capturas/fase-5/](capturas/README.md).
+
+Para abrir: `npm run dev` e `http://localhost:3000/politicos/lula/`. Exemplos de endereço com consulta estão em TIMELINE.md e no README.
+
+### Critério de conclusão do plano
+
+"Filtros, seleção, lista e painel exibem o mesmo recorte; datas parciais são tratadas corretamente; anos com pouca informação são apresentados com clareza."
+
+| Parte do critério | Situação | Como foi conferido |
+| --- | --- | --- |
+| Filtros, seleção, lista e painel exibem o mesmo recorte | Atendido | O estado é um só e fica no endereço; lista, marcas, mapa e painel são derivados dele. Os testes de navegador comparam, a cada filtro, a quantidade de itens da lista e de marcas com a conta feita sobre os dados gerados, e conferem que o acontecimento aberto é o mesmo nas quatro partes, inclusive depois de recarregar, voltar e avançar |
+| Datas parciais são tratadas corretamente | Atendido | A lista diz "só o ano" ou "sem o dia"; a marca cobre o ano ou o mês inteiro; o registro cuja posição as datas não decidem diz que a ordem não está documentada; o filtro por ano nunca precisa de um dia. Testes de regra e de navegador |
+| Anos com pouca informação são apresentados com clareza | Atendido | As lacunas do conjunto aparecem na lista, no lugar dos anos; o recorte vazio explica que falta registro, e não atividade; os cargos e partidos de presença incerta ficam à parte; o fim da lista diz o que a edição cobre |
+
+### Passos do plano e situação de cada um
+
+| Passo | Situação |
+| --- | --- |
+| 1. Entrada e seleção de pessoa | Feito. A entrada já levava aos perfis reais; a exploração ganhou a troca de pessoa, que leva o recorte |
+| 2. Lista cronológica com o conjunto publicado | Feito, com as lacunas e os avisos de data parcial e de ordem em aberto |
+| 3. Seleção de ano ou intervalo e categorias | Feito: campos de ano, clique e arraste no eixo, categorias e limpar filtros |
+| 4. Cargos e filiações documentados para o período | Feito: bloco acima da lista, com a presença incerta à parte |
+| 5. Painel de um acontecimento selecionado | Feito na fase 4; nesta, ligado ao endereço e ao histórico |
+| 6. Endereços compartilháveis e voltar e avançar | Feito: o endereço é a fonte do estado |
+| 7. Legibilidade em telas pequenas e datas muito próximas | Feito: fileiras medidas pela largura do eixo, faixa que rola até o período em celular e janela baixa tratada |
+
+### O que foi entregue
+
+- **Consulta no endereço.** Período, categorias e acontecimento aberto ficam na query string. Abrir um link, recarregar, voltar e avançar restauram a mesma consulta. Endereço com erro abre do mesmo jeito e é corrigido no lugar.
+- **Troca de pessoa** dentro da exploração, com os perfis em ordem alfabética e o aberto marcado. Leva período e categorias; o acontecimento só segue quando é dos dois perfis.
+- **Período por três caminhos:** campos de ano, clique em um ano do eixo e arraste sobre o eixo. O arraste mostra a prévia e só muda a consulta ao soltar.
+- **Limpar filtros**, que volta ao recorte inicial de uma vez.
+- **Lista cronológica** com o período e a quantidade no cabeçalho, as lacunas do conjunto como linhas, o aviso do que falta em cada data parcial e o aviso de ordem não documentada.
+- **Cargos e partidos do período**, por extenso, com o que as datas provam separado do que tem presença incerta.
+- **Linha do tempo** com as marcas distribuídas pela largura real do eixo, sem que uma cubra a outra, e com a hachura do período por baixo das marcas.
+- **Aviso** quando um filtro tira do recorte o acontecimento que estava aberto.
+- **Contrato com o mapa** escrito e exposto: filtros, `visible`, `visibleIds` e `selected` (TIMELINE.md).
+- **Guia de estados** (`/dev/previa/`) com os estados novos.
+- **Capturas** da fase e o comando que as refaz: `npm run capture:timeline`.
+
+### Arquivos
+
+Comparação com o estado da fase 4: 44 arquivos de código e de documentação, mais 20 capturas.
+
+| Onde | O quê |
+| --- | --- |
+| `docs/` | Novo: TIMELINE.md e `capturas/fase-5/` (20 imagens). Atualizados: ARCHITECTURE.md, DECISIONS.md, DESIGN-SYSTEM.md, INTERACTIONS.md, UX.md, STATUS.md e `capturas/README.md` |
+| `src/lib/state/` | Novos: `AtlasUrlStateProvider.tsx` e `url-state.ts`. Atualizados: `atlas-state.ts` (`clearFilters`, `fitPeriod`, `hasFilters`), `selectors.ts` (`settle`), `url-params.ts` (`mergeAtlasParams`) e `AtlasStateProvider.tsx` (`visibleIds`, contrato comum) |
+| `src/features/timeline/` | Novos: `PeriodBrush.tsx` e `PeriodContext.tsx`. Atualizados: `Timeline.tsx`, `EventMarks.tsx` e o README |
+| `src/features/events/` | Novo: `chronology.ts`. Atualizado: `EventList.tsx` |
+| `src/components/` | Novos: `PersonSwitch.tsx` e `PeriodRecords.tsx`. Atualizados: `DateMark.tsx`, `time/scale.ts` (`yearAtPosition`, `yearsBetween`) e `time/PeriodShade.tsx` |
+| `src/app/` | Atualizados: `politicos/[slug]/Explorer.tsx` e `page.tsx`, `comparar/Comparison.tsx` (usa as listas compartilhadas), `dev/previa/StatesGallery.tsx` e `globals.css` (uma regra da grade) |
+| `src/features/map/`, `src/lib/domain/` | `MapView.tsx` (altura mínima em telas médias e largas) e `dates.ts` (`formatYearRange`) |
+| `tests/` | Novos: `url-state.test.ts`, `chronology.test.ts`, `e2e/linha-do-tempo.spec.ts` e `e2e/linha-do-tempo.capture.ts`. Atualizados: `state.test.ts`, `url-params.test.ts`, `timeline.test.ts`, `dates.test.ts`, `e2e/previa.spec.ts`, `e2e/dados.spec.ts` e `e2e/previa.capture.ts` |
+| Raiz | `package.json` (comandos de captura separados) e README.md |
+
+`content/` não foi alterado, nenhuma dependência foi acrescentada, e as imagens de `docs/capturas/fase-4/` não foram refeitas.
+
+### Jornada implementada e o que segue em demonstração
+
+Implementado, com dados reais e teste de navegador:
+
+- Entrada, perfil e troca entre os dois perfis, com o recorte.
+- Ano, intervalo e categorias combinadas, com a lista, as marcas, os pontos e as contagens no mesmo recorte.
+- Ordem cronológica, datas parciais, ordem em aberto e lacunas.
+- Cargos e partidos do período, com mudança de cargo ou de partido dentro do intervalo.
+- Seleção, abertura e fechamento do painel, com o foco devolvido.
+- Limpeza da seleção quando o recorte muda, com o aviso.
+- Recorte sem resultados e retorno por limpeza de filtros.
+- Endereço direto, recarregamento, voltar e avançar.
+- Parâmetros inválidos e acontecimento incompatível.
+- Leitura sem o mapa.
+
+Em demonstração, com o contrato de cada um em INTERACTIONS.md: zoom na linha do tempo (não feito, por decisão), pontos sobrepostos, formas e rótulos no mapa, pontos pelo teclado, comparação ligada ao estado e ao endereço, retorno da página do acontecimento com o recorte de antes, fonte indisponível e imagem de acontecimento.
+
+### O que a fase 4 deixou para esta fase
+
+| Ponto | Como ficou |
+| --- | --- |
+| Escrever o estado no endereço e responder a voltar e avançar | Feito, com o endereço como fonte do estado (D-49, D-50) |
+| Período por arraste, disparando o mesmo `setPeriod` | Feito, com clique para um ano só (D-53) |
+| Cargos e partidos do período na exploração, com documentado e incerto | Feito (D-55) |
+| Zoom ou agrupamento para anos cheios | Decidido: nenhum dos dois. Fileiras medidas pela largura (D-53) |
+| Rótulo das barras de cargo estreitas | O desenho continua sem o texto; o nome está por extenso no bloco do período, que serve ao toque |
+
+### Problemas achados na conferência e corrigidos
+
+A conferência foi feita abrindo a exploração em um Chromium, em computador, tablet e celular, capturando as telas e olhando cada captura, e medindo a área de trabalho em seis tamanhos de janela.
+
+| Problema | Correção |
+| --- | --- |
+| Em uma janela de 1280×720, o mapa era desenhado por cima da linha do tempo | O mapa fica com pelo menos 40% da altura; a linha do tempo rola por dentro. Um teste confere (D-56) |
+| A hachura do período passava por cima das marcas do ano escolhido | A hachura fica sob as marcas |
+| Em celular, chegar por um endereço com período mostrava só hachura na faixa | A faixa rola até o período |
+| O bloco de cargos e partidos, aberto por padrão, empurrava os acontecimentos para fora da tela | Começa recolhido, com o resumo à vista |
+| O resumo do bloco somava os registros de presença incerta aos documentados | Contagens separadas |
+| O aviso de acontecimento fechado continuava na tela depois de voltar no histórico | O aviso vale só para a consulta em que o fechamento aconteceu |
+| As áreas de clique das marcas se cobriam em colunas estreitas | O espaço de cada marca é calculado com a largura real do eixo |
+| Clicar no menu para o perfil que já estava aberto mudava o endereço e não a tela | Um componente avisa das navegações do roteador. Sem ele, o teste falha |
+| A regra de histórico escrita na fase 1 apagaria a entrada anterior ao arraste | Regra reescrita em ARCHITECTURE.md (D-50) |
+
+### Verificações executadas
+
+Todas em 09/10/2026, com Node 24.15.0 no Windows 11.
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run lint` | Sem problemas |
+| `npm run typecheck` | Sem erros |
+| `npm run test` | 382 testes passando, em 19 arquivos. Eram 314 em 17 |
+| `npm run build` | 47 páginas HTML, como antes |
+| `npm run verify:export` | 264 arquivos; 39 acontecimentos com página, 5 rascunhos sem página, nenhum dado sintético, nenhuma rota de desenvolvimento |
+| `npm run test:e2e` | 88 testes passando: 13 da prova sintética, 7 dos dados reais, 28 da prévia e 40 da navegação temporal |
+| `npm run capture:timeline` | 20 capturas, conferidas uma a uma |
+| HTML gerado dos dois perfis | Cada arquivo traz os 20 acontecimentos, as marcas e as lacunas: a exploração não deixou de ser pré-renderizada |
+| Saída estática, servida por `npm run preview` | Chegada por endereço com consulta, recarregamento, nova entrada, voltar, avançar, troca de pessoa com o recorte, correção de endereço inválido e menu para o mesmo perfil: todos como no servidor de desenvolvimento. Nenhum pedido a outro domínio |
+| Janelas medidas | 1440×900, 1366×768, 1280×720, 1280×600, 1024×768 e 768×1024: o mapa não é coberto, e a linha do tempo rola por dentro quando não cabe |
+| Larguras conferidas pelas capturas | 1440×900, 1280×720, 768×1024 e 390×844. Em 360×800, uma captura avulsa com o bloco de cargos aberto, e o teste da fase 4 que confere que nenhuma tela passa da largura |
+| Teclado e foco | Bloco de cargos (Enter), linha do tempo com setas, Esc na leitura e no arraste, foco devolvido ao fechar. Campos de ano, categorias e troca de pessoa são controles nativos: campo de seleção, botão e link |
+| Toque | Em 390×844, com toque emulado: o toque em um ano do eixo foi disparado como toque; leitura, cartão do mapa e botão voltar, como clique. Áreas de 44 px na troca de pessoa e em limpar filtros |
+| Histórico | Uma entrada por escolha; uma por arraste; uma para 14 mudanças seguidas de um campo de ano; nenhuma na correção de endereço |
+
+Dez regras foram quebradas de propósito, uma por vez, para confirmar que os testes falham: histórico sempre criando entrada, período fora da cobertura aceito, troca de pessoa levando qualquer acontecimento, ordem em aberto marcando os dois registros, seleção fora do recorte mantida, voltar e avançar sem escuta, navegação do roteador sem aviso, endereço sem correção, arraste alterando a consulta a cada ano e marcas sem medir a largura. Em todos os casos algum teste falhou, e o código foi restaurado. Com a regra antiga da grade em vigor, o teste da janela baixa também falhou.
+
+### Implementado e não verificado
+
+- **Navegador com janela visível, Firefox e Safari.** Tudo foi conferido em um Chromium sem interface. A integração com a History API e o `touch-action` do eixo não foram vistos em outro motor.
+- **Celular e tablet reais.** As larguras e o toque foram emulados. O botão voltar do aparelho, a barra de endereço que encolhe e o teclado virtual não foram exercitados.
+- **Arraste por toque no eixo, em tablet.** Está implementado para as larguras em que a faixa não rola; o teste cobre só o toque parado.
+- **Setas do teclado em um campo de ano.** O teste dispara mudanças seguidas do campo, e não a tecla física, cujo comportamento varia entre sistemas.
+- **Leitor de tela.** Os avisos da região de anúncio e a leitura das lacunas foram conferidos pela estrutura, e não com NVDA, VoiceOver ou TalkBack.
+- **Hospedagem real.** A saída estática foi servida só pelo servidor local de `npm run preview`.
+- **Conexão lenta.** O intervalo em que quem chega por um link com consulta vê o estado inicial não foi medido.
+- **Desempenho.** Nenhuma medição. É da fase 8.
+
+### Pendências reais
+
+1. **Revisão humana de todo o conteúdo.** Continua sendo a principal.
+2. **Decisões do responsável pelo projeto, herdadas:** nome definitivo, retrato em cinza e recortado (D-42) e canal público de correção.
+3. **Estado inicial por um instante.** Quem abre um link com consulta vê primeiro a exploração sem filtro, que é o que o HTML estático traz, e depois a consulta. É consequência da exportação estática (D-49). Fica para a fase 8.
+4. **Fechar a leitura cria uma entrada no histórico.** Abrir e fechar vários acontecimentos alonga o caminho de volta. A regra é a da arquitetura; vale rever com pessoas usando, na fase 9.
+5. **A página do acontecimento volta sem o recorte.** O link **Trajetória de (pessoa)** leva só o acontecimento. O botão voltar do navegador devolve a consulta inteira. É da fase 7.
+6. **A comparação ainda não usa o endereço.** É da fase 7.
+7. **Pontos sobrepostos no mapa.** Brasília reúne 9 pontos e o estado do Rio de Janeiro, 7. É da fase 6.
+8. **Barras de cargo estreitas sem rótulo no desenho.** O nome agora está por extenso no bloco do período, mas a barra continua muda.
+9. **Saída estática em hospedagem simples.** Os pedidos de pré-carregamento de segmento do Next continuam dando 404 no servidor de `npm run preview`, como na fase 4. A navegação funciona.
+10. **Servidor de desenvolvimento e `globals.css`.** Em duas ocasiões desta fase o servidor continuou entregando o CSS anterior depois de uma mudança no arquivo; em uma delas, o arquivo tinha voltado a um conteúdo que já tivera. Reiniciar `npm run dev` resolveu. O build não é afetado.
+11. **Vídeo de demonstração** não gravado, como na fase 4.
+12. **Lacunas de conteúdo herdadas** (lista na seção da fase 3).
+
+### Preparação para a fase 6 (mapa sincronizado)
+
+O critério da fase 6 é ligar os acontecimentos aos lugares, com seleção nos dois sentidos, pontos sobrepostos tratados e os pontos acompanhando pessoa, período e categoria. Situação de cada passo do plano:
+
+| Passo da fase 6 | O que já existe | O que falta |
+| --- | --- | --- |
+| 1. Base geográfica local e estilo do mapa | Contornos do Natural Earth 1:50m e estilo local, isolados em `buildBaseStyle` | Decidir a base definitiva, os rótulos e os glyphs (D-43) |
+| 2. Plotar os acontecimentos com localização | 27 pontos de 26 acontecimentos, montados pelo gerador | Nada previsto |
+| 3. Foco e seleção nos dois sentidos | O clique no ponto seleciona, e a seleção move a câmera. Desde esta fase, a seleção pelo mapa entra no endereço e no histórico como as outras | Rever com pontos sobrepostos |
+| 4. Agrupar ou escolher pontos sobrepostos | Nada. O clique abre o de cima | Decidir entre agrupar e listar por lugar. `listEventsAtPlace(data, lugarId)` já devolve os acontecimentos de um lugar |
+| 5. Pontos de acordo com pessoa, período e categoria | Feito: `filterPoints(data.pontos, visible)`; `visibleIds` para filtrar uma camada sem refazer a coleção | Nada previsto |
+| 6. Limites de zoom | Zoom contido em 4,5 ao selecionar | Definir mínimo e máximo de navegação |
+| 7. Câmera e gestos em computador e celular | Movimento de 500 ms; em celular, o mapa ocupa a tela e o cartão reserva a faixa de baixo | Conferir em aparelho real |
+
+Pontos de atenção para quem continuar:
+
+- O contrato está em TIMELINE.md, seção Contrato com o mapa. O mapa não precisa de estado próprio nem de parâmetro novo no endereço para o que o plano pede.
+- Voltar e avançar mudam `selectedSlug` sem clique: a câmera já acompanha, porque reage à propriedade, e não ao gesto.
+- `visible` muda uma vez por ação, inclusive no arraste de período: o mapa não recebe atualizações intermediárias.
+- Em tela estreita, a seleção pelo mapa mostra o cartão e guarda que a leitura está fechada (`folded`, em `Explorer.tsx`). Um agrupamento de pontos precisa conviver com esse cartão.
+- Os testes de `tests/e2e/linha-do-tempo.spec.ts` rodam com e sem o mapa e servem de rede para a troca da camada de pontos.
 
 ## Fase 4 (experiência e direção visual)
 
@@ -148,6 +323,8 @@ Todas em 08/10/2026, com Node 24.15.0 no Windows 11.
 8. **Lacunas de conteúdo herdadas** (lista na seção da fase 3): cobertura desigual, lugares aproximados, nenhuma imagem de acontecimento.
 
 ### Preparação para a fase 5 (aplicação e linha do tempo)
+
+*Registro da fase 4. O que a fase 5 fez com cada ponto está na seção dela, acima.*
 
 O critério da fase 5 é "filtros, seleção, lista e painel exibem o mesmo recorte; datas parciais são tratadas corretamente; anos com pouca informação são apresentados com clareza". Situação de cada passo do plano:
 
@@ -347,4 +524,4 @@ Concluída em 08/10/2026 e registrada no commit `9be1013`. O que ela entregou es
 
 ## Próximo passo
 
-Fase 5: aplicação e linha do tempo. A fase 4 termina aqui; a fase 5 só começa com o próximo comando. Nada desta fase foi publicado, e o site continua com `noindex`.
+Fase 6: mapa sincronizado. A fase 5 termina aqui; a fase 6 só começa com o próximo comando. Nada foi publicado, e o site continua com `noindex`.

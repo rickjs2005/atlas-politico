@@ -10,6 +10,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { AffiliationList, MandateList } from "@/components/PeriodRecords";
 import { Portrait } from "@/components/Portrait";
 import { TrajectoryLanes } from "@/features/comparison/TrajectoryLanes";
 import { EventLinkList } from "@/features/events/EventLinkList";
@@ -185,43 +186,12 @@ function PersonColumn({ data, trajetoria, compartilhados, recorte, coberto, lacu
 
       <section className="space-y-2">
         <h3 className={sectionTitle}>Cargos e funções no período</h3>
-        {mandatos.length === 0 ? (
-          <p className="text-sm text-ink-soft">Nenhum cargo registrado no período.</p>
-        ) : (
-          <ul className="divide-y divide-line border-y border-line text-sm">
-            {mandatos.map(({ registro, situacao }) => (
-              <li key={registro.id} className="py-2">
-                <span className="block font-medium">{registro.cargo}</span>
-                <span className="block text-ink-soft">{registro.instituicao}</span>
-                <span className="numerals block text-xs text-ink-soft">
-                  {formatPeriod(registro.periodo)}
-                  {situacao === "incerta" && (
-                    <span className="italic"> · presença no período não documentada</span>
-                  )}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <MandateList itens={mandatos} emptyText="Nenhum cargo registrado no período." />
       </section>
 
       <section className="space-y-2">
         <h3 className={sectionTitle}>Partidos no período</h3>
-        {filiacoes.length === 0 ? (
-          <p className="text-sm text-ink-soft">Nenhuma filiação registrada no período.</p>
-        ) : (
-          <ul className="divide-y divide-line border-y border-line text-sm">
-            {filiacoes.map(({ registro, situacao }) => (
-              <li key={registro.id} className="flex flex-wrap items-baseline justify-between gap-x-4 py-2">
-                <span className="font-medium">{registro.partido.sigla}</span>
-                <span className="numerals text-xs text-ink-soft">
-                  {formatPeriod(registro.periodo)}
-                  {situacao === "incerta" && <span className="italic"> · incerta no período</span>}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <AffiliationList itens={filiacoes} emptyText="Nenhuma filiação registrada no período." />
       </section>
 
       <section className="space-y-2">
