@@ -38,6 +38,8 @@ interface TrajectoryLanesProps {
   periodo?: { de: number | null; ate: number | null };
   /** `resumo` deixa os partidos de fora, para a chamada na entrada. */
   detail?: "completo" | "resumo";
+  /** Endereço de cada marca. O padrão é a página do acontecimento, sem contexto. */
+  hrefOf?: (item: Acontecimento) => string;
 }
 
 const hatch =
@@ -49,13 +51,23 @@ export function TrajectoryLanes({
   dataDeCorte,
   periodo = { de: null, ate: null },
   detail = "completo",
+  hrefOf,
 }: TrajectoryLanesProps) {
+  // Com um período escolhido, o meio dele: em tela estreita, a faixa rola até aí.
+  const foco =
+    periodo.de === null && periodo.ate === null
+      ? null
+      : spanOfYears(domain, periodo.de ?? domain.de, periodo.ate ?? domain.ate);
+
   return (
     <div className="space-y-2">
       {/* Em tela estreita a faixa rola na horizontal e começa pelo fim, nos anos
           recentes, em que as duas trajetórias têm registros. A inversão de
           direção serve só para isso; o conteúdo continua da esquerda para a direita. */}
-      <div className="relative overflow-x-auto overscroll-x-contain border-y border-ink [direction:rtl]">
+      <div
+        data-lanes-scroll
+        className="relative overflow-x-auto overscroll-x-contain border-y border-ink [direction:rtl]"
+      >
         <div className="min-w-[44rem] divide-y divide-line [direction:ltr]">
           {lanes.map((lane) => {
             const antes =
@@ -92,6 +104,7 @@ export function TrajectoryLanes({
                       events={lane.acontecimentos}
                       dimmed={lane.foraDoRecorte}
                       label={`Acontecimentos de ${lane.pessoa.nome}`}
+                      hrefOf={hrefOf}
                     />
                     {/* Lacunas: um colchete tracejado sob o trecho sem acontecimentos.
                         O texto só entra quando cabe inteiro; os anos de cada lacuna
@@ -149,7 +162,17 @@ export function TrajectoryLanes({
 
           <div className="grid grid-cols-[7.5rem_minmax(0,1fr)] md:grid-cols-[10rem_minmax(0,1fr)]">
             <span className="sticky left-0 z-10 bg-paper" />
-            <TimeAxis domain={domain} className="border-t-0" />
+            <div className="relative">
+              <TimeAxis domain={domain} className="border-t-0" />
+              {foco !== null && (
+                <span
+                  data-period-focus
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-0 h-px w-px"
+                  style={{ left: `${(foco.inicio + foco.largura / 2) * 100}%` }}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

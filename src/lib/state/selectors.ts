@@ -4,7 +4,7 @@
 // o estado da exploração para um filtro.
 
 import type { YearSpan } from "@/lib/data/coverage";
-import { filterEvents, findPersonBySlug } from "@/lib/data/queries";
+import { compareTrajectories, filterEvents, findPersonBySlug, type Comparison } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
 import type { Acontecimento } from "@/lib/domain/types";
 
@@ -21,6 +21,16 @@ export function selectVisibleEvents(data: AtlasData, state: AtlasState): Acontec
     periodo: state.periodo,
     categorias: state.categorias,
   });
+}
+
+/**
+ * As trajetórias da comparação no recorte do estado: o mesmo período e as
+ * mesmas categorias, aplicados a cada pessoa pela mesma consulta. A união dos
+ * acontecimentos das trajetórias é o que `selectVisibleEvents` devolve com
+ * `comparar` ligado.
+ */
+export function selectComparison(data: AtlasData, state: AtlasState): Comparison {
+  return compareTrajectories(data, { periodo: state.periodo, categorias: state.categorias });
 }
 
 export function selectSelectedEvent(

@@ -1,14 +1,20 @@
-// Resumo de um perfil: retrato, texto, cargos, partidos, cobertura e fontes.
-// É o que o painel de leitura mostra enquanto nenhum acontecimento está
-// aberto. O mesmo componente serve aos dois perfis, com as mesmas seções na
-// mesma ordem.
+// O perfil de uma pessoa: apresentação, cargos e partidos documentados, cada
+// um com as próprias fontes, cobertura da edição, fontes do texto de
+// apresentação, revisão e crédito do retrato.
+//
+// É o que o painel de leitura da exploração mostra enquanto nenhum
+// acontecimento está aberto: a página do perfil e a exploração são a mesma
+// rota (docs/PAGES.md). O mesmo componente serve aos dois perfis, com as
+// mesmas seções na mesma ordem.
 
+import { EditionTag } from "@/components/EditionStatus";
+import { AffiliationList, MandateList } from "@/components/PeriodRecords";
 import { Portrait, PortraitCredit } from "@/components/Portrait";
 import { ReviewNote } from "@/components/ReviewNote";
 import { SourceList, type SourceEntry } from "@/components/SourceList";
 import type { Coverage } from "@/lib/data/coverage";
 import { formatPeriod } from "@/lib/domain/dates";
-import type { Filiacao, Imagem, Mandato, Pessoa } from "@/lib/domain/types";
+import type { Citacao, Edicao, Filiacao, Imagem, Mandato, Pessoa } from "@/lib/domain/types";
 
 interface ProfilePanelProps {
   pessoa: Pessoa;
@@ -16,11 +22,22 @@ interface ProfilePanelProps {
   mandatos: readonly Mandato[];
   filiacoes: readonly Filiacao[];
   cobertura: Coverage | null;
+  /** Fontes do texto de apresentação. */
   fontes: readonly SourceEntry[];
+  /** A edição do conteúdo, para dizer versão e data de corte. */
+  edicao?: Edicao | null;
+  /** As fontes de um cargo ou de uma filiação. Sem a função, elas não aparecem. */
+  sourcesOf?: (registro: { fontes: readonly Citacao[] }) => readonly SourceEntry[];
+  /** Caminhos a partir do perfil: comparar, copiar o link, metodologia. */
+  actions?: React.ReactNode;
   headingLevel?: 2 | 3;
 }
 
 const sectionTitle = "eyebrow text-ink-soft";
+
+/** Sem período consultado, todo registro da pessoa entra como documentado. */
+const all = <T,>(registros: readonly T[]) =>
+  registros.map((registro) => ({ registro, situacao: "documentada" as const }));
 
 export function ProfilePanel({
   pessoa,
@@ -29,13 +46,16 @@ export function ProfilePanel({
   filiacoes,
   cobertura,
   fontes,
+  edicao,
+  sourcesOf,
+  actions,
   headingLevel = 2,
 }: ProfilePanelProps) {
   const Title = headingLevel === 2 ? "h2" : "h3";
   const SectionTitle = headingLevel === 2 ? "h3" : "h4";
 
   return (
-    <article className="animate-enter space-y-6">
+    <article className="animate-enter space-y-6" data-perfil={pessoa.slug}>
       <header className="grid grid-cols-[6.5rem_minmax(0,1fr)] items-end gap-4">
         <Portrait nome={pessoa.nome} imagem={retrato} sizes="104px" decorative />
         <div className="space-y-1 pb-1">
@@ -48,45 +68,31 @@ export function ProfilePanel({
 
       <p className="reading">{pessoa.resumo}</p>
 
-      <section className="space-y-2">
-        <SectionTitle className={sectionTitle}>Cargos e funções</SectionTitle>
-        {mandatos.length === 0 ? (
-          <p className="text-sm text-ink-soft">Nenhum cargo registrado nesta edição.</p>
-        ) : (
-          <ul className="divide-y divide-line border-y border-line text-sm">
-            {mandatos.map((mandato) => (
-              <li key={mandato.id} className="py-2">
-                <span className="block font-medium">{mandato.cargo}</span>
-                <span className="block text-ink-soft">{mandato.instituicao}</span>
-                <span className="numerals block text-xs text-ink-soft">{formatPeriod(mandato.periodo)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+      {actions}
+
+      <section className="space-y-2" data-secao="cargos">
+        <SectionTitle className={sectionTitle}>
+          Cargos e funções <span className="numerals font-medium">({mandatos.length})</span>
+        </SectionTitle>
+        <MandateList
+          itens={all(mandatos)}
+          emptyText="Nenhum cargo registrado nesta edição."
+          sourcesOf={sourcesOf}
+        />
       </section>
 
-      <section className="space-y-2">
-        <SectionTitle className={sectionTitle}>Partidos</SectionTitle>
-        {filiacoes.length === 0 ? (
-          <p className="text-sm text-ink-soft">Nenhuma filiação registrada nesta edição.</p>
-        ) : (
-          <ul className="divide-y divide-line border-y border-line text-sm">
-            {filiacoes.map((filiacao) => (
-              <li key={filiacao.id} className="flex flex-wrap items-baseline justify-between gap-x-4 py-2">
-                <span>
-                  <span className="font-medium">{filiacao.partido.sigla}</span>
-                  {filiacao.partido.nome !== filiacao.partido.sigla && (
-                    <span className="text-ink-soft"> · {filiacao.partido.nome}</span>
-                  )}
-                </span>
-                <span className="numerals text-xs text-ink-soft">{formatPeriod(filiacao.periodo)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+      <section className="space-y-2" data-secao="partidos">
+        <SectionTitle className={sectionTitle}>
+          Partidos <span className="numerals font-medium">({filiacoes.length})</span>
+        </SectionTitle>
+        <AffiliationList
+          itens={all(filiacoes)}
+          emptyText="Nenhuma filiação registrada nesta edição."
+          sourcesOf={sourcesOf}
+        />
       </section>
 
-      <section className="space-y-2">
+      <section className="space-y-2" data-secao="cobertura">
         <SectionTitle className={sectionTitle}>Cobertura desta edição</SectionTitle>
         {cobertura === null ? (
           <p className="text-sm text-ink-soft">A edição não declara o período coberto para este perfil.</p>
@@ -98,7 +104,7 @@ export function ProfilePanel({
         )}
       </section>
 
-      <section className="space-y-2">
+      <section className="space-y-2" data-secao="fontes">
         <SectionTitle className={sectionTitle}>
           Fontes do perfil <span className="numerals font-medium">({fontes.length})</span>
         </SectionTitle>
@@ -107,7 +113,8 @@ export function ProfilePanel({
 
       <footer className="space-y-2">
         <ReviewNote editorial={pessoa.editorial} />
-        {retrato !== null && <PortraitCredit imagem={retrato} />}
+        {edicao != null && <EditionTag edicao={edicao} />}
+        {retrato !== null && <PortraitCredit imagem={retrato} detail />}
       </footer>
     </article>
   );

@@ -1,6 +1,6 @@
 # Arquitetura
 
-Descreve o que está implementado até a fase 6 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem cinco: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md) e [MAP.md](MAP.md).
+Descreve o que está implementado até a fase 7 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem sete: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md), [MAP.md](MAP.md), [COMPARISON.md](COMPARISON.md) e [PAGES.md](PAGES.md).
 
 ## Visão geral
 
@@ -38,9 +38,10 @@ HTML estático por rota em out/                             │
 | Dados públicos | `src/lib/data/` | Formato do que as páginas consomem, índices, pontos do mapa e consultas | Ler arquivos, usar o Zod em tempo de execução, usar React |
 | Pipeline | `src/lib/publication/` | Validação com diagnósticos, elegibilidade, montagem dos dados, relatório de cobertura, plano de importação | Ler arquivos, usar React |
 | Disco | `src/lib/content/` | Ler `content/`, gravar e ler `generated/`, sondar arquivos de mídia, orquestrar os comandos | Ser importada por código do navegador |
-| Estado | `src/lib/state/` | Estado da exploração, seletores, parâmetros de URL, regras do endereço e do histórico, e os dois providers (memória e endereço) | Ler arquivos, importar Zod em tempo de execução |
+| Estado | `src/lib/state/` | Estado da exploração e da comparação, seletores, parâmetros de URL, regras do endereço e do histórico, endereços entre telas com o contexto de retorno (`links.ts`), leitura do endereço no navegador (`location.tsx`) e os dois providers (memória e endereço) | Ler arquivos, importar Zod em tempo de execução |
+| Configuração | `src/lib/site.ts` | O que depende de decisão do responsável pelo projeto. Hoje, o canal público de correção, ainda sem valor | Guardar conteúdo editorial |
 | Funcionalidades | `src/features/` | Mapa, acontecimentos, linha do tempo, comparação | Ler arquivos, guardar seleção própria |
-| Componentes | `src/components/` | Base visual compartilhada: cabeçalho, rodapé, retrato, cartão de pessoa, data, categoria, fontes, revisão, perfil e as peças da linha do tempo (`time/`) | Ler arquivos, guardar estado da exploração |
+| Componentes | `src/components/` | Base visual compartilhada: cabeçalho, rodapé, retrato, cartão de pessoa, data, categoria, fontes, revisão, identificação da edição, perfil, cópia de link e as peças da linha do tempo (`time/`) | Ler arquivos, guardar estado da exploração |
 | Rotas | `src/app/` | Páginas. Único lugar que chama `getAtlasData()` e entrega os dados por props | |
 | Comandos | `scripts/` | Linha de comando dos dados, conferência e pré-visualização da saída | |
 
@@ -97,12 +98,13 @@ As fronteiras são verificadas, e não só combinadas:
 | Gerador de dados (`npm run data:build`) | Antes do build | Node, fora do Next. Grava `generated/` |
 | `getAtlasData`, pipeline, schemas Zod | Build | Nunca chegam ao navegador |
 | Consultas de `src/lib/data/` | Build e navegador | Funções puras sobre os dados já gerados |
-| `SiteHeader`, `SiteFooter`, `PersonCard`, `Portrait`, `SourceList`, `TrajectoryLanes` | Build | Sem estado |
+| `SiteHeader`, `SiteFooter`, `PersonCard`, `Portrait`, `SourceList`, `SourceCatalog`, `RecordSources`, `EditionTag`, `TrajectoryLanes` | Build | Sem estado |
 | `EventPanel`, `ProfilePanel` | Build ou navegador | Apresentação pura. Servem à página e ao painel |
 | `SiteNav` | Navegador | Só o abrir e fechar do menu em tela estreita |
 | `Explorer` (exploração) e `Comparison` (comparação) | Navegador | Client Components. Recebem os dados por props, são pré-renderizados no HTML e hidratados |
-| `AtlasUrlStateProvider`, `EventList`, `Timeline`, `MapView` | Navegador | Idem, dentro do `Explorer`. No HTML do build saem com o estado inicial; o endereço é lido depois da hidratação |
-| `RouterWatcher` | Só navegador | Único uso de `useSearchParams`, isolado em um `Suspense` sem saída visual, para a exploração continuar inteira no HTML gerado |
+| `AtlasUrlStateProvider`, `EventList`, `Timeline`, `MapView` | Navegador | Idem, dentro do `Explorer`. O provider também envolve a `Comparison`. No HTML do build saem com o estado inicial; o endereço é lido depois da hidratação |
+| `EventReturn`, `CopyLink`, `CorrectionTemplate` | Navegador | Client Components pequenos dentro de páginas estáticas: o retorno da página do acontecimento, a cópia do link e o modelo de correção. No HTML do build saem sem contexto; o endereço e a origem são lidos depois da hidratação |
+| `UrlWatcher` (`src/lib/state/location.tsx`) | Só navegador | Único uso de `useSearchParams`, isolado em um `Suspense` sem saída visual, para as telas continuarem inteiras no HTML gerado. Serve à exploração, à comparação, ao retorno e ao modelo de correção |
 | `AtlasStateProvider` | Navegador | Estado em memória, para as telas de prova e os testes |
 | `MapCanvas` (MapLibre) | Só navegador | Carregado por `next/dynamic` com `ssr: false`. Não aparece no HTML do servidor. A instância é criada uma vez; filtros e seleção não a recriam |
 | Contornos da base (`terra.geojson`, `estados-br.geojson`) | Só navegador | Arquivos próprios, publicados pelo bundler em `/_next/static/media/` e pedidos ao próprio site |
@@ -138,10 +140,10 @@ Regras que valem:
 | Rota | Arquivo | Parâmetros | Situação |
 |---|---|---|---|
 | `/` | `src/app/page.tsx` | | Entrada: propósito, recorte da edição, escolha de pessoa e as duas trajetórias na mesma escala |
-| `/politicos/flavio-bolsonaro`, `/politicos/lula` | `src/app/politicos/[slug]/page.tsx`, com `Explorer.tsx` | `generateStaticParams` a partir de `PROFILES`; consulta em `de`, `ate`, `categorias` e `acontecimento` | Exploração: recorte, lista, mapa, linha do tempo e painel, com a consulta no endereço (fase 5). A página recorta os dados da pessoa (`sliceForPerson`) antes de entregá-los |
-| `/acontecimentos/[slug]` | `src/app/acontecimentos/[slug]/page.published.tsx`, com `EventLocator.tsx` | `generateStaticParams` a partir dos acontecimentos dos dados gerados | Leitura completa, com ficha lateral e mapa de localização (ver abaixo) |
-| `/comparar` | `src/app/comparar/page.tsx`, com `Comparison.tsx` | | Comparação na mesma escala, com período local à tela |
-| `/metodologia` | `src/app/metodologia/page.tsx` | | Regras de datas, lugares, fontes, revisão e cobertura, e os créditos |
+| `/politicos/flavio-bolsonaro`, `/politicos/lula` | `src/app/politicos/[slug]/page.tsx`, com `Explorer.tsx` | `generateStaticParams` a partir de `PROFILES`; consulta em `de`, `ate`, `categorias` e `acontecimento` | Exploração: recorte, lista, mapa, linha do tempo e painel, com a consulta no endereço (fase 5). É também a página do perfil: o painel mostra apresentação, cargos, partidos, cobertura, fontes, edição e crédito do retrato (fase 7). A página recorta os dados da pessoa (`sliceForPerson`) antes de entregá-los |
+| `/acontecimentos/[slug]` | `src/app/acontecimentos/[slug]/page.published.tsx`, com `EventReturn.tsx` e `EventLocator.tsx` | `generateStaticParams` a partir dos acontecimentos dos dados gerados; contexto de retorno opcional em `de`, `ate`, `categorias` e `origem` | Leitura completa, com retorno, cópia do link, ficha lateral e mapa de localização (ver abaixo) |
+| `/comparar` | `src/app/comparar/page.tsx`, com `Comparison.tsx` | Consulta em `de`, `ate` e `categorias` | As duas trajetórias no mesmo período, com as mesmas categorias e na mesma escala, com a consulta no endereço (fase 7, [COMPARISON.md](COMPARISON.md)) |
+| `/metodologia` | `src/app/metodologia/page.tsx`, com `CorrectionTemplate.tsx` | `acontecimento`, opcional, para o modelo de correção | Objetivo, seleção, fontes, revisão feita, datas, lugares, limites da comparação, edição, correção, créditos e o catálogo de fontes (fase 7, [PAGES.md](PAGES.md)) |
 | 404 | `src/app/not-found.tsx` | | Com a identidade do projeto. Vira `out/404.html` |
 | `/dev/previa` | `src/app/dev/previa/page.dev.tsx` | | Só em desenvolvimento. Guia da prévia: caminhos, tokens e estados de cada componente |
 | `/dev/prova` | `src/app/dev/prova/page.dev.tsx` | | Só em desenvolvimento. Dados sintéticos, passados pelo pipeline em memória |
@@ -154,7 +156,7 @@ Todas usam barra final (`trailingSlash`), e cada rota vira `out/<rota>/index.htm
 - `page.dev.tsx` só é rota no servidor de desenvolvimento. É o que mantém as telas de prova e as fixtures sintéticas fora do build de produção.
 - `page.published.tsx` só é rota quando `generated/manifest.json` registra ao menos um acontecimento. A exportação estática recusa rota dinâmica sem nenhum parâmetro gerado. Quando o primeiro acontecimento for publicado, a rota se liga sozinha no build seguinte. Com o servidor de desenvolvimento aberto é preciso reiniciá-lo, porque a configuração é lida na partida.
 
-**Contrato de `/acontecimentos/[slug]`.** Um endereço por acontecimento dos dados gerados, com o `slug` do registro. Rascunhos não geram página. A página mostra data na precisão conhecida, título, categoria, pessoas com os cargos documentados para aquela data, resumo, contexto, lugares com a precisão da coordenada, fontes com a evidência de cada citação, créditos das imagens e quem revisou. O retorno leva à exploração de cada pessoa ligada, com `?acontecimento=<slug>`. Slug fora do conjunto resulta em 404.
+**Contrato de `/acontecimentos/[slug]`.** Um endereço por acontecimento dos dados gerados, com o `slug` do registro. Rascunhos não geram página. A página mostra data na precisão conhecida, título, categoria, pessoas com os cargos documentados para aquela data, resumo, contexto, lugares com a precisão da coordenada, fontes com a evidência de cada citação, créditos das imagens, quem revisou e a edição. O retorno leva à exploração de cada pessoa ligada, com `?acontecimento=<slug>`; quem chega por dentro do atlas traz no endereço o recorte de onde veio, e o retorno o devolve (PAGES.md, seção Retorno). Slug fora do conjunto resulta em 404.
 
 ## Estado compartilhado
 
@@ -174,6 +176,7 @@ Seletores puros, em `selectors.ts`:
 
 - `selectVisibleEvents(dados, estado)`: acontecimentos do recorte, em ordem cronológica. Traduz o estado em um filtro e chama `filterEvents`, das consultas; a regra de filtragem existe em um lugar só.
 - `selectSelectedEvent(visiveis, estado)`: o acontecimento aberto.
+- `selectComparison(dados, estado)`: uma trajetória por pessoa no recorte do estado. Entrega o período e as categorias a `compareTrajectories`, das consultas.
 - `settle(estado, dados, cobertura)`: ajusta o período à cobertura da edição (`fitPeriod`) e aplica a regra de consistência.
 - `transition(estado, ação, dados, cobertura)`: aplica a ação e chama `settle`.
 
@@ -183,7 +186,7 @@ Seletores puros, em `selectors.ts`:
 
 | Provider | Onde o estado fica | Quem usa |
 | --- | --- | --- |
-| `AtlasUrlStateProvider` | No endereço. O estado é derivado da query string a cada renderização, e `dispatch` escreve um endereço novo | A exploração (`/politicos/<slug>`) |
+| `AtlasUrlStateProvider` | No endereço. O estado é derivado da query string a cada renderização, e `dispatch` escreve um endereço novo | A exploração (`/politicos/<slug>`) e a comparação (`/comparar`, com `pessoa={null}` e `comparar`) |
 | `AtlasStateProvider` | Em memória, com `useReducer` | As telas de prova (`/dev/prova`, `/dev/dados`) |
 
 ## Parâmetros de URL e restauração
@@ -195,7 +198,7 @@ A rota define quem e como; a query string define o recorte:
 | Origem | Informação |
 |---|---|
 | `/politicos/<slug>` | `pessoa` igual ao slug, `comparar` desligado |
-| `/comparar` | `comparar` ligado (a tela ainda usa estado local; a ligação é da fase 7) |
+| `/comparar` | `comparar` ligado, sem pessoa em foco e sem acontecimento aberto |
 | `?de=AAAA&ate=AAAA` | Período. Um único ano usa o mesmo valor nos dois |
 | `?categorias=a,b` | Categorias, separadas por vírgula |
 | `?acontecimento=<slug>` | Acontecimento aberto |
@@ -213,6 +216,8 @@ Regras (ao carregar, recarregar, voltar ou avançar):
 7. Escolhas discretas (acontecimento, categoria, limpar filtros) criam uma entrada no histórico, para o botão voltar desfazer a última escolha. O arraste no eixo não altera o endereço enquanto dura e cria uma entrada ao soltar. Mudanças seguidas do período, com menos de um segundo entre elas, substituem a entrada (`chooseHistoryMode`).
 8. Em exportação estática a query string só existe no navegador. O HTML gerado no build mostra o estado padrão, e o provider lê o endereço depois da hidratação, com `useSyncExternalStore`. A escrita usa `window.history.pushState` e `replaceState`, que o Next integra ao roteador.
 9. A página de um acontecimento (`/acontecimentos/<slug>`) é o endereço para compartilhar. O link de volta à exploração leva `?acontecimento=<slug>` para a página do perfil.
+10. Os links da exploração e da comparação para a página de um acontecimento levam o recorte (`de`, `ate`, `categorias`) e, vindos da comparação, `origem=comparar`. A página lê esse contexto com o mesmo `parseAtlasParams` e monta o retorno. Um contexto que não contém o acontecimento é descartado. As regras são funções puras em `src/lib/state/links.ts`.
+11. Na comparação valem as regras de 1 a 8, com duas diferenças: o período é ajustado à escala comum das duas coberturas, e `acontecimento` é sempre descartado.
 
 ## Limites entre as funcionalidades
 
@@ -221,7 +226,7 @@ Regras (ao carregar, recarregar, voltar ou avançar):
 | `features/map` | Coleção GeoJSON do recorte (os pontos gerados, recortados por `filterPoints`), os acontecimentos do recorte sem ponto (`listUnplaced`) e o slug selecionado | `onSelect(slug)` ao escolher um acontecimento, pelo marcador ou pelo seletor | Não filtra, não guarda seleção, não lê conteúdo, não monta os pontos, não escreve no endereço |
 | `features/events` | Lista de acontecimentos e as lacunas do conjunto, ou um acontecimento resolvido | `onSelect(slug)` na lista | Não conhece o mapa, não calcula lacunas |
 | `features/timeline` | Domínio de anos, acontecimentos do recorte, período e categorias em vigor, cargos e partidos do período | `onSelect(slug)` nas marcas; `onChange` e `onPeriodChange` do período; `onToggle` das categorias | Não fala com o mapa, não guarda recorte, não escreve no endereço |
-| `features/comparison` | Uma faixa por pessoa: acontecimentos, mandatos, filiações, cobertura e lacunas | Apenas apresentação | Não calcula nota nem ranking |
+| `features/comparison` | Uma faixa por pessoa: acontecimentos, mandatos, filiações, cobertura e lacunas; o recorte em vigor e a função que dá o endereço de cada acontecimento | Apenas apresentação | Não filtra, não escreve no endereço, não calcula nota nem ranking |
 
 As funcionalidades não se importam entre si. Quem as junta é a página, por meio do estado central: a lista despacha `selectEvent`, o provider escreve o endereço e recalcula o recorte, e o mapa recebe o novo slug selecionado. O clique no mapa percorre o mesmo caminho. O contrato está em [TIMELINE.md](TIMELINE.md), seção Contrato com o mapa, e o que o mapa faz com ele, em [MAP.md](MAP.md).
 
@@ -250,8 +255,8 @@ Dentro de `features/map`:
 | `src/app/fonts/` | Fontes tipográficas locais | Em uso desde a fase 4 |
 | `src/features/timeline/` | Linha do tempo, controles do recorte, escolha de período no eixo e cargos e partidos do período | Em uso desde a fase 4; completa na fase 5 |
 | `src/features/map/` | Mapa, base de contornos, marcadores, seletor, câmera e falhas | Em uso desde a fase 1; completo na fase 6 |
-| `src/features/comparison/` | Faixas das trajetórias na mesma escala. Ligação com o estado central e o endereço | Base na fase 4; completa na 7 |
-| `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova, as quatro telas, a navegação temporal com o endereço e o mapa sincronizado, em três larguras | Em uso; cresce até a fase 9 |
+| `src/features/comparison/` | Faixas das trajetórias na mesma escala | Em uso desde a fase 4; a tela foi ligada ao estado e ao endereço na fase 7 |
+| `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação e as páginas de perfil, de acontecimento e de metodologia, em três larguras | Em uso; cresce até a fase 9 |
 
 A pasta `public/geo/`, reservada na fase 1 para a base do mapa, deixou de existir na fase 6: os contornos ficam em `src/features/map/base/` e são publicados pelo bundler (D-58).
 

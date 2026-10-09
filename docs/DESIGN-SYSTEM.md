@@ -1,6 +1,6 @@
 # Sistema de design
 
-Fases 4, 5 e 6. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. As fases 5 e 6 não criaram token nem cor: acrescentaram componentes sobre a mesma base. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
+Fases 4 a 7. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. As fases 5, 6 e 7 não criaram token nem cor: acrescentaram componentes sobre a mesma base. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
 
 Regra geral: **os tokens de `src/app/globals.css` são a única origem das cores, das famílias e das medidas de movimento.** Os componentes usam as classes geradas a partir deles (`bg-paper`, `text-ink-soft`, `font-serif`). Cor escrita direto em um componente é erro.
 
@@ -164,8 +164,8 @@ Todos em `src/components/` (base, sem estado) ou em `src/features/` (ligados a u
 | --- | --- | --- |
 | `PersonCard` | `src/components/PersonCard.tsx` | Cartão da entrada. Retrato 4:5, nome, período coberto, quantidade de registros e a chamada. O cartão inteiro é o link |
 | `Portrait` | `src/components/Portrait.tsx` | Moldura 4:5 ou quadrada, foto em tons de cinza mesclada ao papel, recorte pelo topo. Sem arquivo, mostra as iniciais na mesma área |
-| `PortraitCredit` | `src/components/Portrait.tsx` | Crédito e o tratamento aplicado: "Exibida em tons de cinza e recortada" |
-| `ProfilePanel` | `src/components/ProfilePanel.tsx` | Perfil no painel: retrato, resumo, cargos e funções, partidos, cobertura da edição e fontes do perfil |
+| `PortraitCredit` | `src/components/Portrait.tsx` | Crédito e o tratamento aplicado: "Exibida em tons de cinza e recortada". Com `detail`, traz também o link para a página de origem e o caminho para as condições de uso, na metodologia |
+| `ProfilePanel` | `src/components/ProfilePanel.tsx` | Perfil no painel: retrato, resumo, caminhos (`actions`), cargos e funções e partidos com as fontes de cada registro, cobertura da edição, fontes do perfil, revisão, edição e crédito do retrato |
 | `SiteNav` | `src/components/SiteNav.tsx` | Destinos do cabeçalho, com os perfis em ordem alfabética |
 | `PersonSwitch` | `src/components/PersonSwitch.tsx` | Troca de pessoa dentro da exploração. Todos os perfis, em ordem alfabética e com o mesmo desenho: o aberto em tinta, com `aria-current`, e os outros como links. Dois tamanhos: de toque (44 px) e compacto (24 px), para a barra em tela larga |
 
@@ -178,8 +178,8 @@ Todos em `src/components/` (base, sem estado) ou em `src/features/` (ligados a u
 | `EventMarks` | `src/features/timeline/EventMarks.tsx` | Marcas selecionáveis, em fileiras quando as datas se aproximam. Cada marca reserva 26 px do eixo |
 | `PeriodBrush` | `src/features/timeline/PeriodBrush.tsx` | Camada sobre o eixo: rótulo de tinta com o ano sob o ponteiro e, no arraste, faixa e rótulo de acento com o intervalo |
 | `PeriodContext` | `src/features/timeline/PeriodContext.tsx` | Bloco que abre e fecha, com os cargos e os partidos do período e a presença incerta à parte |
-| `MandateList`, `AffiliationList` | `src/components/PeriodRecords.tsx` | Cargos e partidos por extenso, com as datas de cada um. Servem à exploração e à comparação |
-| `EventMarkLinks` | `src/components/time/EventMarkLinks.tsx` | As mesmas marcas, como links para a página de cada acontecimento |
+| `MandateList`, `AffiliationList` | `src/components/PeriodRecords.tsx` | Cargos e partidos por extenso, com as datas de cada um. Servem à exploração, ao perfil e à comparação. O que está em vigor na data de corte leva a marca **em curso**. Com `sourcesOf`, cada registro traz as próprias fontes |
+| `EventMarkLinks` | `src/components/time/EventMarkLinks.tsx` | As mesmas marcas, como links para a página de cada acontecimento. Com `hrefOf`, quem usa decide o endereço, para levar o recorte |
 | `PeriodLane` | `src/components/time/PeriodLane.tsx` | Cargos ou partidos como barras sobre o eixo |
 | `PeriodShade` | `src/components/time/PeriodShade.tsx` | Hachura sobre o que está fora do período. Passa por cima do eixo e por baixo das marcas |
 | `Timeline` | `src/features/timeline/Timeline.tsx` | Junta marcas, eixo, hachura, escolha de período e faixas; mede a própria largura; rola na horizontal em tela estreita |
@@ -194,7 +194,7 @@ A geometria (posição de datas e períodos, fileiras, rótulos de ano) é de fu
 | Componente | Arquivo | Notas |
 | --- | --- | --- |
 | `EventList` | `src/features/events/EventList.tsx` | Lista selecionável. Item: `DateMark` com o aviso de data parcial, título, `CategoryLabel`, nomes (quando há mais de uma trajetória), o aviso de ordem em aberto e o de quem não tem ponto. Entre os itens, as linhas de lacuna |
-| `EventLinkList` | `src/features/events/EventLinkList.tsx` | A mesma composição, como links, para a comparação |
+| `EventLinkList` | `src/features/events/EventLinkList.tsx` | A mesma composição, como links, para a comparação. Aceita `hrefOf` e a mensagem de lista vazia; com `showPrecision`, diz o que falta na data parcial |
 
 Estados do item: normal, sob o ponteiro (fundo elevado), em foco (anel de tinta) e selecionado (filete de acento à esquerda e fundo de acento suave, mais `aria-pressed`).
 
@@ -210,6 +210,24 @@ A linha de lacuna não é selecionável: fundo rebaixado com a hachura, os anos 
 ### Apresentação de fontes
 
 `SourceList` (`src/components/SourceList.tsx`) é a única forma de mostrar fontes. Cada item traz: número, título com link para o documento (abre em outra aba, avisado a leitores de tela), quem publicou, domínio, data do documento ou "data do documento desconhecida", data de acesso, onde está o trecho e o que ele sustenta. A densidade `compacta` omite o último campo, para a lista longa do perfil. O estado `indisponivel` troca o link por texto e explica como achar o documento por outro caminho.
+
+Duas peças usam a mesma identificação do documento, e nenhuma delas é outra forma de citar:
+
+| Componente | Arquivo | Notas |
+| --- | --- | --- |
+| `RecordSources` | `src/components/RecordSources.tsx` | "N fontes" de um cargo ou de uma filiação: bloco nativo de abrir e fechar, com a `SourceList` daquele registro dentro. O nome lido inclui o registro |
+| `SourceCatalog` | `src/components/SourceList.tsx` | Cada documento uma vez, com "Citada em N registros". Para o recorte da comparação e para o catálogo da metodologia. Não mostra o trecho: ele está no registro |
+
+### Compartilhamento, retorno e edição
+
+| Componente | Arquivo | Notas |
+| --- | --- | --- |
+| `CopyLink` | `src/components/CopyLink.tsx` | Botão de copiar um endereço do atlas, em duas variantes: `botao`, com borda, 44 px de altura em telas estreitas e médias e 36 em tela larga, e `texto`, sublinhado, para cabeçalhos de lista. Três estados: parado, copiado ("Link copiado", por 4 segundos, depois do sucesso) e falhou (campo com o endereço, selecionado, e o aviso). O hook `useCopy` serve também ao modelo de correção |
+| `EventReturn` | `src/app/acontecimentos/[slug]/EventReturn.tsx` | Links de volta no topo da página do acontecimento, com seta e, quando há contexto, "com o recorte de antes: …" em texto menor |
+| `EditionTag` | `src/components/EditionStatus.tsx` | Uma linha: "Edição 0.1.0 · registros até 8 de outubro de 2026". No perfil e na página do acontecimento |
+| `CorrectionTemplate` | `src/app/metodologia/CorrectionTemplate.tsx` | Modelo de sugestão em um campo só de leitura, com **Copiar o modelo** |
+
+A marca **em curso** e o aviso de canal pendente usam os tokens que já existiam: texto pequeno em tinta suave e o fundo de aviso (`bg-notice`).
 
 ### Mapa
 

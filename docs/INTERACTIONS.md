@@ -1,6 +1,6 @@
 # Interações
 
-Fases 4, 5 e 6. Como a exploração se comporta: o estado que as partes compartilham, o que cada ação faz em cada largura, o teclado, os estados previstos, o movimento e o contrato do que ainda é demonstração. As telas estão em [UX.md](UX.md), os componentes em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) a navegação temporal, com o endereço e o histórico, em [TIMELINE.md](TIMELINE.md), e o mapa, em [MAP.md](MAP.md).
+Fases 4 a 7. Como a exploração se comporta: o estado que as partes compartilham, o que cada ação faz em cada largura, o teclado, os estados previstos, o movimento e o contrato do que ainda é demonstração. As telas estão em [UX.md](UX.md), os componentes em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) a navegação temporal, com o endereço e o histórico, em [TIMELINE.md](TIMELINE.md), e o mapa, em [MAP.md](MAP.md). A comparação está em [COMPARISON.md](COMPARISON.md); as páginas, as fontes e o compartilhamento, em [PAGES.md](PAGES.md).
 
 ## Estado compartilhado
 
@@ -12,6 +12,8 @@ A exploração tem um estado só (`src/lib/state/`), lido por todas as partes. D
 | `periodo` | Ano inicial e final do recorte; `null` deixa o lado aberto | `de` e `ate` | Campos de ano, clique e arraste no eixo |
 | `categorias` | Categorias marcadas; lista vazia significa todas | `categorias` | Filtro de categorias |
 | `acontecimento` | Slug do acontecimento selecionado | `acontecimento` | Lista, linha do tempo, mapa, painel |
+
+A comparação usa o mesmo estado, sem pessoa em foco e sem acontecimento aberto: a rota diz que as duas trajetórias entram, e a query string diz o período e as categorias (COMPARISON.md, seção Estado e endereço).
 
 Lista, mapa, linha do tempo e painel não guardam seleção própria. Eles leem `visible` (os acontecimentos do recorte) e `selected` do mesmo provider, e por isso não há como ficarem em desacordo.
 
@@ -61,8 +63,9 @@ Uma região de anúncio (`aria-live="polite"`) diz "Aberto: título" a cada sele
 | Aba **Perfil** | Fecha o acontecimento aberto e mostra o perfil |
 | Aba **Lista** ou **Mapa** com um acontecimento aberto | Fecha a leitura e mantém a seleção marcada na vista escolhida. Acionar o item marcado abre a leitura de novo |
 | Botão voltar do navegador com a leitura aberta | Fecha a leitura e devolve a lista, ou o mapa. Avançar a reabre |
-| **Abrir a página do acontecimento** | Vai a `/acontecimentos/<slug>/` |
-| **Trajetória de (pessoa)** na página do acontecimento | Volta a `/politicos/<slug>/?acontecimento=<slug>`, com o acontecimento aberto |
+| **Abrir a página do acontecimento** | Vai a `/acontecimentos/<slug>/`, levando no endereço o período e as categorias em vigor |
+| **Trajetória de (pessoa)** na página do acontecimento | Volta à exploração com o acontecimento aberto. Para quem veio de uma consulta, com o mesmo período e as mesmas categorias; por link direto, só com o acontecimento (PAGES.md, seção Retorno) |
+| **Voltar à comparação** na página do acontecimento | Só para quem veio da comparação: volta a `/comparar/` com o mesmo recorte |
 
 ## Recorte
 
@@ -77,6 +80,23 @@ Uma região de anúncio (`aria-live="polite"`) diz "Aberto: título" a cada sele
 - Sobre a lista ficam o período, a quantidade ("N registros do atlas"), a cobertura e as categorias marcadas. A contagem "N acontecimentos · M com ponto no mapa" fica sobre a linha do tempo.
 - **Cargos e partidos do período:** bloco recolhido acima da lista, com o resumo à vista. Aberto, separa o que as datas provam do que tem presença incerta.
 - Em tela larga, os dois botões de desfazer ficam na linha do rótulo: a barra de filtros não muda de altura quando eles aparecem. Um teste confere.
+
+## Comparação, perfil e cópia do link
+
+Fase 7. O desenho de cada tela está em COMPARISON.md e PAGES.md; aqui fica o que cada controle faz.
+
+| Ação | Efeito |
+| --- | --- |
+| Campos **De** e **Até** e categorias, na comparação | Recortam as duas trajetórias ao mesmo tempo e escrevem o endereço. A região de anúncio diz só o recorte ("Recorte da comparação: 2003–2010, todas as categorias.") |
+| **Filtros**, na comparação em tela estreita e média | Abre e fecha os controles do recorte (`aria-expanded`). O período e as categorias em vigor continuam escritos na barra presa ao topo |
+| Marca da faixa ou item da lista, na comparação | Abre a página do acontecimento, com o recorte e `origem=comparar` no endereço. Marca fora do recorte fica apagada e deixa de ser link |
+| **Explorar esta trajetória no mesmo recorte** | Vai à exploração da pessoa com o período ajustado à cobertura dela e as mesmas categorias |
+| **Comparar no mesmo recorte**, no perfil | Vai à comparação com o período e as categorias da exploração. O lado aberto do período recebe o limite da cobertura da pessoa, para o intervalo consultado continuar o mesmo |
+| **N fontes**, em um cargo ou em uma filiação | Abre, no lugar, as fontes daquele registro: documento, onde está o trecho e o que ele sustenta |
+| **Copiar link** e **Copiar link desta consulta** | Copia o endereço com o recorte e, na exploração, o acontecimento aberto. O botão passa a dizer "Link copiado" só depois do sucesso, por 4 segundos |
+| Cópia recusada ou indisponível | O endereço aparece em um campo, com o foco nele e o texto selecionado. Nada é confirmado |
+| **Sugerir uma correção**, na página do acontecimento | Abre a metodologia na seção de correção, com o modelo já preenchido com o link e o título do registro |
+| **Copiar o modelo**, na metodologia | Copia o modelo de sugestão. Na falha, o texto fica selecionado |
 
 ## Teclado
 
@@ -93,6 +113,10 @@ Uma região de anúncio (`aria-live="polite"`) diz "Aberto: título" a cada sele
 | Mapa | O canvas recebe foco e responde ao teclado do MapLibre (setas movem, `+` e `-` aproximam e afastam). Depois dele, o Tab percorre os marcadores, de norte a sul: Enter ou espaço seleciona o acontecimento do marcador, ou abre o seletor quando há vários. Em seguida vêm os controles (**Aproximar**, **Afastar**, **Enquadrar os lugares do recorte**), o botão dos acontecimentos sem ponto e a legenda |
 | Seletor do mapa | Ao abrir, recebe o foco. Tab percorre **Fechar** e os acontecimentos; Enter ou espaço escolhe; Esc fecha. O foco volta ao marcador |
 | Leitura | Ao abrir em tela estreita ou média, o foco vai para o título. Esc fecha. Os links das fontes abrem em outra aba, e isso é dito a leitores de tela |
+| Comparação | Campos nativos de ano, botões de categoria com `aria-pressed` e o botão **Filtros** com `aria-expanded`. As marcas das faixas e os itens das listas são links. Em tela estreita e média, os atalhos **Trajetórias nesta página** levam a cada coluna |
+| Fontes de um cargo ou de uma filiação | Elemento nativo de abrir e fechar: Enter ou espaço em "N fontes". O nome lido inclui o registro: "N fontes de" e o cargo, ou a sigla do partido |
+| Copiar link | Botão. Depois da cópia, uma região de estado diz o resultado. Na falha, o foco vai para o campo com o endereço, já selecionado |
+| Página do acontecimento e metodologia | Documento comum: títulos em ordem, links na ordem de leitura. A metodologia tem um índice com âncoras para as onze seções |
 | Mapa indisponível | A lista que o substitui é agrupada por lugar; cada acontecimento é um botão, com `aria-pressed`, e o nome dele inclui o lugar. **Tentar de novo** ou **Recarregar a página**, quando há |
 
 O foco é sempre visível: anel de tinta de 2 px, afastado 2 px do elemento. No canvas do mapa o anel é desenhado para dentro, porque a moldura corta o que passa da borda.
@@ -138,6 +162,14 @@ Não verificado nesta fase: leitura real com NVDA, VoiceOver ou TalkBack. A estr
 | Acontecimento de outro perfil ou fora do recorte pedido | Não abre: o painel fica no perfil e os filtros valem | `/politicos/lula/?de=2020&ate=2022&acontecimento=lula-2018-prisao-em-curitiba` |
 | Janela baixa, em tela média ou larga | O mapa fica com pelo menos 40% da altura da área de trabalho; a linha do tempo rola por dentro | Janela de 1280×720 |
 | Endereço inexistente | Página 404 com a identidade do atlas e cinco caminhos de volta | Qualquer endereço fora das rotas |
+| Comparação sem acontecimentos em um lado | "Nenhum acontecimento cadastrado neste recorte. Isso indica falta de registro nesta edição, e não falta de atividade pública." A outra coluna continua valendo | `/comparar/?de=1996&ate=2001` |
+| Recorte da comparação anterior à cobertura de uma pessoa | A coluna diz que o atlas não cobre a trajetória naquele trecho, e a faixa o desenha como fora da cobertura | `/comparar/?de=1996&ate=2001` |
+| Cargo ou filiação em vigor na data de corte | Marca **em curso** ao lado do intervalo | Perfil de qualquer pessoa |
+| Cópia do link recusada | Campo com o endereço selecionado e o aviso "Não foi possível copiar daqui. Selecione o link e copie" | Qualquer página servida fora de contexto seguro, como por `http` em outro computador da rede |
+| Página do acontecimento aberta por link direto | Retorno só com o acontecimento; sem **Voltar à comparação** | `/acontecimentos/lula-2018-prisao-em-curitiba/` |
+| Página do acontecimento com contexto que não o contém, ou inválido | O retorno descarta o recorte e abre só o acontecimento | `/acontecimentos/lula-2018-prisao-em-curitiba/?de=1980&ate=1990` |
+| Canal de correção não configurado | A metodologia diz "Canal ainda não definido" e oferece o modelo para copiar | `/metodologia/#correcao` |
+| Fonte sem data do documento | "data do documento desconhecida", no lugar da data | 4 das 59 fontes |
 
 A falha do mapa cobre cinco causas, todas testadas: navegador sem WebGL, pacote do mapa que não baixou, contornos que não carregaram, mapa que não termina de carregar em 15 segundos e contexto gráfico perdido sem retomada (MAP.md, seção Falhas). O contador de espera só corre com a aba visível, e o mapa só é montado quando a moldura aparece na tela: em celular, quem fica na lista não baixa o pacote do mapa.
 
@@ -172,18 +204,18 @@ Não há animação de entrada de página, rolagem com efeito, paralaxe nem movi
 
 ## Em demonstração
 
-O que funciona mas ainda não é a implementação final, e o contrato que a fase seguinte recebe. A fase 5 fechou quatro itens da lista da fase 4: o estado no endereço e o histórico, o período pelo eixo, a distribuição das marcas próximas e o acesso por extenso aos cargos de barra estreita. A fase 6 fechou os quatro do mapa: pontos sobrepostos, base, forma da categoria e acesso pelo teclado.
+O que funciona mas ainda não é a implementação final, e o contrato que a fase seguinte recebe. A fase 5 fechou quatro itens da lista da fase 4: o estado no endereço e o histórico, o período pelo eixo, a distribuição das marcas próximas e o acesso por extenso aos cargos de barra estreita. A fase 6 fechou os quatro do mapa: pontos sobrepostos, base, forma da categoria e acesso pelo teclado. A fase 7 fechou dois: a comparação, que passou a guardar período e categorias no endereço, e o retorno da página do acontecimento, que passou a devolver o recorte de antes.
 
 | Item | Como está | Contrato para a continuação |
 | --- | --- | --- |
 | Zoom na linha do tempo | Não existe, por decisão (D-53). O eixo é fixo, e as marcas próximas sobem de fileira conforme a largura | `placeMarks` e `packRows` (`src/components/time/scale.ts`) recebem o domínio de anos e devolvem posições de 0 a 1 |
 | Rótulos das barras de cargo | Barra com menos de 48 px fica sem texto no desenho. O nome está por extenso no bloco de cargos e partidos do período e no perfil | `PeriodLane` recebe `rotulo` e `descricao` de cada item |
-| Comparação | Período em estado local da tela; não vai ao endereço. Sem filtro de categoria. As marcas levam à página do acontecimento | `compareTrajectories(data, { periodo, categorias })` já aceita os dois recortes. A fase 7 liga a tela ao estado e ao endereço, com as regras de `src/lib/state/url-state.ts` |
-| Retorno da página do acontecimento | O link **Trajetória de (pessoa)** leva só `?acontecimento=<slug>`: o período e as categorias de antes não seguem. O botão voltar do navegador devolve a consulta inteira | A fase 7 refina as páginas e o compartilhamento |
+| Canal de correção | Não configurado. A metodologia oferece um modelo para copiar e diz que o canal está pendente | `SITE.correctionChannel`, em `src/lib/site.ts`. Com o valor preenchido, a página troca o aviso pelo link |
+| Endereço público | Nenhum domínio configurado. **Copiar link** usa o endereço em que o atlas está sendo servido | Endereço canônico, `metadataBase` e sitemap entram na fase 10 |
 | Fonte indisponível | O componente tem o estado, mas nenhum dado o aciona | `SourceEntry.indisponivel`. A conferência de links é da fase 9 |
 | Imagem de acontecimento | O painel e a página têm o lugar e o crédito; nenhum registro tem imagem | `Imagem`, com `arquivo`, `textoAlternativo`, `credito` e `dimensoes` |
 | Rótulos da base do mapa | Não existem, por decisão (D-58). Os nomes no mapa são os dos lugares do conteúdo | Nomes de estados ou de países pedem glyphs locais ou marcadores de texto; `buildBaseStyle` isola a base |
 | Lugares fora da América do Sul | Não são desenhados; entram na lista **sem ponto no mapa**, com o nome | Um contorno mundial e a caixa de `MAP_LIMITS` ampliada (`src/features/map/base/README.md`) |
 | Guia de estados | `/dev/previa/`, só no servidor de desenvolvimento | Não entra no build |
 
-O que não é demonstração: a seleção compartilhada, os filtros, a consulta no endereço com voltar e avançar, a troca de pessoa, a lista cronológica com lacunas, os cargos e partidos do período, o mapa sincronizado com o seletor de lugares, a composição por largura, o painel, a página do acontecimento, as fontes, a comparação na mesma escala, os estados de falha e a página 404 usam os dados gerados reais e têm teste de navegador (`tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts` e `tests/e2e/mapa.spec.ts`).
+O que não é demonstração: a seleção compartilhada, os filtros, a consulta no endereço com voltar e avançar, a troca de pessoa, a lista cronológica com lacunas, os cargos e partidos do período, o mapa sincronizado com o seletor de lugares, a composição por largura, o painel, o perfil, a página do acontecimento com o retorno, as fontes, a comparação com a consulta no endereço, a cópia do link, a metodologia, os estados de falha e a página 404 usam os dados gerados reais e têm teste de navegador (`tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts` e `tests/e2e/paginas.spec.ts`).

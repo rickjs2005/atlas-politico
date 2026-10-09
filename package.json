@@ -16,6 +16,7 @@
     "capture:preview": "playwright test --project=capturas previa.capture",
     "capture:timeline": "playwright test --project=capturas linha-do-tempo.capture",
     "capture:map": "playwright test --project=capturas mapa.capture",
+    "capture:pages": "playwright test --project=capturas paginas.capture",
     "verify:export": "node scripts/check-export.mjs",
     "data:validate": "node --import ./scripts/register.mjs scripts/data.mts validate",
     "data:build": "node --import ./scripts/register.mjs scripts/data.mts build",

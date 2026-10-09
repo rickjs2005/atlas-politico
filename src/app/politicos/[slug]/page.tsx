@@ -22,7 +22,15 @@ export async function generateMetadata({
   params,
 }: PageProps<"/politicos/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  return { title: findProfile(slug)?.nome };
+  const perfil = findProfile(slug);
+  if (!perfil) return {};
+  // A descrição é o texto de apresentação do perfil, do conjunto revisado.
+  const resumo = findPersonBySlug(getAtlasData(), slug)?.resumo;
+  return {
+    title: perfil.nome,
+    description: resumo,
+    openGraph: { title: perfil.nome, description: resumo, type: "profile" },
+  };
 }
 
 export default async function ProfilePage({ params }: PageProps<"/politicos/[slug]">) {

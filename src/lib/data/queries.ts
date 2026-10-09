@@ -21,6 +21,7 @@ import {
   type Periodo,
   type PeriodOverlap,
 } from "@/lib/domain/dates";
+import { compareText } from "@/lib/domain/order";
 import { resolveEvent, type AcontecimentoResolvido } from "@/lib/domain/resolve";
 import type {
   Acontecimento,
@@ -240,6 +241,41 @@ export function getSources(
     const fonte = posicao === undefined ? undefined : data.conjunto.fontes[posicao];
     return fonte === undefined ? [] : [{ citacao, fonte }];
   });
+}
+
+/** Um documento e quantos registros de um conjunto o citam. */
+export interface SourceUse {
+  fonte: Fonte;
+  registros: number;
+}
+
+/**
+ * Os documentos que sustentam um conjunto de registros, sem repetição, com a
+ * quantidade de registros que citam cada um. Um registro que cita o mesmo
+ * documento em dois trechos conta uma vez. A ordem é estável: autoria, título
+ * e `id`, pelo código dos caracteres.
+ */
+export function listSourcesOf(
+  data: AtlasData,
+  registros: readonly { fontes: readonly Citacao[] }[],
+): SourceUse[] {
+  const usos = new Map<string, SourceUse>();
+  for (const registro of registros) {
+    const vistas = new Set<string>();
+    for (const { fonte } of getSources(data, registro)) {
+      if (vistas.has(fonte.id)) continue;
+      vistas.add(fonte.id);
+      const uso = usos.get(fonte.id) ?? { fonte, registros: 0 };
+      uso.registros += 1;
+      usos.set(fonte.id, uso);
+    }
+  }
+  return [...usos.values()].sort(
+    (a, b) =>
+      compareText(a.fonte.autoria, b.fonte.autoria) ||
+      compareText(a.fonte.titulo, b.fonte.titulo) ||
+      compareText(a.fonte.id, b.fonte.id),
+  );
 }
 
 /** Imagem pelo `id`; `null` quando o registro não tem imagem ou ela não foi publicada. */

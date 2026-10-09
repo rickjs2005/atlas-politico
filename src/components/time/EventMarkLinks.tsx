@@ -18,11 +18,22 @@ interface EventMarkLinksProps {
   dimmed?: ReadonlySet<string>;
   label: string;
   markWidth?: number;
+  /** Endereço de cada marca. O padrão é a página do acontecimento, sem contexto. */
+  hrefOf?: (item: Acontecimento) => string;
 }
 
 const ROW_HEIGHT = 24;
 
-export function EventMarkLinks({ domain, events, dimmed, label, markWidth = 0.022 }: EventMarkLinksProps) {
+const pageOf = (item: Acontecimento) => `/acontecimentos/${item.slug}`;
+
+export function EventMarkLinks({
+  domain,
+  events,
+  dimmed,
+  label,
+  markWidth = 0.022,
+  hrefOf = pageOf,
+}: EventMarkLinksProps) {
   const { marcas, fileiras } = placeMarks(domain, events, markWidth);
   const altura = Math.max(1, fileiras) * ROW_HEIGHT;
 
@@ -55,7 +66,9 @@ export function EventMarkLinks({ domain, events, dimmed, label, markWidth = 0.02
               </span>
             ) : (
               <Link
-                href={`/acontecimentos/${item.slug}`}
+                href={hrefOf(item)}
+                // O endereço muda com o recorte: sem isso, cada mudança buscaria as páginas de novo.
+                prefetch={false}
                 aria-label={`${formatDate(item.data)}: ${item.titulo} (${CATEGORY_LABELS[item.categoria]})`}
                 title={`${formatDate(item.data)} · ${item.titulo}`}
                 className="absolute grid size-6 -translate-x-1/2 place-items-center rounded-full outline-offset-1 transition-transform duration-[var(--atlas-fast)] hover:scale-125"

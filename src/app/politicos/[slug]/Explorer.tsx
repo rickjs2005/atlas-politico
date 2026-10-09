@@ -15,8 +15,10 @@
 // O HTML é um só. Quem decide o que aparece em cada largura é o CSS, a partir
 // de dois atributos calculados aqui: `data-pane` e `data-side`.
 
+import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
+import { CopyLink } from "@/components/CopyLink";
 import { DateMark } from "@/components/DateMark";
 import { PersonSwitch } from "@/components/PersonSwitch";
 import { Portrait } from "@/components/Portrait";
@@ -47,6 +49,7 @@ import type { Pessoa } from "@/lib/domain/types";
 import { useAtlas } from "@/lib/state/AtlasStateProvider";
 import { AtlasUrlStateProvider } from "@/lib/state/AtlasUrlStateProvider";
 import { hasFilters, type AtlasAction } from "@/lib/state/atlas-state";
+import { carryToComparison, comparisonHref, eventHref, explorationHref } from "@/lib/state/links";
 import { transition } from "@/lib/state/selectors";
 import { serializeAtlasParams } from "@/lib/state/url-params";
 import { carryToPerson } from "@/lib/state/url-state";
@@ -195,6 +198,20 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
     }),
     [data, pessoa.id, state.periodo, recorte],
   );
+  // O endereço desta consulta, com o recorte e a seleção: é o que "Copiar
+  // link" entrega.
+  const consulta = explorationHref(pessoa.slug, state);
+  // A comparação no mesmo recorte. A escala dela é a soma das coberturas.
+  const escala = useMemo(() => {
+    const cobertos = profiles.flatMap((perfil) => (perfil.cobertura === null ? [] : [perfil.cobertura]));
+    if (cobertos.length === 0) return null;
+    return {
+      de: Math.min(...cobertos.map((item) => item.de)),
+      ate: Math.max(...cobertos.map((item) => item.ate)),
+    };
+  }, [profiles]);
+  const comparacao = comparisonHref(carryToComparison(state, dominio, escala));
+
   // A troca de pessoa leva o recorte junto; o acontecimento aberto só segue
   // quando também é do outro perfil.
   const switchOptions = profiles.map((perfil) => {
@@ -472,6 +489,8 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
                 O acontecimento que estava aberto ficou fora deste recorte e foi fechado.
               </p>
             )}
+            {/* O link reproduz o recorte e, quando há, o acontecimento aberto. */}
+            <CopyLink path={consulta} label="Copiar link desta consulta" variant="texto" className="[&>button]:text-xs" />
           </div>
 
           <PeriodContext
@@ -592,7 +611,9 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
                 (item) => item.situacao === "documentada",
               )}
               image={getImage(data, selected.imagemId)}
-              href={`/acontecimentos/${selected.slug}`}
+              // A página recebe o recorte, para o retorno poder devolvê-lo.
+              href={eventHref(selected.slug, { recorte: state })}
+              actions={<CopyLink path={consulta} label="Copiar link desta consulta" />}
               onClose={closeEvent}
               titleRef={titleRef}
             />
@@ -604,6 +625,26 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
               filiacoes={filiacoes}
               cobertura={getCoverage(data, pessoa.id)}
               fontes={getSources(data, pessoa)}
+              edicao={data.conjunto.edicao}
+              sourcesOf={(registro) => getSources(data, registro)}
+              actions={
+                <nav aria-label="A partir deste perfil" className="flex flex-wrap items-start gap-x-4 gap-y-2">
+                  <Link
+                    href={comparacao}
+                    prefetch={false}
+                    className="inline-flex min-h-11 items-center border border-ink px-4 text-sm font-medium no-underline hover:bg-ink hover:text-paper xl:min-h-9"
+                  >
+                    Comparar no mesmo recorte
+                  </Link>
+                  <CopyLink path={consulta} label="Copiar link desta consulta" />
+                  <Link
+                    href="/metodologia"
+                    className="inline-flex min-h-11 items-center text-sm font-medium underline decoration-line-strong hover:decoration-ink xl:min-h-9"
+                  >
+                    Metodologia e fontes
+                  </Link>
+                </nav>
+              }
               headingLevel={3}
             />
           )}

@@ -24,6 +24,8 @@ interface EventPanelProps {
   image?: Imagem | null;
   /** Endereço da página do acontecimento. */
   href?: string;
+  /** O que mais se pode fazer a partir do painel, como copiar o link da consulta. */
+  actions?: React.ReactNode;
   /** Com esta função, o painel mostra o botão de fechar. */
   onClose?: () => void;
   /** Texto do botão de fechar: muda conforme o lugar para onde se volta. */
@@ -45,6 +47,7 @@ export function EventPanel({
   roles = [],
   image = null,
   href,
+  actions,
   onClose,
   closeLabel = "Fechar",
   titleRef,
@@ -163,15 +166,20 @@ export function EventPanel({
 
       <footer className="space-y-4">
         <ReviewNote editorial={acontecimento.editorial} />
-        {href !== undefined && (
-          <p>
-            <Link
-              href={href}
-              className="inline-flex min-h-11 items-center border border-ink px-4 text-sm font-medium no-underline hover:bg-ink hover:text-paper"
-            >
-              Abrir a página do acontecimento
-            </Link>
-          </p>
+        {(href !== undefined || actions) && (
+          <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
+            {href !== undefined && (
+              <Link
+                href={href}
+                // O endereço leva o recorte: sem isso, cada filtro buscaria a página de novo.
+                prefetch={false}
+                className="inline-flex min-h-11 items-center border border-ink px-4 text-sm font-medium no-underline hover:bg-ink hover:text-paper"
+              >
+                Abrir a página do acontecimento
+              </Link>
+            )}
+            {actions}
+          </div>
         )}
       </footer>
     </article>

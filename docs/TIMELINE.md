@@ -152,7 +152,7 @@ Há uma seleção só, no estado compartilhado. Lista, linha do tempo, mapa e pa
 | Mudar o recorte mantendo o acontecimento dentro dele | Nada muda no painel |
 | Trocar de vista para **Lista** ou **Mapa**, em tela estreita ou média | A leitura fecha e o acontecimento continua marcado. Acionar o item marcado abre a leitura de novo |
 
-O painel mostra, nesta ordem: categoria, data na precisão conhecida (com o aviso de data parcial), título, pessoas, imagem com crédito quando houver, resumo, contexto, cargos na época, lugares com a precisão da coordenada, fontes com a evidência de cada citação, revisão e o link para a página do acontecimento. O texto é o do conjunto revisado.
+O painel mostra, nesta ordem: categoria, data na precisão conhecida (com o aviso de data parcial), título, pessoas, imagem com crédito quando houver, resumo, contexto, cargos na época, lugares com a precisão da coordenada, fontes com a evidência de cada citação, revisão, **Copiar link desta consulta** e o link para a página do acontecimento, que leva o período e as categorias em vigor para a página poder devolvê-los ([PAGES.md](PAGES.md), seção Retorno). O texto é o do conjunto revisado.
 
 Casos parciais:
 
@@ -212,7 +212,7 @@ O site é de arquivos estáticos, e a página de cada perfil é gerada no build,
 - O HTML gerado traz a exploração inteira no estado inicial: os 20 acontecimentos, as lacunas e as marcas de cada perfil estão no arquivo. Conferido em `out/`.
 - No navegador, a hidratação acontece com esse mesmo estado, e o endereço real é lido logo depois, com `useSyncExternalStore`. Quem chega por um link com consulta vê o estado inicial por um instante, até o JavaScript carregar.
 - A escrita usa `window.history.pushState` e `replaceState`, que a documentação do Next 16.4 descreve como integrados ao roteador ("Native History API").
-- `useSearchParams` tira da pré-renderização tudo o que estiver até o `Suspense` mais próximo. Por isso ele fica isolado em um componente sem saída visual (`RouterWatcher`), que só avisa das navegações feitas pelo roteador do Next, como o clique no menu para o perfil que já está aberto. Essas navegações não disparam `popstate`.
+- `useSearchParams` tira da pré-renderização tudo o que estiver até o `Suspense` mais próximo. Por isso ele fica isolado em um componente sem saída visual (`UrlWatcher`, em `src/lib/state/location.tsx`, desde a fase 7), que só avisa das navegações feitas pelo roteador do Next, como o clique no menu para o perfil que já está aberto. Essas navegações não disparam `popstate`.
 - Fronteira: `page.tsx` é Server Component e roda no build; `Explorer` e tudo abaixo dele são Client Components que recebem os dados por props.
 
 ## Contrato com o mapa

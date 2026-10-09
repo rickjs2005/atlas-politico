@@ -622,7 +622,8 @@ test.describe("seleção, painel e endereço", () => {
     const consulta = `${LULA}?de=2016&ate=2019&acontecimento=${escolhido.slug}`;
     await page.goto(consulta);
     await leitura(page).getByRole("link", { name: "Abrir a página do acontecimento" }).click();
-    await expect(page).toHaveURL(new RegExp(`/acontecimentos/${escolhido.slug}/$`));
+    // Desde a fase 7 o link leva o recorte, para a página poder devolvê-lo (docs/PAGES.md).
+    await expectUrl(page, `/acontecimentos/${escolhido.slug}/?de=2016&ate=2019`);
 
     await page.goBack();
     await expectUrl(page, consulta);

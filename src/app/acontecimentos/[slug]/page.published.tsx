@@ -12,16 +12,21 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CategoryLabel } from "@/components/Category";
+import { CopyLink } from "@/components/CopyLink";
+import { EditionTag } from "@/components/EditionStatus";
 import { Portrait } from "@/components/Portrait";
 import { ReviewNote } from "@/components/ReviewNote";
 import { SourceList } from "@/components/SourceList";
 import { getAtlasData } from "@/lib/content/published";
+import { getCoveredSpan, getSharedSpan } from "@/lib/data/coverage";
 import { filterPoints } from "@/lib/data/points";
 import { findEventBySlug, getEventView, getImage, listMandatesAt } from "@/lib/data/queries";
 import { describePrecision, formatDate } from "@/lib/domain/dates";
 import { GEO_PRECISION_LABELS } from "@/lib/domain/geo";
+import { comparisonHref, eventHref, explorationHref } from "@/lib/state/links";
 
 import { EventLocator } from "./EventLocator";
+import { EventReturn } from "./EventReturn";
 
 interface EventPageProps {
   params: Promise<{ slug: string }>;
@@ -36,7 +41,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
   const { slug } = await params;
   const acontecimento = findEventBySlug(getAtlasData(), slug);
-  return { title: acontecimento?.titulo, description: acontecimento?.resumo };
+  if (!acontecimento) return {};
+  // Título e descrição são o texto do registro revisado, sem acréscimo. O
+  // endereço canônico depende do domínio público e entra na fase 10.
+  const { titulo: title, resumo: description } = acontecimento;
+  return { title, description, openGraph: { title, description, type: "article" } };
 }
 
 const SEM_LUGAR = {
@@ -45,6 +54,7 @@ const SEM_LUGAR = {
 };
 
 const sectionTitle = "eyebrow text-ink-soft";
+const textLink = "underline decoration-line-strong hover:decoration-ink";
 
 export default async function EventPage({ params }: EventPageProps) {
   const { slug } = await params;
@@ -60,25 +70,22 @@ export default async function EventPage({ params }: EventPageProps) {
     const retrato = getImage(data, pessoa.retratoId);
     return retrato === null ? [] : [retrato];
   });
+  const temMapa = acontecimento.localizacao.tipo === "lugares";
+  const { edicao } = data.conjunto;
 
   return (
-    <article className="page py-8 md:py-12 [&>*]:max-w-[68rem]">
-      {/* Retorno: volta à exploração com este acontecimento aberto. */}
-      <nav aria-label="Voltar à exploração" className="mb-8 md:mb-10">
-        <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
-          {pessoas.map((pessoa) => (
-            <li key={pessoa.id}>
-              <Link
-                href={`/politicos/${pessoa.slug}?acontecimento=${acontecimento.slug}`}
-                className="inline-flex min-h-11 items-center font-medium underline decoration-line-strong hover:decoration-ink md:min-h-0"
-              >
-                <span aria-hidden="true">←&nbsp;</span>
-                Trajetória de {pessoa.nome}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+    <article className="page py-8 md:py-12 [&>*]:max-w-[68rem]" data-acontecimento={acontecimento.slug}>
+      {/* Retorno: volta à exploração com este acontecimento aberto e, quando a
+          pessoa veio de uma consulta, com o recorte dela. */}
+      <EventReturn
+        event={{ slug: acontecimento.slug, data: acontecimento.data, categoria: acontecimento.categoria }}
+        people={pessoas.map((pessoa) => ({
+          slug: pessoa.slug,
+          nome: pessoa.nome,
+          cobertura: getCoveredSpan(data, pessoa.id),
+        }))}
+        escala={getSharedSpan(data)}
+      />
 
       <header className="space-y-4 border-b border-ink pb-8 [&>h1]:max-w-4xl">
         <p className="eyebrow text-ink-soft">
@@ -91,6 +98,8 @@ export default async function EventPage({ params }: EventPageProps) {
         <h1 className="font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem]">
           {acontecimento.titulo}
         </h1>
+        {/* O link copiado é o desta página, sem o contexto de quem chegou. */}
+        <CopyLink path={eventHref(acontecimento.slug)} />
       </header>
 
       <div className="mt-8 grid gap-x-16 gap-y-10 lg:grid-cols-[minmax(0,42rem)_minmax(0,22rem)]">
@@ -110,8 +119,18 @@ export default async function EventPage({ params }: EventPageProps) {
           )}
 
           <div className="space-y-5">
-            <p className="font-serif text-[1.375rem] leading-[1.45]">{acontecimento.resumo}</p>
-            <p className="reading max-w-[38rem]">{acontecimento.contexto}</p>
+            <section aria-labelledby="resumo" className="space-y-2">
+              <h2 id="resumo" className={sectionTitle}>
+                Resumo
+              </h2>
+              <p className="font-serif text-[1.375rem] leading-[1.45]">{acontecimento.resumo}</p>
+            </section>
+            <section aria-labelledby="contexto" className="space-y-2">
+              <h2 id="contexto" className={sectionTitle}>
+                Contexto
+              </h2>
+              <p className="reading max-w-[38rem]">{acontecimento.contexto}</p>
+            </section>
           </div>
 
           <section aria-labelledby="fontes" className="space-y-3">
@@ -126,10 +145,54 @@ export default async function EventPage({ params }: EventPageProps) {
 
           <section aria-labelledby="revisao" className="space-y-2 border-t border-line pt-5">
             <h2 id="revisao" className={sectionTitle}>
-              Revisão
+              Revisão e edição
             </h2>
             <ReviewNote editorial={acontecimento.editorial} />
+            {edicao !== null && <EditionTag edicao={edicao} />}
+            <p className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
+              <Link href="/metodologia" className={`inline-flex min-h-11 items-center md:min-h-0 ${textLink}`}>
+                Como o atlas é feito
+              </Link>
+              <Link
+                href={`/metodologia/?acontecimento=${acontecimento.slug}#correcao`}
+                className={`inline-flex min-h-11 items-center md:min-h-0 ${textLink}`}
+              >
+                Sugerir uma correção
+              </Link>
+            </p>
           </section>
+
+          <nav aria-labelledby="continuar" className="space-y-2 border-t border-line pt-5">
+            <h2 id="continuar" className={sectionTitle}>
+              Continuar no atlas
+            </h2>
+            <ul className="grid gap-x-6 text-sm sm:grid-cols-2">
+              {pessoas.map((pessoa) => (
+                <li key={pessoa.id}>
+                  <Link
+                    href={explorationHref(pessoa.slug, {
+                      periodo: { de: null, ate: null },
+                      categorias: [],
+                      acontecimento: acontecimento.slug,
+                    })}
+                    className={`inline-flex min-h-11 items-center md:min-h-8 ${textLink}`}
+                  >
+                    Ver na trajetória de {pessoa.nome}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href={comparisonHref()} className={`inline-flex min-h-11 items-center md:min-h-8 ${textLink}`}>
+                  Comparar as duas trajetórias
+                </Link>
+              </li>
+              <li>
+                <Link href="/metodologia" className={`inline-flex min-h-11 items-center md:min-h-8 ${textLink}`}>
+                  Metodologia e fontes
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
 
         <aside aria-label="Ficha do acontecimento" className="space-y-7 lg:border-l lg:border-line lg:pl-8">
@@ -195,21 +258,38 @@ export default async function EventPage({ params }: EventPageProps) {
             )}
           </section>
 
-          {retratos.length > 0 && (
-            <section className="space-y-1.5">
-              <h2 className={sectionTitle}>Créditos das imagens</h2>
-              <ul className="space-y-1 text-xs text-ink-soft">
-                {retratos.map((retrato) => (
-                  <li key={retrato.id}>
-                    {retrato.credito}. Exibida em tons de cinza e recortada.{" "}
-                    <a href={retrato.origem} target="_blank" rel="noreferrer" className="underline decoration-line-strong hover:decoration-ink">
-                      Origem<span className="sr-only"> (abre em nova aba)</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          <section className="space-y-1.5" data-secao="creditos">
+            <h2 className={sectionTitle}>Créditos</h2>
+            <ul className="space-y-1 text-xs text-ink-soft">
+              {imagem !== null && (
+                <li>
+                  Imagem do acontecimento: {imagem.credito}.{" "}
+                  <a href={imagem.origem} target="_blank" rel="noreferrer" className={textLink}>
+                    Origem<span className="sr-only"> da imagem (abre em nova aba)</span>
+                  </a>
+                </li>
+              )}
+              {retratos.map((retrato) => (
+                <li key={retrato.id}>
+                  {retrato.credito}. Exibida em tons de cinza e recortada.{" "}
+                  <a href={retrato.origem} target="_blank" rel="noreferrer" className={textLink}>
+                    Origem<span className="sr-only"> da imagem (abre em nova aba)</span>
+                  </a>
+                </li>
+              ))}
+              {temMapa && (
+                <li>
+                  Mapa: contornos do Natural Earth, em domínio público. Coordenadas pelo centro do
+                  município ou do estado, da API de malhas do IBGE.
+                </li>
+              )}
+              <li>
+                <Link href="/metodologia#creditos" className={textLink}>
+                  Autoria e condições de uso de cada material
+                </Link>
+              </li>
+            </ul>
+          </section>
         </aside>
       </div>
     </article>

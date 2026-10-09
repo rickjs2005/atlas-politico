@@ -12,13 +12,17 @@ interface EventLinkListProps {
   /** `id` dos acontecimentos ligados a mais de uma pessoa da tela. */
   shared?: readonly string[];
   emptyMessage?: React.ReactNode;
+  /** Endereço de cada item. O padrão é a página do acontecimento, sem contexto. */
+  hrefOf?: (item: Acontecimento) => string;
 }
 
-export function EventLinkList({ items, shared = [], emptyMessage }: EventLinkListProps) {
+const pageOf = (item: Acontecimento) => `/acontecimentos/${item.slug}`;
+
+export function EventLinkList({ items, shared = [], emptyMessage, hrefOf = pageOf }: EventLinkListProps) {
   if (items.length === 0) {
     return (
       <div className="border-y border-line py-4 text-sm text-ink-soft">
-        {emptyMessage ?? <p>Nenhum registro do atlas neste recorte.</p>}
+        {emptyMessage ?? <p>Nenhum acontecimento cadastrado neste recorte.</p>}
       </div>
     );
   }
@@ -26,12 +30,14 @@ export function EventLinkList({ items, shared = [], emptyMessage }: EventLinkLis
   return (
     <ol className="divide-y divide-line border-y border-line">
       {items.map((item) => (
-        <li key={item.id}>
+        <li key={item.id} data-acontecimento={item.id}>
           <Link
-            href={`/acontecimentos/${item.slug}`}
+            href={hrefOf(item)}
+            prefetch={false}
             className="group grid grid-cols-[4.25rem_minmax(0,1fr)] gap-x-3 px-1 py-3 no-underline hover:bg-raised"
           >
-            <DateMark data={item.data} className="pt-0.5" />
+            {/* A lista é cronológica: a data parcial diz o que falta, para a posição não sugerir um dia. */}
+            <DateMark data={item.data} showPrecision className="pt-0.5" />
             <span className="min-w-0">
               <span className="block font-serif text-[1.0625rem] font-medium leading-snug underline decoration-transparent underline-offset-[0.2em] group-hover:decoration-ink">
                 {item.titulo}

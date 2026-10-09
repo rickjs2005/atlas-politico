@@ -18,13 +18,13 @@ Catálogo das fontes da edição 0.1.0 e critérios de uso. Todas as fontes fora
 - **TSE, DivulgaCandContas:** as fichas foram lidas pelo serviço REST do próprio sistema (`divulgacandcontas.tse.jus.br/divulga/rest/v1`). O endereço cadastrado é o da ficha pública correspondente, que o serviço informa no campo `txLink`.
 - **TSE, repositório de dados eleitorais:** arquivos `consulta_cand` de 1994, 1998 e 2002, lidos nos CSV `_BR` e `_RJ`. A data do documento é a data de geração registrada no arquivo.
 - **Senado e Câmara, dados abertos:** respostas JSON das APIs.
-- **Segunda passagem:** para cada citação foram anotados os trechos literais que a sustentam, e um verificador conferiu se cada trecho existe na cópia baixada do documento. Resultado: 166 citações, 382 trechos conferidos, nenhuma falha. A lista de trechos está em `docs/evidencias/provas-2026-10-08.json`.
+- **Segunda passagem:** para cada citação foram anotados os trechos literais que a sustentam, e um verificador conferiu se cada trecho existe na cópia baixada do documento. Resultado: 166 citações, 382 trechos conferidos, nenhuma falha. A conta inclui os rascunhos: 160 citações são de registros publicados e 6, dos 5 rascunhos. A lista de trechos está em `docs/evidencias/provas-2026-10-08.json`.
 
 As cópias baixadas não fazem parte do repositório. Para repetir a conferência é preciso baixar os documentos de novo. Transformar isso em comando ficou fora da fase 3 (DECISIONS.md, D-36): o pipeline de dados não baixa nada. O relatório `npm run data:report` informa quantas citações de registros publicados têm trecho registrado.
 
 ## Catálogo
 
-59 fontes, 166 citações.
+59 fontes, 166 citações: 160 em registros publicados, que são as que as páginas mostram, e 6 nos 5 rascunhos, que não entram na publicação. A diferença foi conferida na fase 7 ([PAGES.md](PAGES.md), seção Conferência dos links).
 
 ### Dados oficiais estruturados (17)
 

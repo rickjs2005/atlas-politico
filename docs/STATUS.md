@@ -10,7 +10,190 @@ Atualizado em 9 de outubro de 2026.
 | 4. Experiência e direção visual | Concluída em 08/10/2026, com prévia navegável |
 | 5. Aplicação e linha do tempo | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
 | 6. Mapa sincronizado | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
-| 7 a 10 | Não iniciadas |
+| 7. Comparação, páginas e fontes | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
+| 8 a 10 | Não iniciadas |
+
+## Fase 7 (comparação, páginas e fontes)
+
+Entrega: a comparação das duas trajetórias no mesmo período e com as mesmas categorias, com a consulta no endereço; o perfil completo dentro da exploração; a página de cada acontecimento com fontes, créditos, revisão e edição; **Copiar link** e o retorno com o recorte de antes; e a metodologia pública. A especificação está em [COMPARISON.md](COMPARISON.md) e em [PAGES.md](PAGES.md); o comportamento de cada controle, em [INTERACTIONS.md](INTERACTIONS.md); as decisões, em [DECISIONS.md](DECISIONS.md), de D-66 a D-73; as capturas, em [capturas/fase-7/](capturas/README.md).
+
+Para abrir: `npm run dev` e `http://localhost:3000/comparar/`. Exemplos de endereço estão em COMPARISON.md, em PAGES.md e no README.
+
+### Critério de conclusão do plano
+
+"Links de acontecimentos abrem diretamente; recarregar preserva a consulta relevante; a comparação respeita cargos e períodos diferentes. Quantidade de registros não é apresentada como medida de desempenho."
+
+O pedido da fase escreveu o critério com mais alcance: "comparação contextualizada, páginas estáticas acessíveis por link direto, fontes e créditos visíveis, compartilhamento preservando a consulta e metodologia pública dentro do projeto". A tabela segue esta versão.
+
+| Parte do critério | Situação | Como foi conferido |
+| --- | --- | --- |
+| Comparação contextualizada | Atendido | As duas trajetórias saem da mesma consulta, com o mesmo período e as mesmas categorias, sobre um eixo só. Os testes de navegador comparam cada coluna com a conta feita sobre os dados gerados, conferem que as duas faixas têm a mesma posição e a mesma largura, que cargos e filiações trazem instituição e intervalo, que o recorte vazio diz falta de registro e não de atividade, e leem o texto da página atrás de palavras de ranking |
+| Páginas estáticas acessíveis por link direto | Atendido | 39 páginas de acontecimento e 2 de perfil, geradas no build. Na saída estática, servida por `npm run preview`, as 44 rotas responderam 200 por pedido direto; um slug inventado e um slug de rascunho responderam 404, com a página 404 do atlas. O servidor de desenvolvimento responde do mesmo jeito, com teste |
+| Fontes e créditos visíveis | Atendido | Cada acontecimento, cada cargo e cada filiação mostra as próprias fontes, com o trecho e o que ele sustenta. Um teste percorre as 39 páginas e confere que os links de fonte são os do registro, sem link a mais; outro confere as 59 fontes do catálogo da metodologia. Crédito do retrato com autoria, origem e condições de uso; crédito da base do mapa |
+| Compartilhamento preservando a consulta | Atendido | **Copiar link** na exploração, na comparação e na página do acontecimento, conferido lendo a área de transferência. O link da exploração reproduz recorte e seleção; o da comparação, o recorte. Com a cópia recusada ou indisponível, o endereço aparece em um campo e nada é confirmado. O retorno da página devolve pessoa, período, categorias e seleção, inclusive em uma aba nova |
+| Metodologia pública dentro do projeto | Atendido, com uma configuração pendente | `/metodologia/`, com onze seções e os números vindos dos dados. O canal público de correção não foi definido: a página diz isso e oferece um modelo para copiar |
+
+### Passos do plano e situação de cada um
+
+| Passo | Situação |
+| --- | --- |
+| 1. Comparação das duas trajetórias em um mesmo intervalo | Feito: período e categorias no estado compartilhado e no endereço, sem pessoa em foco (D-66) |
+| 2. Cargos, filiações e acontecimentos de cada pessoa | Feito: uma coluna por pessoa, com as mesmas seções na mesma ordem, mais as fontes do recorte |
+| 3. Mesma escala temporal e cobertura explicada | Feito: um eixo só, os mesmos limites, e o bloco **Como ler esta comparação**, escrito com os dados do recorte |
+| 4. Páginas estáticas por perfil e por acontecimento | Feito. O perfil é a própria exploração, com o painel completo (D-67); a página do acontecimento ganhou retorno, cópia do link, edição e caminhos |
+| 5. Fontes, créditos e data de revisão nas páginas | Feito: fontes por registro, catálogo sem repetição, crédito do retrato com origem, revisão e edição em todas as páginas de leitura (D-71) |
+| 6. Cópia de link e retorno à exploração | Feito: endereço do ambiente em execução, confirmação só depois do sucesso, campo selecionável na falha e contexto de retorno no endereço da página (D-68, D-69) |
+| 7. Metodologia e instruções para sugerir uma correção | Feito, com o canal pendente e um modelo copiável no lugar dele (D-70, D-72) |
+
+### O que foi entregue
+
+- **Comparação por período e categorias** em `/comparar/`, com o mesmo provider de estado da exploração. Recarregar, voltar e avançar restauram a consulta; parâmetro inválido cai sozinho e o endereço é corrigido no lugar.
+- **Leitura paralela:** em tela larga, as seções das duas colunas começam na mesma altura. Em celular, o recorte fica escrito e preso ao topo, os controles ficam atrás de **Filtros**, e as faixas rolam até o período escolhido mantendo o eixo de anos.
+- **Linguagem da comparação:** quantidade dita como acontecimentos cadastrados, cobertura de cada pessoa, trecho fora da cobertura e lacunas explicados. Nenhuma soma, ordem, média ou cor por pessoa.
+- **Acontecimento das duas pessoas** nas duas trajetórias, com a nota "nas duas trajetórias" e uma página só.
+- **Perfil** no painel da exploração: apresentação, cargos e partidos com intervalo, marca **em curso** e fontes de cada registro, cobertura, fontes do perfil, revisão, edição e crédito do retrato com origem.
+- **Página do acontecimento:** retorno por pessoa e à comparação, **Copiar link**, resumo e contexto em seções com nome, revisão e edição, **Sugerir uma correção**, **Continuar no atlas** e créditos.
+- **Fontes:** `RecordSources` para as fontes de um registro e `SourceCatalog` para os documentos de um conjunto, sobre a mesma identificação de documento da `SourceList`.
+- **Copiar link** (`CopyLink`), com os três estados, e os endereços entre telas em um módulo puro (`src/lib/state/links.ts`).
+- **Metodologia** reescrita: objetivo e escopo, seleção, fontes, a revisão que de fato aconteceu, datas, lugares, lacunas e limites da comparação, edição e atualização, correção, créditos e o catálogo das 59 fontes.
+- **Modelo de sugestão de correção,** que já vem com o link e o título quando a pessoa chega pela página de um acontecimento.
+- **Guia de estados** (`/dev/previa/`) com os cargos e partidos com fontes, o catálogo e a cópia do link.
+- **Capturas** da fase e o comando que as refaz: `npm run capture:pages`.
+
+### Arquivos
+
+Comparação com o estado da fase 6: 51 arquivos de código e de documentação (14 novos e 37 alterados), mais 23 capturas.
+
+| Onde | O quê |
+| --- | --- |
+| `docs/` | Novos: COMPARISON.md, PAGES.md e `capturas/fase-7/` (23 imagens). Atualizados: ARCHITECTURE.md, CONTENT-REVIEW.md, DECISIONS.md, DESIGN-SYSTEM.md, INTERACTIONS.md, SOURCES.md, TIMELINE.md, UX.md, STATUS.md e `capturas/README.md` |
+| `src/lib/state/` | Novos: `links.ts` (endereços entre telas e retorno) e `location.tsx` (leitura do endereço no navegador). Atualizados: `url-state.ts` (rota sem pessoa e modo de comparação), `selectors.ts` (`selectComparison`) e `AtlasUrlStateProvider.tsx` |
+| `src/lib/` | Novo: `site.ts` (configuração pendente). Atualizado: `data/queries.ts` (`listSourcesOf`) |
+| `src/components/` | Novos: `CopyLink.tsx` e `RecordSources.tsx`. Atualizados: `ProfilePanel.tsx`, `PeriodRecords.tsx`, `SourceList.tsx`, `EditionStatus.tsx`, `Portrait.tsx` e `time/EventMarkLinks.tsx` |
+| `src/features/` | `comparison/TrajectoryLanes.tsx` e o README da pasta, `events/EventPanel.tsx`, `events/EventLinkList.tsx` e `timeline/PeriodContext.tsx` |
+| `src/app/` | Novos: `acontecimentos/[slug]/EventReturn.tsx` e `metodologia/CorrectionTemplate.tsx`. Reescritos: `comparar/Comparison.tsx` e `metodologia/page.tsx`. Atualizados: `comparar/page.tsx`, `acontecimentos/[slug]/page.published.tsx`, `politicos/[slug]/page.tsx`, `politicos/[slug]/Explorer.tsx` e `dev/previa/StatesGallery.tsx` |
+| `tests/` | Novos: `links.test.ts`, `comparison.test.ts`, `e2e/comparacao.spec.ts`, `e2e/paginas.spec.ts` e `e2e/paginas.capture.ts`. Atualizados: `e2e/previa.spec.ts` e `e2e/linha-do-tempo.spec.ts` |
+| Raiz | `package.json` (`capture:pages`), README.md e `.claude/project-state.md` |
+
+`content/` não foi alterado, nenhuma dependência foi acrescentada, nenhum token de cor ou de tipografia foi criado, e as imagens de `docs/capturas/fase-4/`, `fase-5/` e `fase-6/` não foram refeitas.
+
+### Jornada implementada e o que segue em demonstração
+
+Implementado, com dados reais e teste de navegador:
+
+- Comparação: estado inicial, período, categorias combinadas com o período, acontecimento compartilhado e datas parciais.
+- Endereço da comparação: recarregar, voltar e avançar, parâmetros inválidos, correção sem entrada no histórico e ajustes seguidos contando como um.
+- Cargos e partidos do período, com o que as datas não decidem; recorte sem registros; texto sem ranking; fontes de cada registro e do recorte.
+- De uma tela para outra: comparação, página do acontecimento e exploração, nos dois sentidos, com o recorte.
+- Perfil dos dois políticos, com as mesmas seções na mesma ordem; perfil em celular.
+- Página do acontecimento por link direto, para um registro de cada tipo; as 39 páginas com os links de fonte do registro; leitura sem o mapa.
+- Retorno sem contexto, com contexto, em aba nova, com contexto inválido e para o acontecimento das duas pessoas.
+- Cópia do link com sucesso, recusada e indisponível, na comparação, na exploração e na página.
+- Metodologia: seções, catálogo, créditos, canal pendente e modelo de correção.
+
+Em demonstração, com o contrato de cada um em INTERACTIONS.md: canal de correção, endereço público, fonte indisponível, imagem de acontecimento, rótulos da base e lugares fora da América do Sul.
+
+### O que a fase 6 deixou para esta fase
+
+| Ponto | Como ficou |
+| --- | --- |
+| Ligar a comparação ao estado e ao endereço | Feito, com o provider da exploração (D-66) |
+| Rever cargos e filiações com o recorte vindo do endereço | Feito: as listas saem da mesma consulta, com o título de cada seção dizendo o período |
+| Conferir a mesma escala com período e categorias no endereço | Feito, com teste da posição e da largura das duas faixas |
+| Rever o conteúdo das páginas de perfil e de acontecimento | Feito (PAGES.md) |
+| Conferir o que faltava nos perfis | Faltavam as fontes de cada cargo e de cada filiação, a edição e a origem do retrato. Entraram |
+| Botão de copiar e retorno com o recorte de antes | Feitos (D-68, D-69) |
+| Revisar a metodologia e escrever o caminho de correção | Feito. O canal continua sendo decisão do responsável (D-70) |
+| Pendência 10 da fase 6: página que voltava sem o recorte e comparação fora do endereço | Resolvida |
+
+### Problemas achados na conferência e corrigidos
+
+A conferência foi feita abrindo cada tela em um Chromium, em computador, tablet e celular, capturando e olhando cada captura, e depois quebrando regras de propósito.
+
+| Problema | Correção |
+| --- | --- |
+| Em tela larga, a barra do recorte da comparação mudava de altura quando **Limpar filtros** aparecia | O botão passou para a linha dos rótulos |
+| Em celular, a barra do recorte da comparação quebrava em duas linhas | O texto encolhe e o botão **Filtros** mantém a largura |
+| A metodologia passava da largura da tela em celular, por causa da tabela das categorias | A coluna do texto deixou de crescer com a tabela, que rola por dentro |
+| A lista "ordem de preferência" das fontes saía com marcadores, e não com números | Classes de lista separadas |
+| "Presidente" não identifica um cargo: há mais de um registro com o mesmo nome | Os itens de cargo e de filiação levam o identificador do registro, e os testes usam o identificador |
+| O teste de parâmetros inválidos da comparação passava mesmo com a comparação abrindo acontecimento, porque o acontecimento do teste ficava fora do período | O teste ganhou um acontecimento dentro do recorte |
+| O teste do modelo de correção passava antes de a página ler o endereço | A troca do endereço é feita com a página já lendo o endereço |
+| Um teste da fase 5 esperava que o link da página do acontecimento não levasse o recorte | Atualizado para o contrato novo |
+| Dois testes da prévia cobriam a comparação da fase 4, com o período local | Substituídos pelos de `e2e/comparacao.spec.ts` |
+| SOURCES.md e CONTENT-REVIEW.md falam em 166 citações, e as páginas mostram 160 | As 6 restantes são dos 5 rascunhos. Os dois documentos passaram a dizer isso; nenhum registro foi alterado |
+
+### Verificações executadas
+
+Todas em 09/10/2026, com Node 24.15.0 no Windows 11.
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run lint` | Sem problemas |
+| `npm run typecheck` | Sem erros |
+| `npm run data:validate` | Nenhum erro; 5 pendências, que são os 5 rascunhos |
+| `npm run test` | 485 testes passando, em 23 arquivos. Eram 435 em 21 |
+| `npm run build` | 47 páginas HTML, como antes |
+| `npm run verify:export` | 264 arquivos; 39 acontecimentos com página, 5 rascunhos sem página, nenhum dado sintético, nenhuma rota de desenvolvimento |
+| `npm run test:e2e` | 170 testes passando: 14 da prova sintética, 7 dos dados reais, 26 da prévia, 40 da navegação temporal, 35 do mapa, 23 da comparação e 25 das páginas. Eram 124. Dois testes da prévia, sobre a comparação antiga, deram lugar aos novos |
+| `npm run capture:pages` | 23 capturas, conferidas uma a uma |
+| Saída estática, servida por `npm run preview` | As 44 rotas respondem 200 por pedido direto. Comparação aberta com consulta, recarregada, com voltar e avançar e com endereço corrigido; perfil; página do acontecimento com e sem contexto; retorno à exploração e à comparação; link copiado com o endereço do servidor local; link em campo sem a área de transferência; metodologia com as onze seções, as 59 fontes e o modelo de correção: tudo como no servidor de desenvolvimento. Slug inexistente e slug de rascunho respondem 404, com a página 404 do atlas. Nenhum pedido a outro domínio |
+| Conferência dos links | Nenhuma citação sem fonte, nenhuma fonte sem citação, nenhum endereço repetido ou sem `https` nos dados gerados (PAGES.md, seção Conferência dos links) |
+| Larguras conferidas pelas capturas | 1440×900, 768×1024 e 390×844 |
+| Teclado e foco | Na falha da cópia, o foco vai para o campo com o endereço selecionado, e no modelo de correção o texto fica selecionado (testes). Os blocos de fontes são elementos nativos de abrir e fechar |
+| Toque | Em 390×844: 44 pixels ou mais de altura nas fontes de cada registro e nos caminhos do perfil, e nos controles do recorte da comparação |
+
+Vinte e uma regras foram quebradas de propósito, uma por vez, para confirmar que os testes falham. Oito nas regras puras: comparação abrindo acontecimento, categorias valendo para um lado só, retorno com um recorte que não contém o acontecimento, retorno sem ajuste à cobertura, **Voltar à comparação** para quem não veio dela, lado aberto do período virando a escala inteira, página levando o acontecimento como aberto e fonte contada por citação. Treze no navegador: cópia confirmada sem sucesso, links da comparação sem contexto, comparação tratada como exploração, retorno ignorando o contexto, exploração abrindo a página sem o recorte, perfil sem as fontes dos cargos, perfil sem a edição, catálogo só com acontecimentos, modelo aceitando qualquer slug, colunas desalinhadas, recorte solto em celular, página sem a edição e fonte com o endereço trocado. Dezenove foram notadas na primeira passagem. Duas não foram, e os dois testes foram reforçados (tabela acima); repetidas, as duas foram notadas. O código foi restaurado em todos os casos.
+
+### Implementado e não verificado
+
+- **Navegador com janela visível, Firefox e Safari.** Tudo foi conferido em um Chromium sem interface.
+- **Celular e tablet reais.** As larguras e o toque foram emulados. A rolagem das faixas com o dedo e a barra do recorte presa ao topo com a barra de endereço do navegador móvel não foram vistas.
+- **Área de transferência fora do Chromium.** A recusa e a ausência foram simuladas. O comportamento em uma página servida por `http` em outro aparelho da rede, e no Safari, não foi visto.
+- **Leitor de tela.** Os nomes, os estados e os avisos foram conferidos pela estrutura, e não com NVDA, VoiceOver ou TalkBack.
+- **Links das fontes no ar.** Os endereços conferem com os registros. Nenhum foi aberto nesta fase para saber se ainda responde: é da fase 9.
+- **Hospedagem real.** A saída estática foi servida só pelo servidor local. O status 404 para um slug inexistente depende de a hospedagem servir `404.html`.
+- **Canal de correção configurado.** O caminho em que a página troca o aviso pelo link não tem teste de navegador, porque não há valor para configurar.
+- **Leitura da metodologia por outra pessoa.** O texto segue os documentos editoriais do projeto e não foi lido por ninguém além de quem o escreveu.
+- **Desempenho.** Nada foi medido. É da fase 8.
+
+### Pendências reais
+
+1. **Revisão humana de todo o conteúdo.** Continua sendo a principal. A metodologia diz que ela não aconteceu.
+2. **Canal público de correção.** Decisão do responsável pelo projeto. Para configurar: `SITE.correctionChannel`, em `src/lib/site.ts`.
+3. **Domínio público.** Sem ele não há endereço canônico, `metadataBase`, sitemap nem imagem de compartilhamento. Os links copiados usam o endereço em que o atlas estiver aberto. Fase 10.
+4. **Decisões herdadas do responsável:** nome definitivo e retrato em cinza e recortado (D-42).
+5. **A página do acontecimento responde com e sem contexto no endereço.** O conteúdo é o mesmo; o endereço canônico, sem contexto, só pode ser declarado com o domínio definido.
+6. **A natureza de cada fonte não aparece nas páginas.** O conteúdo não tem esse campo; a página mostra a autoria (D-71).
+7. **4 das 59 fontes não têm data do documento.** Aparecem como "data do documento desconhecida".
+8. **Estado inicial por um instante,** herdado da fase 5 (D-49). Vale agora também para a comparação e para os links de retorno, que aparecem sem o recorte até o JavaScript carregar. Fica para a fase 8.
+9. **A comparação não tem mapa, e a câmera do mapa não vai para o endereço.** Fora do pedido da fase.
+10. **As capturas das fases 4 a 6 mostram a comparação e a página do acontecimento antigas.** Não foram refeitas; `docs/capturas/README.md` avisa.
+11. **Saída estática em hospedagem simples.** Os pedidos de pré-carregamento de segmento do Next continuam dando 404 no servidor de `npm run preview`. A navegação funciona.
+12. **Vídeo de demonstração** não gravado, como nas fases anteriores.
+13. **Lacunas de conteúdo herdadas** (lista na seção da fase 3).
+
+### Preparação para a fase 8 (acabamento visual e desempenho)
+
+O critério da fase 8, no plano: o fluxo principal permanece legível e responsivo, as animações ajudam a acompanhar a seleção, e a entrada e as páginas de leitura funcionam sem depender do carregamento do mapa. Situação de cada passo:
+
+| Passo da fase 8 | O que já existe | O que falta |
+| --- | --- | --- |
+| 1. Refinar abertura, tipografia, imagens e hierarquia dos detalhes | Direção visual e tokens da fase 4; páginas de leitura completas | O acabamento: a hierarquia do perfil, que ficou longo, a metodologia e a barra do recorte da comparação |
+| 2. Transições de pessoa, período e acontecimento | Duas durações e uma curva em tokens; movimento curto e com função | Rever com a comparação e com as páginas novas |
+| 3. Carregar o mapa quando necessário | O mapa só é montado quando a moldura aparece na tela, e a página do acontecimento não depende dele | Medir o peso do pacote e tirar do build o worker de desenvolvimento do MapLibre |
+| 4. Otimizar imagens e manter dimensões definidas | Dois retratos, com dimensões no conteúdo | Conferir formato e peso |
+| 5. Movimento reduzido | Respeitado em todas as telas; os testes rodam nesse modo | Conferir o que a fase acrescentar |
+| 6. Medir carregamento, estabilidade visual e resposta | Nada medido | LCP, CLS e a resposta dos controles, com o resultado identificado como de laboratório |
+| 7. Computador e aparelho móvel real | Só Chromium sem interface, com larguras e toque emulados | Abrir em uma janela visível e em um celular |
+
+Pontos de atenção para quem continuar:
+
+- O instante de estado inicial (D-49) agora aparece em três lugares: a exploração, a comparação e os links de retorno da página do acontecimento. Uma solução vale para os três, porque todos leem o endereço por `useOwnSearch`.
+- As capturas de página inteira saem com a base do mapa deslocada no Chromium sem interface. As da fase 7 são da área visível.
+- O perfil da exploração e as colunas da comparação usam os mesmos componentes de cargos, partidos e fontes. Mexer em um muda os dois.
+- Os testes de `tests/e2e/comparacao.spec.ts` e `tests/e2e/paginas.spec.ts` montam as expectativas a partir dos dados gerados. O roteiro de capturas cita acontecimentos pelo slug.
+- Em um teste que abre uma página com consulta, é preciso esperar o endereço ser lido antes de agir: o HTML do build chega com o estado inicial.
 
 ## Fase 6 (mapa sincronizado)
 
@@ -717,4 +900,4 @@ Concluída em 08/10/2026 e registrada no commit `9be1013`. O que ela entregou es
 
 ## Próximo passo
 
-Fase 7: comparação, páginas e fontes. A fase 6 termina aqui; a fase 7 só começa com o próximo comando. Nada foi publicado, e o site continua com `noindex`.
+Fase 8: acabamento visual e desempenho. A fase 7 termina aqui; a fase 8 só começa com o próximo comando. Nada foi publicado, e o site continua com `noindex`.

@@ -14,7 +14,7 @@ O conjunto está pronto para alimentar o desenvolvimento da interface. Não est�
 ## Como foi a segunda passagem
 
 1. Para cada citação de cada registro foram anotados os trechos literais do documento que a sustentam.
-2. Um verificador conferiu se cada trecho existe na cópia baixada do documento: 166 citações, 382 trechos, nenhuma falha.
+2. Um verificador conferiu se cada trecho existe na cópia baixada do documento: 166 citações, 382 trechos, nenhuma falha. Das 166, 160 são de registros publicados e 6, dos 5 rascunhos.
 3. Cada resumo e cada contexto foi relido contra os trechos, procurando afirmação sem apoio. Duas frases foram corrigidas nessa leitura:
    - No acontecimento de 2016, a frase dizia que era a primeira candidatura de Flávio Bolsonaro "por um partido diferente do PP". Os registros de 2002 trazem a sigla PPB, e a relação entre as duas siglas não está nos documentos lidos. A frase foi reescrita.
    - No acontecimento de 2006, a menção a Geraldo Alckmin como companheiro de chapa em 2022 e 2026 não tinha citação própria. Foram acrescentadas duas.

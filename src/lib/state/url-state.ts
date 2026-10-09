@@ -1,6 +1,6 @@
-// O estado da exploração visto a partir do endereço. Módulo puro: recebe a
-// query string como texto e devolve estado, ou o contrário. Quem fala com o
-// navegador é `AtlasUrlStateProvider.tsx`.
+// O estado da exploração e da comparação visto a partir do endereço. Módulo
+// puro: recebe a query string como texto e devolve estado, ou o contrário.
+// Quem fala com o navegador é `AtlasUrlStateProvider.tsx`.
 //
 // O endereço é a fonte da verdade (docs/TIMELINE.md, seção Endereço): o estado
 // é sempre derivado dele, e uma ação do usuário vira um endereço novo.
@@ -10,16 +10,30 @@ import type { AtlasData } from "@/lib/data/types";
 import type { Acontecimento } from "@/lib/domain/types";
 
 import { INITIAL_STATE, fitPeriod, type AtlasAction, type AtlasState } from "./atlas-state";
-import { settle } from "./selectors";
+import { settle, transition } from "./selectors";
 import { mergeAtlasParams, parseAtlasParams, type UrlState } from "./url-params";
 
 /** O que a rota informa: de quem é a página, com quais dados e qual cobertura. */
 export interface UrlContext {
-  /** Slug da pessoa, tirado da rota. */
-  pessoa: string;
+  /** Slug da pessoa, tirado da rota. `null` na comparação, que não tem pessoa em foco. */
+  pessoa: string | null;
+  /** A rota é a comparação: as duas trajetórias no mesmo recorte. */
+  comparar?: boolean;
   data: AtlasData;
-  /** Anos que a edição cobre para a pessoa; `null` sem cobertura conhecida. */
+  /**
+   * Anos que podem ser consultados: a cobertura da edição para a pessoa ou, na
+   * comparação, a escala comum às duas. `null` sem cobertura conhecida.
+   */
   cobertura: YearSpan | null;
+}
+
+/**
+ * O que a rota impõe ao estado. Na comparação, o recorte vale para as duas
+ * pessoas e não há acontecimento aberto: cada um tem a própria página.
+ */
+function fitRoute(state: AtlasState, contexto: UrlContext): AtlasState {
+  if (!contexto.comparar) return state;
+  return { ...state, pessoa: null, comparar: true, acontecimento: null };
 }
 
 /**
@@ -30,10 +44,16 @@ export interface UrlContext {
 export function stateFromSearch(search: string, contexto: UrlContext): AtlasState {
   const lido = parseAtlasParams(new URLSearchParams(search));
   return settle(
-    { ...INITIAL_STATE, pessoa: contexto.pessoa, ...lido },
+    fitRoute({ ...INITIAL_STATE, pessoa: contexto.pessoa, ...lido }, contexto),
     contexto.data,
     contexto.cobertura,
   );
+}
+
+/** O estado depois de uma ação, a partir do endereço do momento. */
+export function stateAfter(search: string, action: AtlasAction, contexto: UrlContext): AtlasState {
+  const atual = stateFromSearch(search, contexto);
+  return fitRoute(transition(atual, action, contexto.data, contexto.cobertura), contexto);
 }
 
 /** A query string, sem o `?`, que representa o estado; mantém parâmetros alheios. */

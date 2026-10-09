@@ -7,10 +7,11 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | `fase-4/` | A prévia das quatro telas | `npm run capture:preview` | `tests/e2e/previa.capture.ts` |
 | `fase-5/` | A navegação temporal: linha do tempo, lista, painel e a consulta no endereço | `npm run capture:timeline` | `tests/e2e/linha-do-tempo.capture.ts` |
 | `fase-6/` | O mapa sincronizado: marcadores, lista de um lugar, seleção, legenda e falhas | `npm run capture:map` | `tests/e2e/mapa.capture.ts` |
+| `fase-7/` | A comparação, o perfil, a página do acontecimento com o retorno, a cópia do link e a metodologia | `npm run capture:pages` | `tests/e2e/paginas.capture.ts` |
 
-Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts` e `tests/e2e/mapa.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
+Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts` e `tests/e2e/paginas.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
 
-As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeitas depois. A exploração mudou desde a fase 4: a lista ganhou o cabeçalho com o período, o bloco de cargos e partidos e as linhas de lacuna, e a barra ganhou a troca de pessoa. O mapa mudou na fase 6: nas imagens anteriores, cada ponto é um círculo, sem nome, sem controles e sem legenda. Para o mapa atual, valem as de `fase-6/`; para o resto da exploração, as de `fase-5/`.
+As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeitas depois. A exploração mudou desde a fase 4: a lista ganhou o cabeçalho com o período, o bloco de cargos e partidos e as linhas de lacuna, e a barra ganhou a troca de pessoa. O mapa mudou na fase 6: nas imagens anteriores, cada ponto é um círculo, sem nome, sem controles e sem legenda. Para o mapa atual, valem as de `fase-6/`; para o resto da exploração, as de `fase-5/`. A comparação, o perfil e a página do acontecimento mudaram na fase 7: para essas três, valem as de `fase-7/`.
 
 ## Larguras
 
@@ -21,6 +22,29 @@ As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeita
 | `--tablet` | 768×1024 |
 | `--celular` | 390×844 |
 | `--celular-estreito` | 360×800 |
+
+## Fase 7
+
+| Arquivo | O que mostra | Endereço | Larguras |
+| --- | --- | --- | --- |
+| `01-comparacao` | Abertura, recorte, os quatro avisos de leitura e as duas faixas no mesmo eixo | `/comparar/` | Computador, tablet e celular |
+| `02-periodo-e-categorias` | Um intervalo e uma categoria valendo para as duas trajetórias; em celular, o recorte escrito na barra presa ao topo | `/comparar/?de=2016&ate=2022&categorias=eleicoes` | Computador e celular |
+| `03-colunas-no-mesmo-recorte` | As colunas das duas pessoas: cobertura, cargos, partidos, acontecimentos e fontes, com as seções na mesma altura em computador | `/comparar/?de=2003&ate=2010` | Computador e celular |
+| `04-recorte-sem-registros` | Um período em que uma trajetória está fora da cobertura e a outra tem lacuna, sem dizer que faltou atividade | `/comparar/?de=1996&ate=2001` | Computador |
+| `05-fontes-de-um-cargo` | As fontes de um cargo abertas, nas duas colunas | `/comparar/?de=2019&ate=2022` | Computador |
+| `06-filtros` | Os controles do recorte abertos pelo botão **Filtros** | `/comparar/?de=2016&ate=2022&categorias=eleicoes` | Celular |
+| `07-perfil` | O perfil dentro da exploração: cargos com as fontes de um deles abertas, em computador; a vista **Perfil**, em celular | `/politicos/flavio-bolsonaro/` e `/politicos/lula/` | Computador e celular |
+| `08-acontecimento-com-retorno` | A página de um acontecimento vinda de uma consulta: o retorno diz o recorte de antes | `/acontecimentos/lula-2018-prisao-em-curitiba/?de=2016&ate=2019&categorias=marcos-historicos` | Computador e celular |
+| `09-fontes-revisao-e-edicao` | A mesma página, na altura das fontes: citações, revisão, edição e caminhos | `/acontecimentos/lula-2018-prisao-em-curitiba/` | Computador |
+| `10-retorno-a-comparacao` | Acontecimento das duas pessoas, vindo da comparação: **Voltar à comparação** e um retorno por pessoa | `/acontecimentos/eleicao-2026-primeiro-turno/?de=2019&categorias=eleicoes&origem=comparar` | Celular |
+| `11-link-copiado` | A confirmação depois de copiar o link | Botão **Copiar link** | Computador |
+| `12-link-em-campo` | A cópia indisponível: o endereço em um campo, selecionado | O mesmo botão, sem a área de transferência | Celular |
+| `13-metodologia` | O começo da metodologia, com o índice | `/metodologia/` | Computador e celular |
+| `14-fontes-e-revisao` | As seções de fontes e de revisão, com o que foi feito nesta edição | `/metodologia/#fontes` | Computador |
+| `15-modelo-de-correcao` | O aviso de canal pendente e o modelo, já com o link e o título do registro | `/metodologia/?acontecimento=lula-2018-prisao-em-curitiba#correcao` | Computador |
+| `16-fontes-desta-edicao` | O catálogo de fontes, agrupado por quem publicou | `/metodologia/#catalogo` | Computador |
+
+As capturas desta fase são da área visível, e não da página inteira: com o mapa na tela, a captura de página inteira sai com a base deslocada no navegador dos testes.
 
 ## Fase 6
 

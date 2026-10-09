@@ -5,6 +5,7 @@
 // Sem arquivo de imagem, a moldura recebe as iniciais do nome, na mesma área.
 
 import Image from "next/image";
+import Link from "next/link";
 
 import type { Imagem } from "@/lib/domain/types";
 
@@ -65,11 +66,32 @@ export function Portrait({
   );
 }
 
+interface PortraitCreditProps {
+  imagem: Imagem;
+  /** Acrescenta a página de origem do arquivo e o caminho para as condições de uso. */
+  detail?: boolean;
+  className?: string;
+}
+
+const creditLink = "underline decoration-line-strong hover:decoration-ink";
+
 /** Linha de crédito de uma imagem, com o tratamento aplicado. */
-export function PortraitCredit({ imagem, className = "" }: { imagem: Imagem; className?: string }) {
+export function PortraitCredit({ imagem, detail = false, className = "" }: PortraitCreditProps) {
   return (
-    <p className={`text-xs text-ink-faint ${className}`}>
+    <p className={`text-xs text-ink-faint ${className}`} data-credito={imagem.id}>
       {imagem.credito}. Exibida em tons de cinza e recortada.
+      {detail && (
+        <>
+          {" "}
+          <a href={imagem.origem} target="_blank" rel="noreferrer" className={creditLink}>
+            Origem<span className="sr-only"> da imagem (abre em nova aba)</span>
+          </a>
+          {" · "}
+          <Link href="/metodologia#creditos" className={creditLink}>
+            Condições de uso
+          </Link>
+        </>
+      )}
     </p>
   );
 }

@@ -84,6 +84,7 @@ export function PeriodContext({
           <Heading className="eyebrow text-ink-soft">Partidos</Heading>
           <AffiliationList
             itens={partidos.documentados}
+            variant="compacto"
             emptyText="Nenhuma filiação com datas neste período."
           />
         </section>
@@ -99,7 +100,7 @@ export function PeriodContext({
               <MandateList itens={cargos.incertos} variant="compacto" showSituation={false} emptyText="" />
             )}
             {partidos.incertos.length > 0 && (
-              <AffiliationList itens={partidos.incertos} showSituation={false} emptyText="" />
+              <AffiliationList itens={partidos.incertos} variant="compacto" showSituation={false} emptyText="" />
             )}
           </section>
         )}

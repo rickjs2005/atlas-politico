@@ -1,6 +1,6 @@
 # Experiência
 
-Fases 4, 5 e 6. Descreve a direção visual, as quatro telas, como a composição muda com a largura da tela e como percorrer o atlas. A navegação temporal da exploração, com a consulta no endereço, está em [TIMELINE.md](TIMELINE.md), e o mapa, em [MAP.md](MAP.md). A base visual está em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); os comportamentos, os estados e o que ainda é demonstração, em [INTERACTIONS.md](INTERACTIONS.md).
+Fases 4 a 7. Descreve a direção visual, as telas, como a composição muda com a largura da tela e como percorrer o atlas. A navegação temporal da exploração, com a consulta no endereço, está em [TIMELINE.md](TIMELINE.md); o mapa, em [MAP.md](MAP.md); a comparação, em [COMPARISON.md](COMPARISON.md); e os perfis, as páginas, as fontes e o compartilhamento, em [PAGES.md](PAGES.md). A base visual está em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); os comportamentos, os estados e o que ainda é demonstração, em [INTERACTIONS.md](INTERACTIONS.md).
 
 ## Como abrir a prévia
 
@@ -17,6 +17,7 @@ Endereço local: `http://localhost:3000/`. As quatro telas são as próprias rot
 | Exploração | `/politicos/flavio-bolsonaro/` e `/politicos/lula/` |
 | Acontecimento | `/acontecimentos/<slug>/`, por exemplo `/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/` |
 | Comparação | `/comparar/` |
+| Metodologia | `/metodologia/` |
 | Guia de estados (só em desenvolvimento) | `/dev/previa/` |
 
 O guia de estados reúne os caminhos de entrada, os tokens e cada componente nos estados que a interface prevê, inclusive os que o conteúdo atual não produz (fonte indisponível, imagem de acontecimento, perfil sem retrato). Ele não entra no build de produção.
@@ -67,30 +68,38 @@ Uma área de trabalho com cinco partes que leem o mesmo estado:
 | Lista | O período consultado e a quantidade de registros; os cargos e partidos do período, em um bloco que abre e fecha; e os acontecimentos do recorte em ordem cronológica: ano em destaque, título, categoria, o que falta em uma data parcial, o aviso de quem não tem ponto no mapa e as lacunas do conjunto no lugar dos anos |
 | Mapa | Um marcador por lugar documentado, com o nome ao lado: a forma da categoria, quando há um acontecimento, ou a quantidade, quando há vários. O Brasil em tom mais claro, com as divisas dos estados. Controles, legenda e acesso aos acontecimentos sem ponto |
 | Linha do tempo | Uma marca por acontecimento, na forma da categoria, e as faixas de cargos e de partidos sobre o mesmo eixo. O eixo aceita clique (um ano) e arraste (um intervalo) |
-| Painel de leitura | O perfil da pessoa, enquanto nada está aberto; o acontecimento selecionado, quando há um |
+| Painel de leitura | O perfil da pessoa, enquanto nada está aberto: apresentação, cargos e partidos com as fontes de cada um, cobertura, fontes do perfil, edição e crédito do retrato, mais os caminhos para a comparação e a metodologia. O acontecimento selecionado, quando há um |
 
 A relação entre as partes é explícita: o mesmo acontecimento fica marcado na lista (fundo e filete de acento), no mapa (anel de acento nos marcadores dos lugares dele), na linha do tempo (anel e haste até o eixo) e aberto no painel. O recorte vale para as três vistas ao mesmo tempo, e a linha do tempo hachura o que ficou fora do período.
 
-O período, as categorias e o acontecimento aberto ficam no endereço: o que está na tela pode ser recarregado, enviado por link e percorrido com voltar e avançar.
+O período, as categorias e o acontecimento aberto ficam no endereço: o que está na tela pode ser recarregado, enviado por link e percorrido com voltar e avançar. **Copiar link desta consulta**, sobre a lista e no painel, copia esse endereço.
 
 ### Acontecimento (`/acontecimentos/<slug>/`)
 
 A leitura completa, em endereço próprio:
 
-- Retorno para a exploração de cada pessoa ligada, com o acontecimento já aberto.
-- Categoria, data por extenso na precisão conhecida (com o aviso "Só o ano está documentado" ou "O dia não está documentado" quando for o caso) e título.
-- Resumo e contexto, no texto do conjunto revisado.
+- Retorno para a exploração de cada pessoa ligada, com o acontecimento já aberto. Quem veio de uma consulta volta com o mesmo período e as mesmas categorias, e o link diz qual era o recorte; quem veio da comparação tem também **Voltar à comparação**.
+- Categoria, data por extenso na precisão conhecida (com o aviso "Só o ano está documentado" ou "O dia não está documentado" quando for o caso), título e **Copiar link**.
+- Resumo e contexto, em seções com nome, no texto do conjunto revisado.
 - Fontes numeradas: título com link para o documento, quem publicou, data do documento, data de acesso, onde está o trecho e o que ele sustenta.
-- Revisão: quem conferiu, quando, e o aviso de revisão humana pendente.
-- Ficha lateral: pessoas com os cargos que as datas provam para aquele dia, lugares com a precisão da coordenada, mapa de localização e créditos das imagens.
+- Revisão e edição: quem conferiu, quando, o aviso de revisão humana pendente, a versão e a data de corte, e os links **Como o atlas é feito** e **Sugerir uma correção**.
+- Continuar no atlas: a exploração de cada pessoa ligada, a comparação e a metodologia.
+- Ficha lateral: pessoas com os cargos que as datas provam para aquele dia, lugares com a precisão da coordenada, mapa de localização e créditos.
 
 ### Comparação (`/comparar/`)
 
-- Um controle de período que vale para as duas pessoas.
-- Uma faixa por pessoa sobre o mesmo eixo de anos, com a mesma altura mínima e as mesmas marcas.
+- Um recorte, com período e categorias, que vale para as duas pessoas e fica no endereço. A barra do recorte fica presa ao topo e traz **Copiar link**.
+- **Como ler esta comparação:** quatro avisos escritos com os dados do recorte (mesmo recorte, cargos diferentes, cobertura diferente, acervo e não desempenho).
+- Uma faixa por pessoa sobre o mesmo eixo de anos, com a mesma altura mínima e as mesmas marcas. O que fica fora do recorte aparece apagado.
 - O trecho anterior à cobertura de uma trajetória aparece hachurado e escrito como **fora da cobertura desta edição**. As lacunas dentro da cobertura ganham um colchete tracejado e o texto **sem registros**.
-- Uma coluna por pessoa, com a mesma ordem: cobertura da edição, cargos e funções no período, partidos no período e acontecimentos no período.
-- A frase de abertura diz o limite da tela: quantidade de registros não mede desempenho, e os cargos de cada um em cada época são diferentes.
+- Uma coluna por pessoa, com a mesma ordem: cobertura da edição, cargos e funções no período, partidos no período, acontecimentos no período e fontes do recorte. Cada cargo e cada filiação abre as próprias fontes.
+- Um recorte sem acontecimentos diz que falta registro nesta edição, e não que faltou atividade.
+
+O detalhe está em [COMPARISON.md](COMPARISON.md).
+
+### Metodologia (`/metodologia/`)
+
+A explicação pública do atlas, em uma página de leitura com índice: objetivo e escopo, seleção dos acontecimentos, fontes, a revisão que de fato aconteceu, datas, lugares, lacunas e limites da comparação, edição e atualização, como sugerir uma correção, créditos e o catálogo das fontes da edição. Os números e as datas vêm dos dados gerados. O detalhe está em [PAGES.md](PAGES.md), seção Metodologia.
 
 ## Composição por largura
 
@@ -117,7 +126,8 @@ Em telas médias e largas, a área de trabalho tem altura mínima de 640 px. Em 
 | --- | --- | --- | --- |
 | Entrada | Uma coluna: texto, recorte, os dois cartões lado a lado, faixa das trajetórias com rolagem horizontal | O mesmo, com a faixa inteira à vista | Duas colunas (a partir de 1024 px): texto e recorte à esquerda, cartões à direita |
 | Acontecimento | Uma coluna: retorno, cabeçalho, texto, fontes, revisão e, depois, a ficha | O mesmo | Duas colunas (a partir de 1024 px): leitura com até 672 px e ficha de 352 px |
-| Comparação | Faixas com rolagem horizontal, começando pelos anos recentes; as duas colunas de pessoa, uma abaixo da outra | Faixas inteiras à vista; colunas uma abaixo da outra | Duas colunas de pessoa lado a lado (a partir de 1024 px) |
+| Comparação | Recorte escrito e preso ao topo, com os controles atrás do botão **Filtros**. Faixas com rolagem horizontal, começando pelos anos recentes ou no período escolhido. As duas colunas de pessoa, uma abaixo da outra, com atalho para cada uma | Recorte como na estreita. Faixas inteiras à vista; colunas uma abaixo da outra | Controles do recorte em linha, a partir de 1280 px. Duas colunas de pessoa lado a lado (a partir de 1024 px), com as seções na mesma altura |
+| Metodologia | Uma coluna: o índice e, depois, o texto. A tabela das categorias rola para o lado dentro da própria área | O mesmo, com o índice em duas colunas de links | Duas colunas (a partir de 1024 px): índice de 224 px, que acompanha a rolagem, e o texto |
 | Cabeçalho | Nome do atlas e botão **Menu**, que abre o painel de destinos | Destinos em linha | Destinos em linha |
 
 ### Navegação no celular
@@ -167,4 +177,4 @@ Para a versão em celular (390×844): entrada, cartão, aba **Mapa**, toque em u
 
 ## Capturas
 
-As capturas reais ficam em [`docs/capturas/`](capturas/README.md): as da prévia, em `fase-4/`, as da navegação temporal, em `fase-5/`, e as do mapa, em `fase-6/`. O índice e os comandos que as refazem estão em [`docs/capturas/README.md`](capturas/README.md).
+As capturas reais ficam em [`docs/capturas/`](capturas/README.md): as da prévia, em `fase-4/`, as da navegação temporal, em `fase-5/`, as do mapa, em `fase-6/`, e as da comparação, das páginas e da metodologia, em `fase-7/`. O índice e os comandos que as refazem estão em [`docs/capturas/README.md`](capturas/README.md).

@@ -2,16 +2,18 @@
 
 // Guia de estados da prévia: cada componente da base visual nos estados que a
 // interface precisa prever, com dados reais da edição. Existe só no servidor
-// de desenvolvimento e serve de referência para as fases 5 a 8. Os estados da
-// navegação temporal (fase 5) estão marcados no título.
+// de desenvolvimento e serve de referência para as fases 5 a 8. Os estados que
+// cada fase acrescentou estão marcados no título.
 
 import { useState } from "react";
 
 import { CategoryLabel } from "@/components/Category";
+import { CopyLink } from "@/components/CopyLink";
 import { DateMark } from "@/components/DateMark";
+import { AffiliationList, MandateList } from "@/components/PeriodRecords";
 import { PersonSwitch } from "@/components/PersonSwitch";
 import { Portrait } from "@/components/Portrait";
-import { SourceList } from "@/components/SourceList";
+import { SourceCatalog, SourceList } from "@/components/SourceList";
 import { PeriodLane } from "@/components/time/PeriodLane";
 import { EventList } from "@/features/events/EventList";
 import { EventPanel } from "@/features/events/EventPanel";
@@ -33,6 +35,7 @@ import {
   listAffiliations,
   listMandates,
   listMandatesAt,
+  listSourcesOf,
 } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
 import { CATEGORIAS, type Categoria } from "@/lib/domain/categories";
@@ -328,6 +331,41 @@ export function StatesGallery({ data }: { data: AtlasData }) {
           note="A mesma lista serve a pessoa, mandato, filiação e acontecimento."
         >
           <SourceList entries={getSources(data, pessoa)} density="compacta" />
+        </Specimen>
+
+        <Specimen
+          title="Cargos e partidos com fontes (fase 7)"
+          note="Cada registro traz as próprias datas, a marca do que está em curso na data de corte e as fontes que o sustentam, recolhidas junto dele. É a lista do perfil e da comparação."
+        >
+          <div className="grid gap-6 md:grid-cols-2">
+            <MandateList
+              itens={listMandates(data, { pessoaId: outra.id })}
+              emptyText="Nenhum cargo registrado."
+              sourcesOf={(registro) => getSources(data, registro)}
+            />
+            <AffiliationList
+              itens={listAffiliations(data, { pessoaId: outra.id })}
+              emptyText="Nenhuma filiação registrada."
+              sourcesOf={(registro) => getSources(data, registro)}
+            />
+          </div>
+        </Specimen>
+
+        <Specimen
+          title="Catálogo de fontes (fase 7)"
+          note="Os documentos de um conjunto de registros, sem repetição, com a quantidade de registros que citam cada um. É a lista do recorte na comparação e a de toda a edição na metodologia."
+        >
+          <SourceCatalog entries={listSourcesOf(data, noRecorte.slice(0, 3))} />
+        </Specimen>
+
+        <Specimen
+          title="Copiar link (fase 7)"
+          note="A confirmação só aparece depois que a cópia deu certo. Se o navegador não deixa copiar, o link aparece em um campo, já selecionado."
+        >
+          <div className="flex flex-wrap items-start gap-6">
+            <CopyLink path="/comparar/?de=2016&ate=2022" />
+            <CopyLink path={`/politicos/${pessoa.slug}/?de=2016`} label="Copiar link desta consulta" variant="texto" />
+          </div>
         </Specimen>
 
         <Specimen

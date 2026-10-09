@@ -520,19 +520,84 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Consequência.** O que segue em demonstração está em INTERACTIONS.md. O caminho para um lugar fora da América do Sul está descrito em `src/features/map/base/README.md`.
 
+## D-66. A comparação usa o estado do endereço, sem pessoa em foco e sem acontecimento aberto
+
+**Decisão (fase 7).** `/comparar/` usa o mesmo provider da exploração, com `pessoa: null` e `comparar: true`. A query string guarda `de`, `ate` e `categorias`, lidos e escritos pelas mesmas regras. O período é ajustado à escala comum das duas coberturas. O parâmetro `acontecimento` é descartado nessa rota.
+
+**Motivo.** O pedido da fase é consultar os dois perfis no mesmo recorte, sem excluir um deles por causa do filtro de pessoa da exploração, e sem uma segunda implementação da filtragem. A consulta `compareTrajectories` já aceitava período e categorias desde a fase 3; faltava a tela usar o estado. Abrir um acontecimento dentro da comparação pediria um painel de leitura igual ao da exploração, e cada acontecimento já tem a própria página.
+
+**Consequência.** `UrlContext` passou a aceitar `pessoa: null` e `comparar`. `selectComparison` entrega o recorte do estado a `compareTrajectories`, e um teste confere que a união das duas trajetórias é o recorte visível do estado. Um link de comparação que traga `acontecimento` perde o parâmetro ao abrir. A especificação está em [COMPARISON.md](COMPARISON.md).
+
+## D-67. O perfil é a exploração: não existe uma segunda página de perfil
+
+**Decisão (fase 7).** `/politicos/<slug>/` continua sendo a exploração. A apresentação factual, o retrato com crédito, os cargos e as filiações com as fontes de cada um, a cobertura, as fontes do perfil e a edição ficam no painel de leitura enquanto nenhum acontecimento está aberto, e na vista **Perfil** em telas estreitas e médias.
+
+**Motivo.** O pedido da fase prevê o caso: se a rota já for a exploração, integrar as informações sem criar uma experiência duplicada e sem quebrar mapa, filtros e seleção. Uma página à parte daria dois endereços para o mesmo perfil e duas listas de cargos para manter iguais.
+
+**Consequência.** O perfil inteiro está no HTML do build, porque a exploração é pré-renderizada no estado inicial. O título da página é o nome, e a descrição, o resumo do perfil. Em celular, o perfil fica a um toque, na aba **Perfil**. Do painel saem os caminhos para a comparação no mesmo recorte e para a metodologia.
+
+## D-68. O contexto de retorno viaja no endereço da página do acontecimento
+
+**Decisão (fase 7).** Os links da exploração e da comparação para a página de um acontecimento levam `de`, `ate` e `categorias`, e os da comparação levam também `origem=comparar`. A página lê esses parâmetros e monta os links de volta com o mesmo recorte. O link que **Copiar link** copia, na página, não leva contexto.
+
+**Motivo.** O pedido é preservar pessoa, período, categorias e seleção no retorno, sem depender só do histórico do navegador. Guardar o recorte na sessão do navegador não sobrevive a uma aba nova e esconde o estado; voltar no histórico não funciona para quem abriu a página em outra aba. O endereço já é a fonte do estado nas outras telas (D-49).
+
+**Consequência.** A mesma página responde com e sem contexto, e o conteúdo é o mesmo nos dois casos: só os links de retorno mudam. Um contexto que não contém o acontecimento, ou inválido, é descartado, para o retorno nunca deixar de abrir o registro. No HTML do build os links saem sem recorte; o contexto é lido depois da hidratação. O endereço canônico, sem contexto, depende do domínio público e fica para a fase 10. As regras estão em `src/lib/state/links.ts`, com teste sem navegador.
+
+## D-69. Copiar link usa o endereço em que o atlas está sendo servido
+
+**Decisão (fase 7).** **Copiar link** monta o endereço com a origem da janela e o caminho canônico da consulta. A confirmação só aparece depois que a cópia deu certo. Se a área de transferência não existe ou recusa, o endereço aparece em um campo, já selecionado. Nenhum domínio público é configurado, e o atlas não usa o compartilhamento nativo do aparelho.
+
+**Motivo.** O domínio de publicação não foi decidido, e supor um faria todo link copiado apontar para um endereço que não existe. A área de transferência só funciona em contexto seguro: quem abre o atlas por `http`, em outro computador da rede, não consegue copiar. Confirmar sem ter copiado é a pior falha possível de um botão desses.
+
+**Consequência.** Um link copiado no servidor de desenvolvimento aponta para `localhost`. Parâmetros alheios ao atlas, como os de campanha, não entram no link copiado. `metadataBase`, endereço canônico e sitemap ficam para a fase 10.
+
+## D-70. Canal de correção: configuração pendente, com um modelo para copiar
+
+**Decisão (fase 7).** O atlas não publica um canal de correção. `SITE.correctionChannel`, em `src/lib/site.ts`, fica sem valor; a metodologia diz que o canal ainda não foi definido e oferece um modelo de sugestão com o link do acontecimento, a informação a corrigir e a fonte proposta. Quem chega pela página de um acontecimento recebe o modelo já com o link e o título do registro.
+
+**Motivo.** O canal é decisão do responsável pelo projeto (EDITORIAL.md, seção de correção), e nenhum endereço de contato foi informado para esse fim. Publicar um por conta própria exporia um contato sem autorização.
+
+**Consequência.** Com o valor preenchido (`rotulo` e `href`), a página troca o aviso pelo link, sem outra mudança. O parâmetro `acontecimento` da metodologia só aceita slug de acontecimento publicado.
+
+## D-71. Fontes de cada registro recolhidas, e um catálogo sem repetir documento
+
+**Decisão (fase 7).** No perfil e na comparação, cada cargo e cada filiação traz "N fontes", um bloco nativo de abrir e fechar com a citação completa: documento, onde está o trecho e o que ele sustenta. A comparação e a metodologia têm um catálogo em que cada documento aparece uma vez, com a quantidade de registros que o citam. A interface não classifica a fonte por natureza: mostra a autoria registrada, e a metodologia agrupa o catálogo por quem publicou.
+
+**Motivo.** A relação entre a fonte e a afirmação é do registro, e uma lista única de fontes do perfil a perderia. Abertas, as citações de 15 cargos e 8 filiações tornariam o perfil ilegível. O conteúdo não tem um campo com a natureza da fonte; classificar na interface seria acrescentar um dado que ninguém revisou.
+
+**Consequência.** A classificação por natureza continua só em [SOURCES.md](SOURCES.md), que é um documento editorial. Mostrá-la nas páginas pede um campo novo no conteúdo. A lista de fontes de um conjunto de registros é uma consulta (`listSourcesOf`), com teste.
+
+## D-72. A metodologia descreve a revisão que aconteceu, com os números dos dados
+
+**Decisão (fase 7).** A página de metodologia tira dos dados gerados as quantidades, as datas, a cobertura de cada pessoa, o registro de alterações e o tipo da revisão. O trecho sobre a revisão desta edição só aparece com a redação da conferência assistida por IA enquanto for esse o tipo registrado. Os critérios seguem [EDITORIAL.md](EDITORIAL.md), [SOURCES.md](SOURCES.md) e [CONTENT-REVIEW.md](CONTENT-REVIEW.md).
+
+**Motivo.** O pedido é explicar a revisão efetivamente realizada, incluindo o uso de IA. Um texto fixo envelheceria na edição seguinte, e uma página que dissesse "revisado" sem dizer por quem contrariaria a regra de nunca usar para a conferência assistida as palavras da revisão humana.
+
+**Consequência.** Quando uma revisão humana for registrada, o trecho muda sem edição da página. Mudar um critério pede mudar o documento editorial e o texto da página juntos: a página não lê os documentos de `docs/`.
+
+## D-73. O que ficou fora desta fase
+
+**Decisão (fase 7).** Não foram feitos: endereço canônico, `metadataBase`, sitemap, imagem de compartilhamento e dados estruturados; compartilhamento nativo do aparelho; conferência dos links das fontes no ar; índice de acontecimentos em página própria; mapa na comparação; posição da câmera no endereço; acabamento visual e medição de desempenho.
+
+**Motivo.** O pedido da fase é a comparação, as páginas, as fontes e o compartilhamento. Acabamento e desempenho são a fase 8; a conferência de links, a fase 9; domínio, indexação e publicação, a fase 10. A indexação segue bloqueada enquanto o conteúdo não tiver revisão humana.
+
+**Consequência.** O que depende de configuração está em [PAGES.md](PAGES.md), seção Configuração pendente.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
 |---|---|
 | Comando de promoção de rascunhos e verificador de evidências (D-36) | Quando o volume de conteúdo pedir |
 | Exigir revisão humana como condição de publicação | Fase 9 |
-| Canal público de correção e quem assina a revisão humana | Decisão do responsável pelo projeto |
+| Canal público de correção (D-70) e quem assina a revisão humana | Decisão do responsável pelo projeto |
 | Arquivos de segmento do Next na saída estática, pedidos com ponto e gravados em pastas (STATUS.md) | Fase 8 ou 10 |
 | Nome definitivo do atlas (o rodapé diz "nome provisório") | Decisão do responsável pelo projeto |
 | Exibir em cinza e recortado o retrato cuja condição de uso é "livre com crédito" (D-42) | Decisão do responsável pelo projeto |
 | Como evitar o instante de estado inicial para quem chega por um link com consulta (D-49) | Fase 8 |
 | Fechar a leitura criando entrada no histórico ou voltando nele (D-50) | Fase 9, com pessoas usando |
-| Ligar a comparação ao estado e ao endereço, e levar o recorte no retorno da página do acontecimento | Fase 7 |
+| Domínio público, endereço canônico, `metadataBase` e sitemap (D-69) | Fase 10 |
+| Mostrar a natureza de cada fonte nas páginas, com um campo novo no conteúdo (D-71) | Quando a edição pedir |
 | Rótulos da base do mapa, com glyphs locais (D-58) | Quando uma edição pedir nomes de estados ou de países |
 | Contorno mundial, para lugares fora da América do Sul (D-62) | Quando o conteúdo tiver o primeiro lugar fora da área |
 | Peso do pacote do mapa e momento de carregá-lo | Fase 8 |

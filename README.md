@@ -2,7 +2,7 @@
 
 Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa e acontecimentos acompanhados das fontes que os sustentam. Projeto de portfólio da MilWeb.
 
-**Estágio atual:** fases 1 a 6 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados, experiência e direção visual, aplicação com linha do tempo e mapa sincronizado). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e as quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. A fase 5 tornou a exploração navegável no tempo: escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, abrir um acontecimento e ler os detalhes, com a consulta inteira no endereço. A fase 6 ligou o mapa a esse recorte: um marcador por lugar documentado, seleção nos dois sentidos, lista para os acontecimentos que dividem um lugar e leitura preservada quando o mapa falha. Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
+**Estágio atual:** fases 1 a 7 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados, experiência e direção visual, aplicação com linha do tempo, mapa sincronizado, e comparação, páginas e fontes). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e as quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. A fase 5 tornou a exploração navegável no tempo: escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, abrir um acontecimento e ler os detalhes, com a consulta inteira no endereço. A fase 6 ligou o mapa a esse recorte: um marcador por lugar documentado, seleção nos dois sentidos, lista para os acontecimentos que dividem um lugar e leitura preservada quando o mapa falha. A fase 7 pôs a comparação no mesmo recorte para as duas pessoas, com a consulta no endereço; completou o perfil e a página de cada acontecimento, com fontes, créditos, revisão e edição; acrescentou **Copiar link** e o retorno com o recorte de antes; e escreveu a metodologia pública. Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
 
 ## Requisitos
 
@@ -13,7 +13,7 @@ Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Fl
 | Navegador | Com WebGL 2 para ver o mapa. Sem ele o atlas mostra os lugares em lista, e o resto funciona igual |
 | Chromium do Playwright | Só para `npm run test:e2e`. Em máquina nova: `npx playwright install chromium` |
 
-Nenhum serviço externo, conta ou variável de ambiente. Tudo roda com os arquivos do projeto.
+Nenhum serviço externo, conta ou variável de ambiente. Tudo roda com os arquivos do projeto. Há uma configuração pendente, que não impede nada: o canal público de correção, em `src/lib/site.ts` (docs/PAGES.md, seção Configuração pendente).
 
 O Node 22.18 é o mínimo porque os comandos de dados rodam o TypeScript do projeto direto no Node, sem compilar.
 
@@ -32,7 +32,7 @@ O Node 22.18 é o mínimo porque os comandos de dados rodam o TypeScript do proj
 | @playwright/test | 1.63.0 | Testes de navegador e capturas da prévia |
 | eslint, eslint-config-next | 9.39.5, 16.4.0 | Lint e fronteiras entre camadas |
 
-As fases 3 a 6 não acrescentaram nenhuma dependência. As fontes tipográficas (`src/app/fonts/`) e os contornos do mapa (`src/features/map/base/`) são arquivos do projeto, com a licença de cada um descrita na própria pasta. O mapa não usa tiles, chave de API nem serviço de terceiros.
+As fases 3 a 7 não acrescentaram nenhuma dependência. As fontes tipográficas (`src/app/fonts/`) e os contornos do mapa (`src/features/map/base/`) são arquivos do projeto, com a licença de cada um descrita na própria pasta. O mapa não usa tiles, chave de API nem serviço de terceiros.
 
 ## Instalação
 
@@ -50,7 +50,7 @@ Gera os dados e abre em http://localhost:3000. Com erro no conteúdo, o comando 
 
 Com o servidor aberto, editar um arquivo de `content/` e recarregar a página basta: os dados são gerados de novo. Se a edição tiver erro, a página mostra os diagnósticos.
 
-As quatro telas (docs/UX.md):
+As telas (docs/UX.md):
 
 | Tela | Endereço |
 |---|---|
@@ -58,6 +58,7 @@ As quatro telas (docs/UX.md):
 | Exploração | http://localhost:3000/politicos/lula/ e http://localhost:3000/politicos/flavio-bolsonaro/ |
 | Acontecimento | http://localhost:3000/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/ |
 | Comparação | http://localhost:3000/comparar/ |
+| Metodologia | http://localhost:3000/metodologia/ |
 | Guia de estados, só em desenvolvimento | http://localhost:3000/dev/previa/ |
 
 Na exploração, o período, as categorias e o acontecimento aberto ficam no endereço. O que está na tela pode ser recarregado, enviado por link e percorrido com voltar e avançar (docs/TIMELINE.md):
@@ -81,6 +82,19 @@ O mapa acompanha a mesma consulta (docs/MAP.md):
 | Um recorte sem nenhum ponto | http://localhost:3000/politicos/flavio-bolsonaro/?de=2021&ate=2021 |
 
 Em tela estreita, o mapa fica na vista **Mapa**. Para ver a lista de lugares que assume quando o mapa falha, abra http://localhost:3000/dev/prova/ e ligue **Simular navegador sem WebGL**.
+
+A comparação guarda o período e as categorias no endereço, e as páginas abrem por link direto (docs/COMPARISON.md e docs/PAGES.md):
+
+| O que abre | Endereço |
+|---|---|
+| As duas trajetórias em um intervalo, com uma categoria | http://localhost:3000/comparar/?de=2016&ate=2022&categorias=eleicoes |
+| Um período em que uma trajetória está fora da cobertura | http://localhost:3000/comparar/?de=1996&ate=2001 |
+| O perfil, com cargos, partidos, fontes e edição | http://localhost:3000/politicos/flavio-bolsonaro/ (em tela estreita, na vista **Perfil**) |
+| A página de um acontecimento, por link direto | http://localhost:3000/acontecimentos/lula-2018-prisao-em-curitiba/ |
+| A mesma página, vinda de uma consulta: o retorno devolve o recorte | http://localhost:3000/acontecimentos/lula-2018-prisao-em-curitiba/?de=2016&ate=2019&categorias=marcos-historicos |
+| O modelo de correção, já com o registro | http://localhost:3000/metodologia/?acontecimento=lula-2018-prisao-em-curitiba#correcao |
+
+**Copiar link** copia o endereço em que o atlas está aberto. Em uma página servida por `http` fora do próprio computador, o navegador não deixa copiar, e o link aparece em um campo.
 
 Telas de prova técnica, que só existem com `npm run dev` e não entram no build de produção:
 
@@ -133,11 +147,12 @@ npm run preview   # serve out/ em http://localhost:4311
 |---|---|
 | `npm run lint` | ESLint, incluindo as fronteiras entre camadas |
 | `npm run typecheck` | Gera os tipos de rota e roda o `tsc` |
-| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, endereço e histórico, pontos, lugares e câmera do mapa, linha do tempo, lista cronológica, cobertura e base visual, com o contraste das cores (Vitest) |
+| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, endereço e histórico, comparação, endereços entre telas e retorno, pontos, lugares e câmera do mapa, linha do tempo, lista cronológica, cobertura e base visual, com o contraste das cores (Vitest) |
 | `npm run build` | Gera os dados e o site. Falha se o conteúdo estiver inválido |
 | `npm run verify:export` | Confere `out/`: páginas previstas, uma página por acontecimento publicado e nenhuma por rascunho, nenhuma rota de desenvolvimento, nenhum dado sintético |
 | `npm run check` | Os cinco acima, em sequência |
-| `npm run test:e2e` | As telas de prova, as quatro telas, a navegação temporal com o endereço e o mapa sincronizado, em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
+| `npm run test:e2e` | As telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação e as páginas de perfil, de acontecimento e de metodologia, em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
+| `npm run capture:pages` | Refaz as capturas de `docs/capturas/fase-7/`. Não confere nada: só registra as telas |
 | `npm run capture:map` | Refaz as capturas de `docs/capturas/fase-6/`. Não confere nada: só registra as telas |
 | `npm run capture:timeline` | Refaz as capturas de `docs/capturas/fase-5/` com a interface atual |
 | `npm run capture:preview` | Refaz as capturas de `docs/capturas/fase-4/` com a interface atual |
@@ -157,7 +172,7 @@ public/
 scripts/         comandos de dados, conferência e pré-visualização da saída
 src/
   app/           rotas e páginas; fontes tipográficas em app/fonts/
-  components/    base visual: retrato, data, categoria, fontes, troca de pessoa, peças da linha do tempo
+  components/    base visual: retrato, data, categoria, fontes, perfil, cópia de link, troca de pessoa, peças da linha do tempo
   features/
     events/      lista cronológica, lacunas e leitura de acontecimentos
     map/         mapa, marcadores, seletor de lugares, câmera e contornos da base
@@ -168,7 +183,8 @@ src/
     data/        formato dos dados públicos, índices, pontos e consultas
     publication/ validação, elegibilidade, relatório e importação, sem I/O
     content/     leitura de content/ e leitura e gravação de generated/
-    state/       estado compartilhado, seletores, endereço e histórico
+    state/       estado compartilhado, seletores, endereço, histórico e endereços entre telas
+    site.ts      configuração que depende de decisão do responsável (canal de correção)
 tests/
   fixtures/sintetico/   dados de teste, todos marcados como sintéticos
   e2e/                  testes de navegador
@@ -185,6 +201,8 @@ tests/
 - [docs/INTERACTIONS.md](docs/INTERACTIONS.md): seleção, teclado, estados, movimento e o que ainda é demonstração.
 - [docs/TIMELINE.md](docs/TIMELINE.md): navegação temporal: troca de pessoa, filtros, datas, seleção, endereço, histórico e o contrato com o mapa.
 - [docs/MAP.md](docs/MAP.md): mapa: base e recursos locais, recorte, seleção, pontos sobrepostos, câmera, precisão, falhas e conferência.
+- [docs/COMPARISON.md](docs/COMPARISON.md): comparação: mesmo recorte e mesma escala, estado e endereço, datas e intervalos, linguagem e limites.
+- [docs/PAGES.md](docs/PAGES.md): perfis, página do acontecimento, fontes e créditos, copiar link, retorno, metodologia e configuração pendente.
 - [docs/capturas/](docs/capturas/README.md): capturas reais das telas, por fase.
 - [docs/DECISIONS.md](docs/DECISIONS.md): decisões adotadas e seus motivos.
 - [docs/STATUS.md](docs/STATUS.md): situação de cada fase, limitações e preparação para a próxima.

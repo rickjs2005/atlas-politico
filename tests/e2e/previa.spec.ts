@@ -425,52 +425,7 @@ test.describe("acontecimento", () => {
   });
 });
 
-test.describe("comparação", () => {
-  test("mesma escala para as duas pessoas, com as lacunas de cobertura escritas", async ({ page }) => {
-    await page.goto("/comparar/");
-
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Comparar trajetórias");
-    await expect(page.getByText("Quantidade de registros não mede desempenho")).toBeVisible();
-    for (const pessoa of [flavio, lula]) {
-      await expect(page.getByRole("region", { name: `Trajetória de ${pessoa.nome}` })).toBeVisible();
-      const coluna = page.getByRole("region", { name: pessoa.nome, exact: true });
-      await expect(coluna.getByRole("heading", { name: "Cobertura desta edição" })).toBeVisible();
-      await expect(coluna).toContainText(`${eventosDe(pessoa.id).length} registros do atlas`);
-    }
-    // A cobertura de uma trajetória começa depois: o trecho anterior é dito como fora da cobertura.
-    await expect(page.getByText("fora da cobertura desta edição").first()).toBeVisible();
-    await expect(page.getByText(/o atlas não cobre esta\s+trajetória/).first()).toBeVisible();
-    await expect(page.getByText(/São lacunas da pesquisa, e não ausência de atividade/).first()).toBeVisible();
-
-    // As duas faixas usam o mesmo eixo: mesma largura e mesma posição.
-    const caixas = await page.locator("ul[aria-label^='Acontecimentos de ']").evaluateAll((nos) =>
-      nos.map((no) => {
-        const { left, width } = no.getBoundingClientRect();
-        return { left: Math.round(left), width: Math.round(width) };
-      }),
-    );
-    expect(caixas).toHaveLength(2);
-    expect(caixas[0]).toEqual(caixas[1]);
-  });
-
-  test("o período vale para as duas colunas, e a tela não dá nota nem total comparado", async ({ page }) => {
-    await page.goto("/comparar/");
-    await page.getByLabel("De", { exact: true }).selectOption("2019");
-    await page.getByLabel("Até", { exact: true }).selectOption("2022");
-
-    for (const pessoa of [flavio, lula]) {
-      const esperado = eventosDe(pessoa.id).filter((item) => {
-        const ano = Number(item.data.valor.slice(0, 4));
-        return ano >= 2019 && ano <= 2022;
-      }).length;
-      const coluna = page.getByRole("region", { name: pessoa.nome, exact: true });
-      await expect(coluna).toContainText(
-        `${esperado} ${esperado === 1 ? "registro do atlas" : "registros do atlas"}`,
-      );
-    }
-    await expect(page.getByRole("main")).not.toContainText(/ranking|nota|placar|vence|melhor|pior/i);
-  });
-});
+// A comparação tem bateria própria desde a fase 7: tests/e2e/comparacao.spec.ts.
 
 test.describe("largura e páginas de apoio", () => {
   for (const largura of [360, 390, 768]) {

@@ -24,3 +24,12 @@ export function EditionStatus({ edicao, className = "" }: { edicao: Edicao | nul
     </p>
   );
 }
+
+/** Só a identificação da edição: versão e data de corte. Para o pé de um registro. */
+export function EditionTag({ edicao, className = "" }: { edicao: Edicao; className?: string }) {
+  return (
+    <p className={`numerals text-sm text-ink-soft ${className}`} data-edicao={edicao.versao}>
+      Edição {edicao.versao} · registros até {formatDate({ valor: edicao.dataDeCorte, precisao: "dia" })}
+    </p>
+  );
+}

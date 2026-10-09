@@ -1,90 +1,46 @@
 "use client";
 
-// Estado da exploração guardado no endereço. O endereço é a fonte única: o
-// estado é derivado da query string a cada renderização, e uma ação do usuário
-// vira um endereço novo. Voltar, avançar, recarregar e abrir um link direto
-// passam pelo mesmo caminho, e não há como estado e endereço divergirem.
+// Estado da exploração e da comparação guardado no endereço. O endereço é a
+// fonte única: o estado é derivado da query string a cada renderização, e uma
+// ação do usuário vira um endereço novo. Voltar, avançar, recarregar e abrir
+// um link direto passam pelo mesmo caminho, e não há como estado e endereço
+// divergirem.
 //
-// Exportação estática: a página é gerada no build sem query string. O HTML sai
-// com o estado padrão, a hidratação acontece com esse mesmo estado, e o
-// endereço real é lido logo depois (`useSyncExternalStore`).
+// A leitura do endereço fica em `location.tsx`, que também serve ao retorno da
+// página de um acontecimento.
 //
 // A escrita usa `window.history.pushState` e `replaceState`, que o Next
 // integra ao seu roteador (docs do Next: Linking and Navigating, Native
 // History API).
 
-import { useSearchParams } from "next/navigation";
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useSyncExternalStore,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
 
 import type { YearSpan } from "@/lib/data/coverage";
 import type { AtlasData } from "@/lib/data/types";
 
 import { AtlasContext, deriveAtlasView } from "./AtlasStateProvider";
 import type { AtlasAction } from "./atlas-state";
-import { transition } from "./selectors";
+import { UrlWatcher, isOwnPath, notifyUrlChange, useOwnSearch } from "./location";
 import {
   chooseHistoryMode,
   historyGroupOf,
   sameSearch,
   searchFromState,
+  stateAfter,
   stateFromSearch,
   type HistoryWrite,
   type UrlContext,
 } from "./url-state";
 
-// Quem precisa saber que o endereço mudou. O navegador avisa de voltar e
-// avançar (`popstate`); as escritas daqui e as navegações do Next avisam por
-// `notifyUrlChange`.
-const listeners = new Set<() => void>();
-
-function notifyUrlChange() {
-  for (const listener of listeners) listener();
-}
-
-function subscribe(listener: () => void) {
-  listeners.add(listener);
-  window.addEventListener("popstate", listener);
-  return () => {
-    listeners.delete(listener);
-    window.removeEventListener("popstate", listener);
-  };
-}
-
-const withoutSlash = (caminho: string) => caminho.replace(/\/+$/, "");
-
-/**
- * O Next troca o endereço depois de renderizar a página nova. Entre uma coisa
- * e outra, `window.location` ainda é o da página anterior, e a query string
- * dela não é a desta exploração.
- */
-function isOwnPath(path: string): boolean {
-  return withoutSlash(window.location.pathname).endsWith(withoutSlash(path));
-}
-
-/** Avisa das navegações feitas pelo roteador do Next, que não disparam `popstate`. */
-function RouterWatcher() {
-  const search = useSearchParams().toString();
-  useEffect(() => {
-    notifyUrlChange();
-  }, [search]);
-  return null;
-}
-
 interface AtlasUrlStateProviderProps {
   data: AtlasData;
-  /** Slug da pessoa, que vem da rota. */
-  pessoa: string;
-  /** Caminho da exploração, como `/politicos/lula`. */
+  /** Slug da pessoa, que vem da rota. `null` na comparação. */
+  pessoa: string | null;
+  /** A rota é a comparação: o recorte vale para as duas trajetórias. */
+  comparar?: boolean;
+  /** Caminho da tela, como `/politicos/lula` ou `/comparar`. */
   path: string;
-  /** Anos que a edição cobre para a pessoa. */
+  /** Anos que podem ser consultados: a cobertura da pessoa ou a escala comum. */
   cobertura: YearSpan | null;
   children: ReactNode;
 }
@@ -92,14 +48,17 @@ interface AtlasUrlStateProviderProps {
 export function AtlasUrlStateProvider({
   data,
   pessoa,
+  comparar = false,
   path,
   cobertura,
   children,
 }: AtlasUrlStateProviderProps) {
-  const contexto = useMemo<UrlContext>(() => ({ pessoa, data, cobertura }), [pessoa, data, cobertura]);
+  const contexto = useMemo<UrlContext>(
+    () => ({ pessoa, comparar, data, cobertura }),
+    [pessoa, comparar, data, cobertura],
+  );
 
-  const readSearch = useCallback(() => (isOwnPath(path) ? window.location.search : ""), [path]);
-  const search = useSyncExternalStore(subscribe, readSearch, () => "");
+  const search = useOwnSearch(path);
   const state = useMemo(() => stateFromSearch(search, contexto), [search, contexto]);
 
   const ultimaEscrita = useRef<HistoryWrite | null>(null);
@@ -119,8 +78,7 @@ export function AtlasUrlStateProvider({
       if (!isOwnPath(path)) return;
       // O ponto de partida é o endereço do momento, e não o da última
       // renderização: duas ações no mesmo gesto somam, em vez de se atropelar.
-      const atual = stateFromSearch(window.location.search, contexto);
-      const proximo = transition(atual, action, contexto.data, contexto.cobertura);
+      const proximo = stateAfter(window.location.search, action, contexto);
       const destino = searchFromState(window.location.search, proximo);
       if (sameSearch(destino, window.location.search)) return;
 
@@ -156,12 +114,7 @@ export function AtlasUrlStateProvider({
 
   return (
     <AtlasContext value={value}>
-      {/* `useSearchParams` tira da pré-renderização o que estiver até o
-          `Suspense` mais próximo. Aqui ele fica isolado em um componente sem
-          saída visual, e a exploração inteira continua no HTML gerado. */}
-      <Suspense fallback={null}>
-        <RouterWatcher />
-      </Suspense>
+      <UrlWatcher />
       {children}
     </AtlasContext>
   );
