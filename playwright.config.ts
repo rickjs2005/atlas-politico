@@ -25,7 +25,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npx next dev -p ${PORT}`,
+    // `npm run dev` gera os dados antes de subir o servidor.
+    command: `npm run dev -- -p ${PORT}`,
     url: `http://localhost:${PORT}/dev/prova/`,
     reuseExistingServer: true,
     timeout: 120_000,

@@ -180,6 +180,55 @@ export function formatDate(data: DataHistorica): string {
 }
 
 /**
+ * Limites de um período em números de cálculo. `null` marca o limite que não
+ * está documentado. `em-curso` vale até a data de corte da edição, que é o
+ * último dia sobre o qual o conjunto afirma alguma coisa.
+ */
+export interface LimitesDeCalculo {
+  inicio: IntervaloDeCalculo | null;
+  fim: IntervaloDeCalculo | null;
+}
+
+export function calcPeriodBounds(periodo: Periodo, dataDeCorte: string): LimitesDeCalculo {
+  const { inicio, fim } = periodo;
+  return {
+    inicio: inicio.tipo === "data" ? calcInterval(inicio) : null,
+    fim:
+      fim.tipo === "data"
+        ? calcInterval(fim)
+        : fim.tipo === "em-curso"
+          ? calcInterval({ valor: dataDeCorte, precisao: "dia" })
+          : null,
+  };
+}
+
+/**
+ * Relação entre um período e um recorte:
+ *   `documentada`  as datas conhecidas provam que o período toca o recorte;
+ *   `incerta`      depende de um limite que não está documentado;
+ *   `nenhuma`      as datas conhecidas provam que não toca.
+ * Um limite desconhecido nunca vira data: ele só impede a certeza.
+ */
+export type PeriodOverlap = "documentada" | "incerta" | "nenhuma";
+
+export function classifyOverlap(
+  limites: LimitesDeCalculo,
+  recorte: IntervaloDeCalculo,
+): PeriodOverlap {
+  const inicioMaisCedo = limites.inicio?.inicio ?? Number.NEGATIVE_INFINITY;
+  const fimMaisTarde = limites.fim?.fim ?? Number.POSITIVE_INFINITY;
+  if (inicioMaisCedo > recorte.fim || fimMaisTarde < recorte.inicio) return "nenhuma";
+
+  // O início nunca é posterior ao fim, e o fim nunca é anterior ao início:
+  // um limite conhecido restringe o desconhecido.
+  const inicioMaisTarde = Math.min(limites.inicio?.fim ?? Number.POSITIVE_INFINITY, fimMaisTarde);
+  const fimMaisCedo = Math.max(limites.fim?.inicio ?? Number.NEGATIVE_INFINITY, inicioMaisCedo);
+  return inicioMaisTarde <= recorte.fim && fimMaisCedo >= recorte.inicio
+    ? "documentada"
+    : "incerta";
+}
+
+/**
  * Devolve o motivo quando o período é incoerente, ou `null` quando é aceito.
  * Limites desconhecidos ou em curso não são comparados. Entre duas datas
  * parciais, o período só é recusado se não houver nenhuma leitura possível em

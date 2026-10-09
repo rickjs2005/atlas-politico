@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { EditionStatus } from "@/components/EditionStatus";
-import { getPublishedSet } from "@/lib/content/published";
+import { getAtlasData } from "@/lib/content/published";
 
 export const metadata: Metadata = { title: "Metodologia" };
 
@@ -32,7 +32,7 @@ const REGRAS = [
 ];
 
 export default function MethodologyPage() {
-  const { edicao } = getPublishedSet();
+  const { edicao } = getAtlasData().conjunto;
 
   return (
     <div className="max-w-3xl space-y-6">

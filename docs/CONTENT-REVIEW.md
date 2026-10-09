@@ -78,7 +78,7 @@ Acontecimentos com alguma fonte jornalística: 3 (`flavio-bolsonaro-2020-denunci
 
 ## Cobertura
 
-Gerado por `npm run content:coverage` em 8 de outubro de 2026.
+Retrato de 8 de outubro de 2026, feito com o comando da fase 2. Esse comando deu lugar a `npm run data:report`; o relatório atual, com pontos no mapa e pendências, está em [DATA-REPORT.md](DATA-REPORT.md).
 
 Edição 0.1.0 · data de corte 2026-10-08 · revisão assistida-por-ia em 2026-10-08
 

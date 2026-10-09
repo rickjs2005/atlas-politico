@@ -19,6 +19,39 @@ import { PRECISOES_GEOGRAFICAS, isInsideBrazilBox } from "./geo";
 // Mensagens do próprio Zod em português, para quem lê o erro de validação.
 z.config(z.locales.pt());
 
+// Os casos mais comuns em conteúdo editado à mão ganham um motivo direto. O
+// que não está aqui segue com a mensagem do idioma.
+z.config({
+  customError: (issue) => {
+    const { code, input } = issue;
+    if (code === "invalid_type") {
+      if (input === undefined) return "Campo obrigatório ausente.";
+      if (typeof input === "number" && !Number.isFinite(input)) {
+        return "Número inválido: precisa ser um valor finito.";
+      }
+    }
+    if (code === "unrecognized_keys") {
+      return `Campo desconhecido: ${issue.keys.map((chave) => `"${chave}"`).join(", ")}. Confira o nome do campo.`;
+    }
+    if (code === "invalid_value") {
+      return `Valor não aceito. Use um destes: ${issue.values.map(String).join(", ")}.`;
+    }
+    if (code === "invalid_union" && typeof issue.discriminator === "string") {
+      return `Valor não aceito no campo "${issue.discriminator}".`;
+    }
+    if (code === "too_small" && issue.origin === "array") {
+      return `A lista precisa de ao menos ${String(issue.minimum)} item.`;
+    }
+    if (code === "too_small" && issue.origin === "number") {
+      return `Valor abaixo do mínimo (${String(issue.minimum)}).`;
+    }
+    if (code === "too_big" && issue.origin === "number") {
+      return `Valor acima do máximo (${String(issue.maximum)}).`;
+    }
+    return undefined;
+  },
+});
+
 const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const texto = z.string().regex(/\S/, "O campo não pode ficar vazio.");

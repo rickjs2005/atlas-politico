@@ -8,14 +8,13 @@
 import dynamic from "next/dynamic";
 import { Component, useState, type ReactNode } from "react";
 
+import type { EventPointCollection } from "@/lib/data/types";
 import { GEO_PRECISION_LABELS, formatCoordinates } from "@/lib/domain/geo";
-
-import type { EventFeatureCollection } from "./features";
 
 const MapCanvas = dynamic(() => import("./MapCanvas"), { ssr: false });
 
 interface MapViewProps {
-  features: EventFeatureCollection;
+  features: EventPointCollection;
   selectedSlug: string | null;
   onSelect: (slug: string) => void;
 }
@@ -90,7 +89,7 @@ function MapFallback({ features, selectedSlug, onSelect }: MapViewProps) {
             const [longitude = 0, latitude = 0] = geometry.coordinates;
             const selecionado = properties.acontecimentoSlug === selectedSlug;
             return (
-              <li key={`${properties.acontecimentoSlug}:${properties.lugarId}`}>
+              <li key={`${properties.eventId}@${properties.placeId}`}>
                 <button
                   type="button"
                   aria-pressed={selecionado}

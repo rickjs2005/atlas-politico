@@ -3,18 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
+    "node": "^22.18.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm run data:build && next dev",
+    "build": "npm run data:build && next build",
     "preview": "node scripts/preview.mjs",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "verify:export": "node scripts/check-export.mjs",
-    "content:coverage": "node scripts/content-coverage.mjs",
+    "data:validate": "node --import ./scripts/register.mjs scripts/data.mts validate",
+    "data:build": "node --import ./scripts/register.mjs scripts/data.mts build",
+    "data:report": "node --import ./scripts/register.mjs scripts/data.mts report",
+    "data:import": "node --import ./scripts/register.mjs scripts/data.mts import",
+    "data:query": "node --import ./scripts/register.mjs scripts/data.mts query",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run verify:export"
   },
   "dependencies": {

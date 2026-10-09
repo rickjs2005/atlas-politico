@@ -1,9 +1,10 @@
 // Verificações que dependem do conjunto inteiro. Os schemas garantem que cada
 // registro é bem formado; aqui se confere que eles se encaixam.
 //
-// Fase 1: ids e slugs únicos, referências resolvidas, data de corte e as
-// duas regras de publicação. Índices, relatório de campos incompletos e
-// normalização ficam para o pipeline da fase 3.
+// Ids e slugs únicos, referências resolvidas, data de corte e as duas regras
+// de publicação, aplicadas a um conjunto completo. O pipeline de dados
+// (src/lib/publication) faz a validação das fontes editoriais com diagnósticos
+// por registro e usa estas funções para conferir a saída antes de gravá-la.
 
 import { calcInterval } from "./dates";
 import type { Citacao, Conjunto } from "./schemas";
@@ -116,9 +117,13 @@ export function checkIntegrity(conjunto: Conjunto): IntegrityIssue[] {
 
 /**
  * Regras extras para o conjunto que alimenta as páginas: só registros
- * revisados e nenhum dado sintético.
+ * revisados e nenhum dado sintético. `allowSynthetic` desliga a segunda regra
+ * e existe só para a tela de prova e para os testes, que usam as fixtures.
  */
-export function checkPublication(conjunto: Conjunto): IntegrityIssue[] {
+export function checkPublication(
+  conjunto: Conjunto,
+  options: { allowSynthetic?: boolean } = {},
+): IntegrityIssue[] {
   const issues: IntegrityIssue[] = [];
   const { pessoas, mandatos, filiacoes, acontecimentos, lugares, fontes, imagens } = conjunto;
 
@@ -133,6 +138,8 @@ export function checkPublication(conjunto: Conjunto): IntegrityIssue[] {
       }
     }
   }
+
+  if (options.allowSynthetic) return issues;
 
   const todos = { ...factuais, lugares, fontes, imagens };
   for (const [nome, registros] of Object.entries(todos)) {

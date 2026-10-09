@@ -19,6 +19,9 @@
 /.next/
 /out/
 
+# dados gerados por `npm run data:build` (docs/DATA-PIPELINE.md)
+/generated/
+
 # production
 /build
 

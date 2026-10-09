@@ -84,6 +84,8 @@ O que a conferência verifica em cada registro:
 
 Publicação: o conjunto atual, todo com revisão assistida por IA, serve ao desenvolvimento e à leitura interna. A publicação do atlas depende de revisão humana do conjunto final (fase 9 do plano).
 
+A regra que decide, a partir do estado e da pasta, o que entra nos dados do site está em [DATA-PIPELINE.md](DATA-PIPELINE.md), seção "Estados editoriais e elegibilidade". O mesmo documento diz como promover um rascunho e como tirar um registro do ar.
+
 ## Correção
 
 1. **Quem aponta.** Qualquer pessoa. O canal público ainda não foi definido; é uma decisão pendente do responsável pelo projeto.

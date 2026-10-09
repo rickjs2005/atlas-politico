@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { buildEventFeatures } from "@/features/map/features";
 import { buildGraticule } from "@/features/map/graticule";
 import { buildBaseStyle, selectionFilter } from "@/features/map/style";
+import { buildEventPoints, filterPoints } from "@/lib/data/points";
 import { formatCoordinates, isInsideBrazilBox, toPosition } from "@/lib/domain/geo";
 
-import { loadExplorerData } from "./helpers";
+import { loadAtlasData } from "./helpers";
 
-const data = loadExplorerData();
+const data = loadAtlasData();
+const { acontecimentos, lugares } = data.conjunto;
 
 describe("ordem das coordenadas", () => {
   it("posição GeoJSON é [longitude, latitude]", () => {
@@ -29,38 +30,90 @@ describe("ordem das coordenadas", () => {
 });
 
 describe("pontos do mapa", () => {
-  const colecao = buildEventFeatures(data.acontecimentos, data.lugares);
+  // A coleção que a interface recebe é a que o gerador montou.
+  const colecao = data.pontos;
 
   it("gera um ponto por lugar documentado", () => {
     expect(colecao.type).toBe("FeatureCollection");
     expect(colecao.features).toHaveLength(6);
+    expect(buildEventPoints(acontecimentos, lugares)).toEqual(colecao);
   });
 
-  it("acontecimento com dois lugares gera dois pontos", () => {
+  it("cada ponto é identificado pelo acontecimento e pelo lugar", () => {
+    for (const ponto of colecao.features) {
+      const { eventId, placeId } = ponto.properties;
+      expect(ponto.id).toBe(`${eventId}@${placeId}`);
+      expect(acontecimentos.some((item) => item.id === eventId)).toBe(true);
+      expect(lugares.some((item) => item.id === placeId)).toBe(true);
+    }
+    const ids = colecao.features.map((ponto) => ponto.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("acontecimento com dois lugares gera dois pontos ligados ao mesmo acontecimento", () => {
     const pontos = colecao.features.filter(
-      (feature) => feature.properties.acontecimentoSlug === "sintetico-evento-03",
+      (ponto) => ponto.properties.eventId === "sintetico-evento-03",
     );
-    expect(pontos.map((feature) => feature.properties.lugarId)).toEqual([
+    expect(pontos.map((ponto) => ponto.properties.placeId)).toEqual([
       "sintetico-lugar-sudeste",
       "sintetico-lugar-sul",
     ]);
+    expect(new Set(pontos.map((ponto) => ponto.properties.acontecimentoSlug)).size).toBe(1);
+  });
+
+  it("o mesmo lugar citado duas vezes continua sendo um ponto", () => {
+    const repetido = structuredClone(acontecimentos[0]!);
+    repetido.localizacao = {
+      tipo: "lugares",
+      lugarIds: ["sintetico-lugar-norte", "sintetico-lugar-norte"],
+    };
+    expect(buildEventPoints([repetido], lugares).features).toHaveLength(1);
   });
 
   it("abrangência nacional e lugar desconhecido não geram ponto", () => {
-    const comPonto = new Set(colecao.features.map((feature) => feature.properties.acontecimentoSlug));
+    const comPonto = new Set(colecao.features.map((ponto) => ponto.properties.eventId));
     expect(comPonto.has("sintetico-evento-04")).toBe(false);
     expect(comPonto.has("sintetico-evento-06")).toBe(false);
   });
 
-  it("cada ponto leva a longitude primeiro", () => {
-    for (const feature of colecao.features) {
-      const lugar = data.lugares.find((item) => item.id === feature.properties.lugarId);
-      expect(feature.geometry.coordinates).toEqual([lugar?.longitude, lugar?.latitude]);
+  it("cada ponto leva a longitude primeiro e diz a precisão da coordenada", () => {
+    for (const ponto of colecao.features) {
+      const lugar = lugares.find((item) => item.id === ponto.properties.placeId);
+      expect(ponto.geometry.coordinates).toEqual([lugar?.longitude, lugar?.latitude]);
+      expect(ponto.properties.precisaoGeografica).toBe(lugar?.precisaoGeografica);
     }
   });
 
+  it("leva o que os filtros precisam, com a data na precisão original", () => {
+    const ponto = colecao.features.find((item) => item.properties.eventId === "sintetico-evento-02");
+    expect(ponto?.properties).toMatchObject({
+      categoria: "mandatos-e-funcoes",
+      pessoaIds: ["sintetico-pessoa-a"],
+      ano: 2003,
+      dataValor: "2003-03",
+      dataPrecisao: "mes",
+    });
+  });
+
+  it("não liga os pontos entre si: só há pontos, nenhuma linha", () => {
+    expect(new Set(colecao.features.map((ponto) => ponto.geometry.type))).toEqual(new Set(["Point"]));
+  });
+
   it("referência a lugar ausente é ignorada em vez de quebrar o mapa", () => {
-    expect(buildEventFeatures(data.acontecimentos, []).features).toEqual([]);
+    expect(buildEventPoints(acontecimentos, []).features).toEqual([]);
+  });
+
+  it("coleção vazia é válida", () => {
+    expect(buildEventPoints([], lugares)).toEqual({ type: "FeatureCollection", features: [] });
+  });
+
+  it("recorta os pontos de um conjunto de acontecimentos, mantendo todos os de cada um", () => {
+    const recorte = filterPoints(colecao, [{ id: "sintetico-evento-03" }, { id: "sintetico-evento-04" }]);
+    expect(recorte.features.map((ponto) => ponto.id)).toEqual([
+      "sintetico-evento-03@sintetico-lugar-sudeste",
+      "sintetico-evento-03@sintetico-lugar-sul",
+    ]);
+    expect(filterPoints(colecao, []).features).toEqual([]);
   });
 });
 

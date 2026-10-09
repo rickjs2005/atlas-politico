@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
 import { EditionStatus } from "@/components/EditionStatus";
-import { getPublishedSet } from "@/lib/content/published";
+import { getAtlasData } from "@/lib/content/published";
 import { PROFILES } from "@/lib/domain/profiles";
 
 export const metadata: Metadata = { title: "Comparar" };
 
 export default function ComparePage() {
-  const { edicao } = getPublishedSet();
+  const { edicao } = getAtlasData().conjunto;
   const nomes = PROFILES.map((perfil) => perfil.nome).join(" e ");
 
   return (

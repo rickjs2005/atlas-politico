@@ -3,8 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { EditionStatus } from "@/components/EditionStatus";
-import { getPublishedSet } from "@/lib/content/published";
-import { compareDates, formatDate } from "@/lib/domain/dates";
+import { getAtlasData } from "@/lib/content/published";
+import { filterEvents, findPersonBySlug } from "@/lib/data/queries";
+import { formatDate } from "@/lib/domain/dates";
 import { PROFILES, findProfile } from "@/lib/domain/profiles";
 
 // As rotas de perfil vêm do escopo da edição (PROFILES), não do conteúdo: a
@@ -27,20 +28,16 @@ export default async function ProfilePage({ params }: PageProps<"/politicos/[slu
   const perfil = findProfile(slug);
   if (!perfil) notFound();
 
-  const conjunto = getPublishedSet();
-  const pessoa = conjunto.pessoas.find((item) => item.slug === slug);
-  const acontecimentos = pessoa
-    ? conjunto.acontecimentos
-        .filter((item) => item.pessoaIds.includes(pessoa.id))
-        .sort((a, b) => compareDates(a.data, b.data))
-    : [];
+  const data = getAtlasData();
+  const pessoa = findPersonBySlug(data, slug);
+  const acontecimentos = pessoa ? filterEvents(data, { pessoaIds: [pessoa.id] }) : [];
 
   return (
     <div className="space-y-8">
       <header className="max-w-3xl space-y-4">
         <h1 className="font-serif text-4xl leading-tight">{perfil.nome}</h1>
         {pessoa && <p className="text-lg">{pessoa.resumo}</p>}
-        <EditionStatus edicao={conjunto.edicao} />
+        <EditionStatus edicao={data.conjunto.edicao} />
       </header>
 
       <section aria-labelledby="acontecimentos" className="space-y-3">

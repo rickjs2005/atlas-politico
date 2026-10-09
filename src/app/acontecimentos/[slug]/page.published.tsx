@@ -1,5 +1,5 @@
-// Uma página por acontecimento do conjunto publicado. Rascunhos não passam
-// por `getPublishedSet`, então não ganham endereço.
+// Uma página por acontecimento dos dados gerados. Rascunhos não passam pelo
+// gerador, então não ganham endereço.
 //
 // O nome `page.published.tsx` é proposital: o `next.config.ts` só trata este
 // arquivo como rota quando existe ao menos um acontecimento publicado, porque
@@ -12,8 +12,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { EventPanel } from "@/features/events/EventPanel";
-import { getPublishedSet } from "@/lib/content/published";
-import { resolveEvent } from "@/lib/domain/resolve";
+import { getAtlasData } from "@/lib/content/published";
+import { findEventBySlug, getEventView } from "@/lib/data/queries";
 
 interface EventPageProps {
   params: Promise<{ slug: string }>;
@@ -22,13 +22,13 @@ interface EventPageProps {
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getPublishedSet().acontecimentos.map(({ slug }) => ({ slug }));
+  return getAtlasData().conjunto.acontecimentos.map(({ slug }) => ({ slug }));
 }
 
 function findEvent(slug: string) {
-  const conjunto = getPublishedSet();
-  const acontecimento = conjunto.acontecimentos.find((item) => item.slug === slug);
-  return acontecimento ? resolveEvent(acontecimento, conjunto) : null;
+  const data = getAtlasData();
+  const acontecimento = findEventBySlug(data, slug);
+  return acontecimento ? getEventView(data, acontecimento) : null;
 }
 
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {

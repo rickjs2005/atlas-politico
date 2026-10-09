@@ -15,7 +15,8 @@ import {
 } from "maplibre-gl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
-import type { EventFeatureCollection } from "./features";
+import type { EventPointCollection } from "@/lib/data/types";
+
 import {
   INITIAL_BOUNDS,
   MAP_LAYERS,
@@ -38,7 +39,7 @@ const MAP_LOCALE = {
 };
 
 export interface MapCanvasProps {
-  features: EventFeatureCollection;
+  features: EventPointCollection;
   selectedSlug: string | null;
   onSelect: (slug: string) => void;
   onReady: () => void;

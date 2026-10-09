@@ -9,21 +9,26 @@ import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 //   page.dev.tsx        só é rota no servidor de desenvolvimento. É como a tela
 //                       de prova técnica e as fixtures sintéticas que ela
 //                       importa ficam fora do grafo do build de produção.
-//   page.published.tsx  só é rota quando o conjunto publicado tem ao menos um
+//   page.published.tsx  só é rota quando os dados gerados têm ao menos um
 //                       acontecimento. A exportação estática recusa rota
 //                       dinâmica cujo generateStaticParams devolve lista vazia.
 const BASE_PAGE_EXTENSIONS = ["tsx", "ts"];
 const DEV_PAGE_EXTENSION = "dev.tsx";
 const PUBLISHED_PAGE_EXTENSION = "published.tsx";
 
+// Lê o manifesto que `npm run data:build` grava (docs/DATA-PIPELINE.md). Os
+// comandos `dev` e `build` geram os dados antes de o Next ler esta
+// configuração.
 function hasPublishedEvents(): boolean {
-  const arquivo = path.join(process.cwd(), "content", "published", "acontecimentos.json");
-  if (!existsSync(arquivo)) return false;
+  const manifesto = path.join(process.cwd(), "generated", "manifest.json");
+  if (!existsSync(manifesto)) return false;
   try {
-    const lista: unknown = JSON.parse(readFileSync(arquivo, "utf8").replace(/^﻿/, ""));
-    return Array.isArray(lista) && lista.length > 0;
+    const { contagens } = JSON.parse(readFileSync(manifesto, "utf8")) as {
+      contagens?: { acontecimentos?: unknown };
+    };
+    return typeof contagens?.acontecimentos === "number" && contagens.acontecimentos > 0;
   } catch {
-    // JSON ilegível: a validação de conteúdo acusa o erro em qualquer página.
+    // Manifesto ilegível: a leitura dos dados acusa o erro em qualquer página.
     return false;
   }
 }

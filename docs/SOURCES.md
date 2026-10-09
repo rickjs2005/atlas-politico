@@ -20,7 +20,7 @@ Catálogo das fontes da edição 0.1.0 e critérios de uso. Todas as fontes fora
 - **Senado e Câmara, dados abertos:** respostas JSON das APIs.
 - **Segunda passagem:** para cada citação foram anotados os trechos literais que a sustentam, e um verificador conferiu se cada trecho existe na cópia baixada do documento. Resultado: 166 citações, 382 trechos conferidos, nenhuma falha. A lista de trechos está em `docs/evidencias/provas-2026-10-08.json`.
 
-As cópias baixadas não fazem parte do repositório. Para repetir a conferência é preciso baixar os documentos de novo; transformar isso em comando é trabalho da fase 3.
+As cópias baixadas não fazem parte do repositório. Para repetir a conferência é preciso baixar os documentos de novo. Transformar isso em comando ficou fora da fase 3 (DECISIONS.md, D-36): o pipeline de dados não baixa nada. O relatório `npm run data:report` informa quantas citações de registros publicados têm trecho registrado.
 
 ## Catálogo
 

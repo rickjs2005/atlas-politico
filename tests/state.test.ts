@@ -8,9 +8,9 @@ import {
   transition,
 } from "@/lib/state/selectors";
 
-import { loadExplorerData, slugs } from "./helpers";
+import { loadAtlasData, slugs } from "./helpers";
 
-const data = loadExplorerData();
+const data = loadAtlasData();
 const PESSOA_A = "sintetico-pessoa-a";
 const PESSOA_B = "sintetico-pessoa-b";
 

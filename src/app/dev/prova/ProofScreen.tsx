@@ -3,26 +3,32 @@
 // Parte interativa da prova: lista, mapa e painel lendo o mesmo estado.
 // Verifica a arquitetura, não o desenho final da exploração.
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { EventList } from "@/features/events/EventList";
 import { EventPanel } from "@/features/events/EventPanel";
-import { buildEventFeatures } from "@/features/map/features";
 import { MapView } from "@/features/map/MapView";
-import { resolveEvent } from "@/lib/domain/resolve";
+import { filterPoints } from "@/lib/data/points";
+import { getEventView } from "@/lib/data/queries";
+import type { AtlasData } from "@/lib/data/types";
 import { AtlasStateProvider, useAtlas } from "@/lib/state/AtlasStateProvider";
 import { INITIAL_STATE } from "@/lib/state/atlas-state";
-import type { ExplorerData } from "@/lib/state/selectors";
+
+/** `sintetico`: fixtures de teste. `real`: os dados gerados da edição atual. */
+type ProofVariant = "sintetico" | "real";
 
 interface ProofScreenProps {
-  data: ExplorerData;
+  data: AtlasData;
+  /** Acontecimentos que o pipeline deixou fora da publicação. */
   draftCount: number;
+  variant: ProofVariant;
 }
 
-export function ProofScreen({ data, draftCount }: ProofScreenProps) {
+export function ProofScreen({ data, draftCount, variant }: ProofScreenProps) {
   return (
     <AtlasStateProvider data={data} initialState={{ ...INITIAL_STATE, comparar: true }}>
-      <ProofLayout draftCount={draftCount} />
+      <ProofLayout draftCount={draftCount} variant={variant} />
     </AtlasStateProvider>
   );
 }
@@ -53,17 +59,16 @@ function restoreWebgl() {
   originalGetContext = null;
 }
 
-function ProofLayout({ draftCount }: { draftCount: number }) {
+function ProofLayout({ draftCount, variant }: Omit<ProofScreenProps, "data">) {
   const { state, dispatch, data, visible, selected } = useAtlas();
+  const { edicao } = data.conjunto;
   const [webglBlocked, setWebglBlocked] = useState(false);
   const [mapKey, setMapKey] = useState(0);
 
-  const features = useMemo(
-    () => buildEventFeatures(visible, data.lugares),
-    [visible, data.lugares],
-  );
+  // Os pontos vêm prontos do gerador; aqui só se recortam os do recorte visível.
+  const features = useMemo(() => filterPoints(data.pontos, visible), [data.pontos, visible]);
   const resolved = useMemo(
-    () => (selected ? resolveEvent(selected, data) : null),
+    () => (selected ? getEventView(data, selected) : null),
     [selected, data],
   );
 
@@ -91,11 +96,33 @@ function ProofLayout({ draftCount }: { draftCount: number }) {
   return (
     <div className="space-y-6">
       <header className="space-y-3">
-        <h1 className="font-serif text-3xl leading-tight">Prova técnica da fase 1</h1>
-        <p className="rounded-md border border-line bg-notice px-4 py-3 text-sm text-notice-ink">
-          <strong>Dados sintéticos.</strong> Todos os registros desta tela foram criados para
-          teste e não descrevem pessoas, lugares ou fatos reais. A tela existe só no servidor de
-          desenvolvimento e não entra no build de produção.
+        <h1 className="font-serif text-3xl leading-tight">
+          {variant === "real" ? "Prova técnica com os dados gerados" : "Prova técnica"}
+        </h1>
+        {variant === "real" ? (
+          <p className="rounded-md border border-line bg-notice px-4 py-3 text-sm text-notice-ink">
+            <strong>Dados reais{edicao ? ` da edição ${edicao.versao}` : ""}.</strong> Conjunto,
+            índices e pontos do mapa lidos de <code>generated/</code>, como o build os lê. A
+            conferência do conteúdo foi assistida por IA, e a revisão humana está pendente. A tela
+            existe só no servidor de desenvolvimento.
+          </p>
+        ) : (
+          <p className="rounded-md border border-line bg-notice px-4 py-3 text-sm text-notice-ink">
+            <strong>Dados sintéticos.</strong> Todos os registros desta tela foram criados para
+            teste e não descrevem pessoas, lugares ou fatos reais. A tela existe só no servidor de
+            desenvolvimento e não entra no build de produção.
+          </p>
+        )}
+        <p className="text-sm">
+          {variant === "real" ? (
+            <Link href="/dev/prova" className="underline">
+              Ver a prova com dados sintéticos
+            </Link>
+          ) : (
+            <Link href="/dev/dados" className="underline">
+              Ver a prova com os dados gerados da edição
+            </Link>
+          )}
         </p>
       </header>
 
@@ -109,7 +136,7 @@ function ProofLayout({ draftCount }: { draftCount: number }) {
           >
             Todas
           </button>
-          {data.pessoas.map((pessoa) => (
+          {data.conjunto.pessoas.map((pessoa) => (
             <button
               key={pessoa.id}
               type="button"

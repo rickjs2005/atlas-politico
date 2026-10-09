@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 
+import type { AtlasData } from "@/lib/data/types";
 import type { Acontecimento } from "@/lib/domain/types";
 
 import { INITIAL_STATE, type AtlasAction, type AtlasState } from "./atlas-state";
@@ -21,13 +22,12 @@ import {
   selectSelectedEvent,
   selectVisibleEvents,
   transition,
-  type ExplorerData,
 } from "./selectors";
 
 interface AtlasContextValue {
   state: AtlasState;
   dispatch: Dispatch<AtlasAction>;
-  data: ExplorerData;
+  data: AtlasData;
   /** Acontecimentos do recorte atual, em ordem cronológica. */
   visible: Acontecimento[];
   selected: Acontecimento | null;
@@ -36,7 +36,7 @@ interface AtlasContextValue {
 const AtlasContext = createContext<AtlasContextValue | null>(null);
 
 interface AtlasStateProviderProps {
-  data: ExplorerData;
+  data: AtlasData;
   initialState?: AtlasState;
   children: ReactNode;
 }

@@ -1,6 +1,8 @@
 # Modelo de dados
 
-Fase 1. Os contratos estão em `src/lib/domain/schemas.ts` (Zod), e os tipos TypeScript são inferidos deles. Um conjunto completo e válido, com todos os casos abaixo, está em `tests/fixtures/sintetico/`.
+Os contratos estão em `src/lib/domain/schemas.ts` (Zod), e os tipos TypeScript são inferidos deles. Um conjunto completo e válido, com todos os casos abaixo, está em `tests/fixtures/sintetico/`.
+
+Este documento descreve os registros como são escritos em `content/`. O que o gerador faz com eles (o que entra na publicação, os índices e o GeoJSON) está em [DATA-PIPELINE.md](DATA-PIPELINE.md).
 
 ## Convenções
 
@@ -9,7 +11,7 @@ Fase 1. Os contratos estão em `src/lib/domain/schemas.ts` (Zod), e os tipos Typ
 - Todo objeto é estrito: campo desconhecido é erro. Isso pega erro de digitação no nome de um campo.
 - Texto obrigatório não pode ser vazio nem só espaços.
 - "Não sabemos" é sempre um valor escrito, nunca um campo ausente.
-- O prefixo `sintetico-` em um `id` é reservado aos dados de teste e proibido no conjunto publicado.
+- O prefixo `sintetico-` em um `id` é reservado aos dados de teste e proibido nas pastas de conteúdo.
 
 ## Relacionamentos
 
@@ -139,7 +141,7 @@ O uso que um registro faz de uma fonte.
 |---|---|---|
 | `versao` | `1.0.0` | Versão do conteúdo |
 | `dataDeCorte` | data completa | Nenhum acontecimento é posterior a ela |
-| `revisao` | `{ revisadoPor, revisadoEm, observacoes? }` | Última revisão do conjunto |
+| `revisao` | `{ tipo, revisadoPor, revisadoEm, observacoes? }` | Última revisão do conjunto |
 | `cobertura` | lista de `{ pessoaId, periodo, observacao? }` | Período que o conjunto cobre para cada pessoa |
 | `alteracoes` | lista de `{ data, descricao, itens }` | Registro de alterações. `itens` aponta os registros afetados (`{ entidade, id }`) |
 
@@ -224,7 +226,7 @@ Uma lista de lugares vazia não é aceita. Acontecimentos sem ponto continuam na
 |---|---|---|
 | `rascunho` | `pendencias` opcional | Não |
 | `em-revisao` | `pendencias` opcional | Não |
-| `revisado` | `revisao` obrigatória: tipo, quem e quando | Sim |
+| `revisado` | `revisao` obrigatória: tipo, quem e quando | Sim, se estiver em `content/published/` e tudo o que cita também entrar |
 
 Vale para os registros factuais: pessoa, mandato, filiação e acontecimento.
 
@@ -238,9 +240,9 @@ Vale para os registros factuais: pessoa, mandato, filiação e acontecimento.
 A revisão da edição (`edicao.revisao`) usa o mesmo formato.
 
 1. **Revisado exige evidência.** Um registro revisado precisa de ao menos uma citação, e toda citação diz onde está o trecho e o que ele sustenta.
-2. **Rascunho pode estar incompleto de fontes.** É o estado de quem ainda está pesquisando.
-3. **Só o revisado é publicado.** O conjunto que alimenta as páginas recusa qualquer registro em outro estado.
-4. **Dado sintético nunca é publicado.** O conjunto publicado recusa qualquer `id` ou `slug` com o prefixo `sintetico-`.
+2. **Rascunho pode estar incompleto de fontes.** É o estado de quem ainda está pesquisando. Pode também citar um registro que ainda não foi cadastrado: vira pendência no relatório. O resto do contrato vale igual: data impossível ou campo desconhecido é erro também em rascunho.
+3. **Só o revisado é publicado.** O gerador deixa fora qualquer registro em outro estado e o lista como pendência. A regra completa está em DATA-PIPELINE.md, seção Elegibilidade.
+4. **Dado sintético nunca é publicado.** Um `id` ou `slug` com o prefixo `sintetico-` nas pastas de conteúdo é erro e interrompe a geração.
 
 ### Comparação e cobertura
 
@@ -252,29 +254,37 @@ A comparação entre as duas trajetórias depende de três garantias do modelo:
 
 ## Onde cada regra é verificada
 
-| Regra | Onde | Quando falha |
+Desde a fase 3, quem confere é o pipeline de dados, em `npm run data:validate` e em `npm run data:build` (que `npm run dev` e `npm run build` chamam).
+
+| Regra | Onde | Severidade |
 |---|---|---|
-| Formato de cada registro, datas, períodos, coordenadas, evidência do revisado | `schemas.ts` | Na leitura do conteúdo |
-| `id` único por coleção | `checkIntegrity` | Na leitura do conteúdo |
-| `slug` único em pessoas e em acontecimentos | `checkIntegrity` | Na leitura do conteúdo |
-| Referências: `pessoaId`, `pessoaIds`, `lugarIds`, `fonteId`, `retratoId`, `imagemId`, cobertura | `checkIntegrity` | Na leitura do conteúdo |
-| Acontecimento até a data de corte | `checkIntegrity` | Na leitura do conteúdo |
-| Só revisados, sem sintéticos | `checkPublication` | Ao ler `content/published/` |
-| Rascunhos válidos, coerentes com o publicado e com pendência escrita | Teste "content/drafts do repositório" | Em `npm run test` |
-| Arquivo de cada imagem cadastrada existe em `public/` | Teste "content/published do repositório" | Em `npm run test` |
-| Rascunho sem página e publicado com página | `scripts/check-export.mjs` | Depois do build |
-| Arquivo fora do contrato, JSON ilegível | `loadContentSet` | Na leitura do conteúdo |
-| Nenhum dado sintético na saída | `scripts/check-export.mjs` | Depois do build |
+| Arquivo fora do contrato, JSON ilegível, arquivo que não é lista | `src/lib/content/sources.ts` e `validate.ts` | Erro |
+| Formato de cada registro, datas, períodos, coordenadas, evidência do revisado | `schemas.ts`, aplicado registro por registro | Erro |
+| `id` único por coleção e `slug` único em pessoas e em acontecimentos, somando as duas pastas | `validate.ts` | Erro |
+| Pessoa ou lugar repetido no mesmo acontecimento | `validate.ts` | Erro |
+| Referências: `pessoaId`, `pessoaIds`, `lugarIds`, `fonteId`, `retratoId`, `imagemId`, cobertura | `validate.ts` | Erro no revisado, pendência no rascunho |
+| Revisado só cita o que entra na publicação | `validate.ts` | Erro |
+| Acontecimento e limites de período até a data de corte | `validate.ts` | Erro no revisado, pendência no rascunho |
+| Documento não é posterior ao acesso | `validate.ts` | Erro na edição, pendência nos rascunhos |
+| Arquivo de cada imagem existe, é do formato da extensão e tem as dimensões declaradas | `validate.ts`, com a sonda de `src/lib/content/media.ts` | Erro na edição, pendência nos rascunhos |
+| Nenhum dado sintético nas pastas de conteúdo | `validate.ts` | Erro |
+| Rascunho com pendência escrita, cadastro sem uso, filiações sobrepostas, cobertura, itens do registro de alterações | `validate.ts` | Aviso |
+| A saída montada passa de novo pelo contrato, por `checkIntegrity` e `checkPublication`, e bate com os índices e os pontos | `verifyAtlasData`, em `build.ts` | Erro |
+| Rascunho sem página e publicado com página; nenhum dado sintético na saída | `scripts/check-export.mjs` | Depois do build |
 
-Todas falham com a lista completa de problemas, cada um com o caminho do registro e do campo, por exemplo `lugares["brasilia"].latitude`.
+Todo diagnóstico aponta arquivo, entidade, `id`, campo e motivo:
 
-Ficam para a fase 3: relatório de campos incompletos, índices por pessoa, ano, categoria e lugar, conferência dos `itens` do registro de alterações, sobreposição de mandatos e filiações, e o comando que promove rascunhos revisados.
+```
+content/published/lugares.json · lugar "brasilia" · latitude: Valor acima do máximo (90).
+```
+
+A lista de códigos e o significado de erro, pendência e aviso estão em DATA-PIPELINE.md, seção Diagnósticos.
 
 ## Como o primeiro conjunto usa o modelo
 
 Notas da fase 2, para quem for editar o conteúdo:
 
-- **Rascunhos:** `content/drafts/acontecimentos.json` é uma coleção parcial. Os rascunhos citam pessoas, lugares e fontes de `content/published/`.
+- **Rascunhos:** `content/drafts/` guarda coleções parciais, com os mesmos nomes de arquivo. Os rascunhos podem citar pessoas, lugares e fontes de `content/published/`. `id` e `slug` são únicos somando as duas pastas.
 - **Filiação sem data documentada:** quando só se sabe que a pessoa concorreu por um partido em certos anos, o período fica com início e fim `desconhecida`, e a citação diz em que eleições o partido aparece.
 - **Cargo com vários mandatos seguidos e datas de posse não documentadas:** um único registro, com o período total e a observação no nome do cargo. É o caso dos quatro mandatos de deputado estadual.
 - **Lugar de decisão judicial:** o município-sede do tribunal, quando aparece no documento lido.
@@ -306,7 +316,7 @@ Um acontecimento revisado, com data de mês e dois lugares:
   ],
   "editorial": {
     "estado": "revisado",
-    "revisao": { "revisadoPor": "Nome de quem revisou", "revisadoEm": "2026-10-08" }
+    "revisao": { "tipo": "humana", "revisadoPor": "Nome de quem revisou", "revisadoEm": "2026-10-08" }
   }
 }
 ```

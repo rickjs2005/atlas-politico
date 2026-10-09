@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 import { EditionStatus } from "@/components/EditionStatus";
-import { getPublishedSet } from "@/lib/content/published";
+import { getAtlasData } from "@/lib/content/published";
 import { PROFILES } from "@/lib/domain/profiles";
 
 export default function HomePage() {
-  const { edicao } = getPublishedSet();
+  const { edicao } = getAtlasData().conjunto;
 
   return (
     <div className="space-y-10">
