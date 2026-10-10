@@ -67,6 +67,8 @@ const SCREENS = [
   { nome: "06-acontecimento", url: `/acontecimentos/${alvo.slug}/` },
   { nome: "07-metodologia", url: "/metodologia/" },
   { nome: "08-pagina-nao-encontrada", url: "/endereco-que-nao-existe/", status: 404 },
+  { nome: "09-jogo-entrada", url: "/jogo/" },
+  { nome: "10-jogo-cena", url: "/jogo/lula/", jogo: true },
 ];
 const VIEWPORTS = [
   { sufixo: "computador", width: 1440, height: 900 },
@@ -245,6 +247,11 @@ async function settle(page, screen) {
     // Em tela estreita o mapa fica em outra vista, e não é montado.
     await page.waitForSelector(".maplibregl-canvas, [data-map-fallback]", { timeout: 15_000 }).catch(() => {});
     await page.waitForTimeout(600);
+  }
+  if (screen.jogo) {
+    // A cena do jogo é carregada só no navegador.
+    await page.waitForSelector('[data-palco="pronto"]', { timeout: 15_000 }).catch(() => {});
+    await page.waitForTimeout(400);
   }
 }
 

@@ -9,6 +9,8 @@ import { getCoveredSpan, getSharedSpan, listGaps } from "@/lib/data/coverage";
 import { filterEvents, findPersonBySlug, getImage } from "@/lib/data/queries";
 import { formatDate } from "@/lib/domain/dates";
 import { PROFILES } from "@/lib/domain/profiles";
+import { countPlayableChapters } from "@/lib/game/content";
+import { gameHref } from "@/lib/state/links";
 
 export default function HomePage() {
   const data = getAtlasData();
@@ -25,9 +27,12 @@ export default function HomePage() {
         retrato: getImage(data, pessoa.retratoId),
         coberto: getCoveredSpan(data, pessoa.id),
         acontecimentos: filterEvents(data, { pessoaIds: [pessoa.id] }),
+        // Capítulos do jogo que os registros publicados já permitem jogar.
+        capitulos: countPlayableChapters(data, perfil.slug),
       },
     ];
   });
+  const temJogo = perfis.some((perfil) => perfil.capitulos > 0);
   const escala = getSharedSpan(data);
 
   return (
@@ -37,7 +42,7 @@ export default function HomePage() {
           números ficam à esquerda, centrados na altura dos cartões. */}
       <section className="grid gap-x-16 gap-y-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,40rem)] lg:gap-y-8">
         <header className="space-y-4 md:space-y-5 lg:self-end">
-          <p className="eyebrow text-ink-soft">Linha do tempo · Mapa · Fontes</p>
+          <p className="eyebrow text-ink-soft">Linha do tempo · Mapa · Fontes · Jogo</p>
           <h1 className="font-serif text-[3.25rem] font-medium leading-[0.95] tracking-[-0.02em] md:text-7xl">
             Atlas Político
           </h1>
@@ -107,6 +112,40 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
+          )}
+          {/* O jogo: o mesmo acesso para os dois, logo abaixo de cada cartão. */}
+          {temJogo && (
+            <div className="grid grid-cols-2 gap-3 md:gap-5" data-secao="jogo">
+              {perfis.map(({ pessoa, capitulos }) =>
+                capitulos === 0 ? (
+                  <span key={pessoa.id} />
+                ) : (
+                  <IntentLink
+                    key={pessoa.id}
+                    href={gameHref(pessoa.slug)}
+                    data-jogar-entrada={pessoa.slug}
+                    className="flex min-h-11 flex-col items-center justify-center border border-ink bg-ink px-3 py-2 text-center text-sm font-medium leading-tight text-paper no-underline hover:bg-ink-soft"
+                  >
+                    <span>Jogar com {pessoa.nome}</span>
+                    <span className="numerals text-xs font-normal text-paper/80">
+                      {capitulos} {capitulos === 1 ? "capítulo" : "capítulos"}
+                    </span>
+                  </IntentLink>
+                ),
+              )}
+            </div>
+          )}
+          {temJogo && (
+            <p className="text-sm text-ink-soft">
+              No jogo, você percorre cada trajetória em capítulos e recolhe os registros do atlas.{" "}
+              <Link
+                href={gameHref()}
+                prefetch={false}
+                className="inline-flex min-h-11 items-center font-medium underline decoration-line-strong hover:decoration-ink md:min-h-0"
+              >
+                Como é o jogo
+              </Link>
+            </p>
           )}
           <div className="grid grid-cols-2 gap-3 md:gap-5">
             {perfis.map(({ pessoa, retrato }) =>

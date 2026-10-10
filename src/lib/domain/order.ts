@@ -11,6 +11,34 @@ export function compareText(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
+/**
+ * `id` dos registros cuja posição em relação a algum outro da lista as datas
+ * não decidem. Dois registros ficam assim quando os dias que as datas podem
+ * representar se cruzam: o mesmo dia, ou uma data parcial que contém a outra.
+ * Em um par de precisões diferentes, só o menos preciso é marcado: é a data
+ * dele que deixa a ordem em aberto.
+ *
+ * Uma lista sempre põe um item antes do outro. Quando a data de um deles é só
+ * o ano, essa posição é regra de ordenação, e não fato documentado.
+ */
+export function findUndeterminedOrder(items: readonly { id: string; data: DataHistorica }[]): Set<string> {
+  const intervalos = items.map((item) => calcInterval(item.data));
+  const marcados = new Set<string>();
+
+  items.forEach((item, indice) => {
+    const proprio = intervalos[indice]!;
+    const duracao = proprio.fim - proprio.inicio;
+    const emAberto = intervalos.some((outro, outroIndice) => {
+      if (outroIndice === indice) return false;
+      const cruzam = proprio.inicio <= outro.fim && outro.inicio <= proprio.fim;
+      return cruzam && duracao >= outro.fim - outro.inicio;
+    });
+    if (emAberto) marcados.add(item.id);
+  });
+
+  return marcados;
+}
+
 /** Ordem cronológica, com o `id` como desempate: dois registros nunca empatam. */
 export function compareByDate(
   a: { id: string; data: DataHistorica },

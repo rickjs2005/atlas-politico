@@ -251,6 +251,36 @@ html[data-consulta] [data-consulta-aviso] {
   }
 }
 
+/*
+  Palco do jogo (docs/GAMEPLAY.md): ocupa a altura da janela abaixo do
+  cabeçalho, para a cena dominar a tela ao abrir. Em janela muito baixa, mantém
+  um mínimo e a página rola.
+
+  As camadas do jogo (diálogos, transição, fim) ficam dentro de um contexto
+  de empilhamento próprio, abaixo do cabeçalho: o menu do site abre por cima.
+
+  O pixel a menos é o fio de baixo do cabeçalho, que não entra em
+  `--atlas-header-h`: sem ele, a página rolaria um pixel.
+*/
+.jogo-palco {
+  height: calc(100dvh - var(--atlas-header-h) - 1px);
+  min-height: 26rem;
+  isolation: isolate;
+}
+
+/*
+  Celular deitado: o palco cabe na janela, sem o mínimo, para o direcional e o
+  botão de ação, que ficam na base dele, estarem sempre à vista.
+*/
+@media (pointer: coarse) and (max-height: 30rem) {
+  .jogo-palco {
+    min-height: 0;
+  }
+}
+
+/* Janela baixa (celular deitado): o que fica sobre a cena encolhe. */
+@custom-variant janela-baixa (@media (max-height: 30rem));
+
 /* Rótulo pequeno em caixa alta: nome de seção, legenda de campo. */
 @utility eyebrow {
   font-family: var(--font-sans);

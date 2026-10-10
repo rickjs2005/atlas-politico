@@ -389,6 +389,7 @@ Não mudou. Os contornos têm 249 KB no disco e 69 KB transferidos, com as coord
 - **Uma página de cada tipo.** Um perfil e um acontecimento, dos 2 e dos 39 que existem.
 - **Os arquivos dos testes de fontes** foram gravados antes de uma correção no medidor. Para o script de um worker, o navegador informa corpo de tamanho zero, e o worker do mapa (141 KB) ficava fora do peso transferido das telas com mapa. O medidor passou a usar o tamanho que o servidor declara. `antes.json`, `depois.json` e os dois arquivos da página do acontecimento já foram medidos com a correção.
 - **Uma regra de CSS entrou depois da medição.** A conferência final achou um defeito no aviso do link com consulta, com movimento reduzido, e a correção acrescentou uma regra de três linhas à folha de estilo (118 bytes). O build não foi medido de novo por causa dela.
+- **As páginas do jogo não foram medidas.** O jogo entrou depois desta fase ([GAMEPLAY.md](GAMEPLAY.md)). O que os testes conferem é o que cada página pede: o palco em pacote à parte, só na página do jogo, e nenhuma página do atlas pedindo código do jogo. A cadência de quadros da cena foi medida em bancada, fora do projeto, só para comparar dois modos de desenhar (GAMEPLAY.md, seção Desenho por quadro).
 
 ## Pendências
 
@@ -398,6 +399,7 @@ Não mudou. Os contornos têm 249 KB no disco e 69 KB transferidos, com as coord
 4. **Bloqueio de 0,5 a 0,9 segundo no carregamento, no perfil de celular.** Não mudou nesta fase. Reduzir pede menos código de cliente na abertura de cada tela, que é um trabalho de outra ordem.
 5. **Dados de campo e INP,** depois da publicação.
 6. **Hospedagem** (fase 10): compressão, cache longo para `/_next/static/`, `404.html` e tipo de conteúdo dos arquivos `.mjs`. Medir de novo no endereço público.
+7. **Páginas do jogo.** Medir o carregamento com o medidor desta fase e a cadência de quadros em um aparelho real.
 7. **Passos do ajuste da saída:** rever a cada atualização do Next ou do MapLibre. Se o defeito sumir, o passo sai.
 8. **Fontes.** A Newsreader, com 129 KB, é o maior arquivo das páginas de leitura, e em celular com rede lenta o texto só assume a forma final perto de 2 segundos. Um subconjunto menor pede uma ferramenta que o projeto não tem instalada.
 9. **Navegador sem WebP** não mostra o retrato. Não há versão em outro formato.

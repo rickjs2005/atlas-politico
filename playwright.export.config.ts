@@ -39,7 +39,7 @@ export default defineConfig({
       // que são rotas de desenvolvimento e não existem no build.
       name: "jornadas",
       testDir: "tests/e2e",
-      testMatch: ["acabamento", "comparacao", "linha-do-tempo", "mapa", "paginas", "previa"].map(
+      testMatch: ["acabamento", "comparacao", "jogo", "linha-do-tempo", "mapa", "paginas", "previa"].map(
         (nome) => `**/${nome}.spec.ts`,
       ),
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },

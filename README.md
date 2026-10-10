@@ -1,8 +1,10 @@
 # Atlas Político
 
-Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa e acontecimentos acompanhados das fontes que os sustentam. Projeto de portfólio da MilWeb.
+Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa, acontecimentos acompanhados das fontes que os sustentam e, desde a primeira etapa do jogo, por capítulos jogáveis. Projeto de portfólio da MilWeb.
 
-**Estágio atual:** fases 1 a 8 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados, experiência e direção visual, aplicação com linha do tempo, mapa sincronizado, comparação, páginas e fontes, e acabamento visual e desempenho). A fase 9 está com a parte editorial e técnica feita e com a validação com pessoas pendente. O atlas tem a edição 0.1.1 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e as quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. A fase 5 tornou a exploração navegável no tempo: escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, abrir um acontecimento e ler os detalhes, com a consulta inteira no endereço. A fase 6 ligou o mapa a esse recorte: um marcador por lugar documentado, seleção nos dois sentidos, lista para os acontecimentos que dividem um lugar e leitura preservada quando o mapa falha. A fase 7 pôs a comparação no mesmo recorte para as duas pessoas, com a consulta no endereço; completou o perfil e a página de cada acontecimento, com fontes, créditos, revisão e edição; acrescentou **Copiar link** e o retorno com o recorte de antes; e escreveu a metodologia pública. A fase 8 fez o acabamento: retratos em versões locais do tamanho de cada tela, mapa carregado só quando vai ser usado, transições curtas que acompanham a seleção, abertura e leitura com a hierarquia revista, e o desempenho medido antes e depois ([docs/PERFORMANCE.md](docs/PERFORMANCE.md)). A fase 9 abriu de novo as 60 fontes, releu cada registro contra os documentos, corrigiu o que encontrou e testou as jornadas sobre a exportação estática ([docs/EDITORIAL-REVIEW.md](docs/EDITORIAL-REVIEW.md) e [docs/QA.md](docs/QA.md)); o roteiro da validação com três pessoas está pronto e ainda não foi aplicado ([docs/USER-VALIDATION.md](docs/USER-VALIDATION.md)). Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
+> **Projeto em desenvolvimento. Não use como fonte.** O conteúdo trata de duas pessoas públicas e foi conferido só com assistência de IA: nenhuma pessoa refez a revisão do conjunto, e a validação com leitores está pendente. O site não foi publicado: não há hospedagem, e as páginas levam `noindex`. Cada registro traz as fontes que o sustentam; em caso de dúvida, vale o documento citado.
+
+**Estágio atual:** fases 1 a 8 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados, experiência e direção visual, aplicação com linha do tempo, mapa sincronizado, comparação, páginas e fontes, e acabamento visual e desempenho). A fase 9 está com a parte editorial e técnica feita e com a validação com pessoas pendente. O atlas tem a edição 0.1.1 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e as quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. A fase 5 tornou a exploração navegável no tempo: escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, abrir um acontecimento e ler os detalhes, com a consulta inteira no endereço. A fase 6 ligou o mapa a esse recorte: um marcador por lugar documentado, seleção nos dois sentidos, lista para os acontecimentos que dividem um lugar e leitura preservada quando o mapa falha. A fase 7 pôs a comparação no mesmo recorte para as duas pessoas, com a consulta no endereço; completou o perfil e a página de cada acontecimento, com fontes, créditos, revisão e edição; acrescentou **Copiar link** e o retorno com o recorte de antes; e escreveu a metodologia pública. A fase 8 fez o acabamento: retratos em versões locais do tamanho de cada tela, mapa carregado só quando vai ser usado, transições curtas que acompanham a seleção, abertura e leitura com a hierarquia revista, e o desempenho medido antes e depois ([docs/PERFORMANCE.md](docs/PERFORMANCE.md)). A fase 9 abriu de novo as 60 fontes, releu cada registro contra os documentos, corrigiu o que encontrou e testou as jornadas sobre a exportação estática ([docs/EDITORIAL-REVIEW.md](docs/EDITORIAL-REVIEW.md) e [docs/QA.md](docs/QA.md)); o roteiro da validação com três pessoas está pronto e ainda não foi aplicado ([docs/USER-VALIDATION.md](docs/USER-VALIDATION.md)). Depois da fase 9 entrou a **primeira etapa do jogo**: o visitante escolhe uma das duas pessoas, controla um personagem por cenários isométricos e avança por dois capítulos de cada trajetória, recolhendo registros do atlas e cumprindo uma tarefa para abrir a passagem ao capítulo seguinte ([docs/GAMEPLAY.md](docs/GAMEPLAY.md)). Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
 
 ## Requisitos
 
@@ -60,7 +62,10 @@ As telas (docs/UX.md):
 | Acontecimento | http://localhost:3000/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/ |
 | Comparação | http://localhost:3000/comparar/ |
 | Metodologia | http://localhost:3000/metodologia/ |
+| Jogo: escolha do personagem | http://localhost:3000/jogo/ |
+| Jogo: os capítulos de cada personagem | http://localhost:3000/jogo/lula/ e http://localhost:3000/jogo/flavio-bolsonaro/ |
 | Guia de estados, só em desenvolvimento | http://localhost:3000/dev/previa/ |
+| Galeria da arte do jogo, só em desenvolvimento | http://localhost:3000/dev/jogo-arte/ |
 
 Na exploração, o período, as categorias e o acontecimento aberto ficam no endereço. O que está na tela pode ser recarregado, enviado por link e percorrido com voltar e avançar (docs/TIMELINE.md):
 
@@ -95,6 +100,8 @@ A comparação guarda o período e as categorias no endereço, e as páginas abr
 | A mesma página, vinda de uma consulta: o retorno devolve o recorte | http://localhost:3000/acontecimentos/lula-2018-prisao-em-curitiba/?de=2016&ate=2019&categorias=marcos-historicos |
 | O modelo de correção, já com o registro | http://localhost:3000/metodologia/?acontecimento=lula-2018-prisao-em-curitiba#correcao |
 
+No jogo (docs/GAMEPLAY.md): setas ou W, A, S e D para andar, e E, Enter ou espaço para interagir; em tela de toque, o direcional e o botão de ação. A saída de cada capítulo abre com todos os registros recolhidos e a tarefa cumprida. O botão **Capítulos e tarefas** faz tudo sem o cenário. O progresso fica no navegador, separado por personagem, e não vai ao endereço.
+
 **Copiar link** copia o endereço em que o atlas está aberto. Em uma página servida por `http` fora do próprio computador, o navegador não deixa copiar, e o link aparece em um campo.
 
 Telas de prova técnica, que só existem com `npm run dev` e não entram no build de produção:
@@ -113,7 +120,7 @@ Nas duas dá para:
 
 ## Dados
 
-O conteúdo é editado à mão em `content/`. As páginas não leem essa pasta: leem `generated/`, que um comando produz depois de validar tudo. O funcionamento completo está em [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
+O conteúdo fica em JSON, em `content/`, mantido direto no repositório, e não é gerado por comando. As páginas não leem essa pasta: leem `generated/`, que um comando produz depois de validar tudo. O funcionamento completo está em [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
 
 | Comando | O que faz |
 |---|---|
@@ -163,15 +170,16 @@ Confira o resultado antes de continuar: o enquadramento é o mesmo critério par
 |---|---|
 | `npm run lint` | ESLint, incluindo as fronteiras entre camadas |
 | `npm run typecheck` | Gera os tipos de rota e roda o `tsc` |
-| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, endereço e histórico, comparação, endereços entre telas e retorno, versões dos retratos, pontos, lugares e câmera do mapa, linha do tempo, lista cronológica, cobertura e base visual, com o contraste das cores (Vitest) |
+| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, endereço e histórico, comparação, endereços entre telas e retorno, versões dos retratos, pontos, lugares e câmera do mapa, linha do tempo, lista cronológica, cobertura, base visual, com o contraste das cores, e o jogo: regras de missão, progresso, armazenamento, mundo, entrada de teclado e capítulos contra o conteúdo (Vitest) |
 | `npm run build` | Gera os dados e o site. Falha se o conteúdo estiver inválido |
 | `npm run verify:export` | Confere `out/`: páginas previstas, uma página por acontecimento publicado e nenhuma por rascunho, nenhuma rota de desenvolvimento, nenhum dado sintético, versões dos retratos publicadas, arquivos de navegação no lugar, nenhum arquivo do MapLibre sem uso e o pré-carregamento da fonte em todas as páginas |
 | `npm run check` | Os cinco acima, em sequência |
-| `npm run test:e2e` | As telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação, as páginas de perfil, de acontecimento e de metodologia e o acabamento (quatro larguras, transições, link com consulta e a jornada principal), em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
-| `npm run test:export` | Sobre a saída estática, depois de `npm run build`: o que cada página pede e quando, o mapa carregado só quando vai ser usado, as versões dos retratos e a navegação pré-carregada. Sobe o próprio servidor na porta 4311 |
+| `npm run test:e2e` | As telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação, as páginas de perfil, de acontecimento e de metodologia, o acabamento (quatro larguras, transições, link com consulta e a jornada principal) e o jogo (movimento, colisão, tarefa, saída, avanço, progresso, painel, toque em pé e deitado e os avisos editoriais), em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
+| `npm run test:export` | Sobre a saída estática, depois de `npm run build`: o que cada página pede e quando, o mapa carregado só quando vai ser usado, as versões dos retratos, a navegação pré-carregada e o palco do jogo em pacote à parte, pedido só na página do jogo, com a página sem JavaScript e a falha de um pacote. Sobe o próprio servidor na porta 4311 |
 | `npm run test:journeys` | As jornadas de `npm run test:e2e` com dados reais, rodadas sobre a saída estática, depois de `npm run build`. É o que mostra defeitos que o servidor de desenvolvimento esconde ([docs/QA.md](docs/QA.md)) |
-| `npm run audit:a11y` | Passagem de acessibilidade sobre a saída estática: contraste do texto desenhado, rolagem lateral, alvos e ordem de foco, em oito telas e quatro larguras. Grava capturas e um relatório em `test-results/a11y/` |
+| `npm run audit:a11y` | Passagem de acessibilidade sobre a saída estática: contraste do texto desenhado, rolagem lateral, alvos e ordem de foco, em dez telas (as oito do atlas e as duas do jogo) e quatro larguras. Grava capturas e um relatório em `test-results/a11y/` |
 | `npm run measure -- --rotulo <nome>` | Mede carregamento, estabilidade visual, peso e resposta das interações sobre a saída estática, e grava `docs/desempenho/<nome>.json`. Com `--contra <nome>=<pasta>`, mede dois builds alternando as execuções |
+| `npm run capture:game` | Refaz as capturas de `docs/capturas/jogo-etapa-1/`, tiradas da saída estática. Só registra as telas do jogo; a única conferência é que a página não esteja rolada na captura |
 | `npm run capture:finish` | Refaz as capturas de `docs/capturas/fase-8/`, tiradas da saída estática |
 | `npm run capture:pages` | Refaz as capturas de `docs/capturas/fase-7/`. Não confere nada: só registra as telas |
 | `npm run capture:map` | Refaz as capturas de `docs/capturas/fase-6/`. Não confere nada: só registra as telas |
@@ -184,7 +192,7 @@ Antes de qualquer entrega: `npm run check`, `npm run test:journeys`, `npm run te
 
 ```
 content/
-  published/     a edição: registros revisados, editados à mão
+  published/     a edição: registros no estado `revisado` (conferência assistida por IA)
   drafts/        pesquisa em andamento e importações
 generated/       dados gerados por `npm run data:build` (fora do Git)
 docs/            arquitetura, dados, experiência, desempenho, decisões, status e capturas
@@ -201,9 +209,11 @@ src/
     map/         mapa, marcadores, seletor de lugares, câmera e contornos da base
     timeline/    linha do tempo, período, categorias e cargos e partidos do período
     comparison/  trajetórias na mesma escala
+    game/        o jogo: casca, palco, desenho (draw/), motor (engine/) e interface (ui/)
   lib/
     domain/      regras e contratos de dados, sem I/O
     data/        formato dos dados públicos, índices, pontos e consultas
+    game/        regras do jogo, sem interface: capítulos, cenários, missão, progresso e mundo
     media/       molduras, larguras e nomes das versões dos retratos
     publication/ validação, elegibilidade, relatório e importação, sem I/O
     content/     leitura de content/ e leitura e gravação de generated/
@@ -227,6 +237,7 @@ tests/
 - [docs/TIMELINE.md](docs/TIMELINE.md): navegação temporal: troca de pessoa, filtros, datas, seleção, endereço, histórico e o contrato com o mapa.
 - [docs/MAP.md](docs/MAP.md): mapa: base e recursos locais, recorte, seleção, pontos sobrepostos, câmera, precisão, falhas e conferência.
 - [docs/COMPARISON.md](docs/COMPARISON.md): comparação: mesmo recorte e mesma escala, estado e endereço, datas e intervalos, linguagem e limites.
+- [docs/GAMEPLAY.md](docs/GAMEPLAY.md): jogo, etapa 1: fluxo, capítulos escolhidos, tarefas, regras editoriais, controles, progresso, arquitetura, direção visual e o que falta para os demais acontecimentos.
 - [docs/PAGES.md](docs/PAGES.md): perfis, página do acontecimento, fontes e créditos, copiar link, retorno, metodologia e configuração pendente.
 - [docs/PERFORMANCE.md](docs/PERFORMANCE.md): condições e resultados das medições antes e depois da fase 8, o que cada página carrega, imagens, fontes, mapa e limitações.
 - [docs/capturas/](docs/capturas/README.md): capturas reais das telas, por fase.

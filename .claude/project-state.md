@@ -3,7 +3,7 @@
 Tipo: institucional
 Stack: Next.js 16.4 (exportação estática) · React 19.3 · TypeScript 5.9 · Tailwind 4 · MapLibre GL JS 6 · Zod 4 · Vitest 5 · Playwright 1.63 · sharp 0.35 (só em desenvolvimento) · npm
 
-Nome provisório. Site estático de conteúdo, sem banco e sem login. A execução segue o plano próprio do projeto, em 10 fases (`Downloads/Atlas-Politico-Plano-de-Desenvolvimento.md`). O quadro de 16 fases abaixo é o padrão da MilWeb e fica como visão de entrega.
+Nome provisório. Site estático de conteúdo, sem banco e sem login. A execução segue o plano próprio do projeto, em 10 fases, que não faz parte do repositório. O quadro de 16 fases abaixo é o padrão da MilWeb e fica como visão de entrega.
 
 ## Plano do projeto (10 fases)
 Fase 1 — Arquitetura e fundação                  ✓  (08/10/2026, commit 9be1013)
@@ -13,9 +13,12 @@ Fase 4 — Experiência e direção visual             ✓  (08/10/2026, commit 
 Fase 5 — Aplicação e linha do tempo               ✓  (09/10/2026, commit 86c6e38)
 Fase 6 — Mapa sincronizado                        ✓  (09/10/2026, commit f3d4772)
 Fase 7 — Comparação, páginas e fontes             ✓  (09/10/2026, commit ce22a56)
-Fase 8 — Acabamento visual e desempenho           ✓  (09/10/2026, SEM commit: na pasta de trabalho, à espera do pedido do Rick)
-Fase 9 — Revisão editorial, testes e validação    ◐  (09/10/2026, SEM commit: parte editorial e técnica feita com assistência de IA; VALIDAÇÃO COM 3 PESSOAS PENDENTE e revisão humana pendente)
+Fase 8 — Acabamento visual e desempenho           ✓  (09/10/2026; commitada na main e enviada ao GitHub em 10/10/2026)
+Fase 9 — Revisão editorial, testes e validação    ◐  (09/10/2026; commitada na main e enviada ao GitHub em 10/10/2026: parte editorial e técnica feita com assistência de IA; VALIDAÇÃO COM 3 PESSOAS PENDENTE e revisão humana pendente)
 Fase 10 — Publicação e apresentação               ○
+
+Fora do plano de 10 fases, a pedido do Rick:
+Jogo, etapa 1 — primeira versão jogável            ✓  (10/10/2026; commitada na main e enviada ao GitHub no mesmo dia: dois capítulos de cada personagem, jogáveis no build estático; arte por código; a saída só abre com todos os registros recolhidos e a tarefa cumprida, regra pedida pelo Rick no mesmo dia; revisão humana e validação com pessoas continuam PENDENTES)
 
 ## Progresso
 Fase 01 — Briefing        ◐
@@ -46,20 +49,26 @@ O que cada fase já tem e o que falta:
 - Fase 08: título e descrição por página e Open Graph de título e descrição nos perfis e nos acontecimentos. Faltam endereço canônico, `metadataBase`, sitemap, robots.txt, imagem de compartilhamento e JSON-LD, que dependem do domínio. A indexação segue bloqueada (`noindex`) até a revisão humana.
 - Fase 09: retratos em WebP por largura, com dimensões declaradas; mapa carregado só quando vai ser usado; fontes locais com a estratégia medida; LCP e CLS medidos em laboratório antes e depois, dentro das metas (docs/PERFORMANCE.md). Faltam Lighthouse em celular e em computador, INP e dados de campo, e a conferência em aparelho real.
 - Fase 10: contraste medido em teste e, na fase 9 do plano, sobre o texto desenhado em 8 telas e 4 larguras (`npm run audit:a11y`), foco visível, teclado na lista, na linha do tempo, nos filtros e nos marcadores do mapa, regiões nomeadas, avisos para leitor de tela e movimento reduzido. A fase 9 corrigiu os anos do eixo, que ficavam ilegíveis sob a hachura do período. Faltam leitor de tela real, zoom de texto e alvos de toque acima do mínimo nas marcas da linha do tempo (docs/QA.md).
-- Fase 13: iniciada na fase 9 do plano (docs/QA.md): jornadas sobre a exportação estática (184 testes) e no servidor de desenvolvimento (205), jornada principal no Chrome e no Edge instalados, endereços das fontes abertos, 404 conferida em quatro larguras. Faltam Firefox, Safari, aparelhos reais (Android, iPhone, tablet) e a validação com pessoas.
+- Fase 13: iniciada na fase 9 do plano (docs/QA.md): jornadas sobre a exportação estática e no servidor de desenvolvimento, jornada principal no Chrome e no Edge instalados, endereços das fontes abertos, 404 conferida em quatro larguras. Com o jogo, em 10/10/2026: 210 jornadas sobre a exportação e 231 em desenvolvimento. Faltam Firefox, Safari, aparelhos reais (Android, iPhone, tablet) e a validação com pessoas.
+- Fase 14: o repositório está no GitHub, público, na `main`, desde 10/10/2026, que é o primeiro item da fase. Hospedagem, domínio e deploy não começaram, e por isso a fase segue como não iniciada: o deploy é o último passo e só com autorização do Rick.
+- Jogo, etapa 1 (docs/GAMEPLAY.md e docs/STATUS.md, seção "Jogo, etapa 1"): `/jogo/` (escolha de personagem) e `/jogo/<personagem>/` (os capítulos). Quatro capítulos sobre 15 dos 39 acontecimentos, duas mecânicas de tarefa (encontrar um registro; ordenar dois), saída que só abre com a tarefa cumprida e todos os registros do capítulo recolhidos (D-109, pedido do Rick em 10/10/2026, depois de ver a primeira entrega), releitura de um registro recolhido pelo painel (D-110), progresso por personagem no navegador, painel que cumpre tudo sem o cenário, toque em pé e deitado. Arte toda por código, em canvas 2D, sem dependência nova. Entra nas fases 03, 04, 06, 07, 10 e 13 do quadro, sem mudar a situação de nenhuma. Faltam os capítulos dos outros 24 acontecimentos, aparelho real, leitor de tela e um olhar de fora sobre a arte.
 
 ## Bloqueios
 - Nenhum bloqueio técnico.
-- O conteúdo não pode ser publicado sem revisão humana. Roteiro em docs/EDITORIAL-REVIEW.md, seção Revisão humana.
+- O site não pode ser publicado sem revisão humana do conteúdo. Roteiro em docs/EDITORIAL-REVIEW.md, seção Revisão humana. O repositório é público desde 10/10/2026, por decisão do Rick: o conteúdo pode ser lido nos arquivos, e o README e cada registro dizem que a conferência foi assistida por IA.
 - A validação com três pessoas depende do Rick: aplicar docs/USER-VALIDATION.md e preencher as fichas. Sem ela, a fase 9 do plano não fecha.
 - Decisões do Rick ainda pendentes: quem assina a revisão humana, canal público de correção (D-70), domínio de publicação, como tratar as divergências entre documentos (dia do nascimento de Lula, fim da filiação de Flávio Bolsonaro ao Republicanos), nome definitivo do atlas e se o retrato de Flávio Bolsonaro (condição "uso livre com crédito") pode ser exibido em cinza e recortado (docs/DECISIONS.md, D-42).
 
 ## Próxima ação
-Aguardar o Rick. Três coisas dependem dele: (1) o pedido de commit das fases 8 e 9, que estão na pasta de trabalho; (2) aplicar a validação com três pessoas (docs/USER-VALIDATION.md) e trazer as fichas, ou dizer que quer seguir sem ela; (3) o comando para a fase 10 do plano (publicação e apresentação). Antes de retomar, ler docs/STATUS.md, seção "Fase 9", docs/QA.md e docs/EDITORIAL-REVIEW.md. Para conferir que nada quebrou, um comando de cada vez: `npm run check` (502 testes), `npm run test:journeys` (184, sobre o build), `npm run test:export` (16) e `npm run test:e2e` (205).
+Aguardar o Rick. Dependem dele: (1) aplicar a validação com três pessoas (docs/USER-VALIDATION.md) e trazer as fichas, ou dizer que quer seguir sem ela; (2) o comando para a etapa 2 do jogo ou para a fase 10 do plano (publicação e apresentação); (3) a decisão sobre a entrada do atlas virar a escolha de personagem do jogo (D-99). O deploy é o último passo e só acontece com autorização expressa do Rick. Antes de retomar, ler docs/STATUS.md, seções "Jogo, etapa 1" e "Fase 9", e docs/GAMEPLAY.md. Para conferir que nada quebrou, um comando de cada vez: `npm run check` (704 testes de regra e 50 páginas), `npm run test:journeys` (210, sobre o build), `npm run test:export` (32), `npm run test:e2e` (231) e `npm run audit:a11y`.
 
 Atenção ao retomar:
-- As fases 1 a 7 estão commitadas na `main` (`ce22a56`), só nesta máquina: o repositório não tem remoto e nada foi enviado. As fases 8 e 9 estão na pasta de trabalho, sem commit. Commit e push só com pedido.
-- Para dar um commit próprio à fase 8: a árvore do fim da fase 8 foi guardada como objeto do Git, `e09d078501317066a80f273808fbbb4f8da77397` (`git commit-tree <árvore> -p ce22a56 -m "..."` cria o commit; a fase 9 entra por cima, com o que está na pasta). O objeto não tem referência e pode ser recolhido pelo Git depois de algumas semanas: se sumir, as duas fases vão em um commit só.
+- Tudo está na `main`, em repositório público no GitHub (https://github.com/rickjs2005/atlas-politico), desde 10/10/2026: fases 1 a 9 e a etapa 1 do jogo. O versionamento é direto na `main`, sem ramos (pedido do Rick). Não há deploy: o site continua sem hospedagem e com `noindex`. Commit, push e deploy só com pedido; o deploy fica por último.
+- Jogo: abrir com `npm run build`, `npm run preview` e http://localhost:4311/jogo/. Capítulo novo é só configuração (`src/lib/game/chapters.ts`) e cenário (`src/lib/game/scenes/`); `npx vitest run tests/game-chapters.test.ts` confere os identificadores, as datas e o mapa. Regra que o teste cobra: todo registro de um capítulo vem antes, sem ambiguidade de data, de todo registro do seguinte. Texto de capítulo é inventário do que os registros dizem, na mesma forma para os dois personagens.
+- Jogo, regra da saída: `isExitOpen` em `src/lib/game/mission.ts` (a tarefa cumprida E todos os registros do capítulo). Um capítulo só consta como concluído com a saída aberta; progresso guardado pela regra anterior é acertado na leitura (`parseProgress`). As frases do que falta ficam em `src/features/game/ui/saida.ts`, para a cena, as janelas e o painel dizerem o mesmo. Em capítulo novo, todo registro tem de estar à vista e alcançável: um registro escondido trava o capítulo.
+- Jogo, arte: tudo é código em `src/features/game/draw/`. Para olhar sem jogar: `npm run dev` e http://localhost:3000/dev/jogo-arte/. Nenhum registro pode ficar na diagonal atrás da porta nem atrás de um objeto alto. O que é fixo na cena é desenhado uma vez, em telas prontas (`engine/render.ts`, D-106); objeto que se mexe tem de estar em `ANIMADOS`.
+- Jogo, testes e capturas: as janelas ignoram clique e toque por 350 ms ao abrir (D-107). O clique do Playwright dado nesse instante é repetido rolando a página; em roteiro de captura, esperar a janela aceitar ponteiro (`clicar`, em `tests/e2e/jogo-caminho.ts`, usado pelos testes e pelo roteiro de capturas). Depois de mexer no jogo, refazer as capturas (`npm run build` e `npm run capture:game`) e olhar uma a uma: foi assim que apareceram os dois últimos defeitos da etapa.
+- A máquina tem 8 GB: o servidor de desenvolvimento, a suíte de navegador e agentes em paralelo não cabem juntos. Rodar um comando pesado de cada vez.
 - Não dizer que o conteúdo teve revisão humana nem que o atlas foi validado com pessoas: as duas coisas estão pendentes, e os documentos dizem isso.
 - Mexeu em efeito do React, rodar `npm run test:journeys`: o servidor de desenvolvimento repete os efeitos e esconde defeito de ordem (foi assim que o link com consulta inválida ficou 6 segundos encoberto no build).
 - Para ver o que a pessoa recebe: `npm run build`, `npm run preview` e http://localhost:4311/. Em desenvolvimento: `npm run dev` e http://localhost:3000/politicos/lula/. Guia de estados em http://localhost:3000/dev/previa/.
@@ -74,10 +83,11 @@ Atenção ao retomar:
 Pendências pequenas:
 - Canal público de correção: preencher `SITE.correctionChannel` em `src/lib/site.ts` quando o Rick decidir. Até lá a metodologia diz que está pendente.
 - Domínio público: sem ele não há endereço canônico nem sitemap. **Copiar link** usa o endereço em que o atlas estiver aberto.
+- Jogo: nenhuma pessoa jogou, e a arte só foi julgada por quem fez (a crítica independente planejada não rodou). O toque só foi visto em emulação.
 - Nada foi visto em aparelho real: só Chromium, Chrome e Edge sem interface, com celular emulado. Firefox e Safari não foram conferidos (as versões instaladas com o Playwright são de outra versão; `npx playwright install firefox webkit`). Conferir em um celular real a jornada inteira, a barra do recorte presa ao topo, a cópia do link, a pinça e o arraste no mapa e, principalmente, o tempo para abrir a vista do mapa (perto de 4 segundos no perfil emulado de rede lenta).
 - Página do acontecimento em celular: o primeiro desenho ficou 112 ms mais tarde no perfil emulado (dentro da meta). Um terço vem do pré-carregamento da fonte; o resto não foi isolado (docs/PERFORMANCE.md).
 - `scripts/finalize-export.mjs` corrige três defeitos do build (arquivos de navegação em pastas no Windows, arquivos do MapLibre sem uso, páginas de acontecimento sem o pré-carregamento da fonte). Rever a cada atualização do Next ou do MapLibre.
-- Fase 10 do plano: a hospedagem precisa servir `404.html`, dar cache longo a `/_next/static/` e o tipo certo aos arquivos `.mjs`; a política de segurança de conteúdo precisa permitir o trecho de script do link com consulta; remover `robots: noindex` do layout.
+- Fase 10 do plano: a hospedagem precisa servir `404.html`, dar cache longo a `/_next/static/` e o tipo certo aos arquivos `.mjs`; a política de segurança de conteúdo precisa permitir o trecho de script do link com consulta; remover `robots: noindex` do layout; acrescentar o crédito do MapLibre GL JS (BSD-3-Clause) à metodologia; decidir a licença do repositório (hoje não há arquivo LICENSE: todos os direitos reservados).
 - Se o servidor de desenvolvimento continuar mostrando o CSS antigo depois de mexer em `globals.css`, reiniciar não basta: apagar `.next/dev` e subir de novo.
 - Os comandos só foram rodados no Node 24.15.0, no Windows.
 

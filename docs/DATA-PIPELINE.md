@@ -457,7 +457,7 @@ Coletores de sites e integrações recorrentes não foram feitos. Quando houver 
 - quantas citações de registros elegíveis têm trecho literal registrado em `docs/evidencias/`;
 - a lista de erros, pendências e avisos.
 
-O relatório não tem horário e é reproduzível. Uma cópia da edição 0.1.0 está em [DATA-REPORT.md](DATA-REPORT.md).
+O relatório não tem horário e é reproduzível. Uma cópia da edição 0.1.1 está em [DATA-REPORT.md](DATA-REPORT.md).
 
 ## Procedimento de atualização
 

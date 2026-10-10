@@ -16,7 +16,7 @@ import Link from "next/link";
 
 import type { YearSpan } from "@/lib/data/coverage";
 import type { Acontecimento } from "@/lib/domain/types";
-import { comparisonReturn, describeRecorte, profileReturn } from "@/lib/state/links";
+import { comparisonReturn, describeRecorte, gameReturn, profileReturn } from "@/lib/state/links";
 import { UrlWatcher, useOwnSearch } from "@/lib/state/location";
 
 interface EventReturnProps {
@@ -34,11 +34,25 @@ const carried = "text-xs font-normal text-ink-soft";
 export function EventReturn({ event, people, escala }: EventReturnProps) {
   const search = useOwnSearch(`/acontecimentos/${event.slug}`);
   const comparacao = comparisonReturn(search, escala);
+  // Quem abriu a ficha de dentro do jogo volta ao capítulo em que estava; o
+  // progresso fica no navegador, e abrir esta página não o altera.
+  const jogo = gameReturn(search, people);
 
   return (
     <nav aria-label="Voltar à exploração" className="mb-8 md:mb-10">
       <UrlWatcher />
       <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+        {jogo !== null && (
+          <li>
+            <Link href={jogo.href} prefetch={false} className={link} data-retorno="jogo">
+              <span>
+                <span aria-hidden="true">←&nbsp;</span>
+                Voltar ao jogo
+              </span>
+              <span className={carried}>trajetória de {jogo.pessoa.nome}</span>
+            </Link>
+          </li>
+        )}
         {comparacao !== null && (
           <li>
             <Link href={comparacao.href} prefetch={false} className={link} data-retorno="comparacao">

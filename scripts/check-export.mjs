@@ -21,6 +21,9 @@ const EXPECTED_PAGES = [
   "politicos/flavio-bolsonaro/index.html",
   "comparar/index.html",
   "metodologia/index.html",
+  "jogo/index.html",
+  "jogo/lula/index.html",
+  "jogo/flavio-bolsonaro/index.html",
 ];
 
 // Pastas que só existem como rota de desenvolvimento.

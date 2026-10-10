@@ -1,6 +1,6 @@
 # Status
 
-Atualizado em 9 de outubro de 2026.
+Atualizado em 10 de outubro de 2026.
 
 | Fase do plano | Situação |
 | --- | --- |
@@ -14,6 +14,186 @@ Atualizado em 9 de outubro de 2026.
 | 8. Acabamento visual e desempenho | Concluída em 09/10/2026, com medições de laboratório e pendências listadas abaixo |
 | 9. Revisão editorial, testes e validação com pessoas | Parte editorial e técnica feita em 09/10/2026, com assistência de IA. **Validação com pessoas pendente** e revisão humana do conteúdo pendente |
 | 10. Publicação e apresentação | Não iniciada |
+| Jogo, etapa 1 (fora do plano de 10 fases) | Primeira versão jogável feita em 10/10/2026: dois capítulos de cada personagem, conferidos no build estático. Revisão humana e validação com pessoas continuam pendentes |
+
+O código e o conteúdo estão em repositório público no GitHub desde 10 de outubro de 2026: https://github.com/rickjs2005/atlas-politico. Tudo é versionado na `main`, sem ramos. O site não foi publicado: não há hospedagem nem deploy, que é o último passo e depende de autorização do responsável pelo projeto.
+
+## Jogo, etapa 1 (primeira versão jogável)
+
+Depois da fase 9, o atlas ganhou uma direção nova: além de consultar, dá para **jogar** a trajetória. O visitante escolhe Lula ou Flávio Bolsonaro, controla um personagem por cenários isométricos e avança por capítulos; em cada um, recolhe todos os registros do atlas e cumpre uma tarefa para abrir a passagem ao capítulo seguinte. O documento do jogo é [GAMEPLAY.md](GAMEPLAY.md): fluxo, capítulos escolhidos, tarefas, regras editoriais, progresso, arquitetura e direção visual. As decisões vão de D-91 a D-110, em [DECISIONS.md](DECISIONS.md).
+
+| Parte | Situação |
+| --- | --- |
+| Dois capítulos jogáveis de cada personagem, com as duas mecânicas de tarefa | **Feito em 10/10/2026**, conferido no build estático |
+| Regra da saída: a porta só abre com todos os registros recolhidos e a tarefa cumprida | **Feita em 10/10/2026**, a pedido do responsável pelo projeto, depois da primeira entrega (D-109). Conferida no build estático |
+| Arte dos personagens, dos cenários e dos objetos | **Feita por código, com assistência de IA.** Conferida por quem fez, pelas capturas. A crítica independente da arte, que estava planejada, não aconteceu |
+| Revisão independente do código | **Feita com assistência de IA, em cinco lentes.** Duas lentes (editorial e carregamento) terminaram antes de o limite de uso da sessão interromper as outras; as três restantes (estado, entrada e acessibilidade, testes) rodaram depois, sobre o código já corrigido. Foram 40 achados, alguns repetidos entre as lentes, todos conferidos no código e corrigidos. A regra da saída, que veio depois, teve revisão própria em três lentes: 17 achados, 12 distintos, todos corrigidos |
+| Capítulos para os demais acontecimentos | **Não feitos.** 15 dos 39 acontecimentos estão em capítulos; faltam 24 |
+| Teste em aparelho real, com leitor de tela e em outros navegadores | **Não feito.** Toque e celular só em emulação |
+| Sessões com três pessoas | **Pendentes,** como na fase 9. Nenhuma pessoa jogou |
+| Revisão humana do conteúdo | **Pendente,** como desde a fase 2. O jogo usa o mesmo conteúdo, conferido com assistência de IA, e diz isso nas telas |
+| Publicação do site | **Não feita.** Não há deploy, e as páginas continuam com `noindex`. O código e o conteúdo estão em repositório público no GitHub, na `main`, desde 10/10/2026 |
+
+Para abrir: `npm run build`, `npm run preview` e `http://localhost:4311/jogo/`. Em desenvolvimento: `npm run dev` e `http://localhost:3000/jogo/`.
+
+### O que o pedido exigia e como ficou
+
+| Exigência | Situação | Como foi conferido |
+| --- | --- | --- |
+| Entrada com escolha clara entre os dois personagens e prévia do mundo | Atendido em `/jogo/`. A entrada do atlas leva ao jogo com um acesso por personagem (D-99) | Teste de navegador: os dois cartões iguais, em ordem alfabética, com a prévia desenhada |
+| A cena domina a tela ao iniciar | Atendido | A cena ocupa mais de 75% da altura da janela em 1440×900 e em 390×844, sem rolagem lateral |
+| Personagem de corpo inteiro, com caminhada, repouso, direção, colisão e câmera | Atendido | Testes de movimento e de colisão, de regra e no build; arte olhada na bancada e nas capturas |
+| Objetivo curto, objetos a encontrar e interação | Atendido | O objetivo fica sobre a cena, com a contagem dos registros recolhidos; perto de um registro, a pasta ganha destaque, com o anel e a dica; a tecla recolhe e abre o registro |
+| Saída bloqueada com a tarefa pendente; retorno claro e passagem aberta ao concluir | Atendido, com a regra pedida depois da primeira entrega: a saída abre com a tarefa cumprida e todos os registros recolhidos (D-109) | Teste: a porta segura o personagem e diz o que falta; com a tarefa cumprida e registros por recolher, continua fechada; com o último registro, o objetivo muda e a porta abre, na regra e no desenho |
+| Transição curta com novo período, novo cenário e novo objetivo | Atendido | Teste: a tela de transição traz o capítulo seguinte, e a cena, o cenário e o objetivo mudam |
+| Progresso por personagem, continuar e reiniciar com confirmação | Atendido | Teste: progresso separado, recuperado ao recarregar, reinício com confirmação e só para aquele personagem, com o personagem de volta ao início |
+| Setas, WASD e tecla de interação; toque confortável; pausa em diálogos, menus e perda de foco; teclas só na área do jogo | Atendido em emulação | Testes de teclado, de foco e de toque, em pé e deitado. A pausa por perda de foco da janela foi lida no código, sem teste automático |
+| Dois tipos de tarefa, sem botão de concluir, com nova tentativa sem punição | Atendido | Testes das regras e de navegador, com a resposta errada antes da certa, pelo teclado |
+| Guia fictício, sem fala atribuída, datas na precisão do registro, progresso sem avaliação | Atendido | Teste dos textos dos capítulos; leitura das telas; o registro de data parcial mostra os avisos do atlas |
+| Fatos e documentos fora do jogo; fichas, fontes, comparação e metodologia acessíveis | Atendido | As rotas do atlas não mudaram; o registro leva à ficha, e a ficha, de volta ao capítulo |
+| Separação entre dados, capítulos, regras, estado e desenho | Atendido | ARCHITECTURE.md, seção Jogo; o ESLint confere as fronteiras |
+| Progresso salvo com versão, dado inválido tratado, funciona sem armazenamento | Atendido | Testes do formato e do armazenamento; teste de navegador com o armazenamento bloqueado, com ida à ficha e volta |
+| Exportação estática, sem login, banco ou backend | Atendido | `npm run check` e a conferência da saída, com as três páginas do jogo |
+| Recursos do jogo só quando necessários; sem dois renderizadores pesados | Atendido | Teste sobre o build: o palco só é pedido na página do jogo, que não pede o mapa |
+| Abrir a ficha pelo jogo e voltar; link direto não altera o progresso | Atendido | Teste de navegador e teste dos endereços |
+| Caminho acessível por controles de interface, foco visível, contraste | Atendido, sem leitor de tela | O painel cumpre a tarefa e abre a saída sem o cenário; passagem de acessibilidade nas duas telas do jogo |
+| Redução de movimento | Atendido | O desenho e a casca recebem a preferência; os testes rodam com movimento reduzido, e um deles com o movimento ligado |
+| Personagens expressivos, objetos legíveis, cada capítulo com composição própria, sem blocos provisórios | Atendido, no juízo de quem fez | Quatro cenários com piso, paredes, objetos e porta próprios; três personagens com quatro direções e ciclo de caminhada. Nenhuma pessoa de fora avaliou |
+
+### O que foi entregue
+
+- **Rotas:** `/jogo/` (escolha de personagem, com prévia) e `/jogo/lula/` e `/jogo/flavio-bolsonaro/` (os capítulos), geradas no build. Item **Jogo** no menu e acesso **Jogar com** na entrada do atlas.
+- **Quatro capítulos:** dois de cada personagem, sobre 15 acontecimentos publicados, cada um com cenário próprio.
+- **Duas mecânicas:** encontrar um registro e organizar dois acontecimentos.
+- **Regra da saída:** a porta abre com a tarefa cumprida e todos os registros do capítulo recolhidos. A cena mostra a contagem, e o registro, a saída fechada, o guia e o painel dizem o que falta (D-109).
+- **Mundo:** projeção isométrica, colisão com paredes e objetos, desvio na quina, alcance de interação, câmera que acompanha, porta que abre.
+- **Desenho por quadro:** o que é fixo na cena é desenhado uma vez, em telas prontas, e só o que se move é redesenhado.
+- **Arte por código:** três personagens (os dois jogáveis e o Arquivista, guia fictício), quatro cenários, dezenove tipos de objeto (dezesseis em uso nas quatro cenas), a porta de cada cenário, o registro e os efeitos.
+- **Interface:** objetivo e contagem dos registros sobre a cena, registro com resumo, fontes e situação da revisão, tarefa de ordem com nova tentativa, painel **Capítulos e tarefas**, com a releitura de um registro recolhido (D-110), transição, fim da etapa, confirmação de reinício e controles de toque.
+- **Avisos editoriais nas telas:** cenário como representação, guia fictício, figura única de cada personagem, ordem não documentada e revisão humana pendente.
+- **Progresso** por personagem, no navegador, com versão.
+- **Ida e volta** entre o registro, a página do acontecimento e o capítulo.
+- **Testes:** regras em Vitest, jornadas no navegador (no desenvolvimento e sobre o build) e carregamento sobre o build, com as falhas de pacote.
+- **Comandos novos:** `npm run capture:game`. A passagem `npm run audit:a11y` ganhou as duas telas do jogo, e `npm run test:journeys`, as jornadas do jogo.
+- **Documentos:** GAMEPLAY.md (novo), ARCHITECTURE.md, UX.md, DECISIONS.md, README.md, este status e `capturas/README.md`; PERFORMANCE.md e QA.md ganharam a remissão para o jogo.
+
+### Arquivos
+
+| Onde | O quê |
+| --- | --- |
+| `src/lib/game/` | Novo: `types.ts`, `chapters.ts`, `content.ts`, `mission.ts`, `progress.ts`, `storage.ts`, `scenes/` (quatro cenas e as paletas) e `world/` (`iso`, `grid`, `movement`, `interact`, `camera`, `touch`) |
+| `src/features/game/` | Novo: `GameShell.tsx`, `GameStage.tsx`, `CharacterSelect.tsx`, `WorldPreview.tsx`, `hooks.ts`, `draw/` (arte), `engine/` (laço, entrada, desenho da cena) e `ui/` (diálogos, painel, HUD, registro, frases da saída, toque, fronteira de erro) |
+| `src/app/` | Novos: `jogo/page.tsx`, `jogo/[personagem]/page.tsx` e, só em desenvolvimento, `dev/jogo-arte/`. Alterados: `page.tsx` (acesso ao jogo), `acontecimentos/[slug]/EventReturn.tsx` (volta ao jogo) e `globals.css` (palco) |
+| `src/lib/domain/order.ts`, `src/features/events/chronology.ts` | A regra da ordem em aberto passou ao domínio, para a lista do atlas e o jogo usarem a mesma |
+| `src/lib/state/links.ts`, `src/components/` | Endereços do jogo e retorno da ficha; item do menu (`SiteHeader.tsx`) e marca do cartão de perfil (`PersonCard.tsx`) |
+| `tests/` | Novos: `game-mission`, `game-progress`, `game-storage`, `game-world`, `game-chapters` e `game-input` (Vitest); `e2e/jogo.spec.ts` e `e2e/jogo-caminho.ts`; `export/jogo.spec.ts` e `export/jogo.capture.ts`. Alterados: `links.test.ts` e `e2e/acabamento.spec.ts` (os acessos da entrada) |
+| `scripts/`, raiz | `check-export.mjs` (as páginas do jogo), `audit-a11y.mjs` (as telas do jogo), `eslint.config.mjs` (fronteiras do jogo), `playwright.export.config.ts` e `package.json` (`capture:game`) |
+| `docs/`, raiz | Novo: GAMEPLAY.md e `capturas/jogo-etapa-1/`. Atualizados: ARCHITECTURE.md, UX.md, DECISIONS.md, PERFORMANCE.md, QA.md, STATUS.md, `capturas/README.md` e o README.md da raiz |
+
+Nenhuma dependência foi acrescentada. Nenhum registro de `content/` foi alterado. O trabalho das fases 8 e 9 foi preservado.
+
+### Como a etapa foi feita
+
+A mecânica, as regras e a interface foram escritas primeiro, com uma arte provisória. A arte final foi dividida em três frentes paralelas de agentes de IA (personagens, cenário e objetos), e o código passou por uma revisão independente em cinco lentes, também por agentes. O limite de uso da sessão interrompeu os dois trabalhos no meio:
+
+- **Arte.** As três frentes já tinham gravado os personagens, os objetos, os pisos e as paredes. A saída, o registro, os efeitos e a disposição final das cenas ficaram por fazer, e foram desenhados em seguida. A crítica independente da arte, com correções, não rodou.
+- **Regra da saída.** Veio depois da primeira entrega: o responsável pelo projeto a viu rodando e pediu que a porta só abrisse com todos os documentos recolhidos. Mudaram a regra pura, o progresso salvo, a cena, as janelas, o painel e os testes, e a mudança teve uma revisão independente própria, por agentes de IA, em três lentes (regras e estado, textos e interface, testes), só de leitura: 17 achados, 12 distintos, todos corrigidos.
+- **Revisão.** Duas lentes tinham terminado (editorial e carregamento), com 16 achados. As outras três (estado, entrada e acessibilidade, testes) rodaram de novo depois, sobre o código já corrigido, com mais 24. Ao todo foram 40 achados nas cinco lentes, alguns repetidos entre elas. Cada um foi conferido no código antes de ser corrigido; o do toque em celular foi reproduzido por um teste com toque de verdade, que falhava antes da correção. Na primeira rodada, a conferência de cada achado por um segundo agente, que estava prevista, só chegou a rodar para um deles; na segunda, cada lente tentou refutar os próprios achados antes de devolvê-los, sem segundo agente.
+
+### Problemas achados na conferência e corrigidos
+
+| Problema | Correção |
+| --- | --- |
+| A fronteira entre os capítulos 1 e 2 de Lula sugeria que a prisão de 1980, só com o ano, veio antes da fundação do PT, de 10 de fevereiro de 1980. A ressalva só existia no painel | Capítulos reagrupados para toda fronteira ficar onde as datas decidem; o aviso do atlas, "ordem dentro de 1980 não documentada", no registro e no painel; teste de todos os pares (D-100) |
+| "Quatro mandatos na Assembleia" ao lado de 2002–2014, e motivos de capítulo com enredo ("Do Rio ao Senado") | Títulos e motivos viraram inventários do que os registros dizem, na mesma forma para os dois (D-92) |
+| O nome do cenário lia como o lugar do fato, e a ressalva só existia na entrada do jogo, que o acesso **Jogar com** pula | Rótulo "cenário" na cena, na transição e no painel; frase da representação no guia e no rodapé da página do jogo (D-101) |
+| O registro lido no jogo não dizia que a conferência foi assistida por IA nem que a revisão humana está pendente | A nota de revisão do atlas no registro, e a frase da edição na entrada e no rodapé (D-102) |
+| No último capítulo, o guia mandava "seguir ao próximo período", que não existe | O texto depende de haver capítulo seguinte |
+| A explicação da tarefa de ordem saía truncada com os títulos reais ("...e não é eleito é de 2016") | "Datas dos registros: A (data); B (data)", com a fixture do teste em orações |
+| Sem armazenamento, ir à ficha de um registro e voltar zerava o progresso, e dois textos diziam o contrário | A cópia em memória passou a ser da página; os textos dizem o que acontece |
+| Se o pacote do palco não chegava, a página inteira virava o erro padrão, em inglês | Fronteira de erro em volta do palco e da prévia; o painel continua valendo (D-104) |
+| Celular deitado: o palco ficava mais alto que a janela, e o direcional e o botão de ação abriam cortados | O palco cabe na janela, e o que fica sobre a cena encolhe (D-105) |
+| Uma direção ficava presa quando Shift mudava durante o movimento, e atalhos do navegador eram engolidos | Teclas lidas pela posição; atalhos passam direto; soltar a tecla de comando solta tudo |
+| Em celular, o menu do cabeçalho abria atrás das janelas do jogo | Camada própria para o palco, abaixo do cabeçalho |
+| Na tarefa de ordem pelo teclado, o foco sumia ao confirmar, e Esc deixava de valer | O foco acompanha a troca de botões |
+| Sem JavaScript, "Carregando o jogo…" para sempre, com o aviso fora da primeira tela | O aviso fica dentro do palco |
+| Depois do fim da etapa, a saída não respondia mais; ao reiniciar, o personagem não voltava ao início e podia ficar preso na porta que fechou | A cena recomeça nos dois casos, e a saída vale a cada entrada na célula |
+| A prévia do mundo refazia o canvas a cada quadro em telas com densidade fracionária | Tamanho arredondado antes de comparar |
+| A página do jogo rolava um pixel, por causa do fio de baixo do cabeçalho | A altura do palco desconta o fio |
+| O personagem prendia na quina de uma bancada, em corredor de uma célula | Desvio curto para o lado livre, para quem anda reto (D-105) |
+| Registros ficavam escondidos atrás da porta; o tapete do plenário aparecia em retalhos | Disposição das quatro cenas refeita, com a regra escrita no arquivo de cada cena |
+| Um progresso salvo de uma edição anterior do capítulo podia concluir a tarefa nova | A leitura descarta registros que o capítulo não cita mais e a ordem confirmada sem os dois registros atuais |
+| Textos de capítulo afirmavam mais do que os registros ("em São Bernardo do Campo", "único mandato parlamentar") | Reescritos antes da revisão independente, e conferidos por ela frase a frase |
+| Em celular em pé, tocar no botão de ação abria o registro e o mesmo toque já o fechava: o clique que o navegador gera quando o dedo levanta caía no botão da janela, que aparece onde estava o botão de ação | O toque age dentro do próprio `touchstart`, cancelado no mesmo passo, e as janelas não aceitam toque nem clique por 350 ms ao abrir. Teste com toque de verdade (D-107) |
+| Desenhada inteira a cada quadro, a cena ia a cerca de 18 quadros por segundo, mesmo com a placa de vídeo | O que é fixo fica em telas prontas, e só o que se move é redesenhado: 55 a 60 quadros por segundo, com o mesmo resultado na tela (D-106) |
+| Com a saída aberta, a dica "E Atravessar a saída" e o botão de toque "Atravessar" não faziam nada | A interação com a saída aberta atravessa (D-108) |
+| O anel de foco da cena ficava escondido atrás do canvas | O contorno do atlas, virado para dentro, que é pintado por cima do desenho |
+| Enter segurado ao recolher fechava o registro que acabara de abrir; a seta segurada ao atravessar rolava a página durante a transição | A repetição de uma tecla que atravessou a troca de tela é descartada, até a tecla soltar (D-108) |
+| A entrada do jogo dizia "Ainda não jogado neste navegador" para quem já tinha registros recolhidos | "Continuar", com o capítulo, desde o primeiro registro recolhido |
+| Desistir do reinício pedido na tela de fim levava à cena, e não de volta à tela de fim | Volta à tela de fim |
+| Quem revia um capítulo concluído e ia à ficha de um registro voltava ao capítulo corrente | A página lembra o capítulo aberto para essa volta, sem guardar nada |
+| A tela de fim cortava o começo em celular deitado, sem como rolar até ele | O conteúdo fica no meio quando cabe e rola inteiro quando não cabe |
+| Com movimento reduzido, a pasta ainda subia ao ser recolhida | Sem efeito de recolher com movimento reduzido |
+| Sem a cena (pacote que não chegou), fechar uma janela deixava o foco solto na página | O foco vai para o botão do painel |
+| Nos testes: nenhum conferia quais fontes o registro mostra, nem o que está desenhado no canvas, nem erros não tratados na página; a jornada completa só rodava para Lula; o toque era um evento sintético; textos de capítulo com datas escritas à mão não eram conferidos contra os dados | As fontes são comparadas uma a uma; todo teste do jogo recusa erro de página e lê o canvas; as duas jornadas pelo cenário rodam para os dois personagens; o toque é de verdade; anos, datas e contagens dos textos são conferidos contra os registros |
+| Com um registro, a tarefa de ordem ou a transição na tela, a dica do que estava ao alcance ("E Recolher o registro") continuava escrita atrás da janela. Apareceu ao olhar as capturas finais | A dica some enquanto há janela aberta, com teste nas jornadas dos dois personagens |
+| Com capítulo concluído e tudo recolhido, não haveria como reler um registro nem chegar à ficha dele pelo jogo: a pasta recolhida some da cena. Visto ao implementar a regra da saída | **Ler de novo**, em cada registro recolhido do painel, sem mexer no progresso (D-110) |
+| Com todos os registros recolhidos e a ordem por responder, a cena e a janela da saída fechada repetiam "Recolha dois registros" e não diziam onde responder | A cena diz onde colocar os registros em ordem, e a janela da saída fechada leva à pergunta |
+| A contagem dizia "a saída abre com todos" também no capítulo de ordem, em que recolher todos não basta | "a saída abre com todos e a ordem certa", enquanto a ordem não é confirmada |
+| A entrada do jogo dizia "recolha todos os registros do atlas", mais do que o jogo tem e sem a tarefa | "em cada capítulo, recolha todos os registros e cumpra a tarefa" |
+| No guia, "Falta 1 registro para a saída abrir: eles continuam no cenário" | O singular e o plural acompanham a contagem |
+| Depois de reler um registro, o painel voltava ao topo, com o foco em **Voltar ao jogo**; os botões **Ler de novo** tinham todos o mesmo nome | O foco volta ao botão do registro lido, que a janela traz à vista, e cada botão diz no nome qual é o registro |
+| Na ordem certa, a frase sobre a saída ficava fora do aviso anunciado a leitores de tela | Fica no mesmo aviso do resultado |
+| A legenda do mapa, no código, ainda dizia a regra antiga da saída | Corrigida |
+| Nos testes da regra: um teste do progresso gravava um estado igual ao que já existia, e passaria com a função sem efeito; a porta desenhada não era conferida; o estado "tudo recolhido, ordem por responder" não era conferido no painel nem na porta; as frases da regra na entrada do jogo não tinham teste | O teste grava um estado diferente e confere por identidade; o palco diz no documento como desenha a porta (`data-porta`), e os testes conferem; o estado ganhou asserções na cena, no painel, na ficha e na porta; a entrada e as instruções da cena têm as frases conferidas |
+| Com a regra, o teste da tecla segurada passou a falhar: os cliques de preparação, dados antes de a janela aceitar ponteiro, deixavam a página rolada | O clique que espera a janela passou ao auxiliar comum dos testes do jogo (D-107) |
+| Em sete capturas (a tarefa de ordem e a porta aberta), a página saía rolada, com o cabeçalho fora da tela. Não era o jogo: o robô de captura clicava no instante em que a janela ainda não aceita ponteiro e repetia o clique rolando a página. Com o mouse de verdade e pelo teclado a página não rola (medido nos quatro casos) | O roteiro de capturas espera a janela aceitar o clique e recusa captura com a página rolada. Duas capturas novas: o guia e o rodapé da página do jogo |
+
+### Verificações executadas
+
+Todas em 10 de outubro de 2026. Os comandos do projeto rodaram de novo depois da regra da saída e das correções da revisão dela. Depois disso mudou só o tempo máximo de três testes do jogo, e as jornadas do jogo rodaram mais uma vez sobre o build (26, todas passando). As medições de bancada são anteriores à regra da saída: foram feitas com o código de desenho da cena (`engine/render.ts` e `draw/`) no estado final, e a regra não mexeu nele; ao quadro, ela só acrescentou a gravação de um atributo no elemento da cena. A cadência não foi medida de novo. As revisões independentes são anteriores às correções que elas mesmas pediram.
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run check` (lint, tipos, dados, regras, build e conferência da saída) | Passou. 704 testes de regra em 30 arquivos, 197 deles do jogo, em 6 arquivos. 50 páginas HTML, 3 do jogo |
+| `npm run test:journeys` (jornadas sobre a exportação estática) | 210 testes, todos passando: 184 do atlas e 26 do jogo |
+| `npm run test:export` (carregamento sobre a exportação estática) | 32 testes, todos passando: 16 do atlas e 16 do jogo |
+| `npm run test:e2e` (as mesmas jornadas e as telas de prova, no servidor de desenvolvimento) | 231 testes, todos passando: 205 do atlas e 26 do jogo |
+| `npm run audit:a11y` (contraste do texto desenhado, rolagem lateral, alvos e ordem de foco) | 10 telas, 4 larguras e a passagem por teclado, sem falha. Nas telas do jogo, o menor contraste é 5,24 na entrada e 7,51 na cena, e o único alvo abaixo de 24 px é o nome do atlas no cabeçalho, o mesmo das demais páginas (QA.md) |
+| `npm run capture:game` | 43 capturas em `docs/capturas/jogo-etapa-1/`, tiradas da saída estática, com a regra da saída, e olhadas uma a uma |
+| Rolagem da página no caminho pelo painel, em roteiro fora do projeto (cliques do robô, mouse nas coordenadas com e sem espera, teclado) | A página só rola com os cliques do robô dados antes de a janela aceitar ponteiro. Nos outros três casos, não rola |
+| Cadência de quadros da cena, em bancada fora do projeto, antes da regra da saída (Chromium sem interface, por software e com a placa de vídeo, 1440×835 e 390×780) | 55 a 60 quadros por segundo, com cerca de 1 ms de desenho por quadro. Sem as telas prontas, 17 a 45 |
+| Desenho com telas prontas contra o desenho direto, pixel a pixel, nas quatro cenas (1200×760) | Diferença de até 4 níveis em 255, em menos de 0,2% dos pixels |
+| Revisão independente do código, em cinco lentes, por agentes de IA | 40 achados, todos tratados |
+| Revisão independente da regra da saída, em três lentes, por agentes de IA, só de leitura | 17 achados, 12 distintos: 2 de severidade média, que são o mesmo teste visto por duas lentes, e os demais de severidade baixa. Todos tratados |
+
+### Implementado e não verificado
+
+- **Aparelho real.** O toque, o direcional e o layout de celular foram conferidos em emulação (390×844 e 360×800 em pé, 844×390 deitado, com toque). Nenhum celular foi usado: o conforto do direcional no dedo, a barra de endereço do navegador móvel, a taxa de quadros real e o toque no botão de ação fora do Chromium não foram vistos.
+- **Pausa por perda de foco da janela.** Implementada e lida no código; não há teste automático, porque o navegador de teste não perde o foco.
+- **Leitor de tela.** Papéis, nomes e avisos foram conferidos pela estrutura e pelos testes, não com NVDA, VoiceOver ou TalkBack.
+- **Firefox e Safari.** Só Chromium.
+- **Reconhecimento dos personagens e legibilidade da arte por outras pessoas.** Julgados por quem os fez, pelas capturas. A crítica independente da arte não rodou.
+- **Desempenho medido.** As medições de PERFORMANCE.md não incluem as páginas do jogo. O que foi conferido é o que cada página pede e, em bancada fora do projeto, a cadência de quadros nesta máquina.
+- **Ritmo com a regra da saída.** Recolher todos os registros alonga cada capítulo: o primeiro de Flávio Bolsonaro tem cinco. Ninguém jogou com a regra, e não se sabe se cansa.
+- **Uso por pessoas.** Nenhuma pessoa jogou.
+
+### Pendências reais
+
+1. **Capítulos para os 24 acontecimentos restantes,** e uma ficha própria para os episódios judiciais dentro do jogo (D-92).
+2. **Validação com pessoas e revisão humana do conteúdo,** que continuam pendentes e valem também para o jogo.
+3. **Aparelho real, leitor de tela e outros navegadores.**
+4. **A entrada do atlas como entrada do jogo** (D-99): decisão de produto em aberto.
+5. **Uma figura de cada personagem por período** (D-103): hoje cada um tem uma figura só, a de hoje.
+6. **Medir o carregamento e a taxa de quadros das páginas do jogo,** com o medidor da fase 8.
+7. **Olhar de fora sobre a arte:** a crítica independente não rodou.
+8. **Som,** deixado para uma etapa posterior.
+9. **Duas abas no mesmo personagem** não se sincronizam: fica guardado o que foi gravado por último.
+10. **Toque em aparelho real,** em Android e em iPhone: a correção do toque no botão de ação foi conferida no Chromium, com toque emulado.
+
+### O que falta para expandir aos demais acontecimentos
+
+A lista está em [GAMEPLAY.md](GAMEPLAY.md), no fim: capítulos novos (só configuração e cenário, com o teste conferindo), a ficha dos episódios judiciais, mais cenários, a figura de cada época, mais um ou dois tipos de tarefa e as verificações com pessoas e em aparelho real.
 
 ## Fase 9 (revisão editorial, testes e validação com pessoas)
 
@@ -27,7 +207,7 @@ A fase tem duas partes, e elas estão em situações diferentes.
 
 Os três registros da fase: [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md), com o conjunto revisado, a conferência fonte por fonte, as correções e as pendências; [QA.md](QA.md), com o ambiente, as jornadas, os checks e as evidências; e [USER-VALIDATION.md](USER-VALIDATION.md), com o roteiro e as fichas. As decisões novas vão de D-87 a D-90, em [DECISIONS.md](DECISIONS.md).
 
-A fase 9 não tem commit: o trabalho está na pasta, junto com o da fase 8.
+A fase 9 foi commitada na `main` em 10 de outubro de 2026, depois da fase 8 e antes da etapa 1 do jogo.
 
 ### Critério de conclusão do plano
 
@@ -153,7 +333,7 @@ A fase 10 só começa com um pedido. Antes dela, o que depende de pessoas: a val
 | 1. Confirmar a hospedagem estática | Exportação estática conferida, com servidor local que se comporta como uma hospedagem comum | Escolher a hospedagem e ler as condições vigentes |
 | 2. Metadados, imagens de compartilhamento, sitemap e endereço canônico | Títulos e descrições por página | Domínio, `metadataBase`, sitemap e imagem de compartilhamento (D-69) |
 | 3. Build final e conferência da saída | `npm run check`, `npm run test:journeys`, `npm run test:export` e `npm run audit:a11y` | Rodar de novo no dia |
-| 4. Publicar | Nada: o projeto é local, sem repositório remoto | Só com pedido |
+| 4. Publicar | O código está em repositório público no GitHub desde 10/10/2026. Não há hospedagem nem deploy | Só com pedido |
 | 5. Conferir páginas e links no endereço público | As jornadas rodam contra o servidor local | Conferir no endereço público, à mão ou com a base das jornadas trocada na configuração; conferir o 404 e o cache da hospedagem |
 | 6. Demonstração de 20 a 30 segundos | Roteiro de demonstração em UX.md | Gravar |
 | 7. Case | Documentação por fase | Escrever, dizendo com clareza que a revisão foi assistida por IA e o que a validação com pessoas mostrou |
@@ -1257,8 +1437,8 @@ Concluída em 08/10/2026 e registrada no commit `9be1013`. O que ela entregou es
 - Hospedagem real, incluindo o tipo MIME de `.mjs`, fica para a fase 10.
 - `npm audit`, conferido de novo em 08/10/2026: nenhuma vulnerabilidade em produção; 5 altas na cadeia do lint, que não vai para o site.
 - A próxima versão maior do Next deve ligar Cache Components para todos (DECISIONS.md, D-02).
-- O plano de desenvolvimento continua fora do repositório, em `Downloads/`.
+- O plano de desenvolvimento em 10 fases não faz parte do repositório.
 
 ## Próximo passo
 
-Fase 9: revisão editorial, testes e validação com pessoas. A fase 8 termina aqui; a fase 9 só começa com o próximo comando. Nada foi publicado, e o site continua com `noindex`.
+A decisão é do responsável pelo projeto: aplicar a validação com três pessoas e a revisão humana, que continuam pendentes; seguir para a etapa 2 do jogo (os capítulos dos 24 acontecimentos restantes); ou seguir para a fase 10 do plano (publicação e apresentação). Tudo está na `main`, em repositório público no GitHub (https://github.com/rickjs2005/atlas-politico). O site não foi publicado: não há deploy, e as páginas continuam com `noindex`. O deploy é o último passo e depende de autorização.

@@ -49,7 +49,7 @@ const eslintConfig = defineConfig([
   // navegador: não leem arquivos, não conhecem o pipeline e só usam os schemas
   // como tipo, para o Zod não ir para o bundle.
   {
-    files: ["src/lib/data/**", "src/lib/state/**", "src/features/**", "src/components/**"],
+    files: ["src/lib/data/**", "src/lib/state/**", "src/lib/game/**", "src/features/**", "src/components/**"],
     rules: {
       "@typescript-eslint/no-restricted-imports": [
         "error",
@@ -70,9 +70,10 @@ const eslintConfig = defineConfig([
       ],
     },
   },
-  // As consultas e o formato dos dados públicos não dependem da interface.
+  // As consultas, o formato dos dados públicos e as regras do jogo não
+  // dependem da interface.
   {
-    files: ["src/lib/data/**"],
+    files: ["src/lib/data/**", "src/lib/game/**"],
     rules: {
       "no-restricted-imports": [
         "error",

@@ -68,8 +68,15 @@ test.describe("abertura", () => {
       await page.goto("/");
 
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("Atlas Político");
-      const cartoes = page.getByRole("region", { name: "Escolha uma trajetória" }).getByRole("link");
+      const acessos = page.getByRole("region", { name: "Escolha uma trajetória" });
+      const cartoes = acessos.locator("a[data-cartao-perfil]");
       await expect(cartoes).toHaveCount(2);
+      // O jogo é o segundo acesso de cada perfil, logo abaixo do cartão e também na primeira tela.
+      const jogar = acessos.locator("a[data-jogar-entrada]");
+      await expect(jogar).toHaveCount(2);
+      for (const caixa of await Promise.all((await jogar.all()).map(async (botao) => (await botao.boundingBox())!))) {
+        expect(caixa.y + caixa.height, "base do acesso ao jogo").toBeLessThanOrEqual(tela.height);
+      }
 
       const caixas = await Promise.all((await cartoes.all()).map(async (cartao) => (await cartao.boundingBox())!));
       for (const caixa of caixas) {
@@ -445,7 +452,7 @@ test.describe("quatro telas", () => {
 
     await page.goto("/");
     for (const cartao of await page.getByRole("region", { name: "Escolha uma trajetória" }).getByRole("link").all()) {
-      expect(await altura(cartao), "cartão da entrada").toBeGreaterThanOrEqual(44);
+      expect(await altura(cartao), `acesso da entrada: ${(await cartao.getAttribute("href")) ?? ""}`).toBeGreaterThanOrEqual(44);
     }
     expect(await altura(page.getByRole("link", { name: "Comparar as trajetórias" })), "comparar").toBeGreaterThanOrEqual(44);
     expect(await altura(page.getByRole("button", { name: "Menu" })), "menu").toBeGreaterThanOrEqual(44);

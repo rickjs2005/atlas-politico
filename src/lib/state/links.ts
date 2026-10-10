@@ -18,9 +18,43 @@ import { parseAtlasParams, serializeAtlasParams, type UrlState } from "./url-par
 /** Período e categorias: o que se leva de uma tela para outra. */
 export type Recorte = Pick<AtlasState, "periodo" | "categorias">;
 
-/** Parâmetro que diz de que tela a pessoa veio; hoje só a comparação o usa. */
+/** Parâmetro que diz de que tela a pessoa veio: a comparação ou o jogo. */
 export const ORIGIN_PARAM = "origem";
 export const ORIGIN_COMPARISON = "comparar";
+export const ORIGIN_GAME = "jogo";
+/** Com `origem=jogo`, o personagem cujo capítulo estava aberto. */
+export const GAME_PERSON_PARAM = "personagem";
+
+const PERSON_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** A entrada do jogo, ou o jogo de um personagem. */
+export function gameHref(personagem?: string): string {
+  return personagem === undefined ? "/jogo/" : `/jogo/${personagem}/`;
+}
+
+/**
+ * A página de um acontecimento aberta de dentro do jogo. O endereço diz de
+ * onde a pessoa veio, para a página oferecer a volta ao capítulo. O progresso
+ * do jogo não vai no endereço: fica guardado no navegador.
+ */
+export function eventHrefFromGame(slug: string, personagem: string): string {
+  return `/acontecimentos/${slug}/?${ORIGIN_PARAM}=${ORIGIN_GAME}&${GAME_PERSON_PARAM}=${encodeURIComponent(personagem)}`;
+}
+
+/**
+ * A volta ao jogo, para quem veio dele. Só existe com `origem=jogo` e um
+ * personagem que seja uma das pessoas do acontecimento; qualquer outra coisa
+ * é descartada, e a página não supõe um jogo.
+ */
+export function gameReturn(search: string, people: readonly { slug: string; nome: string }[]): { href: string; pessoa: { slug: string; nome: string } } | null {
+  const params = new URLSearchParams(search);
+  if (params.get(ORIGIN_PARAM) !== ORIGIN_GAME) return null;
+  const personagem = params.get(GAME_PERSON_PARAM);
+  if (personagem === null || !PERSON_SLUG.test(personagem)) return null;
+  const pessoa = people.find((item) => item.slug === personagem);
+  if (pessoa === undefined) return null;
+  return { href: gameHref(pessoa.slug), pessoa };
+}
 
 const SEM_RECORTE: Recorte = { periodo: { de: null, ate: null }, categorias: [] };
 

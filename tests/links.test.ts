@@ -5,14 +5,20 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  GAME_PERSON_PARAM,
   ORIGIN_COMPARISON,
+  ORIGIN_GAME,
+  ORIGIN_PARAM,
   carryFromComparison,
   carryToComparison,
   comparisonHref,
   comparisonReturn,
   describeRecorte,
   eventHref,
+  eventHrefFromGame,
   explorationHref,
+  gameHref,
+  gameReturn,
   hasRecorte,
   profileReturn,
   readReturnContext,
@@ -216,5 +222,48 @@ describe("o recorte por extenso", () => {
     expect(describeRecorte(SEM_RECORTE, COBERTURA_A)).toBe("");
     expect(hasRecorte(SEM_RECORTE)).toBe(false);
     expect(hasRecorte(RECORTE)).toBe(true);
+  });
+});
+
+describe("ida e volta entre o jogo e a página do acontecimento", () => {
+  const PESSOAS = [
+    { slug: "sintetico-pessoa-a", nome: "Pessoa A" },
+    { slug: "sintetico-pessoa-b", nome: "Pessoa B" },
+  ];
+
+  it("o jogo tem um endereço de entrada e um por personagem", () => {
+    expect(gameHref()).toBe("/jogo/");
+    expect(gameHref("sintetico-pessoa-a")).toBe("/jogo/sintetico-pessoa-a/");
+  });
+
+  it("a ficha aberta pelo jogo diz de onde a pessoa veio, e não leva progresso", () => {
+    const href = eventHrefFromGame("sintetico-evento-05", "sintetico-pessoa-a");
+    expect(href).toBe(`/acontecimentos/sintetico-evento-05/?${ORIGIN_PARAM}=${ORIGIN_GAME}&${GAME_PERSON_PARAM}=sintetico-pessoa-a`);
+    // Só a origem e o personagem: nada do que foi recolhido ou concluído.
+    expect([...new URLSearchParams(href.split("?")[1])].map(([chave]) => chave)).toEqual([ORIGIN_PARAM, GAME_PERSON_PARAM]);
+  });
+
+  it("a volta ao jogo existe para quem veio dele, e leva ao personagem do capítulo", () => {
+    const search = new URL(`http://x${eventHrefFromGame("sintetico-evento-05", "sintetico-pessoa-b")}`).search;
+    expect(gameReturn(search, PESSOAS)).toEqual({ href: "/jogo/sintetico-pessoa-b/", pessoa: PESSOAS[1] });
+  });
+
+  it("sem a origem, com outra origem ou com personagem de fora do acontecimento, a página não supõe um jogo", () => {
+    expect(gameReturn("", PESSOAS)).toBeNull();
+    expect(gameReturn(`?${GAME_PERSON_PARAM}=sintetico-pessoa-a`, PESSOAS)).toBeNull();
+    expect(gameReturn(`?${ORIGIN_PARAM}=${ORIGIN_COMPARISON}&${GAME_PERSON_PARAM}=sintetico-pessoa-a`, PESSOAS)).toBeNull();
+    expect(gameReturn(`?${ORIGIN_PARAM}=${ORIGIN_GAME}`, PESSOAS)).toBeNull();
+    expect(gameReturn(`?${ORIGIN_PARAM}=${ORIGIN_GAME}&${GAME_PERSON_PARAM}=outra-pessoa`, PESSOAS)).toBeNull();
+    expect(gameReturn(`?${ORIGIN_PARAM}=${ORIGIN_GAME}&${GAME_PERSON_PARAM}=../admin`, PESSOAS)).toBeNull();
+    expect(gameReturn(`?${ORIGIN_PARAM}=${ORIGIN_GAME}&${GAME_PERSON_PARAM}=sintetico-pessoa-a`, [])).toBeNull();
+  });
+
+  it("a origem do jogo não vira retorno à comparação nem muda o retorno à exploração", () => {
+    const search = `?${ORIGIN_PARAM}=${ORIGIN_GAME}&${GAME_PERSON_PARAM}=sintetico-pessoa-b`;
+    expect(comparisonReturn(search, ESCALA)).toBeNull();
+    expect(profileReturn(search, EVENTO, PERFIL_B)).toEqual({
+      href: "/politicos/sintetico-pessoa-b/?acontecimento=sintetico-evento-05",
+      recorte: null,
+    });
   });
 });

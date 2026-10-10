@@ -1,10 +1,10 @@
 # Arquitetura
 
-Descreve o que está implementado até a fase 8 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem sete: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md), [MAP.md](MAP.md), [COMPARISON.md](COMPARISON.md) e [PAGES.md](PAGES.md). O que cada página carrega, e as medições, estão em [PERFORMANCE.md](PERFORMANCE.md).
+Descreve o que está implementado até a fase 9 e na primeira etapa do jogo, e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O jogo tem documento próprio, [GAMEPLAY.md](GAMEPLAY.md): fluxo, capítulos, regras, progresso e direção visual. O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem sete: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md), [MAP.md](MAP.md), [COMPARISON.md](COMPARISON.md) e [PAGES.md](PAGES.md). O que cada página carrega, e as medições, estão em [PERFORMANCE.md](PERFORMANCE.md).
 
 ## Visão geral
 
-Uma única aplicação Next.js (App Router) que vira um site de arquivos estáticos. O conteúdo é JSON versionado dentro do projeto. Um gerador local valida o conteúdo, seleciona o que é elegível e grava os dados públicos. No build, as páginas leem só esses dados e geram HTML. No navegador, a exploração (lista, mapa, linha do tempo, painel) recebe os mesmos dados e trabalha sobre um estado único, guardado no endereço.
+Uma única aplicação Next.js (App Router) que vira um site de arquivos estáticos. O conteúdo é JSON versionado dentro do projeto. Um gerador local valida o conteúdo, seleciona o que é elegível e grava os dados públicos. No build, as páginas leem só esses dados e geram HTML. No navegador, a exploração (lista, mapa, linha do tempo, painel) recebe os mesmos dados e trabalha sobre um estado único, guardado no endereço. O jogo é um segundo caminho sobre os mesmos dados: recebe, no build, só os registros que os capítulos citam, e guarda o progresso de quem joga no navegador.
 
 ```
 content/published/  content/drafts/  public/media/
@@ -39,16 +39,17 @@ HTML estático por rota em out/                             │
 | Pipeline | `src/lib/publication/` | Validação com diagnósticos, elegibilidade, montagem dos dados, relatório de cobertura, plano de importação | Ler arquivos, usar React |
 | Disco | `src/lib/content/` | Ler `content/`, gravar e ler `generated/`, sondar arquivos de mídia, orquestrar os comandos | Ser importada por código do navegador |
 | Estado | `src/lib/state/` | Estado da exploração e da comparação, seletores, parâmetros de URL, regras do endereço e do histórico, endereços entre telas com o contexto de retorno (`links.ts`), leitura do endereço no navegador (`location.tsx`) e os dois providers (memória e endereço) | Ler arquivos, importar Zod em tempo de execução |
+| Jogo | `src/lib/game/` | Capítulos (identificadores de acontecimentos, tarefa e cenário), cenários, regras de missão, progresso e formato salvo, e o mundo: projeção isométrica, grade e colisão, movimento, alcance, câmera e direcional de toque | Ler arquivos, usar React, escrever conteúdo editorial |
 | Mídia | `src/lib/media/` | Molduras, larguras e nomes das versões preparadas dos retratos, e o manifesto do que foi gerado | Ler arquivos: o manifesto só é lido pelos comandos e pelos testes |
 | Configuração | `src/lib/site.ts` | O que depende de decisão do responsável pelo projeto. Hoje, o canal público de correção, ainda sem valor | Guardar conteúdo editorial |
-| Funcionalidades | `src/features/` | Mapa, acontecimentos, linha do tempo, comparação | Ler arquivos, guardar seleção própria |
+| Funcionalidades | `src/features/` | Mapa, acontecimentos, linha do tempo, comparação e o jogo (casca, palco, desenho, motor e interface) | Ler arquivos, guardar seleção própria |
 | Componentes | `src/components/` | Base visual compartilhada: cabeçalho, rodapé, retrato, cartão de pessoa, data, categoria, fontes, revisão, identificação da edição, perfil, cópia de link e as peças da linha do tempo (`time/`) | Ler arquivos, guardar estado da exploração |
 | Rotas | `src/app/` | Páginas. Único lugar que chama `getAtlasData()` e entrega os dados por props | |
 | Comandos | `scripts/` | Linha de comando dos dados, preparo dos retratos, ajuste e conferência da saída estática, pré-visualização e medições | |
 
 As fronteiras são verificadas, e não só combinadas:
 
-- `eslint.config.mjs` proíbe o domínio e o pipeline de importar `node:*`, React, Next e as camadas de interface, e proíbe dados públicos, estado, funcionalidades e componentes de importar `@/lib/content/*`, `@/lib/publication/*`, `node:*` ou os schemas Zod (tipos são permitidos).
+- `eslint.config.mjs` proíbe o domínio e o pipeline de importar `node:*`, React, Next e as camadas de interface, e proíbe dados públicos, estado, jogo, funcionalidades e componentes de importar `@/lib/content/*`, `@/lib/publication/*`, `node:*` ou os schemas Zod (tipos são permitidos). As regras do jogo (`src/lib/game/`), como os dados públicos, também não podem importar React nem a interface.
 - `src/lib/content/published.ts` importa `server-only`: se um componente do navegador importá-lo, o build falha.
 - Tipos para o navegador saem de `src/lib/domain/types.ts` e de `src/lib/data/types.ts`, que só têm tipos. O Zod não entra no bundle (conferido na saída: nenhum arquivo de `out/` contém o Zod).
 - `tsconfig.json` tem `erasableSyntaxOnly`: os módulos que os comandos carregam direto no Node só usam sintaxe que some ao remover os tipos (D-27).
@@ -110,12 +111,16 @@ As fronteiras são verificadas, e não só combinadas:
 | `EventReturn`, `CopyLink`, `CorrectionTemplate` | Navegador | Client Components pequenos dentro de páginas estáticas: o retorno da página do acontecimento, a cópia do link e o modelo de correção. No HTML do build saem sem contexto; o endereço e a origem são lidos depois da hidratação |
 | `UrlWatcher` (`src/lib/state/location.tsx`) | Só navegador | Único uso de `useSearchParams`, isolado em um `Suspense` sem saída visual, para as telas continuarem inteiras no HTML gerado. Serve à exploração, à comparação, ao retorno e ao modelo de correção |
 | `AtlasStateProvider` | Navegador | Estado em memória, para as telas de prova e os testes |
+| Páginas `/jogo` e `/jogo/[personagem]` | Build | Server Components. Montam o recorte do jogo (`buildGameContent`) e o entregam por props. O HTML traz o capítulo, o objetivo e os botões; a cena e o progresso entram no navegador |
+| `GameShell`, `CharacterSelect` e a interface do jogo (`ui/`) | Navegador | Client Components. Pré-renderizados com o estado inicial; o progresso salvo é lido depois da hidratação, com `useSyncExternalStore` |
+| `GameStage` (palco) e `WorldPreview` (prévia) | Só navegador | Carregados por `next/dynamic` com `ssr: false`. O palco só é pedido em `/jogo/[personagem]`, e a prévia, em `/jogo`. Canvas 2D, sem WebGL |
+| Progresso do jogo | Só navegador | `localStorage`, uma chave por personagem, com versão de formato. Nunca vai ao endereço |
 | `MapCanvas` (MapLibre) | Só navegador | Carregado por `next/dynamic` com `ssr: false`, e só quando a moldura do mapa está na tela ou perto dela. Não aparece no HTML do servidor. A instância é criada uma vez; filtros e seleção não a recriam |
 | Trecho de `layout.tsx` que marca o documento | Só navegador, antes do primeiro desenho | Em um link com consulta, encobre a área que vai mudar até o endereço ser lido (D-83). É o único script escrito dentro do HTML |
 | Contornos da base (`terra.geojson`, `estados-br.geojson`) | Só navegador | Arquivos próprios, publicados pelo bundler em `/_next/static/media/` e pedidos ao próprio site |
 | Worker do MapLibre | Só navegador | Arquivo próprio, publicado pelo bundler em `/_next/static/media/` |
 
-O mapa é o único ponto que exige `window` e WebGL. Ele fica atrás do `MapView`, que cuida do carregamento, do estado "Carregando o mapa…", da troca pela lista de lugares quando o mapa falha e da nova tentativa. Nenhuma página depende do mapa para ser lida.
+O mapa é o único ponto que exige WebGL. O palco do jogo exige `window` e canvas 2D, e nunca divide a tela com o mapa: as páginas do jogo não têm mapa, e as páginas com mapa não têm cena. Ele fica atrás do `MapView`, que cuida do carregamento, do estado "Carregando o mapa…", da troca pela lista de lugares quando o mapa falha e da nova tentativa. Nenhuma página depende do mapa para ser lida.
 
 ## Fluxo do conteúdo
 
@@ -127,8 +132,8 @@ fonte → rascunho → revisão → validação → dados gerados → build
 |---|---|---|
 | Fonte | Páginas institucionais e bases públicas | Catálogo feito na fase 2 (SOURCES.md) |
 | Rascunho | `content/drafts/` | Coleções parciais, que citam registros da edição. Recebe também as importações (`npm run data:import`) |
-| Revisão | Estado editorial de cada registro (`rascunho`, `em-revisao`, `revisado`) e tipo da revisão (`assistida-por-ia`, `humana`) | Modelado e validado. Na edição 0.1.0 toda revisão é assistida por IA |
-| Edição | `content/published/` | Edição 0.1.0. A promoção de um rascunho é manual (DATA-PIPELINE.md) |
+| Revisão | Estado editorial de cada registro (`rascunho`, `em-revisao`, `revisado`) e tipo da revisão (`assistida-por-ia`, `humana`) | Modelado e validado. Na edição 0.1.1 toda revisão é assistida por IA |
+| Edição | `content/published/` | Edição 0.1.1. A promoção de um rascunho é manual (DATA-PIPELINE.md) |
 | Validação | `npm run data:validate` | Diagnósticos por arquivo, registro e campo, em três severidades |
 | Dados gerados | `npm run data:build` grava `generated/` | Só o que é elegível, com índices e GeoJSON |
 | Build | `npm run build` | Gera os dados e depois o site. Conteúdo com erro interrompe |
@@ -149,10 +154,13 @@ Regras que valem:
 | `/acontecimentos/[slug]` | `src/app/acontecimentos/[slug]/page.published.tsx`, com `EventReturn.tsx` e `EventLocator.tsx` | `generateStaticParams` a partir dos acontecimentos dos dados gerados; contexto de retorno opcional em `de`, `ate`, `categorias` e `origem` | Leitura completa, com retorno, cópia do link, ficha lateral e mapa de localização (ver abaixo) |
 | `/comparar` | `src/app/comparar/page.tsx`, com `Comparison.tsx` | Consulta em `de`, `ate` e `categorias` | As duas trajetórias no mesmo período, com as mesmas categorias e na mesma escala, com a consulta no endereço (fase 7, [COMPARISON.md](COMPARISON.md)) |
 | `/metodologia` | `src/app/metodologia/page.tsx`, com `CorrectionTemplate.tsx` | `acontecimento`, opcional, para o modelo de correção | Objetivo, seleção, fontes, revisão feita, datas, lugares, limites da comparação, edição, correção, créditos e o catálogo de fontes (fase 7, [PAGES.md](PAGES.md)) |
+| `/jogo` | `src/app/jogo/page.tsx` | | Entrada do jogo: escolha do personagem, prévia do mundo, capítulos e onde cada um parou ([GAMEPLAY.md](GAMEPLAY.md)) |
+| `/jogo/flavio-bolsonaro`, `/jogo/lula` | `src/app/jogo/[personagem]/page.tsx` | `generateStaticParams` a partir de `PROFILES`. Sem consulta: o progresso fica no navegador | O jogo do personagem, no capítulo em que parou |
 | 404 | `src/app/not-found.tsx` | | Com a identidade do projeto. Vira `out/404.html` |
 | `/dev/previa` | `src/app/dev/previa/page.dev.tsx` | | Só em desenvolvimento. Guia da prévia: caminhos, tokens e estados de cada componente |
 | `/dev/prova` | `src/app/dev/prova/page.dev.tsx` | | Só em desenvolvimento. Dados sintéticos, passados pelo pipeline em memória |
 | `/dev/dados` | `src/app/dev/dados/page.dev.tsx` | | Só em desenvolvimento. A mesma tela, com os dados gerados da edição |
+| `/dev/jogo-arte` | `src/app/dev/jogo-arte/page.dev.tsx` | | Só em desenvolvimento. Galeria da arte do jogo: personagens, peças e cenas montadas |
 
 Todas usam barra final (`trailingSlash`), e cada rota vira `out/<rota>/index.html`.
 
@@ -225,6 +233,7 @@ Regras (ao carregar, recarregar, voltar ou avançar):
 9. A página de um acontecimento (`/acontecimentos/<slug>`) é o endereço para compartilhar. O link de volta à exploração leva `?acontecimento=<slug>` para a página do perfil.
 10. Os links da exploração e da comparação para a página de um acontecimento levam o recorte (`de`, `ate`, `categorias`) e, vindos da comparação, `origem=comparar`. A página lê esse contexto com o mesmo `parseAtlasParams` e monta o retorno. Um contexto que não contém o acontecimento é descartado. As regras são funções puras em `src/lib/state/links.ts`.
 11. Na comparação valem as regras de 1 a 8, com duas diferenças: o período é ajustado à escala comum das duas coberturas, e `acontecimento` é sempre descartado.
+12. O jogo não usa a query string. A página de um acontecimento aberta de dentro dele leva `origem=jogo` e `personagem=<slug>`, e com isso oferece **Voltar ao jogo**; um personagem que não é do acontecimento é descartado. O progresso não vai no endereço: abrir um link direto não o altera (`eventHrefFromGame` e `gameReturn`, em `src/lib/state/links.ts`).
 
 ## Limites entre as funcionalidades
 
@@ -233,6 +242,7 @@ Regras (ao carregar, recarregar, voltar ou avançar):
 | `features/map` | Coleção GeoJSON do recorte (os pontos gerados, recortados por `filterPoints`), os acontecimentos do recorte sem ponto (`listUnplaced`) e o slug selecionado | `onSelect(slug)` ao escolher um acontecimento, pelo marcador ou pelo seletor | Não filtra, não guarda seleção, não lê conteúdo, não monta os pontos, não escreve no endereço |
 | `features/events` | Lista de acontecimentos e as lacunas do conjunto, ou um acontecimento resolvido | `onSelect(slug)` na lista | Não conhece o mapa, não calcula lacunas |
 | `features/timeline` | Domínio de anos, acontecimentos do recorte, período e categorias em vigor, cargos e partidos do período | `onSelect(slug)` nas marcas; `onChange` e `onPeriodChange` do período; `onToggle` das categorias | Não fala com o mapa, não guarda recorte, não escreve no endereço |
+| `features/game` | O recorte do jogo de um personagem (capítulos e registros já resolvidos) | Apenas apresentação e o progresso, que ela mesma guarda no navegador | Não lê conteúdo, não escreve texto editorial, não usa o estado nem o endereço da exploração, não carrega o mapa |
 | `features/comparison` | Uma faixa por pessoa: acontecimentos, mandatos, filiações, cobertura e lacunas; o recorte em vigor e a função que dá o endereço de cada acontecimento | Apenas apresentação | Não filtra, não escreve no endereço, não calcula nota nem ranking |
 
 As funcionalidades não se importam entre si. Quem as junta é a página, por meio do estado central: a lista despacha `selectEvent`, o provider escreve o endereço e recalcula o recorte, e o mapa recebe o novo slug selecionado. O clique no mapa percorre o mesmo caminho. O contrato está em [TIMELINE.md](TIMELINE.md), seção Contrato com o mapa, e o que o mapa faz com ele, em [MAP.md](MAP.md).
@@ -251,6 +261,38 @@ Dentro de `features/map`:
 - `MapFallback.tsx` é a lista de lugares que assume quando o mapa falha.
 - `MapView.tsx` é a fronteira: carrega o `MapCanvas` só no navegador, mostra o carregamento e decide entre o mapa e a lista de lugares.
 
+## Jogo
+
+Um segundo caminho de leitura sobre os mesmos dados ([GAMEPLAY.md](GAMEPLAY.md)). Cinco coisas ficam separadas:
+
+| O quê | Onde | Regra |
+| --- | --- | --- |
+| Dados históricos | `generated/dados/`, pelo pipeline | O jogo não tem conteúdo editorial. `buildGameContent` recorta, no build, os registros que os capítulos citam, com as fontes resolvidas, a situação da revisão e a marca de ordem em aberto (`findUndeterminedOrder`, a mesma regra da lista do atlas, em `src/lib/domain/order.ts`) |
+| Configuração dos capítulos | `src/lib/game/chapters.ts` e `scenes/` | Um capítulo cita acontecimentos pelo `id`, define a tarefa e aponta um cenário. Todo registro de um capítulo é anterior, sem ambiguidade de data, a todo registro do seguinte. Um teste confere tudo contra a edição |
+| Regras de missão | `src/lib/game/mission.ts` | Funções puras: recolher, cumprir a tarefa, abrir a saída (a tarefa cumprida e todos os registros do capítulo recolhidos), decidir se duas datas dão ordem, avaliar uma resposta |
+| Estado do jogador | `src/lib/game/progress.ts` e `storage.ts` | Capítulos bloqueados, disponíveis e concluídos, com transições previsíveis; um capítulo só conclui com a saída aberta; formato com versão; dado inválido vira começo; sem armazenamento, vale uma cópia em memória, que é da página e atravessa a navegação entre o jogo e a ficha |
+| Desenho do mundo | `src/features/game/draw/` e `engine/` | Canvas 2D, por código. Recebe a cena e o estado e desenha; não conhece regras |
+
+```
+getAtlasData()  ──▶  buildGameContent(dados, personagem)        (build)
+                              │ props
+                              ▼
+                        GameShell                                (navegador)
+            progresso ◀── useGameProgress ──▶ localStorage
+                │
+                ├─ GameStage  ── laço, entrada, câmera ──▶ renderScene ──▶ draw/
+                ├─ Hud, TouchControls
+                └─ diálogos e painel  ── regras de mission.ts e progress.ts
+```
+
+A casca decide o que acontece com uma interação e quando um capítulo termina. O palco só anda e desenha: avisa o que está ao alcance, a interação e a travessia da saída. As teclas são ouvidas no elemento da cena, e não na janela, lidas pela posição no teclado, e a simulação para quando um diálogo abre, quando a janela perde o foco e quando a aba fica oculta.
+
+O palco e a prévia do mundo são pacotes carregados à parte, e ficam atrás de uma fronteira de erro (`ui/StageBoundary.tsx`): se um deles não chega, aparece o substituto, e o cabeçalho, o objetivo e o painel continuam funcionando. As janelas do jogo ficam em um contexto de empilhamento próprio (`.jogo-palco`, em `globals.css`), abaixo do cabeçalho do site.
+
+O que é fixo na cena (paredes, piso, parapeitos e objetos parados) é desenhado uma vez, em telas à parte, e copiado a cada quadro; `engine/render.ts` redesenha só o que se move (D-106).
+
+O desenho tem um arquivo por parte, todos em `src/features/game/draw/`: `kit.ts` (tinta, luz e primitivas isométricas), `characters.ts` e `character-*.ts` (os três personagens), `scene.ts` (a montagem), `scene-floor.ts`, `scene-walls.ts`, `scene-exit.ts` (o portal, a porta e a soleira), `scene-record.ts` (o registro, o anel de alcance e o efeito de recolher), `props.ts` e `props-*.ts` (os objetos de cenário). O contrato está em `draw/types.ts`.
+
 ## Espaços reservados
 
 | Pasta | Recebe | Fase |
@@ -263,6 +305,8 @@ Dentro de `features/map`:
 | `src/features/timeline/` | Linha do tempo, controles do recorte, escolha de período no eixo e cargos e partidos do período | Em uso desde a fase 4; completa na fase 5 |
 | `src/features/map/` | Mapa, base de contornos, marcadores, seletor, câmera e falhas | Em uso desde a fase 1; completo na fase 6 |
 | `src/features/comparison/` | Faixas das trajetórias na mesma escala | Em uso desde a fase 4; a tela foi ligada ao estado e ao endereço na fase 7 |
+| `src/lib/game/` | Regras e configuração do jogo, sem interface | Em uso desde a etapa 1 do jogo |
+| `src/features/game/` | Casca, palco, desenho (`draw/`), motor (`engine/`) e interface (`ui/`) do jogo | Em uso desde a etapa 1 do jogo |
 | `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação, as páginas de perfil, de acontecimento e de metodologia, e o acabamento (transições, continuidade da seleção, link com consulta), em quatro larguras | Em uso; cresce até a fase 9 |
 | `tests/export/` | O que só existe no build de produção: o que cada página pede e quando, o carregamento adiado do mapa, as versões dos retratos e a navegação pré-carregada. Roda sobre `out/`, servida por `npm run preview` | Em uso desde a fase 8 |
 | `docs/desempenho/` | Resultado bruto das medições, em JSON, um arquivo por build medido | Em uso desde a fase 8 |

@@ -21,6 +21,7 @@ export function PersonCard({ pessoa, retrato, coberto, registros }: PersonCardPr
   return (
     <Link
       href={`/politicos/${pessoa.slug}`}
+      data-cartao-perfil={pessoa.slug}
       className="group flex w-full flex-col border border-ink bg-raised no-underline transition-colors duration-[var(--atlas-fast)] hover:bg-paper"
     >
       <Portrait

@@ -6,6 +6,7 @@ import { SiteNav } from "./SiteNav";
 const NAV_ITEMS = [
   ...PROFILES.map((perfil) => ({ href: `/politicos/${perfil.slug}`, label: perfil.nome })),
   { href: "/comparar", label: "Comparar" },
+  { href: "/jogo", label: "Jogo" },
   { href: "/metodologia", label: "Metodologia" },
 ];
 

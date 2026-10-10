@@ -85,7 +85,7 @@ O que a conferência verifica em cada registro:
 6. Divergências entre documentos, com registro do que foi adotado.
 7. O endereço de cada fonte, aberto como um leitor o abriria. Um endereço que responde não basta: a página precisa mostrar o conteúdo citado.
 
-Publicação: o conjunto atual, todo com revisão assistida por IA, serve ao desenvolvimento e à leitura interna. A publicação do atlas depende de revisão humana do conjunto final. A fase 9 do plano refez a conferência com assistência de IA e deixou o roteiro da revisão humana pronto ([EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md)); ela continua pendente.
+Publicação: o conjunto atual, todo com revisão assistida por IA, serve ao desenvolvimento. O repositório é público desde 10 de outubro de 2026, por decisão do responsável pelo projeto, e por isso o conteúdo pode ser lido nos arquivos; o site não foi publicado e continua com `noindex`. A publicação do site depende de revisão humana do conjunto final. A fase 9 do plano refez a conferência com assistência de IA e deixou o roteiro da revisão humana pronto ([EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md)); ela continua pendente.
 
 A regra que decide, a partir do estado e da pasta, o que entra nos dados do site está em [DATA-PIPELINE.md](DATA-PIPELINE.md), seção "Estados editoriais e elegibilidade". O mesmo documento diz como promover um rascunho e como tirar um registro do ar.
 

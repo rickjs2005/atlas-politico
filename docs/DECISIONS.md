@@ -720,6 +720,174 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Consequência.** Nenhuma dependência nova. Leitor de tela e aparelho real continuam fora do que o projeto confere sozinho.
 
+## D-91. O jogo é um segundo caminho sobre os mesmos dados, sem conteúdo próprio
+
+**Decisão (jogo, etapa 1).** O atlas ganhou um jogo em que o visitante escolhe uma das duas pessoas, controla um personagem por cenários e avança por capítulos da trajetória. Um capítulo cita acontecimentos publicados pelo `id`; o título, a data, o resumo e as fontes de cada registro vêm dos dados gerados. O jogo não tem arquivo de conteúdo, e as fichas, as fontes, a comparação e a metodologia continuam nos mesmos endereços.
+
+**Motivo.** O pedido da etapa: uma experiência jogável sobre a base existente, com os fatos disponíveis também fora do jogo. Texto editorial repetido no código das cenas sairia do pipeline, da revisão e do registro de alterações.
+
+**Consequência.** Um capítulo só existe se os acontecimentos dele estão publicados: `playableChapters` descarta o que não está, e a rota diz isso. Corrigir um registro corrige o jogo no build seguinte. Os textos próprios do jogo (título, motivo e objetivo do capítulo, nome do cenário) ficam em `src/lib/game/` e só dizem o que os registros sustentam; um teste os confere.
+
+## D-92. Capítulos por assunto e período, começando pelo começo de cada trajetória
+
+**Decisão (jogo, etapa 1).** Dois capítulos por pessoa, com os primeiros registros publicados de cada uma, sem pular nenhum: para Lula, o sindicato, as greves e a fundação do partido (1975 a 1980) e a Constituinte com as duas primeiras disputas presidenciais (1986 a 1994); para Flávio Bolsonaro, as eleições para deputado estadual com a disputa pela Prefeitura (2002 a 2016) e a eleição para o Senado com os dois registros de 2019 (2018 a 2019). O mesmo desenho para os dois: a primeira tarefa é encontrar um registro, e a segunda, ordenar dois. O título e o motivo de cada capítulo são inventários do que os registros dizem, na mesma forma para os dois.
+
+**Motivo.** As trajetórias têm períodos diferentes, e a regra editorial é não nivelar carreiras de duração diferente. Um título que conta uma história ("quatro mandatos", "do Rio ao Senado") afirma mais do que os registros: o período do capítulo é o dos anos dos acontecimentos, e não o dos mandatos, e a revisão independente achou as duas coisas lado a lado na tela.
+
+**Consequência.** Nenhum episódio judicial dos processos recentes entrou nesta etapa: denúncia, condenação e anulação pedem uma ficha que mostre alegação, decisão e desfecho no mesmo lugar, e isso fica desenhado antes. O número de registros por capítulo não é igual entre os dois (quatro e três, cinco e três), porque segue o que cada trajetória tem no período. Faltam capítulos para 24 dos 39 acontecimentos ([GAMEPLAY.md](GAMEPLAY.md)). A regra da fronteira entre capítulos está na D-100.
+
+## D-93. Tarefa com objetivo, ação e conclusão no código, e ordem só com datas que decidem
+
+**Decisão (jogo, etapa 1).** Dois tipos de tarefa em `TaskSpec`: `registro` (recolher o registro pedido conclui) e `ordem` (recolher dois registros e confirmar a ordem certa conclui). Não há botão de concluir fase. Uma tarefa de ordem só aceita dois registros cujos intervalos de cálculo não se cruzam (`datesDecideOrder`). Errar mostra as duas datas e deixa tentar de novo, sem perder nada.
+
+**Motivo.** O pedido: mecânica explícita, fácil e sem conhecimento prévio. A regra das datas é a do atlas: uma data parcial não é completada, e um ano não vem antes nem depois de um dia do mesmo ano.
+
+**Consequência.** O par "prisão de 1980" e "fundação do PT em 10 de fevereiro de 1980" não pode virar tarefa, e o teste dos capítulos recusa. A explicação lista os dois registros com a data entre parênteses, na precisão de cada um e com o mais antigo primeiro: os títulos do atlas são orações, e uma frase montada com eles sairia truncada.
+
+Cumprir a tarefa deixou de abrir a saída sozinho: a D-109 separou as duas coisas.
+
+## D-94. Canvas 2D e arte por código, sem biblioteca de jogo e sem imagens
+
+**Decisão (jogo, etapa 1).** A cena é desenhada em um canvas 2D, com uma projeção isométrica de 64 por 32 pixels por célula, e toda a arte (personagens, cenários, objetos, efeitos) é desenho vetorial feito por código em `src/features/game/draw/`. Nenhuma dependência foi acrescentada.
+
+**Motivo.** A cena é pequena (uma sala de 12 por 9 células e uns vinte objetos), e o canvas 2D a desenha a 60 quadros por segundo. Um motor de jogo traria centenas de quilobytes e um modo de trabalhar estranho ao projeto. Sem folha de sprites não há recurso externo para carregar nem para licenciar, e o traço acompanha a densidade da tela e o zoom.
+
+**Consequência.** Cada peça nova é código de desenho, e não um arquivo de imagem: a galeria `/dev/jogo-arte/` existe para olhar as peças sem jogar. O jogo não usa WebGL, e as páginas do jogo não têm mapa: nunca há dois renderizadores pesados na mesma tela. A conta dos 60 quadros por segundo só fechou com o que é fixo desenhado uma vez (D-106).
+
+## D-95. O palco é um pacote à parte, carregado só na página do jogo
+
+**Decisão (jogo, etapa 1).** `GameStage` (canvas, laço e entrada) e o desenho entram por `next/dynamic`, sem renderização no servidor, só em `/jogo/[personagem]`. A entrada do jogo pede só a prévia. A entrada do atlas só adianta a página do jogo quando a pessoa aponta para o acesso (`IntentLink`).
+
+**Motivo.** É a regra da fase 8 para o mapa (D-76): o código pesado chega quando vai ser usado. Quem veio ler um acontecimento não paga pelo jogo.
+
+**Consequência.** O HTML do build traz o capítulo, o objetivo e os botões, sem a cena; sem JavaScript, o aviso fica dentro do palco, na primeira tela, e aponta para a trajetória no atlas. Um pacote à parte pode não chegar (D-104). `tests/export/jogo.spec.ts` confere na saída estática o que cada página pede.
+
+## D-96. Progresso no navegador, por personagem, com versão; nunca no endereço
+
+**Decisão (jogo, etapa 1).** O progresso fica em `localStorage`, uma chave por personagem, em um formato com versão. Os capítulos têm três situações (`bloqueado`, `disponivel`, `concluido`) e transições previsíveis. A leitura aceita só o que está certo: dado inválido, de outra versão ou de outro personagem vira começo, e a progressão é reaplicada. Sem armazenamento, o jogo segue com uma cópia em memória e avisa.
+
+**Motivo.** Sem login e sem backend, o navegador é o único lugar para guardar. No endereço, o progresso viajaria em link compartilhado e poderia ser alterado por quem abre o link: o pedido é que abrir um link direto não mude nada.
+
+**Consequência.** O progresso não acompanha a pessoa entre aparelhos nem entre navegadores, e duas abas no mesmo personagem não se sincronizam. A página de um acontecimento aberta pelo jogo leva só `origem=jogo` e o personagem, para oferecer a volta. A cópia em memória é da página, e não de cada montagem do jogo: sem armazenamento, ir à ficha de um registro e voltar pelo site não perde o progresso da visita; recarregar perde, e o painel diz. A leitura também acerta o que ficou de uma edição anterior do capítulo: registro que ele não cita mais sai dos recolhidos, e uma ordem confirmada só vale com os dois registros da tarefa atual. Desde a D-109, acerta também o que foi guardado pela regra anterior da saída: um capítulo só consta como concluído com todos os registros recolhidos.
+
+## D-97. As teclas são da cena, e tudo pode ser feito sem ela
+
+**Decisão (jogo, etapa 1).** As setas, W, A, S, D e a tecla de interação são ouvidas no elemento da cena, e não na janela: só valem com o foco nela. A simulação para quando um diálogo abre, quando a janela perde o foco e quando a aba fica oculta. O painel **Capítulos e tarefas** lista os capítulos e cumpre as tarefas por botões, com o mesmo progresso.
+
+**Motivo.** Um jogo que captura teclas na página inteira quebra a rolagem, os botões e o leitor de tela do resto do atlas. E a exploração espacial não pode ser o único caminho para o conteúdo.
+
+**Consequência.** Recolher pelo painel é a mesma ação de recolher no cenário, e não um atalho para concluir: a tarefa de ordem ainda precisa ser respondida, e a saída, atravessada. Com um diálogo aberto, a cena e os botões sobre ela ficam fora da tabulação (`inert`). As teclas são lidas pela posição no teclado (`code`), para Shift e a trava de maiúsculas não deixarem uma direção presa, e um atalho do navegador passa direto. As janelas do jogo ficam em uma camada própria, abaixo do cabeçalho: o menu do site abre por cima delas.
+
+## D-98. O guia é um personagem fictício, e as pessoas retratadas não falam
+
+**Decisão (jogo, etapa 1).** Quem orienta o jogador é o Arquivista, identificado como personagem fictício na entrada do jogo e no diálogo dele. Os personagens de Lula e de Flávio Bolsonaro não têm fala, balão nem pensamento. Concluir um capítulo não gera nota, vitória nem elogio.
+
+**Motivo.** As regras editoriais do atlas: declaração tem autor, e nada é atribuído a quem não disse. Um jogo convida a pôr palavras na boca do personagem; aqui isso seria inventar fala de pessoa real. O progresso é de quem joga, e não uma avaliação da pessoa retratada.
+
+**Consequência.** O cenário é apresentado como representação (D-101). Os dois personagens têm o mesmo cartão, o mesmo número de capítulos, as mesmas mecânicas e o mesmo cuidado de desenho, em ordem alfabética, sem cor nem símbolo de partido.
+
+## D-99. A entrada do atlas aponta para o jogo, e a entrada do jogo é `/jogo/`
+
+**Decisão (jogo, etapa 1).** A escolha de personagem com a prévia do mundo fica em `/jogo/`. A entrada do atlas mantém os dois cartões de perfil, que levam à exploração, e ganhou, logo abaixo de cada um, o acesso **Jogar com**, do mesmo tamanho para os dois e na primeira tela nas quatro larguras. O menu ganhou o item **Jogo**.
+
+**Motivo.** A entrada do atlas foi medida e ajustada na fase 8, e os cartões são o acesso às fichas, que tem de continuar à mão. Pôr a prévia do jogo nela traria o código de desenho para a primeira tela do site.
+
+**Consequência.** Quem chega pela entrada do atlas está a um clique da cena, e a dois da entrada do jogo. Tornar a própria entrada do atlas a escolha de personagem do jogo é uma decisão de produto que fica em aberto para o responsável.
+
+## D-100. A fronteira entre capítulos só fica onde as datas decidem
+
+**Decisão (jogo, etapa 1).** Todo registro de um capítulo é anterior, sem ambiguidade de data, a todo registro do capítulo seguinte. Dois registros cuja ordem as datas não decidem ficam no mesmo capítulo, e o de data menos precisa leva o aviso que já leva na lista do atlas ("ordem dentro de 1980 não documentada"), no registro recolhido e no painel. A regra do aviso é a mesma função, movida para o domínio (`findUndeterminedOrder`).
+
+**Motivo.** A revisão independente do código achou o caso: a prisão de 1980, só com o ano, fechava o capítulo 1 de Lula, e a fundação do PT, de 10 de fevereiro de 1980, abria o 2. Quem jogava pelo cenário saía com a sequência prisão e depois fundação, que o conteúdo não sustenta, e a ressalva só existia no painel. Avançar de capítulo é dito pelo jogo como passar a um período seguinte; a fronteira afirma ordem, queira o texto ou não. É a D-54 aplicada ao jogo.
+
+**Consequência.** A fundação do PT passou para o capítulo 1, junto da prisão, e o capítulo 2 de Lula começa em 1986. `tests/game-chapters.test.ts` confere todos os pares entre capítulos vizinhos e a marca de ordem em aberto contra o conteúdo real. Um capítulo novo que quebre a regra não passa no teste.
+
+## D-101. O nome do lugar é sempre dito como cenário, na própria página do jogo
+
+**Decisão (jogo, etapa 1).** O nome do lugar aparece com o rótulo "cenário" no alto da cena, na transição e no painel. A frase "O cenário é uma representação: não afirma que a pessoa esteve neste lugar nem que os fatos aconteceram nele" está no diálogo do guia e no rodapé da página de cada personagem, além da entrada do jogo.
+
+**Motivo.** O acesso **Jogar com**, da entrada do atlas, leva direto à página do personagem, e a ressalva só existia na entrada do jogo. Ao lado do período, "Plenário do Senado" lia como o lugar e a época do fato, contra a regra de lugares do atlas (o lugar é o do fato documentado).
+
+**Consequência.** Os capítulos foram agrupados para o cenário não contradizer os registros mais do que uma representação contradiz: as eleições disputadas como deputado estadual ficam no salão da Assembleia, e o plenário do Senado começa com a eleição para o Senado. O que sobra de distância (uma disputa presidencial de 1994 no plenário da Constituinte) é o que a frase cobre. Um teste de navegador confere a frase e o rótulo.
+
+## D-102. O registro lido no jogo leva a situação da revisão
+
+**Decisão (jogo, etapa 1).** O registro recolhido mostra a mesma nota das outras leituras do atlas: conferido com as fontes, com assistência de IA, e revisão humana pendente. A entrada do jogo e o rodapé da página do jogo repetem a frase da edição, com o caminho para a metodologia.
+
+**Motivo.** A regra do projeto é mostrar a nota em toda leitura de um registro (D-22). O jogo era a única que a omitia, e quem chega pelo menu ou por link direto leria os resumos sem saber que nenhuma pessoa os revisou.
+
+**Consequência.** O recorte do jogo leva o campo editorial de cada registro, sem as observações internas. Um teste confere que nenhum registro do jogo diz ter revisão humana.
+
+## D-103. Uma figura por personagem, a de hoje
+
+**Decisão (jogo, etapa 1).** Cada personagem tem a mesma figura em todos os capítulos, a de hoje. Ela não acompanha a idade de cada período, e a entrada do jogo diz isso.
+
+**Motivo.** O pedido é uma aparência reconhecível, com o mesmo cuidado para os dois. A figura de hoje é a que mais se reconhece, e desenhar bem uma figura por década, para os dois, é mais do que esta etapa comporta.
+
+**Consequência.** Um capítulo de 1975 mostra o personagem como ele é desenhado para 2026. É uma convenção do jogo, e não uma afirmação sobre a aparência da pessoa na época. Figuras por período ficam para quando os capítulos cobrirem décadas diferentes com cenários próprios.
+
+## D-104. O jogo não derruba a página quando algo falha
+
+**Decisão (jogo, etapa 1).** O palco e a prévia do mundo ficam atrás de uma fronteira de erro. Se o pacote do palco não chega, aparece no lugar da cena um aviso com o botão de recarregar, e o cabeçalho, o objetivo e o painel **Capítulos e tarefas** continuam funcionando. Se o da prévia não chega, a entrada do jogo fica com o fundo do cartão.
+
+**Motivo.** Um pacote carregado à parte pode faltar: a rede cai depois do HTML, ou uma publicação nova troca os arquivos com a página aberta. Sem a fronteira, o Next trocava a página inteira pelo erro padrão, em inglês, e sumia justamente o caminho sem o cenário.
+
+**Consequência.** É a regra do mapa (D-64) aplicada ao jogo. `tests/export/jogo.spec.ts` derruba cada pacote na saída estática e confere que a tarefa ainda pode ser cumprida pelo painel.
+
+## D-105. O personagem contorna a quina, e o celular deitado tem o palco inteiro
+
+**Decisão (jogo, etapa 1).** Quem anda reto por um corredor e roça a quina de um obstáculo é desviado para o lado livre, até o corpo passar; de frente para o obstáculo, para. Em celular deitado, o palco deixa o mínimo de altura e cabe na janela, e o que fica sobre a cena encolhe.
+
+**Motivo.** Os corredores dos cenários têm uma célula de largura, e a colisão por eixo prendia o personagem na quina de uma bancada, o que pede uma precisão que o direcional de toque não tem. Com o celular deitado, o palco ficava mais alto que a janela, e o direcional e o botão de ação, presos à base dele, abriam cortados.
+
+**Consequência.** O desvio vale só para movimento reto em um eixo do mundo, com tolerância de um quarto de célula; na diagonal, cada eixo segue a própria regra. Os dois casos têm teste, de regra e de navegador.
+
+## D-106. O que é fixo na cena é desenhado uma vez
+
+**Decisão (jogo, etapa 1).** As paredes de trás com o piso e os detalhes de chão, os parapeitos da frente e cada objeto parado são desenhados uma vez, em telas à parte, e copiados a cada quadro. Só o que se move é redesenhado: o personagem, o guia, os registros, a porta, a bandeira, a planta e os efeitos.
+
+**Motivo.** A arte final tem milhares de traços por cena. Uma medição de bancada, feita depois de a arte ficar pronta, mostrou a cena a cerca de 18 quadros por segundo no Chromium com a placa de vídeo, em 1440×835: o custo não era o do código, de 2 ms por quadro, e sim o de o navegador rasterizar tudo de novo. Com as telas prontas, a mesma cena ficou entre 55 e 60 quadros por segundo.
+
+**Consequência.** Os parapeitos e o portal da saída vão todos depois do que está dentro da sala, em vez de entrarem na ordem de profundidade: ficam na borda, e nada de dentro passa na frente deles. As telas são refeitas quando a escala muda e liberadas quando saem de uso; sem elas, a cena é desenhada direto. O desenho com as telas e o desenho direto foram comparados pixel a pixel. A medição foi feita fora do projeto, nesta máquina; as páginas do jogo continuam fora das medições de [PERFORMANCE.md](PERFORMANCE.md).
+
+## D-107. O toque age ao encostar, e as janelas esperam um instante
+
+**Decisão (jogo, etapa 1).** O botão de ação de toque age dentro do próprio `touchstart`, que é cancelado no mesmo passo. As janelas do jogo não aceitam toque nem clique por 350 ms ao abrir. O teclado não espera.
+
+**Motivo.** A revisão independente achou o defeito mais sério da etapa, e um teste com toque de verdade o confirmou: em celular em pé, a janela do registro abre embaixo, e o botão que a fecha aparece onde estava o botão de ação. O clique que o navegador gera quando o dedo levanta caía nesse botão, e o registro fechava sem ser lido. Agir no `pointerdown` e cancelar o `touchstart` não bastava: a ação tira o botão do documento, e o `touchstart` chegava a um botão já sem ouvinte.
+
+**Consequência.** Dá para andar com um dedo e agir com outro, o que agir no clique não permitiria. A espera das janelas cobre o segundo toque dado por reflexo e os navegadores em que o cancelamento não valer. O teste de celular usa um toque de verdade e confere que a janela continua aberta. Nenhum aparelho real foi usado.
+
+A espera vale também para o mouse: um clique dado nos primeiros 350 ms de uma janela não faz nada. Para o robô dos testes isso tem um efeito à parte: o Playwright repete o clique barrado rolando a página de outros jeitos, e a página termina rolada. Com o mouse de verdade e pelo teclado ela não rola (medido). O roteiro de capturas espera a janela aceitar o clique antes de clicar, e recusa captura com a página rolada.
+
+## D-108. Uma tecla segurada não atravessa a troca de tela
+
+**Decisão (jogo, etapa 1).** A repetição do teclado de uma tecla que já estava apertada quando uma janela abriu, fechou ou trocou é descartada, até a tecla soltar. A saída aberta, ao alcance, é atravessada também pela tecla e pelo botão de interação.
+
+**Motivo.** Com a tecla ainda apertada, a repetição caía no botão que acabara de receber o foco: o Enter que recolhia um registro fechava o registro, e a seta com que se entrava na saída rolava a página durante a transição, deixando o capítulo seguinte com o objetivo fora da tela. A dica "Atravessar a saída", com a tecla ao lado, não fazia nada.
+
+**Consequência.** Há um ouvinte de teclado na janela enquanto a página do jogo está aberta, só para descartar essa repetição: o jogo continua sem reagir a teclas fora da cena (D-97). Os dois casos têm teste de navegador.
+
+## D-109. A saída abre com todos os registros recolhidos, e não só com a tarefa
+
+**Decisão (jogo, etapa 1, em 10 de outubro de 2026).** A saída de um capítulo abre com duas condições juntas: a tarefa cumprida e todos os registros do capítulo recolhidos (`isExitOpen`, em `src/lib/game/mission.ts`). Antes, abria assim que a tarefa era cumprida. A tarefa continua a mesma (D-93): encontrar o registro pedido ou pôr dois em ordem. A regra vale na cena, na tecla de interação, no painel e no progresso salvo.
+
+**Motivo.** Pedido do responsável pelo projeto, depois de ver a primeira entrega rodando: a porta só pode abrir depois de todos os documentos recolhidos. Na primeira entrega ela abria com a tarefa cumprida, e as outras pastas podiam ficar no chão. Com a regra, ninguém passa de um capítulo sem ter aberto todos os registros dele.
+
+**Consequência.** Há dois estados que antes não existiam, cada um com a sua frase: a tarefa cumprida com registros por recolher ("Tarefa concluída. Faltam N registros para a saída abrir.") e todos os registros recolhidos com a ordem por responder ("falta a tarefa"). A contagem "Registros: n de total" fica sempre à vista sobre a cena; a janela do registro, a da saída fechada, o guia e o painel dizem o que falta. Na tarefa de ordem, em que recolher tudo não basta, a contagem diz "a saída abre com todos e a ordem certa"; com os dois registros da tarefa recolhidos, a cena diz onde responder, e a janela da saída fechada leva à pergunta. O painel só oferece **Atravessar a saída** com ela aberta. O objetivo de cada capítulo continua dizendo só a tarefa.
+
+Um capítulo só consta como concluído com a saída aberta, e isso vale para o que foi salvo. Um progresso guardado pela regra anterior, com um capítulo concluído sem todos os registros, é acertado na leitura: o capítulo volta a disponível, com o que já foi recolhido, e os seguintes recomeçam. O formato salvo não mudou, e a versão continua 1.
+
+Recolher tudo leva mais tempo: as jornadas de teste pelo cenário passaram a andar por todos os registros de cada capítulo.
+
+## D-110. Um registro recolhido pode ser lido de novo pelo painel
+
+**Decisão (jogo, etapa 1, em 10 de outubro de 2026).** No painel **Capítulos e tarefas**, cada registro recolhido tem o botão **Ler de novo**, que abre a mesma janela do registro, sem mexer no progresso e sem os avisos de tarefa e de saída. Fechar volta ao painel.
+
+**Motivo.** Com a D-109, um capítulo concluído tem todos os registros recolhidos, e a pasta recolhida some da cena. Sem a releitura não haveria, no jogo, como voltar ao texto de um registro nem chegar à ficha dele ao rever um capítulo. Antes, isso se fazia recolhendo um registro que tinha ficado para trás, o que a regra nova não deixa existir em capítulo concluído.
+
+**Consequência.** O caminho "rever um capítulo, ir à ficha de um registro e voltar ao capítulo que se revia" continua existindo, agora pela releitura, com teste de navegador. Como há um botão por registro, cada um leva no nome o título do registro, e na volta de uma releitura o foco fica no botão do registro lido, que a janela traz à vista sem rolar a página.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
@@ -741,3 +909,8 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 | Texto legível sob a hachura do período, na comparação (D-88) | Revisão de design, se a validação com pessoas mostrar dificuldade |
 | Conferência das fontes como comando do projeto ([EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md), pendência 6) | Quando o conteúdo passar a ser atualizado com frequência |
 | Firefox e Safari nas jornadas ([QA.md](QA.md)) | Fase 10, antes de publicar |
+| A entrada do atlas como escolha de personagem do jogo (D-99) | Decisão do responsável pelo projeto |
+| Capítulos para os 24 acontecimentos restantes e ficha própria para episódios judiciais no jogo (D-92) | Etapa 2 do jogo |
+| Uma figura de cada personagem por período (D-103) | Quando os capítulos cobrirem décadas diferentes |
+| Jogo em aparelho real, com leitor de tela e em outros navegadores | Antes de publicar |
+| Som no jogo | Etapa posterior |

@@ -2,7 +2,7 @@
 
 Tudo o que o atlas afirma sobre pessoas, mandatos e acontecimentos mora aqui, em JSON versionado. O código nunca traz conteúdo embutido.
 
-Situação: edição 0.1.0, com data de corte em 8 de outubro de 2026. São 39 acontecimentos conferidos e 5 rascunhos. Toda a conferência foi assistida por IA; a revisão humana está pendente (ver `docs/CONTENT-REVIEW.md`).
+Situação: edição 0.1.1, com data de corte em 8 de outubro de 2026. São 39 acontecimentos conferidos e 5 rascunhos. Toda a conferência foi assistida por IA; a revisão humana está pendente (ver `docs/CONTENT-REVIEW.md`).
 
 As páginas não leem estas pastas. Elas leem `generated/`, que `npm run data:build` produz depois de validar o conteúdo. O funcionamento está em `docs/DATA-PIPELINE.md`.
 

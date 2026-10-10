@@ -9,6 +9,7 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | `fase-6/` | O mapa sincronizado: marcadores, lista de um lugar, seleção, legenda e falhas | `npm run capture:map` | `tests/e2e/mapa.capture.ts` |
 | `fase-7/` | A comparação, o perfil, a página do acontecimento com o retorno, a cópia do link e a metodologia | `npm run capture:pages` | `tests/e2e/paginas.capture.ts` |
 | `fase-8/` | O acabamento: abertura, exploração, comparação e leitura, na saída estática. Em `fase-8/antes/`, as mesmas telas antes da fase | `npm run build` e `npm run capture:finish` | `tests/export/acabamento.capture.ts` |
+| `jogo-etapa-1/` | O jogo, na saída estática: entrada do atlas com o acesso, escolha de personagem, os dois capítulos de cada personagem, registro, tarefa de ordem, painel, guia, fim da etapa, celular, rodapé e a volta da ficha | `npm run build` e `npm run capture:game` | `tests/export/jogo.capture.ts` |
 | `fase-9/` | As oito telas da conferência final, nas quatro larguras, com a edição 0.1.1; o relatório da passagem de acessibilidade; e a linha do tempo antes e depois da correção da hachura | `npm run build` e `npm run audit:a11y -- --saida docs/capturas/fase-9` | `scripts/audit-a11y.mjs` |
 
 Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts`, `tests/e2e/paginas.spec.ts`, `tests/e2e/acabamento.spec.ts` e, sobre a saída estática, `tests/export/carregamento.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
@@ -24,6 +25,40 @@ As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeita
 | `--tablet` | 768×1024 |
 | `--celular` | 390×844 |
 | `--celular-estreito` | 360×800 |
+
+## Jogo, etapa 1
+
+Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o conteúdo da edição 0.1.1. O celular é emulado (390×844 em pé e 844×390 deitado, com toque).
+
+| Arquivo | O que mostra |
+| --- | --- |
+| `01-entrada-do-atlas--computador` e `--celular` | A entrada do atlas, com o acesso **Jogar com** abaixo de cada cartão |
+| `02-escolha-de-personagem--computador` e `--celular` | A entrada do jogo: os dois personagens, a prévia do mundo e os capítulos |
+| `<personagem>-03-capitulo-1` | A cena do primeiro capítulo, ao abrir |
+| `<personagem>-04-registro-ao-alcance` | O personagem ao lado do registro pedido, com a pasta em destaque, o anel e a dica |
+| `<personagem>-05-registro-recolhido` | O registro pedido: o aviso da tarefa concluída, quantos registros já vieram e quantos faltam para a saída abrir, e depois a data, o título, o resumo, as fontes, a situação da revisão e o caminho da ficha |
+| `<personagem>-06-saida-aberta` | Todos os registros recolhidos e a tarefa concluída: a contagem cheia e a porta aberta |
+| `<personagem>-07-transicao` | A tela entre os capítulos |
+| `<personagem>-08-capitulo-2` | A cena do segundo capítulo: outro lugar, outros objetos |
+| `<personagem>-09-tarefa-de-ordem` | Os dois registros lado a lado, com as datas |
+| `<personagem>-10-ordem-errada-com-explicacao` | A explicação e o botão de tentar de novo |
+| `<personagem>-11-ordem-certa` | A ordem confirmada, com o aviso de que ainda falta um registro para a saída abrir |
+| `<personagem>-12-painel-de-capitulos` | O painel **Capítulos e tarefas**, com a saída aberta e **Ler de novo** em cada registro recolhido |
+| `<personagem>-13-fim-da-etapa` | A tela de fim desta etapa, com os caminhos para o atlas |
+| `<personagem>-14` a `-17-celular-...` | A cena, o registro e o painel em celular, com os controles de toque |
+| `18-pagina-do-acontecimento-com-volta-ao-jogo` | A página do acontecimento aberta pelo jogo, com **Voltar ao jogo** |
+| `19-celular-deitado` | A cena em celular deitado: o palco inteiro na janela, com o direcional e o botão de ação |
+| `20-painel-com-o-aviso-de-ordem` | O painel do capítulo 1 de Lula, com o motivo do agrupamento e o aviso de ordem não documentada |
+| `21-registro-com-a-ordem-nao-documentada` | O registro de data parcial, com os dois avisos e a situação da revisão |
+| `22-diante-da-porta-aberta` | O personagem diante da saída aberta: a folha girada, a placa acesa e as setas no degrau |
+| `23-guia-como-jogar` | A janela do guia: o Arquivista identificado como personagem fictício, o objetivo, como se joga e o aviso de que o cenário é representação |
+| `24-rodape-da-pagina-do-jogo` | A página do jogo rolada até o fim, de propósito: o que fica abaixo do palco (o aviso do cenário, a situação da revisão e o caminho para escolher outro personagem) |
+| `25-tarefa-cumprida-e-saida-fechada` | A tarefa cumprida e registros por recolher: o objetivo diz quantos faltam, a contagem aparece sobre a cena e a porta continua trancada |
+| `26-saida-fechada-o-que-falta` | A janela da saída fechada: a regra, os registros recolhidos e os que faltam, e a situação da tarefa |
+
+`<personagem>` é `flavio-bolsonaro` ou `lula`: as mesmas capturas para os dois. São 43 arquivos.
+
+O roteiro do jogo confere uma coisa só: que a página não esteja rolada em nenhuma captura, fora a 24. As janelas do jogo ignoram toque e clique por 350 ms ao abrir; quando o robô clica nesse instante, ele repete o clique rolando a página de outros jeitos, e a captura seguinte sairia com a página fora do lugar. Com o mouse de verdade e pelo teclado a página não rola (medido em 10 de outubro de 2026). Por isso o roteiro espera a janela aceitar o clique.
 
 ## Fase 9
 
