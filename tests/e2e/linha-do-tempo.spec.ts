@@ -8,6 +8,8 @@ import { readFileSync } from "node:fs";
 
 import { expect, test, type Page } from "@playwright/test";
 
+import { MAP_PACKAGE } from "./map-package";
+
 interface Limit {
   tipo: "data" | "desconhecida" | "em-curso";
   valor?: string;
@@ -327,6 +329,39 @@ test.describe("ano, intervalo e categorias", () => {
     await expectUrl(page, LULA);
     await expect(itens(page)).toHaveCount(deLula.length);
   });
+
+  for (const [nome, tela] of [
+    ["computador", { width: 1440, height: 900 }],
+    ["celular", CELULAR],
+  ] as const) {
+    test(`com um período escolhido, a hachura não passa pelos anos do eixo: ${nome}`, async ({ page }) => {
+      await page.setViewportSize(tela);
+      await page.goto(`${LULA}?de=2016&ate=2019`);
+      await expect(itens(page)).toHaveCount(noRecorte(deLula, 2016, 2019).length);
+
+      // Os anos fora do período são os que a pessoa lê para escolher outro: têm de ficar no claro.
+      const medidas = await tempo(page).evaluate((regiao) => {
+        const caixa = (no: Element) => no.getBoundingClientRect();
+        const sombras = Array.from(regiao.querySelectorAll("[data-period-shade] > span"))
+          .map(caixa)
+          .filter((sombra) => sombra.width > 1 && sombra.height > 1);
+        const anos = Array.from(regiao.querySelectorAll("[data-year-label]"))
+          .filter((no) => (no as HTMLElement).checkVisibility())
+          .map((no) => ({ ano: no.textContent ?? "", caixa: caixa(no) }));
+        const cobre = (sombra: DOMRect, alvo: DOMRect) =>
+          sombra.left < alvo.right && sombra.right > alvo.left && sombra.top < alvo.bottom && sombra.bottom > alvo.top;
+        return {
+          sombras: sombras.length,
+          anos: anos.length,
+          foraDoPeriodo: anos.filter(({ ano }) => Number(ano) < 2016 || Number(ano) > 2019).length,
+          cobertos: anos.filter(({ caixa: alvo }) => sombras.some((sombra) => cobre(sombra, alvo))).map(({ ano }) => ano),
+        };
+      });
+      expect(medidas.sombras, "partes da hachura na tela").toBe(2);
+      expect(medidas.foraDoPeriodo, "anos escritos fora do período").toBeGreaterThan(2);
+      expect(medidas.cobertos, "anos cobertos pela hachura").toEqual([]);
+    });
+  }
 });
 
 test.describe("lista cronológica e datas parciais", () => {
@@ -708,7 +743,7 @@ test.describe("endereços inválidos ou incompatíveis", () => {
 
 test.describe("leitura independente do mapa", () => {
   test("sem o pacote do mapa, a consulta, a linha do tempo e o painel continuam", async ({ page }) => {
-    await page.route(/maplibre-gl.*\.js(\?|$)/, (route) => route.abort());
+    await page.route(MAP_PACKAGE, (route) => route.abort());
     const esperados = noRecorte(deLula, 2016, 2019);
     await page.goto(`${LULA}?de=2016&ate=2019`);
 

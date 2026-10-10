@@ -35,6 +35,8 @@ Regras que valem para os dois perfis:
 - **Texto próprio.** Nada é copiado das fontes além de expressões curtas entre aspas, quando a expressão é o próprio dado, como a situação "Eleito por QP" no registro do TSE.
 - **Atribuição.** O que é declaração ou avaliação aparece com autor: "a defesa afirmou", "os partidos alegavam", "segundo a Agência Senado".
 - **Precisão da data.** A data tem a precisão que a fonte sustenta. Se a fonte só dá o ano, o registro fica com o ano e o contexto explica.
+- **Data do fato e data da publicação.** São coisas diferentes. Quando o documento diz o dia do fato ("nesta quarta-feira (12)"), vale esse dia. Quando só há a data em que a notícia foi publicada, o registro usa essa data e o texto diz que é a da publicação ou da divulgação.
+- **Nome do cargo.** O nome se explica sozinho, sem a instituição: "Presidente do PT", e não "Presidente". A página do acontecimento e a linha do tempo escrevem só o nome do cargo, e o mesmo nome em instituições diferentes deixaria a leitura por conta de quem lê. Um teste recusa o nome repetido entre instituições da mesma pessoa.
 - **Sem qualificar.** O atlas não diz se uma decisão foi justa, se um resultado foi bom ou se uma pessoa tem razão.
 - **Ordem dos nomes.** Em acontecimento compartilhado, os nomes vêm em ordem alfabética.
 - **Mesma régua.** Os textos dos dois perfis seguem a mesma estrutura e o mesmo tom. Na revisão, o teste é trocar os nomes e ver se a frase ainda soaria neutra.
@@ -81,8 +83,9 @@ O que a conferência verifica em cada registro:
 4. Separação entre fato, declaração, investigação, acusação e decisão.
 5. Em episódio judicial, o estado na época e os desdobramentos até a data de corte.
 6. Divergências entre documentos, com registro do que foi adotado.
+7. O endereço de cada fonte, aberto como um leitor o abriria. Um endereço que responde não basta: a página precisa mostrar o conteúdo citado.
 
-Publicação: o conjunto atual, todo com revisão assistida por IA, serve ao desenvolvimento e à leitura interna. A publicação do atlas depende de revisão humana do conjunto final (fase 9 do plano).
+Publicação: o conjunto atual, todo com revisão assistida por IA, serve ao desenvolvimento e à leitura interna. A publicação do atlas depende de revisão humana do conjunto final. A fase 9 do plano refez a conferência com assistência de IA e deixou o roteiro da revisão humana pronto ([EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md)); ela continua pendente.
 
 A regra que decide, a partir do estado e da pasta, o que entra nos dados do site está em [DATA-PIPELINE.md](DATA-PIPELINE.md), seção "Estados editoriais e elegibilidade". O mesmo documento diz como promover um rascunho e como tirar um registro do ar.
 

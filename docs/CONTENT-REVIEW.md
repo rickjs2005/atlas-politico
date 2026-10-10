@@ -1,6 +1,6 @@
 # Revisão de conteúdo
 
-Situação do conteúdo na edição 0.1.0, com data de corte em 8 de outubro de 2026.
+Situação do conteúdo na edição 0.1.1, com data de corte em 8 de outubro de 2026. A revisão editorial de 9 de outubro de 2026, com o que foi conferido, corrigido e deixado pendente, está em [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md).
 
 ## Situação
 
@@ -22,6 +22,10 @@ O conjunto está pronto para alimentar o desenvolvimento da interface. Não est�
 
 A conferência mecânica prova que o trecho existe no documento. Não prova que o texto do atlas o interpreta bem. Esse juízo é o que a revisão humana precisa refazer.
 
+## Terceira conferência
+
+Em 9 de outubro de 2026, na fase 9, as fontes foram abertas de novo e cada registro foi relido contra os documentos, ainda com assistência de IA. O resultado, as correções e as pendências estão em [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md). As tabelas abaixo já trazem o que mudou: o acontecimento de 2006 passou a ter 6 fontes, e o de 2017, 4. Na lista de cargos, os três registros de Lula escritos só como "Presidente" passaram a dizer de quê: do Sindicato dos Metalúrgicos e do PT.
+
 ## Itens conferidos
 
 ### Lula
@@ -36,9 +40,9 @@ A conferência mecânica prova que o trecho existe no documento. Não prova que 
 | 1989 | Lula disputa a Presidência pela primeira vez e perde no segundo turno | Primeira candidatura à Presidência | Eleições | 2 | agência pública 1, biografia institucional 1 | nacional |
 | 1994-10-03 | Lula é derrotado por Fernando Henrique Cardoso na eleição presidencial | Segunda derrota presidencial; o contexto registra a terceira, em 1998 | Eleições | 3 | dados oficiais 2, biografia institucional 1 | nacional |
 | 2002-10-27 | Lula é eleito presidente da República | Primeira eleição para presidente | Eleições | 3 | dados oficiais 1, agência pública 1, biografia institucional 1 | nacional |
-| 2006-10-29 | Lula é reeleito presidente da República | Reeleição | Eleições | 5 | dados oficiais 1, órgão 1, agência pública 2, biografia institucional 1 | nacional |
+| 2006-10-29 | Lula é reeleito presidente da República | Reeleição | Eleições | 6 | dados oficiais 2, órgão 1, agência pública 2, biografia institucional 1 | nacional |
 | 2016-03-18 | STF suspende a nomeação de Lula para a Casa Civil | Nomeação para ministério suspensa pelo STF | Mandatos e funções | 1 | órgão 1 | com lugar |
-| 2017-07-12 | Lula é condenado em primeira instância no caso do triplex | Primeira condenação criminal | Marcos históricos | 3 | órgão 2, agência pública 1 | com lugar |
+| 2017-07-12 | Lula é condenado em primeira instância no caso do triplex | Primeira condenação criminal | Marcos históricos | 4 | órgão 3, agência pública 1 | com lugar |
 | 2018-01-24 | TRF4 confirma a condenação de Lula e aumenta a pena | Condenação em segunda instância, que antecedeu a inelegibilidade e a prisão | Marcos históricos | 5 | órgão 3, agência pública 2 | com lugar |
 | 2018-04-07 | Lula é preso e levado à Polícia Federal em Curitiba | Início dos 580 dias de prisão | Marcos históricos | 3 | agência pública 3 | com lugar |
 | 2018-08-31 | TSE indefere o registro da candidatura de Lula à Presidência | Candidatura barrada pela Lei da Ficha Limpa | Eleições | 2 | dados oficiais 1, órgão 1 | com lugar |
@@ -164,7 +168,9 @@ Acontecimentos conferidos no conjunto: 39, dos quais 1 ligado(s) a mais de uma p
 
 | Tema | O que os documentos dizem | O que o atlas adotou |
 | --- | --- | --- |
-| Data de nascimento de Lula | A biografia da Presidência diz 27 de outubro de 1945. O TSE e a Câmara registram 6 de outubro de 1945 | O resumo não informa o dia. A divergência fica registrada aqui |
+| Data de nascimento de Lula | A biografia da Presidência diz 27 de outubro de 1945. O TSE (fichas de 2006, 2018 e 2026) e os dados abertos da Câmara registram 6 de outubro de 1945 | Desde a edição 0.1.1, o resumo informa o mês e o ano, em que os documentos concordam, e a ficha do TSE passou a ser citada. O dia continua fora |
+| Designação de Flávio Bolsonaro como líder do Patriota | O serviço de lideranças do Senado traz 4 de junho de 2021 no campo da data de designação e, na observação do mesmo registro, "Em 07.06.2021 [...] é designado Líder do Patriota" | Início com precisão de mês: junho de 2021. O texto do acontecimento diz os dois dias |
+| Nome da candidatura de Lula em 2006 | A ficha do TSE traz "A FORÇA DO POVO" no campo do nome da coligação e classifica o registro como partido isolado, sem composição | O texto diz que ele concorreu pela coligação A Força do Povo, como o campo registra. A composição não é informada |
 | Naturalidade de Flávio Bolsonaro | Senado, TSE de 2002 e TSE de 2026 registram Resende (RJ). As fichas do TSE de 2014, 2016 e 2018 registram Rio de Janeiro | Resende, por constar no Senado e nos registros mais antigo e mais recente do TSE |
 | Reeleições de Flávio Bolsonaro como deputado | A Agência Senado (4 out. 2026) diz "reelegendo-se quatro vezes seguidas". O TSE e a Agência Brasil mostram eleição em 2002 e reeleições em 2006, 2010 e 2014 | Quatro mandatos: uma eleição e três reeleições |
 | Vara que condenou Lula | A Agência Senado (4 out. 2026) escreve "14ª Vara Federal". STF, TSE e demais fontes dizem 13ª Vara Federal de Curitiba | 13ª Vara |
@@ -197,7 +203,7 @@ Acontecimentos conferidos no conjunto: 39, dos quais 1 ligado(s) a mais de uma p
 
 - Salvas em `public/media/retratos/`: os dois retratos oficiais, em 960 px de largura, com autoria, crédito, origem, condições de uso e texto alternativo em `content/published/imagens.json`.
 - Nenhum acontecimento tem imagem. A seleção de imagens de acontecimentos fica pendente.
-- Antes de publicar, confirmar as condições de uso do retrato de Flávio Bolsonaro diretamente com o Senado, já que a licença consta por via indireta (Senado Fotos e Wikimedia Commons).
+- Antes de publicar, confirmar as condições de uso do retrato de Flávio Bolsonaro diretamente com o Senado, já que a licença consta por via indireta (Senado Fotos e Wikimedia Commons). Em 9 de outubro de 2026, o registro no Commons dizia que qualquer uso é permitido, inclusive obra derivada, desde que a Agência Senado seja citada e o conteúdo não seja descaracterizado.
 
 ## Pendências
 
@@ -223,6 +229,7 @@ Flávio Bolsonaro:
 - Atuação na Assembleia Legislativa do Rio de Janeiro: propostas, votações e comissões. A Agência Senado cita a presidência da Comissão Especial de Planejamento Familiar, sem data.
 - Proposições e votações no Senado além da relatoria das saídas temporárias.
 - Episódios de 2026 noticiados pela Agência Brasil e não lidos nesta fase, entre eles o que envolve o Banco Master. Estão em andamento e só devem entrar com documento oficial e desfecho.
+- Ação cível por improbidade administrativa que, segundo o Brasil de Fato (29 set. 2026), o Ministério Público do Rio apresentou em 2023, ligada ao caso das "rachadinhas". A reportagem é fonte do atlas para outro ponto. A ação não entrou em nenhum registro: está em andamento, e nenhum documento oficial sobre ela foi lido.
 
 Os dois:
 
@@ -237,7 +244,7 @@ Os dois:
 
 ## O que a revisão humana precisa fazer
 
-1. Abrir cada acontecimento em `/acontecimentos/<slug>/`, seguir cada fonte e conferir o trecho indicado em "Onde". A lista de trechos em `docs/evidencias/provas-2026-10-08.json` permite procurar o texto exato no documento.
+1. Abrir cada acontecimento em `/acontecimentos/<slug>/`, seguir cada fonte e conferir o trecho indicado em "Onde". A lista de trechos em `docs/evidencias/provas-2026-10-09.json` permite procurar o texto exato no documento. O roteiro detalhado está em [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md), seção Revisão humana.
 2. Julgar se o resumo e o contexto dizem só o que a fonte sustenta e se o tom é o mesmo para as duas pessoas.
 3. Decidir sobre as divergências da tabela acima.
 4. Decidir se os episódios judiciais estão descritos de forma completa até a data de corte.

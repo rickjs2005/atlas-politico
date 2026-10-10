@@ -230,6 +230,88 @@ describe("conteúdo do repositório", () => {
     expect(conjunto.fontes.map((fonte) => fonte.id).sort()).toEqual([...citadas].sort());
   });
 
+  it("consulta, índice e comparação trazem os mesmos acontecimentos de cada pessoa", () => {
+    const { trajetorias } = compareTrajectories(data);
+    const todos = filterEvents(data).map((item) => item.id);
+    const reunidos = new Set<string>();
+
+    for (const perfil of PROFILES) {
+      const pessoa = findPersonBySlug(data, perfil.slug)!;
+      const daConsulta = filterEvents(data, { pessoaIds: [pessoa.id] }).map((item) => item.id);
+      const doIndice = data.indices.acontecimentos.porPessoa[pessoa.id] ?? [];
+      const daComparacao = trajetorias
+        .find((item) => item.pessoa.id === pessoa.id)!
+        .acontecimentos.map((item) => item.id);
+      const doConteudo = data.conjunto.acontecimentos
+        .filter((item) => item.pessoaIds.includes(pessoa.id))
+        .map((item) => item.id);
+
+      // A mesma lista, na mesma ordem, pelos quatro caminhos.
+      expect(daConsulta, perfil.slug).toEqual(doConteudo);
+      expect(doIndice, perfil.slug).toEqual(doConteudo);
+      expect(daComparacao, perfil.slug).toEqual(doConteudo);
+      for (const id of doConteudo) reunidos.add(id);
+    }
+    // Ninguém fica fora das trajetórias, e ninguém entra duas vezes na lista geral.
+    expect([...reunidos].sort()).toEqual([...todos].sort());
+  });
+
+  it("os pontos do mapa fecham com os lugares documentados de cada acontecimento", () => {
+    const { conjunto, indices, pontos } = data;
+    const porAcontecimento = new Map<string, string[]>();
+    for (const ponto of pontos.features) {
+      const { eventId, placeId } = ponto.properties;
+      porAcontecimento.set(eventId, [...(porAcontecimento.get(eventId) ?? []), placeId]);
+    }
+
+    let esperados = 0;
+    for (const acontecimento of conjunto.acontecimentos) {
+      const noMapa = (porAcontecimento.get(acontecimento.id) ?? []).sort();
+      if (acontecimento.localizacao.tipo === "lugares") {
+        const lugares = [...new Set(acontecimento.localizacao.lugarIds)].sort();
+        expect(noMapa, acontecimento.id).toEqual(lugares);
+        esperados += lugares.length;
+      } else {
+        // Abrangência nacional ou lugar não documentado: nenhum ponto, e o motivo no índice.
+        expect(noMapa, acontecimento.id).toEqual([]);
+        expect(indices.acontecimentos.semPonto[acontecimento.localizacao.tipo], acontecimento.id).toContain(
+          acontecimento.id,
+        );
+      }
+    }
+    expect(pontos.features).toHaveLength(esperados);
+
+    // Com ponto ou sem ponto, todo acontecimento está em um dos dois lados, uma vez.
+    const semPonto = [...indices.acontecimentos.semPonto.nacional, ...indices.acontecimentos.semPonto.desconhecida];
+    expect(new Set([...porAcontecimento.keys(), ...semPonto]).size).toBe(conjunto.acontecimentos.length);
+    expect(porAcontecimento.size + semPonto.length).toBe(conjunto.acontecimentos.length);
+  });
+
+  it("toda fonte da edição foi acessada depois do documento e traz endereço seguro", () => {
+    for (const fonte of data.conjunto.fontes) {
+      expect(fonte.url, fonte.id).toMatch(/^https:\/\//);
+      if (fonte.dataDocumento.tipo === "data" && fonte.dataDocumento.precisao === "dia") {
+        expect(fonte.dataDocumento.valor <= fonte.acessadoEm, fonte.id).toBe(true);
+      }
+    }
+    // Nenhum endereço repetido: cada documento entra uma vez no catálogo.
+    const enderecos = data.conjunto.fontes.map((fonte) => fonte.url);
+    expect(new Set(enderecos).size).toBe(enderecos.length);
+  });
+
+  it("o nome de cada cargo se explica sem a instituição", () => {
+    // A página do acontecimento e a linha do tempo escrevem só o nome do cargo.
+    // O mesmo nome em instituições diferentes ("Presidente" de um sindicato e
+    // de um partido) deixaria a leitura por conta de quem lê.
+    const instituicoes = new Map<string, Set<string>>();
+    for (const mandato of data.conjunto.mandatos) {
+      const chave = `${mandato.pessoaId} · ${mandato.cargo}`;
+      instituicoes.set(chave, (instituicoes.get(chave) ?? new Set()).add(mandato.instituicao));
+    }
+    const ambiguos = [...instituicoes].filter(([, onde]) => onde.size > 1).map(([chave]) => chave);
+    expect(ambiguos).toEqual([]);
+  });
+
   it("o acontecimento compartilhado aparece nas duas trajetórias e uma vez na lista geral", () => {
     const { trajetorias, compartilhados } = compareTrajectories(data);
     expect(trajetorias.map((item) => item.pessoa.slug).sort()).toEqual(

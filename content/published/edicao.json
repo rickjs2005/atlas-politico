@@ -1,11 +1,11 @@
 {
-  "versao": "0.1.0",
+  "versao": "0.1.1",
   "dataDeCorte": "2026-10-08",
   "revisao": {
     "tipo": "assistida-por-ia",
     "revisadoPor": "Claude, modelo de IA da Anthropic",
-    "revisadoEm": "2026-10-08",
-    "observacoes": "Edição preliminar. Todos os registros foram conferidos contra os documentos citados em uma segunda passagem assistida por IA. Revisão humana pendente."
+    "revisadoEm": "2026-10-09",
+    "observacoes": "Revisão editorial de 9 de outubro de 2026: as 60 fontes foram abertas de novo e cada registro foi relido contra os documentos, com assistência de IA. A data de corte não mudou. Revisão humana pendente."
   },
   "cobertura": [
     {
@@ -42,6 +42,140 @@
       "data": "2026-10-08",
       "descricao": "Primeiro conjunto de conteúdo: 39 acontecimentos, 15 mandatos e funções, 8 filiações partidárias, 9 lugares, 59 fontes e 2 imagens.",
       "itens": []
+    },
+    {
+      "data": "2026-10-09",
+      "descricao": "Revisão editorial assistida por IA, sem mudança na data de corte. Fontes: endereço corrigido em sete fichas do TSE, que tinham deixado de abrir; fonte nova para a candidatura de Geraldo Alckmin em 2006, antes atribuída à ficha de Lula; serviço de lideranças do Senado trocado pelo substituto que o próprio Senado indica; título de uma reportagem e autoria de cinco completados. Textos: data da notícia do STF de 2016, manifestação da defesa no julgamento do TRF4 e no registro de 2018, atribuição do desfecho da denúncia de 2020 ao veículo que o informa, nome de um juiz como a fonte o escreve, atribuição da notícia de agosto de 2026, mês e ano de nascimento de Lula e início da liderança do Patriota com precisão de mês. Citação acrescentada à sentença de 2017. Condições de uso dos dois retratos completadas. Cargos: os três registros em que o cargo de Lula aparecia só como \"Presidente\" passaram a dizer de quê (do Sindicato dos Metalúrgicos e do PT), porque o nome do cargo aparece sem a instituição na página do acontecimento e na linha do tempo.",
+      "itens": [
+        {
+          "entidade": "fonte",
+          "id": "tse-divulgacand-2006-lula"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-divulgacand-2018-lula"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-divulgacand-2026-lula"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-divulgacand-2014-flavio"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-divulgacand-2016-flavio"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-divulgacand-2018-flavio"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-divulgacand-2026-flavio"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-divulgacand-2006-alckmin"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dados-abertos-flavio-liderancas"
+        },
+        {
+          "entidade": "fonte",
+          "id": "gazeta-do-povo-2026-candidatura-flavio"
+        },
+        {
+          "entidade": "fonte",
+          "id": "agencia-brasil-2018-trf4"
+        },
+        {
+          "entidade": "fonte",
+          "id": "agencia-brasil-2018-chegada-pf"
+        },
+        {
+          "entidade": "fonte",
+          "id": "agencia-brasil-2019-stj-reduz-pena"
+        },
+        {
+          "entidade": "fonte",
+          "id": "agencia-brasil-2023-senado-confirma-intervencao"
+        },
+        {
+          "entidade": "fonte",
+          "id": "agencia-brasil-2024-cronologia-8-de-janeiro"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "lula-2006-reeleito-presidente"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "lula-2016-nomeacao-para-a-casa-civil-suspensa"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "lula-2017-condenacao-em-primeira-instancia"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "lula-2018-tribunal-confirma-condenacao"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "lula-2018-registro-de-candidatura-indeferido"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "flavio-bolsonaro-2020-denuncia-do-ministerio-publico"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "flavio-bolsonaro-2021-filiacao-ao-patriota"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "flavio-bolsonaro-2022-tribunal-rejeita-denuncia"
+        },
+        {
+          "entidade": "acontecimento",
+          "id": "flavio-bolsonaro-2026-convencao-do-pl"
+        },
+        {
+          "entidade": "pessoa",
+          "id": "lula"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-lider-do-patriota-no-senado"
+        },
+        {
+          "entidade": "imagem",
+          "id": "retrato-lula"
+        },
+        {
+          "entidade": "imagem",
+          "id": "retrato-flavio-bolsonaro"
+        },
+        {
+          "entidade": "mandato",
+          "id": "lula-presidente-do-sindicato-dos-metalurgicos"
+        },
+        {
+          "entidade": "mandato",
+          "id": "lula-presidente-do-pt-1980-1988"
+        },
+        {
+          "entidade": "mandato",
+          "id": "lula-presidente-do-pt-1990-1994"
+        }
+      ]
     }
   ]
 }

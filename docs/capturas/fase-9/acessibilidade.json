@@ -1,0 +1,6253 @@
+{
+  "data": "2026-10-10",
+  "navegador": "Chromium 153.0.8010.12, sem interface, movimento reduzido",
+  "pasta": "out",
+  "acontecimento": "lula-2016-nomeacao-para-a-casa-civil-suspensa",
+  "telas": [
+    {
+      "tela": "01-entrada",
+      "url": "/",
+      "largura": "1440×900",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 62,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 48,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "02-exploracao-lula",
+      "url": "/politicos/lula/",
+      "largura": "1440×900",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 267,
+        "menor": 5.71,
+        "sobreImagem": 8,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 77,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "Copiar link desta consulta",
+            "onde": "section > div > div[data-copy] > button",
+            "w": 165,
+            "h": 16
+          }
+        ]
+      }
+    },
+    {
+      "tela": "03-exploracao-flavio-bolsonaro",
+      "url": "/politicos/flavio-bolsonaro/",
+      "largura": "1440×900",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 282,
+        "menor": 5.71,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 82,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "Copiar link desta consulta",
+            "onde": "section > div > div[data-copy] > button",
+            "w": 165,
+            "h": 16
+          }
+        ]
+      }
+    },
+    {
+      "tela": "04-leitura-com-periodo",
+      "url": "/politicos/lula/?de=2016&ate=2019&acontecimento=lula-2016-nomeacao-para-a-casa-civil-suspensa",
+      "largura": "1440×900",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 111,
+        "menor": 5.71,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 40,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "Copiar link desta consulta",
+            "onde": "section > div > div[data-copy] > button",
+            "w": 165,
+            "h": 16
+          }
+        ]
+      }
+    },
+    {
+      "tela": "05-comparacao-com-periodo",
+      "url": "/comparar/?de=2003&ate=2022",
+      "largura": "1440×900",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 271,
+        "menor": 6.16,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 80,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "Explorar esta trajetória no mesmo recorte",
+            "onde": "header > div > p > a",
+            "w": 271,
+            "h": 20
+          },
+          {
+            "nome": "Explorar esta trajetória no mesmo recorte",
+            "onde": "header > div > p > a",
+            "w": 271,
+            "h": 20
+          }
+        ]
+      }
+    },
+    {
+      "tela": "06-acontecimento",
+      "url": "/acontecimentos/lula-2016-nomeacao-para-a-casa-civil-suspensa/",
+      "largura": "1440×900",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 55,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 17,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "← Trajetória de Lula",
+            "onde": "nav > ul > li > a[data-retorno]",
+            "w": 131,
+            "h": 20
+          },
+          {
+            "nome": "Como o atlas é feito",
+            "onde": "div > section > p > a",
+            "w": 129,
+            "h": 20
+          },
+          {
+            "nome": "Sugerir uma correção",
+            "onde": "div > section > p > a",
+            "w": 140,
+            "h": 20
+          }
+        ]
+      }
+    },
+    {
+      "tela": "07-metodologia",
+      "url": "/metodologia/",
+      "largura": "1440×900",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 441,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 18,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "08-pagina-nao-encontrada",
+      "url": "/endereco-que-nao-existe/",
+      "largura": "1440×900",
+      "status": 404,
+      "statusEsperado": 404,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 21,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 10,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "01-entrada",
+      "url": "/",
+      "largura": "768×1024",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 55,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 48,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "02-exploracao-lula",
+      "url": "/politicos/lula/",
+      "largura": "768×1024",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 147,
+        "menor": 5.71,
+        "sobreImagem": 8,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 61,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "03-exploracao-flavio-bolsonaro",
+      "url": "/politicos/flavio-bolsonaro/",
+      "largura": "768×1024",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 133,
+        "menor": 5.71,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 59,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "04-leitura-com-periodo",
+      "url": "/politicos/lula/?de=2016&ate=2019&acontecimento=lula-2016-nomeacao-para-a-casa-civil-suspensa",
+      "largura": "768×1024",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 59,
+        "menor": 5.71,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 25,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "05-comparacao-com-periodo",
+      "url": "/comparar/?de=2003&ate=2022",
+      "largura": "768×1024",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 255,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 73,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "06-acontecimento",
+      "url": "/acontecimentos/lula-2016-nomeacao-para-a-casa-civil-suspensa/",
+      "largura": "768×1024",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 52,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 12,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "← Trajetória de Lula",
+            "onde": "nav > ul > li > a[data-retorno]",
+            "w": 131,
+            "h": 20
+          },
+          {
+            "nome": "Como o atlas é feito",
+            "onde": "div > section > p > a",
+            "w": 129,
+            "h": 20
+          },
+          {
+            "nome": "Sugerir uma correção",
+            "onde": "div > section > p > a",
+            "w": 140,
+            "h": 20
+          }
+        ]
+      }
+    },
+    {
+      "tela": "07-metodologia",
+      "url": "/metodologia/",
+      "largura": "768×1024",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 441,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 18,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "08-pagina-nao-encontrada",
+      "url": "/endereco-que-nao-existe/",
+      "largura": "768×1024",
+      "status": 404,
+      "statusEsperado": 404,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 21,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 10,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "01-entrada",
+      "url": "/",
+      "largura": "390×844",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 53,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 45,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "6 de outubro de 2002: Flávio Bolsonaro é eleito de",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2006: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2010: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2014: Flávio Bolsonaro conquista o quarto mandato ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2016: Flávio Bolsonaro disputa a Prefeitura do Rio",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2018: Flávio Bolsonaro é eleito senador pelo Rio d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "6 de fevereiro de 2019: Flávio Bolsonaro assume a ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de novembro de 2019: Flávio Bolsonaro deixa o P",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de novembro de 2020: Ministério Público do Rio d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de maio de 2021: Flávio Bolsonaro se filia ao P",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "9 de novembro de 2021: STJ anula decisões da prime",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de novembro de 2021: Flávio Bolsonaro se filia ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "16 de maio de 2022: Tribunal de Justiça do Rio rej",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de junho de 2022: Flávio Bolsonaro assume a lid",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "5 de abril de 2023: Flávio Bolsonaro se torna líde",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "20 de fevereiro de 2024: Senado aprova projeto rel",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de fevereiro de 2025: Flávio Bolsonaro assume a",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "5 de dezembro de 2025: Flávio Bolsonaro é indicado",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "25 de julho de 2026: PL oficializa a candidatura d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula pass",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1975: Lula é eleito presidente do Sindicato dos Me",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "março de 1979: Greve de 170 mil metalúrgicos paral",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1980: Lula é preso com base na Lei de Segurança Na",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de fevereiro de 1980: Lula participa da fundaçã",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1986: Lula é eleito deputado federal constituinte ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1989: Lula disputa a Presidência pela primeira vez",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "3 de outubro de 1994: Lula é derrotado por Fernand",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "27 de outubro de 2002: Lula é eleito presidente da",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "29 de outubro de 2006: Lula é reeleito presidente ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "18 de março de 2016: STF suspende a nomeação de Lu",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "12 de julho de 2017: Lula é condenado em primeira ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "24 de janeiro de 2018: TRF4 confirma a condenação ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "7 de abril de 2018: Lula é preso e levado à Políci",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de agosto de 2018: TSE indefere o registro da c",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de novembro de 2019: Lula deixa a prisão em Curi",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de março de 2021: STF anula as condenações de Lu",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de outubro de 2022: Lula é eleito presidente da",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de janeiro de 2023: Lula decreta intervenção fed",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2 de agosto de 2026: PT oficializa a candidatura d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula pass",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          }
+        ]
+      }
+    },
+    {
+      "tela": "02-exploracao-lula",
+      "url": "/politicos/lula/",
+      "largura": "390×844",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 133,
+        "menor": 7.11,
+        "sobreImagem": 8,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 48,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "1975: Lula é eleito presidente do Sindicato dos Me",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "março de 1979: Greve de 170 mil metalúrgicos paral",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1980: Lula é preso com base na Lei de Segurança Na",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de fevereiro de 1980: Lula participa da fundaçã",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1986: Lula é eleito deputado federal constituinte ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1989: Lula disputa a Presidência pela primeira vez",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "3 de outubro de 1994: Lula é derrotado por Fernand",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "27 de outubro de 2002: Lula é eleito presidente da",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "29 de outubro de 2006: Lula é reeleito presidente ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "18 de março de 2016: STF suspende a nomeação de Lu",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "12 de julho de 2017: Lula é condenado em primeira ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "24 de janeiro de 2018: TRF4 confirma a condenação ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "7 de abril de 2018: Lula é preso e levado à Políci",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de agosto de 2018: TSE indefere o registro da c",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de novembro de 2019: Lula deixa a prisão em Curi",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de março de 2021: STF anula as condenações de Lu",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de outubro de 2022: Lula é eleito presidente da",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de janeiro de 2023: Lula decreta intervenção fed",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2 de agosto de 2026: PT oficializa a candidatura d",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula pass",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          }
+        ]
+      }
+    },
+    {
+      "tela": "03-exploracao-flavio-bolsonaro",
+      "url": "/politicos/flavio-bolsonaro/",
+      "largura": "390×844",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 123,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 48,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "6 de outubro de 2002: Flávio Bolsonaro é eleito de",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2006: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2010: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2014: Flávio Bolsonaro conquista o quarto mandato ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2016: Flávio Bolsonaro disputa a Prefeitura do Rio",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2018: Flávio Bolsonaro é eleito senador pelo Rio d",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "6 de fevereiro de 2019: Flávio Bolsonaro assume a ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de novembro de 2019: Flávio Bolsonaro deixa o P",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de novembro de 2020: Ministério Público do Rio d",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de maio de 2021: Flávio Bolsonaro se filia ao P",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "9 de novembro de 2021: STJ anula decisões da prime",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de novembro de 2021: Flávio Bolsonaro se filia ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "16 de maio de 2022: Tribunal de Justiça do Rio rej",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de junho de 2022: Flávio Bolsonaro assume a lid",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "5 de abril de 2023: Flávio Bolsonaro se torna líde",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "20 de fevereiro de 2024: Senado aprova projeto rel",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de fevereiro de 2025: Flávio Bolsonaro assume a",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "5 de dezembro de 2025: Flávio Bolsonaro é indicado",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "25 de julho de 2026: PL oficializa a candidatura d",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula pass",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          }
+        ]
+      }
+    },
+    {
+      "tela": "04-leitura-com-periodo",
+      "url": "/politicos/lula/?de=2016&ate=2019&acontecimento=lula-2016-nomeacao-para-a-casa-civil-suspensa",
+      "largura": "390×844",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 37,
+        "menor": 5.71,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 9,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "05-comparacao-com-periodo",
+      "url": "/comparar/?de=2003&ate=2022",
+      "largura": "390×844",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 253,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 70,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "2006: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2010: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2014: Flávio Bolsonaro conquista o quarto mandato ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2016: Flávio Bolsonaro disputa a Prefeitura do Rio",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2018: Flávio Bolsonaro é eleito senador pelo Rio d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "6 de fevereiro de 2019: Flávio Bolsonaro assume a ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de novembro de 2019: Flávio Bolsonaro deixa o P",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de novembro de 2020: Ministério Público do Rio d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de maio de 2021: Flávio Bolsonaro se filia ao P",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "9 de novembro de 2021: STJ anula decisões da prime",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de novembro de 2021: Flávio Bolsonaro se filia ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "16 de maio de 2022: Tribunal de Justiça do Rio rej",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de junho de 2022: Flávio Bolsonaro assume a lid",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "29 de outubro de 2006: Lula é reeleito presidente ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "18 de março de 2016: STF suspende a nomeação de Lu",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "12 de julho de 2017: Lula é condenado em primeira ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "24 de janeiro de 2018: TRF4 confirma a condenação ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "7 de abril de 2018: Lula é preso e levado à Políci",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de agosto de 2018: TSE indefere o registro da c",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de novembro de 2019: Lula deixa a prisão em Curi",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de março de 2021: STF anula as condenações de Lu",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de outubro de 2022: Lula é eleito presidente da",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          }
+        ]
+      }
+    },
+    {
+      "tela": "06-acontecimento",
+      "url": "/acontecimentos/lula-2016-nomeacao-para-a-casa-civil-suspensa/",
+      "largura": "390×844",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 49,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 9,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "07-metodologia",
+      "url": "/metodologia/",
+      "largura": "390×844",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 438,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 15,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "Datas",
+            "onde": "nav > ol > li > a",
+            "w": 38,
+            "h": 44
+          }
+        ]
+      }
+    },
+    {
+      "tela": "08-pagina-nao-encontrada",
+      "url": "/endereco-que-nao-existe/",
+      "largura": "390×844",
+      "status": 404,
+      "statusEsperado": 404,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 18,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 7,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "01-entrada",
+      "url": "/",
+      "largura": "360×800",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 53,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 45,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "6 de outubro de 2002: Flávio Bolsonaro é eleito de",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2006: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2010: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2014: Flávio Bolsonaro conquista o quarto mandato ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2016: Flávio Bolsonaro disputa a Prefeitura do Rio",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2018: Flávio Bolsonaro é eleito senador pelo Rio d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "6 de fevereiro de 2019: Flávio Bolsonaro assume a ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de novembro de 2019: Flávio Bolsonaro deixa o P",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de novembro de 2020: Ministério Público do Rio d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de maio de 2021: Flávio Bolsonaro se filia ao P",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "9 de novembro de 2021: STJ anula decisões da prime",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de novembro de 2021: Flávio Bolsonaro se filia ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "16 de maio de 2022: Tribunal de Justiça do Rio rej",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de junho de 2022: Flávio Bolsonaro assume a lid",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "5 de abril de 2023: Flávio Bolsonaro se torna líde",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "20 de fevereiro de 2024: Senado aprova projeto rel",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de fevereiro de 2025: Flávio Bolsonaro assume a",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "5 de dezembro de 2025: Flávio Bolsonaro é indicado",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "25 de julho de 2026: PL oficializa a candidatura d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula pass",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1975: Lula é eleito presidente do Sindicato dos Me",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "março de 1979: Greve de 170 mil metalúrgicos paral",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1980: Lula é preso com base na Lei de Segurança Na",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de fevereiro de 1980: Lula participa da fundaçã",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1986: Lula é eleito deputado federal constituinte ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1989: Lula disputa a Presidência pela primeira vez",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "3 de outubro de 1994: Lula é derrotado por Fernand",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "27 de outubro de 2002: Lula é eleito presidente da",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "29 de outubro de 2006: Lula é reeleito presidente ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "18 de março de 2016: STF suspende a nomeação de Lu",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "12 de julho de 2017: Lula é condenado em primeira ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "24 de janeiro de 2018: TRF4 confirma a condenação ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "7 de abril de 2018: Lula é preso e levado à Políci",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de agosto de 2018: TSE indefere o registro da c",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de novembro de 2019: Lula deixa a prisão em Curi",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de março de 2021: STF anula as condenações de Lu",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de outubro de 2022: Lula é eleito presidente da",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de janeiro de 2023: Lula decreta intervenção fed",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2 de agosto de 2026: PT oficializa a candidatura d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula pass",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          }
+        ]
+      }
+    },
+    {
+      "tela": "02-exploracao-lula",
+      "url": "/politicos/lula/",
+      "largura": "360×800",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 133,
+        "menor": 7.11,
+        "sobreImagem": 8,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 48,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "1975: Lula é eleito presidente do Sindicato dos Me",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "março de 1979: Greve de 170 mil metalúrgicos paral",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1980: Lula é preso com base na Lei de Segurança Na",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de fevereiro de 1980: Lula participa da fundaçã",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1986: Lula é eleito deputado federal constituinte ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "1989: Lula disputa a Presidência pela primeira vez",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "3 de outubro de 1994: Lula é derrotado por Fernand",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "27 de outubro de 2002: Lula é eleito presidente da",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "29 de outubro de 2006: Lula é reeleito presidente ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "18 de março de 2016: STF suspende a nomeação de Lu",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "12 de julho de 2017: Lula é condenado em primeira ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "24 de janeiro de 2018: TRF4 confirma a condenação ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "7 de abril de 2018: Lula é preso e levado à Políci",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de agosto de 2018: TSE indefere o registro da c",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de novembro de 2019: Lula deixa a prisão em Curi",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de março de 2021: STF anula as condenações de Lu",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de outubro de 2022: Lula é eleito presidente da",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de janeiro de 2023: Lula decreta intervenção fed",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2 de agosto de 2026: PT oficializa a candidatura d",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula pass",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          }
+        ]
+      }
+    },
+    {
+      "tela": "03-exploracao-flavio-bolsonaro",
+      "url": "/politicos/flavio-bolsonaro/",
+      "largura": "360×800",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 123,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 48,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "6 de outubro de 2002: Flávio Bolsonaro é eleito de",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2006: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2010: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2014: Flávio Bolsonaro conquista o quarto mandato ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2016: Flávio Bolsonaro disputa a Prefeitura do Rio",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2018: Flávio Bolsonaro é eleito senador pelo Rio d",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "6 de fevereiro de 2019: Flávio Bolsonaro assume a ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de novembro de 2019: Flávio Bolsonaro deixa o P",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de novembro de 2020: Ministério Público do Rio d",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de maio de 2021: Flávio Bolsonaro se filia ao P",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "9 de novembro de 2021: STJ anula decisões da prime",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de novembro de 2021: Flávio Bolsonaro se filia ",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "16 de maio de 2022: Tribunal de Justiça do Rio rej",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de junho de 2022: Flávio Bolsonaro assume a lid",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "5 de abril de 2023: Flávio Bolsonaro se torna líde",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "20 de fevereiro de 2024: Senado aprova projeto rel",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de fevereiro de 2025: Flávio Bolsonaro assume a",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "5 de dezembro de 2025: Flávio Bolsonaro é indicado",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "25 de julho de 2026: PL oficializa a candidatura d",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula pass",
+            "onde": "div > div > div > button[data-mark]",
+            "w": 24,
+            "h": 24
+          }
+        ]
+      }
+    },
+    {
+      "tela": "04-leitura-com-periodo",
+      "url": "/politicos/lula/?de=2016&ate=2019&acontecimento=lula-2016-nomeacao-para-a-casa-civil-suspensa",
+      "largura": "360×800",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 37,
+        "menor": 5.71,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 9,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "05-comparacao-com-periodo",
+      "url": "/comparar/?de=2003&ate=2022",
+      "largura": "360×800",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 253,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 70,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "2006: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2010: Flávio Bolsonaro é reeleito deputado estadua",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2014: Flávio Bolsonaro conquista o quarto mandato ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2016: Flávio Bolsonaro disputa a Prefeitura do Rio",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "2018: Flávio Bolsonaro é eleito senador pelo Rio d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "6 de fevereiro de 2019: Flávio Bolsonaro assume a ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "19 de novembro de 2019: Flávio Bolsonaro deixa o P",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "4 de novembro de 2020: Ministério Público do Rio d",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de maio de 2021: Flávio Bolsonaro se filia ao P",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "9 de novembro de 2021: STJ anula decisões da prime",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de novembro de 2021: Flávio Bolsonaro se filia ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "16 de maio de 2022: Tribunal de Justiça do Rio rej",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "10 de junho de 2022: Flávio Bolsonaro assume a lid",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "29 de outubro de 2006: Lula é reeleito presidente ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "18 de março de 2016: STF suspende a nomeação de Lu",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "12 de julho de 2017: Lula é condenado em primeira ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "24 de janeiro de 2018: TRF4 confirma a condenação ",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "7 de abril de 2018: Lula é preso e levado à Políci",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "31 de agosto de 2018: TSE indefere o registro da c",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de novembro de 2019: Lula deixa a prisão em Curi",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "8 de março de 2021: STF anula as condenações de Lu",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          },
+          {
+            "nome": "30 de outubro de 2022: Lula é eleito presidente da",
+            "onde": "div > ul > li > a",
+            "w": 24,
+            "h": 24
+          }
+        ]
+      }
+    },
+    {
+      "tela": "06-acontecimento",
+      "url": "/acontecimentos/lula-2016-nomeacao-para-a-casa-civil-suspensa/",
+      "largura": "360×800",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 49,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 9,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    },
+    {
+      "tela": "07-metodologia",
+      "url": "/metodologia/",
+      "largura": "360×800",
+      "status": 200,
+      "statusEsperado": 200,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 438,
+        "menor": 7.59,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 15,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          },
+          {
+            "nome": "Datas",
+            "onde": "nav > ol > li > a",
+            "w": 38,
+            "h": 44
+          }
+        ]
+      }
+    },
+    {
+      "tela": "08-pagina-nao-encontrada",
+      "url": "/endereco-que-nao-existe/",
+      "largura": "360×800",
+      "status": 404,
+      "statusEsperado": 404,
+      "erros": [],
+      "rolagemLateral": 0,
+      "contraste": {
+        "conferidos": 18,
+        "menor": 5.24,
+        "sobreImagem": 0,
+        "falhas": []
+      },
+      "alvos": {
+        "total": 7,
+        "abaixoDe24": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ],
+        "abaixoDe44": [
+          {
+            "nome": "Atlas Político",
+            "onde": "header > div > a",
+            "w": 114,
+            "h": 22
+          }
+        ]
+      }
+    }
+  ],
+  "teclado": [
+    {
+      "tela": "01-entrada",
+      "url": "/",
+      "paradas": [
+        {
+          "elemento": "a",
+          "nome": "Pular para o conteúdo",
+          "w": 163,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Atlas Político",
+          "w": 114,
+          "h": 22,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 108,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 28,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar",
+          "w": 65,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia",
+          "w": 82,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 544,
+          "h": 37,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro 2002–2026 · 20 registros Explorar a trajetória →",
+          "w": 310,
+          "h": 514,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula 1975–2026 · 20 registros Explorar a trajetória →",
+          "w": 310,
+          "h": 514,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar as trajetórias",
+          "w": 189,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "6 de outubro de 2002: Flávio Bolsonaro é eleito deputado estadual no R",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2006: Flávio Bolsonaro é reeleito deputado estadual (Eleições)",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2010: Flávio Bolsonaro é reeleito deputado estadual pela segunda vez (",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2014: Flávio Bolsonaro conquista o quarto mandato de deputado estadual",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2016: Flávio Bolsonaro disputa a Prefeitura do Rio de Janeiro e não é ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2018: Flávio Bolsonaro é eleito senador pelo Rio de Janeiro (Eleições)",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "6 de fevereiro de 2019: Flávio Bolsonaro assume a 3ª Secretaria da Mes",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "19 de novembro de 2019: Flávio Bolsonaro deixa o PSL (Partidos e alian",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "4 de novembro de 2020: Ministério Público do Rio denuncia Flávio Bolso",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "31 de maio de 2021: Flávio Bolsonaro se filia ao Patriota (Partidos e ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "9 de novembro de 2021: STJ anula decisões da primeira instância na inv",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "30 de novembro de 2021: Flávio Bolsonaro se filia ao PL (Partidos e al",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "16 de maio de 2022: Tribunal de Justiça do Rio rejeita a denúncia cont",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "10 de junho de 2022: Flávio Bolsonaro assume a liderança do PL no Sena",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "5 de abril de 2023: Flávio Bolsonaro se torna líder da Minoria no Cong",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "20 de fevereiro de 2024: Senado aprova projeto relatado por Flávio Bol",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "19 de fevereiro de 2025: Flávio Bolsonaro assume a presidência da Comi",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "5 de dezembro de 2025: Flávio Bolsonaro é indicado pelo pai como candi",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "25 de julho de 2026: PL oficializa a candidatura de Flávio Bolsonaro à",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula passam ao segundo turno ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "1975: Lula é eleito presidente do Sindicato dos Metalúrgicos de São Be",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "março de 1979: Greve de 170 mil metalúrgicos paralisa o ABC paulista (",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "1980: Lula é preso com base na Lei de Segurança Nacional durante greve",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "10 de fevereiro de 1980: Lula participa da fundação do Partido dos Tra",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "1986: Lula é eleito deputado federal constituinte por São Paulo (Eleiç",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "1989: Lula disputa a Presidência pela primeira vez e perde no segundo ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "3 de outubro de 1994: Lula é derrotado por Fernando Henrique Cardoso n",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "27 de outubro de 2002: Lula é eleito presidente da República (Eleições",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "29 de outubro de 2006: Lula é reeleito presidente da República (Eleiçõ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "18 de março de 2016: STF suspende a nomeação de Lula para a Casa Civil",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "12 de julho de 2017: Lula é condenado em primeira instância no caso do",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "24 de janeiro de 2018: TRF4 confirma a condenação de Lula e aumenta a ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "7 de abril de 2018: Lula é preso e levado à Polícia Federal em Curitib",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "31 de agosto de 2018: TSE indefere o registro da candidatura de Lula à",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "8 de novembro de 2019: Lula deixa a prisão em Curitiba (Marcos históri",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "8 de março de 2021: STF anula as condenações de Lula na Lava Jato (Mar",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "30 de outubro de 2022: Lula é eleito presidente da República pela terc",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "8 de janeiro de 2023: Lula decreta intervenção federal na segurança pú",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2 de agosto de 2026: PT oficializa a candidatura de Lula à reeleição (",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "4 de outubro de 2026: Flávio Bolsonaro e Lula passam ao segundo turno ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        }
+      ]
+    },
+    {
+      "tela": "02-exploracao-lula",
+      "url": "/politicos/lula/",
+      "paradas": [
+        {
+          "elemento": "a",
+          "nome": "Pular para o conteúdo",
+          "w": 163,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Atlas Político",
+          "w": 114,
+          "h": 22,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 108,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 28,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar",
+          "w": 65,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia",
+          "w": 82,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 111,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "select",
+          "nome": "1975 1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 ",
+          "w": 76,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "select",
+          "nome": "1975 1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 ",
+          "w": 76,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Mandatos e funções 2",
+          "w": 176,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Eleições 9",
+          "w": 105,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Partidos e alianças 1",
+          "w": 165,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Atuação institucional 1",
+          "w": 178,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Marcos históricos 7",
+          "w": 160,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "1975: Lula é eleito presidente do Sindicato dos Metalúrgicos de São Be",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar link desta consulta",
+          "w": 165,
+          "h": 16,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "Cargos e partidos em 1975–2026 7 cargos e funções · 1 partido ▾",
+          "w": 351,
+          "h": 52,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "1975. Só o ano está documentado. 1975 só o ano Lula é eleito president",
+          "w": 351,
+          "h": 140,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "março de 1979. O dia não está documentado. 1979 mar sem o dia Greve de",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "1980. Só o ano está documentado. 1980 só o ano Lula é preso com base n",
+          "w": 351,
+          "h": 168,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "10 de fevereiro de 1980 1980 10 fev Lula participa da fundação do Part",
+          "w": 351,
+          "h": 127,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "1986. Só o ano está documentado. 1986 só o ano Lula é eleito deputado ",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "1989. Só o ano está documentado. 1989 só o ano Lula disputa a Presidên",
+          "w": 351,
+          "h": 134,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "3 de outubro de 1994 1994 3 out Lula é derrotado por Fernando Henrique",
+          "w": 351,
+          "h": 134,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "27 de outubro de 2002 2002 27 out Lula é eleito presidente da Repúblic",
+          "w": 351,
+          "h": 111,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "29 de outubro de 2006 2006 29 out Lula é reeleito presidente da Repúbl",
+          "w": 351,
+          "h": 111,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "18 de março de 2016 2016 18 mar STF suspende a nomeação de Lula para a",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "12 de julho de 2017 2017 12 jul Lula é condenado em primeira instância",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "24 de janeiro de 2018 2018 24 jan TRF4 confirma a condenação de Lula e",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "7 de abril de 2018 2018 7 abr Lula é preso e levado à Polícia Federal ",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "31 de agosto de 2018 2018 31 ago TSE indefere o registro da candidatur",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "8 de novembro de 2019 2019 8 nov Lula deixa a prisão em Curitiba Marco",
+          "w": 351,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "8 de março de 2021 2021 8 mar STF anula as condenações de Lula na Lava",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "30 de outubro de 2022 2022 30 out Lula é eleito presidente da Repúblic",
+          "w": 351,
+          "h": 111,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "8 de janeiro de 2023 2023 8 jan Lula decreta intervenção federal na se",
+          "w": 351,
+          "h": 116,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2 de agosto de 2026 2026 2 ago PT oficializa a candidatura de Lula à r",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "4 de outubro de 2026 2026 4 out Flávio Bolsonaro e Lula passam ao segu",
+          "w": 351,
+          "h": 134,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "canvas",
+          "nome": "Mapa dos acontecimentos",
+          "w": 654,
+          "h": 429,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Brasília: 4 acontecimentos",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2 lugares próximos: Araraquara, Estado de São Paulo: 2 acontecimentos",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2 lugares próximos: São Bernardo do Campo, São Paulo: 3 acontecimentos",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Curitiba: 3 acontecimentos",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Porto Alegre: TRF4 confirma a condenação de Lula e aumenta a pena, 24 ",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Aproximar",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Afastar",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Enquadrar os lugares do recorte",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "8 sem ponto no mapa : abre a lista",
+          "w": 147,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "Legenda · pontos aproximados ▴",
+          "w": 191,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar no mesmo recorte",
+          "w": 223,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar link desta consulta",
+          "w": 217,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 139,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Presidente do Sindicato dos Metalúrgicos ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Presidente do PT ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Deputado federal constituinte (SP) ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Presidente do PT ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Presidente da República (primeiro mandato) ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Presidente da República (segundo mandato) ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Presidente da República (terceiro mandato) ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de PT ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Biografia completa de Luiz Inácio Lula da Silva (Galeria dos Ex-Presid",
+          "w": 355,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Lula a presidente em 2026 (abre em n",
+          "w": 350,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Congresso empossa Lula e Alckmin na Presidência da República (abre em ",
+          "w": 352,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Biografia do deputado federal Luiz Inácio Lula da Silva (abre em nova ",
+          "w": 352,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro (PL) e Lula (PT) vão disputar o 2º turno para a Presi",
+          "w": 323,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Origem da imagem (abre em nova aba)",
+          "w": 41,
+          "h": 15,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Condições de uso",
+          "w": 99,
+          "h": 15,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        }
+      ]
+    },
+    {
+      "tela": "03-exploracao-flavio-bolsonaro",
+      "url": "/politicos/flavio-bolsonaro/",
+      "paradas": [
+        {
+          "elemento": "a",
+          "nome": "Pular para o conteúdo",
+          "w": 163,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Atlas Político",
+          "w": 114,
+          "h": 22,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 110,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 28,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar",
+          "w": 65,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia",
+          "w": 82,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 42,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "select",
+          "nome": "2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 ",
+          "w": 76,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "select",
+          "nome": "2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 ",
+          "w": 76,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Mandatos e funções 2",
+          "w": 176,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Eleições 9",
+          "w": 105,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Partidos e alianças 3",
+          "w": 167,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Atuação institucional 3",
+          "w": 181,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Marcos históricos 3",
+          "w": 161,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "6 de outubro de 2002: Flávio Bolsonaro é eleito deputado estadual no R",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar link desta consulta",
+          "w": 165,
+          "h": 16,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "Cargos e partidos em 2002–2026 8 cargos e funções · 7 partidos ▾",
+          "w": 351,
+          "h": 52,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "6 de outubro de 2002 2002 6 out Flávio Bolsonaro é eleito deputado est",
+          "w": 351,
+          "h": 116,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2006. Só o ano está documentado. 2006 só o ano Flávio Bolsonaro é reel",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2010. Só o ano está documentado. 2010 só o ano Flávio Bolsonaro é reel",
+          "w": 351,
+          "h": 116,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2014. Só o ano está documentado. 2014 só o ano Flávio Bolsonaro conqui",
+          "w": 351,
+          "h": 116,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2016. Só o ano está documentado. 2016 só o ano Flávio Bolsonaro disput",
+          "w": 351,
+          "h": 116,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2018. Só o ano está documentado. 2018 só o ano Flávio Bolsonaro é elei",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "6 de fevereiro de 2019 2019 6 fev Flávio Bolsonaro assume a 3ª Secreta",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "19 de novembro de 2019 2019 19 nov Flávio Bolsonaro deixa o PSL Partid",
+          "w": 351,
+          "h": 103,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "4 de novembro de 2020 2020 4 nov Ministério Público do Rio denuncia Fl",
+          "w": 351,
+          "h": 116,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "31 de maio de 2021 2021 31 mai Flávio Bolsonaro se filia ao Patriota P",
+          "w": 351,
+          "h": 127,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "9 de novembro de 2021 2021 9 nov STJ anula decisões da primeira instân",
+          "w": 351,
+          "h": 150,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "30 de novembro de 2021 2021 30 nov Flávio Bolsonaro se filia ao PL Par",
+          "w": 351,
+          "h": 103,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "16 de maio de 2022 2022 16 mai Tribunal de Justiça do Rio rejeita a de",
+          "w": 351,
+          "h": 116,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "10 de junho de 2022 2022 10 jun Flávio Bolsonaro assume a liderança do",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "5 de abril de 2023 2023 5 abr Flávio Bolsonaro se torna líder da Minor",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "20 de fevereiro de 2024 2024 20 fev Senado aprova projeto relatado por",
+          "w": 351,
+          "h": 140,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "19 de fevereiro de 2025 2025 19 fev Flávio Bolsonaro assume a presidên",
+          "w": 351,
+          "h": 116,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "5 de dezembro de 2025 2025 5 dez Flávio Bolsonaro é indicado pelo pai ",
+          "w": 351,
+          "h": 150,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "25 de julho de 2026 2026 25 jul PL oficializa a candidatura de Flávio ",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "4 de outubro de 2026 2026 4 out Flávio Bolsonaro e Lula passam ao segu",
+          "w": 351,
+          "h": 134,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "canvas",
+          "nome": "Mapa dos acontecimentos",
+          "w": 654,
+          "h": 342,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Brasília: 5 acontecimentos",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "2 lugares próximos: Estado do Rio de Janeiro, Rio de Janeiro: 8 aconte",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "São Paulo: PL oficializa a candidatura de Flávio Bolsonaro à Presidênc",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Aproximar",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Afastar",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Enquadrar os lugares do recorte",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "6 sem ponto no mapa : abre a lista",
+          "w": 147,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "Legenda · pontos aproximados ▴",
+          "w": 191,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar no mesmo recorte",
+          "w": 223,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar link desta consulta",
+          "w": 217,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 139,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "3 fontes de Deputado estadual (quatro mandatos consecutivos) ▾",
+          "w": 61,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Senador (RJ) ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de 3º secretário da Comissão Diretora ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Vice-líder do Governo no Congresso Nacional ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Líder do Patriota no Senado ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Líder do PL no Senado ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Líder da Minoria no Congresso Nacional ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Presidente da Comissão de Segurança Pública ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de PSL ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "3 fontes de Republicanos ▾",
+          "w": 61,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Patriota ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de PL ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de PP ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de PPB ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de PSC ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Dados Abertos do Senado: detalhe do senador Flávio Bolsonaro (código 5",
+          "w": 346,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Dados Abertos do Senado: mandatos do senador Flávio Bolsonaro (abre em",
+          "w": 320,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Filho mais velho de Bolsonaro, Flávio disputa a Presidência pelo PL (a",
+          "w": 302,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro (PSL) (abre em nova aba)",
+          "w": 148,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Origem da imagem (abre em nova aba)",
+          "w": 41,
+          "h": 15,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Condições de uso",
+          "w": 99,
+          "h": 15,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        }
+      ]
+    },
+    {
+      "tela": "04-leitura-com-periodo",
+      "url": "/politicos/lula/?de=2016&ate=2019&acontecimento=lula-2016-nomeacao-para-a-casa-civil-suspensa",
+      "paradas": [
+        {
+          "elemento": "a",
+          "nome": "Pular para o conteúdo",
+          "w": 187,
+          "h": 40,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Atlas Político",
+          "w": 114,
+          "h": 22,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 108,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 28,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar",
+          "w": 65,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia",
+          "w": 82,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 111,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Todo o período",
+          "w": 84,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "select",
+          "nome": "1975 1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 ",
+          "w": 76,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "select",
+          "nome": "1975 1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 ",
+          "w": 76,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Mandatos e funções 1",
+          "w": 174,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Eleições 1",
+          "w": 102,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Partidos e alianças 0",
+          "w": 167,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Atuação institucional 0",
+          "w": 181,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Marcos históricos 4",
+          "w": 161,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "18 de março de 2016: STF suspende a nomeação de Lula para a Casa Civil",
+          "w": 30,
+          "h": 30,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Limpar filtros",
+          "w": 76,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar link desta consulta",
+          "w": 165,
+          "h": 16,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "Cargos e partidos em 2016–2019 0 cargos e funções · 1 partido · 1 com ",
+          "w": 351,
+          "h": 52,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "18 de março de 2016 2016 18 mar STF suspende a nomeação de Lula para a",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "12 de julho de 2017 2017 12 jul Lula é condenado em primeira instância",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "24 de janeiro de 2018 2018 24 jan TRF4 confirma a condenação de Lula e",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "7 de abril de 2018 2018 7 abr Lula é preso e levado à Polícia Federal ",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "31 de agosto de 2018 2018 31 ago TSE indefere o registro da candidatur",
+          "w": 351,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "8 de novembro de 2019 2019 8 nov Lula deixa a prisão em Curitiba Marco",
+          "w": 351,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "canvas",
+          "nome": "Mapa dos acontecimentos",
+          "w": 654,
+          "h": 429,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Brasília: 2 acontecimentos, entre eles o que está aberto",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Curitiba: 3 acontecimentos",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Porto Alegre: TRF4 confirma a condenação de Lula e aumenta a pena, 24 ",
+          "w": 44,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Aproximar",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Afastar",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Enquadrar os lugares do recorte",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "Legenda · pontos aproximados ▴",
+          "w": 191,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "× Fechar",
+          "w": 74,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Ministro suspende nomeação de Lula para Casa Civil e mantém processo n",
+          "w": 354,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Abrir a página do acontecimento",
+          "w": 247,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar link desta consulta",
+          "w": 217,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        }
+      ]
+    },
+    {
+      "tela": "05-comparacao-com-periodo",
+      "url": "/comparar/?de=2003&ate=2022",
+      "paradas": [
+        {
+          "elemento": "a",
+          "nome": "Pular para o conteúdo",
+          "w": 163,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Atlas Político",
+          "w": 114,
+          "h": 22,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 108,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 28,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar",
+          "w": 67,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia",
+          "w": 82,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Todo o período",
+          "w": 84,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "select",
+          "nome": "1975 1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 ",
+          "w": 76,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "select",
+          "nome": "1975 1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 ",
+          "w": 76,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Mandatos e funções 2",
+          "w": 176,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Eleições 8",
+          "w": 105,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Partidos e alianças 3",
+          "w": 167,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Atuação institucional 1",
+          "w": 178,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Marcos históricos 8",
+          "w": 161,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Limpar filtros",
+          "w": 76,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar link",
+          "w": 118,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2006: Flávio Bolsonaro é reeleito deputado estadual (Eleições)",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2010: Flávio Bolsonaro é reeleito deputado estadual pela segunda vez (",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2014: Flávio Bolsonaro conquista o quarto mandato de deputado estadual",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2016: Flávio Bolsonaro disputa a Prefeitura do Rio de Janeiro e não é ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2018: Flávio Bolsonaro é eleito senador pelo Rio de Janeiro (Eleições)",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "6 de fevereiro de 2019: Flávio Bolsonaro assume a 3ª Secretaria da Mes",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "19 de novembro de 2019: Flávio Bolsonaro deixa o PSL (Partidos e alian",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "4 de novembro de 2020: Ministério Público do Rio denuncia Flávio Bolso",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "31 de maio de 2021: Flávio Bolsonaro se filia ao Patriota (Partidos e ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "9 de novembro de 2021: STJ anula decisões da primeira instância na inv",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "30 de novembro de 2021: Flávio Bolsonaro se filia ao PL (Partidos e al",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "16 de maio de 2022: Tribunal de Justiça do Rio rejeita a denúncia cont",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "10 de junho de 2022: Flávio Bolsonaro assume a liderança do PL no Sena",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "29 de outubro de 2006: Lula é reeleito presidente da República (Eleiçõ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "18 de março de 2016: STF suspende a nomeação de Lula para a Casa Civil",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "12 de julho de 2017: Lula é condenado em primeira instância no caso do",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "24 de janeiro de 2018: TRF4 confirma a condenação de Lula e aumenta a ",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "7 de abril de 2018: Lula é preso e levado à Polícia Federal em Curitib",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "31 de agosto de 2018: TSE indefere o registro da candidatura de Lula à",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "8 de novembro de 2019: Lula deixa a prisão em Curitiba (Marcos históri",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "8 de março de 2021: STF anula as condenações de Lula na Lava Jato (Mar",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "30 de outubro de 2022: Lula é eleito presidente da República pela terc",
+          "w": 24,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Explorar esta trajetória no mesmo recorte",
+          "w": 271,
+          "h": 20,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "3 fontes de Deputado estadual (quatro mandatos consecutivos) ▾",
+          "w": 61,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Senador (RJ) ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de 3º secretário da Comissão Diretora ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Vice-líder do Governo no Congresso Nacional ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Líder do Patriota no Senado ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Líder do PL no Senado ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de PSL ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "3 fontes de Republicanos ▾",
+          "w": 61,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de Patriota ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de PL ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de PP ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de PPB ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "1 fonte de PSC ▾",
+          "w": 52,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2006. Só o ano está documentado. 2006 só o ano Flávio Bolsonaro é reel",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2010. Só o ano está documentado. 2010 só o ano Flávio Bolsonaro é reel",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2014. Só o ano está documentado. 2014 só o ano Flávio Bolsonaro conqui",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2016. Só o ano está documentado. 2016 só o ano Flávio Bolsonaro disput",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2018. Só o ano está documentado. 2018 só o ano Flávio Bolsonaro é elei",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "6 de fevereiro de 2019 2019 6 fev Flávio Bolsonaro assume a 3ª Secreta",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "19 de novembro de 2019 2019 19 nov Flávio Bolsonaro deixa o PSL Partid",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "4 de novembro de 2020 2020 4 nov Ministério Público do Rio denuncia Fl",
+          "w": 604,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "31 de maio de 2021 2021 31 mai Flávio Bolsonaro se filia ao Patriota P",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "9 de novembro de 2021 2021 9 nov STJ anula decisões da primeira instân",
+          "w": 604,
+          "h": 93,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "30 de novembro de 2021 2021 30 nov Flávio Bolsonaro se filia ao PL Par",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "16 de maio de 2022 2022 16 mai Tribunal de Justiça do Rio rejeita a de",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "10 de junho de 2022 2022 10 jun Flávio Bolsonaro assume a liderança do",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "21 documentos sustentam os registros desta coluna ▾",
+          "w": 604,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Explorar esta trajetória no mesmo recorte",
+          "w": 271,
+          "h": 20,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Presidente do Sindicato dos Metalúrgicos ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Presidente da República (primeiro mandato) ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de Presidente da República (segundo mandato) ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "2 fontes de PT ▾",
+          "w": 60,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "29 de outubro de 2006 2006 29 out Lula é reeleito presidente da Repúbl",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "18 de março de 2016 2016 18 mar STF suspende a nomeação de Lula para a",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "12 de julho de 2017 2017 12 jul Lula é condenado em primeira instância",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "24 de janeiro de 2018 2018 24 jan TRF4 confirma a condenação de Lula e",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "7 de abril de 2018 2018 7 abr Lula é preso e levado à Polícia Federal ",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "31 de agosto de 2018 2018 31 ago TSE indefere o registro da candidatur",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "8 de novembro de 2019 2019 8 nov Lula deixa a prisão em Curitiba Marco",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "8 de março de 2021 2021 8 mar STF anula as condenações de Lula na Lava",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "30 de outubro de 2022 2022 30 out Lula é eleito presidente da Repúblic",
+          "w": 604,
+          "h": 69,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "27 documentos sustentam os registros desta coluna ▾",
+          "w": 604,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        }
+      ]
+    },
+    {
+      "tela": "06-acontecimento",
+      "url": "/acontecimentos/lula-2016-nomeacao-para-a-casa-civil-suspensa/",
+      "paradas": [
+        {
+          "elemento": "a",
+          "nome": "Pular para o conteúdo",
+          "w": 163,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Atlas Político",
+          "w": 114,
+          "h": 22,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 108,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 28,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar",
+          "w": 65,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia",
+          "w": 82,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "← Trajetória de Lula",
+          "w": 131,
+          "h": 20,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar link",
+          "w": 118,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Ministro suspende nomeação de Lula para Casa Civil e mantém processo n",
+          "w": 572,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Como o atlas é feito",
+          "w": 129,
+          "h": 20,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Sugerir uma correção",
+          "w": 140,
+          "h": 20,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Ver na trajetória de Lula",
+          "w": 154,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar as duas trajetórias",
+          "w": 187,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 33,
+          "h": 18,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "canvas",
+          "nome": "Mapa dos acontecimentos",
+          "w": 317,
+          "h": 254,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Aproximar",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Afastar",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Enquadrar os lugares do recorte",
+          "w": 36,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "summary",
+          "nome": "Legenda · pontos aproximados ▴",
+          "w": 191,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Origem da imagem (abre em nova aba)",
+          "w": 41,
+          "h": 15,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Autoria e condições de uso de cada material",
+          "w": 245,
+          "h": 15,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        }
+      ]
+    },
+    {
+      "tela": "07-metodologia",
+      "url": "/metodologia/",
+      "paradas": [
+        {
+          "elemento": "a",
+          "nome": "Pular para o conteúdo",
+          "w": 163,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Atlas Político",
+          "w": 114,
+          "h": 22,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 108,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 28,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar",
+          "w": 65,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia",
+          "w": 84,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Objetivo e escopo",
+          "w": 117,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Seleção dos acontecimentos",
+          "w": 188,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Fontes",
+          "w": 44,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Revisão",
+          "w": 51,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Datas",
+          "w": 38,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lugares",
+          "w": 53,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lacunas e limites da comparação",
+          "w": 215,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Edição e atualização",
+          "w": 132,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Como sugerir uma correção",
+          "w": 181,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Fontes desta edição",
+          "w": 130,
+          "h": 32,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Fontes desta edição",
+          "w": 130,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "textarea",
+          "nome": "Sugestão de correção ao Atlas Político Link do acontecimento: (cole aq",
+          "w": 672,
+          "h": 299,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "button",
+          "nome": "Copiar o modelo",
+          "w": 141,
+          "h": 44,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Página de origem (abre em nova aba)",
+          "w": 113,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Página de origem (abre em nova aba)",
+          "w": 113,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "perfil de Flávio Bolsonaro",
+          "w": 181,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "perfil de Lula",
+          "w": 93,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "STJ anula decisões de juiz sobre rachadinha na Alerj (abre em nova aba",
+          "w": 337,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "PT oficializa candidatura de Lula à Presidência (abre em nova aba)",
+          "w": 302,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Após decisão do STF, juiz manda soltar ex-presidente Lula (abre em nov",
+          "w": 378,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula deixa carceragem da PF em Curitiba (abre em nova aba)",
+          "w": 267,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "TSE determina que filiação de Flávio ao PL seja restabelecida (abre em",
+          "w": 399,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula chega à Polícia Federal em Curitiba para começar a cumprir pena (",
+          "w": 452,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Por 3 a 0, desembargadores do TRF4 mantêm condenação de Lula no caso t",
+          "w": 534,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "STJ reduz pena de Lula de 12 para 8 anos de prisão no caso do triplex ",
+          "w": 447,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "PT oficializa chapa Lula-Alckmin para disputar a Presidência (abre em ",
+          "w": 393,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Relembre o passo a passo da tentativa de golpe no 8/1 (abre em nova ab",
+          "w": 354,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Moro condena Lula a nove anos e seis meses de prisão no caso triplex (",
+          "w": 454,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Senado confirma intervenção federal na segurança pública do DF (abre e",
+          "w": 425,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "PL oficializa candidatura de Flávio Bolsonaro à Presidência (abre em n",
+          "w": 383,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Filho mais velho de Bolsonaro, Flávio disputa a Presidência pelo PL (a",
+          "w": 435,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "MP do Rio denuncia 17 investigados por lavagem de dinheiro e peculato ",
+          "w": 466,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Justiça do Rio arquiva processo de caso de supostas rachadinhas (abre ",
+          "w": 424,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Veja a íntegra do discurso de posse do presidente Lula (abre em nova a",
+          "w": 354,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Congresso empossa Lula e Alckmin na Presidência da República (abre em ",
+          "w": 420,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro (PSL) (abre em nova aba)",
+          "w": 148,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro e Lula disputam o segundo turno das eleições para pre",
+          "w": 516,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Intervenção federal na segurança pública do DF vai a promulgação (abre",
+          "w": 433,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Pela segunda vez, Congresso acaba com saídas temporárias de presos em ",
+          "w": 541,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Portinho destaca filiação de Flávio Bolsonaro ao Partido Liberal (abre",
+          "w": 413,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Senado aprova restrição a 'saidões' de presos; texto volta para a Câma",
+          "w": 471,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Gilmar Mendes mantém quebra de sigilos de investigada por 'rachadinha'",
+          "w": 693,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "O que aconteceu com o caso da 'rachadinha' de Flávio Bolsonaro, supost",
+          "w": 611,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Biografia do deputado federal Luiz Inácio Lula da Silva (abre em nova ",
+          "w": 352,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Da escolha de Bolsonaro à consolidação na direita: como foi construída",
+          "w": 616,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "MPRJ recorre contra decisão do STJ que anulou quebras de sigilo (abre ",
+          "w": 424,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Biografia completa de Luiz Inácio Lula da Silva (Galeria dos Ex-Presid",
+          "w": 489,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Dados Abertos do Senado: cargos de liderança do senador Flávio Bolsona",
+          "w": 494,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Dados Abertos do Senado: cargos do senador Flávio Bolsonaro (abre em n",
+          "w": 411,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Dados Abertos do Senado: detalhe do senador Flávio Bolsonaro (código 5",
+          "w": 512,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Dados Abertos do Senado: filiações partidárias do senador Flávio Bolso",
+          "w": 495,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Dados Abertos do Senado: mandatos do senador Flávio Bolsonaro (abre em",
+          "w": 432,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Perfil do senador Flávio Bolsonaro (abre em nova aba)",
+          "w": 224,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro muda do partido REPUBLICANOS para o partido PATRIOTA ",
+          "w": 753,
+          "h": 36,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "2ª Turma reconhece parcialidade de ex-juiz Sérgio Moro na condenação d",
+          "w": 617,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Fachin anula condenações de Lula e manda ações penais para Justiça Fed",
+          "w": 544,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Ministro suspende nomeação de Lula para Casa Civil e mantém processo n",
+          "w": 572,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Plenário fixa competência da Justiça Federal do DF para julgar process",
+          "w": 645,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "STF confirma anulação de condenações do ex-presidente Lula na Lava Jat",
+          "w": 489,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "STF confirma suspeição de Sergio Moro na ação do triplex do Guarujá (a",
+          "w": 454,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Operação Lava Jato: TRF4 confirma condenação do ex-presidente Luiz Iná",
+          "w": 588,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "100% das seções totalizadas: confira como ficou o quadro eleitoral apó",
+          "w": 538,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Flávio Bolsonaro a deputado estadual",
+          "w": 544,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Flávio Bolsonaro a prefeito do Rio d",
+          "w": 588,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Flávio Bolsonaro a presidente em 202",
+          "w": 494,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Flávio Bolsonaro a senador em 2018 (",
+          "w": 475,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Geraldo Alckmin a presidente em 2006",
+          "w": 495,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Lula a presidente em 2006 (abre em n",
+          "w": 414,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Lula a presidente em 2018 (abre em n",
+          "w": 411,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "DivulgaCandContas: candidatura de Lula a presidente em 2026 (abre em n",
+          "w": 413,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro (PL) e Lula (PT) vão disputar o 2º turno para a Presi",
+          "w": 572,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Repositório de dados eleitorais: candidatos de 1994 (consulta_cand_199",
+          "w": 487,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Repositório de dados eleitorais: candidatos de 1998 (consulta_cand_199",
+          "w": 488,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Repositório de dados eleitorais: candidatos de 2002 (consulta_cand_200",
+          "w": 491,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "TSE indefere pedido de registro de candidatura de Lula à Presidência d",
+          "w": 537,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "TSE proclama eleitos presidente e vice-presidente da República Luiz In",
+          "w": 696,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "TSE valida seis registros de candidatura à Presidência da República (a",
+          "w": 438,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        }
+      ]
+    },
+    {
+      "tela": "08-pagina-nao-encontrada",
+      "url": "/endereco-que-nao-existe/",
+      "paradas": [
+        {
+          "elemento": "a",
+          "nome": "Pular para o conteúdo",
+          "w": 163,
+          "h": 24,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Atlas Político",
+          "w": 114,
+          "h": 22,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Flávio Bolsonaro",
+          "w": 108,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Lula",
+          "w": 28,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar",
+          "w": 65,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia",
+          "w": 82,
+          "h": 28,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Voltar ao início →",
+          "w": 768,
+          "h": 48,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Trajetória de Flávio Bolsonaro →",
+          "w": 768,
+          "h": 48,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Trajetória de Lula →",
+          "w": 768,
+          "h": 48,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Comparar as trajetórias →",
+          "w": 768,
+          "h": 48,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia →",
+          "w": 768,
+          "h": 48,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Metodologia e fontes",
+          "w": 138,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        },
+        {
+          "elemento": "a",
+          "nome": "Créditos",
+          "w": 56,
+          "h": 17,
+          "visivel": true,
+          "naTela": true,
+          "indicador": true
+        }
+      ]
+    }
+  ]
+}

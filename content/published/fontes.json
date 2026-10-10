@@ -9,7 +9,7 @@
       "valor": "2022-02-24",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "camara-biografia-lula",
@@ -19,7 +19,7 @@
     "dataDocumento": {
       "tipo": "desconhecida"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-candidatos-1994",
@@ -31,7 +31,7 @@
       "valor": "2026-02-13",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-candidatos-1998",
@@ -43,7 +43,7 @@
       "valor": "2021-05-25",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-candidatos-2002",
@@ -55,89 +55,103 @@
       "valor": "2021-05-25",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-divulgacand-2006-lula",
     "titulo": "DivulgaCandContas: candidatura de Lula a presidente em 2006",
     "autoria": "Tribunal Superior Eleitoral",
-    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2006/14423/BR/23",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/BRASIL/BR/14423/23/2006/BR",
     "dataDocumento": {
-      "tipo": "desconhecida"
+      "tipo": "data",
+      "valor": "2017-01-24",
+      "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
+  },
+  {
+    "id": "tse-divulgacand-2006-alckmin",
+    "titulo": "DivulgaCandContas: candidatura de Geraldo Alckmin a presidente em 2006",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/BRASIL/BR/14423/25/2006/BR",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2017-01-24",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-divulgacand-2018-lula",
     "titulo": "DivulgaCandContas: candidatura de Lula a presidente em 2018",
     "autoria": "Tribunal Superior Eleitoral",
-    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2018/2022802018/BR/280000625869",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/BRASIL/BR/2022802018/280000625869/2018/BR",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2018-09-17",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-divulgacand-2026-lula",
     "titulo": "DivulgaCandContas: candidatura de Lula a presidente em 2026",
     "autoria": "Tribunal Superior Eleitoral",
-    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2026/20322002026/BR/280002542548",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/BRASIL/BR/20322002026/280002542548/2026/BR",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2026-10-05",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-divulgacand-2014-flavio",
     "titulo": "DivulgaCandContas: candidatura de Flávio Bolsonaro a deputado estadual em 2014",
     "autoria": "Tribunal Superior Eleitoral",
-    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2014/680/RJ/190000000095",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/SUDESTE/RJ/680/190000000095/2014/RJ",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2018-07-12",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-divulgacand-2016-flavio",
     "titulo": "DivulgaCandContas: candidatura de Flávio Bolsonaro a prefeito do Rio de Janeiro em 2016",
     "autoria": "Tribunal Superior Eleitoral",
-    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2016/2/60011/190000011736",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/SUDESTE/RJ/2/190000011736/2016/60011",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2018-07-12",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-divulgacand-2018-flavio",
     "titulo": "DivulgaCandContas: candidatura de Flávio Bolsonaro a senador em 2018",
     "autoria": "Tribunal Superior Eleitoral",
-    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2018/2022802018/RJ/190000614721",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/SUDESTE/RJ/2022802018/190000614721/2018/RJ",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2021-12-14",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-divulgacand-2026-flavio",
     "titulo": "DivulgaCandContas: candidatura de Flávio Bolsonaro a presidente em 2026",
     "autoria": "Tribunal Superior Eleitoral",
-    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/2026/20322002026/BR/280002551544",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/#/candidato/BRASIL/BR/20322002026/280002551544/2026/BR",
     "dataDocumento": {
       "tipo": "data",
-      "valor": "2026-10-08",
+      "valor": "2026-10-09",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-noticia-2018-registro-lula",
@@ -149,7 +163,7 @@
       "valor": "2018-09-01",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-noticia-2022-totalizacao",
@@ -161,7 +175,7 @@
       "valor": "2022-10-31",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-noticia-2022-proclamacao",
@@ -173,7 +187,7 @@
       "valor": "2022-12-06",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-noticia-2026-registros",
@@ -185,7 +199,7 @@
       "valor": "2026-09-02",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "tse-noticia-2026-primeiro-turno",
@@ -197,7 +211,7 @@
       "valor": "2026-10-05",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "stf-noticia-2016-casa-civil",
@@ -209,7 +223,7 @@
       "valor": "2016-03-18",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "stf-noticia-2021-fachin-anula",
@@ -221,7 +235,7 @@
       "valor": "2021-03-08",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "stf-noticia-2021-plenario-confirma",
@@ -233,7 +247,7 @@
       "valor": "2021-04-15",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "stf-noticia-2021-competencia-df",
@@ -245,7 +259,7 @@
       "valor": "2021-04-22",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "stf-noticia-2021-segunda-turma-suspeicao",
@@ -257,7 +271,7 @@
       "valor": "2021-03-23",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "stf-noticia-2021-plenario-suspeicao",
@@ -269,7 +283,7 @@
       "valor": "2021-06-23",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "trf4-noticia-2018-apelacao",
@@ -281,7 +295,7 @@
       "valor": "2018-01-24",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2017-sentenca-triplex",
@@ -293,43 +307,43 @@
       "valor": "2017-07-12",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2018-trf4",
     "titulo": "Por 3 a 0, desembargadores do TRF4 mantêm condenação de Lula no caso triplex",
-    "autoria": "Agência Brasil",
+    "autoria": "Agência Brasil (Danyele Soares)",
     "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2018-01/desembargadores-do-trf4-mantem-condenacao-de-lula-no-caso-triplex",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2018-01-24",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2018-chegada-pf",
     "titulo": "Lula chega à Polícia Federal em Curitiba para começar a cumprir pena",
-    "autoria": "Agência Brasil",
+    "autoria": "Agência Brasil (Danyele Soares)",
     "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2018-04/lula-chega-policia-federal-em-curitiba-para-comecar-cumprir-pena",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2018-04-07",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2019-stj-reduz-pena",
     "titulo": "STJ reduz pena de Lula de 12 para 8 anos de prisão no caso do triplex",
-    "autoria": "Agência Brasil",
+    "autoria": "Agência Brasil (Felipe Pontes e André Richter)",
     "url": "https://agenciabrasil.ebc.com.br/justica/noticia/2019-04/maioria-do-stj-decide-reduzir-pena-do-ex-presidente-lula",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2019-04-23",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2019-juiz-manda-soltar",
@@ -341,7 +355,7 @@
       "valor": "2019-11-08",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2019-deixa-carceragem",
@@ -353,7 +367,7 @@
       "valor": "2019-11-08",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2022-chapa-lula-alckmin",
@@ -365,7 +379,7 @@
       "valor": "2022-07-21",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-senado-2023-posse",
@@ -377,7 +391,7 @@
       "valor": "2023-01-01",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-senado-2023-intervencao",
@@ -389,31 +403,31 @@
       "valor": "2023-01-10",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2023-senado-confirma-intervencao",
     "titulo": "Senado confirma intervenção federal na segurança pública do DF",
-    "autoria": "Agência Brasil",
+    "autoria": "Agência Brasil (Karine Melo)",
     "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2023-01/senado-confirma-intervencao-federal-na-seguranca-publica-do-df",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2023-01-10",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2024-cronologia-8-de-janeiro",
     "titulo": "Relembre o passo a passo da tentativa de golpe no 8/1",
-    "autoria": "Agência Brasil",
+    "autoria": "Agência Brasil (Gilberto Costa)",
     "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2024-01/relembre-o-passo-passo-da-tentativa-de-golpe-no-81",
     "dataDocumento": {
       "tipo": "data",
       "valor": "2024-01-08",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-camara-2007-discurso-de-posse",
@@ -425,7 +439,7 @@
       "valor": "2007-01-01",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2026-convencao-pt",
@@ -437,7 +451,7 @@
       "valor": "2026-08-02",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2026-convencao-pl",
@@ -449,7 +463,7 @@
       "valor": "2026-07-25",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2026-filiacao-restabelecida",
@@ -461,7 +475,7 @@
       "valor": "2026-08-13",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2026-perfil-flavio",
@@ -473,7 +487,7 @@
       "valor": "2026-08-17",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-senado-2026-segundo-turno",
@@ -485,7 +499,7 @@
       "valor": "2026-10-04",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "senado-dados-abertos-flavio",
@@ -494,10 +508,10 @@
     "url": "https://legis.senado.leg.br/dadosabertos/senador/5894",
     "dataDocumento": {
       "tipo": "data",
-      "valor": "2026-10-08",
+      "valor": "2026-10-09",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "senado-dados-abertos-flavio-mandatos",
@@ -506,10 +520,10 @@
     "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/mandatos",
     "dataDocumento": {
       "tipo": "data",
-      "valor": "2026-10-08",
+      "valor": "2026-10-09",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "senado-dados-abertos-flavio-filiacoes",
@@ -518,10 +532,10 @@
     "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/filiacoes",
     "dataDocumento": {
       "tipo": "data",
-      "valor": "2026-10-08",
+      "valor": "2026-10-09",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "senado-dados-abertos-flavio-cargos",
@@ -530,22 +544,22 @@
     "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/cargos",
     "dataDocumento": {
       "tipo": "data",
-      "valor": "2026-10-08",
+      "valor": "2026-10-09",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "senado-dados-abertos-flavio-liderancas",
     "titulo": "Dados Abertos do Senado: cargos de liderança do senador Flávio Bolsonaro",
     "autoria": "Senado Federal",
-    "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/liderancas",
+    "url": "https://legis.senado.leg.br/dadosabertos/composicao/lideranca?codigoParlamentar=5894",
     "dataDocumento": {
       "tipo": "data",
-      "valor": "2026-10-08",
+      "valor": "2026-10-09",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "senado-perfil-flavio",
@@ -555,7 +569,7 @@
     "dataDocumento": {
       "tipo": "desconhecida"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-senado-2019-perfil-flavio",
@@ -567,7 +581,7 @@
       "valor": "2019-01-18",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-senado-2021-filiacao-pl",
@@ -579,7 +593,7 @@
       "valor": "2021-12-01",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "senado-manual-republicanos-patriota",
@@ -589,7 +603,7 @@
     "dataDocumento": {
       "tipo": "desconhecida"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-senado-2024-saidas-temporarias",
@@ -601,7 +615,7 @@
       "valor": "2024-02-20",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-senado-2024-veto-saidas-temporarias",
@@ -613,7 +627,7 @@
       "valor": "2024-05-28",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2020-denuncia-mprj",
@@ -625,7 +639,7 @@
       "valor": "2020-11-04",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "mprj-2021-recurso-stj",
@@ -637,7 +651,7 @@
       "valor": "2021-03-20",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2021-stj-anula-decisoes",
@@ -649,7 +663,7 @@
       "valor": "2021-11-09",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "agencia-brasil-2022-tjrj-rejeita-denuncia",
@@ -661,7 +675,7 @@
       "valor": "2022-05-16",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "cartacapital-2025-caso-rachadinha",
@@ -673,7 +687,7 @@
       "valor": "2025-12-06",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "brasil-de-fato-2026-quebra-de-sigilos",
@@ -685,11 +699,11 @@
       "valor": "2026-09-29",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   },
   {
     "id": "gazeta-do-povo-2026-candidatura-flavio",
-    "titulo": "Após crise, Flávio chega ao 1º turno como principal nome da direita",
+    "titulo": "Da escolha de Bolsonaro à consolidação na direita: como foi construída a candidatura de Flávio",
     "autoria": "Gazeta do Povo (Wesley Oliveira)",
     "url": "https://www.gazetadopovo.com.br/eleicoes/2026/da-escolha-de-bolsonaro-a-consolidacao-na-direita-como-foi-construida-candidatura-de-flavio/",
     "dataDocumento": {
@@ -697,6 +711,6 @@
       "valor": "2026-09-30",
       "precisao": "dia"
     },
-    "acessadoEm": "2026-10-08"
+    "acessadoEm": "2026-10-09"
   }
 ]

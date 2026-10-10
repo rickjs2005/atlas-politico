@@ -9,10 +9,11 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | `fase-6/` | O mapa sincronizado: marcadores, lista de um lugar, seleção, legenda e falhas | `npm run capture:map` | `tests/e2e/mapa.capture.ts` |
 | `fase-7/` | A comparação, o perfil, a página do acontecimento com o retorno, a cópia do link e a metodologia | `npm run capture:pages` | `tests/e2e/paginas.capture.ts` |
 | `fase-8/` | O acabamento: abertura, exploração, comparação e leitura, na saída estática. Em `fase-8/antes/`, as mesmas telas antes da fase | `npm run build` e `npm run capture:finish` | `tests/export/acabamento.capture.ts` |
+| `fase-9/` | As oito telas da conferência final, nas quatro larguras, com a edição 0.1.1; o relatório da passagem de acessibilidade; e a linha do tempo antes e depois da correção da hachura | `npm run build` e `npm run audit:a11y -- --saida docs/capturas/fase-9` | `scripts/audit-a11y.mjs` |
 
 Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts`, `tests/e2e/paginas.spec.ts`, `tests/e2e/acabamento.spec.ts` e, sobre a saída estática, `tests/export/carregamento.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
 
-As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeitas depois. A exploração mudou desde a fase 4: a lista ganhou o cabeçalho com o período, o bloco de cargos e partidos e as linhas de lacuna, e a barra ganhou a troca de pessoa. O mapa mudou na fase 6: nas imagens anteriores, cada ponto é um círculo, sem nome, sem controles e sem legenda. Para o mapa atual, valem as de `fase-6/`; para o resto da exploração, as de `fase-5/`. A comparação, o perfil e a página do acontecimento mudaram na fase 7, e a fase 8 mexeu na hierarquia e nos retratos de todas as telas: para o estado atual, valem as de `fase-8/`; as de `fase-7/` continuam valendo para o que elas detalham e a fase 8 não refez (fontes de um cargo, cópia do link, modelo de correção).
+As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeitas depois. A exploração mudou desde a fase 4: a lista ganhou o cabeçalho com o período, o bloco de cargos e partidos e as linhas de lacuna, e a barra ganhou a troca de pessoa. O mapa mudou na fase 6: nas imagens anteriores, cada ponto é um círculo, sem nome, sem controles e sem legenda. Para o mapa atual, valem as de `fase-6/`; para o resto da exploração, as de `fase-5/`. A comparação, o perfil e a página do acontecimento mudaram na fase 7, e a fase 8 mexeu na hierarquia e nos retratos de todas as telas, e a fase 9 corrigiu o eixo da linha do tempo e o nome de três cargos: para o estado atual, valem as de `fase-9/`, e as de `fase-8/` para os estados que a fase 9 não refez (filtros abertos, recorte vazio, mapa indisponível); as de `fase-7/` continuam valendo para o que elas detalham e a fase 8 não refez (fontes de um cargo, cópia do link, modelo de correção).
 
 ## Larguras
 
@@ -23,6 +24,24 @@ As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeita
 | `--tablet` | 768×1024 |
 | `--celular` | 390×844 |
 | `--celular-estreito` | 360×800 |
+
+## Fase 9
+
+Tiradas da saída estática em 9 de outubro de 2026, depois das correções da fase, pelo mesmo comando que faz a passagem de acessibilidade. São o estado atual das telas: edição 0.1.1, anos do eixo legíveis com um período escolhido e os cargos com o nome completo.
+
+| Arquivo | O que mostra | Larguras |
+| --- | --- | --- |
+| `01-entrada` | Entrada | As quatro |
+| `02-exploracao-lula` e `03-exploracao-flavio-bolsonaro` | Exploração de cada pessoa, sem seleção | As quatro |
+| `04-leitura-com-periodo` | Exploração com o período de 2016 a 2019 e um acontecimento aberto | As quatro |
+| `05-comparacao-com-periodo` | Comparação de 2003 a 2022 | As quatro |
+| `06-acontecimento` | Página de um acontecimento | As quatro |
+| `07-metodologia` | Metodologia | As quatro |
+| `08-pagina-nao-encontrada` | Página 404 | As quatro |
+| `eixo-do-periodo-antes` e `eixo-do-periodo-depois` | A linha do tempo com um período escolhido, antes e depois de a hachura parar acima dos anos (QA.md, falha 3) | Computador |
+| `acessibilidade.json` | O relatório da passagem: contraste, rolagem lateral, alvos e ordem de foco de cada tela | |
+
+As capturas são da primeira tela de cada página, e não da página inteira. O celular é emulado.
 
 ## Fase 8
 

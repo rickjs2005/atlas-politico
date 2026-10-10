@@ -309,6 +309,10 @@ export default function MethodologyPage() {
                   </li>
                   <li>Cada resumo e cada contexto foi relido contra esses trechos, à procura de afirmação sem apoio.</li>
                   <li>
+                    Na última conferência, todas as fontes foram abertas de novo, e os trechos foram
+                    procurados nos documentos do dia. O que mudou está no registro de alterações.
+                  </li>
+                  <li>
                     Essa conferência prova que o trecho existe no documento. Não prova que o texto do
                     atlas o interpreta bem: esse juízo depende da revisão humana, que está pendente.
                   </li>
@@ -337,6 +341,11 @@ export default function MethodologyPage() {
                 <strong className="font-semibold">A precisão é a da fonte:</strong> dia, mês ou ano.
                 O atlas não completa uma data parcial. Quando só o ano está documentado, a página
                 diz isso.
+              </li>
+              <li>
+                <strong className="font-semibold">Data do fato e data da notícia.</strong> Quando o
+                documento diz o dia do fato, vale esse dia. Quando só há a data em que a notícia foi
+                publicada, o registro usa essa data, e o texto diz que ela é a da publicação.
               </li>
               <li>
                 <strong className="font-semibold">Na linha do tempo,</strong> um acontecimento de que

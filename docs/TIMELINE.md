@@ -110,7 +110,7 @@ O bloco **Cargos e partidos em (período)** fica acima da lista, recolhido, com 
 
 A classificação é da camada de dados (`listMandates` e `listAffiliations`, com `situacao` igual a `documentada` ou `incerta`). Sem período escolhido, entram todos os registros da pessoa.
 
-Em telas médias e largas, as faixas de cargos e de partidos sob o eixo mostram os mesmos registros em desenho, e a hachura do período passa por cima delas. O bloco é o equivalente por extenso, e o único em tela estreita, onde as faixas não aparecem.
+Em telas médias e largas, as faixas de cargos e de partidos sob o eixo mostram os mesmos registros em desenho. A hachura do período não chega a elas: cobre só as marcas e a régua. O bloco é o equivalente por extenso, e o único em tela estreita, onde as faixas não aparecem.
 
 ## Datas
 
@@ -124,7 +124,7 @@ Em telas médias e largas, as faixas de cargos e de partidos sob o eixo mostram 
 
 As marcas ficam em fileiras. Cada marca reserva no eixo o espaço do próprio botão, 26 pixels, e a que não cabe ao lado da anterior sobe uma fileira. O espaço é calculado com a largura real do eixo, medida no navegador: em uma coluna estreita há mais fileiras, e em uma larga, menos. Um teste confere, em computador e em tablet, que nenhuma marca cobre outra.
 
-O eixo não muda com os filtros nem tem zoom: o que fica fora do período é hachurado, e a hachura passa por baixo das marcas do recorte. Em tela estreita a faixa tem largura mínima e rola para o lado; com um período escolhido, ela rola sozinha até o trecho em claro.
+O eixo não muda com os filtros nem tem zoom: o que fica fora do período é hachurado, e a hachura passa por baixo das marcas do recorte. Ela para acima dos anos do eixo, que continuam legíveis: são eles que a pessoa lê para escolher outro período. Até a fase 9 a hachura cobria os anos, e o contraste deles caía para cerca de 1,6:1 ([QA.md](QA.md), falha 3). Em tela estreita a faixa tem largura mínima e rola para o lado; com um período escolhido, ela rola sozinha até o trecho em claro.
 
 ### Lacunas
 

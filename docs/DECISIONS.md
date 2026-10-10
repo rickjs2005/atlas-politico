@@ -688,21 +688,56 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Consequência.** As pendências estão em [STATUS.md](STATUS.md) e em [PERFORMANCE.md](PERFORMANCE.md), seção Pendências.
 
+## D-87. As jornadas rodam também sobre a exportação estática
+
+**Decisão (fase 9).** `npm run test:journeys` roda sobre a pasta `out/` os mesmos testes de navegador que `npm run test:e2e` roda no servidor de desenvolvimento, menos as telas de prova. Os testes que bloqueiam o pacote do mapa o reconhecem nos dois ambientes (`tests/e2e/map-package.ts`).
+
+**Motivo.** O servidor de desenvolvimento repete os efeitos do React, e isso escondeu um defeito de ordem: no build, um link com consulta inválida deixava a tela encoberta por 6 segundos. Quatro testes de falha do mapa também não testavam nada no build, porque bloqueavam o arquivo pelo nome de desenvolvimento.
+
+**Consequência.** Mexeu em efeito, rode as jornadas sobre o build. São mais três minutos antes de uma entrega.
+
+## D-88. A hachura do período não passa pelos anos do eixo
+
+**Decisão (fase 9).** Na exploração, a hachura que marca o que está fora do período cobre as marcas, a régua e os traços, e para acima da linha dos anos. Na comparação nada mudou: lá o eixo de anos já ficava fora da hachura.
+
+**Motivo.** Os anos fora do período são o que a pessoa lê para escolher outro ano ou outro intervalo, e sob a hachura o contraste deles ficava em cerca de 1,6:1. O guia de design já dizia, para as linhas de lacuna da lista, que a hachura não passa pelas letras.
+
+**Consequência.** `PeriodShade` recebe a altura que cobre. Na comparação, o nome dos cargos e as notas das faixas que ficam fora do período continuam sob a hachura: é o desenho documentado, e as colunas abaixo trazem a mesma informação em texto. Fica como ponto em aberto.
+
+## D-89. O nome do cargo se explica sozinho
+
+**Decisão (fase 9).** O campo `cargo` traz um nome que dispensa a instituição: "Presidente do PT", e não "Presidente". A regra está em [EDITORIAL.md](EDITORIAL.md), e um teste recusa o mesmo nome em instituições diferentes da mesma pessoa. Na página do acontecimento, a nota dos cargos acompanha a precisão da data: "na data", "no mês" ou "no ano".
+
+**Motivo.** A página do acontecimento e a linha do tempo mostram o cargo sem a instituição. Com três cargos de Lula chamados "Presidente", a página de um acontecimento de 1980 dizia "Lula: Presidente". O conteúdo estava certo, e a leitura que a tela permitia, não. Os cargos de Flávio Bolsonaro já seguiam o padrão ("Líder do PL no Senado").
+
+**Consequência.** Onde a instituição aparece ao lado, o texto fica um pouco redundante ("Presidente do PT, Partido dos Trabalhadores (PT)"). A alternativa, mostrar a instituição em todas as telas, mudaria o desenho da faixa de cargos.
+
+## D-90. Passagem de acessibilidade como comando, e não como teste
+
+**Decisão (fase 9).** `npm run audit:a11y` mede o contraste do texto desenhado, a rolagem lateral, os alvos e a ordem de foco, sobre a saída estática, e grava capturas e um relatório. Não entra em `npm run check`.
+
+**Motivo.** O teste de contraste que existia confere os pares de cor do sistema, e não o que cada tela desenha. A passagem leva três minutos e depende de olhar as capturas: ela não vê uma camada posta por cima do texto, que foi justamente o defeito encontrado.
+
+**Consequência.** Nenhuma dependência nova. Leitor de tela e aparelho real continuam fora do que o projeto confere sozinho.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
 |---|---|
 | Comando de promoção de rascunhos e verificador de evidências (D-36) | Quando o volume de conteúdo pedir |
-| Exigir revisão humana como condição de publicação | Fase 9 |
+| Exigir revisão humana como condição de publicação | A fase 9 refez a conferência com IA e deixou o roteiro pronto ([EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md)). A decisão de publicar sem ela é do responsável pelo projeto, na fase 10 |
 | Canal público de correção (D-70) e quem assina a revisão humana | Decisão do responsável pelo projeto |
 | Passos de `scripts/finalize-export.mjs` (D-77): rever a cada atualização do Next ou do MapLibre | Quando a versão mudar |
 | Nome definitivo do atlas (o rodapé diz "nome provisório") | Decisão do responsável pelo projeto |
 | Exibir em cinza e recortado o retrato cuja condição de uso é "livre com crédito" (D-42) | Decisão do responsável pelo projeto |
 | Política de segurança de conteúdo que permita o trecho de script da D-83 | Fase 10 |
-| Fechar a leitura criando entrada no histórico ou voltando nele (D-50) | Fase 9, com pessoas usando |
+| Fechar a leitura criando entrada no histórico ou voltando nele (D-50) | Depois da validação com pessoas, que está pendente ([USER-VALIDATION.md](USER-VALIDATION.md)) |
 | Domínio público, endereço canônico, `metadataBase` e sitemap (D-69) | Fase 10 |
 | Mostrar a natureza de cada fonte nas páginas, com um campo novo no conteúdo (D-71) | Quando a edição pedir |
 | Rótulos da base do mapa, com glyphs locais (D-58) | Quando uma edição pedir nomes de estados ou de países |
 | Contorno mundial, para lugares fora da América do Sul (D-62) | Quando o conteúdo tiver o primeiro lugar fora da área |
 | Peso do MapLibre na vista do mapa em rede lenta (D-76) | Sem saída dentro do pacote; reavaliar se a base mudar |
-| Tratamento do retrato quando o navegador não tem WebP (D-74) | Fase 9, se a validação mostrar esse caso |
+| Tratamento do retrato quando o navegador não tem WebP (D-74) | Não apareceu nos navegadores conferidos na fase 9. Reavaliar se a validação com pessoas mostrar esse caso |
+| Texto legível sob a hachura do período, na comparação (D-88) | Revisão de design, se a validação com pessoas mostrar dificuldade |
+| Conferência das fontes como comando do projeto ([EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md), pendência 6) | Quando o conteúdo passar a ser atualizado com frequência |
+| Firefox e Safari nas jornadas ([QA.md](QA.md)) | Fase 10, antes de publicar |

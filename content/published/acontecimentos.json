@@ -37,8 +37,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -75,8 +75,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -110,8 +110,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -150,8 +150,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -193,8 +193,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -233,8 +233,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -278,8 +278,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -326,8 +326,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -371,8 +371,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -414,8 +414,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -445,8 +445,13 @@
       },
       {
         "fonteId": "tse-divulgacand-2006-lula",
-        "localizacao": "Lista de candidatos a presidente em 2006: linhas de Lula e de Geraldo Alckmin",
-        "evidencia": "Coligação de Lula, situação de eleito e candidatura de Geraldo Alckmin pelo PSDB."
+        "localizacao": "Ficha do candidato: situação e nome do registro da candidatura",
+        "evidencia": "Situação de eleito e o nome A Força do Povo no registro da candidatura."
+      },
+      {
+        "fonteId": "tse-divulgacand-2006-alckmin",
+        "localizacao": "Ficha do candidato: cargo, partido e situação",
+        "evidencia": "Geraldo Alckmin, candidato a presidente pelo PSDB em 2006, não eleito."
       },
       {
         "fonteId": "agencia-camara-2007-discurso-de-posse",
@@ -469,8 +474,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -512,8 +517,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -555,8 +560,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -603,8 +608,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -620,8 +625,8 @@
       "precisao": "dia"
     },
     "categoria": "mandatos-e-funcoes",
-    "resumo": "Em 18 de março de 2016, o ministro Gilmar Mendes, do STF, concedeu liminar que suspendeu a eficácia da nomeação de Lula para o cargo de ministro-chefe da Casa Civil.",
-    "contexto": "A decisão foi tomada em mandados de segurança do PPS e do PSDB. Os partidos alegavam que a nomeação, feita pela presidente Dilma Rousseff, teve desvio de finalidade: retirar da 13ª Vara Federal de Curitiba um procedimento criminal contra Lula, já que ministros de Estado têm foro no STF. A liminar também manteve os procedimentos criminais na primeira instância.",
+    "resumo": "Em 18 de março de 2016, o STF informou que o ministro Gilmar Mendes concedeu liminar que suspendeu a eficácia da nomeação de Lula para o cargo de ministro-chefe da Casa Civil.",
+    "contexto": "A decisão foi tomada em mandados de segurança do PPS e do PSDB. Os partidos alegavam que a nomeação, feita pela presidente Dilma Rousseff, teve desvio de finalidade: retirar da 13ª Vara Federal de Curitiba um procedimento criminal contra Lula, já que ministros de Estado têm foro no STF. A liminar também manteve os procedimentos criminais na primeira instância. A notícia do tribunal não informa o dia em que a liminar foi assinada; a data deste registro é a da publicação.",
     "localizacao": {
       "tipo": "lugares",
       "lugarIds": [
@@ -633,7 +638,7 @@
       {
         "fonteId": "stf-noticia-2016-casa-civil",
         "localizacao": "Texto da notícia e data de publicação",
-        "evidencia": "Liminar que suspendeu a nomeação, autores dos mandados de segurança e alegação de desvio de finalidade."
+        "evidencia": "Liminar que suspendeu a nomeação, autores dos mandados de segurança e alegação de desvio de finalidade. A data é a da publicação da notícia."
       }
     ],
     "editorial": {
@@ -641,8 +646,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -674,6 +679,11 @@
         "evidencia": "Condenação, pena, crimes e possibilidade de recorrer em liberdade."
       },
       {
+        "fonteId": "trf4-noticia-2018-apelacao",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Confirmação da condenação em segunda instância em 24 de janeiro de 2018, com aumento da pena."
+      },
+      {
         "fonteId": "stf-noticia-2021-fachin-anula",
         "localizacao": "Primeiro parágrafo",
         "evidencia": "Anulação das decisões da 13ª Vara Federal de Curitiba, sede do juízo que proferiu a sentença."
@@ -689,8 +699,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -737,8 +747,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -755,7 +765,7 @@
     },
     "categoria": "marcos-historicos",
     "resumo": "Em 24 de janeiro de 2018, a 8ª Turma do Tribunal Regional Federal da 4ª Região confirmou por unanimidade a condenação de Lula por corrupção passiva e lavagem de dinheiro e elevou a pena de nove anos e seis meses para 12 anos e um mês de reclusão.",
-    "contexto": "A condenação em segunda instância foi o fundamento citado no TSE para declarar Lula inelegível em 2018 e precedeu sua prisão, em abril daquele ano. Em abril de 2019, a Quinta Turma do STJ manteve a condenação e reduziu a pena para 8 anos e 10 meses. As condenações foram anuladas pelo STF em 2021.",
+    "contexto": "No julgamento, o advogado de Lula, Cristiano Zanin, pediu a absolvição e afirmou que o processo era nulo e que a sentença não havia provado a culpa. A condenação em segunda instância foi o fundamento citado no TSE para declarar Lula inelegível em 2018 e precedeu sua prisão, em abril daquele ano. Em abril de 2019, a Quinta Turma do STJ manteve a condenação e reduziu a pena para 8 anos e 10 meses. As condenações foram anuladas pelo STF em 2021.",
     "localizacao": {
       "tipo": "lugares",
       "lugarIds": [
@@ -766,13 +776,13 @@
     "fontes": [
       {
         "fonteId": "trf4-noticia-2018-apelacao",
-        "localizacao": "Primeiro parágrafo",
-        "evidencia": "Confirmação unânime da condenação e nova pena."
+        "localizacao": "Primeiro parágrafo e trecho das sustentações orais",
+        "evidencia": "Confirmação unânime da condenação, nova pena e pedido de absolvição feito pela defesa."
       },
       {
         "fonteId": "agencia-brasil-2018-trf4",
-        "localizacao": "Primeiro parágrafo",
-        "evidencia": "Sede do tribunal em Porto Alegre."
+        "localizacao": "Primeiro parágrafo e trecho Como foi o julgamento",
+        "evidencia": "Sede do tribunal em Porto Alegre e manifestação da defesa durante o julgamento."
       },
       {
         "fonteId": "tse-noticia-2018-registro-lula",
@@ -781,8 +791,8 @@
       },
       {
         "fonteId": "agencia-brasil-2019-stj-reduz-pena",
-        "localizacao": "Primeiro parágrafo",
-        "evidencia": "Redução da pena pela Quinta Turma do STJ em 23 de abril de 2019."
+        "localizacao": "Primeiro parágrafo e parágrafo sobre a prisão",
+        "evidencia": "Redução da pena pela Quinta Turma do STJ em 23 de abril de 2019; preso desde abril de 2018."
       },
       {
         "fonteId": "stf-noticia-2021-fachin-anula",
@@ -795,8 +805,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -843,8 +853,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -861,7 +871,7 @@
     },
     "categoria": "eleicoes",
     "resumo": "Em sessão extraordinária iniciada em 31 de agosto de 2018, o plenário do TSE indeferiu, por 6 votos a 1, o registro da candidatura de Lula à Presidência da República, com base na Lei da Ficha Limpa.",
-    "contexto": "O relator, ministro Luís Roberto Barroso, declarou a inelegibilidade de Lula. Por 5 votos a 2, o tribunal permitiu à coligação O Povo Feliz de Novo (PT, PCdoB e Pros) substituir o candidato em dez dias e proibiu Lula de praticar atos de campanha. O TSE publicou o resultado na madrugada de 1º de setembro. Fernando Haddad era o candidato a vice na chapa registrada.",
+    "contexto": "O relator, ministro Luís Roberto Barroso, declarou a inelegibilidade de Lula. A defesa alegava que uma medida cautelar do Comitê de Direitos Humanos da ONU havia suspendido a inelegibilidade; o relator rejeitou o argumento. Por 5 votos a 2, o tribunal permitiu à coligação O Povo Feliz de Novo (PT, PCdoB e Pros) substituir o candidato em dez dias e proibiu Lula de praticar atos de campanha. O TSE publicou o resultado na madrugada de 1º de setembro. Fernando Haddad era o candidato a vice na chapa registrada.",
     "localizacao": {
       "tipo": "lugares",
       "lugarIds": [
@@ -872,8 +882,8 @@
     "fontes": [
       {
         "fonteId": "tse-noticia-2018-registro-lula",
-        "localizacao": "Primeiros parágrafos, data de publicação e rodapé",
-        "evidencia": "Placar, fundamento, substituição do candidato, proibição de atos de campanha e data da sessão."
+        "localizacao": "Primeiros parágrafos, trecho Decisão da ONU, data de publicação e rodapé",
+        "evidencia": "Placar, fundamento, alegação da defesa e resposta do relator, substituição do candidato, proibição de atos de campanha e data da sessão."
       },
       {
         "fonteId": "tse-divulgacand-2018-lula",
@@ -886,8 +896,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -934,8 +944,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -977,8 +987,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1027,8 +1037,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1045,7 +1055,7 @@
     },
     "categoria": "marcos-historicos",
     "resumo": "Em 4 de novembro de 2020, o Ministério Público do Rio de Janeiro informou ter apresentado denúncia contra Flávio Bolsonaro, o ex-assessor Fabrício Queiroz e outras 15 pessoas ao Órgão Especial do Tribunal de Justiça do Rio. A acusação era de lavagem de dinheiro, peculato, apropriação indébita e organização criminosa.",
-    "contexto": "A investigação tratava de suposto esquema de “rachadinha” na Assembleia Legislativa do Rio de Janeiro no período em que Flávio era deputado estadual; segundo o Ministério Público, os fatos teriam ocorrido entre 2007 e 2018. A denúncia havia sido oferecida em 19 de outubro. A defesa afirmou que a acusação não se sustentava e era desprovida de indício de prova, e o senador declarou que não cometeu irregularidade. A denúncia foi rejeitada pelo Tribunal de Justiça em 2022, a pedido do próprio Ministério Público, e não chegou a ser julgada no mérito.",
+    "contexto": "A investigação tratava de suposto esquema de “rachadinha” na Assembleia Legislativa do Rio de Janeiro no período em que Flávio era deputado estadual; segundo o Ministério Público, os fatos teriam ocorrido entre 2007 e 2018. A denúncia havia sido oferecida em 19 de outubro. A defesa afirmou que a acusação não se sustentava e era desprovida de indício de prova, e o senador declarou que não cometeu irregularidade. A denúncia foi rejeitada pelo Tribunal de Justiça em 2022, a pedido do próprio Ministério Público. Segundo reportagem do Brasil de Fato de 29 de setembro de 2026, ela não chegou a ser julgada no mérito.",
     "localizacao": {
       "tipo": "lugares",
       "lugarIds": [
@@ -1075,8 +1085,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1138,8 +1148,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1156,7 +1166,7 @@
     },
     "categoria": "partidos-e-aliancas",
     "resumo": "Em 31 de maio de 2021, Flávio Bolsonaro se filiou ao Patriota, segundo os dados abertos do Senado. O Manual de Comunicação do Senado registra a mudança como saída do Republicanos.",
-    "contexto": "Ele foi líder do Patriota no Senado de 4 de junho a 29 de novembro de 2021. A filiação durou seis meses: em 30 de novembro de 2021 ele passou para o PL.",
+    "contexto": "Ele foi líder do Patriota no Senado de junho a 29 de novembro de 2021; o registro do Senado traz 4 de junho no campo da data de designação e 7 de junho na observação do mesmo registro. A filiação durou seis meses: em 30 de novembro de 2021 ele passou para o PL.",
     "localizacao": {
       "tipo": "desconhecida"
     },
@@ -1170,7 +1180,7 @@
       {
         "fonteId": "senado-dados-abertos-flavio-liderancas",
         "localizacao": "Liderança de Partido no Senado Federal (Patriota)",
-        "evidencia": "Líder do Patriota de 4 de junho a 29 de novembro de 2021."
+        "evidencia": "Líder do Patriota até 29 de novembro de 2021. A designação aparece com 4 de junho de 2021 no campo de data e 7 de junho na observação."
       },
       {
         "fonteId": "senado-manual-republicanos-patriota",
@@ -1183,8 +1193,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1201,7 +1211,7 @@
     },
     "categoria": "marcos-historicos",
     "resumo": "Em 9 de novembro de 2021, a Quinta Turma do Superior Tribunal de Justiça anulou as decisões da primeira instância da Justiça do Rio de Janeiro nas investigações sobre o suposto esquema de “rachadinha” na Assembleia Legislativa.",
-    "contexto": "O colegiado aceitou recurso da defesa de Flávio Bolsonaro: como ele era deputado estadual na época dos fatos apontados pelo Ministério Público, somente o Tribunal de Justiça do Rio poderia decidir sobre o caso. As decisões anuladas eram do juiz Flávio Itabaiana, da 27ª Vara Criminal. Em fevereiro de 2021, a mesma turma havia anulado, por falta de fundamentação, a quebra de sigilo bancário e fiscal de cerca de 90 investigados; o Ministério Público do Rio recorreu dessa decisão em 20 de março de 2021. O registro não tem ponto no mapa porque a sede do tribunal não consta nos documentos lidos.",
+    "contexto": "O colegiado aceitou recurso da defesa de Flávio Bolsonaro: como ele era deputado estadual na época dos fatos apontados pelo Ministério Público, somente o Tribunal de Justiça do Rio poderia decidir sobre o caso. As decisões anuladas eram do juiz Flavio Itabaiana, da 27ª Vara Criminal. Em fevereiro de 2021, a mesma turma havia anulado, por falta de fundamentação, a quebra de sigilo bancário e fiscal de cerca de 90 investigados; o Ministério Público do Rio recorreu dessa decisão em 20 de março de 2021. O registro não tem ponto no mapa porque a sede do tribunal não consta nos documentos lidos.",
     "localizacao": {
       "tipo": "desconhecida"
     },
@@ -1223,8 +1233,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1273,8 +1283,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1291,7 +1301,7 @@
     },
     "categoria": "marcos-historicos",
     "resumo": "Em 16 de maio de 2022, foi divulgada a decisão do Órgão Especial do Tribunal de Justiça do Rio de Janeiro que rejeitou a denúncia do Ministério Público contra Flávio Bolsonaro no caso das “rachadinhas”.",
-    "contexto": "O próprio Ministério Público havia pedido a extinção da denúncia, depois que as provas usadas na acusação foram anuladas pelo STJ e pelo STF. Segundo a decisão, a rejeição por falta de justa causa não impede a retomada das investigações. A defesa declarou considerar o caso encerrado. De acordo com reportagem da CartaCapital de dezembro de 2025, o Ministério Público recorreu para retomar a apuração, o STJ enviou o recurso ao STF em abril de 2023 e, em fevereiro de 2025, o ministro Gilmar Mendes negou os recursos; o processo tramita em segredo de justiça. A denúncia não foi julgada no mérito.",
+    "contexto": "O próprio Ministério Público havia pedido a extinção da denúncia, depois que as provas usadas na acusação foram anuladas pelo STJ e pelo STF. Segundo a decisão, a rejeição por falta de justa causa não impede a retomada das investigações. A defesa declarou considerar o caso encerrado. De acordo com reportagem da CartaCapital de dezembro de 2025, o Ministério Público recorreu para retomar a apuração, o STJ enviou o recurso ao STF em abril de 2023 e, em fevereiro de 2025, o ministro Gilmar Mendes negou os recursos; o processo tramita em segredo de justiça. Segundo reportagem do Brasil de Fato de 29 de setembro de 2026, a denúncia não chegou a ser julgada no mérito.",
     "localizacao": {
       "tipo": "lugares",
       "lugarIds": [
@@ -1321,8 +1331,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1364,8 +1374,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1414,8 +1424,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1463,8 +1473,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1511,8 +1521,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1564,8 +1574,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1617,8 +1627,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1662,8 +1672,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1680,7 +1690,7 @@
     },
     "categoria": "eleicoes",
     "resumo": "Em 25 de julho de 2026, o PL formalizou a candidatura de Flávio Bolsonaro à Presidência da República, em convenção nacional realizada no Mercado Pago Hall, na Arena Pacaembu, em São Paulo.",
-    "contexto": "O candidato a vice é o deputado federal Alfredo Gaspar (PL-AL). Em 13 de agosto, o presidente do TSE, ministro Nunes Marques, mandou restabelecer a filiação de Flávio ao PL, depois que ele apareceu filiado ao partido Missão no sistema da Justiça Eleitoral; segundo o tribunal, houve uso indevido das credenciais daquela legenda, e não invasão do sistema. O TSE aprovou o registro da chapa por unanimidade em 2 de setembro de 2026.",
+    "contexto": "O candidato a vice é o deputado federal Alfredo Gaspar (PL-AL). Segundo a Agência Brasil, em notícia de 13 de agosto, o presidente do TSE, ministro Nunes Marques, mandou restabelecer a filiação de Flávio ao PL, depois que ele apareceu filiado ao partido Missão no sistema da Justiça Eleitoral; segundo o tribunal, houve uso indevido das credenciais daquela legenda, e não invasão do sistema. O TSE aprovou o registro da chapa por unanimidade em 2 de setembro de 2026.",
     "localizacao": {
       "tipo": "lugares",
       "lugarIds": [
@@ -1720,8 +1730,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1768,8 +1778,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -1819,8 +1829,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   }

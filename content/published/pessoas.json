@@ -3,13 +3,18 @@
     "id": "lula",
     "slug": "lula",
     "nome": "Lula",
-    "resumo": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE), é presidente da República desde 2023, cargo que também ocupou de 2003 a 2011. Metalúrgico formado pelo Senai, presidiu o Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema, foi um dos fundadores do PT em 1980 e deputado federal constituinte por São Paulo. Em 2026 disputa a reeleição.",
+    "resumo": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE) em outubro de 1945, é presidente da República desde 2023, cargo que também ocupou de 2003 a 2011. Metalúrgico formado pelo Senai, presidiu o Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema, foi um dos fundadores do PT em 1980 e deputado federal constituinte por São Paulo. Em 2026 disputa a reeleição.",
     "retratoId": "retrato-lula",
     "fontes": [
       {
         "fonteId": "planalto-biografia-lula",
         "localizacao": "Primeiro parágrafo da biografia e parágrafos sobre o Senai, o sindicato e o PT",
-        "evidencia": "Local de nascimento, formação de torneiro mecânico no Senai, presidência do sindicato e fundação do PT em 1980."
+        "evidencia": "Local de nascimento, mês e ano de nascimento (o texto diz 27 de outubro de 1945), formação de torneiro mecânico no Senai, presidência do sindicato e fundação do PT em 1980."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Ficha do candidato: data de nascimento e naturalidade",
+        "evidencia": "Nascimento registrado em 6 de outubro de 1945, em Garanhuns (PE). Os dois documentos divergem no dia e concordam no mês e no ano; o resumo informa só o mês e o ano."
       },
       {
         "fonteId": "agencia-senado-2023-posse",
@@ -32,8 +37,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   },
@@ -70,8 +75,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-08",
-        "observacoes": "Segunda passagem feita contra os documentos citados. Revisão humana pendente."
+        "revisadoEm": "2026-10-09",
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
       }
     }
   }

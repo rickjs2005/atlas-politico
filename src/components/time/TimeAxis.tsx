@@ -19,7 +19,10 @@ function Labels({ domain, maximo, className }: { domain: TimeDomain; maximo: num
         return (
           <span key={ano} className="absolute top-0" style={{ left: `${x * 100}%` }}>
             <span className="absolute left-0 top-0 h-2.5 w-px bg-ink" />
-            <span className={`numerals absolute top-3 text-[0.6875rem] font-medium leading-none text-ink-soft ${alinhamento}`}>
+            <span
+              data-year-label
+              className={`numerals absolute top-3 text-[0.6875rem] font-medium leading-none text-ink-soft ${alinhamento}`}
+            >
               {ano}
             </span>
           </span>

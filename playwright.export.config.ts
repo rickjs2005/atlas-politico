@@ -6,6 +6,7 @@ import { defineConfig, devices } from "@playwright/test";
 //
 //   npm run build
 //   npm run test:export       confere o carregamento adiado e as páginas sem o mapa
+//   npm run test:journeys     roda sobre a saída as jornadas dos testes de navegador (docs/QA.md)
 //   npm run capture:finish    refaz as capturas de docs/capturas/fase-8/
 //
 // `OUT_DIR` troca a pasta servida, e `CAPTURE_DIR`, a pasta das capturas.
@@ -29,6 +30,18 @@ export default defineConfig({
     {
       name: "exportacao",
       testMatch: "**/*.spec.ts",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+    },
+    {
+      // As jornadas com dados reais de `tests/e2e/`, que no dia a dia rodam
+      // contra o servidor de desenvolvimento. Aqui rodam contra a saída: é o
+      // que a pessoa recebe. Ficam de fora só as telas de prova e a de dados,
+      // que são rotas de desenvolvimento e não existem no build.
+      name: "jornadas",
+      testDir: "tests/e2e",
+      testMatch: ["acabamento", "comparacao", "linha-do-tempo", "mapa", "paginas", "previa"].map(
+        (nome) => `**/${nome}.spec.ts`,
+      ),
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
     },
     {

@@ -7,6 +7,8 @@ import { readFileSync } from "node:fs";
 
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import { MAP_PACKAGE } from "./map-package";
+
 interface EventRecord {
   id: string;
   slug: string;
@@ -398,7 +400,7 @@ test.describe("com movimento ligado", () => {
 
 test.describe("falha do mapa", () => {
   test("sem o pacote do mapa, os lugares viram lista e a seleção continua", async ({ page }) => {
-    await page.route(/maplibre-gl.*\.js(\?|$)/, (route) => route.abort());
+    await page.route(MAP_PACKAGE, (route) => route.abort());
     await page.goto(PERFIL);
 
     await expect(mapa(page).getByText("O mapa não pôde ser exibido agora.")).toBeVisible();

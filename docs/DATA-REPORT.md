@@ -1,6 +1,6 @@
 # Relatório de dados
 
-Edição 0.1.0 · data de corte 2026-10-08 · revisão assistida-por-ia em 2026-10-08
+Edição 0.1.1 · data de corte 2026-10-08 · revisão assistida-por-ia em 2026-10-09
 
 ## Situação
 
@@ -22,7 +22,7 @@ Sem erros: o conjunto pode ser gerado.
 | Pontos geográficos | 27 |
 | Acontecimentos com ao menos um ponto | 26 |
 | Lugares nos dados públicos | 9 |
-| Fontes nos dados públicos | 59 |
+| Fontes nos dados públicos | 60 |
 | Imagens nos dados públicos | 2 |
 
 ## Por pessoa
@@ -91,7 +91,7 @@ Um período sem acontecimentos é falta de registro no atlas, e não falta de at
 
 ## Trechos conferidos
 
-Das 160 citações de registros elegíveis, 160 têm trecho literal registrado em docs/evidencias e 0 não têm.
+Das 163 citações de registros elegíveis, 163 têm trecho literal registrado em docs/evidencias e 0 não têm.
 
 ## Erros
 

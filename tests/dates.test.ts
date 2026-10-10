@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import {
   analyzeDate,
@@ -136,6 +136,53 @@ describe("apresentação", () => {
     expect(describePrecision(data("1994", "ano"))).toBe("Só o ano está documentado.");
     expect(describePrecision(data("2003-03", "mes"))).toBe("O dia não está documentado.");
     expect(describePrecision(data("2011-06-15", "dia"))).toBeNull();
+  });
+});
+
+describe("datas civis e fuso horário", () => {
+  // Uma data do conteúdo é um dia do calendário, e não um instante: o fuso da
+  // máquina que gera o site, ou do navegador de quem lê, não pode mudá-la.
+  const FUSOS = [
+    { nome: "Pacific/Kiritimati", minutos: -840 }, // UTC+14
+    { nome: "America/Sao_Paulo", minutos: 180 },
+    { nome: "Pacific/Pago_Pago", minutos: 660 }, // UTC-11
+  ];
+  const datas = [data("2018-04-07", "dia"), data("2023-01-01", "dia"), data("2026-10-04", "dia"), data("1979-03", "mes"), data("1975", "ano")];
+  const original = process.env.TZ;
+
+  afterEach(() => {
+    if (original === undefined) delete process.env.TZ;
+    else process.env.TZ = original;
+  });
+
+  it("o texto e o intervalo de cálculo são os mesmos em qualquer fuso", () => {
+    const vistos = FUSOS.map(({ nome, minutos }) => {
+      process.env.TZ = nome;
+      // Confirma que a troca de fuso valeu, para o teste não passar por engano.
+      expect(new Date(2020, 0, 1).getTimezoneOffset(), nome).toBe(minutos);
+      return datas.map((item) => ({ texto: formatDate(item), intervalo: calcInterval(item) }));
+    });
+
+    expect(vistos[0]!.map((item) => item.texto)).toEqual([
+      "7 de abril de 2018",
+      "1º de janeiro de 2023",
+      "4 de outubro de 2026",
+      "março de 1979",
+      "1975",
+    ]);
+    for (const outro of vistos.slice(1)) expect(outro).toEqual(vistos[0]);
+  });
+
+  it("o dia do recorte de anos não escorrega para o ano vizinho", () => {
+    for (const { nome } of FUSOS) {
+      process.env.TZ = nome;
+      const reveillon = calcInterval(data("2022-12-31", "dia"));
+      const anoNovo = calcInterval(data("2023-01-01", "dia"));
+      expect(intervalsOverlap(reveillon, yearRangeInterval(2022, 2022)), nome).toBe(true);
+      expect(intervalsOverlap(reveillon, yearRangeInterval(2023, 2023)), nome).toBe(false);
+      expect(intervalsOverlap(anoNovo, yearRangeInterval(2023, 2023)), nome).toBe(true);
+      expect(intervalsOverlap(anoNovo, yearRangeInterval(2022, 2022)), nome).toBe(false);
+    }
   });
 });
 

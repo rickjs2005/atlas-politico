@@ -77,7 +77,7 @@ Regras de apresentação:
 
 - **A relação entre fonte e afirmação é a do registro.** Cada citação é mostrada com o registro que a usa, com os campos `localizacao` ("Onde") e `evidencia` ("O que sustenta"). O catálogo, que não tem citação, diz quantos registros citam o documento e aponta para onde o trecho está.
 - **Natureza da informação.** O conteúdo não tem um campo que classifique a fonte. Quem diz a origem é a autoria registrada (um tribunal, o Senado, uma agência, um veículo), sempre à vista. A separação entre fato, declaração atribuída e contexto está no texto revisado: a página mostra resumo e contexto em seções com nome e não reescreve nenhum dos dois.
-- **Data ausente é dita.** Fonte sem data do documento aparece como "data do documento desconhecida". São 4 das 59.
+- **Data ausente é dita.** Fonte sem data do documento aparece como "data do documento desconhecida". São 3 das 60, desde a edição 0.1.1.
 - **Nada inventado.** Revisor e data de revisão são os do registro. A revisão assistida por IA nunca é dita com as palavras da revisão humana.
 - **Imagens.** Crédito ao lado da imagem; autoria, condições de uso e página de origem em **Metodologia, Créditos**. O tratamento (tons de cinza, recorte) é dito.
 
@@ -92,11 +92,11 @@ Feita nesta fase, sobre os dados gerados:
 | Endereços ou títulos repetidos entre fontes | Nenhum |
 | Endereços sem `https` | Nenhum |
 | Links de fonte de cada uma das 39 páginas iguais aos do registro, sem link a mais | Conferido por teste |
-| Catálogo da metodologia com as 59 fontes e os endereços publicados | Conferido por teste |
+| Catálogo da metodologia com todas as fontes e os endereços publicados (59 na edição 0.1.0, 60 na 0.1.1) | Conferido por teste |
 
 Uma diferença de contagem foi encontrada e registrada: [SOURCES.md](SOURCES.md) dizia 166 citações, e as páginas mostram 160. As 6 que faltam são de rascunhos, que não entram na publicação. O catálogo de SOURCES.md passou a dizer isso. Nenhum registro de conteúdo foi alterado.
 
-O que não foi feito: abrir cada endereço para saber se ainda responde. A conferência de links no ar é da fase 9.
+O que não foi feito na fase 7: abrir cada endereço para saber se ainda responde. Isso foi feito na fase 9, em 9 de outubro de 2026, e mudou o endereço de oito fontes ([EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md), seção Fontes).
 
 ## Copiar link
 

@@ -9,6 +9,8 @@ import { readFileSync } from "node:fs";
 
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import { MAP_PACKAGE } from "./map-package";
+
 interface EventRecord {
   id: string;
   slug: string;
@@ -312,7 +314,7 @@ test.describe("movimento reduzido", () => {
   // O padrão da suíte: `reducedMotion: "reduce"`.
   test("as transições e o aviso de carregamento ficam sem movimento", async ({ page }) => {
     // O pacote do mapa demora, para o aviso de carregamento ficar na tela.
-    await page.route(/maplibre-gl.*\.js(\?|$)/, async (route) => {
+    await page.route(MAP_PACKAGE, async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 1200));
       await route.continue();
     });

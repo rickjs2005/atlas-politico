@@ -12,7 +12,159 @@ Atualizado em 9 de outubro de 2026.
 | 6. Mapa sincronizado | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
 | 7. Comparação, páginas e fontes | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
 | 8. Acabamento visual e desempenho | Concluída em 09/10/2026, com medições de laboratório e pendências listadas abaixo |
-| 9 e 10 | Não iniciadas |
+| 9. Revisão editorial, testes e validação com pessoas | Parte editorial e técnica feita em 09/10/2026, com assistência de IA. **Validação com pessoas pendente** e revisão humana do conteúdo pendente |
+| 10. Publicação e apresentação | Não iniciada |
+
+## Fase 9 (revisão editorial, testes e validação com pessoas)
+
+A fase tem duas partes, e elas estão em situações diferentes.
+
+| Parte | Situação |
+| --- | --- |
+| Editorial e técnica | **Feita em 09/10/2026, com assistência de IA.** As 60 fontes foram abertas de novo, cada registro foi relido contra os documentos, as jornadas rodaram sobre a exportação estática e os problemas encontrados foram corrigidos |
+| Validação com três pessoas | **Pendente.** O roteiro e as fichas estão prontos em [USER-VALIDATION.md](USER-VALIDATION.md). Nenhuma sessão foi feita |
+| Revisão humana do conteúdo | **Pendente**, como desde a fase 2. O roteiro está em [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md) |
+
+Os três registros da fase: [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md), com o conjunto revisado, a conferência fonte por fonte, as correções e as pendências; [QA.md](QA.md), com o ambiente, as jornadas, os checks e as evidências; e [USER-VALIDATION.md](USER-VALIDATION.md), com o roteiro e as fichas. As decisões novas vão de D-87 a D-90, em [DECISIONS.md](DECISIONS.md).
+
+A fase 9 não tem commit: o trabalho está na pasta, junto com o da fase 8.
+
+### Critério de conclusão do plano
+
+"A jornada principal passa, não há informação publicada sem sustentação identificada e as pendências restantes não prejudicam leitura ou interpretação." O pedido da fase acrescentou: validação com pessoas registrada quando efetivamente realizada.
+
+| Parte do critério | Situação | Como foi conferido |
+| --- | --- | --- |
+| Jornada principal funcionando | Atendido, em emulação | 184 testes de navegador sobre a exportação estática, 205 no servidor de desenvolvimento e a jornada principal percorrida no Chrome e no Edge instalados, com a placa de vídeo. Nenhum aparelho real |
+| Informações publicadas com sustentação identificada | Atendido com assistência de IA | 60 de 60 fontes acessadas, e 398 de 398 trechos de evidência encontrados nos documentos de 9 de outubro. A leitura de cada registro contra os trechos foi feita por IA. Nenhuma pessoa a refez |
+| Pendências sem prejuízo à leitura ou à interpretação | Atendido para o que a IA consegue julgar | As leituras enganosas encontradas foram corrigidas (cargos chamados só de "Presidente", nota dos cargos em data parcial, anos do eixo ilegíveis). O juízo final sobre interpretação é da revisão humana |
+| Validação com pessoas registrada quando realizada | **Não realizada** | Roteiro pronto, fichas em branco. Nada foi inventado |
+
+### Passos do plano e situação de cada um
+
+| Passo | Situação |
+| --- | --- |
+| 1. Revisar a coleção final contra as fontes | Feito com assistência de IA: 39 acontecimentos, 15 cargos, 8 filiações, 2 perfis, 9 lugares, 60 fontes e 2 imagens. 14 correções |
+| 2. Conferir todos os links de evidência e registrar a data | Feito em 9 de outubro de 2026. Oito endereços trocados, uma fonte acrescentada, nenhuma indisponível. Quadro fonte por fonte em EDITORIAL-REVIEW.md |
+| 3. Testar regras de datas, períodos, filtros e integridade | Feito: 502 testes. Seis novos, para o fuso do aparelho, a igualdade entre as vistas do conteúdo real, o catálogo de fontes e o nome dos cargos |
+| 4. Testar escolha de pessoa, seleção, sincronização do mapa e comparação | Feito sobre a exportação estática |
+| 5. Testar acesso direto, recarregamento e voltar/avançar | Feito. Achou um defeito que só existia no build |
+| 6. Conferir teclado, foco, contraste, movimento reduzido e leitura em celular | Feito em emulação, com um comando novo, `npm run audit:a11y`. Achou os anos do eixo ilegíveis sob a hachura. Leitor de tela e celular real não foram usados |
+| 7. Testar falha do mapa e conteúdo sem coordenadas | Feito, com um teste novo para o navegador sem WebGL nas telas reais |
+| 8. Três pessoas encontram um episódio e conferem a fonte | **Não feito.** Depende de pessoas. Roteiro pronto |
+
+### O que foi entregue
+
+- **Conteúdo na edição 0.1.1,** com a mesma data de corte, 8 de outubro de 2026. O registro de alterações traz a entrada de 9 de outubro, com 32 registros afetados.
+- **Conferência das fontes com data real:** `acessadoEm` de 9 de outubro de 2026 nas 60 fontes; `docs/evidencias/provas-2026-10-09.json`, com 169 citações e 398 trechos; `docs/evidencias/conferencia-2026-10-09.json`, com o acesso a cada fonte.
+- **Endereços do TSE que abrem a ficha.** Os sete cadastrados respondiam, mas mostravam uma página de erro.
+- **Nome dos cargos que se explica sozinho,** e a nota dos cargos da página do acontecimento com a precisão da data.
+- **Anos do eixo legíveis** com um período escolhido.
+- **Link com consulta inválida sem a espera de 6 segundos** no build.
+- **Jornadas sobre a exportação estática:** `npm run test:journeys`.
+- **Passagem de acessibilidade:** `npm run audit:a11y`, com capturas e relatório.
+- **Metodologia pública atualizada:** a regra da data do fato e da data da notícia, e o que foi feito na última conferência.
+- **Roteiro da validação com três pessoas,** com tarefas, gabarito para quem aplica, perguntas e fichas.
+- **Roteiro da revisão humana,** passo a passo.
+
+### Arquivos
+
+Comparação com o estado da fase 8: 76 arquivos, dos quais 35 são as capturas e o relatório de `docs/capturas/fase-9/`.
+
+| Onde | O quê |
+| --- | --- |
+| `content/published/` | `fontes.json`, `acontecimentos.json`, `mandatos.json`, `filiacoes.json`, `pessoas.json`, `imagens.json` e `edicao.json`. Toda mudança passou pelo pipeline e está em `alteracoes` |
+| `docs/` | Novos: EDITORIAL-REVIEW.md, QA.md, USER-VALIDATION.md, `evidencias/provas-2026-10-09.json`, `evidencias/conferencia-2026-10-09.json` e `capturas/fase-9/`. Atualizados: CONTENT-REVIEW.md, SOURCES.md, EDITORIAL.md, PAGES.md, TIMELINE.md, DECISIONS.md, DATA-REPORT.md, STATUS.md, `evidencias/README.md` e `capturas/README.md` |
+| `src/` | `lib/state/AtlasUrlStateProvider.tsx` (ordem da revelação do link com consulta), `components/time/PeriodShade.tsx`, `components/time/TimeAxis.tsx` e `features/timeline/Timeline.tsx` (hachura acima dos anos), `app/acontecimentos/[slug]/page.published.tsx` (nota dos cargos) e `app/metodologia/page.tsx` |
+| `tests/` | Novo: `e2e/map-package.ts`. Atualizados: `content.test.ts`, `dates.test.ts` e, em `e2e/`, `linha-do-tempo.spec.ts`, `mapa.spec.ts`, `paginas.spec.ts`, `acabamento.spec.ts` e `previa.spec.ts` |
+| `scripts/` | Novo: `audit-a11y.mjs` |
+| Raiz | `package.json` (dois comandos: `test:journeys` e `audit:a11y`), `playwright.export.config.ts` (projeto das jornadas), README.md e `.claude/project-state.md` |
+
+Nenhuma dependência foi acrescentada. Nenhum acontecimento foi incluído ou retirado. Nenhuma cor, fonte ou tela foi criada.
+
+### Problemas achados e corrigidos
+
+Cada um com causa, mudança e verificação em [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md), seção Correções, e em [QA.md](QA.md), seção Falhas encontradas e correções.
+
+| Problema | Correção |
+| --- | --- |
+| Sete endereços de fichas do TSE abriam "Erro ao carregar a página" | Endereços no formato atual, abertos em navegador |
+| Dois trechos sobre a candidatura de Geraldo Alckmin em 2006 eram atribuídos à ficha de Lula | A ficha de Alckmin entrou como fonte |
+| O serviço de lideranças do Senado é anunciado como descontinuado | Endereço do substituto, com os mesmos registros |
+| Título de uma reportagem, autoria de cinco notícias e data de uma ficha não conferiam com as páginas | Corrigidos como as páginas mostram |
+| O registro de 2016 dava a data da notícia do STF como a da decisão | O texto diz que a data é a da publicação |
+| O contexto da sentença de 2017 afirmava a confirmação em segunda instância sem citação | Citação acrescentada |
+| Dois episódios judiciais de 2018 não traziam a manifestação da defesa, que as fontes trazem | Acrescentada ao contexto |
+| O desfecho da denúncia de 2020 vinha de uma reportagem, sem atribuição | Atribuído ao veículo, com a data |
+| O perfil de Lula não trazia o nascimento, que o de Flávio Bolsonaro traz | Mês e ano, em que os documentos concordam; a divergência no dia está registrada |
+| O início de uma liderança tinha um dia que o registro do Senado não confirma | Precisão de mês, com os dois dias escritos no texto |
+| Três cargos de Lula apareciam como "Presidente" na página do acontecimento e na linha do tempo | "Presidente do Sindicato dos Metalúrgicos" e "Presidente do PT" (D-89) |
+| A nota dos cargos dizia "na data do acontecimento" mesmo com só o ano documentado | "Na data", "no mês" ou "no ano" |
+| Com um período escolhido, os anos do eixo ficavam sob a hachura, com contraste de 1,6:1 | A hachura para acima dos anos (D-88). Contraste de 8:1 |
+| No build, um link com consulta inválida deixava a tela encoberta por 6 segundos | Ordem dos efeitos corrigida (D-87) |
+| Quatro testes de falha do mapa não testavam nada no build | Auxiliar que reconhece o pacote nos dois ambientes |
+
+### Verificações executadas
+
+Todas em 9 de outubro de 2026, depois da última mudança.
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run data:validate` | 0 erros, 0 avisos, 5 pendências (os rascunhos) |
+| `npm run check` | Passou: lint, tipos, 502 testes em 24 arquivos, build e conferência da saída (276 arquivos, 47 páginas) |
+| `npm run test:journeys` | 184 passando, sobre a exportação estática |
+| `npm run test:export` | 16 passando |
+| `npm run test:e2e` | 205 passando |
+| `npm run audit:a11y` | 32 telas e 8 passagens de teclado, sem problema |
+| Conferência das fontes | 60 de 60 acessadas; 398 de 398 trechos encontrados |
+| Jornada principal no Chrome 154 e no Edge 154 instalados | 25 de 25 passos em cada um |
+| Capturas | 32 telas do build final, olhadas, mais o antes e o depois do eixo |
+
+Dois testes novos foram provados ao contrário, o do fuso e o da hachura: com a regra quebrada de propósito, falharam. Os de endereço inválido falhavam no build antes da correção. O desempenho não foi medido de novo: as mudanças não tocam o que PERFORMANCE.md mede (QA.md, seção Desempenho).
+
+### Implementado e não verificado
+
+- **Aparelho móvel real.** Não havia um disponível. Todo o celular desta fase é emulado.
+- **Firefox e Safari.** As versões instaladas com o Playwright são de outra versão da ferramenta e não abrem. Nada foi instalado.
+- **Leitor de tela** e zoom do navegador a 200% e 400%.
+- **Uso por pessoas.** É a parte pendente da fase.
+- **Interpretação dos textos.** A IA procurou afirmação sem apoio e leitura enganosa. Se o atlas interpreta bem cada fonte, quem julga é a revisão humana.
+- **Totalização final do primeiro turno de 2026.** O registro usa os números da apuração, e diz isso.
+- **Hospedagem.** Tudo rodou no servidor local.
+
+### Pendências reais
+
+1. **Validação com três pessoas.** Aplicar o roteiro de USER-VALIDATION.md, com pelo menos uma sessão em celular de verdade, e registrar o que acontecer.
+2. **Revisão humana do conteúdo.** A política do projeto é que a publicação depende dela. A decisão de publicar sem ela, se for o caso, é do responsável.
+3. **Fim da filiação de Flávio Bolsonaro ao Republicanos:** o mês vem da combinação de dois documentos. Decisão para a revisão humana.
+4. **Firefox e Safari,** antes de publicar: `npx playwright install firefox webkit` e as jornadas nesses navegadores, o que pede um projeto a mais na configuração do Playwright.
+5. **Texto sob a hachura na comparação** (D-88): fica velado de propósito. Rever se a validação mostrar dificuldade.
+6. **Alvos de toque de 24 pixels** nas marcas da linha do tempo, e o nome do atlas com 22 pixels de altura no cabeçalho (QA.md).
+7. **Conferência das fontes como comando do projeto.** Hoje depende de ferramentas escritas na sessão.
+8. **Os 5 rascunhos,** com as pendências de cada um.
+9. **Herdadas das fases anteriores, sem mudança:** canal público de correção, domínio, nome definitivo, política de segurança de conteúdo, abertura da vista do mapa em rede lenta e as demais da lista da fase 8, abaixo.
+
+### Preparação para a fase 10 (publicação e apresentação)
+
+A fase 10 só começa com um pedido. Antes dela, o que depende de pessoas: a validação com três pessoas e a decisão sobre a revisão humana.
+
+| Passo da fase 10 | O que já existe | O que falta |
+| --- | --- | --- |
+| 1. Confirmar a hospedagem estática | Exportação estática conferida, com servidor local que se comporta como uma hospedagem comum | Escolher a hospedagem e ler as condições vigentes |
+| 2. Metadados, imagens de compartilhamento, sitemap e endereço canônico | Títulos e descrições por página | Domínio, `metadataBase`, sitemap e imagem de compartilhamento (D-69) |
+| 3. Build final e conferência da saída | `npm run check`, `npm run test:journeys`, `npm run test:export` e `npm run audit:a11y` | Rodar de novo no dia |
+| 4. Publicar | Nada: o projeto é local, sem repositório remoto | Só com pedido |
+| 5. Conferir páginas e links no endereço público | As jornadas rodam contra o servidor local | Conferir no endereço público, à mão ou com a base das jornadas trocada na configuração; conferir o 404 e o cache da hospedagem |
+| 6. Demonstração de 20 a 30 segundos | Roteiro de demonstração em UX.md | Gravar |
+| 7. Case | Documentação por fase | Escrever, dizendo com clareza que a revisão foi assistida por IA e o que a validação com pessoas mostrou |
+| 8. Textos para redes | Nada | Só com pedido |
+
+Pontos de atenção para quem continuar:
+
+- O case não pode dizer que o conteúdo teve revisão humana, nem que o atlas foi validado com pessoas, enquanto as duas coisas estiverem pendentes.
+- Mexeu em efeito do React, rode `npm run test:journeys`: o servidor de desenvolvimento esconde defeito de ordem de efeitos.
+- O servidor do TSE recusa pedidos sem cabeçalhos de navegador. Uma conferência automática de links, na hospedagem ou em uma integração contínua, vai acusar erro em fontes que abrem normalmente.
+- Seis fontes são documentos vivos. Na próxima edição, a data do documento e o conteúdo podem ter mudado.
 
 ## Fase 8 (acabamento visual e desempenho)
 

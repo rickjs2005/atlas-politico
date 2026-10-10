@@ -238,7 +238,17 @@ export default async function EventPage({ params }: EventPageProps) {
                 );
               })}
             </ul>
-            <p className="text-xs text-ink-faint">Cargos e funções registrados no atlas na data do acontecimento.</p>
+            {/* A nota acompanha a precisão da data: com só o ano documentado, o
+                cargo listado é o de algum momento daquele ano, e não o do dia. */}
+            <p className="text-xs text-ink-faint">
+              Cargos e funções registrados no atlas{" "}
+              {acontecimento.data.precisao === "dia"
+                ? "na data"
+                : acontecimento.data.precisao === "mes"
+                  ? "no mês"
+                  : "no ano"}{" "}
+              do acontecimento.
+            </p>
           </section>
 
           <section className="space-y-2.5">

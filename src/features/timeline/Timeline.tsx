@@ -127,8 +127,14 @@ export function Timeline({
             animate={animate}
           />
           <TimeAxis domain={domain} />
-          {/* Durante o arraste a hachura segue o ponteiro, sem transição. */}
-          <PeriodShade domain={domain} periodo={previa ?? periodo} animate={animate && previa === null} />
+          {/* Durante o arraste a hachura segue o ponteiro, sem transição. Ela
+              cobre as marcas, a régua e os traços, e para acima dos anos. */}
+          <PeriodShade
+            domain={domain}
+            periodo={previa ?? periodo}
+            animate={animate && previa === null}
+            vertical="top-0 bottom-4"
+          />
           {onPeriodChange && (
             <PeriodBrush
               domain={domain}

@@ -6,6 +6,8 @@ import { readFileSync } from "node:fs";
 
 import { expect, test, type Page } from "@playwright/test";
 
+import { MAP_PACKAGE } from "./map-package";
+
 interface Citacao {
   fonteId: string;
   localizacao: string;
@@ -249,6 +251,9 @@ test.describe("página do acontecimento", () => {
       } else {
         await expect(ficha).toContainText(/Abrangência nacional|não está documentado/);
       }
+      // A nota dos cargos acompanha a precisão da data: com só o ano documentado, ela não fala em data.
+      const quando = { ano: "no ano", mes: "no mês", dia: "na data" }[acontecimento.data.precisao];
+      await expect(ficha).toContainText(`Cargos e funções registrados no atlas ${quando} do acontecimento.`);
 
       // Fontes: os endereços, o trecho e o que ele sustenta são os do registro, na mesma ordem.
       const fontes = page.getByRole("region", { name: /^Fontes/ });
@@ -326,7 +331,7 @@ test.describe("página do acontecimento", () => {
   });
 
   test("a leitura não depende do mapa", async ({ page }) => {
-    await page.route(/maplibre-gl.*\.js(\?|$)/, (route) => route.abort());
+    await page.route(MAP_PACKAGE, (route) => route.abort());
     await page.goto(pagina(alvo.slug));
 
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(alvo.titulo);
@@ -460,6 +465,56 @@ test.describe("retorno e compartilhamento", () => {
     await expect(campo).toHaveValue(`${baseURL}${pagina(alvo.slug)}`);
     await expect(campo).toBeFocused();
     await expect(cabecalho.getByText("Link copiado")).toHaveCount(0);
+  });
+});
+
+test.describe("datas e fuso do aparelho", () => {
+  // As datas do atlas são datas civis: valem como estão no registro, onde quer
+  // que a pessoa esteja. Kiritimati (UTC+14) e Pago Pago (UTC-11) são os
+  // extremos do calendário: o mesmo instante cai em dias diferentes nos dois.
+  const FUSOS = ["Pacific/Kiritimati", "America/Sao_Paulo", "Pacific/Pago_Pago"];
+
+  test("lista, acontecimento, comparação e metodologia mostram as mesmas datas em fusos extremos", async ({ browser, baseURL }) => {
+    expect(alvo.data.precisao, "o acontecimento de referência tem dia conhecido").toBe("dia");
+    expect(alvo.data.valor.endsWith("-01"), "e não cai no dia 1º, que a tela escreve com ordinal").toBe(false);
+
+    const leituras: string[] = [];
+    for (const fuso of FUSOS) {
+      const contexto = await browser.newContext({
+        baseURL,
+        timezoneId: fuso,
+        reducedMotion: "reduce",
+        viewport: { width: 1440, height: 900 },
+      });
+      const page = await contexto.newPage();
+      const partes: string[] = [];
+
+      await page.goto("/politicos/lula/");
+      expect(await page.evaluate(() => Intl.DateTimeFormat().resolvedOptions().timeZone), "fuso do navegador").toBe(fuso);
+      await expect(lista(page).locator("li[data-acontecimento]")).toHaveCount(eventosDe(lula.id).length);
+      partes.push(await lista(page).innerText());
+
+      await page.goto(pagina(alvo.slug));
+      const data = page.locator(`time[datetime="${alvo.data.valor}"]`).first();
+      await expect(data).toHaveText(porExtenso(alvo.data.valor));
+      partes.push(await page.locator("main").locator("time").allInnerTexts().then((textos) => textos.join(" | ")));
+
+      await page.goto("/comparar/");
+      await expect(page.locator(`[data-trajetoria="${lula.slug}"] li[data-acontecimento]`)).toHaveCount(
+        eventosDe(lula.id).length,
+      );
+      partes.push(await page.locator("main").innerText());
+
+      await page.goto("/metodologia/");
+      await expect(page.locator(`[data-edicao="${conjunto.edicao.versao}"]`)).toContainText(corte);
+      partes.push(await page.locator("main").innerText());
+
+      leituras.push(partes.join("\n---\n"));
+      await contexto.close();
+    }
+
+    expect(leituras[1], `${FUSOS[1]} e ${FUSOS[0]}`).toBe(leituras[0]);
+    expect(leituras[2], `${FUSOS[2]} e ${FUSOS[0]}`).toBe(leituras[0]);
   });
 });
 

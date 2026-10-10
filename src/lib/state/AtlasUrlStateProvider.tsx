@@ -75,14 +75,6 @@ export function AtlasUrlStateProvider({
   );
   const state = useMemo<AtlasState>(() => ({ ...lido, periodo, categorias }), [lido, periodo, categorias]);
 
-  // O endereço já foi lido: o que estava encoberto à espera da consulta
-  // aparece, já no recorte certo (globals.css, `data-consulta`).
-  useEffect(() => {
-    if (isOwnPath(path) && search === window.location.search) {
-      document.documentElement.removeAttribute("data-consulta");
-    }
-  }, [search, path]);
-
   const ultimaEscrita = useRef<HistoryWrite | null>(null);
 
   // Voltar e avançar encerram uma sequência de ajustes: o próximo ajuste cria
@@ -122,13 +114,22 @@ export function AtlasUrlStateProvider({
     if (!isOwnPath(path)) return;
     const atual = window.location.search;
     const canonico = searchFromState(atual, stateFromSearch(atual, contexto));
-    if (sameSearch(canonico, atual)) return;
-    window.history.replaceState(
-      null,
-      "",
-      canonico === "" ? window.location.pathname : `?${canonico}`,
-    );
-    notifyUrlChange();
+    if (!sameSearch(canonico, atual)) {
+      window.history.replaceState(
+        null,
+        "",
+        canonico === "" ? window.location.pathname : `?${canonico}`,
+      );
+      notifyUrlChange();
+    }
+    // O endereço já foi lido: o que estava encoberto à espera da consulta
+    // aparece, já no recorte certo (globals.css, `data-consulta`). A conferência
+    // vem depois da correção de propósito. Quando o endereço corrigido fica sem
+    // consulta, ele passa a ser igual ao que a tela já mostra, nenhuma nova
+    // renderização acontece e esta é a única passagem por aqui.
+    if (search === window.location.search) {
+      document.documentElement.removeAttribute("data-consulta");
+    }
   }, [search, path, contexto]);
 
   // O recorte visível depende de quem, quando e o quê, e não do acontecimento aberto.

@@ -7,6 +7,8 @@ import { readFileSync } from "node:fs";
 
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import { MAP_PACKAGE } from "./map-package";
+
 interface EventRecord {
   id: string;
   slug: string;
@@ -734,7 +736,7 @@ test.describe("falhas do mapa", () => {
   });
 
   test("sem o pacote do mapa, a exploração textual fica inteira e oferece recarregar", async ({ page }) => {
-    await page.route(/maplibre-gl.*\.js(\?|$)/, (route) => route.abort());
+    await page.route(MAP_PACKAGE, (route) => route.abort());
     await page.goto(LULA);
 
     const falha = mapa(page).locator("[data-map-fallback]");
@@ -748,6 +750,50 @@ test.describe("falhas do mapa", () => {
     await marca(page, eleicoes[0]!.slug).click();
     await expectUrl(page, `${LULA}?categorias=eleicoes&acontecimento=${eleicoes[0]!.slug}`);
     await expect(leitura(page).getByRole("heading", { name: eleicoes[0]!.titulo })).toBeVisible();
+  });
+
+  test("navegador sem WebGL: os lugares viram lista na exploração e na página do acontecimento, sem oferecer nova tentativa", async ({ page }) => {
+    // A simulação fica neste teste: o navegador passa a responder que não tem WebGL.
+    await page.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, tipo: string, ...resto: unknown[]) {
+        if (tipo.startsWith("webgl")) return null;
+        return (original as (...args: unknown[]) => unknown).call(this, tipo, ...resto);
+      } as typeof original;
+    });
+    await page.goto(`${LULA}?de=2016&ate=2019`);
+
+    const falha = mapa(page).locator("[data-map-fallback]");
+    await expect(falha).toHaveAttribute("data-map-fallback", "sem-webgl");
+    await expect(falha).toContainText("O navegador ou o aparelho não oferece WebGL");
+    // Tentar de novo não mudaria nada: a saída não é oferecida, e nenhum quadro de mapa fica na tela.
+    await expect(falha.getByRole("button", { name: /Tentar de novo|Recarregar/ })).toHaveCount(0);
+    await expect(canvas(page)).toHaveCount(0);
+
+    // Um item por lugar de cada acontecimento do recorte, e a seleção continua.
+    const esperados = comLugar(noRecorte(deLula, 2016, 2019));
+    await expect(falha.locator("[data-ponto]")).toHaveCount(
+      esperados.reduce((soma, evento) => soma + lugaresDe(evento).length, 0),
+    );
+    await falha.locator("[data-ponto]").first().click();
+    await expect(lista(page).locator('button[aria-pressed="true"]')).toHaveCount(1);
+    await expect(leitura(page).getByRole("heading", { level: 3 }).first()).toBeVisible();
+    expect(endereco(page)).toContain("acontecimento=");
+
+    // Os filtros continuam valendo para a lista de lugares.
+    await recorte(page).getByRole("button", { name: /^Eleições/ }).click();
+    const eleicoes = comLugar(noRecorte(deLula, 2016, 2019, ["eleicoes"]));
+    await expect(falha.locator("[data-ponto]")).toHaveCount(
+      eleicoes.reduce((soma, evento) => soma + lugaresDe(evento).length, 0),
+    );
+
+    // Na página do acontecimento, os lugares aparecem em texto.
+    const alvo = comLugar(deLula)[0]!;
+    await page.goto(`/acontecimentos/${alvo.slug}/`);
+    const naPagina = page.locator("[data-map-fallback]");
+    await naPagina.scrollIntoViewIfNeeded();
+    await expect(naPagina).toHaveAttribute("data-map-fallback", "sem-webgl");
+    await expect(naPagina).toContainText(nomeDoLugar(lugaresDe(alvo)[0]!));
   });
 });
 
