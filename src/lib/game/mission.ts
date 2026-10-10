@@ -35,6 +35,17 @@ export function hasAnswer(tarefa: TaskSpec): boolean {
   return tarefa.tipo !== "registro";
 }
 
+/**
+ * A assinatura de uma tarefa: o tipo e os identificadores que ela pede. Vai
+ * para o progresso salvo junto com a confirmação, para a leitura saber a qual
+ * tarefa a resposta pertence (src/lib/game/progress.ts): trocar o tipo da
+ * tarefa, ou o que ela pede, sob os mesmos identificadores de capítulo, não
+ * deixa uma resposta antiga concluir a nova.
+ */
+export function taskSignature(tarefa: TaskSpec): string {
+  return `${tarefa.tipo}:${requiredRecords(tarefa).join("+")}`;
+}
+
 /** Recolher um registro. Recolher o mesmo duas vezes não muda nada. */
 export function collect(estado: TaskState, eventId: string): TaskState {
   if (estado.recolhidos.includes(eventId)) return estado;
@@ -87,9 +98,14 @@ export interface Attempt {
   explicacao: string;
 }
 
-/** Conta a tentativa e confirma a tarefa se a resposta estiver certa. Errar não desfaz nada. */
-function attempt(estado: TaskState, certo: boolean, explicacao: string): Attempt {
-  return { estado: { ...estado, tentativas: estado.tentativas + 1, confirmada: certo || estado.confirmada }, certo, explicacao };
+/**
+ * Conta a tentativa e confirma a tarefa se a resposta estiver certa, gravando
+ * a assinatura da tarefa respondida. Errar não desfaz nada.
+ */
+function attempt(tarefa: TaskSpec, estado: TaskState, certo: boolean, explicacao: string): Attempt {
+  const proximo: TaskState = { ...estado, tentativas: estado.tentativas + 1, confirmada: certo || estado.confirmada };
+  if (certo) proximo.assinatura = taskSignature(tarefa);
+  return { estado: proximo, certo, explicacao };
 }
 
 // ---------------------------------------------------------------------------
@@ -122,7 +138,7 @@ export function submitOrder(
   const rb = registros[depois];
   // Os títulos do atlas são orações: a data vai entre parênteses, e não em uma frase montada com eles.
   const datas = ra && rb ? `Datas dos registros: ${ra.titulo} (${formatDate(ra.data)}); ${rb.titulo} (${formatDate(rb.data)}).` : "";
-  return attempt(estado, certo, certo ? `Ordem certa. ${datas}` : `Ainda não. ${datas} A data mais antiga vem primeiro. Tente de novo: não há penalidade.`);
+  return attempt(tarefa, estado, certo, certo ? `Ordem certa. ${datas}` : `Ainda não. ${datas} A data mais antiga vem primeiro. Tente de novo: não há penalidade.`);
 }
 
 // ---------------------------------------------------------------------------
@@ -204,14 +220,14 @@ export function submitSource(
 ): Attempt {
   const alvo = registros[tarefa.eventId];
   const citada = alvo?.fontes.find((fonte) => fonte.id === fonteId);
-  if (alvo === undefined) return attempt(estado, false, "O registro desta tarefa não está no conteúdo.");
+  if (alvo === undefined) return attempt(tarefa, estado, false, "O registro desta tarefa não está no conteúdo.");
   if (citada !== undefined) {
-    return attempt(estado, true, `Certo. O registro cita ${citada.titulo} (${citada.autoria}). O que o trecho sustenta: ${citada.evidencia}`);
+    return attempt(tarefa, estado, true, `Certo. O registro cita ${citada.titulo} (${citada.autoria}). O que o trecho sustenta: ${citada.evidencia}`);
   }
   const outro = citedBy(capitulo, registros, fonteId);
   const sustenta = outro === undefined ? "Esse documento não é citado por este registro." : `Esse documento é citado por outro registro do capítulo: ${outro.titulo} (${formatDate(outro.data)}).`;
   const dica = `O registro pedido cita ${alvo.fontes.length === 1 ? "um documento" : `${alvo.fontes.length} documentos`}; a lista está no próprio registro, ao recolhê-lo. Tente de novo: não há penalidade.`;
-  return attempt(estado, false, `Ainda não. ${sustenta} ${dica}`);
+  return attempt(tarefa, estado, false, `Ainda não. ${sustenta} ${dica}`);
 }
 
 /** O rótulo de um lugar documentado, ou da abrangência, como a ficha diz. */
@@ -259,9 +275,9 @@ export function submitPlace(
   lugar: string,
 ): Attempt {
   const alvo = registros[tarefa.eventId];
-  if (alvo === undefined) return attempt(estado, false, "O registro desta tarefa não está no conteúdo.");
+  if (alvo === undefined) return attempt(tarefa, estado, false, "O registro desta tarefa não está no conteúdo.");
   const certo = placeLabel(alvo);
-  if (lugar === certo) return attempt(estado, true, `Certo. O atlas documenta este acontecimento em ${certo}, como diz a ficha dele.`);
+  if (lugar === certo) return attempt(tarefa, estado, true, `Certo. O atlas documenta este acontecimento em ${certo}, como diz a ficha dele.`);
   let outro: GameRecord | undefined;
   for (const capitulo of capitulos) {
     for (const id of capitulo.eventIds) {
@@ -274,5 +290,5 @@ export function submitPlace(
     if (outro !== undefined) break;
   }
   const onde = outro === undefined ? "Esse lugar não é o deste registro." : `${lugar} é o lugar de outro registro: ${outro.titulo} (${formatDate(outro.data)}).`;
-  return attempt(estado, false, `Ainda não. ${onde} O lugar documentado aparece no registro, ao recolhê-lo. Tente de novo: não há penalidade.`);
+  return attempt(tarefa, estado, false, `Ainda não. ${onde} O lugar documentado aparece no registro, ao recolhê-lo. Tente de novo: não há penalidade.`);
 }

@@ -27,6 +27,7 @@ import {
   submitOrder,
   submitPlace,
   submitSource,
+  taskSignature,
 } from "@/lib/game/mission";
 import type { ChapterSpec, GameLocation, GameRecord, GameSource, TaskSpec, TaskState } from "@/lib/game/types";
 
@@ -37,6 +38,9 @@ const fonte = (id: string, titulo: string, evidencia = `O que ${titulo} sustenta
   titulo,
   autoria: `Instituição ${id}`,
   url: `https://exemplo.gov.br/${id}`,
+  dataDocumento: { tipo: "data", valor: "2020-01-15", precisao: "dia" },
+  acessadoEm: "2026-10-09",
+  localizacao: `Seção sobre ${titulo}`,
   evidencia,
 });
 
@@ -512,5 +516,29 @@ describe("responder a tarefa de lugar", () => {
     const certa = submitPlace(TAREFA_LUGAR, errada.estado, capitulos, REGISTROS, "São Bernardo do Campo");
     expect(certa.estado.tentativas).toBe(2);
     expect(pronta).toEqual({ recolhidos: ["fundacao"], confirmada: false, tentativas: 0 });
+  });
+});
+
+describe("assinatura da tarefa", () => {
+  it("é o tipo e os identificadores que a tarefa pede", () => {
+    expect(taskSignature({ tipo: "registro", eventId: "a" })).toBe("registro:a");
+    expect(taskSignature({ tipo: "ordem", eventIds: ["a", "b"] })).toBe("ordem:a+b");
+    expect(taskSignature({ tipo: "fonte", eventId: "a" })).toBe("fonte:a");
+    expect(taskSignature({ tipo: "lugar", eventId: "a" })).toBe("lugar:a");
+    // Trocar o tipo, ou o que a tarefa pede, muda a assinatura; a ordem dos identificadores também.
+    expect(taskSignature({ tipo: "fonte", eventId: "a" })).not.toBe(taskSignature({ tipo: "lugar", eventId: "a" }));
+    expect(taskSignature({ tipo: "ordem", eventIds: ["b", "a"] })).not.toBe(taskSignature({ tipo: "ordem", eventIds: ["a", "b"] }));
+  });
+
+  it("a resposta certa grava a assinatura da tarefa respondida; a errada não grava nada", () => {
+    const pronta = recolhidos("fundacao", "constituinte");
+    const errada = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], REGISTROS);
+    expect(errada.estado.confirmada).toBe(false);
+    expect("assinatura" in errada.estado).toBe(false);
+    const certa = submitOrder(TAREFA_ORDEM, errada.estado, ["fundacao", "constituinte"], REGISTROS);
+    expect(certa.estado.confirmada).toBe(true);
+    expect(certa.estado.assinatura).toBe(taskSignature(TAREFA_ORDEM));
+    // A assinatura segue a ordem em que a tarefa cita os registros, e não a cronológica.
+    expect(certa.estado.assinatura).toBe("ordem:constituinte+fundacao");
   });
 });

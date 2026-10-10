@@ -5,7 +5,7 @@
 // identificador do conjunto publicado; os textos, as datas e as fontes chegam
 // pelos dados gerados, como em qualquer outra tela do atlas.
 
-import type { Categoria, DataHistorica, Editorial } from "@/lib/domain/types";
+import type { Categoria, DataHistorica, Editorial, Fonte } from "@/lib/domain/types";
 import type { ProfileSlug } from "@/lib/domain/profiles";
 
 export type PersonagemSlug = ProfileSlug;
@@ -102,9 +102,12 @@ export type ChapterStatus = "bloqueado" | "disponivel" | "concluido";
 /**
  * Versão do formato salvo. A 1 guardava a tarefa com `ordemConfirmada`; a 2
  * generalizou para `confirmada`, que vale para qualquer tarefa com resposta
- * (ordem, fonte, lugar). A leitura migra a versão 1 (src/lib/game/progress.ts).
+ * (ordem, fonte, lugar); a 3 guarda, junto com a confirmação, a assinatura
+ * da tarefa respondida (`taskSignature`), para uma resposta antiga não
+ * concluir uma tarefa que mudou sob os mesmos identificadores. A leitura
+ * migra as versões 1 e 2 (src/lib/game/progress.ts).
  */
-export const PROGRESS_VERSION = 2;
+export const PROGRESS_VERSION = 3;
 
 export interface TaskState {
   /** Registros recolhidos neste capítulo, na ordem em que foram recolhidos. */
@@ -113,6 +116,12 @@ export interface TaskState {
   confirmada: boolean;
   /** Tarefa com resposta: quantas tentativas foram feitas (só informação; não pune). */
   tentativas: number;
+  /**
+   * A tarefa que a confirmação respondeu, pela assinatura de `taskSignature`
+   * (tipo e identificadores). Só existe com `confirmada`. Se a tarefa do
+   * capítulo mudar, a confirmação deixa de valer na leitura do progresso.
+   */
+  assinatura?: string;
 }
 
 export interface ChapterProgress {
@@ -137,6 +146,12 @@ export interface GameSource {
   titulo: string;
   autoria: string;
   url: string;
+  /** De quando é o documento, como o catálogo diz, ou desconhecida. */
+  dataDocumento: Fonte["dataDocumento"];
+  /** Quando a fonte foi lida (AAAA-MM-DD). */
+  acessadoEm: string;
+  /** Onde, no documento, está o trecho: seção, página, parágrafo, minuto. É o que permite conferir sem sair do jogo. */
+  localizacao: string;
   /** O que o trecho citado sustenta no registro, como a citação diz. */
   evidencia: string;
 }

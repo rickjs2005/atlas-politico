@@ -183,6 +183,7 @@ Confira o resultado antes de continuar: o enquadramento é o mesmo critério par
 | `npm run measure:game -- --rotulo <nome>` | Medições de laboratório das páginas do jogo sobre a saída estática: carregamento, palco pronto, rede e cadência de quadros parado e andando; grava `docs/desempenho/jogo-<nome>.json` |
 | `npm run game:coverage` | Regrava `docs/GAME-COVERAGE.md`, a matriz acontecimento → personagem → capítulo, a partir dos dados; com `-- --check`, só confere |
 | `npm run review:human` | Regrava `docs/HUMAN-REVIEW.md`, a lista do que precisa de revisão humana, trecho a trecho, a partir dos dados; com `-- --check`, só confere |
+| `npm run verify:release` | A barreira de release: recusa a publicação, com o diagnóstico, enquanto houver registro sem revisão humana ou domínio e canal de correção sem valor; avisa sobre indexação desligada e falta de licença. Não é o build: `npm run check` continua passando com o conteúdo em conferência ([docs/DEPLOY.md](docs/DEPLOY.md)) |
 | `node scripts/capture-art.mjs --saida <pasta>` | Com `npm run dev` rodando, captura a galeria da arte do jogo (cenas, peças e as figuras por época) como PNG |
 | `node scripts/share-image.mjs` | Regrava `public/share/atlas.png`, a imagem da prévia de compartilhamento |
 | `npm run capture:finish` | Refaz as capturas de `docs/capturas/fase-8/`, tiradas da saída estática |
@@ -191,7 +192,7 @@ Confira o resultado antes de continuar: o enquadramento é o mesmo critério par
 | `npm run capture:timeline` | Refaz as capturas de `docs/capturas/fase-5/` com a interface atual |
 | `npm run capture:preview` | Refaz as capturas de `docs/capturas/fase-4/` com a interface atual |
 
-Antes de qualquer entrega: `npm run check`, `npm run test:journeys`, `npm run test:export` e `npm run test:e2e`, um de cada vez.
+Antes de qualquer entrega: `npm run check`, `npm run test:journeys`, `npm run test:export` e `npm run test:e2e`, um de cada vez. O GitHub repete tudo isso a cada push na `main` e a cada pull request (`.github/workflows/verificacao.yml`: um trabalho com `check`, as suítes sobre a exportação, a passagem de acessibilidade e a conferência da matriz e da lista de revisão; outro com as jornadas no servidor de desenvolvimento), guardando os resultados dos testes quando algo falha. Nada ali publica.
 
 ## Estrutura
 

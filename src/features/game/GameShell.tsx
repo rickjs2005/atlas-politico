@@ -60,6 +60,27 @@ function StageNotice({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** O navegador não desenha canvas 2D: a cena não existe, e o painel é o caminho (não é falha de rede: recarregar não resolve). */
+function StageUnavailable({ onOpenPanel, slug, nome }: { onOpenPanel(): void; slug: string; nome: string }) {
+  return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sunken p-6 text-center" role="alert" data-palco="sem-canvas">
+      <p className="max-w-md font-serif text-xl font-medium leading-snug">O navegador não conseguiu desenhar a cena</p>
+      <p className="max-w-md text-sm text-ink-soft">
+        Ele não ofereceu o desenho em canvas, que o cenário usa. Os capítulos continuam jogáveis pelo painel Capítulos e tarefas: dá para
+        recolher os registros, cumprir as tarefas e abrir a saída por ele, sem o cenário. Os registros também estão na{" "}
+        <a href={`/politicos/${slug}/`} className="font-medium underline">
+          trajetória de {nome} no atlas
+        </a>
+        .
+      </p>
+      {/* O nome não repete "Capítulos e tarefas": o botão do HUD, com esse nome, continua na tela, e dois iguais confundiriam leitor de tela e testes. */}
+      <button type="button" className={primaryButton} onClick={onOpenPanel} data-abrir-painel-sem-cena>
+        Abrir o painel
+      </button>
+    </div>
+  );
+}
+
 /** O pacote do palco não chegou: o painel continua valendo, e recarregar tenta de novo. */
 function StageFailure() {
   return (
@@ -338,6 +359,8 @@ export function GameShell({ content }: { content: GameContent }) {
 
   const registro = registroAberto === null ? null : (content.registros[registroAberto] ?? null);
   const acao = reachLabel(alcance, saidaAberta);
+  // O navegador não deu canvas 2D: a cena sai, o aviso entra e o painel segue valendo.
+  const [semCanvas, setSemCanvas] = useState(false);
   // O registro da tarefa de escolha e as opções, que vêm dos próprios registros.
   const escolha = useMemo(() => {
     const t = capitulo.tarefa;
@@ -365,26 +388,31 @@ export function GameShell({ content }: { content: GameContent }) {
       {/* Com um diálogo aberto, a cena e os botões sobre ela saem da tabulação e da leitura. */}
       <div className="absolute inset-0" inert={modo !== "jogando"} data-cena-e-hud>
         {carregado ? (
-          <StageBoundary fallback={<StageFailure />}>
-            <GameStage
-              handle={handle}
-              scene={cena}
-              chapter={capitulo}
-              personagem={slug}
-              sessao={sessao}
-              recolhidos={tarefa.recolhidos}
-              saidaAberta={saidaAberta}
-              pausado={pausado}
-              movimento={movimento}
-              onInteract={interagir}
-              onExit={atravessar}
-              onReach={setAlcance}
-              onEscape={() => {
-                if (modo === "jogando") abrirPainel();
-              }}
-              describedBy={instrucoesId}
-            />
-          </StageBoundary>
+          semCanvas ? (
+            <StageUnavailable onOpenPanel={abrirPainel} slug={slug} nome={content.personagem.nome} />
+          ) : (
+            <StageBoundary fallback={<StageFailure />}>
+              <GameStage
+                handle={handle}
+                scene={cena}
+                chapter={capitulo}
+                personagem={slug}
+                sessao={sessao}
+                recolhidos={tarefa.recolhidos}
+                saidaAberta={saidaAberta}
+                pausado={pausado}
+                movimento={movimento}
+                onInteract={interagir}
+                onExit={atravessar}
+                onReach={setAlcance}
+                onEscape={() => {
+                  if (modo === "jogando") abrirPainel();
+                }}
+                onUnavailable={() => setSemCanvas(true)}
+                describedBy={instrucoesId}
+              />
+            </StageBoundary>
+          )
         ) : (
           <StageNotice>
             <p className="map-loading text-sm text-ink-soft">Carregando o jogo…</p>

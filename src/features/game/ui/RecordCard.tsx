@@ -1,9 +1,10 @@
 // Um registro do atlas, como o jogo o apresenta: a data na precisão
 // documentada, o título, a categoria e, quando pedido, o resumo, o contexto,
-// o lugar documentado, as fontes com o que cada uma sustenta, a ficha judicial
-// (natureza e decisões relacionadas, com a própria data) e a situação da
-// revisão. O texto é o do conteúdo publicado; nada é escrito aqui. Os avisos
-// são os mesmos que o atlas dá para o mesmo registro.
+// o lugar documentado, as fontes (de quando é o documento, quando foi lido,
+// onde está o trecho e o que ele sustenta, como a lista de fontes do atlas),
+// a ficha judicial (natureza e decisões relacionadas, com a própria data) e a
+// situação da revisão. O texto é o do conteúdo publicado; nada é escrito
+// aqui. Os avisos são os mesmos que o atlas dá para o mesmo registro.
 
 import Link from "next/link";
 
@@ -86,12 +87,19 @@ export function RecordCard({ registro, personagem, detalhe, relacionados = [], o
             </h4>
             <ol className="space-y-1.5 text-sm">
               {registro.fontes.map((fonte) => (
-                <li key={fonte.id} data-fonte={fonte.id}>
+                <li key={`${fonte.id}:${fonte.localizacao}`} data-fonte={fonte.id}>
                   <a href={fonte.url} target="_blank" rel="noreferrer" className="underline decoration-line-strong hover:decoration-ink">
                     {fonte.titulo}
                     <span className="sr-only"> (abre em nova aba)</span>
                   </a>
-                  <span className="text-ink-soft"> · {fonte.autoria}</span>
+                  <span className="block text-xs text-ink-soft" data-documento>
+                    {fonte.autoria} ·{" "}
+                    {fonte.dataDocumento.tipo === "data" ? `documento de ${formatDate(fonte.dataDocumento)}` : "data do documento desconhecida"} · acesso em{" "}
+                    {formatDate({ valor: fonte.acessadoEm, precisao: "dia" })}
+                  </span>
+                  <span className="block text-xs text-ink-soft" data-onde>
+                    Onde: {fonte.localizacao}
+                  </span>
                   <span className="block text-xs text-ink-soft" data-evidencia>
                     Sustenta: {fonte.evidencia}
                   </span>

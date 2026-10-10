@@ -146,9 +146,30 @@ Todas em 10 de outubro de 2026, sobre o build final, uma de cada vez. O servidor
 - **Desempenho em aparelho real.** As medições acima são de laboratório, em um notebook, com celular emulado.
 - **Cadência em celular.** No perfil emulado, com a CPU 4 vezes mais lenta e o desenho por software, a cena fica em 19 a 24 quadros por segundo, com quadros longos. Um celular real tem placa de vídeo e outro processador, e o número real não foi medido: é o primeiro item a olhar numa sessão com aparelho.
 
+### Auditoria externa de 10 de outubro de 2026
+
+Depois do commit `17875bc`, o responsável pelo projeto trouxe um relatório de auditoria técnica e de cobertura informativa, feito por um agente de IA sobre esse commit. O parecer principal não é sobre defeito: o repositório implementa o jogo sobre o atlas, com os 39 acontecimentos em capítulos, mas **não implementa o produto descrito em um pedido novo, "conhecer todas as propostas, projetos e posicionamentos de Flávio Bolsonaro" em sete áreas** (segurança pública, economia, saúde, educação, reforma do Estado, meio ambiente, direitos das mulheres). O modelo não tem entidade de proposta, proposição legislativa, voto ou declaração, e a política editorial exclui opinião e declaração isolada. Isso é uma decisão de escopo, e ficou como ponto em aberto em [DECISIONS.md](DECISIONS.md): nenhuma tela promete propostas hoje, e nada foi construído nessa direção sem a decisão. Os achados técnicos foram conferidos um a um no código e tratados no mesmo dia:
+
+| Achado | Conferência | O que foi feito |
+| --- | --- | --- |
+| A-01 (P0): objetivo anunciado maior que o conteúdo | Verdadeiro quanto ao cadastro: não há propostas no modelo nem na política | Nada no código. Decisão do responsável: focar só Flávio Bolsonaro (com o recorte declarado) ou manter o tratamento igual aos dois, e com que fontes e política. Registrado em DECISIONS.md, pontos em aberto |
+| A-02 (P0): revisão humana ausente e regra de release inconsistente entre os documentos; `checkPublication` aceita `revisado` de qualquer tipo | Confirmado | `npm run verify:release` (D-120): recusa a release com o diagnóstico. Hoje recusa, de propósito: 64 registros sem revisão humana em quatro coleções, domínio e canal de correção pendentes, mais dois avisos (indexação desligada, sem LICENSE). GAME-RELEASE.md, DEPLOY.md e EDITORIAL.md passaram a dizer a mesma coisa. O build de desenvolvimento continua passando com o conteúdo em conferência |
+| A-03 (P1): a ficha do jogo perdia onde está o trecho, a data do documento e a data de acesso | Confirmado | `GameSource` ganhou os três campos; o registro no jogo mostra a linha do documento e **Onde:**, como a lista de fontes do atlas; teste de regra compara campo a campo com o conteúdo e a jornada da ficha lê o localizador de cada fonte |
+| A-04 (P1): uma confirmação sobrevivia à troca da tarefa sob os mesmos identificadores | Reproduzido no teste de regra, como o auditor fez | A confirmação grava a assinatura da tarefa respondida; progresso na versão 3, com migração explícita das versões 1 e 2 pela tabela congelada do que cada capítulo pedia então (D-119). O caso do auditor virou teste |
+| A-05 (P1): sem o contexto 2D do canvas, a cena ficava vazia sem aviso | Confirmado | O lugar da cena mostra o aviso e o botão **Abrir o painel**; teste no navegador com o contexto 2D negado, que joga o capítulo 1 inteiro pelo painel |
+| A-06 (P1): celular e acessibilidade sem uso real | Já registrado acima | Continua pendente: sessões com pessoas e aparelho real |
+| A-07 (P1): sem verificação contínua | Confirmado | `.github/workflows/verificacao.yml` (D-121): um trabalho com `check`, as suítes sobre a exportação, a passagem de acessibilidade e a conferência da matriz e da lista; outro com as jornadas em desenvolvimento. Escrito e não executado: o primeiro resultado é o do GitHub, depois do push |
+| A-08 (P1): o critério editorial não mede equilíbrio nem completude temática | Risco, sem demonstração de viés, como o próprio relatório diz | Sem mudança: entra na decisão de escopo |
+| A-09 (P1): o primeiro turno é apuração parcial | Já registrado (D-118) | Pendente de decisão e documento oficial |
+| A-10: configuração pública, canal de correção e licença pendentes | Já registrado (D-117) | `verify:release` lista os três; a licença entrou nos pontos em aberto |
+| P2: separar os diálogos do `GameShell`, links permanentes para capítulo, sincronia entre abas, conferência de fontes como comando | Anotados | Pontos em aberto em DECISIONS.md |
+
+Verificações depois das correções, em 10 de outubro de 2026, uma de cada vez: `npm run typecheck` e `npm run lint`, passando; `npm run test`, 771 testes em 35 arquivos (18 novos: assinatura, migrações, barreira de release, localizador das fontes), todos passando; `npm run build` e `npm run verify:export`, 51 rotas e 302 arquivos; as 33 jornadas do jogo sobre a exportação (a nova do canvas negado entre elas), todas passando; `npm run test:export`, 32; `npm run verify:release`, recusando como previsto; `npm run capture:game` refeito, com as capturas do registro mostrando as linhas novas. As jornadas do atlas não foram repetidas: nenhum arquivo delas mudou. `npm run test:e2e` não rodou nesta máquina pelo mesmo motivo da tabela acima; é o segundo trabalho da verificação contínua.
+
 ### Pendências reais
 
-1. **Revisão humana do conteúdo** ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)): condição da publicação, pela regra do próprio projeto.
+0. **Decisão de escopo sobre propostas** (auditoria, A-01): só com ela se desenha o modelo, as fontes e a política, para os dois personagens ou com o recorte declarado.
+1. **Revisão humana do conteúdo** ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)): condição da publicação, pela regra do próprio projeto, e agora pela barreira `npm run verify:release`.
 2. **Sessões com três pessoas, com celular real** ([USER-VALIDATION.md](USER-VALIDATION.md)).
 3. **Domínio, canal de correção, nome definitivo e liberação da indexação** (`src/lib/site.ts`), hospedagem e **autorização do deploy** ([DEPLOY.md](DEPLOY.md)).
 4. **Totalização final do primeiro turno:** o registro de 4 de outubro traz a apuração parcial, como a notícia do TSE a publicou. Trocar é uma edição nova de conteúdo, com documento oficial lido e decisão do responsável. O segundo turno, de 25 de outubro, fica depois da data de corte.

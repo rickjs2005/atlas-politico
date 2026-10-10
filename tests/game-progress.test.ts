@@ -1,12 +1,15 @@
 // Progresso do jogador: os três estados de capítulo, as transições, a leitura
-// tolerante do formato salvo e a migração da versão 1. Um capítulo só é
-// concluído com a saída aberta: a tarefa cumprida e todos os registros do
-// capítulo recolhidos.
+// tolerante do formato salvo, a migração das versões 1 e 2 e a assinatura da
+// tarefa respondida, que impede uma resposta antiga de concluir uma tarefa
+// que mudou. Um capítulo só é concluído com a saída aberta: a tarefa cumprida
+// e todos os registros do capítulo recolhidos.
 
 import { describe, expect, it } from "vitest";
 
-import { requiredRecords } from "@/lib/game/mission";
+import { chaptersOf } from "@/lib/game/chapters";
+import { requiredRecords, taskSignature } from "@/lib/game/mission";
 import {
+  LEGACY_SIGNATURES,
   READABLE_VERSIONS,
   chapterStatus,
   completeChapter,
@@ -17,6 +20,7 @@ import {
   parseProgress,
   taskStateOf,
   withTaskState,
+  type LegacySignatures,
 } from "@/lib/game/progress";
 import { PROGRESS_VERSION, type ChapterSpec, type PlayerProgress, type TaskSpec, type TaskState } from "@/lib/game/types";
 
@@ -46,16 +50,19 @@ const [UM, DOIS, TRES, QUATRO] = CAPITULOS as [ChapterSpec, ChapterSpec, Chapter
 
 const VAZIA: TaskState = { recolhidos: [], confirmada: false, tentativas: 0 };
 
+/** A resposta confirmada de uma tarefa, com a assinatura que a confirmação grava. */
+function confirmadaDe(spec: ChapterSpec): Pick<TaskState, "confirmada" | "tentativas" | "assinatura"> {
+  return spec.tarefa.tipo === "registro" ? { confirmada: false, tentativas: 0 } : { confirmada: true, tentativas: 1, assinatura: taskSignature(spec.tarefa) };
+}
+
 /** A tarefa cumprida só com os registros que ela pede: se o capítulo tem outros, a saída continua fechada. */
 function soATarefa(spec: ChapterSpec): TaskState {
-  const comResposta = spec.tarefa.tipo !== "registro";
-  return { recolhidos: [...requiredRecords(spec.tarefa)], confirmada: comResposta, tentativas: comResposta ? 1 : 0 };
+  return { recolhidos: [...requiredRecords(spec.tarefa)], ...confirmadaDe(spec) };
 }
 
 /** Um estado que abre a saída do capítulo: a tarefa cumprida e todos os registros recolhidos. */
 function feita(spec: ChapterSpec): TaskState {
-  const comResposta = spec.tarefa.tipo !== "registro";
-  return { recolhidos: [...spec.eventIds], confirmada: comResposta, tentativas: comResposta ? 1 : 0 };
+  return { recolhidos: [...spec.eventIds], ...confirmadaDe(spec) };
 }
 
 /** Recolhe tudo, cumpre a tarefa e atravessa a saída do capítulo. */
@@ -247,8 +254,8 @@ describe("leitura do progresso salvo", () => {
     expect(parseProgress([inicial], "lula", CAPITULOS)).toBeNull();
   });
 
-  it("recusa versão desconhecida ou ausente; aceita a atual e a anterior", () => {
-    expect(READABLE_VERSIONS).toEqual([1, PROGRESS_VERSION]);
+  it("recusa versão desconhecida ou ausente; aceita a atual e as anteriores", () => {
+    expect(READABLE_VERSIONS).toEqual([1, 2, PROGRESS_VERSION]);
     expect(parseProgress(salvo({ versao: PROGRESS_VERSION + 1 }), "lula", CAPITULOS)).toBeNull();
     expect(parseProgress(salvo({ versao: String(PROGRESS_VERSION) }), "lula", CAPITULOS)).toBeNull();
     expect(parseProgress(salvo({ versao: 0 }), "lula", CAPITULOS)).toBeNull();
@@ -413,7 +420,7 @@ describe("leitura do progresso salvo", () => {
     const deOutroPar = salvo({
       capitulos: {
         [UM.id]: entrada("concluido", feita(UM)),
-        [DOIS.id]: entrada("concluido", { recolhidos: ["b", "antigo"], confirmada: true, tentativas: 2 }),
+        [DOIS.id]: entrada("concluido", { recolhidos: ["b", "antigo"], confirmada: true, tentativas: 2, assinatura: "ordem:b+antigo" }),
         [TRES.id]: entrada("disponivel"),
       },
     });
@@ -448,19 +455,36 @@ describe("migração da versão 1", () => {
   // A versão 1 chamava a confirmação de `ordemConfirmada` e só a tarefa de ordem a usava.
   const v1 = (capitulos: Record<string, unknown>) => ({ versao: 1, personagem: "lula", capitulos });
   const tarefaV1 = (recolhidos: string[], ordemConfirmada = false, tentativas = 0) => ({ recolhidos, ordemConfirmada, tentativas });
+  // O que os capítulos de teste pediam na versão 1: a tabela congelada, injetada porque os capítulos são fixtures.
+  const LEGADO: LegacySignatures = { 1: { [DOIS.id]: taskSignature(DOIS.tarefa) }, 2: {} };
 
-  it("lê um progresso da versão 1 e devolve a versão atual, com a confirmação renomeada", () => {
+  it("lê um progresso da versão 1 e devolve a versão atual, com a confirmação renomeada e assinada", () => {
     const salvo = v1({
       [UM.id]: { status: "concluido", tarefa: tarefaV1(["a", "x"]) },
       [DOIS.id]: { status: "disponivel", tarefa: tarefaV1(["b", "c"], true, 2) },
     });
-    const lido = parseProgress(salvo, "lula", CAPITULOS)!;
+    const lido = parseProgress(salvo, "lula", CAPITULOS, LEGADO)!;
     expect(lido.versao).toBe(PROGRESS_VERSION);
     expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
     expect(taskStateOf(lido, UM.id)).toEqual({ recolhidos: ["a", "x"], confirmada: false, tentativas: 0 });
-    // A ordem confirmada da versão 1 vale: os dois registros estão recolhidos e a tarefa é de ordem.
-    expect(taskStateOf(lido, DOIS.id)).toEqual({ recolhidos: ["b", "c"], confirmada: true, tentativas: 2 });
+    // A ordem confirmada da versão 1 vale: os dois registros estão recolhidos, a tarefa é de ordem e é a mesma de então.
+    expect(taskStateOf(lido, DOIS.id)).toEqual({ recolhidos: ["b", "c"], confirmada: true, tentativas: 2, assinatura: taskSignature(DOIS.tarefa) });
     expect("ordemConfirmada" in taskStateOf(lido, DOIS.id)).toBe(false);
+  });
+
+  it("a confirmação da versão 1 só migra se o capítulo pedia a mesma tarefa então", () => {
+    const salvo = v1({
+      [UM.id]: { status: "concluido", tarefa: tarefaV1(["a", "x"]) },
+      [DOIS.id]: { status: "concluido", tarefa: tarefaV1(["b", "c", "y"], true, 2) },
+    });
+    // Sem o capítulo na tabela da versão 1 (ou com outra tarefa lá), a resposta não vale: o capítulo reabre com o que tinha.
+    const semTabela = parseProgress(salvo, "lula", CAPITULOS, { 1: {}, 2: {} })!;
+    expect(statuses(semTabela)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
+    expect(taskStateOf(semTabela, DOIS.id)).toEqual({ recolhidos: ["b", "c", "y"], confirmada: false, tentativas: 2 });
+    const outraTarefa = parseProgress(salvo, "lula", CAPITULOS, { 1: { [DOIS.id]: "fonte:b" }, 2: {} })!;
+    expect(statuses(outraTarefa)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
+    // Com a tabela certa, conclui.
+    expect(statuses(parseProgress(salvo, "lula", CAPITULOS, LEGADO)!)).toEqual(["concluido", "concluido", "disponivel", "bloqueado"]);
   });
 
   it("um progresso da versão 1 que terminou os capítulos de então segue para o primeiro capítulo novo", () => {
@@ -468,16 +492,16 @@ describe("migração da versão 1", () => {
       [UM.id]: { status: "concluido", tarefa: tarefaV1(["a", "x"]) },
       [DOIS.id]: { status: "concluido", tarefa: tarefaV1(["b", "c", "y"], true, 1) },
     });
-    const lido = parseProgress(salvo, "lula", CAPITULOS)!;
+    const lido = parseProgress(salvo, "lula", CAPITULOS, LEGADO)!;
     expect(statuses(lido)).toEqual(["concluido", "concluido", "disponivel", "bloqueado"]);
     expect(currentChapter(lido, CAPITULOS)).toBe(TRES);
   });
 
   it("a versão 1 exige o nome antigo do campo: o novo não vale nela", () => {
     const comNomeNovo = v1({ [UM.id]: { status: "disponivel", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } } });
-    expect(parseProgress(comNomeNovo, "lula", CAPITULOS)).toBeNull();
+    expect(parseProgress(comNomeNovo, "lula", CAPITULOS, LEGADO)).toBeNull();
     const comTipoErrado = v1({ [UM.id]: { status: "disponivel", tarefa: { recolhidos: [], ordemConfirmada: "sim", tentativas: 0 } } });
-    expect(parseProgress(comTipoErrado, "lula", CAPITULOS)).toBeNull();
+    expect(parseProgress(comTipoErrado, "lula", CAPITULOS, LEGADO)).toBeNull();
   });
 
   it("a regra da saída vale também para o que a versão 1 guardou", () => {
@@ -486,15 +510,111 @@ describe("migração da versão 1", () => {
       [UM.id]: { status: "concluido", tarefa: tarefaV1(["a"]) },
       [DOIS.id]: { status: "disponivel", tarefa: tarefaV1(["b"]) },
     });
-    const lido = parseProgress(salvo, "lula", CAPITULOS)!;
+    const lido = parseProgress(salvo, "lula", CAPITULOS, LEGADO)!;
     expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
     expect(taskStateOf(lido, UM.id)).toEqual({ recolhidos: ["a"], confirmada: false, tentativas: 0 });
   });
 
   it("depois da migração, salvar e ler de novo não muda nada", () => {
     const salvo = v1({ [UM.id]: { status: "concluido", tarefa: tarefaV1(["a", "x"]) }, [DOIS.id]: { status: "disponivel", tarefa: tarefaV1(["b"]) } });
-    const migrado = parseProgress(salvo, "lula", CAPITULOS)!;
+    const migrado = parseProgress(salvo, "lula", CAPITULOS, LEGADO)!;
     expect(relido(migrado)).toEqual(migrado);
     expect(migrado).not.toEqual(inicial);
+  });
+});
+
+describe("assinatura da tarefa respondida (versão 3)", () => {
+  const inicial = initialProgress("lula", CAPITULOS);
+  const salvo = (capitulos: Record<string, unknown>) => JSON.parse(JSON.stringify({ ...inicial, capitulos }));
+  // O mesmo capítulo 2, com os mesmos identificadores, mas a tarefa trocada de ordem por documento.
+  const DOIS_MUDADO = capitulo(2, { tipo: "fonte", eventId: "b" }, ["c", "y"]);
+  const CAPITULOS_MUDADOS: readonly ChapterSpec[] = [UM, DOIS_MUDADO, TRES, QUATRO];
+
+  it("a confirmação grava a assinatura da tarefa, e ela sobrevive à ida e volta por JSON", () => {
+    const concluido = completeChapter(withTaskState(inicial, DOIS.id, feita(DOIS)), CAPITULOS, DOIS.id);
+    const umFeito = completeChapter(withTaskState(inicial, UM.id, feita(UM)), CAPITULOS, UM.id);
+    const doisFeitos = completeChapter(withTaskState(umFeito, DOIS.id, feita(DOIS)), CAPITULOS, DOIS.id);
+    expect(taskStateOf(doisFeitos, DOIS.id).assinatura).toBe("ordem:b+c");
+    expect(relido(doisFeitos)).toEqual(doisFeitos);
+    expect(concluido).toBe(inicial); // bloqueado: nada muda
+  });
+
+  it("uma resposta confirmada não conclui uma tarefa que mudou sob os mesmos identificadores", () => {
+    // O que o auditor reproduziu: o capítulo e os registros mantiveram os identificadores, mas a tarefa de ordem virou tarefa de documento.
+    const guardado = salvo({ [UM.id]: { status: "concluido", tarefa: feita(UM) }, [DOIS.id]: { status: "concluido", tarefa: feita(DOIS) }, [TRES.id]: { status: "disponivel", tarefa: VAZIA } });
+    const lido = parseProgress(guardado, "lula", CAPITULOS_MUDADOS)!;
+    expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
+    // O que foi recolhido e as tentativas ficam; só a resposta é pedida de novo.
+    expect(taskStateOf(lido, DOIS_MUDADO.id)).toEqual({ recolhidos: ["b", "c", "y"], confirmada: false, tentativas: 1 });
+    // Com os capítulos de antes, o mesmo salvo conclui.
+    expect(statuses(parseProgress(guardado, "lula", CAPITULOS)!)).toEqual(["concluido", "concluido", "disponivel", "bloqueado"]);
+  });
+
+  it("na versão atual, confirmação sem assinatura não vale", () => {
+    const semAssinatura = salvo({ [UM.id]: { status: "concluido", tarefa: feita(UM) }, [DOIS.id]: { status: "concluido", tarefa: { recolhidos: ["b", "c", "y"], confirmada: true, tentativas: 1 } } });
+    const lido = parseProgress(semAssinatura, "lula", CAPITULOS)!;
+    expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
+    expect(taskStateOf(lido, DOIS.id)).toEqual({ recolhidos: ["b", "c", "y"], confirmada: false, tentativas: 1 });
+  });
+
+  it("assinatura com tipo errado recusa o salvo", () => {
+    const estranha = salvo({ [UM.id]: { status: "disponivel", tarefa: { ...VAZIA, assinatura: 7 } } });
+    expect(parseProgress(estranha, "lula", CAPITULOS)).toBeNull();
+  });
+
+  it("a assinatura sem confirmação é descartada na leitura", () => {
+    const sobra = salvo({
+      [UM.id]: { status: "concluido", tarefa: feita(UM) },
+      [DOIS.id]: { status: "disponivel", tarefa: { recolhidos: ["b"], confirmada: false, tentativas: 1, assinatura: "ordem:b+c" } },
+    });
+    expect(taskStateOf(parseProgress(sobra, "lula", CAPITULOS)!, DOIS.id)).toEqual({ recolhidos: ["b"], confirmada: false, tentativas: 1 });
+  });
+});
+
+describe("migração da versão 2", () => {
+  // A versão 2 não guardava a assinatura: a confirmação migra pela tabela do que cada capítulo pedia então.
+  const LULA = chaptersOf("lula");
+  const [c1, c2, c3] = LULA as [ChapterSpec, ChapterSpec, ChapterSpec];
+  const v2 = (capitulos: Record<string, unknown>) => ({ versao: 2, personagem: "lula", capitulos });
+
+  it("a tabela congelada cobre os capítulos de cada versão, pelos identificadores de então", () => {
+    expect(Object.keys(LEGACY_SIGNATURES[1]).sort()).toEqual(["flavio-bolsonaro-1-alerj", "flavio-bolsonaro-2-senado", "lula-1-sindicato", "lula-2-constituinte"]);
+    expect(Object.keys(LEGACY_SIGNATURES[2]).sort()).toEqual(
+      [
+        ...["flavio-bolsonaro-1-alerj", "flavio-bolsonaro-2-senado", "flavio-bolsonaro-3-denuncia", "flavio-bolsonaro-4-minoria", "flavio-bolsonaro-5-eleicao-2026"],
+        ...["lula-1-sindicato", "lula-2-constituinte", "lula-3-presidencia", "lula-4-processos", "lula-5-anulacao", "lula-6-eleicao-2026"],
+      ].sort(),
+    );
+    for (const assinatura of [...Object.values(LEGACY_SIGNATURES[1]), ...Object.values(LEGACY_SIGNATURES[2])]) expect(assinatura).toMatch(/^(registro|ordem|fonte|lugar):\S+$/);
+  });
+
+  it("uma confirmação da versão 2 migra com a assinatura quando a tarefa do capítulo é a mesma de então", () => {
+    const guardado = v2({
+      [c1.id]: { status: "concluido", tarefa: { recolhidos: [...c1.eventIds], confirmada: false, tentativas: 0 } },
+      [c2.id]: { status: "concluido", tarefa: { recolhidos: [...c2.eventIds], confirmada: true, tentativas: 1 } },
+      [c3.id]: { status: "disponivel", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } },
+    });
+    const lido = parseProgress(guardado, "lula", LULA)!;
+    expect(lido.versao).toBe(PROGRESS_VERSION);
+    expect(LULA.map((spec) => chapterStatus(lido, spec.id)).slice(0, 3)).toEqual(["concluido", "concluido", "disponivel"]);
+    expect(taskStateOf(lido, c2.id)).toEqual({ recolhidos: [...c2.eventIds], confirmada: true, tentativas: 1, assinatura: taskSignature(c2.tarefa) });
+    // No dia em que a tabela foi congelada, ela dizia o que os capítulos pedem hoje.
+    expect(LEGACY_SIGNATURES[2][c2.id]).toBe(taskSignature(c2.tarefa));
+  });
+
+  it("uma confirmação da versão 2 de um capítulo que a tabela não conhece não vale", () => {
+    const guardado = v2({ [UM.id]: { status: "concluido", tarefa: feita(UM) }, [DOIS.id]: { status: "concluido", tarefa: { recolhidos: ["b", "c", "y"], confirmada: true, tentativas: 1 } } });
+    const lido = parseProgress(guardado, "lula", CAPITULOS)!;
+    expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
+    expect(taskStateOf(lido, DOIS.id)).toEqual({ recolhidos: ["b", "c", "y"], confirmada: false, tentativas: 1 });
+  });
+
+  it("a versão 2 ignora a assinatura, que ela não tinha", () => {
+    const comAssinatura = v2({
+      [UM.id]: { status: "concluido", tarefa: { recolhidos: [...UM.eventIds], confirmada: false, tentativas: 0 } },
+      [DOIS.id]: { status: "disponivel", tarefa: { recolhidos: ["b", "c"], confirmada: true, tentativas: 1, assinatura: taskSignature(DOIS.tarefa) } },
+    });
+    // Sem o capítulo na tabela da versão 2, a assinatura escrita no salvo não resgata a confirmação.
+    expect(taskStateOf(parseProgress(comAssinatura, "lula", CAPITULOS)!, DOIS.id)).toEqual({ recolhidos: ["b", "c"], confirmada: false, tentativas: 1 });
   });
 });

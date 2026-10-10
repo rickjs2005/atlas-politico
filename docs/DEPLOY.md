@@ -17,11 +17,12 @@ Mudar qualquer campo de `src/lib/site.ts` exige `npm run build` de novo: os valo
 ## Antes de publicar
 
 1. Conteúdo: a edição a publicar está em `content/`, com `alteracoes` registradas, e a revisão humana feita ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)). O código nunca registra revisão como humana.
-2. `npm run check`: lint, tipos, testes, build e verificação da exportação, tudo verde.
-3. `npm run test:export` e `npm run test:journeys` sobre o `out/` recém-gerado.
-4. `npm run audit:a11y` e `npm run measure -- --rotulo <data>` e `npm run measure:game -- --rotulo <data>`: registrar os números em [PERFORMANCE.md](PERFORMANCE.md) e em [STATUS.md](STATUS.md).
-5. Capturas: `npm run capture:game` e as demais, para a conferência visual da versão candidata.
-6. Conferir a primeira dobra em celular real, em pé e deitado, e o jogo em aparelho real ([USER-VALIDATION.md](USER-VALIDATION.md)).
+2. `npm run verify:release`: a barreira de release (`src/lib/editorial/release.ts`). Recusa a publicação, com o diagnóstico, enquanto houver registro sem revisão humana, ou domínio e canal de correção sem valor em `src/lib/site.ts`; avisa, sem recusar, quando a indexação está desligada e quando não há arquivo LICENSE. É uma régua diferente da do build: `npm run check` continua passando com o conteúdo em conferência, de propósito, para o desenvolvimento não parar. Publicar com a barreira recusando é uma mudança de política, que precisa ficar escrita em [EDITORIAL.md](EDITORIAL.md) e nas telas.
+3. `npm run check`: lint, tipos, testes, build e verificação da exportação, tudo verde.
+4. `npm run test:export` e `npm run test:journeys` sobre o `out/` recém-gerado, e `npm run test:e2e`. A verificação contínua do GitHub (`.github/workflows/verificacao.yml`) roda o mesmo a cada push na `main` e a cada pull request, e tem de estar verde no commit publicado.
+5. `npm run audit:a11y` e `npm run measure -- --rotulo <data>` e `npm run measure:game -- --rotulo <data>`: registrar os números em [PERFORMANCE.md](PERFORMANCE.md) e em [STATUS.md](STATUS.md).
+6. Capturas: `npm run capture:game` e as demais, para a conferência visual da versão candidata.
+7. Conferir a primeira dobra em celular real, em pé e deitado, e o jogo em aparelho real ([USER-VALIDATION.md](USER-VALIDATION.md)).
 
 ## Como publicar `out/`
 

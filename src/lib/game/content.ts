@@ -1,7 +1,8 @@
 // O recorte dos dados que a página do jogo entrega ao navegador: o
 // personagem, os capítulos e só os registros que eles citam, já com título,
-// data, resumo, contexto, lugar, fontes resolvidas e a situação da revisão.
-// Função pura sobre `AtlasData`.
+// data, resumo, contexto, lugar, fontes resolvidas (com onde está o trecho,
+// de quando é o documento e quando foi lido, como a ficha do atlas mostra) e
+// a situação da revisão. Função pura sobre `AtlasData`.
 
 import { findEventById, findPersonBySlug } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
@@ -53,7 +54,20 @@ export function buildGameContent(data: AtlasData, personagem: PersonagemSlug): G
         fontes: acontecimento.fontes.flatMap((citacao) => {
           const posicao = lookup(data.indices.fontes.porId, citacao.fonteId);
           const fonte = posicao === undefined ? undefined : data.conjunto.fontes[posicao];
-          return fonte === undefined ? [] : [{ id: fonte.id, titulo: fonte.titulo, autoria: fonte.autoria, url: fonte.url, evidencia: citacao.evidencia }];
+          return fonte === undefined
+            ? []
+            : [
+                {
+                  id: fonte.id,
+                  titulo: fonte.titulo,
+                  autoria: fonte.autoria,
+                  url: fonte.url,
+                  dataDocumento: fonte.dataDocumento,
+                  acessadoEm: fonte.acessadoEm,
+                  localizacao: citacao.localizacao,
+                  evidencia: citacao.evidencia,
+                },
+              ];
         }),
         editorial: reviewOf(acontecimento.editorial),
         ordemEmAberto: false,

@@ -320,6 +320,10 @@ describe("conteúdo do jogo", () => {
           expect(fonte.titulo.length, onde).toBeGreaterThan(0);
           expect(fonte.autoria.length, onde).toBeGreaterThan(0);
           expect(fonte.evidencia.length, onde).toBeGreaterThan(0);
+          // Onde está o trecho e quando a fonte foi lida: o que permite conferir sem sair do jogo.
+          expect(fonte.localizacao.length, onde).toBeGreaterThan(0);
+          expect(fonte.acessadoEm, onde).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+          expect(["data", "desconhecida"], onde).toContain(fonte.dataDocumento.tipo);
           expect(fonte.url, onde).toMatch(/^https:\/\//);
         }
       }
@@ -338,12 +342,22 @@ describe("conteúdo do jogo", () => {
           resumo: acontecimento.resumo,
           contexto: acontecimento.contexto,
         });
-        // As fontes são as do acontecimento, uma a uma e na ordem, com o que
-        // cada citação sustenta: é o que diz qual documento sustenta qual registro.
+        // As fontes são as do acontecimento, uma a uma e na ordem, com onde
+        // está o trecho e o que cada citação sustenta: é o que diz qual
+        // documento sustenta qual registro, e onde conferir.
         expect(registro.fontes).toEqual(
           acontecimento.fontes.map((citacao) => {
             const fonte = data.conjunto.fontes.find((item) => item.id === citacao.fonteId)!;
-            return { id: fonte.id, titulo: fonte.titulo, autoria: fonte.autoria, url: fonte.url, evidencia: citacao.evidencia };
+            return {
+              id: fonte.id,
+              titulo: fonte.titulo,
+              autoria: fonte.autoria,
+              url: fonte.url,
+              dataDocumento: fonte.dataDocumento,
+              acessadoEm: fonte.acessadoEm,
+              localizacao: citacao.localizacao,
+              evidencia: citacao.evidencia,
+            };
           }),
         );
         // O lugar é o documentado, com os nomes da edição.

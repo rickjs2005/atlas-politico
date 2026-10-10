@@ -1,0 +1,69 @@
+# Verificação contínua (docs/QA.md): o que `npm run check` e as suítes sobre a
+# exportação conferem na máquina, repetido a cada push na `main` e a cada pull
+# request. Não publica nada: o deploy é manual e depende de autorização
+# (docs/DEPLOY.md).
+name: Verificação
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: verificacao-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regras-build-e-exportacao:
+    name: Regras, build e exportação
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Instalar com o lockfile
+        run: npm ci
+      - name: Lint, tipos, testes de regra, build e conferência da saída
+        run: npm run check
+      - name: Navegador dos testes
+        run: npx playwright install --with-deps chromium
+      - name: Carregamento sobre a exportação
+        run: npm run test:export
+      - name: Jornadas sobre a exportação
+        run: npm run test:journeys
+      - name: Passagem de acessibilidade
+        run: npm run audit:a11y
+      - name: Matriz de cobertura e lista de revisão em dia
+        run: npm run game:coverage -- --check && npm run review:human -- --check
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: resultados-exportacao
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  desenvolvimento:
+    name: Jornadas no servidor de desenvolvimento
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Jornadas e telas de prova
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: resultados-desenvolvimento
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

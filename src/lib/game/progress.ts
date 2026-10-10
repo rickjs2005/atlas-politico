@@ -9,10 +9,10 @@
 // os registros do capítulo recolhidos (`isExitOpen`).
 //
 // O formato salvo tem versão. `parseProgress` aceita a versão atual e migra
-// a anterior; devolve `null` para qualquer outra coisa: dado inválido vira
+// as anteriores; devolve `null` para qualquer outra coisa: dado inválido vira
 // começo, e não erro na tela.
 
-import { hasAnswer, hasRequired, isExitOpen } from "./mission";
+import { hasAnswer, hasRequired, isExitOpen, taskSignature } from "./mission";
 import { PROGRESS_VERSION, type ChapterProgress, type ChapterSpec, type ChapterStatus, type PersonagemSlug, type PlayerProgress, type TaskState } from "./types";
 
 const STATUSES: readonly ChapterStatus[] = ["bloqueado", "disponivel", "concluido"];
@@ -90,47 +90,94 @@ function isRecord(valor: unknown): valor is Record<string, unknown> {
   return typeof valor === "object" && valor !== null && !Array.isArray(valor);
 }
 
+/** As versões do formato que a leitura entende: a atual e as que ela migra. */
+export type ReadableVersion = 1 | 2 | 3;
+export const READABLE_VERSIONS: readonly ReadableVersion[] = [1, 2, PROGRESS_VERSION];
+
 /**
  * Lê o estado de uma tarefa. A versão 1 chamava a confirmação de
- * `ordemConfirmada`; a 2 chama de `confirmada`. Só um dos dois nomes é
- * aceito, o da versão lida.
+ * `ordemConfirmada`; a 2 e a 3 chamam de `confirmada`. Só um dos dois nomes é
+ * aceito, o da versão lida. A assinatura da tarefa respondida só existe a
+ * partir da versão 3; nas anteriores é ignorada.
  */
-function parseTask(valor: unknown, versao: 1 | 2): TaskState | null {
+function parseTask(valor: unknown, versao: ReadableVersion): TaskState | null {
   if (!isRecord(valor)) return null;
-  const { recolhidos, tentativas } = valor;
+  const { recolhidos, tentativas, assinatura } = valor;
   const confirmada = versao === 1 ? valor.ordemConfirmada : valor.confirmada;
   if (!Array.isArray(recolhidos) || !recolhidos.every((item) => typeof item === "string")) return null;
   if (typeof confirmada !== "boolean") return null;
   if (typeof tentativas !== "number" || !Number.isInteger(tentativas) || tentativas < 0) return null;
-  return { recolhidos: [...new Set(recolhidos as string[])], confirmada, tentativas };
+  if (assinatura !== undefined && typeof assinatura !== "string") return null;
+  const lida: TaskState = { recolhidos: [...new Set(recolhidos as string[])], confirmada, tentativas };
+  if (versao === PROGRESS_VERSION && typeof assinatura === "string") lida.assinatura = assinatura;
+  return lida;
 }
 
-/** As versões do formato que a leitura entende: a atual e a que ela migra. */
-export const READABLE_VERSIONS: readonly number[] = [1, PROGRESS_VERSION];
+/** As assinaturas das tarefas de cada capítulo quando uma versão antiga do formato era a atual. */
+export type LegacySignatures = Readonly<Record<1 | 2, Readonly<Record<string, string>>>>;
+
+/** As tarefas da etapa 1 (versão 1 do formato): dois capítulos de cada personagem. */
+const TAREFAS_NA_VERSAO_1: Readonly<Record<string, string>> = {
+  "lula-1-sindicato": "registro:lula-1975-eleito-presidente-do-sindicato",
+  "lula-2-constituinte": "ordem:lula-1986-eleito-deputado-federal-constituinte+lula-1989-primeira-candidatura-a-presidencia",
+  "flavio-bolsonaro-1-alerj": "registro:flavio-bolsonaro-2002-eleito-deputado-estadual",
+  "flavio-bolsonaro-2-senado": "ordem:flavio-bolsonaro-2018-eleito-senador+flavio-bolsonaro-2019-terceiro-secretario-do-senado",
+};
+
+/** As tarefas da versão de lançamento (versão 2 do formato): os onze capítulos. */
+const TAREFAS_NA_VERSAO_2: Readonly<Record<string, string>> = {
+  ...TAREFAS_NA_VERSAO_1,
+  "lula-3-presidencia": "fonte:lula-2002-eleito-presidente",
+  "lula-4-processos": "ordem:lula-2017-condenacao-em-primeira-instancia+lula-2018-tribunal-confirma-condenacao",
+  "lula-5-anulacao": "lugar:lula-2021-stf-anula-condenacoes",
+  "lula-6-eleicao-2026": "fonte:eleicao-2026-primeiro-turno",
+  "flavio-bolsonaro-3-denuncia": "fonte:flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao",
+  "flavio-bolsonaro-4-minoria": "lugar:flavio-bolsonaro-2024-relatoria-das-saidas-temporarias",
+  "flavio-bolsonaro-5-eleicao-2026": "ordem:flavio-bolsonaro-2026-convencao-do-pl+eleicao-2026-primeiro-turno",
+};
+
+/**
+ * O que cada capítulo pedia quando as versões 1 e 2 do formato eram as
+ * atuais, pela assinatura de `taskSignature`. Essas versões não guardavam a
+ * assinatura da tarefa respondida; uma confirmação delas só migra se a tarefa
+ * do capítulo continua a mesma de então. A tabela é congelada de propósito:
+ * não acompanha mudanças futuras dos capítulos, e é isso que a torna útil.
+ */
+export const LEGACY_SIGNATURES: LegacySignatures = { 1: TAREFAS_NA_VERSAO_1, 2: TAREFAS_NA_VERSAO_2 };
 
 /**
  * Lê um progresso salvo. Devolve `null` quando a versão, o personagem ou a
- * forma não conferem. A versão 1 é migrada ao ler: muda só o nome do campo
- * da confirmação. Capítulos que a edição não tem mais são descartados;
- * capítulos novos entram bloqueados (ou disponíveis, se forem o primeiro
- * aberto), e a regra de progressão é reaplicada para não haver dois
- * capítulos disponíveis nem um disponível depois de um bloqueado. Quem
- * terminou os capítulos de uma edição anterior recebe o primeiro capítulo
- * novo como disponível.
+ * forma não conferem. As versões 1 e 2 são migradas ao ler: a 1 muda o nome
+ * do campo da confirmação; as duas ganham a assinatura da tarefa respondida,
+ * conferida pela tabela do que o capítulo pedia na época (`legado`).
+ * Capítulos que a edição não tem mais são descartados; capítulos novos entram
+ * bloqueados (ou disponíveis, se forem o primeiro aberto), e a regra de
+ * progressão é reaplicada para não haver dois capítulos disponíveis nem um
+ * disponível depois de um bloqueado. Quem terminou os capítulos de uma edição
+ * anterior recebe o primeiro capítulo novo como disponível.
  *
  * Um capítulo pode mudar entre uma edição e outra. Os registros que ele não
- * cita mais saem dos recolhidos, e uma confirmação só vale se a tarefa
- * ainda pede resposta e os registros dela estão recolhidos.
+ * cita mais saem dos recolhidos, e uma confirmação só vale se a tarefa ainda
+ * pede resposta, os registros dela estão recolhidos e ela é a mesma tarefa
+ * que foi respondida: na versão atual, pela assinatura guardada; nas
+ * anteriores, pela tabela. Trocar o tipo da tarefa, ou o que ela pede, sob os
+ * mesmos identificadores reabre a pergunta, sem apagar o que foi recolhido
+ * nem as tentativas.
  *
  * A regra de saída também vale para o que foi salvo: um capítulo marcado
  * como concluído sem todos os registros recolhidos (guardado quando a saída
  * abria só com a tarefa, ou antes de o capítulo ganhar um registro) volta a
  * disponível, com o que já foi recolhido, e os seguintes voltam a bloqueado.
  */
-export function parseProgress(valor: unknown, personagem: PersonagemSlug, capitulos: readonly ChapterSpec[]): PlayerProgress | null {
+export function parseProgress(
+  valor: unknown,
+  personagem: PersonagemSlug,
+  capitulos: readonly ChapterSpec[],
+  legado: LegacySignatures = LEGACY_SIGNATURES,
+): PlayerProgress | null {
   if (!isRecord(valor)) return null;
-  if (valor.versao !== 1 && valor.versao !== PROGRESS_VERSION) return null;
-  const versao = valor.versao as 1 | 2;
+  if (!READABLE_VERSIONS.includes(valor.versao as ReadableVersion)) return null;
+  const versao = valor.versao as ReadableVersion;
   if (valor.personagem !== personagem) return null;
   if (!isRecord(valor.capitulos)) return null;
 
@@ -143,8 +190,15 @@ export function parseProgress(valor: unknown, personagem: PersonagemSlug, capitu
     const lida = parseTask(entrada.tarefa, versao);
     if (lida === null || !STATUSES.includes(entrada.status as ChapterStatus)) return null;
     const recolhidos = lida.recolhidos.filter((id) => capitulo.eventIds.includes(id));
-    const tarefa: TaskState = { ...lida, recolhidos };
-    tarefa.confirmada = lida.confirmada && hasAnswer(capitulo.tarefa) && hasRequired(capitulo.tarefa, tarefa);
+    // A confirmação pertence à tarefa atual? Na versão atual, pela assinatura
+    // guardada; nas anteriores, pelo que o capítulo pedia naquela versão.
+    const atual = taskSignature(capitulo.tarefa);
+    const respondida = versao === PROGRESS_VERSION ? lida.assinatura === atual : legado[versao][capitulo.id] === atual;
+    const tarefa: TaskState = { recolhidos, confirmada: false, tentativas: lida.tentativas };
+    if (lida.confirmada && hasAnswer(capitulo.tarefa) && hasRequired(capitulo.tarefa, tarefa) && respondida) {
+      tarefa.confirmada = true;
+      tarefa.assinatura = atual;
+    }
     lidos[capitulo.id] = { status: entrada.status as ChapterStatus, tarefa };
   }
 

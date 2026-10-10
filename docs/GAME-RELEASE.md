@@ -11,7 +11,7 @@ A parte técnica cabe no prazo: os capítulos, as mecânicas, os cenários e as 
 - **Domínio, hospedagem e canal de correção.** Sem domínio não há endereço canônico, sitemap nem prévia de compartilhamento com endereço absoluto.
 - **Decisão sobre a totalização do primeiro turno.** O registro de 4 de outubro traz a apuração com 99,99% das urnas, como a notícia do TSE a publicou. Trocar pelos números definitivos é uma atualização de conteúdo, com nova entrada na edição; não é feita sem decisão e sem documento oficial lido.
 
-**Risco real:** se a revisão humana e a validação não acontecerem até 20 de outubro, a versão candidata existe, mas a publicação em 22 viola a regra editorial do próprio projeto. Nesse caso a recomendação é publicar só com o aviso de revisão pendente na entrada, no jogo e nas fichas (que já existe), e dizer isso na divulgação, ou adiar. A decisão é do responsável pelo projeto, e nada aqui a toma por ele.
+**Risco real:** se a revisão humana e a validação não acontecerem até 20 de outubro, a versão candidata existe, mas a publicação em 22 viola a regra editorial do próprio projeto, e a barreira de release (`npm run verify:release`, [DEPLOY.md](DEPLOY.md)) a recusa. As saídas são duas, e nenhuma é tomada aqui: adiar, ou mudar a política por decisão escrita do responsável pelo projeto em [EDITORIAL.md](EDITORIAL.md), mantendo o aviso de revisão pendente que já existe na entrada, no jogo e nas fichas e dizendo isso na divulgação. Enquanto a política for a atual, a barreira continua recusando.
 
 ## Etapas
 

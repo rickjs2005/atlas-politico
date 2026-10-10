@@ -22,7 +22,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { compareDates, formatDate, yearOf } from "@/lib/domain/dates";
 import { findUndeterminedOrder } from "@/lib/domain/order";
 import { chaptersOf } from "@/lib/game/chapters";
-import { requiredRecords } from "@/lib/game/mission";
+import { requiredRecords, taskSignature } from "@/lib/game/mission";
 import { getScene } from "@/lib/game/scenes";
 import { storageKey } from "@/lib/game/storage";
 import { EPOCA_LABEL, PROGRESS_VERSION, type ChapterSpec } from "@/lib/game/types";
@@ -34,7 +34,7 @@ interface EventRecord {
   slug: string;
   titulo: string;
   data: { valor: string; precisao: "ano" | "mes" | "dia" };
-  fontes: { fonteId: string }[];
+  fontes: { fonteId: string; localizacao: string }[];
   localizacao: { tipo: "lugares"; lugarIds: string[] } | { tipo: "nacional" } | { tipo: "desconhecida" };
 }
 
@@ -98,7 +98,12 @@ function progressoAte(slug: Slug, numero: number) {
   const entradas: Record<string, unknown> = {};
   chaptersOf(slug).forEach((capitulo, indice) => {
     const comResposta = capitulo.tarefa.tipo !== "registro";
-    if (indice < numero - 1) entradas[capitulo.id] = { status: "concluido", tarefa: { recolhidos: [...capitulo.eventIds], confirmada: comResposta, tentativas: comResposta ? 1 : 0 } };
+    if (indice < numero - 1) {
+      entradas[capitulo.id] = {
+        status: "concluido",
+        tarefa: { recolhidos: [...capitulo.eventIds], confirmada: comResposta, tentativas: comResposta ? 1 : 0, ...(comResposta ? { assinatura: taskSignature(capitulo.tarefa) } : {}) },
+      };
+    }
     else entradas[capitulo.id] = { status: indice === numero - 1 ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
   });
   return { versao: PROGRESS_VERSION, personagem: slug, capitulos: entradas };
@@ -1462,6 +1467,36 @@ test.describe("tarefas de documento e de lugar", () => {
   });
 });
 
+test.describe("sem o desenho em canvas", () => {
+  test("a cena avisa, aponta o painel, e o capítulo continua jogável por ele", async ({ page }) => {
+    // O navegador não oferece o contexto 2D (política do navegador, falta de memória, extensão): a cena não existe.
+    await page.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, tipo: string, ...resto: unknown[]) {
+        return tipo === "2d" ? null : (original as (...args: unknown[]) => unknown).call(this, tipo, ...resto);
+      } as typeof HTMLCanvasElement.prototype.getContext;
+    });
+    await page.goto(LULA.rota);
+    await clearProgress(page);
+    await page.reload();
+    const aviso = page.locator('[data-palco="sem-canvas"]');
+    await expect(aviso).toBeVisible({ timeout: 30_000 });
+    await expect(aviso).toContainText("não conseguiu desenhar a cena");
+    await expect(aviso).toContainText("Capítulos e tarefas");
+    await expect(aviso.getByRole("link", { name: `trajetória de ${LULA.nome} no atlas` })).toHaveAttribute("href", `/politicos/${LULA.slug}/`);
+    // O botão do aviso abre o painel; Esc fecha e o aviso continua lá.
+    await aviso.locator("[data-abrir-painel-sem-cena]").click();
+    await expect(dialogo(page, "painel")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialogo(page, "painel")).toHaveCount(0);
+    await expect(aviso).toBeVisible();
+    // O capítulo inteiro pelo painel, como sem o cenário: recolher, responder e atravessar.
+    await concluirCapitulo1PeloPainel(page, LULA);
+    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
+    await expect(aviso).toBeVisible();
+  });
+});
+
 test.describe("ficha judicial", () => {
   test("a ficha diz a natureza do registro, lista as decisões relacionadas com a própria data e avisa que o jogo não decide culpa", async ({ page }) => {
     const condenacao = "lula-2017-condenacao-em-primeira-instancia";
@@ -1483,6 +1518,12 @@ test.describe("ficha judicial", () => {
     await expect(ficha.locator("[data-contexto]")).toContainText("Contexto, como a ficha do atlas o traz");
     await expect(ficha.locator('[data-lugar-documentado="lugares"]')).toContainText("Curitiba");
     await expect(ficha.locator("[data-evidencia]")).toHaveCount(registro(condenacao).fontes.length);
+    // Onde está o trecho em cada documento, e de quando ele é e quando foi lido: o que a lista de fontes do atlas mostra.
+    await expect(ficha.locator("[data-onde]")).toHaveCount(registro(condenacao).fontes.length);
+    for (const [indice, citacao] of registro(condenacao).fontes.entries()) {
+      await expect(ficha.locator("[data-onde]").nth(indice)).toHaveText(`Onde: ${citacao.localizacao}`);
+      await expect(ficha.locator("[data-documento]").nth(indice)).toContainText("acesso em");
+    }
     await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
     await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
 

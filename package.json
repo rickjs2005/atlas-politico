@@ -27,6 +27,7 @@
     "measure:report": "node scripts/measure-report.mjs",
     "game:coverage": "node --import ./scripts/register.mjs scripts/game-coverage.mts",
     "review:human": "node --import ./scripts/register.mjs scripts/human-review.mts",
+    "verify:release": "node --import ./scripts/register.mjs scripts/verify-release.mts",
     "audit:a11y": "node scripts/audit-a11y.mjs",
     "images": "node --import ./scripts/register.mjs scripts/images.mts",
     "images:check": "node --import ./scripts/register.mjs scripts/images.mts --check",

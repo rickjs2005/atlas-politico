@@ -47,6 +47,11 @@ export interface GameStageProps {
   onExit(): void;
   onReach(alvo: Interactable | null): void;
   onEscape(): void;
+  /**
+   * O navegador não deu o contexto 2D do canvas: a cena não pode ser
+   * desenhada. A casca avisa e aponta o painel, que cumpre tudo sem o cenário.
+   */
+  onUnavailable(): void;
   /** Elemento com as instruções, para o leitor de tela. */
   describedBy: string;
 }
@@ -133,7 +138,12 @@ export function GameStage(props: GameStageProps) {
     const canvas = canvasRef.current;
     if (root === null || canvas === null) return;
     const ctx = canvas.getContext("2d");
-    if (ctx === null) return;
+    if (ctx === null) {
+      // Sem canvas 2D não há cena: nada de laço, e a casca mostra o aviso.
+      root.dataset.palco = "sem-canvas";
+      propsRef.current.onUnavailable();
+      return;
+    }
 
     const medir = () => {
       const caixa = root.getBoundingClientRect();

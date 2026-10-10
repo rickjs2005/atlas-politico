@@ -10,7 +10,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { chaptersOf } from "@/lib/game/chapters";
-import { requiredRecords } from "@/lib/game/mission";
+import { requiredRecords, taskSignature } from "@/lib/game/mission";
 import { getScene } from "@/lib/game/scenes";
 import { storageKey } from "@/lib/game/storage";
 import { PROGRESS_VERSION, type ChapterSpec, type PersonagemSlug } from "@/lib/game/types";
@@ -58,7 +58,12 @@ function progressoAte(slug: PersonagemSlug, numero: number) {
   const entradas: Record<string, unknown> = {};
   chaptersOf(slug).forEach((capitulo, indice) => {
     const comResposta = capitulo.tarefa.tipo !== "registro";
-    if (indice < numero - 1) entradas[capitulo.id] = { status: "concluido", tarefa: { recolhidos: [...capitulo.eventIds], confirmada: comResposta, tentativas: comResposta ? 1 : 0 } };
+    if (indice < numero - 1) {
+      entradas[capitulo.id] = {
+        status: "concluido",
+        tarefa: { recolhidos: [...capitulo.eventIds], confirmada: comResposta, tentativas: comResposta ? 1 : 0, ...(comResposta ? { assinatura: taskSignature(capitulo.tarefa) } : {}) },
+      };
+    }
     else entradas[capitulo.id] = { status: indice === numero - 1 ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
   });
   return { versao: PROGRESS_VERSION, personagem: slug, capitulos: entradas };

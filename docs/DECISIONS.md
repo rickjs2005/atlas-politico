@@ -952,6 +952,30 @@ Recolher tudo leva mais tempo: as jornadas de teste pelo cenário passaram a and
 
 **Consequência.** Testes conferem que a lista cita todo registro e toda fonte, que começa pelos episódios judiciais e que o documento está em dia; e que nenhum texto do jogo chama o primeiro turno de resultado final.
 
+## D-119. A confirmação de uma tarefa leva a assinatura da tarefa respondida (progresso na versão 3)
+
+**Decisão (auditoria externa de 10 de outubro de 2026, achado A-04).** O estado salvo de uma tarefa com resposta confirmada guarda a assinatura da tarefa respondida, o tipo e os identificadores que ela pede (`taskSignature`, em `src/lib/game/mission.ts`; por exemplo `ordem:a+b`). Na leitura, a confirmação só vale se a assinatura é a da tarefa atual do capítulo; se a tarefa mudou sob os mesmos identificadores de capítulo e de registros, a pergunta é feita de novo, sem apagar o que foi recolhido nem as tentativas. O formato salvo passou à versão 3. As versões 1 e 2, que não guardavam a assinatura, migram pela tabela congelada do que cada capítulo pedia naquela versão (`LEGACY_SIGNATURES`, em `src/lib/game/progress.ts`): a confirmação só migra se a tarefa continua a mesma de então. A tabela não acompanha mudanças futuras dos capítulos, de propósito.
+
+**Motivo.** A auditoria reproduziu, na função pura, uma confirmação de tarefa de ordem concluindo uma tarefa de documento que tinha os mesmos identificadores: a validação conferia os registros presentes e a necessidade de resposta, não a identidade da tarefa respondida. A versão do formato é do armazenamento, e não da tarefa; faltava dizer explicitamente o que invalidar quando a tarefa muda.
+
+**Consequência.** Testes de regra com o caso reproduzido pela auditoria, com a migração das versões 1 e 2 (com e sem o capítulo na tabela) e com a ida e volta por JSON; o teste no navegador que grava um progresso da versão 1 continua. Os roteiros de teste e de captura que semeiam progresso gravam a assinatura. Acrescentar um capítulo não mexe na tabela; mudar a tarefa de um capítulo existente invalida as confirmações antigas dele, e é isso que se quer.
+
+## D-120. Barreira de release separada da validação do build
+
+**Decisão (auditoria externa de 10 de outubro de 2026, achado A-02).** `npm run verify:release` (`scripts/verify-release.mts`, sobre `src/lib/editorial/release.ts`) recusa a publicação enquanto houver registro factual sem revisão humana, ou domínio público e canal de correção sem valor em `src/lib/site.ts`, e avisa, sem recusar, quando a indexação está desligada e quando não há arquivo LICENSE. `checkPublication` continua aceitando `revisado` de qualquer tipo, para o build de desenvolvimento seguir com o conteúdo em conferência. [GAME-RELEASE.md](GAME-RELEASE.md) e [DEPLOY.md](DEPLOY.md) passaram a dizer a mesma coisa: publicar sem revisão humana é uma mudança de política, registrada em [EDITORIAL.md](EDITORIAL.md), e não uma opção do comando. O código continua sem jamais registrar revisão como humana.
+
+**Motivo.** Os documentos divergiam (um sugeria publicar com aviso se a revisão não acontecesse; o outro condicionava a publicação à revisão), e não havia barreira específica de release: `noindex` bloqueia indexação, não impede hospedar e acessar os arquivos.
+
+**Consequência.** Hoje a barreira recusa a release, de propósito: 64 registros sem revisão humana, domínio e canal pendentes, mais os dois avisos. Testes de regra cobrem o que bloqueia e o que só avisa, sobre as fixtures sintéticas.
+
+## D-121. Verificação contínua no GitHub, sem publicação
+
+**Decisão (auditoria externa de 10 de outubro de 2026, achado A-07).** `.github/workflows/verificacao.yml` roda, a cada push na `main` e a cada pull request, `npm ci`, `npm run check`, as suítes sobre a exportação (`test:export`, `test:journeys`), a passagem de acessibilidade e a conferência da matriz de cobertura e da lista de revisão; em trabalho separado, as jornadas no servidor de desenvolvimento (`test:e2e`). Os resultados dos testes ficam como artefato quando algo falha. Nada ali publica: o deploy continua manual e condicionado à autorização.
+
+**Motivo.** O projeto tinha bons comandos locais e nenhum fluxo versionado que os repetisse a cada mudança; a suíte de desenvolvimento, em uma máquina de 8 GB, não terminou na verificação da versão de lançamento. Em um executor do GitHub ela roda sozinha, com memória própria.
+
+**Consequência.** O fluxo foi escrito e não rodou antes do primeiro push que o contém: o primeiro resultado real é o do GitHub, e o que ele apontar é a próxima correção. A regra fixa da MilWeb não muda: commit e push antes de qualquer deploy, e deploy só com pedido.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
@@ -978,3 +1002,6 @@ Recolher tudo leva mais tempo: as jornadas de teste pelo cenário passaram a and
 | Atualizar o primeiro turno de 2026 com a totalização final do TSE (D-118) | Decisão do responsável pelo projeto, por uma edição nova de conteúdo |
 | Domínio público, indexação e autorização do deploy (D-117) | Decisão do responsável pelo projeto ([DEPLOY.md](DEPLOY.md)) |
 | Som no jogo | Depois do lançamento |
+| Escopo de propostas, projetos legislativos, votos e posicionamentos (auditoria externa de 10/10/2026, achado A-01): o atlas e o jogo cobrem os 39 acontecimentos cadastrados, e a política editorial exclui opinião e declaração isolada; um produto que prometa "todas as propostas" exige contratos, fontes e política novos, para os dois personagens ou com o recorte declarado | Decisão do responsável pelo projeto, antes de qualquer código |
+| Licença do código (auditoria, achado A-10): não há arquivo LICENSE, e `npm run verify:release` avisa | Decisão do responsável pelo projeto |
+| Links permanentes para capítulo, separação dos diálogos do `GameShell` e sincronia entre abas (auditoria, P2) | Quando o jogo ganhar novos modos |
