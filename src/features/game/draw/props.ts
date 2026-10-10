@@ -1,13 +1,14 @@
 // Elementos de cenário: um desenho por tipo (`PropKind`), com o material
-// variando pela cena (madeira crua e aço gasto no sindicato, madeira
-// envernizada na Constituinte, madeira escura e pedra na Assembleia, madeira
-// polida e estofado sóbrio no Senado).
+// variando pela arte do ambiente (draw/arts/): madeira crua e aço gasto no
+// sindicato, madeira envernizada na Constituinte, madeira escura e pedra na
+// Assembleia, madeira polida e estofado sóbrio no Senado, e assim por diante.
 //
 // Cada objeto é desenhado em eixos próprios, com a frente em +v
 // (props-base.ts). `espelhado` troca o eixo do mundo para onde a frente
 // aponta, e a luz continua vindo do mesmo lado. `variante` escolhe, conforme
 // o tipo:
-//   cadeira, bancada, poltrona, tribuna, microfone   par: de frente; ímpar: de costas para a câmera
+//   cadeira, bancada, poltrona, tribuna, microfone, fileira, sofa
+//                   par: de frente; ímpar: de costas para a câmera
 //   mesa            0 papéis, 1 pasta fechada, 2 pasta aberta
 //   mesa-central    par: Mesa diretora; ímpar: mesa de reunião
 //   arquivo         0 fechado, 1 gaveta aberta, 2 caixa em cima
@@ -18,19 +19,27 @@
 //   maquina         par: prensa; ímpar: torno
 //   placa           par: quadro de avisos; ímpar: cavalete
 //   bandeira        três tons de cinza
+//   balcao          par: telefone de mesa no tampo; ímpar: porta-folhetos com o maço de panfletos
+//   cartaz          par: cavalete de tripé com cartaz; ímpar: banner de chão enrolável
+//   tela            par: telão em dois pés; ímpar: televisor sobre gabinete
+//   fileira         a armação (pés, trilho, braços) é de ferro nos ambientes frios e de madeira escura nos outros
 //   decoracao       0 faixa pintada, 1 folhas caídas, 2 luz de janela, 3 capacho
 
 import type { PropKind } from "@/lib/game/types";
 
 import { LIGHT } from "./kit";
 import { arquivo, armario, caixote, estante, placa, urna } from "./props-arquivo";
+import { balcao, cartaz } from "./props-balcao";
 import { materiais, type Quadro } from "./props-base";
 import { decoracao } from "./props-chao";
+import { fileira } from "./props-fileira";
 import { bancada, banco, cadeira, mesa, mesaCentral, poltrona, tribuna } from "./props-moveis";
 import { bandeira, coluna, maquina, microfone, planta } from "./props-salao";
+import { sofa } from "./props-sofa";
+import { tela } from "./props-tela";
 import type { PropDrawer } from "./types";
 
-const DESENHOS: Record<PropKind, (q: Quadro) => void> = {
+export const DESENHOS: Record<PropKind, (q: Quadro) => void> = {
   mesa,
   "mesa-central": mesaCentral,
   cadeira,
@@ -50,7 +59,15 @@ const DESENHOS: Record<PropKind, (q: Quadro) => void> = {
   poltrona,
   placa,
   decoracao,
+  tela,
+  balcao,
+  fileira,
+  sofa,
+  cartaz,
 };
+
+/** Todos os tipos de elemento de cenário, na ordem da galeria. */
+export const PROP_KINDS = Object.keys(DESENHOS) as PropKind[];
 
 export const drawProp: PropDrawer = (d, paleta, tipo, sx, sy, variante, espelhado, info) => {
   DESENHOS[tipo]({
@@ -60,7 +77,7 @@ export const drawProp: PropDrawer = (d, paleta, tipo, sx, sy, variante, espelhad
     m: espelhado,
     lv: espelhado ? LIGHT.direita : LIGHT.esquerda,
     lu: espelhado ? LIGHT.esquerda : LIGHT.direita,
-    mat: materiais(info.cena, paleta),
+    mat: materiais(info.arte, paleta),
     paleta,
     info,
     variante: Math.max(0, Math.trunc(variante)),

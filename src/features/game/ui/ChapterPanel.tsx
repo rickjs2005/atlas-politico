@@ -3,21 +3,22 @@
 // Painel de capítulos e tarefas: o caminho sem o canvas. Lista os capítulos
 // com a situação de cada um e, para o capítulo aberto, o objetivo, os
 // registros e as ações da tarefa, todas por botão: recolher, ler de novo o
-// que já foi recolhido, ordenar, atravessar a saída. É o mesmo progresso da
-// cena, com a mesma regra: a saída abre com todos os registros recolhidos e
-// a tarefa cumprida.
+// que já foi recolhido, responder (ordem, documento ou lugar), atravessar a
+// saída. É o mesmo progresso da cena, com a mesma regra: a saída abre com
+// todos os registros recolhidos e a tarefa cumprida.
 
 import Link from "next/link";
 
 import { formatDate, yearOf } from "@/lib/domain/dates";
-import { isTaskDone, missingRecords, requiredRecords } from "@/lib/game/mission";
+import { isAnswerPending, isTaskDone, missingRecords, requiredRecords } from "@/lib/game/mission";
 import { getScene } from "@/lib/game/scenes";
-import type { ChapterSpec, ChapterStatus, GameContent, PlayerProgress } from "@/lib/game/types";
+import { EPOCA_LABEL, type ChapterSpec, type ChapterStatus, type GameContent, type PlayerProgress } from "@/lib/game/types";
 import { chapterStatus, taskStateOf } from "@/lib/game/progress";
 import { explorationHref, gameHref } from "@/lib/state/links";
 
 import { Dialog, primaryButton, quietButton, secondaryButton } from "./Dialog";
 import { EXIT_RULE, collectedSentence, exitOpen, missingLabel, type ExitState } from "./saida";
+import { TASK_TYPE_LABEL, answerLabel, pendingSentence } from "./tarefa";
 
 const STATUS_LABEL: Record<ChapterStatus, string> = {
   bloqueado: "bloqueado",
@@ -36,7 +37,8 @@ interface ChapterPanelProps {
   onRead(eventId: string): void;
   /** O registro que acabou de ser relido: na volta, o foco fica no botão dele, e não no rodapé. */
   focoEm: string | null;
-  onAnswerOrder(): void;
+  /** Abre a resposta da tarefa (ordem, documento ou lugar). */
+  onAnswer(): void;
   onCrossExit(): void;
   onOpenChapter(id: string): void;
   onReset(): void;
@@ -52,7 +54,7 @@ export function ChapterPanel({
   onCollect,
   onRead,
   focoEm,
-  onAnswerOrder,
+  onAnswer,
   onCrossExit,
   onOpenChapter,
   onReset,
@@ -61,13 +63,14 @@ export function ChapterPanel({
   const tarefa = taskStateOf(progresso, aberto.id);
   const concluida = isTaskDone(aberto.tarefa, tarefa);
   const exigidos = requiredRecords(aberto.tarefa);
-  const ordemPendente = aberto.tarefa.tipo === "ordem" && exigidos.every((id) => tarefa.recolhidos.includes(id)) && !tarefa.ordemConfirmada;
+  const respostaPendente = isAnswerPending(aberto.tarefa, tarefa);
   const saida: ExitState = { tarefaConcluida: concluida, faltam: missingRecords(aberto, tarefa).length, total: aberto.eventIds.length };
   const saidaAberta = exitOpen(saida);
   // Na volta de uma releitura, o foco vai para o botão do registro lido, que continua na lista.
   const focoNoRegistro = focoEm !== null && aberto.eventIds.includes(focoEm) && tarefa.recolhidos.includes(focoEm);
   const cena = getScene(aberto.cena);
   const statusAberto = chapterStatus(progresso, aberto.id);
+  const periodo = (capitulo: ChapterSpec) => (capitulo.periodo.de === capitulo.periodo.ate ? `${capitulo.periodo.de}` : `${capitulo.periodo.de}–${capitulo.periodo.ate}`);
 
   return (
     <Dialog
@@ -101,10 +104,8 @@ export function ChapterPanel({
                   <span className="numerals w-6 font-semibold">{capitulo.numero}</span>
                   <span className="flex-1">
                     <span className={atual ? "font-semibold" : "font-medium"}>{capitulo.titulo}</span>
-                    <span className="numerals text-ink-soft">
-                      {" "}
-                      · {capitulo.periodo.de}–{capitulo.periodo.ate}
-                    </span>
+                    <span className="numerals text-ink-soft"> · {periodo(capitulo)}</span>
+                    <span className="text-ink-soft"> · {TASK_TYPE_LABEL[capitulo.tarefa.tipo]}</span>
                   </span>
                   <span className="eyebrow text-ink-soft">{STATUS_LABEL[status]}</span>
                   {!atual && status !== "bloqueado" && (
@@ -121,7 +122,7 @@ export function ChapterPanel({
         <section aria-labelledby="painel-tarefa" className="space-y-3">
           <div className="space-y-1">
             <h3 id="painel-tarefa" className="eyebrow text-ink-soft">
-              Capítulo {aberto.numero} · cenário: {cena.nome}
+              Capítulo {aberto.numero} · {periodo(aberto)} · cenário: {cena.nome} · {EPOCA_LABEL[aberto.epoca]}
             </h3>
             <p className="font-serif text-xl font-medium leading-snug">{aberto.titulo}</p>
             <p className="reading text-base">{aberto.objetivo}</p>
@@ -132,8 +133,8 @@ export function ChapterPanel({
               ? "Tarefa concluída e registros recolhidos. A saída está aberta."
               : concluida
                 ? `Tarefa concluída. ${missingLabel(saida.faltam)} para a saída abrir.`
-                : ordemPendente
-                  ? "Os dois registros da tarefa estão recolhidos. Falta colocá-los em ordem."
+                : respostaPendente
+                  ? pendingSentence(aberto.tarefa.tipo)
                   : "Tarefa pendente."}
           </p>
           <p className="text-sm text-ink-soft" data-regra-da-saida data-registros={`${saida.total - saida.faltam}/${saida.total}`}>
@@ -200,9 +201,9 @@ export function ChapterPanel({
             })}
           </ul>
           <div className="flex flex-wrap gap-2">
-            {ordemPendente && (
-              <button type="button" className={secondaryButton} onClick={onAnswerOrder} data-responder-ordem>
-                Ordenar os registros
+            {respostaPendente && (
+              <button type="button" className={secondaryButton} onClick={onAnswer} data-responder-tarefa={aberto.tarefa.tipo}>
+                {answerLabel(aberto.tarefa.tipo)}
               </button>
             )}
             {saidaAberta && (

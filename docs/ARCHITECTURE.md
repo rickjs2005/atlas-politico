@@ -268,10 +268,10 @@ Um segundo caminho de leitura sobre os mesmos dados ([GAMEPLAY.md](GAMEPLAY.md))
 | O quê | Onde | Regra |
 | --- | --- | --- |
 | Dados históricos | `generated/dados/`, pelo pipeline | O jogo não tem conteúdo editorial. `buildGameContent` recorta, no build, os registros que os capítulos citam, com as fontes resolvidas, a situação da revisão e a marca de ordem em aberto (`findUndeterminedOrder`, a mesma regra da lista do atlas, em `src/lib/domain/order.ts`) |
-| Configuração dos capítulos | `src/lib/game/chapters.ts` e `scenes/` | Um capítulo cita acontecimentos pelo `id`, define a tarefa e aponta um cenário. Todo registro de um capítulo é anterior, sem ambiguidade de data, a todo registro do seguinte. Um teste confere tudo contra a edição |
-| Regras de missão | `src/lib/game/mission.ts` | Funções puras: recolher, cumprir a tarefa, abrir a saída (a tarefa cumprida e todos os registros do capítulo recolhidos), decidir se duas datas dão ordem, avaliar uma resposta |
-| Estado do jogador | `src/lib/game/progress.ts` e `storage.ts` | Capítulos bloqueados, disponíveis e concluídos, com transições previsíveis; um capítulo só conclui com a saída aberta; formato com versão; dado inválido vira começo; sem armazenamento, vale uma cópia em memória, que é da página e atravessa a navegação entre o jogo e a ficha |
-| Desenho do mundo | `src/features/game/draw/` e `engine/` | Canvas 2D, por código. Recebe a cena e o estado e desenha; não conhece regras |
+| Configuração dos capítulos | `src/lib/game/chapters.ts`, `scenes/`, `coverage.ts` e `judicial.ts` | Um capítulo cita acontecimentos pelo `id`, define a tarefa, aponta um cenário e a época da figura. Todo registro de um capítulo é anterior, sem ambiguidade de data e precisão, a todo registro do seguinte; todo acontecimento publicado de cada personagem está em um capítulo dele, ou em uma exclusão justificada (`coverage.ts` gera a matriz de [GAME-COVERAGE.md](GAME-COVERAGE.md)). A ficha judicial relaciona os episódios de processo por identificador. Testes conferem tudo contra a edição |
+| Regras de missão | `src/lib/game/mission.ts` | Funções puras: recolher, cumprir a tarefa, abrir a saída (a tarefa cumprida e todos os registros do capítulo recolhidos), decidir se duas datas dão ordem, montar as opções de documento e de lugar a partir dos registros, avaliar uma resposta |
+| Estado do jogador | `src/lib/game/progress.ts` e `storage.ts` | Capítulos bloqueados, disponíveis e concluídos, com transições previsíveis; um capítulo só conclui com a saída aberta; formato com versão (2) e migração explícita da versão 1; dado inválido vira começo; sem armazenamento, vale uma cópia em memória, que é da página e atravessa a navegação entre o jogo e a ficha |
+| Desenho do mundo | `src/features/game/draw/` e `engine/` | Canvas 2D, por código. Recebe a cena e o estado e desenha; não conhece regras. A cena aponta a arte que a desenha (`arts/`), e o personagem é desenhado na figura da época do capítulo |
 
 ```
 getAtlasData()  ──▶  buildGameContent(dados, personagem)        (build)
@@ -291,7 +291,7 @@ O palco e a prévia do mundo são pacotes carregados à parte, e ficam atrás de
 
 O que é fixo na cena (paredes, piso, parapeitos e objetos parados) é desenhado uma vez, em telas à parte, e copiado a cada quadro; `engine/render.ts` redesenha só o que se move (D-106).
 
-O desenho tem um arquivo por parte, todos em `src/features/game/draw/`: `kit.ts` (tinta, luz e primitivas isométricas), `characters.ts` e `character-*.ts` (os três personagens), `scene.ts` (a montagem), `scene-floor.ts`, `scene-walls.ts`, `scene-exit.ts` (o portal, a porta e a soleira), `scene-record.ts` (o registro, o anel de alcance e o efeito de recolher), `props.ts` e `props-*.ts` (os objetos de cenário). O contrato está em `draw/types.ts`.
+O desenho tem um arquivo por parte, todos em `src/features/game/draw/`: `kit.ts` (tinta, luz e primitivas isométricas), `characters.ts` e `character-*.ts` (os três personagens, os dois jogáveis em três épocas), `scene.ts` (a montagem), `scene-floor.ts`, `scene-walls.ts`, `scene-exit.ts` (o portal, a porta e a soleira), `scene-record.ts` (o registro, o anel de alcance e o efeito de recolher), `props.ts` e `props-*.ts` (os objetos de cenário). As artes de ambiente ficam em `arts/`, uma por arquivo, registradas em `arts/index.ts` (`ARTS`, por `SceneArtId`): cada uma diz o estilo e o caráter da parede, o piso, a porta e a receita de materiais, com os kits compartilhados `wall-kit.ts`, `floor-kit.ts`, `floors.ts`, `exit-kit.ts` e `door-leaves.ts`. Uma cena (`SceneId`) aponta a arte que a desenha; duas cenas podem dividir uma arte com paleta própria (D-112). O contrato está em `draw/types.ts` e em `arts/types.ts`.
 
 ## Espaços reservados
 

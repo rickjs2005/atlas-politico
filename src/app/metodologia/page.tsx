@@ -569,6 +569,24 @@ export default function MethodologyPage() {
                   Tipos: Newsreader e Libre Franklin, sob a SIL Open Font License 1.1, servidos pelo
                   próprio site.
                 </li>
+                <li>Mapa interativo: MapLibre GL JS, sob a licença BSD de 3 cláusulas, servido pelo próprio site.</li>
+              </ul>
+            </div>
+
+            <div className="max-w-[42rem] space-y-2" data-creditos-jogo>
+              <h3 className={h3}>Jogo</h3>
+              <ul className="space-y-1 text-sm text-ink-soft">
+                <li>
+                  Personagens, cenários, objetos e efeitos: desenhados por código neste projeto, em cartum editorial, com
+                  assistência de IA. Nenhuma imagem, modelo ou folha de sprites de terceiros. As figuras dos personagens
+                  mudam de cabelo, barba e roupa conforme a época do capítulo, de forma estilizada; não afirmam a aparência
+                  real em cada data.
+                </li>
+                <li>O Arquivista, que guia o jogo, é um personagem fictício e não retrata ninguém.</li>
+                <li>
+                  Os registros do jogo são os acontecimentos desta edição, com data, lugar e fontes; o jogo não tem conteúdo
+                  editorial próprio nem atribui falas às pessoas retratadas.
+                </li>
               </ul>
             </div>
           </section>

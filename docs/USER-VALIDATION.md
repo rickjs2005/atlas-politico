@@ -1,8 +1,8 @@
 # Validação com pessoas
 
-**Situação: pendente.** Até 9 de outubro de 2026, nenhuma sessão foi feita. Este documento traz o roteiro pronto e as fichas em branco. Os resultados entram aqui só depois de sessões reais, com as palavras de quem participou.
+**Situação: pendente.** Até 10 de outubro de 2026, nenhuma sessão foi feita. Este documento traz o roteiro pronto e as fichas em branco. Os resultados entram aqui só depois de sessões reais, com as palavras de quem participou. A versão de lançamento do jogo acrescentou a tarefa 5 e as perguntas 12 a 15; o lançamento depende destas sessões ([GAME-RELEASE.md](GAME-RELEASE.md)).
 
-O que a validação responde: uma pessoa que nunca viu o atlas consegue, sem ajuda, encontrar um episódio, chegar à fonte, comparar as duas trajetórias e mandar o resultado para alguém? Os testes automáticos de [QA.md](QA.md) mostram que as telas funcionam. Eles não mostram se uma pessoa entende o que vê.
+O que a validação responde: uma pessoa que nunca viu o atlas consegue, sem ajuda, encontrar um episódio, chegar à fonte, comparar as duas trajetórias, mandar o resultado para alguém e jogar um capítulo entendendo o que o jogo mostra? Os testes automáticos de [QA.md](QA.md) mostram que as telas funcionam. Eles não mostram se uma pessoa entende o que vê.
 
 ## Quem convidar
 
@@ -11,14 +11,14 @@ Três pessoas que não participaram do projeto. Se der para escolher, uma que ac
 ## Preparação
 
 1. Gere e sirva a versão de produção: `npm run build` e depois `npm run preview`. O atlas abre em `http://localhost:4311/`.
-2. Faça pelo menos uma das três sessões em um celular de verdade. Com o celular na mesma rede do computador, o endereço é `http://<IP do computador>:4311/`. O Windows pode pedir permissão para o servidor aceitar a conexão. Esse caminho não foi testado na fase 9: anote se funcionou.
+2. Faça pelo menos uma das três sessões em um celular de verdade, e nela faça a tarefa 5 (o jogo) em pé e deitado. Com o celular na mesma rede do computador, o endereço é `http://<IP do computador>:4311/`. O Windows pode pedir permissão para o servidor aceitar a conexão. Esse caminho não foi testado: anote se funcionou. O jogo em celular só foi conferido em emulação; a sessão real é a primeira vez que o toque, a cadência e o tamanho dos botões serão vistos em aparelho de verdade. Anote o modelo do celular e se a cena ficou fluida ou travou.
 3. No celular aberto pelo IP, o navegador não libera a área de transferência para páginas sem conexão segura. O botão de copiar mostra o link em um campo já selecionado, para a pessoa copiar à mão. É o comportamento esperado, e vale observar se a pessoa entende.
 4. Abra a página inicial e entregue o aparelho. Não mostre nada antes.
 5. Tenha esta ficha à mão e anote na hora. Se a pessoa deixar, grave a tela.
 
 ## O que dizer no começo
 
-> Este é um site em desenvolvimento. Quem está sendo testado é o site, e não você. Vou pedir quatro coisas. Faça do jeito que achar natural e vá falando em voz alta o que está pensando. Eu não vou ajudar durante as tarefas, mas no fim respondo o que você quiser saber.
+> Este é um site em desenvolvimento. Quem está sendo testado é o site, e não você. Vou pedir cinco coisas. Faça do jeito que achar natural e vá falando em voz alta o que está pensando. Eu não vou ajudar durante as tarefas, mas no fim respondo o que você quiser saber.
 
 ## Regras para quem aplica
 
@@ -60,6 +60,12 @@ Dizer: "Imagine que você quer mandar para um amigo exatamente o que está vendo
 
 Depois, abra o link que a pessoa produziu em outra aba ou em outro aparelho e veja se a tela é a mesma.
 
+### Tarefa 5: jogar um capítulo
+
+Dizer: "O site tem um jogo. Jogue com a pessoa que você ainda não escolheu nas tarefas anteriores até passar para o segundo capítulo. Depois me diga: o que você precisou fazer para a porta abrir, e o que era aquele lugar?"
+
+Se houver tempo, peça um segundo capítulo com tarefa de documento ou de lugar (capítulo 3 de Lula, capítulo 3 ou 4 de Flávio Bolsonaro, pelo painel **Capítulos e tarefas** não dá para pular; se a pessoa já tem progresso, use o personagem em que ela está).
+
 ## Gabarito para quem aplica
 
 Não leia para o participante. Os dados são os da edição 0.1.1.
@@ -71,6 +77,7 @@ Não leia para o participante. Os dados são os da edição 0.1.1.
 | 2 | Abrir um documento da lista de fontes do registro e dizer algo que esteja no campo "O que sustenta" daquela fonte | A pessoa acha as fontes sem ajuda? Lê "Onde" e "O que sustenta"? Volta ao atlas depois de abrir o documento? Nas fichas do TSE, a página demora e é de outro site: anote a reação |
 | 3 | Chegar a uma tela com as duas pessoas no período de 2019 a 2022. Nesse recorte, o atlas tem 8 registros de Flávio Bolsonaro e 3 de Lula | A leitura esperada é que a quantidade mostra o que o atlas registrou, e não quem fez mais. Anote a frase exata que a pessoa usou para explicar a diferença |
 | 4 | Produzir um link que, aberto em outro lugar, mostra o mesmo período e as mesmas duas pessoas | A pessoa usa o botão de copiar ou a barra de endereço? Os dois valem. Se o link aberto não mostrar o mesmo recorte, anote como defeito |
+| 5 | Chegar ao capítulo 2 do personagem escolhido e dizer, com as próprias palavras, que a porta abriu com todos os registros recolhidos e a tarefa feita, e que o cenário é uma representação (não é onde os fatos aconteceram) | A pessoa acha os registros sozinha? Entende a contagem "Registros: n de total"? Lê o registro ou só fecha? Percebe que a figura e o cenário são representações? Em celular: o direcional e o botão de ação respondem? A cena ficou fluida? Anote a frase exata sobre o que o lugar era |
 
 ## Perguntas do fim
 
@@ -93,6 +100,13 @@ Faça depois das quatro tarefas. Anote a resposta como foi dita.
 7. Você confiaria no que leu? O que fez você confiar ou desconfiar?
 8. O atlas diz que a revisão foi feita com ajuda de inteligência artificial e que a revisão por uma pessoa está pendente. Você viu esse aviso? O que achou?
 9. As duas pessoas pareceram tratadas do mesmo jeito? Por quê?
+
+**Jogo**
+
+12. No jogo, o que você entendeu que o lugar do cenário era? Ele afirma que a pessoa esteve ali?
+13. Se você leu um registro de processo (denúncia, condenação, anulação): o que a ficha dizia que aconteceu, e quando? Você sentiu que o jogo pedia para você julgar alguém?
+14. A figura do personagem muda entre os capítulos. Você reparou? O que entendeu disso?
+15. Em celular: os botões e o direcional foram fáceis de usar? A cena travou em algum momento?
 
 **Geral**
 
@@ -119,8 +133,9 @@ Uma por participante. Não registre nome completo, contato nem posição políti
 | 2. Consultar a fonte | | | | |
 | 3. Comparar em 2019 a 2022 | | | | |
 | 4. Compartilhar | | | | |
+| 5. Jogar um capítulo | | | | |
 
-Respostas às perguntas do fim: (a preencher, numeradas de 1 a 11)
+Respostas às perguntas do fim: (a preencher, numeradas de 1 a 15)
 
 ### Participante 2
 
@@ -138,8 +153,9 @@ Respostas às perguntas do fim: (a preencher, numeradas de 1 a 11)
 | 2. Consultar a fonte | | | | |
 | 3. Comparar em 2019 a 2022 | | | | |
 | 4. Compartilhar | | | | |
+| 5. Jogar um capítulo | | | | |
 
-Respostas às perguntas do fim: (a preencher, numeradas de 1 a 11)
+Respostas às perguntas do fim: (a preencher, numeradas de 1 a 15)
 
 ### Participante 3
 
@@ -157,8 +173,9 @@ Respostas às perguntas do fim: (a preencher, numeradas de 1 a 11)
 | 2. Consultar a fonte | | | | |
 | 3. Comparar em 2019 a 2022 | | | | |
 | 4. Compartilhar | | | | |
+| 5. Jogar um capítulo | | | | |
 
-Respostas às perguntas do fim: (a preencher, numeradas de 1 a 11)
+Respostas às perguntas do fim: (a preencher, numeradas de 1 a 15)
 
 ## Depois das sessões
 

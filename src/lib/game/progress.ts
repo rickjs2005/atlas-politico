@@ -8,11 +8,11 @@
 // Um capítulo só é concluído com a saída aberta: a tarefa cumprida e todos
 // os registros do capítulo recolhidos (`isExitOpen`).
 //
-// O formato salvo tem versão. `parseProgress` aceita só o que está certo e
-// devolve `null` para qualquer outra coisa: dado inválido vira começo, e não
-// erro na tela.
+// O formato salvo tem versão. `parseProgress` aceita a versão atual e migra
+// a anterior; devolve `null` para qualquer outra coisa: dado inválido vira
+// começo, e não erro na tela.
 
-import { hasRequired, isExitOpen } from "./mission";
+import { hasAnswer, hasRequired, isExitOpen } from "./mission";
 import { PROGRESS_VERSION, type ChapterProgress, type ChapterSpec, type ChapterStatus, type PersonagemSlug, type PlayerProgress, type TaskState } from "./types";
 
 const STATUSES: readonly ChapterStatus[] = ["bloqueado", "disponivel", "concluido"];
@@ -22,7 +22,7 @@ export function initialProgress(personagem: PersonagemSlug, capitulos: readonly 
   capitulos.forEach((capitulo, indice) => {
     entradas[capitulo.id] = {
       status: indice === 0 ? "disponivel" : "bloqueado",
-      tarefa: { recolhidos: [], ordemConfirmada: false, tentativas: 0 },
+      tarefa: { recolhidos: [], confirmada: false, tentativas: 0 },
     };
   });
   return { versao: PROGRESS_VERSION, personagem, capitulos: entradas };
@@ -33,7 +33,7 @@ export function chapterStatus(progresso: PlayerProgress, capituloId: string): Ch
 }
 
 export function taskStateOf(progresso: PlayerProgress, capituloId: string): TaskState {
-  return progresso.capitulos[capituloId]?.tarefa ?? { recolhidos: [], ordemConfirmada: false, tentativas: 0 };
+  return progresso.capitulos[capituloId]?.tarefa ?? { recolhidos: [], confirmada: false, tentativas: 0 };
 }
 
 /** Troca o estado da tarefa de um capítulo. Capítulo bloqueado não muda. */
@@ -90,25 +90,37 @@ function isRecord(valor: unknown): valor is Record<string, unknown> {
   return typeof valor === "object" && valor !== null && !Array.isArray(valor);
 }
 
-function parseTask(valor: unknown): TaskState | null {
+/**
+ * Lê o estado de uma tarefa. A versão 1 chamava a confirmação de
+ * `ordemConfirmada`; a 2 chama de `confirmada`. Só um dos dois nomes é
+ * aceito, o da versão lida.
+ */
+function parseTask(valor: unknown, versao: 1 | 2): TaskState | null {
   if (!isRecord(valor)) return null;
-  const { recolhidos, ordemConfirmada, tentativas } = valor;
+  const { recolhidos, tentativas } = valor;
+  const confirmada = versao === 1 ? valor.ordemConfirmada : valor.confirmada;
   if (!Array.isArray(recolhidos) || !recolhidos.every((item) => typeof item === "string")) return null;
-  if (typeof ordemConfirmada !== "boolean") return null;
+  if (typeof confirmada !== "boolean") return null;
   if (typeof tentativas !== "number" || !Number.isInteger(tentativas) || tentativas < 0) return null;
-  return { recolhidos: [...new Set(recolhidos as string[])], ordemConfirmada, tentativas };
+  return { recolhidos: [...new Set(recolhidos as string[])], confirmada, tentativas };
 }
+
+/** As versões do formato que a leitura entende: a atual e a que ela migra. */
+export const READABLE_VERSIONS: readonly number[] = [1, PROGRESS_VERSION];
 
 /**
  * Lê um progresso salvo. Devolve `null` quando a versão, o personagem ou a
- * forma não conferem. Capítulos que a edição não tem mais são descartados;
+ * forma não conferem. A versão 1 é migrada ao ler: muda só o nome do campo
+ * da confirmação. Capítulos que a edição não tem mais são descartados;
  * capítulos novos entram bloqueados (ou disponíveis, se forem o primeiro
  * aberto), e a regra de progressão é reaplicada para não haver dois
- * capítulos disponíveis nem um disponível depois de um bloqueado.
+ * capítulos disponíveis nem um disponível depois de um bloqueado. Quem
+ * terminou os capítulos de uma edição anterior recebe o primeiro capítulo
+ * novo como disponível.
  *
  * Um capítulo pode mudar entre uma edição e outra. Os registros que ele não
- * cita mais saem dos recolhidos, e uma ordem confirmada só vale se a tarefa
- * ainda for de ordem e os dois registros dela estiverem recolhidos.
+ * cita mais saem dos recolhidos, e uma confirmação só vale se a tarefa
+ * ainda pede resposta e os registros dela estão recolhidos.
  *
  * A regra de saída também vale para o que foi salvo: um capítulo marcado
  * como concluído sem todos os registros recolhidos (guardado quando a saída
@@ -117,7 +129,9 @@ function parseTask(valor: unknown): TaskState | null {
  */
 export function parseProgress(valor: unknown, personagem: PersonagemSlug, capitulos: readonly ChapterSpec[]): PlayerProgress | null {
   if (!isRecord(valor)) return null;
-  if (valor.versao !== PROGRESS_VERSION || valor.personagem !== personagem) return null;
+  if (valor.versao !== 1 && valor.versao !== PROGRESS_VERSION) return null;
+  const versao = valor.versao as 1 | 2;
+  if (valor.personagem !== personagem) return null;
   if (!isRecord(valor.capitulos)) return null;
 
   const base = initialProgress(personagem, capitulos);
@@ -126,11 +140,11 @@ export function parseProgress(valor: unknown, personagem: PersonagemSlug, capitu
     const entrada = valor.capitulos[capitulo.id];
     if (entrada === undefined) continue;
     if (!isRecord(entrada)) return null;
-    const lida = parseTask(entrada.tarefa);
+    const lida = parseTask(entrada.tarefa, versao);
     if (lida === null || !STATUSES.includes(entrada.status as ChapterStatus)) return null;
     const recolhidos = lida.recolhidos.filter((id) => capitulo.eventIds.includes(id));
     const tarefa: TaskState = { ...lida, recolhidos };
-    tarefa.ordemConfirmada = lida.ordemConfirmada && capitulo.tarefa.tipo === "ordem" && hasRequired(capitulo.tarefa, tarefa);
+    tarefa.confirmada = lida.confirmada && hasAnswer(capitulo.tarefa) && hasRequired(capitulo.tarefa, tarefa);
     lidos[capitulo.id] = { status: entrada.status as ChapterStatus, tarefa };
   }
 

@@ -1,7 +1,7 @@
 // O recorte dos dados que a página do jogo entrega ao navegador: o
 // personagem, os capítulos e só os registros que eles citam, já com título,
-// data, resumo, fontes resolvidas e a situação da revisão. Função pura sobre
-// `AtlasData`.
+// data, resumo, contexto, lugar, fontes resolvidas e a situação da revisão.
+// Função pura sobre `AtlasData`.
 
 import { findEventById, findPersonBySlug } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
@@ -10,13 +10,24 @@ import { findUndeterminedOrder } from "@/lib/domain/order";
 import type { Editorial } from "@/lib/domain/types";
 
 import { chaptersOf } from "./chapters";
-import type { GameContent, GameRecord, PersonagemSlug } from "./types";
+import type { GameContent, GameLocation, GameRecord, PersonagemSlug } from "./types";
 
 /** A situação da revisão sem as observações internas, que a nota do registro não mostra. */
 function reviewOf(editorial: Editorial): Editorial {
   if (editorial.estado !== "revisado") return { estado: editorial.estado };
   const { tipo, revisadoPor, revisadoEm } = editorial.revisao;
   return { estado: "revisado", revisao: { tipo, revisadoPor, revisadoEm } };
+}
+
+/** Os nomes dos lugares documentados, na ordem do registro; lugar que a edição não tem fica de fora. */
+function locationOf(data: AtlasData, localizacao: { tipo: "lugares"; lugarIds: readonly string[] } | { tipo: "nacional" } | { tipo: "desconhecida" }): GameLocation {
+  if (localizacao.tipo !== "lugares") return { tipo: localizacao.tipo };
+  const lugares = localizacao.lugarIds.flatMap((id) => {
+    const posicao = lookup(data.indices.lugares.porId, id);
+    const lugar = posicao === undefined ? undefined : data.conjunto.lugares[posicao];
+    return lugar === undefined ? [] : [lugar.nome];
+  });
+  return lugares.length === 0 ? { tipo: "desconhecida" } : { tipo: "lugares", lugares };
 }
 
 export function buildGameContent(data: AtlasData, personagem: PersonagemSlug): GameContent | null {
@@ -37,10 +48,12 @@ export function buildGameContent(data: AtlasData, personagem: PersonagemSlug): G
         data: acontecimento.data,
         categoria: acontecimento.categoria,
         resumo: acontecimento.resumo,
+        contexto: acontecimento.contexto,
+        localizacao: locationOf(data, acontecimento.localizacao),
         fontes: acontecimento.fontes.flatMap((citacao) => {
           const posicao = lookup(data.indices.fontes.porId, citacao.fonteId);
           const fonte = posicao === undefined ? undefined : data.conjunto.fontes[posicao];
-          return fonte === undefined ? [] : [{ titulo: fonte.titulo, autoria: fonte.autoria, url: fonte.url }];
+          return fonte === undefined ? [] : [{ id: fonte.id, titulo: fonte.titulo, autoria: fonte.autoria, url: fonte.url, evidencia: citacao.evidencia }];
         }),
         editorial: reviewOf(acontecimento.editorial),
         ordemEmAberto: false,

@@ -1,19 +1,22 @@
 // Os capítulos do jogo contra o conteúdo real da edição: todo acontecimento
-// citado existe e é do personagem, as tarefas de ordem têm datas que decidem,
-// as cenas batem com os capítulos e tudo é alcançável a pé.
+// citado existe e é do personagem, todo acontecimento do personagem está em
+// um capítulo dele, as tarefas têm o que precisam (datas que decidem, opções
+// que vêm dos registros), as cenas batem com os capítulos e tudo é alcançável
+// a pé.
 
 import { describe, expect, it } from "vitest";
 
 import { readSources, resolvePaths } from "@/lib/content/sources";
+import { lookup } from "@/lib/data/lookup";
 import { findEventById, findPersonBySlug } from "@/lib/data/queries";
 import { analyzeDate, compareDates, formatDate, yearOf } from "@/lib/domain/dates";
 import { findUndeterminedOrder } from "@/lib/domain/order";
 import { PROFILES } from "@/lib/domain/profiles";
 import { CHAPTERS, chaptersOf, findChapter } from "@/lib/game/chapters";
 import { buildGameContent, playableChapters } from "@/lib/game/content";
-import { correctOrder, datesDecideOrder } from "@/lib/game/mission";
+import { DISTRACTORS, correctOrder, datesDecideOrder, placeLabel, placeOptions, sourceOptions } from "@/lib/game/mission";
 import { SCENES, getScene } from "@/lib/game/scenes";
-import type { ChapterSpec, GameContent, SceneId, SceneSpec } from "@/lib/game/types";
+import type { ChapterSpec, GameContent, SceneId, SceneSpec, TaskType } from "@/lib/game/types";
 import { CELL, cellAt, isBlocked, neighbours, reachable, readMarkers } from "@/lib/game/world/grid";
 import { initialPlayer } from "@/lib/game/world/movement";
 import { buildAtlasData } from "@/lib/publication/build";
@@ -41,10 +44,10 @@ function cellsOf(scene: SceneSpec, caractere: string): string[] {
 }
 
 describe("capítulos da edição", () => {
-  it("cada personagem tem pelo menos dois capítulos, numerados de 1 em sequência", () => {
+  it("cada personagem tem pelo menos cinco capítulos, numerados de 1 em sequência", () => {
     for (const slug of SLUGS) {
       const capitulos = chaptersOf(slug);
-      expect(capitulos.length, slug).toBeGreaterThanOrEqual(2);
+      expect(capitulos.length, slug).toBeGreaterThanOrEqual(5);
       expect(capitulos.map((capitulo) => capitulo.numero), slug).toEqual(capitulos.map((_, indice) => indice + 1));
       for (const capitulo of capitulos) expect(capitulo.personagem).toBe(slug);
     }
@@ -74,6 +77,15 @@ describe("capítulos da edição", () => {
     }
   });
 
+  it("todo acontecimento publicado de cada personagem está em um capítulo dele: a cobertura é completa", () => {
+    for (const slug of SLUGS) {
+      const pessoa = findPersonBySlug(data, slug)!;
+      const publicados = data.conjunto.acontecimentos.filter((item) => item.pessoaIds.includes(pessoa.id)).map((item) => item.id);
+      const emCapitulos = chaptersOf(slug).flatMap((capitulo) => capitulo.eventIds);
+      expect([...emCapitulos].sort(), slug).toEqual([...publicados].sort());
+    }
+  });
+
   it("o período do capítulo é o dos anos dos seus acontecimentos", () => {
     for (const capitulo of CHAPTERS) {
       const anos = capitulo.eventIds.map((id) => yearOf(evento(id).data));
@@ -84,14 +96,17 @@ describe("capítulos da edição", () => {
 
   it("passar de um capítulo ao seguinte nunca sugere uma ordem que as datas não decidem", () => {
     // Todo registro de um capítulo é anterior, sem ambiguidade, a todo registro
-    // do capítulo seguinte. Um par de mesmo ano, com um deles só no ano, fica
-    // no mesmo capítulo.
+    // do capítulo seguinte: pela data e pela precisão, e não pelo ano. Dois
+    // capítulos podem dividir um ano quando as datas, com dia, decidem; um par
+    // de mesmo ano com um deles só no ano fica no mesmo capítulo.
+    let fronteirasNoMesmoAno = 0;
     for (const slug of SLUGS) {
       const capitulos = chaptersOf(slug);
       for (let i = 1; i < capitulos.length; i += 1) {
         const anterior = capitulos[i - 1]!;
         const seguinte = capitulos[i]!;
-        expect(seguinte.periodo.de, `${slug} capítulo ${i + 1}`).toBeGreaterThan(anterior.periodo.ate);
+        expect(seguinte.periodo.de, `${slug} capítulo ${i + 1}`).toBeGreaterThanOrEqual(anterior.periodo.ate);
+        if (seguinte.periodo.de === anterior.periodo.ate) fronteirasNoMesmoAno += 1;
         for (const antes of anterior.eventIds) {
           for (const depois of seguinte.eventIds) {
             const onde = `${antes} (capítulo ${anterior.numero}) e ${depois} (capítulo ${seguinte.numero})`;
@@ -101,11 +116,21 @@ describe("capítulos da edição", () => {
         }
       }
     }
+    // Na edição atual a fronteira dentro de um ano existe: a comissão de fevereiro de 2025 e a indicação de dezembro de 2025.
+    expect(fronteirasNoMesmoAno).toBeGreaterThan(0);
   });
 
-  it("nenhum acontecimento aparece em dois capítulos", () => {
-    const todos = CHAPTERS.flatMap((capitulo) => capitulo.eventIds);
-    expect(new Set(todos).size).toBe(todos.length);
+  it("nenhum acontecimento aparece em dois capítulos do mesmo personagem; o compartilhado aparece uma vez para cada", () => {
+    for (const slug of SLUGS) {
+      const todos = chaptersOf(slug).flatMap((capitulo) => capitulo.eventIds);
+      expect(new Set(todos).size, slug).toBe(todos.length);
+    }
+    const compartilhados = data.conjunto.acontecimentos.filter((item) => item.pessoaIds.length > 1).map((item) => item.id);
+    expect(compartilhados).toContain("eleicao-2026-primeiro-turno");
+    for (const id of compartilhados) {
+      const onde = CHAPTERS.filter((capitulo) => capitulo.eventIds.includes(id));
+      expect(onde.map((capitulo) => capitulo.personagem).sort(), id).toEqual([...SLUGS].sort());
+    }
   });
 
   it("a tarefa de registro cita um acontecimento do capítulo", () => {
@@ -130,10 +155,30 @@ describe("capítulos da edição", () => {
     }
   });
 
-  it("os dois tipos de tarefa aparecem na trajetória de cada personagem", () => {
+  it("as tarefas de documento e de lugar citam um acontecimento do capítulo", () => {
+    for (const capitulo of CHAPTERS) {
+      if (capitulo.tarefa.tipo !== "fonte" && capitulo.tarefa.tipo !== "lugar") continue;
+      expect(capitulo.eventIds, capitulo.id).toContain(capitulo.tarefa.eventId);
+    }
+  });
+
+  it("cada personagem tem pelo menos três tipos de tarefa, distribuídos, e os quatro tipos aparecem no jogo", () => {
+    const todos = new Set<TaskType>();
     for (const slug of SLUGS) {
-      const tipos = new Set(chaptersOf(slug).map((capitulo) => capitulo.tarefa.tipo));
-      expect([...tipos].sort(), slug).toEqual(["ordem", "registro"]);
+      const tipos = chaptersOf(slug).map((capitulo) => capitulo.tarefa.tipo);
+      expect(new Set(tipos).size, slug).toBeGreaterThanOrEqual(3);
+      // Distribuídos: nenhum tipo em dois capítulos seguidos.
+      for (let i = 1; i < tipos.length; i += 1) expect(tipos[i], `${slug} capítulos ${i} e ${i + 1}`).not.toBe(tipos[i - 1]);
+      tipos.forEach((tipo) => todos.add(tipo));
+    }
+    expect([...todos].sort()).toEqual(["fonte", "lugar", "ordem", "registro"]);
+  });
+
+  it("cada capítulo tem a época da figura, e as épocas seguem a ordem dos capítulos", () => {
+    const ordem = { inicio: 0, meio: 1, atual: 2 };
+    for (const slug of SLUGS) {
+      const epocas = chaptersOf(slug).map((capitulo) => ordem[capitulo.epoca]);
+      for (let i = 1; i < epocas.length; i += 1) expect(epocas[i]!, `${slug} capítulo ${i + 1}`).toBeGreaterThanOrEqual(epocas[i - 1]!);
     }
   });
 });
@@ -144,6 +189,7 @@ describe("cenas dos capítulos", () => {
   it("cada cena é usada por um capítulo, e cada capítulo tem a sua", () => {
     const usadas = new Set(CHAPTERS.map((capitulo) => capitulo.cena));
     expect([...usadas].sort()).toEqual((Object.keys(SCENES) as SceneId[]).sort());
+    expect(usadas.size).toBe(CHAPTERS.length);
     for (const capitulo of CHAPTERS) expect(getScene(capitulo.cena).id).toBe(capitulo.cena);
   });
 
@@ -233,6 +279,14 @@ describe("cenas dos capítulos", () => {
       expect(reachable(scene, scene.spawn, true).has(chave(scene.saida)), scene.id).toBe(true);
     }
   });
+
+  it("nenhum registro fica na célula vizinha da saída, onde a porta o esconderia", () => {
+    for (const scene of cenas) {
+      for (const registro of scene.registros) {
+        expect(Math.abs(registro.x - scene.saida.x) + Math.abs(registro.y - scene.saida.y), `${scene.id} registro ${chave(registro)}`).toBeGreaterThan(1);
+      }
+    }
+  });
 });
 
 describe("conteúdo do jogo", () => {
@@ -248,18 +302,24 @@ describe("conteúdo do jogo", () => {
     }
   });
 
-  it("todo registro tem título, data válida, resumo e fontes resolvidas, com endereço seguro", () => {
+  it("todo registro tem título, data válida, resumo, contexto, lugar e fontes resolvidas, com endereço seguro e o que cada uma sustenta", () => {
     for (const [slug, content] of conteudos) {
       for (const registro of Object.values(content!.registros)) {
         const onde = `${slug} ${registro.id}`;
         expect(registro.slug.length, onde).toBeGreaterThan(0);
         expect(registro.titulo.length, onde).toBeGreaterThan(0);
         expect(registro.resumo.length, onde).toBeGreaterThan(0);
+        expect(registro.contexto.length, onde).toBeGreaterThan(0);
         expect(analyzeDate(registro.data).ok, onde).toBe(true);
+        expect(["lugares", "nacional", "desconhecida"], onde).toContain(registro.localizacao.tipo);
+        if (registro.localizacao.tipo === "lugares") expect(registro.localizacao.lugares.length, onde).toBeGreaterThan(0);
+        expect(placeLabel(registro).length, onde).toBeGreaterThan(0);
         expect(registro.fontes.length, onde).toBeGreaterThan(0);
         for (const fonte of registro.fontes) {
+          expect(fonte.id.length, onde).toBeGreaterThan(0);
           expect(fonte.titulo.length, onde).toBeGreaterThan(0);
           expect(fonte.autoria.length, onde).toBeGreaterThan(0);
+          expect(fonte.evidencia.length, onde).toBeGreaterThan(0);
           expect(fonte.url, onde).toMatch(/^https:\/\//);
         }
       }
@@ -276,15 +336,21 @@ describe("conteúdo do jogo", () => {
           data: acontecimento.data,
           categoria: acontecimento.categoria,
           resumo: acontecimento.resumo,
+          contexto: acontecimento.contexto,
         });
-        // As fontes são as do acontecimento, uma a uma e na ordem: é o que diz
-        // qual documento sustenta qual registro.
+        // As fontes são as do acontecimento, uma a uma e na ordem, com o que
+        // cada citação sustenta: é o que diz qual documento sustenta qual registro.
         expect(registro.fontes).toEqual(
           acontecimento.fontes.map((citacao) => {
             const fonte = data.conjunto.fontes.find((item) => item.id === citacao.fonteId)!;
-            return { titulo: fonte.titulo, autoria: fonte.autoria, url: fonte.url };
+            return { id: fonte.id, titulo: fonte.titulo, autoria: fonte.autoria, url: fonte.url, evidencia: citacao.evidencia };
           }),
         );
+        // O lugar é o documentado, com os nomes da edição.
+        if (acontecimento.localizacao.tipo === "lugares") {
+          const nomes = acontecimento.localizacao.lugarIds.map((id) => data.conjunto.lugares[lookup(data.indices.lugares.porId, id)!]!.nome);
+          expect(registro.localizacao).toEqual({ tipo: "lugares", lugares: nomes });
+        } else expect(registro.localizacao).toEqual({ tipo: acontecimento.localizacao.tipo });
       }
     }
   });
@@ -294,7 +360,43 @@ describe("conteúdo do jogo", () => {
       for (const capitulo of content!.capitulos) {
         if (capitulo.tarefa.tipo !== "ordem") continue;
         const [antes, depois] = correctOrder(capitulo.tarefa, content!.registros);
-        expect(yearOf(content!.registros[antes]!.data), capitulo.id).toBeLessThan(yearOf(content!.registros[depois]!.data));
+        expect(compareDates(content!.registros[antes]!.data, content!.registros[depois]!.data), capitulo.id).toBeLessThan(0);
+      }
+    }
+  });
+
+  it("a tarefa de documento tem a opção certa e pelo menos duas erradas, todas documentos de registros do capítulo", () => {
+    for (const [, content] of conteudos) {
+      for (const capitulo of content!.capitulos) {
+        if (capitulo.tarefa.tipo !== "fonte") continue;
+        const pedido = content!.registros[capitulo.tarefa.eventId]!;
+        const opcoes = sourceOptions(capitulo, content!.registros, capitulo.tarefa.eventId);
+        expect(opcoes.length, capitulo.id).toBe(1 + DISTRACTORS);
+        const citadas = new Set(pedido.fontes.map((fonte) => fonte.id));
+        const certas = opcoes.filter((opcao) => citadas.has(opcao.id));
+        expect(certas.length, capitulo.id).toBe(1);
+        expect(certas[0]!.id, capitulo.id).toBe(pedido.fontes[0]!.id);
+        const doCapitulo = new Set(capitulo.eventIds.flatMap((id) => content!.registros[id]!.fontes.map((fonte) => fonte.id)));
+        for (const opcao of opcoes) {
+          expect(doCapitulo.has(opcao.id), `${capitulo.id}: ${opcao.id}`).toBe(true);
+          expect(opcao.rotulo.length, capitulo.id).toBeGreaterThan(0);
+          expect(opcao.detalhe.length, capitulo.id).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  it("a tarefa de lugar tem a opção certa e pelo menos duas erradas, todas lugares documentados na trajetória", () => {
+    for (const [, content] of conteudos) {
+      for (const capitulo of content!.capitulos) {
+        if (capitulo.tarefa.tipo !== "lugar") continue;
+        const pedido = content!.registros[capitulo.tarefa.eventId]!;
+        expect(pedido.localizacao.tipo, capitulo.id).toBe("lugares");
+        const opcoes = placeOptions(content!.capitulos, content!.registros, capitulo.tarefa.eventId);
+        expect(opcoes.length, capitulo.id).toBe(1 + DISTRACTORS);
+        expect(opcoes.filter((opcao) => opcao.id === placeLabel(pedido)).length, capitulo.id).toBe(1);
+        const daTrajetoria = new Set(Object.values(content!.registros).map(placeLabel));
+        for (const opcao of opcoes) expect(daTrajetoria.has(opcao.id), `${capitulo.id}: ${opcao.id}`).toBe(true);
       }
     }
   });
@@ -344,6 +446,16 @@ describe("conteúdo do jogo", () => {
     }
   });
 
+  it("o registro do primeiro turno de 2026 fala em apuração parcial, e nenhum texto do jogo o chama de resultado definitivo", () => {
+    const registro = conteudos[0]![1]!.registros["eleicao-2026-primeiro-turno"] ?? conteudos[1]![1]!.registros["eleicao-2026-primeiro-turno"];
+    expect(registro).toBeDefined();
+    expect(registro!.resumo).toMatch(/99,99% das urnas apuradas/);
+    for (const capitulo of CHAPTERS.filter((item) => item.eventIds.includes("eleicao-2026-primeiro-turno"))) {
+      expect(capitulo.motivo).toContain("apuração parcial");
+      expect(`${capitulo.titulo} ${capitulo.motivo} ${capitulo.objetivo}`).not.toMatch(/resultado (final|definitivo)|totalização final|segundo turno (venc|ganh)/i);
+    }
+  });
+
   it("playableChapters devolve todos os capítulos", () => {
     for (const [slug, content] of conteudos) expect(playableChapters(content!), slug).toEqual(content!.capitulos);
   });
@@ -379,6 +491,12 @@ describe("textos dos capítulos", () => {
     }
   });
 
+  it("nenhum texto decide culpa nem equipara denúncia, condenação, anulação e absolvição", () => {
+    for (const { onde, texto } of textos) {
+      expect(texto, onde).not.toMatch(/\b(culpado|culpada|inocente|absolvido|absolvida|criminoso|criminosa|corrupto|corrupta)\b/i);
+    }
+  });
+
   it("os anos, as datas e as contagens escritos nos textos são os dos registros do capítulo", () => {
     // Os textos são escritos à mão. Se uma data do conteúdo for corrigida, o
     // texto do capítulo não pode continuar afirmando a antiga.
@@ -411,10 +529,13 @@ describe("textos dos capítulos", () => {
     }
   });
 
-  it("o objetivo fala com o jogador e termina em ponto", () => {
+  it("o objetivo fala com o jogador, diz a tarefa e termina em ponto", () => {
     for (const capitulo of CHAPTERS) {
       expect(capitulo.objetivo, capitulo.id).toMatch(/^(Encontre|Recolha)\b/);
       expect(capitulo.objetivo, capitulo.id).toMatch(/\.$/);
+      if (capitulo.tarefa.tipo === "ordem") expect(capitulo.objetivo, capitulo.id).toMatch(/em ordem/);
+      if (capitulo.tarefa.tipo === "fonte") expect(capitulo.objetivo, capitulo.id).toMatch(/documento/);
+      if (capitulo.tarefa.tipo === "lugar") expect(capitulo.objetivo, capitulo.id).toMatch(/lugar/);
     }
   });
 });

@@ -4,7 +4,7 @@ Registro dos testes da fase 9, feitos em 9 de outubro de 2026: ambiente, regras 
 
 A conferência foi feita por uma IA (Claude, modelo da Anthropic), que rodou os comandos, escreveu os testes novos e olhou as capturas. Nenhuma pessoa usou o atlas nesta conferência. A validação com pessoas é outra etapa, e está pendente: [USER-VALIDATION.md](USER-VALIDATION.md).
 
-Depois desta fase entrou a primeira etapa do jogo, com testes próprios. Os números abaixo são os de 9 de outubro, sem o jogo. As jornadas do jogo, os checks de 10 de outubro e o que ficou sem verificar estão em [STATUS.md](STATUS.md), seção Jogo, etapa 1, e em [GAMEPLAY.md](GAMEPLAY.md), seção Verificação.
+Depois desta fase entrou o jogo, com testes próprios, em duas entregas: a etapa 1 e a versão de lançamento. Os números abaixo são os de 9 de outubro, sem o jogo. As jornadas do jogo, os checks de 10 de outubro e o que ficou sem verificar estão em [STATUS.md](STATUS.md), seções Jogo, versão de lançamento e Jogo, etapa 1, e em [GAMEPLAY.md](GAMEPLAY.md), seção Verificação.
 
 ## Resultado
 

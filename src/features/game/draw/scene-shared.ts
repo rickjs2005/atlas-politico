@@ -3,7 +3,7 @@
 // vez por cena.
 
 import { SCENES } from "@/lib/game/scenes";
-import type { ExitSide, SceneId, ScenePalette } from "@/lib/game/types";
+import type { ExitSide, SceneId } from "@/lib/game/types";
 import { TILE_H, TILE_W } from "@/lib/game/world/iso";
 
 import { INK, tone } from "./kit";
@@ -152,12 +152,5 @@ export function exitOf(cena: SceneId): { x: number; y: number; lado: ExitSide } 
   return factsOf(cena).saida;
 }
 
-export const SCENE_INDEX: Record<SceneId, number> = { sindicato: 0, constituinte: 1, alerj: 2, senado: 3 };
-
-const porPaleta = new Map<ScenePalette, SceneId>();
-
-/** A cena de uma paleta, para as funções que não recebem a célula. */
-export function sceneOfPalette(paleta: ScenePalette): SceneId | null {
-  if (porPaleta.size === 0) for (const scene of Object.values(SCENES)) porPaleta.set(scene.paleta, scene.id);
-  return porPaleta.get(paleta) ?? null;
-}
+/** A posição de cada cena no registro: entra na chave do cache das bordas de tapete. */
+export const SCENE_INDEX: Record<SceneId, number> = Object.fromEntries((Object.keys(SCENES) as SceneId[]).map((id, indice) => [id, indice])) as Record<SceneId, number>;

@@ -1,10 +1,13 @@
-// Progresso do jogador: os três estados de capítulo, as transições e a
-// leitura tolerante do formato salvo. Um capítulo só é concluído com a saída
-// aberta: a tarefa cumprida e todos os registros do capítulo recolhidos.
+// Progresso do jogador: os três estados de capítulo, as transições, a leitura
+// tolerante do formato salvo e a migração da versão 1. Um capítulo só é
+// concluído com a saída aberta: a tarefa cumprida e todos os registros do
+// capítulo recolhidos.
 
 import { describe, expect, it } from "vitest";
 
+import { requiredRecords } from "@/lib/game/mission";
 import {
+  READABLE_VERSIONS,
   chapterStatus,
   completeChapter,
   countCompleted,
@@ -25,32 +28,34 @@ const capitulo = (numero: number, tarefa: TaskSpec, outros: string[] = []): Chap
   periodo: { de: 1970 + numero, ate: 1970 + numero },
   motivo: "Fixture dos testes.",
   objetivo: "Fixture dos testes.",
-  eventIds: [...(tarefa.tipo === "registro" ? [tarefa.eventId] : tarefa.eventIds), ...outros],
+  eventIds: [...requiredRecords(tarefa), ...outros],
   tarefa,
   cena: "sindicato",
+  epoca: "inicio",
 });
 
-// Três capítulos: registro, ordem, registro. Os dois primeiros têm um
-// registro a mais, que a tarefa não pede e a saída exige.
+// Quatro capítulos: registro, ordem, documento, registro. Os três primeiros
+// têm um registro a mais, que a tarefa não pede e a saída exige.
 const CAPITULOS: readonly ChapterSpec[] = [
   capitulo(1, { tipo: "registro", eventId: "a" }, ["x"]),
   capitulo(2, { tipo: "ordem", eventIds: ["b", "c"] }, ["y"]),
-  capitulo(3, { tipo: "registro", eventId: "d" }),
+  capitulo(3, { tipo: "fonte", eventId: "e" }, ["z"]),
+  capitulo(4, { tipo: "registro", eventId: "d" }),
 ];
-const [UM, DOIS, TRES] = CAPITULOS as [ChapterSpec, ChapterSpec, ChapterSpec];
+const [UM, DOIS, TRES, QUATRO] = CAPITULOS as [ChapterSpec, ChapterSpec, ChapterSpec, ChapterSpec];
 
-const VAZIA: TaskState = { recolhidos: [], ordemConfirmada: false, tentativas: 0 };
+const VAZIA: TaskState = { recolhidos: [], confirmada: false, tentativas: 0 };
 
 /** A tarefa cumprida só com os registros que ela pede: se o capítulo tem outros, a saída continua fechada. */
 function soATarefa(spec: ChapterSpec): TaskState {
-  if (spec.tarefa.tipo === "registro") return { recolhidos: [spec.tarefa.eventId], ordemConfirmada: false, tentativas: 0 };
-  return { recolhidos: [...spec.tarefa.eventIds], ordemConfirmada: true, tentativas: 1 };
+  const comResposta = spec.tarefa.tipo !== "registro";
+  return { recolhidos: [...requiredRecords(spec.tarefa)], confirmada: comResposta, tentativas: comResposta ? 1 : 0 };
 }
 
 /** Um estado que abre a saída do capítulo: a tarefa cumprida e todos os registros recolhidos. */
 function feita(spec: ChapterSpec): TaskState {
-  const deOrdem = spec.tarefa.tipo === "ordem";
-  return { recolhidos: [...spec.eventIds], ordemConfirmada: deOrdem, tentativas: deOrdem ? 1 : 0 };
+  const comResposta = spec.tarefa.tipo !== "registro";
+  return { recolhidos: [...spec.eventIds], confirmada: comResposta, tentativas: comResposta ? 1 : 0 };
 }
 
 /** Recolhe tudo, cumpre a tarefa e atravessa a saída do capítulo. */
@@ -68,7 +73,7 @@ describe("início da trajetória", () => {
     const inicial = initialProgress("lula", CAPITULOS);
     expect(inicial.versao).toBe(PROGRESS_VERSION);
     expect(inicial.personagem).toBe("lula");
-    expect(statuses(inicial)).toEqual(["disponivel", "bloqueado", "bloqueado"]);
+    expect(statuses(inicial)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
     for (const spec of CAPITULOS) expect(taskStateOf(inicial, spec.id)).toEqual(VAZIA);
   });
 
@@ -89,7 +94,7 @@ describe("início da trajetória", () => {
 
 describe("estado da tarefa", () => {
   const inicial = initialProgress("lula", CAPITULOS);
-  const umRecolhido: TaskState = { recolhidos: ["a"], ordemConfirmada: false, tentativas: 0 };
+  const umRecolhido: TaskState = { recolhidos: ["a"], confirmada: false, tentativas: 0 };
 
   it("troca a tarefa de um capítulo disponível sem alterar o progresso recebido", () => {
     const depois = withTaskState(inicial, UM.id, umRecolhido);
@@ -99,7 +104,7 @@ describe("estado da tarefa", () => {
   });
 
   it("capítulo bloqueado não muda", () => {
-    expect(withTaskState(inicial, DOIS.id, { recolhidos: ["b"], ordemConfirmada: false, tentativas: 0 })).toBe(inicial);
+    expect(withTaskState(inicial, DOIS.id, { recolhidos: ["b"], confirmada: false, tentativas: 0 })).toBe(inicial);
   });
 
   it("capítulo desconhecido não muda", () => {
@@ -127,22 +132,22 @@ describe("concluir capítulo", () => {
 
   it("só conclui um capítulo disponível com a saída aberta", () => {
     expect(completeChapter(inicial, CAPITULOS, UM.id)).toBe(inicial);
-    const quaseLa = withTaskState(inicial, UM.id, { recolhidos: ["x"], ordemConfirmada: false, tentativas: 0 });
+    const quaseLa = withTaskState(inicial, UM.id, { recolhidos: ["x"], confirmada: false, tentativas: 0 });
     expect(completeChapter(quaseLa, CAPITULOS, UM.id)).toBe(quaseLa);
   });
 
   it("a tarefa cumprida não conclui o capítulo enquanto falta recolher algum registro", () => {
     const soTarefa = withTaskState(inicial, UM.id, soATarefa(UM));
     expect(completeChapter(soTarefa, CAPITULOS, UM.id)).toBe(soTarefa);
-    expect(statuses(soTarefa)).toEqual(["disponivel", "bloqueado", "bloqueado"]);
+    expect(statuses(soTarefa)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
     // Com o registro que faltava, conclui.
     const tudo = withTaskState(soTarefa, UM.id, feita(UM));
-    expect(statuses(completeChapter(tudo, CAPITULOS, UM.id))).toEqual(["concluido", "disponivel", "bloqueado"]);
+    expect(statuses(completeChapter(tudo, CAPITULOS, UM.id))).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
   });
 
   it("ao concluir, o capítulo vira concluído e o seguinte fica disponível", () => {
     const depois = concluir(inicial, UM);
-    expect(statuses(depois)).toEqual(["concluido", "disponivel", "bloqueado"]);
+    expect(statuses(depois)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
     // O estado da tarefa concluída é mantido.
     expect(taskStateOf(depois, UM.id)).toEqual(feita(UM));
   });
@@ -150,7 +155,7 @@ describe("concluir capítulo", () => {
   it("não altera o progresso recebido", () => {
     const comTarefa = withTaskState(inicial, UM.id, feita(UM));
     completeChapter(comTarefa, CAPITULOS, UM.id);
-    expect(statuses(comTarefa)).toEqual(["disponivel", "bloqueado", "bloqueado"]);
+    expect(statuses(comTarefa)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
   });
 
   it("capítulo bloqueado não conclui, mesmo com a tarefa feita no estado salvo", () => {
@@ -166,25 +171,29 @@ describe("concluir capítulo", () => {
     expect(completeChapter(depois, CAPITULOS, UM.id)).toBe(depois);
   });
 
-  it("a tarefa de ordem exige a ordem confirmada, e não só os registros recolhidos", () => {
+  it("as tarefas com resposta exigem a resposta confirmada, e não só os registros recolhidos", () => {
     const segundo = concluir(inicial, UM);
-    const soRecolhidos = withTaskState(segundo, DOIS.id, { recolhidos: ["b", "c", "y"], ordemConfirmada: false, tentativas: 2 });
+    const soRecolhidos = withTaskState(segundo, DOIS.id, { recolhidos: ["b", "c", "y"], confirmada: false, tentativas: 2 });
     expect(completeChapter(soRecolhidos, CAPITULOS, DOIS.id)).toBe(soRecolhidos);
-    expect(statuses(concluir(segundo, DOIS))).toEqual(["concluido", "concluido", "disponivel"]);
+    const terceiro = concluir(segundo, DOIS);
+    expect(statuses(terceiro)).toEqual(["concluido", "concluido", "disponivel", "bloqueado"]);
+    const semDocumento = withTaskState(terceiro, TRES.id, { recolhidos: ["e", "z"], confirmada: false, tentativas: 1 });
+    expect(completeChapter(semDocumento, CAPITULOS, TRES.id)).toBe(semDocumento);
+    expect(statuses(concluir(terceiro, TRES))).toEqual(["concluido", "concluido", "concluido", "disponivel"]);
   });
 
-  it("no capítulo de ordem, a ordem confirmada não conclui sem o registro que a tarefa não pede", () => {
+  it("no capítulo com resposta, a resposta confirmada não conclui sem o registro que a tarefa não pede", () => {
     const segundo = concluir(inicial, UM);
     const semOTerceiro = withTaskState(segundo, DOIS.id, soATarefa(DOIS));
     expect(completeChapter(semOTerceiro, CAPITULOS, DOIS.id)).toBe(semOTerceiro);
-    expect(statuses(semOTerceiro)).toEqual(["concluido", "disponivel", "bloqueado"]);
+    expect(statuses(semOTerceiro)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
   });
 
   it("concluir o último capítulo não quebra e completa a trajetória", () => {
-    const fim = concluir(concluir(concluir(inicial, UM), DOIS), TRES);
-    expect(statuses(fim)).toEqual(["concluido", "concluido", "concluido"]);
+    const fim = concluir(concluir(concluir(concluir(inicial, UM), DOIS), TRES), QUATRO);
+    expect(statuses(fim)).toEqual(["concluido", "concluido", "concluido", "concluido"]);
     expect(isTrajectoryComplete(fim, CAPITULOS)).toBe(true);
-    expect(completeChapter(fim, CAPITULOS, TRES.id)).toBe(fim);
+    expect(completeChapter(fim, CAPITULOS, QUATRO.id)).toBe(fim);
   });
 
   it("capítulo que não está na lista não muda nada", () => {
@@ -201,7 +210,7 @@ describe("concluir capítulo", () => {
 describe("capítulo atual e contagem", () => {
   const inicial = initialProgress("lula", CAPITULOS);
   const umFeito = concluir(inicial, UM);
-  const todos = concluir(concluir(umFeito, DOIS), TRES);
+  const todos = concluir(concluir(concluir(umFeito, DOIS), TRES), QUATRO);
 
   it("o capítulo atual é o primeiro disponível", () => {
     expect(currentChapter(inicial, CAPITULOS)).toBe(UM);
@@ -209,13 +218,13 @@ describe("capítulo atual e contagem", () => {
   });
 
   it("com tudo concluído, o atual é o último", () => {
-    expect(currentChapter(todos, CAPITULOS)).toBe(TRES);
+    expect(currentChapter(todos, CAPITULOS)).toBe(QUATRO);
   });
 
   it("conta os concluídos e sabe quando a trajetória acabou", () => {
     expect(countCompleted(inicial, CAPITULOS)).toBe(0);
     expect(countCompleted(umFeito, CAPITULOS)).toBe(1);
-    expect(countCompleted(todos, CAPITULOS)).toBe(3);
+    expect(countCompleted(todos, CAPITULOS)).toBe(4);
     expect(isTrajectoryComplete(inicial, CAPITULOS)).toBe(false);
     expect(isTrajectoryComplete(umFeito, CAPITULOS)).toBe(false);
     expect(isTrajectoryComplete(todos, CAPITULOS)).toBe(true);
@@ -238,9 +247,11 @@ describe("leitura do progresso salvo", () => {
     expect(parseProgress([inicial], "lula", CAPITULOS)).toBeNull();
   });
 
-  it("recusa versão errada ou ausente", () => {
+  it("recusa versão desconhecida ou ausente; aceita a atual e a anterior", () => {
+    expect(READABLE_VERSIONS).toEqual([1, PROGRESS_VERSION]);
     expect(parseProgress(salvo({ versao: PROGRESS_VERSION + 1 }), "lula", CAPITULOS)).toBeNull();
     expect(parseProgress(salvo({ versao: String(PROGRESS_VERSION) }), "lula", CAPITULOS)).toBeNull();
+    expect(parseProgress(salvo({ versao: 0 }), "lula", CAPITULOS)).toBeNull();
     const semVersao = salvo();
     delete semVersao.versao;
     expect(parseProgress(semVersao, "lula", CAPITULOS)).toBeNull();
@@ -261,12 +272,22 @@ describe("leitura do progresso salvo", () => {
 
   it("capítulo ausente entra bloqueado, ou disponível se é o próximo da fila", () => {
     const soOPrimeiro = salvo({ capitulos: { [UM.id]: entrada("concluido", feita(UM)) } });
-    expect(statuses(parseProgress(soOPrimeiro, "lula", CAPITULOS)!)).toEqual(["concluido", "disponivel", "bloqueado"]);
+    expect(statuses(parseProgress(soOPrimeiro, "lula", CAPITULOS)!)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
 
     const semOTerceiro = salvo({ capitulos: { [UM.id]: entrada("disponivel"), [DOIS.id]: entrada("bloqueado") } });
     const lido = parseProgress(semOTerceiro, "lula", CAPITULOS)!;
-    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado"]);
+    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
     expect(taskStateOf(lido, TRES.id)).toEqual(VAZIA);
+  });
+
+  it("quem terminou os capítulos de uma edição anterior recebe o primeiro capítulo novo como disponível", () => {
+    // A edição anterior tinha só os dois primeiros capítulos, os dois concluídos.
+    const daEdicaoAnterior = salvo({ capitulos: { [UM.id]: entrada("concluido", feita(UM)), [DOIS.id]: entrada("concluido", feita(DOIS)) } });
+    const lido = parseProgress(daEdicaoAnterior, "lula", CAPITULOS)!;
+    expect(statuses(lido)).toEqual(["concluido", "concluido", "disponivel", "bloqueado"]);
+    expect(taskStateOf(lido, UM.id)).toEqual(feita(UM));
+    expect(taskStateOf(lido, TRES.id)).toEqual(VAZIA);
+    expect(currentChapter(lido, CAPITULOS)).toBe(TRES);
   });
 
   it("capítulo que a edição não tem mais é descartado", () => {
@@ -292,12 +313,14 @@ describe("leitura do progresso salvo", () => {
     expect(parseProgress(comTarefa({ ...VAZIA, tentativas: -1 }), "lula", CAPITULOS)).toBeNull();
     expect(parseProgress(comTarefa({ ...VAZIA, tentativas: 1.5 }), "lula", CAPITULOS)).toBeNull();
     expect(parseProgress(comTarefa({ ...VAZIA, tentativas: "2" }), "lula", CAPITULOS)).toBeNull();
-    expect(parseProgress(comTarefa({ ...VAZIA, ordemConfirmada: "sim" }), "lula", CAPITULOS)).toBeNull();
-    expect(parseProgress(comTarefa({ recolhidos: [], ordemConfirmada: false }), "lula", CAPITULOS)).toBeNull();
+    expect(parseProgress(comTarefa({ ...VAZIA, confirmada: "sim" }), "lula", CAPITULOS)).toBeNull();
+    expect(parseProgress(comTarefa({ recolhidos: [], confirmada: false }), "lula", CAPITULOS)).toBeNull();
+    // O nome da versão 1 não vale na versão atual.
+    expect(parseProgress(comTarefa({ recolhidos: [], ordemConfirmada: false, tentativas: 0 }), "lula", CAPITULOS)).toBeNull();
   });
 
   it("deduplica registros recolhidos, mantendo a primeira ocorrência", () => {
-    const repetidos = { recolhidos: ["a", "x", "a", "x"], ordemConfirmada: false, tentativas: 0 };
+    const repetidos = { recolhidos: ["a", "x", "a", "x"], confirmada: false, tentativas: 0 };
     const lido = parseProgress(salvo({ capitulos: { ...inicial.capitulos, [UM.id]: entrada("disponivel", repetidos) } }), "lula", CAPITULOS)!;
     expect(taskStateOf(lido, UM.id).recolhidos).toEqual(["a", "x"]);
   });
@@ -306,12 +329,12 @@ describe("leitura do progresso salvo", () => {
     const doisAbertos = salvo({
       capitulos: {
         [UM.id]: entrada("disponivel"),
-        [DOIS.id]: entrada("disponivel", { recolhidos: ["b"], ordemConfirmada: false, tentativas: 0 }),
+        [DOIS.id]: entrada("disponivel", { recolhidos: ["b"], confirmada: false, tentativas: 0 }),
         [TRES.id]: entrada("bloqueado"),
       },
     });
     const lido = parseProgress(doisAbertos, "lula", CAPITULOS)!;
-    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado"]);
+    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
     // O capítulo que voltou a bloqueado perde o que tinha recolhido.
     expect(taskStateOf(lido, DOIS.id)).toEqual(VAZIA);
   });
@@ -320,16 +343,16 @@ describe("leitura do progresso salvo", () => {
     const invertido = salvo({
       capitulos: { [UM.id]: entrada("bloqueado"), [DOIS.id]: entrada("disponivel"), [TRES.id]: entrada("bloqueado") },
     });
-    expect(statuses(parseProgress(invertido, "lula", CAPITULOS)!)).toEqual(["disponivel", "bloqueado", "bloqueado"]);
+    expect(statuses(parseProgress(invertido, "lula", CAPITULOS)!)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
   });
 
   it("concluído sem a tarefa feita volta a disponível, mantendo o que foi recolhido", () => {
-    const parcial = { recolhidos: ["x"], ordemConfirmada: false, tentativas: 0 };
+    const parcial = { recolhidos: ["x"], confirmada: false, tentativas: 0 };
     const inconsistente = salvo({
       capitulos: { [UM.id]: entrada("concluido", parcial), [DOIS.id]: entrada("disponivel"), [TRES.id]: entrada("bloqueado") },
     });
     const lido = parseProgress(inconsistente, "lula", CAPITULOS)!;
-    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado"]);
+    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
     expect(taskStateOf(lido, UM.id)).toEqual(parcial);
   });
 
@@ -338,77 +361,77 @@ describe("leitura do progresso salvo", () => {
     const daRegraAntiga = salvo({
       capitulos: {
         [UM.id]: entrada("concluido", soATarefa(UM)),
-        [DOIS.id]: entrada("disponivel", { recolhidos: ["b"], ordemConfirmada: false, tentativas: 0 }),
+        [DOIS.id]: entrada("disponivel", { recolhidos: ["b"], confirmada: false, tentativas: 0 }),
         [TRES.id]: entrada("bloqueado"),
       },
     });
     const lido = parseProgress(daRegraAntiga, "lula", CAPITULOS)!;
-    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado"]);
+    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
     // O que já foi recolhido no capítulo que reabriu continua recolhido.
     expect(taskStateOf(lido, UM.id)).toEqual(soATarefa(UM));
     // O capítulo que voltou a bloqueado recomeça.
     expect(taskStateOf(lido, DOIS.id)).toEqual(VAZIA);
     // Recolhido o que faltava, o capítulo conclui de novo.
-    expect(statuses(completeChapter(withTaskState(lido, UM.id, feita(UM)), CAPITULOS, UM.id))).toEqual(["concluido", "disponivel", "bloqueado"]);
+    expect(statuses(completeChapter(withTaskState(lido, UM.id, feita(UM)), CAPITULOS, UM.id))).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
   });
 
-  it("tarefa de ordem concluída exige a ordem confirmada no salvo", () => {
+  it("tarefa com resposta concluída exige a resposta confirmada no salvo", () => {
     const semConfirmar = salvo({
       capitulos: {
         [UM.id]: entrada("concluido", feita(UM)),
-        [DOIS.id]: entrada("concluido", { recolhidos: ["b", "c", "y"], ordemConfirmada: false, tentativas: 1 }),
+        [DOIS.id]: entrada("concluido", { recolhidos: ["b", "c", "y"], confirmada: false, tentativas: 1 }),
         [TRES.id]: entrada("disponivel"),
       },
     });
-    expect(statuses(parseProgress(semConfirmar, "lula", CAPITULOS)!)).toEqual(["concluido", "disponivel", "bloqueado"]);
+    expect(statuses(parseProgress(semConfirmar, "lula", CAPITULOS)!)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
   });
 
-  it("tarefa de ordem concluída exige todos os registros no salvo, e não só os dois da tarefa", () => {
+  it("tarefa com resposta concluída exige todos os registros no salvo, e não só os da tarefa", () => {
     const semOTerceiro = salvo({
       capitulos: {
         [UM.id]: entrada("concluido", feita(UM)),
         [DOIS.id]: entrada("concluido", soATarefa(DOIS)),
-        [TRES.id]: entrada("disponivel", { recolhidos: ["d"], ordemConfirmada: false, tentativas: 0 }),
+        [TRES.id]: entrada("disponivel", { recolhidos: ["e"], confirmada: false, tentativas: 0 }),
       },
     });
     const lido = parseProgress(semOTerceiro, "lula", CAPITULOS)!;
-    expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado"]);
-    // A ordem já confirmada continua valendo: falta só o registro.
+    expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
+    // A resposta já confirmada continua valendo: falta só o registro.
     expect(taskStateOf(lido, DOIS.id)).toEqual(soATarefa(DOIS));
     expect(taskStateOf(lido, TRES.id)).toEqual(VAZIA);
   });
 
   it("registros que o capítulo não cita mais saem dos recolhidos", () => {
     // O capítulo mudou entre uma edição e outra: o que foi recolhido antes e não existe mais é esquecido.
-    const antigo = { recolhidos: ["antigo", "a", "outro"], ordemConfirmada: false, tentativas: 0 };
+    const antigo = { recolhidos: ["antigo", "a", "outro"], confirmada: false, tentativas: 0 };
     const lido = parseProgress(salvo({ capitulos: { ...inicial.capitulos, [UM.id]: entrada("disponivel", antigo) } }), "lula", CAPITULOS)!;
     expect(taskStateOf(lido, UM.id).recolhidos).toEqual(["a"]);
   });
 
-  it("ordem confirmada sem os dois registros do capítulo não vale, e o capítulo volta a disponível", () => {
+  it("resposta confirmada sem os registros da tarefa não vale, e o capítulo volta a disponível", () => {
     // A tarefa de ordem passou a pedir outro par: a confirmação antiga não conclui a nova.
     const deOutroPar = salvo({
       capitulos: {
         [UM.id]: entrada("concluido", feita(UM)),
-        [DOIS.id]: entrada("concluido", { recolhidos: ["b", "antigo"], ordemConfirmada: true, tentativas: 2 }),
+        [DOIS.id]: entrada("concluido", { recolhidos: ["b", "antigo"], confirmada: true, tentativas: 2 }),
         [TRES.id]: entrada("disponivel"),
       },
     });
     const lido = parseProgress(deOutroPar, "lula", CAPITULOS)!;
-    expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado"]);
-    expect(taskStateOf(lido, DOIS.id)).toEqual({ recolhidos: ["b"], ordemConfirmada: false, tentativas: 2 });
+    expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
+    expect(taskStateOf(lido, DOIS.id)).toEqual({ recolhidos: ["b"], confirmada: false, tentativas: 2 });
   });
 
-  it("ordem confirmada em capítulo que não é de ordem é ignorada", () => {
-    const estranho = { recolhidos: ["x"], ordemConfirmada: true, tentativas: 1 };
+  it("resposta confirmada em capítulo de registro é ignorada", () => {
+    const estranho = { recolhidos: ["x"], confirmada: true, tentativas: 1 };
     const lido = parseProgress(salvo({ capitulos: { ...inicial.capitulos, [UM.id]: entrada("disponivel", estranho) } }), "lula", CAPITULOS)!;
-    expect(taskStateOf(lido, UM.id)).toEqual({ recolhidos: ["x"], ordemConfirmada: false, tentativas: 1 });
+    expect(taskStateOf(lido, UM.id)).toEqual({ recolhidos: ["x"], confirmada: false, tentativas: 1 });
   });
 
   it("um progresso coerente volta igual depois da ida e volta por JSON", () => {
     const umFeito = concluir(inicial, UM);
-    const emAndamento = withTaskState(umFeito, DOIS.id, { recolhidos: ["c"], ordemConfirmada: false, tentativas: 0 });
-    const todos = concluir(concluir(umFeito, DOIS), TRES);
+    const emAndamento = withTaskState(umFeito, DOIS.id, { recolhidos: ["c"], confirmada: false, tentativas: 0 });
+    const todos = concluir(concluir(concluir(umFeito, DOIS), TRES), QUATRO);
     for (const progresso of [inicial, umFeito, emAndamento, todos]) expect(relido(progresso)).toEqual(progresso);
   });
 
@@ -417,5 +440,61 @@ describe("leitura do progresso salvo", () => {
     const lido = parseProgress(bruto, "lula", CAPITULOS)!;
     expect(lido.capitulos).not.toBe(bruto.capitulos);
     expect(lido).toEqual(inicial);
+  });
+});
+
+describe("migração da versão 1", () => {
+  const inicial = initialProgress("lula", CAPITULOS);
+  // A versão 1 chamava a confirmação de `ordemConfirmada` e só a tarefa de ordem a usava.
+  const v1 = (capitulos: Record<string, unknown>) => ({ versao: 1, personagem: "lula", capitulos });
+  const tarefaV1 = (recolhidos: string[], ordemConfirmada = false, tentativas = 0) => ({ recolhidos, ordemConfirmada, tentativas });
+
+  it("lê um progresso da versão 1 e devolve a versão atual, com a confirmação renomeada", () => {
+    const salvo = v1({
+      [UM.id]: { status: "concluido", tarefa: tarefaV1(["a", "x"]) },
+      [DOIS.id]: { status: "disponivel", tarefa: tarefaV1(["b", "c"], true, 2) },
+    });
+    const lido = parseProgress(salvo, "lula", CAPITULOS)!;
+    expect(lido.versao).toBe(PROGRESS_VERSION);
+    expect(statuses(lido)).toEqual(["concluido", "disponivel", "bloqueado", "bloqueado"]);
+    expect(taskStateOf(lido, UM.id)).toEqual({ recolhidos: ["a", "x"], confirmada: false, tentativas: 0 });
+    // A ordem confirmada da versão 1 vale: os dois registros estão recolhidos e a tarefa é de ordem.
+    expect(taskStateOf(lido, DOIS.id)).toEqual({ recolhidos: ["b", "c"], confirmada: true, tentativas: 2 });
+    expect("ordemConfirmada" in taskStateOf(lido, DOIS.id)).toBe(false);
+  });
+
+  it("um progresso da versão 1 que terminou os capítulos de então segue para o primeiro capítulo novo", () => {
+    const salvo = v1({
+      [UM.id]: { status: "concluido", tarefa: tarefaV1(["a", "x"]) },
+      [DOIS.id]: { status: "concluido", tarefa: tarefaV1(["b", "c", "y"], true, 1) },
+    });
+    const lido = parseProgress(salvo, "lula", CAPITULOS)!;
+    expect(statuses(lido)).toEqual(["concluido", "concluido", "disponivel", "bloqueado"]);
+    expect(currentChapter(lido, CAPITULOS)).toBe(TRES);
+  });
+
+  it("a versão 1 exige o nome antigo do campo: o novo não vale nela", () => {
+    const comNomeNovo = v1({ [UM.id]: { status: "disponivel", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } } });
+    expect(parseProgress(comNomeNovo, "lula", CAPITULOS)).toBeNull();
+    const comTipoErrado = v1({ [UM.id]: { status: "disponivel", tarefa: { recolhidos: [], ordemConfirmada: "sim", tentativas: 0 } } });
+    expect(parseProgress(comTipoErrado, "lula", CAPITULOS)).toBeNull();
+  });
+
+  it("a regra da saída vale também para o que a versão 1 guardou", () => {
+    // Concluído quando a saída abria só com a tarefa: reabre com o que já tinha.
+    const salvo = v1({
+      [UM.id]: { status: "concluido", tarefa: tarefaV1(["a"]) },
+      [DOIS.id]: { status: "disponivel", tarefa: tarefaV1(["b"]) },
+    });
+    const lido = parseProgress(salvo, "lula", CAPITULOS)!;
+    expect(statuses(lido)).toEqual(["disponivel", "bloqueado", "bloqueado", "bloqueado"]);
+    expect(taskStateOf(lido, UM.id)).toEqual({ recolhidos: ["a"], confirmada: false, tentativas: 0 });
+  });
+
+  it("depois da migração, salvar e ler de novo não muda nada", () => {
+    const salvo = v1({ [UM.id]: { status: "concluido", tarefa: tarefaV1(["a", "x"]) }, [DOIS.id]: { status: "disponivel", tarefa: tarefaV1(["b"]) } });
+    const migrado = parseProgress(salvo, "lula", CAPITULOS)!;
+    expect(relido(migrado)).toEqual(migrado);
+    expect(migrado).not.toEqual(inicial);
   });
 });

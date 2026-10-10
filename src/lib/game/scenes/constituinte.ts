@@ -3,10 +3,9 @@
 
 import type { SceneSpec } from "../types";
 
-import { PALETTES } from "./palettes";
-
 export const constituinte: SceneSpec = {
   id: "constituinte",
+  arte: "constituinte",
   nome: "Plenário da Constituinte",
   mapa: [
     "############",
@@ -21,7 +20,8 @@ export const constituinte: SceneSpec = {
   ],
   largura: 12,
   altura: 9,
-  paleta: PALETTES.constituinte,
+  // Anos 1980: madeira, parede clara, tapete verde-acinzentado.
+  paleta: { chao: "#b9956c", chaoAlt: "#ad8a62", tapete: "#4f6b6a", parede: "#d9d2c1", paredeTopo: "#e6e0d2", fundo: "#ece7db", acento: "#8a6d3b" },
   props: [
     { tipo: "bandeira", x: 1, y: 1 },
     // A tribuna fica no canto leste, voltada para o plenário: a câmera vê o lado de quem fala.

@@ -1,4 +1,4 @@
-// Jogo, etapa 1: o que as páginas pedem, e quando, na saída estática. O palco
+// Jogo: o que as páginas pedem, e quando, na saída estática. O palco
 // (canvas, laço e entrada) fica em um pacote à parte, pedido só na página de
 // um personagem; nenhuma página do jogo carrega o mapa, e nenhuma página do
 // atlas carrega o palco (docs/GAMEPLAY.md, seção Carregamento).

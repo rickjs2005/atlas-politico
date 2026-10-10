@@ -1,11 +1,14 @@
-// Jogo, etapa 1 (docs/GAMEPLAY.md): a entrada com a escolha de personagem, a
-// cena que domina a tela, o movimento com colisão, a interação, a saída
-// bloqueada até a tarefa estar cumprida e todos os registros do capítulo
-// estarem recolhidos, a conclusão e o avanço, a tarefa de ordem com nova
-// tentativa, o progresso separado por personagem e recuperado ao recarregar,
-// o caminho pelo painel sem o cenário, o toque em celular, em pé e deitado, e
-// a ida à ficha com volta ao capítulo. Também os avisos editoriais: o cenário
-// como representação, a ordem não documentada e a situação da revisão.
+// Jogo (docs/GAMEPLAY.md): a entrada com a escolha de personagem, a cena que
+// domina a tela, o movimento com colisão, a interação, a saída bloqueada até
+// a tarefa estar cumprida e todos os registros do capítulo estarem
+// recolhidos, a conclusão e o avanço, as tarefas com resposta (ordem,
+// documento, lugar) com nova tentativa, a trajetória inteira dos dois
+// personagens até o fim, a ficha judicial, a figura por época, o progresso
+// separado por personagem e recuperado ao recarregar (inclusive o da versão 1
+// do formato), o caminho pelo painel sem o cenário, o toque em celular, em pé
+// e deitado, e a ida à ficha com volta ao capítulo. Também os avisos
+// editoriais: o cenário como representação, a ordem não documentada e a
+// situação da revisão.
 //
 // Os valores esperados saem dos dados gerados e das cenas. As duas jornadas
 // pelo cenário rodam para os dois personagens. Além dos atributos do
@@ -19,9 +22,10 @@ import { expect, test, type Page } from "@playwright/test";
 import { compareDates, formatDate, yearOf } from "@/lib/domain/dates";
 import { findUndeterminedOrder } from "@/lib/domain/order";
 import { chaptersOf } from "@/lib/game/chapters";
+import { requiredRecords } from "@/lib/game/mission";
 import { getScene } from "@/lib/game/scenes";
 import { storageKey } from "@/lib/game/storage";
-import { PROGRESS_VERSION, type ChapterSpec } from "@/lib/game/types";
+import { EPOCA_LABEL, PROGRESS_VERSION, type ChapterSpec } from "@/lib/game/types";
 
 import { clearProgress, clicar, frame, holdKeys, jogo, palco, position, waitForStage, walkTo } from "./jogo-caminho";
 
@@ -31,23 +35,30 @@ interface EventRecord {
   titulo: string;
   data: { valor: string; precisao: "ano" | "mes" | "dia" };
   fontes: { fonteId: string }[];
+  localizacao: { tipo: "lugares"; lugarIds: string[] } | { tipo: "nacional" } | { tipo: "desconhecida" };
 }
 
 const conjunto = JSON.parse(readFileSync("generated/dados/conjunto.json", "utf8")) as {
   acontecimentos: EventRecord[];
   pessoas: { id: string; slug: string; nome: string }[];
   fontes: { id: string; url: string }[];
+  lugares: { id: string; nome: string }[];
 };
 const registro = (id: string) => conjunto.acontecimentos.find((item) => item.id === id)!;
 const urlsDasFontes = (id: string) => registro(id).fontes.map((citacao) => conjunto.fontes.find((fonte) => fonte.id === citacao.fonteId)!.url);
+/** O rótulo do lugar documentado, como o jogo o escreve. */
+const lugarDe = (id: string) => {
+  const { localizacao } = registro(id);
+  return localizacao.tipo === "lugares" ? localizacao.lugarIds.map((lugar) => conjunto.lugares.find((item) => item.id === lugar)!.nome).join(" e ") : "";
+};
 
 const PERSONAGENS = ["flavio-bolsonaro", "lula"] as const;
 type Slug = (typeof PERSONAGENS)[number];
 
-/** Os dois capítulos de um personagem, com as cenas e o registro que a primeira tarefa pede. */
+/** Os capítulos de um personagem, com as cenas dos três primeiros e o registro que a primeira tarefa pede. */
 function trajetoria(slug: Slug) {
   const capitulos = chaptersOf(slug);
-  const [c1, c2] = capitulos as [ChapterSpec, ChapterSpec];
+  const [c1, c2, c3] = capitulos as [ChapterSpec, ChapterSpec, ChapterSpec];
   return {
     slug,
     rota: `/jogo/${slug}/`,
@@ -55,10 +66,51 @@ function trajetoria(slug: Slug) {
     capitulos,
     c1,
     c2,
+    c3,
     cena1: getScene(c1.cena),
     cena2: getScene(c2.cena),
+    cena3: getScene(c3.cena),
     exigido1: c1.tarefa.tipo === "registro" ? c1.tarefa.eventId : "",
   };
+}
+
+/** O que responde certo a tarefa de escolha: o primeiro documento do registro pedido, ou o lugar documentado. */
+function respostaCerta(capitulo: ChapterSpec): string {
+  if (capitulo.tarefa.tipo === "fonte") return registro(capitulo.tarefa.eventId).fontes[0]!.fonteId;
+  if (capitulo.tarefa.tipo === "lugar") return lugarDe(capitulo.tarefa.eventId);
+  throw new Error(`${capitulo.id} não tem tarefa de escolha`);
+}
+
+/** Uma opção errada da tarefa de escolha, entre as oferecidas na janela. */
+async function opcaoErrada(page: Page, capitulo: ChapterSpec): Promise<string> {
+  const certas = capitulo.tarefa.tipo === "fonte" ? registro(capitulo.tarefa.eventId).fontes.map((citacao) => citacao.fonteId) : [respostaCerta(capitulo)];
+  const ids = await dialogo(page, "escolha").locator("[data-escolher]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")!));
+  const errada = ids.find((id) => !certas.includes(id));
+  if (errada === undefined) throw new Error(`${capitulo.id}: sem opção errada entre ${ids.join(", ")}`);
+  return errada;
+}
+
+/** O rótulo do período de um capítulo, como a interface o escreve. */
+const periodoDe = (capitulo: ChapterSpec) => (capitulo.periodo.de === capitulo.periodo.ate ? `${capitulo.periodo.de}` : `${capitulo.periodo.de}–${capitulo.periodo.ate}`);
+
+/** Um progresso salvo, na versão atual, com os capítulos anteriores ao de número `numero` concluídos e ele disponível. */
+function progressoAte(slug: Slug, numero: number) {
+  const entradas: Record<string, unknown> = {};
+  chaptersOf(slug).forEach((capitulo, indice) => {
+    const comResposta = capitulo.tarefa.tipo !== "registro";
+    if (indice < numero - 1) entradas[capitulo.id] = { status: "concluido", tarefa: { recolhidos: [...capitulo.eventIds], confirmada: comResposta, tentativas: comResposta ? 1 : 0 } };
+    else entradas[capitulo.id] = { status: indice === numero - 1 ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
+  });
+  return { versao: PROGRESS_VERSION, personagem: slug, capitulos: entradas };
+}
+
+/** Abre o jogo de um personagem no capítulo de número `numero`, com os anteriores concluídos. */
+async function abrirNoCapitulo(page: Page, t: ReturnType<typeof trajetoria>, numero: number) {
+  await page.goto(t.rota);
+  await page.evaluate(({ chave, salvo }) => window.localStorage.setItem(chave, JSON.stringify(salvo)), { chave: storageKey(t.slug), salvo: progressoAte(t.slug, numero) });
+  await page.reload();
+  await waitForStage(page);
+  await expect(jogo(page)).toHaveAttribute("data-capitulo", t.capitulos[numero - 1]!.id);
 }
 
 const LULA = trajetoria("lula");
@@ -100,19 +152,20 @@ async function abrirLimpo(page: Page, rota: string) {
 }
 
 /** Os registros que a tarefa do capítulo pede, e os que ela não pede: a saída exige todos. */
-const pedidosPor = (capitulo: ChapterSpec) => (capitulo.tarefa.tipo === "registro" ? [capitulo.tarefa.eventId] : [...capitulo.tarefa.eventIds]);
+const pedidosPor = (capitulo: ChapterSpec) => [...requiredRecords(capitulo.tarefa)];
 const foraDaTarefa = (capitulo: ChapterSpec) => capitulo.eventIds.filter((id) => !pedidosPor(capitulo).includes(id));
 
 /**
  * Recolhe um registro pelo painel e guarda. Devolve o modo em que o jogo
- * ficou: `ordem`, se a pergunta da tarefa abriu em seguida, ou `jogando`.
+ * ficou: `ordem` ou `escolha`, se a pergunta da tarefa abriu em seguida, ou
+ * `jogando`.
  */
 async function recolherPeloPainel(page: Page, id: string) {
   await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
   await clicar(page, page.locator(`[data-recolher="${id}"]`));
   await expect(dialogo(page, "registro")).toBeVisible();
   await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
-  await expect(jogo(page)).toHaveAttribute("data-modo", /^(jogando|ordem)$/);
+  await expect(jogo(page)).toHaveAttribute("data-modo", /^(jogando|ordem|escolha)$/);
   return (await jogo(page).getAttribute("data-modo"))!;
 }
 
@@ -126,11 +179,26 @@ async function responderAOrdemCerta(page: Page, capitulo: ChapterSpec) {
   await expect(ordem).toHaveCount(0);
 }
 
+/** Responde certo à pergunta de documento ou de lugar que está aberta e fecha a janela. */
+async function responderAEscolhaCerta(page: Page, capitulo: ChapterSpec) {
+  const escolha = dialogo(page, "escolha");
+  await expect(escolha).toBeVisible();
+  await clicar(page, escolha.locator(`[data-escolher="${respostaCerta(capitulo)}"]`));
+  await clicar(page, escolha.locator("[data-confirmar-escolha]"));
+  await expect(escolha.locator("[data-escolha-resultado]")).toHaveAttribute("data-escolha-resultado", "certo");
+  await clicar(page, escolha.locator("[data-escolha-concluida]"));
+  await expect(escolha).toHaveCount(0);
+}
+
+/** Responde certo a pergunta que abriu, conforme o modo em que o jogo ficou. */
+async function responderCerto(page: Page, capitulo: ChapterSpec, modo: string) {
+  if (modo === "ordem") await responderAOrdemCerta(page, capitulo);
+  else if (modo === "escolha") await responderAEscolhaCerta(page, capitulo);
+}
+
 /** Cumpre só a tarefa do capítulo aberto, pelo painel. A saída continua fechada se o capítulo tem outros registros. */
 async function cumprirATarefaPeloPainel(page: Page, capitulo: ChapterSpec) {
-  for (const id of pedidosPor(capitulo)) {
-    if ((await recolherPeloPainel(page, id)) === "ordem") await responderAOrdemCerta(page, capitulo);
-  }
+  for (const id of pedidosPor(capitulo)) await responderCerto(page, capitulo, await recolherPeloPainel(page, id));
   await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
 }
 
@@ -147,7 +215,7 @@ async function abrirASaidaPeloPainel(page: Page, capitulo: ChapterSpec) {
   await expect(dialogo(page, "painel")).toHaveCount(0);
   for (const id of [...pedidosPor(capitulo), ...foraDaTarefa(capitulo)]) {
     if (jaRecolhidos.includes(id)) continue;
-    if ((await recolherPeloPainel(page, id)) === "ordem") await responderAOrdemCerta(page, capitulo);
+    await responderCerto(page, capitulo, await recolherPeloPainel(page, id));
   }
   await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
   await expect(jogo(page)).toHaveAttribute("data-registros", `${capitulo.eventIds.length}/${capitulo.eventIds.length}`);
@@ -200,9 +268,11 @@ test.describe("entrada do jogo", () => {
     // A regra da saída é dita na abertura e na lista de como jogar: os registros de cada capítulo e a tarefa.
     await expect(page.locator("main")).toContainText("em cada capítulo, recolha todos os registros e cumpra a tarefa para abrir a passagem ao seguinte");
     await expect(page.locator("main")).toContainText("A saída de cada capítulo abre com todos os registros recolhidos e a tarefa cumprida.");
-    // O cenário é dito como representação, a figura é a mesma em todos os capítulos, e a situação da revisão é a da entrada do atlas.
+    // O cenário é dito como representação, a figura por época é dita como estilizada, as quatro tarefas são explicadas, e a situação da revisão é a da entrada do atlas.
     await expect(page.locator("main")).toContainText("Os cenários são representações");
-    await expect(page.locator("main")).toContainText("mesma figura em todos os capítulos");
+    await expect(page.locator("main")).toContainText("três figuras, uma por época dos capítulos");
+    await expect(page.locator("main")).toContainText("sem afirmar a aparência real da pessoa em cada data");
+    await expect(page.locator("main")).toContainText("indicar o documento que sustenta um registro ou o lugar em que o atlas o documenta");
     await expect(page.locator("main [data-revisao]")).toContainText("Revisão humana pendente");
     await expect(page.locator("main [data-revisao]").getByRole("link", { name: "Metodologia e fontes" })).toHaveAttribute("href", "/metodologia/");
   });
@@ -550,7 +620,7 @@ for (const slug of PERSONAGENS) {
       await expect.poll(() => position(page)).toEqual(inicioDe(t.c2));
     });
 
-    test("tarefa de ordem: errar explica e deixa tentar de novo; com todos os registros, acertar abre a saída e leva ao fim da etapa", async ({ page }) => {
+    test("tarefa de ordem: errar explica e deixa tentar de novo; com todos os registros, acertar abre a saída e leva ao capítulo seguinte", async ({ page }) => {
       test.slow();
       expect(t.c2.tarefa.tipo).toBe("ordem");
       await abrirLimpo(page, t.rota);
@@ -611,13 +681,13 @@ for (const slug of PERSONAGENS) {
         const ficha = dialogo(page, "registro");
         await expect(ficha).toContainText(registro(id).titulo);
         // A ficha diz que a ordem está pronta para responder e, no último registro, que só falta a tarefa.
-        await expect(ficha.locator("[data-ordem-pronta]")).toBeVisible();
+        await expect(ficha.locator('[data-resposta-pronta="ordem"]')).toHaveText("Os dois registros da tarefa estão com você. Falta colocá-los em ordem.");
         if (indice === terceiros.length - 1) {
           await expect(ficha.locator("[data-saida-situacao]")).toHaveAttribute("data-saida-situacao", "fechada");
           await expect(ficha.locator("[data-saida-situacao]")).toHaveText(`Registros recolhidos: ${total} de ${total}. Falta a tarefa para a saída abrir.`);
         }
         // Com a ordem por responder, guardar o registro leva de volta à pergunta.
-        await page.getByRole("button", { name: "Guardar e ordenar os registros" }).click();
+        await page.getByRole("button", { name: "Guardar e responder" }).click();
         await expect(ordem).toBeVisible();
         await page.keyboard.press("Escape");
         await expect(ordem).toHaveCount(0);
@@ -635,7 +705,7 @@ for (const slug of PERSONAGENS) {
       await expect(painelDaOrdem.locator("[data-tarefa-situacao]")).toHaveAttribute("data-tarefa-situacao", "pendente");
       await expect(painelDaOrdem.locator("[data-tarefa-situacao]")).toHaveAttribute("data-saida-situacao", "fechada");
       await expect(painelDaOrdem.locator("[data-atravessar-saida]")).toHaveCount(0);
-      await expect(painelDaOrdem.locator("[data-responder-ordem]")).toBeVisible();
+      await expect(painelDaOrdem.locator('[data-responder-tarefa="ordem"]')).toHaveText("Ordenar os registros");
       await page.keyboard.press("Escape");
       // A porta segura o personagem, diz que não falta registro e leva à pergunta.
       const antesDaSaida2 = t.cena2.saida.lado === "sul" ? { x: t.cena2.saida.x, y: t.cena2.saida.y - 1 } : { x: t.cena2.saida.x - 1, y: t.cena2.saida.y };
@@ -649,14 +719,14 @@ for (const slug of PERSONAGENS) {
       await expect(fechada.locator("[data-falta-registros]")).toHaveAttribute("data-falta-registros", "0");
       await expect(fechada.locator("[data-falta-registros]")).toContainText("Não falta nenhum.");
       await expect(fechada.locator("[data-falta-tarefa]")).toHaveAttribute("data-falta-tarefa", "sim");
-      await expect(fechada.locator("[data-falta-tarefa]")).toHaveText("Tarefa pendente: os dois registros pedidos já estão com você. Falta colocá-los em ordem.");
+      await expect(fechada.locator("[data-falta-tarefa]")).toHaveText("Tarefa pendente: Os dois registros da tarefa estão com você. Falta colocá-los em ordem.");
       await fechada.getByRole("button", { name: "Ordenar os registros" }).click();
       await expect(ordem).toBeVisible();
       await page.keyboard.press("Escape");
       await expect(ordem).toHaveCount(0);
       // A pergunta volta também pelo guia, que diz o que falta.
       await page.getByRole("button", { name: "Como jogar" }).click();
-      await expect(dialogo(page, "guia")).toContainText("Falta colocá-los em ordem cronológica.");
+      await expect(dialogo(page, "guia")).toContainText("Falta colocá-los em ordem.");
       await expect(dialogo(page, "guia").locator("[data-regra-da-saida]")).toContainText(`Registros recolhidos: ${total} de ${total}.`);
       await dialogo(page, "guia").getByRole("button", { name: "Ordenar os registros" }).click();
       await expect(ordem).toBeVisible();
@@ -674,11 +744,11 @@ for (const slug of PERSONAGENS) {
       await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
       await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
       await expect(palco(page)).toHaveAttribute("data-porta", "aberta");
-      // É o último capítulo: o objetivo e o guia falam em encerrar, e não em um capítulo que não existe.
-      await expect(page.locator("[data-objetivo]")).toContainText("encerrar esta etapa");
+      // Não é o último capítulo: o objetivo e o guia falam em seguir, e não em encerrar.
+      await expect(page.locator("[data-objetivo]")).toContainText("atravesse a passagem para seguir");
       await page.getByRole("button", { name: "Como jogar" }).click();
-      await expect(dialogo(page, "guia")).toContainText("encerrar esta etapa");
-      await expect(dialogo(page, "guia")).not.toContainText("próximo");
+      await expect(dialogo(page, "guia")).toContainText("seguir ao próximo capítulo");
+      await expect(dialogo(page, "guia")).not.toContainText("encerrar");
       await page.keyboard.press("Escape");
 
       // O painel registra o estado.
@@ -689,30 +759,19 @@ for (const slug of PERSONAGENS) {
       await expect(page.locator("[data-atravessar-saida]")).toBeVisible();
       await page.keyboard.press("Escape");
 
-      // O último capítulo desta etapa leva ao fim, sem inventar o que não existe.
+      // Atravessar leva ao capítulo 3, com a transição dizendo o que vem: título, período, cenário, época e contexto.
       await walkTo(page, t.cena2, { x: t.cena2.saida.x, y: t.cena2.saida.y }, true);
-      await expect(page.locator("[data-transicao]")).toContainText("último capítulo desta etapa");
+      const transicao = page.locator("[data-transicao]");
+      await expect(transicao).toHaveAttribute("data-transicao", t.c3.id);
+      await expect(transicao).toContainText(t.c3.titulo);
+      await expect(transicao).toContainText(periodoDe(t.c3));
+      await expect(transicao).toContainText(t.cena3.nome);
+      await expect(transicao.locator("[data-contexto-do-capitulo]")).toHaveText(t.c3.motivo);
       await page.getByRole("button", { name: "Continuar" }).click();
-      const fim = page.locator('[data-fim="sim"]');
-      await expect(fim).toBeVisible();
-      await expect(fim).toContainText(`${t.capitulos.length} capítulos`);
-      await expect(fim.getByRole("link", { name: /Trajetória completa/ })).toHaveAttribute("href", `/politicos/${slug}/`);
-      await expect(fim.getByRole("button", { name: "Rever os capítulos" })).toBeFocused();
-
-      // Pedir o reinício e desistir volta à tela de fim, e não à cena.
-      await fim.getByRole("button", { name: "Reiniciar a trajetória" }).click();
-      await expect(dialogo(page, "reiniciar")).toBeVisible();
-      await page.getByRole("button", { name: "Cancelar" }).click();
-      await expect(fim).toBeVisible();
-
-      // De volta à cena pelo painel, o personagem está no início, e a saída aberta funciona de novo.
-      await fim.getByRole("button", { name: "Rever os capítulos" }).click();
-      await expect(dialogo(page, "painel")).toBeVisible();
-      await page.keyboard.press("Escape");
-      await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
-      await expect.poll(() => position(page)).toEqual(inicioDe(t.c2));
-      await walkTo(page, t.cena2, { x: t.cena2.saida.x, y: t.cena2.saida.y }, true);
-      await expect(page.locator("[data-transicao]")).toBeVisible();
+      await expect(jogo(page)).toHaveAttribute("data-capitulo", t.c3.id);
+      await expect(jogo(page)).toHaveAttribute("data-epoca", t.c3.epoca);
+      await expect(jogo(page)).toHaveAttribute("data-registros", `0/${t.c3.eventIds.length}`);
+      await expect.poll(() => position(page)).toEqual(inicioDe(t.c3));
     });
   });
 }
@@ -1005,14 +1064,15 @@ test.describe("regra da saída", () => {
     await expect(page.locator("[data-atravessar-saida]")).toBeVisible();
   });
 
-  test("um progresso guardado quando a saída abria só com a tarefa reabre o capítulo que ficou sem registros", async ({ page }) => {
+  test("um progresso da versão 1, guardado quando a saída abria só com a tarefa, é migrado e reabre o capítulo que ficou sem registros", async ({ page }) => {
     await page.goto(LULA.rota);
+    // O formato da versão 1: `ordemConfirmada` no lugar de `confirmada`, e só os dois capítulos da etapa 1.
     await page.evaluate(
       ({ chave, salvo }) => window.localStorage.setItem(chave, JSON.stringify(salvo)),
       {
         chave: storageKey("lula"),
         salvo: {
-          versao: PROGRESS_VERSION,
+          versao: 1,
           personagem: "lula",
           capitulos: {
             [LULA.c1.id]: { status: "concluido", tarefa: { recolhidos: [LULA.exigido1], ordemConfirmada: false, tentativas: 0 } },
@@ -1194,11 +1254,11 @@ test.describe("celular deitado", () => {
   });
 
   test("a tela de fim não corta o começo: o que não cabe rola inteiro", async ({ page }) => {
-    // Os dois capítulos inteiros pelo painel.
+    // Os capítulos anteriores já concluídos; o último inteiro pelo painel.
     test.slow();
-    await abrirLimpo(page, LULA.rota);
-    await concluirCapitulo1PeloPainel(page, LULA);
-    await abrirASaidaPeloPainel(page, LULA.c2);
+    const ultimo = LULA.capitulos.at(-1)!;
+    await abrirNoCapitulo(page, LULA, LULA.capitulos.length);
+    await abrirASaidaPeloPainel(page, ultimo);
     await atravessarPeloPainel(page);
     const fim = page.locator('[data-fim="sim"]');
     await expect(fim).toBeVisible();
@@ -1209,8 +1269,8 @@ test.describe("celular deitado", () => {
       const caixa = no.getBoundingClientRect();
       return { topoDoTexto: primeiro.top, topoDaTela: caixa.top };
     });
-    expect(medida.topoDoTexto, "o rótulo Fim desta etapa começa dentro da tela de fim").toBeGreaterThanOrEqual(medida.topoDaTela);
-    await expect(fim.locator("p").first()).toHaveText("Fim desta etapa");
+    expect(medida.topoDoTexto, "o rótulo Fim da trajetória começa dentro da tela de fim").toBeGreaterThanOrEqual(medida.topoDaTela);
+    await expect(fim.locator("p").first()).toHaveText("Fim da trajetória");
   });
 });
 
@@ -1250,5 +1310,200 @@ test.describe("com movimento ligado", () => {
     await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
     await expect.poll(() => position(page)).toEqual(inicioDe(LULA.c2));
     expect((await frame(page)).cores).toBeGreaterThan(60);
+  });
+});
+
+test.describe("todos os capítulos", () => {
+  for (const t of [LULA, FLAVIO]) {
+    test(`a trajetória inteira de ${t.nome} pelo painel: as tarefas de todos os tipos, as transições com contexto e o fim`, async ({ page }) => {
+      test.setTimeout(300_000);
+      await abrirLimpo(page, t.rota);
+      const tipos = new Set<string>();
+      for (const [indice, capitulo] of t.capitulos.entries()) {
+        await expect(jogo(page)).toHaveAttribute("data-capitulo", capitulo.id);
+        await expect(jogo(page)).toHaveAttribute("data-epoca", capitulo.epoca);
+        await expect(jogo(page)).toHaveAttribute("data-tipo-da-tarefa", capitulo.tarefa.tipo);
+        await expect(page.locator("[data-cenario]")).toContainText(EPOCA_LABEL[capitulo.epoca]);
+        await expect(page.locator("[data-cenario]")).toContainText(getScene(capitulo.cena).nome);
+        tipos.add(capitulo.tarefa.tipo);
+        await abrirASaidaPeloPainel(page, capitulo);
+        await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+        await clicar(page, page.locator("[data-atravessar-saida]"));
+        const transicao = page.locator("[data-transicao]");
+        const proximo = t.capitulos[indice + 1];
+        if (proximo !== undefined) {
+          // A transição diz o que vem: título, período, cenário, época e o contexto do capítulo.
+          await expect(transicao).toHaveAttribute("data-transicao", proximo.id);
+          await expect(transicao).toContainText(proximo.titulo);
+          await expect(transicao).toContainText(periodoDe(proximo));
+          await expect(transicao).toContainText(getScene(proximo.cena).nome);
+          await expect(transicao).toContainText(EPOCA_LABEL[proximo.epoca]);
+          await expect(transicao.locator("[data-contexto-do-capitulo]")).toHaveText(proximo.motivo);
+          await clicar(page, page.getByRole("button", { name: "Continuar" }));
+          await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
+        } else {
+          await expect(transicao).toHaveAttribute("data-transicao", "fim");
+          await expect(transicao).toContainText("último capítulo da trajetória");
+          await clicar(page, page.getByRole("button", { name: "Continuar" }));
+        }
+      }
+      expect(tipos.size, "tipos de tarefa na trajetória").toBeGreaterThanOrEqual(3);
+
+      const fim = page.locator('[data-fim="sim"]');
+      await expect(fim).toBeVisible();
+      await expect(fim.locator("p").first()).toHaveText("Fim da trajetória");
+      await expect(fim).toContainText(`${t.capitulos.length} capítulos de ${t.nome}`);
+      const registros = t.capitulos.reduce((soma, capitulo) => soma + capitulo.eventIds.length, 0);
+      await expect(fim).toContainText(`${registros} acontecimentos`);
+      await expect(fim.getByRole("link", { name: /Trajetória completa/ })).toHaveAttribute("href", `/politicos/${t.slug}/`);
+      await expect(fim.getByRole("button", { name: "Rever os capítulos" })).toBeFocused();
+      // Pedir o reinício e desistir volta à tela de fim, e não à cena.
+      await fim.getByRole("button", { name: "Reiniciar a trajetória" }).click();
+      await expect(dialogo(page, "reiniciar")).toBeVisible();
+      await page.getByRole("button", { name: "Cancelar" }).click();
+      await expect(fim).toBeVisible();
+      // Recarregar: tudo continua concluído, e o jogo reabre no último capítulo.
+      await page.reload();
+      await waitForStage(page);
+      await expect(jogo(page)).toHaveAttribute("data-capitulo", t.capitulos.at(-1)!.id);
+      await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+      for (const capitulo of t.capitulos) await expect(page.locator(`[data-capitulo-item="${capitulo.id}"]`)).toHaveAttribute("data-status", "concluido");
+    });
+  }
+
+  test("a entrada do atlas diz quantos capítulos cada personagem tem", async ({ page }) => {
+    await page.goto("/");
+    for (const t of [LULA, FLAVIO]) await expect(page.locator(`[data-jogar-entrada="${t.slug}"]`)).toContainText(`${t.capitulos.length} capítulos`);
+  });
+});
+
+test.describe("tarefas de documento e de lugar", () => {
+  test("tarefa de documento: a opção errada explica de qual registro é o documento, a certa confirma, e a saída exige os outros registros", async ({ page }) => {
+    test.slow();
+    const capitulo = LULA.capitulos.find((item) => item.tarefa.tipo === "fonte")!;
+    const pedido = capitulo.tarefa.tipo === "fonte" ? capitulo.tarefa.eventId : "";
+    await abrirNoCapitulo(page, LULA, capitulo.numero);
+    expect(await recolherPeloPainel(page, pedido)).toBe("escolha");
+    const escolha = dialogo(page, "escolha");
+    await expect(escolha).toContainText("Qual documento sustenta este registro?");
+    await expect(escolha.locator(`[data-escolha-registro="${pedido}"]`)).toContainText(registro(pedido).titulo);
+    await expect(escolha.locator("[data-escolher]")).toHaveCount(3);
+    // Todas as opções são documentos de registros do capítulo: nada é inventado.
+    const ids = await escolha.locator("[data-escolher]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")!));
+    const doCapitulo = new Set(capitulo.eventIds.flatMap((id) => registro(id).fontes.map((citacao) => citacao.fonteId)));
+    for (const id of ids) expect(doCapitulo.has(id), id).toBe(true);
+
+    // Errar: a explicação diz de qual registro do capítulo é o documento, com a data, e deixa tentar de novo.
+    const errada = await opcaoErrada(page, capitulo);
+    await clicar(page, escolha.locator(`[data-escolher="${errada}"]`));
+    await expect(escolha.locator(`[data-escolher="${errada}"]`)).toHaveAttribute("aria-pressed", "true");
+    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
+    const resultado = escolha.locator("[data-escolha-resultado]");
+    await expect(resultado).toHaveAttribute("data-escolha-resultado", "errado");
+    await expect(resultado).toContainText("Ainda não.");
+    await expect(resultado).toContainText("não há penalidade");
+    const dono = capitulo.eventIds.find((id) => id !== pedido && registro(id).fontes.some((citacao) => citacao.fonteId === errada))!;
+    await expect(resultado).toContainText(`${registro(dono).titulo} (${formatDate(registro(dono).data)})`);
+    await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
+    await expect(escolha.locator("[data-tentar-de-novo]")).toBeFocused();
+    await clicar(page, escolha.locator("[data-tentar-de-novo]"));
+    await expect(escolha.locator("[data-escolha-resultado]")).toHaveCount(0);
+    await expect(escolha).toContainText("Tentativas até agora: 1.");
+
+    // Dá para fechar e responder depois: a cena e o painel dizem o que falta e levam à pergunta.
+    await page.keyboard.press("Escape");
+    await expect(escolha).toHaveCount(0);
+    await expect(page.locator("[data-objetivo]")).toHaveText("O registro da tarefa está com você. Para indicar o documento que o sustenta, abra Como jogar ou Capítulos e tarefas.");
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await expect(page.locator("[data-tarefa-situacao]")).toHaveText("O registro da tarefa está com você. Falta indicar o documento que o sustenta.");
+    await clicar(page, page.locator('[data-responder-tarefa="fonte"]'));
+    await expect(escolha).toBeVisible();
+
+    // Acertar confirma a tarefa; a saída continua fechada enquanto falta o outro registro.
+    await clicar(page, escolha.locator(`[data-escolher="${respostaCerta(capitulo)}"]`));
+    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
+    await expect(resultado).toHaveAttribute("data-escolha-resultado", "certo");
+    await expect(resultado).toContainText("Certo.");
+    await expect(resultado).toContainText("Tarefa concluída.");
+    await expect(resultado.locator("[data-saida-situacao]")).toHaveAttribute("data-saida-situacao", "fechada");
+    await clicar(page, escolha.locator("[data-escolha-concluida]"));
+    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
+    await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
+    for (const id of foraDaTarefa(capitulo)) expect(await recolherPeloPainel(page, id)).toBe("jogando");
+    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
+  });
+
+  test("tarefa de lugar: a opção errada explica de qual registro é o lugar, e a certa confirma", async ({ page }) => {
+    const capitulo = LULA.capitulos.find((item) => item.tarefa.tipo === "lugar")!;
+    const pedido = capitulo.tarefa.tipo === "lugar" ? capitulo.tarefa.eventId : "";
+    await abrirNoCapitulo(page, LULA, capitulo.numero);
+    expect(await recolherPeloPainel(page, pedido)).toBe("escolha");
+    const escolha = dialogo(page, "escolha");
+    await expect(escolha).toContainText("Em que lugar o atlas documenta este acontecimento?");
+    await expect(escolha.locator("[data-escolher]")).toHaveCount(3);
+    await expect(escolha.locator(`[data-escolher="${lugarDe(pedido)}"]`)).toHaveCount(1);
+
+    const errada = await opcaoErrada(page, capitulo);
+    await clicar(page, escolha.locator(`[data-escolher="${errada}"]`));
+    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
+    const resultado = escolha.locator("[data-escolha-resultado]");
+    await expect(resultado).toHaveAttribute("data-escolha-resultado", "errado");
+    await expect(resultado).toContainText("Ainda não.");
+    await expect(resultado).toContainText(errada);
+    await expect(resultado).toContainText("não há penalidade");
+    await clicar(page, escolha.locator("[data-tentar-de-novo]"));
+
+    await clicar(page, escolha.locator(`[data-escolher="${lugarDe(pedido)}"]`));
+    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
+    await expect(resultado).toHaveAttribute("data-escolha-resultado", "certo");
+    await expect(resultado).toContainText(lugarDe(pedido));
+    await clicar(page, escolha.locator("[data-escolha-concluida]"));
+    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
+  });
+});
+
+test.describe("ficha judicial", () => {
+  test("a ficha diz a natureza do registro, lista as decisões relacionadas com a própria data e avisa que o jogo não decide culpa", async ({ page }) => {
+    const condenacao = "lula-2017-condenacao-em-primeira-instancia";
+    const confirmacao = "lula-2018-tribunal-confirma-condenacao";
+    const anulacao = "lula-2021-stf-anula-condenacoes";
+    const capitulo = LULA.capitulos.find((item) => item.eventIds.includes(condenacao))!;
+    await abrirNoCapitulo(page, LULA, capitulo.numero);
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-recolher="${condenacao}"]`));
+    const ficha = dialogo(page, "registro");
+    await expect(ficha.locator('[data-ficha-judicial="condenacao"]')).toBeVisible();
+    await expect(ficha.locator("[data-natureza]")).toHaveText("Condenação em primeira instância.");
+    // A decisão posterior que alterou o quadro, mesmo estando em outro capítulo, com a própria data.
+    await expect(ficha.locator(`[data-relacionado="${confirmacao}"]`)).toContainText(formatDate(registro(confirmacao).data));
+    await expect(ficha.locator(`[data-relacionado="${confirmacao}"]`)).toContainText(registro(confirmacao).titulo);
+    await expect(ficha.locator(`[data-relacionado="${anulacao}"]`)).toContainText("8 de março de 2021");
+    await expect(ficha.locator("[data-aviso-judicial]")).toContainText("não pede que você decida culpa");
+    // O contexto da ficha, o lugar documentado e o que cada fonte sustenta.
+    await expect(ficha.locator("[data-contexto]")).toContainText("Contexto, como a ficha do atlas o traz");
+    await expect(ficha.locator('[data-lugar-documentado="lugares"]')).toContainText("Curitiba");
+    await expect(ficha.locator("[data-evidencia]")).toHaveCount(registro(condenacao).fontes.length);
+    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
+    await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
+
+    // Um registro que não é episódio judicial não tem a ficha.
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator('[data-recolher="lula-2018-registro-de-candidatura-indeferido"]'));
+    await expect(ficha.locator("[data-ficha-judicial]")).toHaveAttribute("data-ficha-judicial", "decisao-eleitoral");
+    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
+
+    // Flávio Bolsonaro: a denúncia é dita como acusação, não como condenação, e a rejeição aparece com a data.
+    const denuncia = "flavio-bolsonaro-2020-denuncia-do-ministerio-publico";
+    const rejeicao = "flavio-bolsonaro-2022-tribunal-rejeita-denuncia";
+    await abrirNoCapitulo(page, FLAVIO, FLAVIO.capitulos.find((item) => item.eventIds.includes(denuncia))!.numero);
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-recolher="${denuncia}"]`));
+    await expect(ficha.locator("[data-natureza]")).toContainText("Não é condenação");
+    await expect(ficha.locator(`[data-relacionado="${rejeicao}"]`)).toContainText(formatDate(registro(rejeicao).data));
+    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator('[data-recolher="flavio-bolsonaro-2021-filiacao-ao-patriota"]'));
+    await expect(ficha.locator("[data-ficha-judicial]")).toHaveCount(0);
+    await expect(ficha.locator('[data-lugar-documentado="desconhecida"]')).toContainText("Lugar não documentado");
   });
 });

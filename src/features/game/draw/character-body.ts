@@ -1,7 +1,7 @@
 // O corpo dos personagens, sobre o esqueleto comum (character-pose.ts):
-// pernas, sapatos, tronco, braços e mãos, com as duas roupas do jogo (o terno
-// dos dois personagens jogáveis e o colete do Arquivista). A cabeça fica em
-// character-head.ts.
+// pernas, sapatos, tronco, braços e mãos, com as três roupas do jogo (o terno
+// dos dois personagens jogáveis, a camisa de mangas dobradas das primeiras
+// épocas e o colete do Arquivista). A cabeça fica em character-head.ts.
 //
 // Tudo é desenhado com o personagem olhando para a direita; o espelho é
 // aplicado por quem chama. `lado` diz para que lado do desenho fica a direita
@@ -11,7 +11,7 @@ import { DETAIL, INK, OUTLINE, SHADOW, groundShadow, tone } from "./kit";
 import { FINE, curve, dot, lit, litLimb, traceLimb } from "./character-ink";
 import { AX, AY_CHAO, type Build, type Chain, type Leg, type Pose } from "./character-pose";
 
-export type Outfit = "terno" | "colete";
+export type Outfit = "terno" | "colete" | "camisa";
 
 /** As tintas do corpo, já com os tons de luz e de sombra calculados. */
 export interface BodyPaints {
@@ -535,6 +535,63 @@ function vestBack(g: CanvasRenderingContext2D, lado: number): void {
   headShadow(g, lado);
 }
 
+/** Camisa sem paletó, de mangas dobradas: colarinho aberto, carcela com botões e um bolso no peito. */
+function shirtFront(g: CanvasRenderingContext2D, lado: number): void {
+  lit(g, traceTorso, T.camisa, T.camisaSombra, lado, OUTLINE, 2.2, 1);
+  const m = P.troncoX + 2.2;
+  const yP = P.pescocoY;
+  const yB = P.barraY;
+  // Colarinho aberto, sem gravata.
+  g.beginPath();
+  g.moveTo(m - 3.8, yP - 0.9);
+  g.lineTo(m - 0.9, yP + 1.6);
+  g.lineTo(m - 3, yP + 3.4);
+  g.closePath();
+  g.moveTo(m + 3, yP - 1.4);
+  g.lineTo(m + 0.9, yP + 1.4);
+  g.lineTo(m + 2.4, yP + 2.8);
+  g.closePath();
+  g.fillStyle = T.camisa;
+  g.fill();
+  g.lineWidth = 0.7;
+  g.strokeStyle = INK;
+  g.stroke();
+  // A carcela, do decote à barra, e os botões.
+  const fim = P.baseX + 2.6;
+  curve(g, m, yP + 2.2, m + 0.5, (yP + yB) / 2, fim, yB + 1.2, 0.5, INK, 0.45);
+  for (let i = 0; i < 4; i += 1) {
+    const t = (i + 0.7) / 4.2;
+    dot(g, m + (fim - m) * t, yP + 2.6 + (yB - yP - 1.6) * t, 0.5, 0.5, INK);
+  }
+  // Bolso do peito, do lado de perto.
+  curve(g, m - 6.4, P.ombroY + 7.6, m - 5, P.ombroY + 7.9, m - 3.6, P.ombroY + 7.4, 0.6, INK, 0.5);
+  curve(g, m - 6.3, P.ombroY + 7.8, m - 6.2, P.ombroY + 11.4, m - 3.8, P.ombroY + 11.2, 0.6, INK, 0.4);
+  headShadow(g, lado);
+}
+
+function shirtBack(g: CanvasRenderingContext2D, lado: number): void {
+  lit(g, traceTorso, T.camisa, T.camisaSombra, lado, OUTLINE, 2.2, 1);
+  const c = P.troncoX - 0.4;
+  const yP = P.pescocoY;
+  const dn = P.desnivel;
+  // Colarinho.
+  g.beginPath();
+  g.moveTo(c - 4.2, yP + 0.2 - dn * 0.2);
+  g.quadraticCurveTo(c - 0.2, yP - 2.6, c + 3.8, yP - 0.7 + dn * 0.2);
+  g.lineTo(c + 4.2, yP + 1.2 + dn * 0.2);
+  g.quadraticCurveTo(c - 0.2, yP - 0.4, c - 4.6, yP + 2 - dn * 0.2);
+  g.closePath();
+  g.fillStyle = T.camisa;
+  g.fill();
+  g.lineWidth = 0.7;
+  g.strokeStyle = INK;
+  g.stroke();
+  // A pala das costas e a costura do meio.
+  curve(g, c - 7.4, yP + 6.2 - dn * 0.3, c - 0.2, yP + 7, c + 7, yP + 6.2 + dn * 0.3, 0.6, INK, 0.4);
+  curve(g, c - 0.2, yP + 7, c - 1.2, (yP + P.barraY) / 2, P.baseX - 1.8, P.barraY + 1.2, 0.6, INK, 0.35);
+  headShadow(g, lado);
+}
+
 /** A pasta de documentos debaixo do braço de perto. */
 function folder(g: CanvasRenderingContext2D): void {
   const frente = P.frente ? 1 : -1;
@@ -601,8 +658,11 @@ export function drawBody(g: CanvasRenderingContext2D, spec: BodySpec, pose: Pose
   if (spec.roupa === "terno") {
     if (pose.frente) suitFront(g, lado);
     else suitBack(g, lado);
-  } else if (pose.frente) vestFront(g, lado);
-  else vestBack(g, lado);
+  } else if (spec.roupa === "colete") {
+    if (pose.frente) vestFront(g, lado);
+    else vestBack(g, lado);
+  } else if (pose.frente) shirtFront(g, lado);
+  else shirtBack(g, lado);
   if (comPasta) folder(g);
   arm(g, spec, pose.bracoPerto, false, lado);
 }

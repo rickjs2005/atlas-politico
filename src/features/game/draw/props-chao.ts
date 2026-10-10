@@ -12,7 +12,7 @@ function faixa(q: Quadro): void {
   const { ctx } = q;
   const meia = 0.065;
   const antes = ctx.globalAlpha;
-  if (q.info.cena === "sindicato") {
+  if (q.mat.rustico) {
     // Tinta velha no concreto: três trechos, com falhas onde ela saiu.
     const r = cellNoise(q.info.x, q.info.y, 11);
     const g1 = -0.24 + r * 0.16;
@@ -88,7 +88,7 @@ function papeis(q: Quadro): void {
 // para +x. Nos dois casos a luz anda na mesma direção.
 function luz(q: Quadro): void {
   const { ctx } = q;
-  const frio = q.info.cena === "senado";
+  const frio = q.mat.frio;
   const antes = ctx.globalAlpha;
   ctx.globalAlpha = antes * (frio ? 0.4 : 0.34);
   ctx.beginPath();

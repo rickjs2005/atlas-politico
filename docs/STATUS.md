@@ -15,10 +15,153 @@ Atualizado em 10 de outubro de 2026.
 | 9. Revisão editorial, testes e validação com pessoas | Parte editorial e técnica feita em 09/10/2026, com assistência de IA. **Validação com pessoas pendente** e revisão humana do conteúdo pendente |
 | 10. Publicação e apresentação | Não iniciada |
 | Jogo, etapa 1 (fora do plano de 10 fases) | Primeira versão jogável feita em 10/10/2026: dois capítulos de cada personagem, conferidos no build estático. Revisão humana e validação com pessoas continuam pendentes |
+| Jogo, versão de lançamento (candidata) | Feita em 10/10/2026: onze capítulos sobre os 39 acontecimentos, quatro tipos de tarefa, ficha judicial, cinco ambientes novos e três figuras de cada personagem, conferidos no build estático. **Revisão humana, validação com pessoas, domínio e deploy pendentes**, e são o que decide o lançamento |
 
 O código e o conteúdo estão em repositório público no GitHub desde 10 de outubro de 2026: https://github.com/rickjs2005/atlas-politico. Tudo é versionado na `main`, sem ramos. O site não foi publicado: não há hospedagem nem deploy, que é o último passo e depende de autorização do responsável pelo projeto.
 
+## Jogo, versão de lançamento (candidata)
+
+A continuação da etapa 1, feita em 10 de outubro de 2026 a partir do plano em [GAME-RELEASE.md](GAME-RELEASE.md), com a meta de lançamento em 22 de outubro. O jogo passou de quatro capítulos sobre 15 acontecimentos a **onze capítulos sobre os 39**, com quatro tipos de tarefa, uma ficha própria para os episódios de processo, cinco ambientes novos, três figuras de cada personagem (uma por época) e o progresso salvo na versão 2, com migração da versão 1. A entrada do atlas, os metadados, a prévia de compartilhamento, os créditos e o bloqueio de indexação foram preparados para a publicação, que não aconteceu. O desenho do jogo está em [GAMEPLAY.md](GAMEPLAY.md); as decisões, de D-111 a D-118, em [DECISIONS.md](DECISIONS.md); a matriz de cobertura, em [GAME-COVERAGE.md](GAME-COVERAGE.md); o material para a revisão humana, em [HUMAN-REVIEW.md](HUMAN-REVIEW.md); o procedimento de publicação, em [DEPLOY.md](DEPLOY.md).
+
+| Parte | Situação |
+| --- | --- |
+| Capítulos para os 24 acontecimentos restantes | **Feitos em 10/10/2026.** Sete capítulos novos (quatro de Lula, três de Flávio Bolsonaro): 11 ao todo, 6 e 5. Os 39 acontecimentos publicados estão em capítulo, nenhum excluído; o primeiro turno de 2026 pertence aos dois e aparece uma vez na trajetória de cada um. A matriz acontecimento → personagem → capítulo é gerada dos dados (`npm run game:coverage`) e conferida por teste |
+| Contratos: unicidade por personagem, fronteira cronológica pela data e pela precisão, alcance de todo registro, migração do progresso | **Feitos,** com testes de regra. O progresso da etapa 1 (versão 1) é lido e convertido; quem tinha terminado a etapa recebe o primeiro capítulo novo disponível (D-115, D-116) |
+| Ficha judicial | **Feita.** Os 10 registros de processo (7 de Lula, 3 de Flávio Bolsonaro) mostram a natureza do registro (liminar, condenação, confirmação, prisão, decisão eleitoral, soltura, anulação, denúncia, rejeição), o contexto como a ficha do atlas o traz, as decisões relacionadas por identificador, cada uma com a própria data, e o aviso de que o jogo não pede juízo de culpa (D-114) |
+| Mecânicas novas | **Feitas:** associar um registro ao documento que o sustenta (3 capítulos) e relacionar um registro ao lugar documentado (2 capítulos), com duas opções erradas tiradas do próprio capítulo, explicação do erro e nova tentativa sem penalidade. Com as duas anteriores (encontrar um registro, 2 capítulos; ordem de dois, 4 capítulos), cada personagem tem os quatro tipos (D-113) |
+| Cenários | **Feitos:** comitê de campanha, sala de audiências (duas variantes), gabinete, sala de comissão e auditório de convenção (duas variantes): 9 artes para 11 cenas, com a arte separada da cena (D-112). Arte por código, no padrão das quatro anteriores, sem bloco provisório. Três artes foram refinadas por agentes de IA; o gabinete, em parte; a sala de comissão ficou na versão própria, porque o agente dela não chegou a rodar |
+| Figuras por período | **Feitas:** três figuras de cada personagem (primeiros anos, anos intermediários, anos recentes), com variação de cabelo, barba e roupa e a mesma escala e o mesmo cuidado para os dois; a transição e a cena dizem qual é a época da figura (D-111). D-103 superada |
+| Entrada do atlas e experiência pública | **Feitas:** a primeira dobra da entrada traz os dois cartões e o acesso **Jogar com**, com o número de capítulos; título e descrição por página; prévia de compartilhamento gerada (`public/share/atlas.png`); créditos do jogo na metodologia; `robots.txt` e `sitemap.xml` que só liberam a indexação com domínio decidido (D-117). O canal de correção continua pendente, como antes |
+| Medição das páginas do jogo | **Feita em laboratório,** com o medidor novo (`npm run measure:game`), nos perfis de computador e de celular emulado. Os números estão abaixo e em [PERFORMANCE.md](PERFORMANCE.md) |
+| Capítulos antigos e progresso salvo | **Preservados.** Os quatro identificadores da etapa 1 não mudaram; a migração foi testada com um progresso da versão 1 no navegador |
+| Revisão humana do conteúdo | **Pendente,** como desde a fase 2. O material está em [HUMAN-REVIEW.md](HUMAN-REVIEW.md), gerado dos dados: 10 episódios judiciais, 16 acontecimentos eleitorais, 8 filiações, 15 mandatos e os demais registros, trecho a trecho |
+| Sessões com três pessoas, com celular real | **Pendentes.** O roteiro ganhou a tarefa do jogo e quatro perguntas ([USER-VALIDATION.md](USER-VALIDATION.md)). Nenhuma pessoa jogou |
+| Aparelho real, leitor de tela e outros navegadores | **Não feitos.** Só Chromium, com celular emulado |
+| Publicação | **Não feita.** Sem domínio, sem hospedagem, sem deploy; todas as páginas seguem com `noindex`. O procedimento está em [DEPLOY.md](DEPLOY.md) e só roda com autorização |
+
+Para abrir: `npm run build`, `npm run preview` e `http://localhost:4311/jogo/`. Em desenvolvimento: `npm run dev` e `http://localhost:3000/jogo/`; a galeria da arte fica em `http://localhost:3000/dev/jogo-arte/`.
+
+### O que o pedido exigia e como ficou
+
+| Exigência | Situação | Como foi conferido |
+| --- | --- | --- |
+| Todo acontecimento publicado em um capítulo, ou com exclusão justificada; matriz de cobertura | Atendido: 39 de 39, sem exclusão | `tests/game-coverage.test.ts` recusa acontecimento fora de capítulo e matriz desatualizada |
+| Cada acontecimento em um só capítulo por personagem; capítulos em ordem cronológica, pela data e pela precisão | Atendido | `tests/game-chapters.test.ts`: todo par de registros entre capítulos vizinhos tem a ordem decidida pelas datas, sem comparação por ano |
+| Situação eleitoral de 2026 conferida em fonte oficial; apuração parcial mantida como parcial; nenhum resultado de segundo turno | Atendido: os registros de 2026 não mudaram, e os textos do jogo dizem "apuração parcial" | Teste dos textos dos capítulos contra os dados; o conteúdo continua na edição 0.1.1, com a data de corte de 8 de outubro (D-118) |
+| `SceneId` ampliado, registro de cenas e de artes, testes de cobertura e de alcance | Atendido | `tests/game-draw-registry.test.ts` (toda arte e todo objeto registrados), `tests/game-chapters.test.ts` (todo registro à vista e alcançável, nenhum ao lado da porta) |
+| Identificadores dos capítulos mantidos e progresso salvo com migração explícita e testada | Atendido | `tests/game-progress.test.ts` (versão 1 lida, convertida e reaplicada) e a jornada com um progresso da versão 1 gravado no navegador |
+| Cenário próprio por fase, abertura com título, período e contexto, guia fictício | Atendido | Capturas de cada cena e da transição com contexto; o guia continua o Arquivista, dito fictício |
+| Mecânica reutilizável "associar um documento à sua fonte"; opcional "relacionar ao lugar documentado"; pistas, explicação e nova tentativa | Atendido, com as duas | Testes de regra (`tests/game-mission.test.ts`) e de navegador, com a resposta errada antes da certa, pelo teclado, nos dois personagens |
+| Regra da saída mantida (todos os registros e a tarefa) | Atendido | A jornada da saída fechada e aberta, nos dois personagens |
+| Figuras por período, com o mesmo cuidado para os dois; sem arte provisória | Atendido, no juízo de quem fez | Galeria capturada por época; capturas dos capítulos; `data-epoca` conferido na jornada completa |
+| Progresso, não julgamento | Atendido | Nenhum placar, nenhuma nota; o fim diz quantos capítulos e acontecimentos a trajetória cobriu |
+| Episódios judiciais: quem alegou, defesa, decisão, data, efeitos, situação na data de corte; relação por identificador; sem equiparar denúncia, condenação, anulação e absolvição; sem pedir ao jogador que decida culpa | Atendido com o que a ficha do atlas traz | `tests/game-judicial.test.ts` (todo relacionado existe, é do mesmo personagem e tem data); a jornada da ficha judicial lê a natureza, os relacionados e o aviso |
+| Lista de trechos que precisam de revisão humana | Atendido | [HUMAN-REVIEW.md](HUMAN-REVIEW.md), gerado por `npm run review:human` e conferido por teste |
+| Primeira dobra da entrada com a escolha de personagem e a entrada do jogo | Atendido em 390×844 e em 1280×800; em janela de 1440×720 os botões **Jogar com** ficam logo abaixo da dobra | Capturas da primeira dobra, em roteiro fora do projeto |
+| Teclado, toque, pausa, foco, painel; celular em pé e deitado | Atendido em emulação, como na etapa 1 | As jornadas de teclado, de foco e de toque; capturas em pé e deitado em dois cenários |
+| Exportação estática, recursos locais, jogo em pacote à parte, sem login, banco, ranking ou serviço pago | Atendido | `npm run verify:export`; `tests/export/jogo.spec.ts` (o palco só na página do jogo; nenhum pedido externo) |
+| Medir o carregamento e a cadência nas páginas do jogo | Atendido em laboratório | `npm run measure:game`, números abaixo |
+| Títulos, descrição, prévia de compartilhamento, créditos, canal de correção | Atendido, menos o canal, que depende de decisão | `src/app/layout.tsx`, `scripts/share-image.mjs` (gera e confere a imagem), metodologia com os créditos |
+| Canônico, sitemap e indexação só para o domínio escolhido e a edição lançada | Atendido: tudo bloqueado até haver `publicUrl` e `indexar` | `src/app/robots.ts`, `src/app/sitemap.ts`; o build atual sai com `Disallow: /` e sitemap vazio |
+| Verificação no build estático | Atendido | Todas as suítes abaixo rodaram sobre `out/`, fora a de desenvolvimento |
+| Roteiro de validação com 3 pessoas e celular real; material para revisão humana | Preparado; as sessões e a revisão não aconteceram | [USER-VALIDATION.md](USER-VALIDATION.md), [HUMAN-REVIEW.md](HUMAN-REVIEW.md) |
+| Versão executável local, matriz, capturas, comandos e resultados, roteiro de demonstração, pendências de publicação | Atendido | Este documento, [GAME-COVERAGE.md](GAME-COVERAGE.md), `docs/capturas/jogo-lancamento/`, [GAME-RELEASE.md](GAME-RELEASE.md) (roteiro e pendências) |
+| Procedimento de deploy preparado; publicação e divulgação só por último, sem serviço e sem postagem automática | Atendido: [DEPLOY.md](DEPLOY.md); nada publicado | Leitura; nenhum comando de deploy existe no projeto |
+
+### O que foi entregue
+
+- **Onze capítulos**, com título, período, cenário, época da figura, motivo (inventário do que os registros dizem) e tarefa: Lula, 6 (sindicato 1975 a 1980; Constituinte 1986 a 1994; Presidência 2002 a 2006; nomeação suspensa, processos e prisão 2016 a 2019; anulação, terceira eleição e intervenção federal 2021 a 2023; convenção e primeiro turno de 2026); Flávio Bolsonaro, 5 (Assembleia 2002 a 2016; Senado 2018 a 2019; denúncia, partidos e decisões judiciais 2020 a 2022; liderança da Minoria, relatoria e comissão 2023 a 2025; indicação, convenção e primeiro turno 2025 a 2026).
+- **Quatro tarefas:** encontrar um registro, ordem de dois registros, o documento que sustenta um registro e o lugar em que o atlas o documenta. As duas novas têm três opções (a certa e duas do próprio capítulo), explicação do erro com a data do registro que cita o outro documento, ou com o lugar certo, e nova tentativa.
+- **Ficha judicial** dentro do registro: natureza, contexto, decisões relacionadas com a própria data e o aviso.
+- **Onze cenas sobre nove artes:** salão do sindicato, plenário da Constituinte, salão da Assembleia, plenário do Senado, comitê de campanha, sala de audiências (quente e fria), gabinete, sala de comissão e auditório de convenção (duas disposições). Kits de parede, piso, porta e folhas de porta compartilhados; 24 tipos de objeto, 5 novos (balcão, cartaz, tela, fileira de assentos, sofá).
+- **Três figuras de cada personagem,** escolhidas pela época do capítulo, na cena, na prévia e na galeria.
+- **Progresso na versão 2,** com tentativas por tarefa e a migração da versão 1.
+- **Entrada do atlas** com o acesso ao jogo na primeira dobra; **metadados** com canônico, Open Graph e prévia condicionados ao domínio; **robots e sitemap** gerados pelo build; **créditos** do jogo na metodologia.
+- **Comandos novos:** `npm run game:coverage` (matriz, com `--check`), `npm run review:human` (lista de revisão), `npm run measure:game` (medição das páginas do jogo), `node scripts/capture-art.mjs` (galeria da arte, peça a peça), `node scripts/share-image.mjs` (prévia de compartilhamento). O roteiro `npm run capture:game` passou a gravar em `docs/capturas/jogo-lancamento/`.
+- **Testes:** quatro arquivos novos de regra (ficha judicial, registro da arte, cobertura, lista de revisão) e os anteriores reescritos para os contratos novos; as jornadas do jogo ganharam a trajetória inteira de cada personagem, as tarefas de documento e de lugar, a ficha judicial, a figura por época e a migração da versão 1.
+- **Documentos:** GAME-RELEASE.md, GAME-COVERAGE.md, HUMAN-REVIEW.md e DEPLOY.md (novos); GAMEPLAY.md, ARCHITECTURE.md, DECISIONS.md, EDITORIAL.md, EDITORIAL-REVIEW.md, PAGES.md, QA.md, USER-VALIDATION.md, PERFORMANCE.md, `capturas/README.md`, o README.md da raiz e este status.
+
+### Arquivos
+
+| Onde | O quê |
+| --- | --- |
+| `src/lib/game/` | Reescritos: `types.ts`, `chapters.ts` (11 capítulos), `content.ts`, `mission.ts` (quatro tarefas), `progress.ts` (versão 2 e migração). Novos: `judicial.ts`, `coverage.ts`, `scenes/comite.ts`, `tribunal-a.ts`, `tribunal-b.ts`, `gabinete.ts`, `comissao.ts`, `convencao-a.ts`, `convencao-b.ts`. As quatro cenas anteriores ganharam a arte e a paleta no próprio arquivo (`palettes.ts` saiu) |
+| `src/lib/editorial/` | Novo: `human-review.ts` (a lista de revisão humana, gerada dos dados) |
+| `src/features/game/draw/` | Novos: `arts/` (nove artes e o registro), `wall-kit.ts`, `floor-kit.ts`, `floors.ts`, `exit-kit.ts`, `door-leaves.ts`, `props-balcao.ts`, `props-tela.ts`, `props-fileira.ts`, `props-sofa.ts`. Reescritos: `scene-walls.ts`, `scene-floor.ts`, `scene-exit.ts`, `props-base.ts`, `props.ts`, `characters.ts` (figuras por época). Os objetos anteriores leem o material pela arte, e não pela cena |
+| `src/features/game/` | `GameShell.tsx`, `ui/dialogs.tsx` (janela de escolha), `ui/RecordCard.tsx` (ficha judicial), `ui/ChapterPanel.tsx`, `ui/Hud.tsx`, `ui/tarefa.ts` (novo), `CharacterSelect.tsx`, `engine/render.ts` (arte e época) |
+| `src/app/` | `layout.tsx` (metadados condicionados), `robots.ts` e `sitemap.ts` (novos), `metodologia/page.tsx` (créditos do jogo), `dev/jogo-arte/ArtGallery.tsx` (épocas, modo parado) |
+| `src/lib/site.ts` | Domínio, indexação e canal de correção em um só lugar, todos pendentes |
+| `scripts/` | Novos: `game-coverage.mts`, `human-review.mts`, `measure-game.mjs`, `capture-art.mjs`, `share-image.mjs` |
+| `tests/` | Novos: `game-judicial`, `game-draw-registry`, `game-coverage`, `human-review`. Reescritos ou alterados: `game-mission`, `game-progress`, `game-chapters`, `game-storage`, `game-world`, `e2e/jogo.spec.ts`, `export/jogo.spec.ts`, `export/jogo.capture.ts` |
+| `docs/`, `public/`, raiz | Novos: GAME-RELEASE.md, GAME-COVERAGE.md, HUMAN-REVIEW.md, DEPLOY.md, `capturas/jogo-lancamento/`, `desempenho/jogo-*.json`, `public/share/atlas.png`. Atualizados: os documentos listados acima e `package.json` (comandos) |
+
+Nenhuma dependência foi acrescentada. Nenhum registro de `content/` foi alterado: a edição continua a 0.1.1, com a data de corte de 8 de outubro de 2026.
+
+### Como a versão foi feita
+
+Na ordem do plano: primeiro os contratos e os testes de regra (unicidade, fronteira, alcance, cobertura, migração), depois os capítulos e as cenas, a ficha judicial, as mecânicas, a arte dos ambientes novos, as figuras por época e a experiência pública. A arte dos cinco ambientes foi escrita primeiro em uma versão própria, para o jogo rodar inteiro, e depois refinada por agentes de IA em paralelo, um por arte, com a galeria capturada antes e depois. Três agentes terminaram (sala de audiências, auditório de convenção e comitê); o do gabinete foi interrompido pelo limite de uso da sessão depois de gravar o gabinete e o sofá (o código compila, passa no lint e nos testes, e foi olhado nas capturas); o da sala de comissão não chegou a rodar. Durante o trabalho dos agentes o sistema derrubou o servidor de desenvolvimento por falta de memória, e as verificações finais rodaram sobre o build estático, uma de cada vez.
+
+### Problemas achados na conferência e corrigidos
+
+| Problema | Correção |
+| --- | --- |
+| Com os contratos novos, a conferência de tipos só falhava nos testes antigos (campo `ordemConfirmada`, fixtures sem `epoca` e `arte`) | Testes reescritos para a versão 2 do progresso e para os campos novos |
+| Na sala de comissão, seis objetos estavam em células que o mapa não reservava, e um registro ficava ao lado da porta | Objetos e registro movidos; foi o teste dos capítulos que apontou |
+| O roteiro de captura da galeria estourava o tempo no servidor de desenvolvimento: a rede nunca "assenta" (o canal de recarga fica aberto) e a captura de cada elemento esperava dezenas de canvases animados | A galeria ganhou o modo `?parado` (um quadro só), o roteiro espera só o documento e captura por recorte |
+| Na imagem de compartilhamento, a nota do rodapé invadia a última marca da linha | Disposição refeita e imagem gerada de novo |
+| A matriz de cobertura quebrava quando a edição não tinha número | Leitura tolerante ao campo ausente |
+| Linhas sem efeito deixadas nas primeiras versões de três artes (arcos e elipses de coordenada zero) | Removidas |
+| A jornada "mesma figura em todos os capítulos" ficou falsa com as figuras por época | A asserção lê a frase nova da entrada, "três figuras, uma por época" |
+| Dois dos cinco agentes de arte pararam no limite de uso da sessão | O gabinete ficou com o que o agente gravou, conferido; a sala de comissão ficou na versão própria |
+| Em janela de 1440×720, os botões **Jogar com** da entrada ficam logo abaixo da dobra | Não mudado: em 390×844 e 1280×800 aparecem na primeira dobra; registrado aqui |
+| `npm run test:e2e` não subia o próprio servidor: o Next 16 só aceita um servidor de desenvolvimento por pasta, e o que o sistema tinha derrubado por falta de memória deixou o processo do servidor órfão na porta 3000 | O processo órfão foi encerrado, e a suíte subiu. A anotação de como conferir e encerrar está no estado do projeto |
+
+### Verificações executadas
+
+Todas em 10 de outubro de 2026, sobre o build final, uma de cada vez. O servidor de desenvolvimento só foi usado por `npm run test:e2e`, que sobe o próprio.
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run typecheck` e `npm run lint` | Passaram |
+| `npm run test` (Vitest) | 753 testes em 34 arquivos, todos passando |
+| `npm run build` e `npm run verify:export` | 51 rotas geradas (50 páginas HTML, 3 do jogo, mais `robots.txt` e `sitemap.xml`); 302 arquivos conferidos. `robots.txt` sai com `Disallow: /` e o sitemap, vazio, como a decisão manda |
+| `npm run game:coverage -- --check` e `npm run review:human` | Matriz e lista em dia com os dados (os dois têm teste) |
+| `npm run test:export` (carregamento sobre a exportação) | 32 testes, todos passando: 16 do atlas e 16 do jogo, em 1,0 minuto |
+| `npm run capture:game` | 71 capturas em `docs/capturas/jogo-lancamento/`, em 2,8 minutos, olhadas uma a uma |
+| `npm run test:journeys` (jornadas sobre a exportação) | 216 testes, todos passando: 184 do atlas e 32 do jogo, em 8,4 minutos |
+| `npm run test:e2e` (as mesmas jornadas e as telas de prova, no servidor de desenvolvimento) | **Não concluída.** De 237 testes, 185 passaram, sem nenhuma falha real; aos 11,2 minutos o sistema derrubou a suíte por falta de memória da máquina (8 GB), e o Playwright registrou 4 testes interrompidos no instante da parada (0 a 145 ms) e 48 que não chegaram a rodar. As mesmas jornadas passaram inteiras sobre o build (linha acima). Rodar de novo com os outros programas fechados |
+| `npm run audit:a11y` | 10 telas, 4 larguras e a passagem por teclado, sem falha: nenhum texto abaixo do contraste mínimo, nenhuma rolagem lateral, nenhum erro de página, nenhuma parada do teclado sem foco visível. Nas telas do jogo, o menor contraste é 5,24 na entrada e 7,51 na cena, e o único alvo abaixo de 24 px é o nome do atlas no cabeçalho, como nas demais páginas. Na entrada do atlas, o link **Como é o jogo**, novo, tem 20 px de altura, como os outros links de texto corrido do site. Relatório em `test-results/a11y/` |
+| `npm run measure:game -- --rotulo lancamento-2026-10-10` | Laboratório, nesta máquina, mediana de 3 execuções com o cache vazio, Chromium sem interface com o canvas desenhado por software. Computador (1440×900, 10 Mbit/s, 40 ms, CPU sem limite): entrada do jogo com LCP de 304 ms, carregamento em 506 ms e 370 KB; página do jogo com LCP de 244 a 276 ms, palco pronto em 750 a 775 ms, 386 a 387 KB, e a cena a 58 quadros por segundo parada e andando, sem quadro longo. Celular emulado (390×844, 1,6 Mbit/s, 150 ms, CPU 4 vezes mais lenta): entrada com LCP de 1.040 ms e carregamento em 2.358 ms; página do jogo com LCP de 1.088 ms, palco pronto em 2.717 a 2.741 ms, e a cena a 19 a 24 quadros por segundo, com 7 a 14 quadros longos em 3 segundos de caminhada (p95 de 50 a 67 ms). Arquivo: `docs/desempenho/jogo-lancamento-2026-10-10.json`; leitura em [PERFORMANCE.md](PERFORMANCE.md), seção Páginas do jogo |
+| Galeria da arte (`scripts/capture-art.mjs`), antes e depois dos agentes | As nove artes, os 24 objetos e as seis figuras capturadas e olhadas |
+| Primeira dobra da entrada, em roteiro fora do projeto | 390×844 e 1280×800 com os cartões e **Jogar com** na primeira tela; 1440×720 com os botões logo abaixo |
+
+### Implementado e não verificado
+
+- **Aparelho real, leitor de tela, Firefox e Safari.** Como na etapa 1: só Chromium, com celular emulado.
+- **Pausa por perda de foco da janela.** Sem teste automático, como antes.
+- **Reconhecimento das figuras por época e legibilidade da arte por outras pessoas.** Julgados por quem os fez, pelas capturas. A crítica independente da arte não rodou; os agentes refinaram quatro das cinco artes novas e não olharam as quatro anteriores.
+- **Ritmo da trajetória inteira.** Onze capítulos, dois deles com seis registros. Ninguém jogou do início ao fim; a jornada automática leva perto de meio minuto por personagem, sem ler nada.
+- **Migração de um progresso real da etapa 1.** Testada com um progresso da versão 1 gravado pelo teste, não com um gravado pelo build da etapa 1 em um navegador de verdade.
+- **Prévia de compartilhamento.** A imagem existe e foi conferida; os metadados que a citam só entram com o domínio, e nenhum serviço a leu.
+- **Desempenho em aparelho real.** As medições acima são de laboratório, em um notebook, com celular emulado.
+- **Cadência em celular.** No perfil emulado, com a CPU 4 vezes mais lenta e o desenho por software, a cena fica em 19 a 24 quadros por segundo, com quadros longos. Um celular real tem placa de vídeo e outro processador, e o número real não foi medido: é o primeiro item a olhar numa sessão com aparelho.
+
+### Pendências reais
+
+1. **Revisão humana do conteúdo** ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)): condição da publicação, pela regra do próprio projeto.
+2. **Sessões com três pessoas, com celular real** ([USER-VALIDATION.md](USER-VALIDATION.md)).
+3. **Domínio, canal de correção, nome definitivo e liberação da indexação** (`src/lib/site.ts`), hospedagem e **autorização do deploy** ([DEPLOY.md](DEPLOY.md)).
+4. **Totalização final do primeiro turno:** o registro de 4 de outubro traz a apuração parcial, como a notícia do TSE a publicou. Trocar é uma edição nova de conteúdo, com documento oficial lido e decisão do responsável. O segundo turno, de 25 de outubro, fica depois da data de corte.
+5. **Licença do repositório:** não há arquivo LICENSE.
+6. **Aparelho real, leitor de tela e outros navegadores.**
+7. **Olhar de fora sobre a arte,** incluindo a sala de comissão, que não passou por agente.
+8. **Som** e a sincronia entre duas abas do mesmo personagem, como antes.
+9. **Cadência da cena em celular real.** Se um aparelho de verdade ficar perto dos 20 quadros por segundo do perfil emulado, reduzir o trabalho por quadro (por exemplo, limitar a densidade de pixels do canvas da cena em telas pequenas).
+10. **A suíte no servidor de desenvolvimento,** `npm run test:e2e`, que não chegou ao fim em 10/10 (tabela acima): rodar com os outros programas fechados.
+
 ## Jogo, etapa 1 (primeira versão jogável)
+
+Esta seção é o registro da primeira entrega, do mesmo dia. As pendências que ela lista sobre capítulos, figuras por período, ficha judicial e medição foram resolvidas pela versão de lançamento (seção acima); as demais continuam valendo e estão repetidas lá.
 
 Depois da fase 9, o atlas ganhou uma direção nova: além de consultar, dá para **jogar** a trajetória. O visitante escolhe Lula ou Flávio Bolsonaro, controla um personagem por cenários isométricos e avança por capítulos; em cada um, recolhe todos os registros do atlas e cumpre uma tarefa para abrir a passagem ao capítulo seguinte. O documento do jogo é [GAMEPLAY.md](GAMEPLAY.md): fluxo, capítulos escolhidos, tarefas, regras editoriais, progresso, arquitetura e direção visual. As decisões vão de D-91 a D-110, em [DECISIONS.md](DECISIONS.md).
 

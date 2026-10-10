@@ -15,17 +15,59 @@ export type PersonagemSlug = ProfileSlug;
 // ---------------------------------------------------------------------------
 
 /**
- * A tarefa de um capítulo. Dois tipos nesta etapa:
+ * A tarefa de um capítulo. Quatro tipos:
  *   `registro`  encontrar e recolher o registro de um acontecimento;
  *   `ordem`     recolher dois registros e pô-los em ordem cronológica. As
  *               datas dos dois têm de decidir a ordem sem ambiguidade (um
- *               teste confere isso contra o conteúdo).
+ *               teste confere isso contra o conteúdo);
+ *   `fonte`     recolher um registro e indicar, entre documentos do capítulo,
+ *               o que o sustenta;
+ *   `lugar`     recolher um registro e indicar o lugar em que o atlas o
+ *               documenta, entre lugares da trajetória.
+ * As opções das tarefas de fonte e de lugar saem dos próprios registros
+ * (src/lib/game/mission.ts): o jogo não escreve alternativa nenhuma.
  */
 export type TaskSpec =
   | { tipo: "registro"; eventId: string }
-  | { tipo: "ordem"; eventIds: readonly [string, string] };
+  | { tipo: "ordem"; eventIds: readonly [string, string] }
+  | { tipo: "fonte"; eventId: string }
+  | { tipo: "lugar"; eventId: string };
 
-export type SceneId = "sindicato" | "constituinte" | "alerj" | "senado";
+export type TaskType = TaskSpec["tipo"];
+
+/**
+ * A arte de um cenário: piso, paredes, porta e materiais. Uma arte pode
+ * servir a mais de uma cena, com paleta e disposição próprias; a cena é o
+ * que o capítulo aponta (`SceneId`).
+ */
+export type SceneArtId = "sindicato" | "constituinte" | "alerj" | "senado" | "comite" | "tribunal" | "gabinete" | "comissao" | "convencao";
+
+export type SceneId =
+  | "sindicato"
+  | "constituinte"
+  | "alerj"
+  | "senado"
+  | "comite"
+  | "tribunal-a"
+  | "tribunal-b"
+  | "gabinete"
+  | "comissao"
+  | "convencao-a"
+  | "convencao-b";
+
+/**
+ * A época da figura do personagem no capítulo: variações estilizadas de
+ * cabelo, barba e roupa, as mesmas para os dois personagens (D-111). Não
+ * afirmam a aparência real em cada data.
+ */
+export type Epoca = "inicio" | "meio" | "atual";
+
+/** Como cada época aparece na interface: a figura é uma representação, e o rótulo diz isso. */
+export const EPOCA_LABEL: Record<Epoca, string> = {
+  inicio: "figura dos primeiros anos",
+  meio: "figura dos anos intermediários",
+  atual: "figura dos anos recentes",
+};
 
 export interface ChapterSpec {
   /** Identificador estável, usado no progresso salvo. */
@@ -48,6 +90,7 @@ export interface ChapterSpec {
   eventIds: readonly string[];
   tarefa: TaskSpec;
   cena: SceneId;
+  epoca: Epoca;
 }
 
 export type ChapterStatus = "bloqueado" | "disponivel" | "concluido";
@@ -56,14 +99,19 @@ export type ChapterStatus = "bloqueado" | "disponivel" | "concluido";
 // Progresso do jogador (salvo localmente, por personagem)
 // ---------------------------------------------------------------------------
 
-export const PROGRESS_VERSION = 1;
+/**
+ * Versão do formato salvo. A 1 guardava a tarefa com `ordemConfirmada`; a 2
+ * generalizou para `confirmada`, que vale para qualquer tarefa com resposta
+ * (ordem, fonte, lugar). A leitura migra a versão 1 (src/lib/game/progress.ts).
+ */
+export const PROGRESS_VERSION = 2;
 
 export interface TaskState {
   /** Registros recolhidos neste capítulo, na ordem em que foram recolhidos. */
   recolhidos: string[];
-  /** Tarefa de ordem: a ordem foi confirmada como certa. */
-  ordemConfirmada: boolean;
-  /** Tarefa de ordem: quantas tentativas foram feitas (só informação; não pune). */
+  /** Tarefa com resposta (ordem, fonte, lugar): a resposta certa foi confirmada. */
+  confirmada: boolean;
+  /** Tarefa com resposta: quantas tentativas foram feitas (só informação; não pune). */
   tentativas: number;
 }
 
@@ -84,10 +132,17 @@ export interface PlayerProgress {
 // ---------------------------------------------------------------------------
 
 export interface GameSource {
+  /** O `id` da fonte no conjunto publicado. */
+  id: string;
   titulo: string;
   autoria: string;
   url: string;
+  /** O que o trecho citado sustenta no registro, como a citação diz. */
+  evidencia: string;
 }
+
+/** Onde o atlas documenta o acontecimento, com os nomes dos lugares já resolvidos. */
+export type GameLocation = { tipo: "lugares"; lugares: readonly string[] } | { tipo: "nacional" } | { tipo: "desconhecida" };
 
 /** O que um registro mostra ao ser recolhido: o mesmo que a ficha, em resumo. */
 export interface GameRecord {
@@ -97,6 +152,9 @@ export interface GameRecord {
   data: DataHistorica;
   categoria: Categoria;
   resumo: string;
+  /** O contexto da ficha: nos episódios judiciais, é onde o atlas traz a defesa, a decisão e o desfecho. */
+  contexto: string;
+  localizacao: GameLocation;
   fontes: readonly GameSource[];
   /** Quem conferiu o registro e quando: o jogo mostra a mesma nota do atlas. */
   editorial: Editorial;
@@ -142,7 +200,12 @@ export type PropKind =
   | "caixote"
   | "poltrona"
   | "placa"
-  | "decoracao";
+  | "decoracao"
+  | "tela"
+  | "balcao"
+  | "fileira"
+  | "sofa"
+  | "cartaz";
 
 export interface PropSpec {
   tipo: PropKind;
@@ -169,6 +232,8 @@ export type ExitSide = "norte" | "sul" | "leste" | "oeste";
 
 export interface SceneSpec {
   id: SceneId;
+  /** A arte que desenha esta cena. */
+  arte: SceneArtId;
   /** Nome do lugar, mostrado na transição e no painel. */
   nome: string;
   /** Uma linha por fileira, um caractere por célula (legenda em grid.ts). */

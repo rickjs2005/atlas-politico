@@ -3,10 +3,9 @@
 
 import type { SceneSpec } from "../types";
 
-import { PALETTES } from "./palettes";
-
 export const senado: SceneSpec = {
   id: "senado",
+  arte: "senado",
   nome: "Plenário do Senado",
   mapa: [
     "############",
@@ -21,7 +20,8 @@ export const senado: SceneSpec = {
   ],
   largura: 12,
   altura: 9,
-  paleta: PALETTES.senado,
+  // Fim dos anos 2010: pedra fria, parede clara, tapete de ardósia.
+  paleta: { chao: "#d2d5d0", chaoAlt: "#c7cbc6", tapete: "#5d6b78", parede: "#d8dad3", paredeTopo: "#e4e5df", fundo: "#eceee9", acento: "#8a7a4a" },
   props: [
     { tipo: "bandeira", x: 2, y: 2 },
     { tipo: "bandeira", x: 9, y: 2, espelhado: true },

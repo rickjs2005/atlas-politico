@@ -1,6 +1,6 @@
 // Base dos elementos de cenário (draw/props.ts): o quadro local de um objeto,
-// os materiais de cada cena e as formas que o kit não tem (prisma, tronco,
-// disco em pé, sombra alongada).
+// os materiais de cada arte de ambiente e as formas que o kit não tem (prisma,
+// tronco, disco em pé, sombra alongada).
 //
 // Um objeto é desenhado em eixos próprios: `u` é a largura e `v` a
 // profundidade, em células, com a frente em +v; `z` é a altura, em pixels.
@@ -8,9 +8,10 @@
 // trocam. As faces são sombreadas pelo eixo do mundo para onde ficam
 // voltadas: o objeto vira e a luz fica onde estava.
 
-import type { SceneId, ScenePalette } from "@/lib/game/types";
+import type { SceneArtId, ScenePalette } from "@/lib/game/types";
 import { TILE_H, TILE_W } from "@/lib/game/world/iso";
 
+import { ARTS } from "./arts";
 import { DETAIL, INK, LIGHT, OUTLINE, SHADOW, isoBox, poly, tone, type Pt } from "./kit";
 import type { CellInfo } from "./types";
 
@@ -63,110 +64,14 @@ export interface Materiais {
   brilho: number;
   /** Desgaste: de 0 (novo) a 1 (lascado, com veios à mostra). */
   desgaste: number;
+  /** Mobília rústica, de oficina: cadeiras e pés de aço, armários de chapa, madeira crua. */
+  rustico: boolean;
+  /** Ambiente de materiais frios: estofado e metal em vez de madeira quente, onde o objeto escolhe. */
+  frio: boolean;
 }
 
-type Receita = Omit<Materiais, "madeira"> & { madeira: string; /** Quanto do acento da paleta entra na madeira. */ tinta: number };
-
-// Nenhuma cor identifica pessoa ou partido: são madeira, aço, pedra e pano em
-// tons de papel. O laranja do atlas não entra aqui.
-const RECEITAS: Record<SceneId, Receita> = {
-  // Madeira crua e aço pintado, gasto.
-  sindicato: {
-    madeira: "#a9814f",
-    tinta: 0.1,
-    tampo: "#bb9764",
-    madeiraEscura: "#7a5a3c",
-    aco: "#8b9790",
-    maquina: "#5f7873",
-    ferro: "#454a48",
-    cromo: "#c6c9c2",
-    latao: "#a58a55",
-    estofado: "#6d5443",
-    pedra: "#c9c3b5",
-    pano: "#a9aaa3",
-    papel: "#f2ede1",
-    pardo: "#c9ad7c",
-    folha: "#5f7f57",
-    vaso: "#9a7861",
-    feltro: "#b3956a",
-    plastico: "#dedbcf",
-    lombadas: ["#c9ad7c", "#8e8f86", "#5e6e66", "#e3dccb", "#7a5a3c"],
-    brilho: 0,
-    desgaste: 1,
-  },
-  // Madeira quente envernizada.
-  constituinte: {
-    madeira: "#7f4f2c",
-    tinta: 0.15,
-    tampo: "#95643a",
-    madeiraEscura: "#5a3620",
-    aco: "#9c9a86",
-    maquina: "#6f7f76",
-    ferro: "#3f3b36",
-    cromo: "#cfcabb",
-    latao: "#b3975a",
-    estofado: "#4f6462",
-    pedra: "#e3dccb",
-    pano: "#b3b2a8",
-    papel: "#f4efe3",
-    pardo: "#cfb07a",
-    folha: "#5d7d52",
-    vaso: "#8a6b4a",
-    feltro: "#4f6462",
-    plastico: "#e2dccb",
-    lombadas: ["#6b4a3a", "#4f6462", "#b59a6a", "#3f3a36", "#e6dfce"],
-    brilho: 0.55,
-    desgaste: 0.2,
-  },
-  // Madeira escura e pedra clara.
-  alerj: {
-    madeira: "#5c4334",
-    tinta: 0.1,
-    tampo: "#745744",
-    madeiraEscura: "#43312a",
-    aco: "#b4b5ad",
-    maquina: "#7c8a86",
-    ferro: "#4a4a47",
-    cromo: "#d2d3cc",
-    latao: "#b9975b",
-    estofado: "#57483f",
-    pedra: "#ece6d8",
-    pano: "#b9b8ae",
-    papel: "#f6f2e8",
-    pardo: "#d1b888",
-    folha: "#5f8259",
-    vaso: "#d8d1c1",
-    feltro: "#6b5648",
-    plastico: "#e6e3d9",
-    lombadas: ["#d1b888", "#5a6a72", "#8b8d86", "#f1ece0", "#6b5648"],
-    brilho: 0.35,
-    desgaste: 0,
-  },
-  // Madeira escura polida e estofado cinza-azulado sóbrio.
-  senado: {
-    madeira: "#4d3a31",
-    tinta: 0.08,
-    tampo: "#604b3d",
-    madeiraEscura: "#382b26",
-    aco: "#8f969b",
-    maquina: "#75828a",
-    ferro: "#3d4144",
-    cromo: "#d0d4d3",
-    latao: "#a39262",
-    estofado: "#66737f",
-    pedra: "#e7e8e2",
-    pano: "#b4b7b4",
-    papel: "#f5f3ec",
-    pardo: "#c8b78f",
-    folha: "#58796a",
-    vaso: "#5a6068",
-    feltro: "#5d6b78",
-    plastico: "#e3e4de",
-    lombadas: ["#4a5560", "#c8b78f", "#8a8f93", "#efede6", "#3d4144"],
-    brilho: 0.8,
-    desgaste: 0,
-  },
-};
+/** A receita de uma arte: os materiais e quanto do acento da paleta entra na madeira. */
+export type Receita = Materiais & { tinta: number };
 
 function canais(hex: string): [number, number, number] {
   const n = Number.parseInt(hex.slice(1), 16);
@@ -180,15 +85,15 @@ export function mistura(a: string, b: string, t: number): string {
   return `#${ca.map((c, i) => Math.round(c + (cb[i]! - c) * t).toString(16).padStart(2, "0")).join("")}`;
 }
 
-const prontos: Partial<Record<SceneId, { acento: string; mat: Materiais }>> = {};
+const prontos = new Map<ScenePalette, Materiais>();
 
-/** Os materiais da cena. O acento da paleta tinge de leve a madeira; montados uma vez. */
-export function materiais(cena: SceneId, paleta: ScenePalette): Materiais {
-  const pronto = prontos[cena];
-  if (pronto !== undefined && pronto.acento === paleta.acento) return pronto.mat;
-  const { tinta, ...receita } = RECEITAS[cena];
+/** Os materiais da arte para a paleta da cena. O acento tinge de leve a madeira; montados uma vez por paleta. */
+export function materiais(arte: SceneArtId, paleta: ScenePalette): Materiais {
+  const pronto = prontos.get(paleta);
+  if (pronto !== undefined) return pronto;
+  const { tinta, ...receita } = ARTS[arte].receita;
   const mat: Materiais = { ...receita, madeira: mistura(receita.madeira, paleta.acento, tinta) };
-  prontos[cena] = { acento: paleta.acento, mat };
+  prontos.set(paleta, mat);
   return mat;
 }
 

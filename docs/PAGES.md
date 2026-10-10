@@ -173,8 +173,8 @@ As regras são funções puras em `src/lib/state/links.ts` (`profileReturn`, `co
 | Item | Situação | Onde configurar |
 | --- | --- | --- |
 | Canal público de correção | **Pendente.** É decisão do responsável pelo projeto. A metodologia diz "Canal ainda não definido" e oferece o modelo | `SITE.correctionChannel`, em `src/lib/site.ts`: `{ rotulo, href }`. Com o valor preenchido, a página troca o aviso pelo link |
-| Domínio público | **Não definido.** Não é necessário para **Copiar link**, que usa o endereço em execução | Endereço canônico, `metadataBase` e sitemap entram na fase 10 |
-| Indexação | Bloqueada (`robots: noindex`), porque o conteúdo não tem revisão humana | `src/app/layout.tsx`, na fase 10 |
+| Domínio público | **Não definido.** Não é necessário para **Copiar link**, que usa o endereço em execução | `SITE.publicUrl`, em `src/lib/site.ts`. Com o valor, o `<html>` ganha `metadataBase` e endereço canônico, a prévia de compartilhamento ganha a imagem (`public/share/atlas.png`) e o sitemap passa a listar as páginas ([DEPLOY.md](DEPLOY.md)) |
+| Indexação | Bloqueada (`robots: noindex` em toda página e `robots.txt` com `Disallow: /`), porque o conteúdo não tem revisão humana | `SITE.indexar`, em `src/lib/site.ts`; só vale com o domínio. `src/app/robots.ts` e `src/app/sitemap.ts` leem os dois |
 
 ## Arquivos
 

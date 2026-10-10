@@ -80,7 +80,7 @@ export function bandeira(q: Quadro): void {
   const [x, y] = pt(q, 0, 0);
   const variante = q.variante % 3;
   const cor = variante === 1 ? tone(mat.pano, -0.2) : variante === 2 ? tone(mat.pano, 0.22) : mat.pano;
-  const rustica = q.info.cena === "sindicato";
+  const rustica = q.mat.rustico;
   const base = rustica ? mat.ferro : mat.pedra;
   // O pano balança devagar na barra de baixo; cada bandeira no seu tempo.
   const b = q.movimento ? Math.sin(q.tempo * 1.1 + q.info.x * 1.7 + q.info.y) * 1.5 : 0;

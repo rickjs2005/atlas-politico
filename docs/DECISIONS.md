@@ -888,6 +888,70 @@ Recolher tudo leva mais tempo: as jornadas de teste pelo cenário passaram a and
 
 **Consequência.** O caminho "rever um capítulo, ir à ficha de um registro e voltar ao capítulo que se revia" continua existindo, agora pela releitura, com teste de navegador. Como há um botão por registro, cada um leva no nome o título do registro, e na volta de uma releitura o foco fica no botão do registro lido, que a janela traz à vista sem rolar a página.
 
+## D-111. Uma figura de cada personagem por época, estilizada e com a mesma escala para os dois
+
+**Decisão (jogo, versão de lançamento, em 10 de outubro de 2026).** Cada personagem jogável tem três figuras, uma por época dos capítulos (`Epoca`: primeiros anos, anos intermediários, anos recentes), que mudam cabelo, barba e roupa sobre o mesmo esqueleto, o mesmo rosto e o mesmo ciclo de caminhada. Lula: camisa de mangas dobradas com cabelo e barba escuros; terno com cabelo e barba grisalhos; terno com a barba branca. Flávio Bolsonaro: terno cinza sem barba; a barba rente; fios mais claros e terno escuro. Cada capítulo declara a época (`ChapterSpec.epoca`), e os dois personagens passam pelas três, em ordem. O cabeçalho da cena, a transição, o painel e o guia dizem qual figura é e que ela é estilizada: não afirma a aparência real da pessoa em cada data. Supera a D-103.
+
+**Motivo.** Com capítulos de 1975 a 2026, a figura única de hoje em todos os períodos era um anacronismo dito na entrada. A variação por época é a solução pedida para a versão de lançamento, com a condição de não inventar aparência: as mudanças são as mais estilizadas possíveis (cor de cabelo e barba, presença da barba, roupa), e a frase na interface diz isso.
+
+**Consequência.** `characterArt(personagem, epoca)` substitui `CHARACTERS[personagem]`; a galeria mostra as três figuras de cada um; o corpo ganhou a roupa `camisa`, além do terno e do colete; o rótulo da época (`EPOCA_LABEL`) aparece onde a figura é apresentada. Um teste confere que cada personagem tem figura nas três épocas e que as épocas seguem a ordem dos capítulos.
+
+## D-112. A arte do ambiente separada da cena
+
+**Decisão (jogo, versão de lançamento, em 10 de outubro de 2026).** Uma cena (`SceneId`) é o layout de um capítulo: mapa, objetos, paleta e posições. Uma arte (`SceneArtId`, em `src/features/game/draw/arts/`) é o que desenha piso, paredes, porta e materiais. Cada cena aponta a arte que a desenha, e duas cenas podem dividir uma arte com paleta e disposição próprias. Os períodos novos ganharam cinco artes novas (comitê de campanha, sala de audiências, gabinete, sala de comissão, auditório de convenção), e não a aparência dos quatro ambientes da etapa 1.
+
+**Motivo.** Na etapa 1 a arte era escolhida pelo identificador da cena, espalhada por vários arquivos (paredes, piso, porta, materiais e até os objetos perguntavam "é o sindicato?"). Sete cenas novas com cinco ambientes diferentes não cabiam nisso, nem permitiam trabalho em paralelo sem conflito. Com um arquivo por arte e um registro único, cada ambiente é uma unidade, e os objetos escolhem material pela receita (`rustico`, `frio`), e não pelo nome da cena.
+
+**Consequência.** `CellInfo` leva a cena e a arte; `scene-walls.ts`, `scene-floor.ts`, `scene-exit.ts` e `props.ts` desenham com o que a arte diz; os kits compartilhados (`wall-kit.ts`, `floor-kit.ts`, `floors.ts`, `exit-kit.ts`, `door-leaves.ts`) expõem o plano e as formas. As paletas saíram de um arquivo único e ficam na própria cena. Entraram cinco objetos novos (balcão, cartaz, tela, fileira, sofá). Um teste confere o registro: toda cena aponta uma arte, toda arte é usada, e duas cenas da mesma arte têm paletas diferentes.
+
+## D-113. Duas mecânicas novas: o documento que sustenta e o lugar documentado
+
+**Decisão (jogo, versão de lançamento, em 10 de outubro de 2026).** Além de encontrar um registro e de pôr dois em ordem, há a tarefa de **documento** (`fonte`: recolher o registro pedido e indicar, entre três documentos, o que o sustenta) e a de **lugar** (`lugar`: indicar, entre três lugares, o que o atlas documenta para o registro). As opções saem dos próprios registros: o documento certo é o primeiro que o registro cita (qualquer citado conta como certo), e as erradas são documentos de outros registros do capítulo não citados pelo pedido; o lugar certo é o da ficha, e os errados são lugares de outros registros da trajetória. A ordem das opções é fixa e não deixa a certa sempre em primeiro. Errar explica (de qual registro é o documento ou o lugar escolhido, com a data) e deixa tentar de novo, sem penalidade. Cada trajetória tem pelo menos três tipos de tarefa, nunca dois iguais seguidos, e os quatro tipos aparecem no jogo.
+
+**Motivo.** As duas mecânicas pedidas para o lançamento são as que ensinam o que o atlas é: cada registro tem documentos que o sustentam e um lugar documentado ou uma abrangência. Montar as opções a partir dos registros garante que o jogo não escreve alternativa nenhuma e que a resposta está sempre ao alcance de quem leu o registro recolhido.
+
+**Consequência.** `TaskSpec` ganhou os dois tipos; `TaskState.confirmada` vale para qualquer tarefa com resposta (D-115); `sourceOptions`, `placeOptions`, `submitSource` e `submitPlace` em `mission.ts`, com testes sobre fixtures e sobre o conteúdo real; a janela de escolha (`ChoiceDialog`) e as frases do HUD, do painel, do guia e da saída fechada por tipo de tarefa. O registro recolhido passou a mostrar o lugar documentado e o que cada fonte sustenta, que é onde a resposta está.
+
+## D-114. Ficha judicial por identificador, com a natureza do registro e as decisões relacionadas
+
+**Decisão (jogo, versão de lançamento, em 10 de outubro de 2026).** Os registros de processo (dez na edição) têm, no jogo, uma ficha judicial (`src/lib/game/judicial.ts`): a natureza (denúncia, decisão liminar, condenação, confirmação, prisão, decisão eleitoral, soltura, anulação, rejeição), dita sem equiparar o que é diferente; as decisões relacionadas, por identificador, com a própria data, mesmo de outro capítulo; e o aviso de que o jogo não pede que o jogador decida culpa. Quem alegou, o que a defesa disse, quem decidiu e o desfecho vêm do contexto da ficha do atlas, mostrado inteiro no registro recolhido. Cada relação repete o que o contexto do registro já diz.
+
+**Motivo.** A etapa 1 deixou os episódios judiciais de fora até existir uma apresentação própria (D-92). A regra da versão de lançamento é mostrar, quando documentado, cada passo com a data, relacionar os acontecimentos por identificador e nunca fazer o jogador julgar: as tarefas dos capítulos judiciais são a ordem de duas decisões pelas datas e o documento que sustenta uma decisão.
+
+**Consequência.** Um teste confere que todo identificador da ficha existe na edição e nos capítulos do mesmo personagem, que os textos não têm fala atribuída nem aspas e que a natureza de denúncia, anulação e rejeição diz o que não são. A lista de revisão humana ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)) começa por esses registros.
+
+## D-115. Progresso na versão 2, com migração explícita da versão 1
+
+**Decisão (jogo, versão de lançamento, em 10 de outubro de 2026).** O formato salvo passou à versão 2: o estado da tarefa chama a confirmação de `confirmada`, que vale para a ordem, o documento e o lugar (a versão 1 só tinha `ordemConfirmada`). A leitura aceita a versão 1 e a 2 e devolve sempre a 2; o nome antigo só vale na versão 1, e o novo só na 2. Quem terminou os dois capítulos da etapa 1 reabre o jogo com os dois concluídos e o capítulo 3 disponível.
+
+**Motivo.** A regra do lançamento: mudança de formato só com migração explícita e testada, e os identificadores dos capítulos preservados para o progresso salvo continuar valendo. Os quatro capítulos da etapa 1 mantiveram o identificador, os acontecimentos e a tarefa.
+
+**Consequência.** `PROGRESS_VERSION = 2`, `READABLE_VERSIONS = [1, 2]`; testes de migração em `tests/game-progress.test.ts` (inclusive o progresso da regra antiga da saída, D-109) e no navegador, com um salvo da versão 1 gravado antes de abrir a página.
+
+## D-116. Cobertura completa, matriz gerada e fronteira entre capítulos pela data e pela precisão
+
+**Decisão (jogo, versão de lançamento, em 10 de outubro de 2026).** Todo acontecimento publicado de cada personagem está em um capítulo dele; um acontecimento só pode ficar fora se estiver em `EXCLUSIONS` (`src/lib/game/coverage.ts`) com justificativa escrita, e a lista está vazia. A matriz acontecimento → personagem → capítulo é gerada dos dados (`npm run game:coverage`, [GAME-COVERAGE.md](GAME-COVERAGE.md)) e conferida por teste. A fronteira entre capítulos é decidida pela data e pela precisão de cada par de registros (`datesDecideOrder`), e não mais pelo ano: dois capítulos podem dividir um ano quando as datas têm dia. O acontecimento compartilhado (o primeiro turno de 2026) aparece uma vez na trajetória de cada personagem; a unicidade é por personagem.
+
+**Motivo.** O lançamento exige os 24 acontecimentos restantes em capítulos, sem esconder episódio difícil e sem privilegiar um personagem. A comparação por ano era restritiva demais para fronteiras como fevereiro e dezembro de 2025, e inventar dias para separá-las seria pior.
+
+**Consequência.** Seis capítulos de Lula e cinco de Flávio Bolsonaro, 39 acontecimentos; `tests/game-chapters.test.ts` confere unicidade por personagem, cobertura, fronteiras e as opções das tarefas sobre o conteúdo real; `tests/game-coverage.test.ts` confere o documento gerado.
+
+## D-117. Publicação condicionada: domínio, indexação, prévia e deploy só com decisão
+
+**Decisão (jogo, versão de lançamento, em 10 de outubro de 2026).** `src/lib/site.ts` concentra o que a publicação precisa decidir: o domínio público (`publicUrl`), a liberação da indexação (`indexar`), o canal de correção, o nome e a descrição. Enquanto não há domínio, não há endereço canônico, `metadataBase`, sitemap (vazio) nem imagem na prévia de compartilhamento, e o `robots.txt` bloqueia tudo; com domínio e indexação liberada, `robots.ts` e `sitemap.ts` passam a servir. A imagem da prévia está pronta em `public/share/atlas.png` (`node scripts/share-image.mjs`). O procedimento de publicação está em [DEPLOY.md](DEPLOY.md), e o deploy só acontece com autorização expressa, depois da revisão humana e da validação com pessoas.
+
+**Motivo.** O pedido do lançamento: preparar títulos, descrição, prévia, créditos e canal de correção, com canonical, sitemap e indexação só para o domínio escolhido e a edição liberada, sem serviço nem publicação automática.
+
+**Consequência.** Nada muda no site enquanto os campos ficarem nulos; mudar qualquer um exige build. A metodologia ganhou os créditos do jogo e do MapLibre.
+
+## D-118. Lista de revisão humana gerada dos dados, e a apuração do primeiro turno mantida como parcial
+
+**Decisão (jogo, versão de lançamento, em 10 de outubro de 2026).** [HUMAN-REVIEW.md](HUMAN-REVIEW.md) é gerado por `npm run review:human` (`src/lib/editorial/human-review.ts`): lista, trecho a trecho e por prioridade (episódios judiciais, dados eleitorais, filiações, mandatos, demais), o resumo, o contexto e as fontes de cada registro, com a caixa para a pessoa que conferir assinar. O código nunca registra revisão como humana. O registro do primeiro turno de 2026 continua com a apuração parcial divulgada pelo TSE (99,99% das urnas), e os textos do jogo a chamam de apuração parcial; a totalização final só entra por uma edição nova de conteúdo, com documento oficial lido e `alteracoes` registradas. A data de corte continua 8 de outubro de 2026.
+
+**Motivo.** A política editorial condiciona a publicação à revisão humana, e o pedido do lançamento exige a lista objetiva do que precisa de olho humano e a proibição de renomear a apuração parcial como resultado definitivo.
+
+**Consequência.** Testes conferem que a lista cita todo registro e toda fonte, que começa pelos episódios judiciais e que o documento está em dia; e que nenhum texto do jogo chama o primeiro turno de resultado final.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
@@ -910,7 +974,7 @@ Recolher tudo leva mais tempo: as jornadas de teste pelo cenário passaram a and
 | Conferência das fontes como comando do projeto ([EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md), pendência 6) | Quando o conteúdo passar a ser atualizado com frequência |
 | Firefox e Safari nas jornadas ([QA.md](QA.md)) | Fase 10, antes de publicar |
 | A entrada do atlas como escolha de personagem do jogo (D-99) | Decisão do responsável pelo projeto |
-| Capítulos para os 24 acontecimentos restantes e ficha própria para episódios judiciais no jogo (D-92) | Etapa 2 do jogo |
-| Uma figura de cada personagem por período (D-103) | Quando os capítulos cobrirem décadas diferentes |
-| Jogo em aparelho real, com leitor de tela e em outros navegadores | Antes de publicar |
-| Som no jogo | Etapa posterior |
+| Jogo em aparelho real, com leitor de tela e em outros navegadores | Antes de publicar ([USER-VALIDATION.md](USER-VALIDATION.md)) |
+| Atualizar o primeiro turno de 2026 com a totalização final do TSE (D-118) | Decisão do responsável pelo projeto, por uma edição nova de conteúdo |
+| Domínio público, indexação e autorização do deploy (D-117) | Decisão do responsável pelo projeto ([DEPLOY.md](DEPLOY.md)) |
+| Som no jogo | Depois do lançamento |

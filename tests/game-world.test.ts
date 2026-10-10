@@ -15,6 +15,7 @@ import { DEAD_ZONE, directionFor } from "@/lib/game/world/touch";
 // um elemento de cenário no meio e dois registros embaixo.
 const CENA: SceneSpec = {
   id: "sindicato",
+  arte: "sindicato",
   nome: "Sala de teste",
   mapa: [
     "#########",
@@ -56,6 +57,7 @@ const CAPITULO: ChapterSpec = {
   eventIds: ["r1", "r2"],
   tarefa: { tipo: "ordem", eventIds: ["r1", "r2"] },
   cena: "sindicato",
+  epoca: "inicio",
 };
 
 const DT = 1 / 60;

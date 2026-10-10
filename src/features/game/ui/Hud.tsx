@@ -7,10 +7,11 @@
 // Em janela baixa (celular deitado), o cabeçalho encolhe para a cena e os
 // controles de toque caberem juntos.
 
-import type { ChapterSpec, Interactable } from "@/lib/game/types";
+import { EPOCA_LABEL, type ChapterSpec, type Interactable } from "@/lib/game/types";
 
 import { secondaryButton } from "./Dialog";
 import { missingLabel } from "./saida";
+import { countingSentence, hudPendingSentence } from "./tarefa";
 
 export function reachLabel(alvo: Interactable | null, saidaAberta: boolean): string | null {
   if (alvo === null) return null;
@@ -26,11 +27,11 @@ interface HudProps {
   /** A tarefa cumprida e todos os registros recolhidos: a passagem está aberta. */
   saidaAberta: boolean;
   tarefaConcluida: boolean;
-  /** Tarefa de ordem: os dois registros pedidos já estão recolhidos, e a ordem ainda não foi confirmada. */
-  ordemPendente: boolean;
+  /** Os registros pedidos já estão recolhidos, e a resposta (ordem, documento ou lugar) ainda não foi dada. */
+  respostaPendente: boolean;
   /** Registros do capítulo que ainda não foram recolhidos. */
   faltam: number;
-  /** Este é o último capítulo desta etapa: a saída encerra, e não leva a outro. */
+  /** Este é o último capítulo da trajetória: a saída encerra, e não leva a outro. */
   ultimo: boolean;
   /** Tela de toque: a dica do alcance fica no botão de ação. */
   toque: boolean;
@@ -46,7 +47,7 @@ export function Hud({
   alcance,
   saidaAberta,
   tarefaConcluida,
-  ordemPendente,
+  respostaPendente,
   faltam,
   ultimo,
   toque,
@@ -58,24 +59,19 @@ export function Hud({
   const dica = reachLabel(alcance, saidaAberta);
   const total = capitulo.eventIds.length;
   const recolhidos = total - faltam;
-  // A linha do objetivo diz o próximo passo: a tarefa, a ordem a responder, os registros que faltam, a passagem.
+  // A linha do objetivo diz o próximo passo: a tarefa, a resposta a dar, os registros que faltam, a passagem.
   const objetivo = saidaAberta
     ? ultimo
-      ? "Tarefa concluída e registros recolhidos. A saída abriu: atravesse a passagem para encerrar esta etapa."
+      ? "Tarefa concluída e registros recolhidos. A saída abriu: atravesse a passagem para encerrar a trajetória."
       : "Tarefa concluída e registros recolhidos. A saída abriu: atravesse a passagem para seguir."
     : tarefaConcluida
       ? `Tarefa concluída. ${missingLabel(faltam)} para a saída abrir.`
-      : ordemPendente
-        ? "Os dois registros da tarefa estão com você. Para colocá-los em ordem, abra Como jogar ou Capítulos e tarefas."
+      : respostaPendente
+        ? hudPendingSentence(capitulo.tarefa.tipo)
         : capitulo.objetivo;
-  // Recolher todos cumpre a tarefa de registro, mas não a de ordem: enquanto a ordem não é confirmada, a contagem diz as duas coisas.
-  const contagem = saidaAberta
-    ? "saída aberta"
-    : faltam === 0
-      ? "falta a tarefa"
-      : tarefaConcluida || capitulo.tarefa.tipo === "registro"
-        ? "a saída abre com todos"
-        : "a saída abre com todos e a ordem certa";
+  // Recolher todos cumpre a tarefa de registro, mas não as que pedem resposta: enquanto a resposta não é dada, a contagem diz as duas coisas.
+  const contagem = saidaAberta ? "saída aberta" : faltam === 0 ? "falta a tarefa" : tarefaConcluida ? "a saída abre com todos" : countingSentence(capitulo.tarefa.tipo);
+  const periodo = capitulo.periodo.de === capitulo.periodo.ate ? `${capitulo.periodo.de}` : `${capitulo.periodo.de}–${capitulo.periodo.ate}`;
   return (
     <>
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-wrap items-start justify-between gap-2 p-3 md:p-4">
@@ -85,9 +81,9 @@ export function Hud({
           }`}
           data-objetivo-caixa={saidaAberta ? "saida-aberta" : tarefaConcluida ? "tarefa-concluida" : "pendente"}
         >
-          {/* O nome do lugar é o do cenário, e não o do fato: o rótulo diz isso. */}
-          <p className="eyebrow text-ink-soft janela-baixa:hidden" data-cenario>
-            Capítulo {capitulo.numero} · {capitulo.periodo.de}–{capitulo.periodo.ate} · cenário: {cenaNome}
+          {/* O nome do lugar é o do cenário, e não o do fato: o rótulo diz isso. A figura é a da época, estilizada. */}
+          <p className="eyebrow text-ink-soft janela-baixa:hidden" data-cenario data-epoca={capitulo.epoca}>
+            Capítulo {capitulo.numero} · {periodo} · cenário: {cenaNome} · {EPOCA_LABEL[capitulo.epoca]}
           </p>
           <p className="font-serif text-lg font-medium leading-tight janela-baixa:text-base">{capitulo.titulo}</p>
           <p className={`text-sm janela-baixa:text-xs ${saidaAberta ? "font-medium" : ""}`} data-objetivo role="status">

@@ -9,7 +9,8 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | `fase-6/` | O mapa sincronizado: marcadores, lista de um lugar, seleção, legenda e falhas | `npm run capture:map` | `tests/e2e/mapa.capture.ts` |
 | `fase-7/` | A comparação, o perfil, a página do acontecimento com o retorno, a cópia do link e a metodologia | `npm run capture:pages` | `tests/e2e/paginas.capture.ts` |
 | `fase-8/` | O acabamento: abertura, exploração, comparação e leitura, na saída estática. Em `fase-8/antes/`, as mesmas telas antes da fase | `npm run build` e `npm run capture:finish` | `tests/export/acabamento.capture.ts` |
-| `jogo-etapa-1/` | O jogo, na saída estática: entrada do atlas com o acesso, escolha de personagem, os dois capítulos de cada personagem, registro, tarefa de ordem, painel, guia, fim da etapa, celular, rodapé e a volta da ficha | `npm run build` e `npm run capture:game` | `tests/export/jogo.capture.ts` |
+| `jogo-etapa-1/` | O jogo na etapa 1, na saída estática: entrada do atlas com o acesso, escolha de personagem, os dois capítulos de cada personagem, registro, tarefa de ordem, painel, guia, fim da etapa, celular, rodapé e a volta da ficha. Guardadas como história; o roteiro passou a gravar em `jogo-lancamento/` | (roteiro da etapa 1) | |
+| `jogo-lancamento/` | O jogo na versão de lançamento, na saída estática: os onze capítulos, as quatro tarefas, a ficha judicial, as figuras por época, o painel, o fim da trajetória, celular em pé e deitado, guia, saída fechada, rodapé e a volta da ficha | `npm run build` e `npm run capture:game` | `tests/export/jogo.capture.ts` |
 | `fase-9/` | As oito telas da conferência final, nas quatro larguras, com a edição 0.1.1; o relatório da passagem de acessibilidade; e a linha do tempo antes e depois da correção da hachura | `npm run build` e `npm run audit:a11y -- --saida docs/capturas/fase-9` | `scripts/audit-a11y.mjs` |
 
 Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts`, `tests/e2e/paginas.spec.ts`, `tests/e2e/acabamento.spec.ts` e, sobre a saída estática, `tests/export/carregamento.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
@@ -26,9 +27,38 @@ As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeita
 | `--celular` | 390×844 |
 | `--celular-estreito` | 360×800 |
 
+## Jogo, versão de lançamento
+
+Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o conteúdo da edição 0.1.1, em `jogo-lancamento/`. O celular é emulado (390×844 em pé e 844×390 deitado, com toque). Os capítulos avançados são abertos com um progresso salvo (os anteriores concluídos).
+
+| Arquivo | O que mostra |
+| --- | --- |
+| `01-entrada-do-atlas--computador` e `--celular` | A entrada do atlas, com o acesso **Jogar com** e o número de capítulos abaixo de cada cartão |
+| `02-escolha-de-personagem--computador` e `--celular` | A entrada do jogo: os dois personagens, a prévia do mundo e os capítulos |
+| `<personagem>-03` a `-08` | O primeiro capítulo: a cena, o registro ao alcance, o registro recolhido, a saída aberta, a transição e a cena do capítulo 2 |
+| `<personagem>-09` a `-11` | A tarefa de ordem: a pergunta, a ordem errada com a explicação e a ordem certa |
+| `<personagem>-12-painel-de-capitulos` | O painel, com todos os capítulos, o tipo de tarefa de cada um e **Ler de novo** |
+| `<personagem>-13-transicao-com-contexto` | A transição para o capítulo 3: título, período, cenário, época da figura e contexto |
+| `<personagem>-14-capitulo-<n>` | A cena de cada capítulo a partir do 3, com a figura da época |
+| `<personagem>-15` a `-17` | A tarefa de documento: a pergunta com as opções, a opção errada com a explicação e a certa |
+| `<personagem>-18-tarefa-de-lugar` | A tarefa de lugar, com as opções |
+| `<personagem>-19` e `-20-ficha-judicial...` | O registro de um episódio de processo: a natureza, o contexto, as decisões relacionadas com a própria data e o aviso |
+| `<personagem>-21` e `-22` | A transição para o fim e a tela de fim da trajetória |
+| `<personagem>-23` a `-28-celular-...` | A cena, o registro, o painel, um capítulo avançado e a tarefa de documento em celular, com os controles de toque |
+| `29-celular-deitado` e `30-celular-deitado-capitulo-4` | A cena em celular deitado, em dois cenários |
+| `31-guia-como-jogar` | A janela do guia: o Arquivista como personagem fictício, o objetivo, como se joga, o aviso do cenário e da figura |
+| `32` e `33` | O painel com o aviso de ordem não documentada e o registro de data parcial |
+| `34` a `36` | A tarefa cumprida com a saída fechada, a janela da saída fechada e o personagem diante da porta aberta |
+| `37-rodape-da-pagina-do-jogo` | A página do jogo rolada até o fim, de propósito |
+| `38-pagina-do-acontecimento-com-volta-ao-jogo` | A página do acontecimento aberta pelo jogo, com **Voltar ao jogo** |
+
+`<personagem>` é `flavio-bolsonaro` ou `lula`: as mesmas capturas para os dois, fora as que dependem do tipo de tarefa de cada trajetória (Lula tem a tarefa de lugar no capítulo 5 e Flávio Bolsonaro, no 4; os dois têm a de documento). São 71 arquivos, tirados em 10 de outubro de 2026 e olhados um a um.
+
+O roteiro confere uma coisa só: que a página não esteja rolada em nenhuma captura, fora a 37 (a mesma regra da etapa 1, abaixo).
+
 ## Jogo, etapa 1
 
-Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o conteúdo da edição 0.1.1. O celular é emulado (390×844 em pé e 844×390 deitado, com toque).
+Tiradas da saída estática em 10 de outubro de 2026, com o conteúdo da edição 0.1.1, pelo roteiro de então. O celular é emulado (390×844 em pé e 844×390 deitado, com toque). Ficam como registro da primeira entrega; para o estado atual valem as de `jogo-lancamento/`.
 
 | Arquivo | O que mostra |
 | --- | --- |

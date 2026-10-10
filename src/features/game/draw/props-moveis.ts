@@ -55,7 +55,7 @@ function sobreAMesa(q: Quadro, z: number): void {
 /** Mesa de trabalho: tampo, gaveteiro de um lado e apoio do outro. A variante troca o que está em cima. */
 export function mesa(q: Quadro): void {
   const { mat } = q;
-  const deAco = q.info.cena === "sindicato";
+  const deAco = q.mat.rustico;
   const corpo = deAco ? mat.aco : mat.madeira;
   sombra(q, 0.86, 0.56);
 
@@ -180,7 +180,7 @@ function assentoDaCadeira(q: Quadro, v: number): void {
 export function cadeira(q: Quadro): void {
   const costas = deCostas(q);
   const s = costas ? -1 : 1;
-  const pe = q.info.cena === "sindicato" ? q.mat.ferro : q.mat.madeiraEscura;
+  const pe = q.mat.rustico ? q.mat.ferro : q.mat.madeiraEscura;
   sombra(q, 0.44, 0.44);
   if (costas) {
     pernasDaCadeira(q, 0.17 * s, pe);
@@ -227,7 +227,7 @@ function tampoDaBancada(q: Quadro, s: number, costas: boolean): void {
   // O que cada lugar deixou no tampo muda de célula para célula, sempre igual para a mesma.
   const sorte = cellNoise(q.info.x, q.info.y, 3);
   if (sorte > 0.35) folha(q, sorte > 0.7 ? -0.2 : 0.16, v, 0.15, 0.14, sorte * 2, 27.5, mat.papel);
-  if (q.info.cena === "senado") {
+  if (q.mat.frio) {
     // Microfone de mesa: uma haste fina e a cápsula.
     const u = sorte > 0.5 ? 0.24 : -0.24;
     fio(q.ctx, [pt(q, u, v, 27.5), pt(q, u, v, 33), pt(q, u, v - 0.05 * s, 36)], 1, 0.9);
@@ -386,7 +386,7 @@ export function tribuna(q: Quadro): void {
     tracos(q.ctx, [pt(q, -0.11, -0.07, 46.9), pt(q, 0.03, -0.07, 46.9), pt(q, -0.11, 0.01, 45.6), pt(q, 0.03, 0.01, 45.6), pt(q, -0.11, 0.09, 44.4), pt(q, -0.02, 0.09, 44.4)], 0.6, 0.38);
     tracos(q.ctx, [pt(q, -0.3, 0.22, 42.2), pt(q, 0.3, 0.22, 42.2)], 1, 0.6);
   }
-  if (q.info.cena !== "sindicato") {
+  if (!q.mat.rustico) {
     // Fora do sindicato, o microfone é o da própria tribuna.
     const v = costas ? -0.16 : 0.1;
     const ponta = costas ? -0.06 : 0.02;

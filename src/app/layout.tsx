@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SITE, isIndexable } from "@/lib/site";
 
 import "./globals.css";
 
@@ -27,13 +28,28 @@ const franklin = localFont({
   fallback: ["ui-sans-serif", "system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
+// A prévia de compartilhamento: só com o domínio decidido ela ganha imagem,
+// porque o endereço da imagem precisa ser absoluto (docs/DEPLOY.md). A imagem
+// fica em public/share/ e é gerada por `node scripts/share-image.mjs`.
+const SHARE_IMAGE = { url: "/share/atlas.png", width: 1200, height: 630, alt: `${SITE.nome}: trajetórias públicas com fontes e um jogo por capítulos` };
+
 export const metadata: Metadata = {
-  title: { default: "Atlas Político", template: "%s · Atlas Político" },
-  description:
-    "Trajetórias públicas em linha do tempo, mapa e acontecimentos com fontes.",
-  // O conteúdo ainda não passou por revisão humana. A indexação é liberada na
-  // fase de publicação (fase 10), junto com sitemap e endereço canônico.
-  robots: { index: false, follow: false },
+  // O endereço canônico e os endereços absolutos dependem do domínio público (src/lib/site.ts).
+  ...(SITE.publicUrl === null ? {} : { metadataBase: new URL(SITE.publicUrl), alternates: { canonical: "./" } }),
+  title: { default: SITE.nome, template: `%s · ${SITE.nome}` },
+  description: SITE.descricao,
+  // O conteúdo ainda não passou por revisão humana. A indexação é liberada em
+  // src/lib/site.ts, junto com o sitemap e o robots.txt, só com o domínio.
+  robots: isIndexable() ? { index: true, follow: true } : { index: false, follow: false },
+  openGraph: {
+    type: "website",
+    siteName: SITE.nome,
+    locale: "pt_BR",
+    title: SITE.nome,
+    description: SITE.descricao,
+    ...(SITE.publicUrl === null ? {} : { images: [SHARE_IMAGE] }),
+  },
+  twitter: { card: SITE.publicUrl === null ? "summary" : "summary_large_image", title: SITE.nome, description: SITE.descricao },
 };
 
 // As páginas são geradas sem a consulta do endereço: o HTML traz o recorte

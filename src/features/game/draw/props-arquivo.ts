@@ -111,7 +111,7 @@ const ARRUMACOES = [arrumar(1), arrumar(2), arrumar(3)] as const;
 /** Estante de quatro vãos com pastas e caixas de arquivo: de aço no sindicato, de madeira nas outras cenas. */
 export function estante(q: Quadro): void {
   const { mat, ctx } = q;
-  const corpo = q.info.cena === "sindicato" ? mat.aco : mat.madeira;
+  const corpo = mat.rustico ? mat.aco : mat.madeira;
   const v = 0.15;
   sombra(q, 0.84, 0.3);
   caixa(q, 0, 0, 0.84, 0.3, 64, corpo);

@@ -21,6 +21,7 @@ const capitulo = (numero: number, eventId: string): ChapterSpec => ({
   eventIds: [eventId],
   tarefa: { tipo: "registro", eventId },
   cena: "sindicato",
+  epoca: "inicio",
 });
 
 const CAPITULOS: readonly ChapterSpec[] = [capitulo(1, "a"), capitulo(2, "b")];
@@ -29,7 +30,7 @@ const [UM] = CAPITULOS as [ChapterSpec, ChapterSpec];
 /** Um progresso com história: o primeiro capítulo concluído. */
 function progressoAvancado(): PlayerProgress {
   const inicial = initialProgress("lula", CAPITULOS);
-  const comTarefa = withTaskState(inicial, UM.id, { recolhidos: ["a"], ordemConfirmada: false, tentativas: 0 });
+  const comTarefa = withTaskState(inicial, UM.id, { recolhidos: ["a"], confirmada: false, tentativas: 0 });
   return completeChapter(comTarefa, CAPITULOS, UM.id);
 }
 

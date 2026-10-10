@@ -9,35 +9,17 @@ import { useEffect, useRef } from "react";
 
 import { CHAPTERS } from "@/lib/game/chapters";
 import { SCENES } from "@/lib/game/scenes";
-import type { Facing, PropKind, SceneSpec } from "@/lib/game/types";
+import { EPOCA_LABEL, type Epoca, type Facing, type SceneSpec } from "@/lib/game/types";
 import { sceneBounds, zoomToFit } from "@/lib/game/world/camera";
 import { initialPlayer } from "@/lib/game/world/movement";
 
-import { CHARACTERS, GUIDE, RECORD_ART, SCENE_ART, type CellInfo, type CharacterArt, type DrawContext } from "@/features/game/draw";
+import { ARTS, CHARACTERS, GUIDE, RECORD_ART, SCENE_ART, type CellInfo, type CharacterArt, type DrawContext } from "@/features/game/draw";
+import { PROP_KINDS } from "@/features/game/draw/props";
 import { renderScene } from "@/features/game/engine/render";
 
 const FACINGS: Facing[] = ["frente-direita", "frente-esquerda", "costas-direita", "costas-esquerda"];
-const PROPS: PropKind[] = [
-  "mesa",
-  "mesa-central",
-  "cadeira",
-  "bancada",
-  "tribuna",
-  "arquivo",
-  "estante",
-  "armario",
-  "coluna",
-  "urna",
-  "bandeira",
-  "planta",
-  "maquina",
-  "banco",
-  "microfone",
-  "caixote",
-  "poltrona",
-  "placa",
-  "decoracao",
-];
+const EPOCAS: Epoca[] = ["inicio", "meio", "atual"];
+const PROPS = PROP_KINDS;
 
 interface ArtCanvasProps {
   id: string;
@@ -61,11 +43,14 @@ function ArtCanvas({ id, largura, altura, draw, animar = false, legenda }: ArtCa
     if (ctx === null) return;
     let pedido = 0;
     const inicio = performance.now();
+    // `?parado` desenha um quadro só de cada peça: é como o script de captura
+    // (scripts/capture-art.mjs) lê a galeria sem esperar a animação.
+    const parado = new URLSearchParams(window.location.search).has("parado");
     const quadro = (agora: number) => {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      draw(ctx, (agora - inicio) / 1000, dpr);
-      if (animar) pedido = requestAnimationFrame(quadro);
+      draw(ctx, parado ? 0.4 : (agora - inicio) / 1000, dpr);
+      if (animar && !parado) pedido = requestAnimationFrame(quadro);
     };
     pedido = requestAnimationFrame(quadro);
     return () => cancelAnimationFrame(pedido);
@@ -82,10 +67,13 @@ function contexto(ctx: CanvasRenderingContext2D, tempo: number, movimento = true
   return { ctx, tempo, movimento };
 }
 
-function CharacterRow({ id, arte }: { id: string; arte: CharacterArt }) {
+function CharacterRow({ id, arte, legenda }: { id: string; arte: CharacterArt; legenda?: string }) {
   return (
     <section className="space-y-2">
-      <h3 className="font-serif text-xl">{arte.nome}</h3>
+      <h3 className="font-serif text-xl">
+        {arte.nome}
+        {legenda && <span className="text-base text-ink-soft"> · {legenda}</span>}
+      </h3>
       <div className="flex flex-wrap gap-3">
         {FACINGS.map((facing) => (
           <ArtCanvas
@@ -147,14 +135,16 @@ function CharacterRow({ id, arte }: { id: string; arte: CharacterArt }) {
 function SceneSheet({ scene }: { scene: SceneSpec }) {
   const p = scene.paleta;
   // Uma célula do meio da cena, para as peças avulsas.
-  const info: CellInfo = { cena: scene.id, x: 4, y: 4, largura: scene.largura, altura: scene.altura };
+  const info: CellInfo = { cena: scene.id, arte: scene.arte, x: 4, y: 4, largura: scene.largura, altura: scene.altura };
   return (
     <section className="space-y-2">
-      <h3 className="font-serif text-xl">{scene.nome}</h3>
+      <h3 className="font-serif text-xl">
+        {scene.nome} <span className="text-base text-ink-soft">· cena {scene.id} · arte {ARTS[scene.arte].nome}</span>
+      </h3>
       <ArtCanvas
         id={`folha-${scene.id}`}
         largura={1180}
-        altura={400}
+        altura={530}
         legenda="piso (duas variantes e tapete), paredes (norte, oeste, leste, sul), saída fechada, meio aberta e aberta (leste e sul), registro (normal e em destaque), efeito de recolher, elementos de cenário"
         draw={(ctx, tempo, dpr) => {
           ctx.scale(dpr, dpr);
@@ -189,9 +179,9 @@ function SceneSheet({ scene }: { scene: SceneSpec }) {
           x = 50;
           let y = 200;
           PROPS.forEach((tipo, indice) => {
-            if (indice === 10) {
+            if (indice > 0 && indice % 10 === 0) {
               x = 50;
-              y = 330;
+              y += 130;
             }
             SCENE_ART.drawFloor(d, p, x, y, 0, false, info);
             SCENE_ART.drawProp(d, p, tipo, x, y, 0, false, info);
@@ -246,8 +236,16 @@ export function ArtGallery() {
     <div className="space-y-10">
       <section className="space-y-6">
         <h2 className="font-serif text-3xl">Personagens</h2>
-        <CharacterRow id="lula" arte={CHARACTERS.lula} />
-        <CharacterRow id="flavio-bolsonaro" arte={CHARACTERS["flavio-bolsonaro"]} />
+        <p className="max-w-prose text-sm text-ink-soft">
+          Cada personagem tem três figuras, uma por época dos capítulos: cabelo, barba e roupa estilizados, com a mesma escala
+          para os dois. Não afirmam a aparência real da pessoa em cada data.
+        </p>
+        {EPOCAS.map((epoca) => (
+          <CharacterRow key={`lula-${epoca}`} id={`lula-${epoca}`} arte={CHARACTERS.lula[epoca]} legenda={EPOCA_LABEL[epoca]} />
+        ))}
+        {EPOCAS.map((epoca) => (
+          <CharacterRow key={`flavio-${epoca}`} id={`flavio-bolsonaro-${epoca}`} arte={CHARACTERS["flavio-bolsonaro"][epoca]} legenda={EPOCA_LABEL[epoca]} />
+        ))}
         <CharacterRow id="guia" arte={GUIDE} />
       </section>
       <section className="space-y-6">

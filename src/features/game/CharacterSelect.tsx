@@ -118,7 +118,7 @@ export function CharacterSelect({ opcoes, notaDeRevisao }: CharacterSelectProps)
   return (
     <div className="page space-y-8 py-7 md:space-y-10 md:py-12">
       <header className="max-w-3xl space-y-4">
-        <p className="eyebrow text-ink-soft">Jogo · primeira etapa</p>
+        <p className="eyebrow text-ink-soft">Jogo</p>
         <h1 className="font-serif text-[2.75rem] font-medium leading-[0.95] tracking-[-0.02em] md:text-6xl">
           Percorra a trajetória em capítulos
         </h1>
@@ -155,7 +155,8 @@ export function CharacterSelect({ opcoes, notaDeRevisao }: CharacterSelectProps)
         </div>
         <p className="text-xs text-ink-faint">
           Os personagens e os cenários do jogo são desenhos feitos para o projeto; não são fotografias nem registros de lugares.
-          Cada personagem tem a mesma figura em todos os capítulos, sem acompanhar a idade de cada período.
+          Cada personagem tem três figuras, uma por época dos capítulos: cabelo, barba e roupa mudam de forma estilizada, com a
+          mesma escala para os dois, sem afirmar a aparência real da pessoa em cada data.
         </p>
       </section>
 
@@ -166,6 +167,10 @@ export function CharacterSelect({ opcoes, notaDeRevisao }: CharacterSelectProps)
         <ul className="list-disc space-y-1 pl-5">
           <li>No computador: setas ou W, A, S e D para andar; E, Enter ou espaço para interagir com o que está ao alcance.</li>
           <li>No celular: o direcional na tela e o botão de ação.</li>
+          <li>
+            As tarefas: encontrar um registro, pôr dois em ordem pelas datas, indicar o documento que sustenta um registro ou o
+            lugar em que o atlas o documenta. Errar explica e deixa tentar de novo, sem penalidade.
+          </li>
           <li>A saída de cada capítulo abre com todos os registros recolhidos e a tarefa cumprida.</li>
           <li>O painel Capítulos e tarefas faz tudo por botões, sem o cenário, e mostra o que está pendente.</li>
           <li>O progresso fica guardado neste navegador, separado por personagem. Dá para continuar de onde parou ou reiniciar.</li>

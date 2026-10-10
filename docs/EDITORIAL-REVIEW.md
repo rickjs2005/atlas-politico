@@ -204,7 +204,7 @@ Nenhuma destas pendências deixa uma afirmação publicada sem fonte identificad
 
 ## Revisão humana
 
-Para quem for revisar. Leva o conjunto de "revisão assistida por IA" a "revisão humana", registro por registro.
+Para quem for revisar. Leva o conjunto de "revisão assistida por IA" a "revisão humana", registro por registro. A lista do que conferir, trecho a trecho e por prioridade (episódios judiciais, dados eleitorais, filiações, mandatos, demais), com as fontes de cada item e a caixa para assinar, é gerada dos dados em [HUMAN-REVIEW.md](HUMAN-REVIEW.md) (`npm run review:human`); este roteiro diz como ler cada item.
 
 1. Abra a lista de trechos: `docs/evidencias/provas-2026-10-09.json`. Cada item tem o registro, a fonte e os trechos literais que sustentam a citação.
 2. Para cada acontecimento, abra a página em `/acontecimentos/<slug>/`. A página mostra as fontes na ordem do registro, com "Onde" e "O que sustenta".

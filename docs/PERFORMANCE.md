@@ -389,7 +389,22 @@ Não mudou. Os contornos têm 249 KB no disco e 69 KB transferidos, com as coord
 - **Uma página de cada tipo.** Um perfil e um acontecimento, dos 2 e dos 39 que existem.
 - **Os arquivos dos testes de fontes** foram gravados antes de uma correção no medidor. Para o script de um worker, o navegador informa corpo de tamanho zero, e o worker do mapa (141 KB) ficava fora do peso transferido das telas com mapa. O medidor passou a usar o tamanho que o servidor declara. `antes.json`, `depois.json` e os dois arquivos da página do acontecimento já foram medidos com a correção.
 - **Uma regra de CSS entrou depois da medição.** A conferência final achou um defeito no aviso do link com consulta, com movimento reduzido, e a correção acrescentou uma regra de três linhas à folha de estilo (118 bytes). O build não foi medido de novo por causa dela.
-- **As páginas do jogo não foram medidas.** O jogo entrou depois desta fase ([GAMEPLAY.md](GAMEPLAY.md)). O que os testes conferem é o que cada página pede: o palco em pacote à parte, só na página do jogo, e nenhuma página do atlas pedindo código do jogo. A cadência de quadros da cena foi medida em bancada, fora do projeto, só para comparar dois modos de desenhar (GAMEPLAY.md, seção Desenho por quadro).
+- **As páginas do jogo foram medidas depois, com um medidor próprio** (`npm run measure:game`), em 3 execuções em vez de 7 e com o canvas 2D desenhado por software, sem placa de vídeo: seção Páginas do jogo, abaixo. O jogo entrou depois desta fase ([GAMEPLAY.md](GAMEPLAY.md)); o que os testes conferem é o que cada página pede: o palco em pacote à parte, só na página do jogo, e nenhuma página do atlas pedindo código do jogo.
+
+## Páginas do jogo (10 de outubro de 2026)
+
+Medidas por `npm run measure:game -- --rotulo lancamento-2026-10-10`, que sobe o servidor de pré-visualização sobre `out/`, abre cada página com o cache vazio e registra o carregamento, o momento em que o palco fica pronto, o que a rede transferiu e a cadência de quadros da cena, parada e andando por três segundos. Mediana de 3 execuções, nos mesmos perfis de rede e de CPU das medições acima, em Chromium sem interface com o canvas 2D desenhado por software (`--enable-unsafe-swiftshader`), sem placa de vídeo. Arquivo: `desempenho/jogo-lancamento-2026-10-10.json`.
+
+| Perfil | Página | LCP | Carregamento | Palco pronto | Transferido | Cena parada | Cena andando |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Computador | `/jogo/` | 304 ms | 506 ms | | 370 KB | | |
+| Computador | `/jogo/lula/` | 244 ms | 523 ms | 775 ms | 387 KB | 58,5 fps | 57,6 fps, p95 de 16,8 ms, 0 quadros longos |
+| Computador | `/jogo/flavio-bolsonaro/` | 276 ms | 526 ms | 750 ms | 386 KB | 58,3 fps | 58,7 fps, p95 de 16,8 ms, 0 quadros longos |
+| Celular emulado | `/jogo/` | 1.040 ms | 2.358 ms | | 373 KB | | |
+| Celular emulado | `/jogo/lula/` | 1.088 ms | 2.429 ms | 2.741 ms | 387 KB | 19,0 fps | 19,8 fps, p95 de 66,7 ms, 14 quadros longos |
+| Celular emulado | `/jogo/flavio-bolsonaro/` | 1.088 ms | 2.438 ms | 2.717 ms | 386 KB | 19,6 fps | 23,8 fps, p95 de 50,1 ms, 7 quadros longos |
+
+Leitura: em computador, a cena fica no teto do monitor (60 quadros por segundo) parada e andando, sem quadro longo, e o palco está pronto antes de 0,8 s. No celular emulado, o carregamento fica na faixa das páginas do atlas (LCP perto de 1 s; palco pronto em 2,7 s), mas a cena cai a 19 a 24 quadros por segundo: é o custo de desenhar o canvas por software com a CPU 4 vezes mais lenta. O perfil não é um aparelho: um celular real tem placa de vídeo e outro processador, e pode ficar bem acima disso ou perto. É a primeira coisa a medir numa sessão com aparelho; se ficar perto dos 20, a saída conhecida é reduzir o trabalho por quadro (limitar a densidade de pixels do canvas da cena em telas pequenas). A entrada do jogo não tem "palco pronto" porque não tem cena jogável, só a prévia.
 
 ## Pendências
 
@@ -399,8 +414,8 @@ Não mudou. Os contornos têm 249 KB no disco e 69 KB transferidos, com as coord
 4. **Bloqueio de 0,5 a 0,9 segundo no carregamento, no perfil de celular.** Não mudou nesta fase. Reduzir pede menos código de cliente na abertura de cada tela, que é um trabalho de outra ordem.
 5. **Dados de campo e INP,** depois da publicação.
 6. **Hospedagem** (fase 10): compressão, cache longo para `/_next/static/`, `404.html` e tipo de conteúdo dos arquivos `.mjs`. Medir de novo no endereço público.
-7. **Páginas do jogo.** Medir o carregamento com o medidor desta fase e a cadência de quadros em um aparelho real.
-7. **Passos do ajuste da saída:** rever a cada atualização do Next ou do MapLibre. Se o defeito sumir, o passo sai.
-8. **Fontes.** A Newsreader, com 129 KB, é o maior arquivo das páginas de leitura, e em celular com rede lenta o texto só assume a forma final perto de 2 segundos. Um subconjunto menor pede uma ferramenta que o projeto não tem instalada.
-9. **Navegador sem WebP** não mostra o retrato. Não há versão em outro formato.
-10. **Segunda visita e troca de página** não foram medidas: todas as execuções abrem a tela direto, com o cache vazio.
+7. **Cadência da cena do jogo em celular real.** No perfil emulado a cena fica em 19 a 24 quadros por segundo (seção Páginas do jogo). Medir em um aparelho de verdade e, se ficar perto disso, reduzir o trabalho por quadro.
+8. **Passos do ajuste da saída:** rever a cada atualização do Next ou do MapLibre. Se o defeito sumir, o passo sai.
+9. **Fontes.** A Newsreader, com 129 KB, é o maior arquivo das páginas de leitura, e em celular com rede lenta o texto só assume a forma final perto de 2 segundos. Um subconjunto menor pede uma ferramenta que o projeto não tem instalada.
+10. **Navegador sem WebP** não mostra o retrato. Não há versão em outro formato.
+11. **Segunda visita e troca de página** não foram medidas: todas as execuções abrem a tela direto, com o cache vazio.

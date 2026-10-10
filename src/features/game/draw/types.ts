@@ -9,7 +9,7 @@
 // Com `movimento` desligado, nada balança nem pisca: os desenhos ficam no
 // estado de repouso.
 
-import type { ExitSide, Facing, PersonagemSlug, PropKind, SceneId, ScenePalette } from "@/lib/game/types";
+import type { Epoca, ExitSide, Facing, PersonagemSlug, PropKind, SceneArtId, SceneId, ScenePalette } from "@/lib/game/types";
 
 export interface DrawContext {
   ctx: CanvasRenderingContext2D;
@@ -35,19 +35,21 @@ export interface CharacterArt {
   draw(d: DrawContext, pose: CharacterPose, sx: number, sy: number): void;
 }
 
-/** Os dois personagens jogáveis, com o mesmo cuidado de desenho. */
-export type CharacterArtSet = Record<PersonagemSlug, CharacterArt>;
+/** Os dois personagens jogáveis, em cada época, com o mesmo cuidado de desenho. */
+export type CharacterArtSet = Record<PersonagemSlug, Record<Epoca, CharacterArt>>;
 
 /** O tipo de parede por borda: as duas de trás ficam em pé; as da frente são baixas. */
 export type WallSide = ExitSide;
 
 /**
- * Onde a peça está: a cena, a célula e o tamanho da grade. Serve para a arte
- * variar por cena (material, janela, quadro) e por posição (canto, textura),
- * sempre do mesmo jeito para a mesma célula.
+ * Onde a peça está: a cena, a arte que a desenha, a célula e o tamanho da
+ * grade. Serve para a arte variar por ambiente (material, janela, quadro) e
+ * por posição (canto, textura), sempre do mesmo jeito para a mesma célula.
+ * A cena identifica o layout (tapetes, saída); a arte, o desenho.
  */
 export interface CellInfo {
   cena: SceneId;
+  arte: SceneArtId;
   x: number;
   y: number;
   largura: number;

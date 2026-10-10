@@ -3,10 +3,9 @@
 
 import type { SceneSpec } from "../types";
 
-import { PALETTES } from "./palettes";
-
 export const sindicato: SceneSpec = {
   id: "sindicato",
+  arte: "sindicato",
   nome: "Salão do sindicato",
   mapa: [
     "############",
@@ -21,7 +20,8 @@ export const sindicato: SceneSpec = {
   ],
   largura: 12,
   altura: 9,
-  paleta: PALETTES.sindicato,
+  // Anos 1970: concreto gasto, parede cinza, tapete de lona. Nenhuma cor identifica pessoa ou partido.
+  paleta: { chao: "#cfc8b6", chaoAlt: "#c5bdaa", tapete: "#b39a74", parede: "#9c968b", paredeTopo: "#b8b2a6", fundo: "#e6e0d2", acento: "#b24a00" },
   props: [
     // O torno, encostado na parede do fundo; a prensa fica na parede oeste.
     { tipo: "maquina", x: 3, y: 1, variante: 1 },

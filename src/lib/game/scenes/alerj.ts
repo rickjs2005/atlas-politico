@@ -3,10 +3,9 @@
 
 import type { SceneSpec } from "../types";
 
-import { PALETTES } from "./palettes";
-
 export const alerj: SceneSpec = {
   id: "alerj",
+  arte: "alerj",
   nome: "Salão da Assembleia",
   mapa: [
     "############",
@@ -21,7 +20,8 @@ export const alerj: SceneSpec = {
   ],
   largura: 12,
   altura: 9,
-  paleta: PALETTES.alerj,
+  // Anos 2000: pedra clara, parede creme, tapete marrom.
+  paleta: { chao: "#d9d3c5", chaoAlt: "#cfc8b8", tapete: "#6b5648", parede: "#e2dac9", paredeTopo: "#ece6d8", fundo: "#efeadf", acento: "#b9975b" },
   props: [
     { tipo: "coluna", x: 1, y: 1 },
     { tipo: "coluna", x: 10, y: 1 },

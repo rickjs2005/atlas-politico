@@ -14,7 +14,7 @@ import { sceneBounds, type Camera, type Viewport } from "@/lib/game/world/camera
 import { CELL, cellAt } from "@/lib/game/world/grid";
 import { toScreen } from "@/lib/game/world/iso";
 
-import { CHARACTERS, GUIDE, RECORD_ART, SCENE_ART, type CellInfo, type DrawContext, type WallSide } from "../draw";
+import { GUIDE, RECORD_ART, SCENE_ART, characterArt, type CellInfo, type DrawContext, type WallSide } from "../draw";
 
 export interface CollectEffect {
   x: number;
@@ -54,7 +54,7 @@ export function wallSide(scene: SceneSpec, x: number, y: number): WallSide {
   return "sul";
 }
 
-const infoOf = (scene: SceneSpec, x: number, y: number): CellInfo => ({ cena: scene.id, x, y, largura: scene.largura, altura: scene.altura });
+const infoOf = (scene: SceneSpec, x: number, y: number): CellInfo => ({ cena: scene.id, arte: scene.arte, x, y, largura: scene.largura, altura: scene.altura });
 
 // ---------------------------------------------------------------------------
 // O que é fixo na cena
@@ -303,7 +303,8 @@ export function renderScene(ctx: CanvasRenderingContext2D, state: RenderState, v
   // personagem fica na frente dele quando a soma das próprias coordenadas é maior.
   if (!state.semJogador) {
     const { sx, sy } = toScreen(state.player.x, state.player.y);
-    const arte = CHARACTERS[state.personagem];
+    // A figura da época do capítulo (D-111): o mesmo personagem, com cabelo, barba e roupa do período.
+    const arte = characterArt(state.personagem, state.chapter.epoca);
     drawables.push({
       z: state.player.x + state.player.y - 1,
       draw: () => arte.draw(d, { facing: state.player.facing, andando: state.player.andando, fase: state.player.fase }, sx, sy),
