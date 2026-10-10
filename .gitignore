@@ -46,5 +46,4 @@ yarn-error.log*
 next-env.d.ts
 
 # estado local de ferramentas: só o estado do projeto é versionado
-.claude/*
-!.claude/project-state.md
+.claude/
