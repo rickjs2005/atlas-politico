@@ -87,15 +87,16 @@ export function EventPanel({
           )}
         </div>
 
-        <p className="numerals text-[1.75rem] font-semibold leading-none tracking-tight">
+        {/* A data abre a leitura, em números de mesma largura; o título é o que se lê primeiro. */}
+        <p className="numerals text-lg font-semibold leading-none tracking-tight">
           <time dateTime={acontecimento.data.valor}>{formatDate(acontecimento.data)}</time>
         </p>
-        {precisao !== null && <p className="-mt-1 text-xs italic text-ink-soft">{precisao}</p>}
+        {precisao !== null && <p className="-mt-1.5 text-xs italic text-ink-soft">{precisao}</p>}
 
         <Title
           ref={titleRef}
           tabIndex={titleRef ? -1 : undefined}
-          className="font-serif text-2xl font-medium leading-tight tracking-tight outline-none"
+          className="font-serif text-[1.75rem] font-medium leading-[1.15] tracking-tight outline-none"
         >
           {acontecimento.titulo}
         </Title>
@@ -118,7 +119,7 @@ export function EventPanel({
         </figure>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-3 border-t border-line pt-4">
         <p className="reading">{acontecimento.resumo}</p>
         <p className="font-serif text-base leading-relaxed text-ink-soft">{acontecimento.contexto}</p>
       </div>

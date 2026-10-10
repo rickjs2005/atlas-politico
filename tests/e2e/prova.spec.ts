@@ -15,6 +15,9 @@ const canvas = (page: Page) => page.locator(".maplibregl-canvas");
 
 async function openWithMap(page: Page) {
   await page.goto(PROVA);
+  // O mapa só é montado perto da área visível (fase 8): em tela estreita ele
+  // fica abaixo da lista, e é preciso chegar até ele.
+  await mapa(page).scrollIntoViewIfNeeded();
   await expect(canvas(page)).toBeVisible();
   await expect(page.getByText("Carregando o mapa…")).toBeHidden();
 }
@@ -225,6 +228,7 @@ test("se o worker do mapa não carrega, a lista de lugares assume ao fim da espe
 test("em tela de celular nada estoura a largura", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openWithMap(page);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await item(page, "03").click();
   await expect(painel(page)).toContainText("15 de junho de 2011");
 

@@ -1,0 +1,13 @@
+{
+  "comentario": "Enquadramento de cada retrato, em pixels do arquivo original (docs/PERFORMANCE.md, seção Imagens). Os dois perfis ficam com a linha dos olhos na mesma altura da moldura e o rosto do mesmo tamanho. Sem entrada aqui, o recorte é o do topo do arquivo, centralizado.",
+  "enquadramentos": {
+    "retrato-flavio-bolsonaro": {
+      "retrato": { "x": 0, "y": 0, "largura": 960, "altura": 1200 },
+      "quadrado": { "x": 98, "y": 40, "largura": 760, "altura": 760 }
+    },
+    "retrato-lula": {
+      "retrato": { "x": 85, "y": 21, "largura": 850, "altura": 1062 },
+      "quadrado": { "x": 160, "y": 45, "largura": 700, "altura": 700 }
+    }
+  }
+}

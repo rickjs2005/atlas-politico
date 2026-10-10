@@ -1,13 +1,26 @@
+"use client";
+
 // Retrato de um perfil, sempre na mesma moldura e com o mesmo tratamento: tons
 // de cinza sobre o papel. As duas fotos oficiais têm cores e fundos bem
 // diferentes; em cinza elas ocupam a página com o mesmo peso.
 //
 // Sem arquivo de imagem, a moldura recebe as iniciais do nome, na mesma área.
+//
+// A página não pede o arquivo original: pede uma versão já recortada na
+// proporção da moldura, na largura que a tela precisa (src/lib/media/portraits.ts).
+// O enquadramento é o mesmo para os dois perfis: olhos na mesma altura e rosto
+// do mesmo tamanho.
+//
+// Componente de cliente de propósito. Renderizada em um Server Component, uma
+// imagem que carrega logo entra como dica de pré-carregamento no conteúdo que
+// o roteador busca ao ver um link: toda página com link para a entrada
+// baixaria os retratos dos cartões sem mostrá-los. Aqui a dica fica só no HTML
+// da própria página.
 
-import Image from "next/image";
 import Link from "next/link";
 
 import type { Imagem } from "@/lib/domain/types";
+import { derivedSources } from "@/lib/media/portraits";
 
 interface PortraitProps {
   nome: string;
@@ -16,8 +29,12 @@ interface PortraitProps {
   shape?: "retrato" | "quadrado";
   /** Largura esperada na tela, para o navegador escolher o que carregar. */
   sizes: string;
-  /** A imagem é a principal da tela: carrega antes das outras. */
-  priority?: boolean;
+  /**
+   * Quando carregar. `prioritaria`: é a imagem principal da primeira tela.
+   * `imediata`: está na primeira tela, mas é pequena. `adiada`: só quando se
+   * aproxima da área visível.
+   */
+  loading?: "prioritaria" | "imediata" | "adiada";
   /** O nome já está escrito ao lado: a imagem não precisa repeti-lo. */
   decorative?: boolean;
   className?: string;
@@ -34,15 +51,16 @@ export function Portrait({
   imagem,
   shape = "retrato",
   sizes,
-  priority = false,
+  loading = "adiada",
   decorative = false,
   className = "",
 }: PortraitProps) {
   const proporcao = shape === "retrato" ? "aspect-[4/5]" : "aspect-square";
+  const fontes = imagem === null ? null : derivedSources(imagem.id, shape);
 
   return (
     <div className={`@container relative overflow-hidden bg-sunken ${proporcao} ${className}`}>
-      {imagem === null ? (
+      {imagem === null || fontes === null ? (
         // A letra acompanha a largura da moldura, do cartão à miniatura.
         <span
           role={decorative ? undefined : "img"}
@@ -53,13 +71,21 @@ export function Portrait({
           {initials(nome)}
         </span>
       ) : (
-        <Image
-          src={imagem.arquivo}
-          alt={decorative ? "" : imagem.textoAlternativo}
-          fill
+        // As versões já vêm na proporção da moldura, que reserva o espaço:
+        // a imagem não desloca nada ao chegar. O `next/image` não se aplica a
+        // um site sem servidor de imagens.
+        // eslint-disable-next-line @next/next/no-img-element -- versões locais, com srcset próprio
+        <img
+          src={fontes.src}
+          srcSet={fontes.srcSet}
           sizes={sizes}
-          priority={priority}
-          className="object-cover object-top mix-blend-multiply grayscale contrast-[1.06]"
+          width={fontes.width}
+          height={fontes.height}
+          alt={decorative ? "" : imagem.textoAlternativo}
+          loading={loading === "adiada" ? "lazy" : "eager"}
+          fetchPriority={loading === "prioritaria" ? "high" : undefined}
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]"
         />
       )}
     </div>
@@ -87,7 +113,7 @@ export function PortraitCredit({ imagem, detail = false, className = "" }: Portr
             Origem<span className="sr-only"> da imagem (abre em nova aba)</span>
           </a>
           {" · "}
-          <Link href="/metodologia#creditos" className={creditLink}>
+          <Link href="/metodologia#creditos" prefetch={false} className={creditLink}>
             Condições de uso
           </Link>
         </>

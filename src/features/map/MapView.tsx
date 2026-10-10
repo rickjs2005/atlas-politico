@@ -15,7 +15,23 @@ import type { EventPointCollection } from "@/lib/data/types";
 
 import { MapFallback, type MapFailure } from "./MapFallback";
 
-const MapCanvas = dynamic(() => import("./MapCanvas"), { ssr: false });
+// O código do mapa (MapLibre, marcadores, câmera) fica em um pacote à parte,
+// que só é pedido quando o mapa vai ser desenhado.
+const loadCanvas = () => import("./MapCanvas");
+const MapCanvas = dynamic(loadCanvas, { ssr: false });
+
+/**
+ * Começa a baixar o código do mapa antes de ele ser montado, para quem deu
+ * sinal de que vai abri-lo, como ao levar o ponteiro ou o foco ao botão da
+ * vista do mapa. Não cria o mapa nem pede os contornos.
+ */
+export function warmUpMap() {
+  // Se o pacote não chegar, quem trata é o próprio mapa, ao ser montado.
+  void loadCanvas().catch(() => undefined);
+}
+
+/** A que distância da área visível o mapa começa a ser carregado. */
+const NEAR_VIEWPORT = "400px 0px";
 
 export interface MapViewProps {
   /** Os pontos do recorte. O mapa não filtra: desenha o que recebe. */
@@ -74,17 +90,22 @@ export function MapView({
   const [overlayHeight, setOverlayHeight] = useState(0);
   const frame = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  // O mapa só é montado quando a moldura aparece na tela. Em telas estreitas
-  // ele fica em uma vista própria: enquanto a pessoa está na lista, o pacote
-  // do mapa nem é baixado, e a espera pelo carregamento não começa a contar.
+  // O mapa só é montado quando a moldura está na tela, ou perto de entrar
+  // nela. Em telas estreitas ele fica em uma vista própria: enquanto a pessoa
+  // está na lista, o pacote do mapa nem é baixado, e a espera pelo carregamento
+  // não começa a contar. Em uma página de leitura, o mapa que está abaixo da
+  // primeira tela espera a rolagem chegar perto dele.
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
     const moldura = frame.current;
     if (!moldura || shown) return;
-    const observer = new ResizeObserver(([entrada]) => {
-      if (entrada && entrada.contentRect.width > 0 && entrada.contentRect.height > 0) setShown(true);
-    });
+    const observer = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some((entrada) => entrada.isIntersecting)) setShown(true);
+      },
+      { rootMargin: NEAR_VIEWPORT },
+    );
     observer.observe(moldura);
     return () => observer.disconnect();
   }, [shown, failure]);
@@ -139,24 +160,32 @@ export function MapView({
       className="relative h-full min-h-64 overflow-hidden border border-ink-faint bg-map-sea md:min-h-40"
     >
       {shown && (
-        <MapBoundary key={attempt} onError={(erro) => fail("pacote", erro)}>
-          <MapCanvas
-            features={features}
-            selectedSlug={selectedSlug}
-            onSelect={onSelect}
-            unplaced={unplaced}
-            bottomInset={chooserOpen ? 0 : overlayHeight}
-            cooperative={gestures === "cooperativos"}
-            onReady={() => setReady(true)}
-            onFailure={fail}
-            onChooserChange={setChooserOpen}
-          />
-        </MapBoundary>
+        // O mapa entra com uma transição curta de opacidade quando termina de
+        // carregar, em vez de aparecer de uma vez sobre a moldura.
+        <div
+          data-map-ready={ready ? "" : undefined}
+          className="h-full w-full opacity-0 transition-opacity duration-[var(--atlas-base)] ease-atlas data-[map-ready]:opacity-100"
+        >
+          <MapBoundary key={attempt} onError={(erro) => fail("pacote", erro)}>
+            <MapCanvas
+              features={features}
+              selectedSlug={selectedSlug}
+              onSelect={onSelect}
+              unplaced={unplaced}
+              bottomInset={chooserOpen ? 0 : overlayHeight}
+              cooperative={gestures === "cooperativos"}
+              onReady={() => setReady(true)}
+              onFailure={fail}
+              onChooserChange={setChooserOpen}
+            />
+          </MapBoundary>
+        </div>
       )}
       {!ready && (
-        <p role="status" className="absolute inset-0 grid place-items-center text-sm text-ink-soft">
-          Carregando o mapa…
-        </p>
+        // A moldura já tem o tamanho e a cor do mapa: nada se desloca quando ele chega.
+        <div role="status" className="absolute inset-0 grid place-items-center">
+          <p className="map-loading text-sm text-ink-soft">Carregando o mapa…</p>
+        </div>
       )}
       {/* O conteúdo sobreposto fica montado mesmo escondido, para a medida acompanhar. */}
       <div

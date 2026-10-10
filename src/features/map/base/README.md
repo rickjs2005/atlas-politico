@@ -4,8 +4,8 @@ Dois arquivos de contorno, que dão referência geográfica aos lugares do atlas
 
 | Arquivo | Conteúdo | Tamanho |
 |---|---|---|
-| `terra.geojson` | 32 países e territórios da América do Sul, do Caribe e de parte da América Central, como polígonos. Propriedades: `iso` e `nome` | 165 KB |
-| `estados-br.geojson` | Os 27 estados do Brasil, como polígonos. Propriedades: `uf` e `nome` | 89 KB |
+| `terra.geojson` | 32 países e territórios da América do Sul, do Caribe e de parte da América Central, como polígonos. Propriedades: `iso` e `nome` | 162 KB |
+| `estados-br.geojson` | Os 27 estados do Brasil, como polígonos. Propriedades: `uf` e `nome` | 87 KB |
 
 **Origem.** Natural Earth, escala 1:50 milhões, arquivos `ne_50m_admin_0_countries` e `ne_50m_admin_1_states_provinces`, obtidos em 8 de outubro de 2026 do repositório público do projeto, `nvkelso/natural-earth-vector`.
 

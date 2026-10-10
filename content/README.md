@@ -19,7 +19,7 @@ A edição: os registros que passaram pela revisão.
 | `acontecimentos.json` | Acontecimentos |
 | `lugares.json` | Lugares com coordenada, precisão e origem |
 | `fontes.json` | Documentos citados |
-| `imagens.json` | Imagens com autoria, crédito e condições de uso. Os arquivos ficam em `public/media/` |
+| `imagens.json` | Imagens com autoria, crédito e condições de uso. Os arquivos ficam em `public/media/`. Depois de trocar o arquivo de um retrato, rode `npm run images`: as páginas pedem versões preparadas dele, e o build recusa versões desatualizadas |
 
 Regras:
 

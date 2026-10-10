@@ -17,9 +17,11 @@ import { useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
 
 import type { YearSpan } from "@/lib/data/coverage";
 import type { AtlasData } from "@/lib/data/types";
+import type { Categoria } from "@/lib/domain/categories";
 
-import { AtlasContext, deriveAtlasView } from "./AtlasStateProvider";
-import type { AtlasAction } from "./atlas-state";
+import { AtlasContext } from "./AtlasStateProvider";
+import type { AtlasAction, AtlasState } from "./atlas-state";
+import { selectSelectedEvent, selectVisibleEvents } from "./selectors";
 import { UrlWatcher, isOwnPath, notifyUrlChange, useOwnSearch } from "./location";
 import {
   chooseHistoryMode,
@@ -59,7 +61,27 @@ export function AtlasUrlStateProvider({
   );
 
   const search = useOwnSearch(path);
-  const state = useMemo(() => stateFromSearch(search, contexto), [search, contexto]);
+  const lido = useMemo(() => stateFromSearch(search, contexto), [search, contexto]);
+
+  // O período e as categorias mantêm a mesma identidade enquanto não mudam.
+  // Abrir ou fechar um acontecimento muda o endereço, mas não o recorte: a
+  // lista, os pontos do mapa e as contagens não são refeitos por isso.
+  const { de, ate } = lido.periodo;
+  const periodo = useMemo(() => ({ de, ate }), [de, ate]);
+  const categoriasLidas = lido.categorias.join(",");
+  const categorias = useMemo(
+    () => (categoriasLidas === "" ? [] : (categoriasLidas.split(",") as Categoria[])),
+    [categoriasLidas],
+  );
+  const state = useMemo<AtlasState>(() => ({ ...lido, periodo, categorias }), [lido, periodo, categorias]);
+
+  // O endereço já foi lido: o que estava encoberto à espera da consulta
+  // aparece, já no recorte certo (globals.css, `data-consulta`).
+  useEffect(() => {
+    if (isOwnPath(path) && search === window.location.search) {
+      document.documentElement.removeAttribute("data-consulta");
+    }
+  }, [search, path]);
 
   const ultimaEscrita = useRef<HistoryWrite | null>(null);
 
@@ -109,8 +131,23 @@ export function AtlasUrlStateProvider({
     notifyUrlChange();
   }, [search, path, contexto]);
 
-  const view = useMemo(() => deriveAtlasView(data, state), [data, state]);
-  const value = useMemo(() => ({ ...view, dispatch }), [view, dispatch]);
+  // O recorte visível depende de quem, quando e o quê, e não do acontecimento aberto.
+  const visible = useMemo(
+    () =>
+      selectVisibleEvents(data, {
+        pessoa: lido.pessoa,
+        comparar: lido.comparar,
+        periodo,
+        categorias,
+        acontecimento: null,
+      }),
+    [data, lido.pessoa, lido.comparar, periodo, categorias],
+  );
+  const visibleIds = useMemo(() => visible.map((item) => item.id), [visible]);
+  const value = useMemo(
+    () => ({ state, data, visible, visibleIds, selected: selectSelectedEvent(visible, state), dispatch }),
+    [state, data, visible, visibleIds, dispatch],
+  );
 
   return (
     <AtlasContext value={value}>

@@ -27,8 +27,8 @@ MapLibre GL JS 6.13, com uma base local de contornos. Nada do mapa vem de fora d
 
 | Recurso | Onde está | O que é |
 | --- | --- | --- |
-| Contornos de países | `src/features/map/base/terra.geojson` (165 KB) | 32 países e territórios da América do Sul, do Caribe e de parte da América Central, do Natural Earth 1:50 milhões |
-| Divisas dos estados | `src/features/map/base/estados-br.geojson` (89 KB) | Os 27 estados do Brasil, da mesma fonte |
+| Contornos de países | `src/features/map/base/terra.geojson` (162 KB) | 32 países e territórios da América do Sul, do Caribe e de parte da América Central, do Natural Earth 1:50 milhões |
+| Divisas dos estados | `src/features/map/base/estados-br.geojson` (87 KB) | Os 27 estados do Brasil, da mesma fonte |
 | Grade | `src/features/map/graticule.ts` | Meridianos e paralelos a cada 10 graus, gerados no código |
 | Estilo | `src/features/map/style.ts` | Mar, grade, terra, Brasil em tom mais claro, divisas e fronteiras. Seis camadas, nenhuma de texto |
 | Cores da base | `src/features/map/palette.ts` | Repetem seis tokens de `globals.css`; um teste confere a sincronia |
@@ -208,7 +208,9 @@ Os pontos não são ligados entre si. A ordem cronológica não comprova desloca
 | Etapa | O que acontece |
 | --- | --- |
 | HTML do build | `MapView` sai com "Carregando o mapa…". Nenhum código do MapLibre vai para o HTML |
-| Montagem | `MapCanvas` é carregado por `next/dynamic` com `ssr: false`, e só quando a moldura do mapa aparece na tela. Quem fica na lista, em celular, não baixa o pacote do mapa |
+| Montagem | `MapCanvas` é carregado por `next/dynamic` com `ssr: false`, e só quando a moldura do mapa está na tela ou a menos de 400 px dela (`IntersectionObserver`). Quem fica na lista, em celular, não baixa o pacote do mapa; na página de um acontecimento, o mapa que está abaixo da primeira tela espera a rolagem chegar perto |
+| Aquecimento | Levar o ponteiro, o dedo ou o foco ao botão da vista **Mapa** começa a baixar o pacote (`warmUpMap`), sem criar o mapa nem pedir os contornos. Quem só olha a lista não baixa nada |
+| Entrada | A moldura já tem o tamanho final e a cor do mar. Pronto, o mapa entra com 180 ms de opacidade, sem deslocar o que está em volta |
 | Instância | Criada uma vez, em um efeito sem dependências. Filtros, seleção e seletor não a recriam; um teste confere que o canvas é o mesmo elemento depois de várias mudanças |
 | Marcadores | Elementos do React, postos por um portal dentro do contêiner do canvas. Um efeito os mantém sobre a coordenada a cada movimento da câmera, sem passar pelo estado |
 | Atualização | Mudou o recorte: os lugares são refeitos. Terminou um zoom: o agrupamento é refeito. Mudou a seleção: os destaques e, se preciso, a câmera |
@@ -232,7 +234,7 @@ Em qualquer falha, a área do mapa mostra uma mensagem e a lista dos lugares do 
 
 ### Quadros sobre o mapa parado
 
-A legenda aberta tem o fundo quase opaco (98%), e não opaco. No Chromium dos testes, que desenha o mapa sem placa de vídeo, um quadro opaco que aparecia sobre o canvas parado fazia a base sumir ao lado dele: sobrava a cor do mar onde havia terra. Com o fundo quase opaco isso não acontece. Não foi possível conferir se o defeito existe em um navegador com placa de vídeo.
+A legenda aberta tem o fundo quase opaco (98%), e não opaco. No Chromium dos testes, que desenha o mapa sem placa de vídeo, um quadro opaco que aparecia sobre o canvas parado fazia a base sumir ao lado dele: sobrava a cor do mar onde havia terra. Com o fundo quase opaco isso não acontece. Na fase 8 o mesmo roteiro foi repetido com a placa de vídeo da máquina (Intel UHD, pelo ANGLE com Direct3D 11), forçando o fundo opaco: a base continuou inteira. Por software, no mesmo roteiro, ela sumiu de novo. O defeito é do desenho por software; o fundo a 98% continua, porque é assim que os testes rodam.
 
 Dois testes comparam o mapa pixel a pixel, antes e depois de abrir a legenda e a lista dos acontecimentos sem ponto. Quem acrescentar outro quadro sobre o mapa deve acrescentar a mesma conferência.
 
@@ -240,7 +242,7 @@ Outros estados:
 
 | Estado | O que aparece |
 | --- | --- |
-| Carregando | "Carregando o mapa…" sobre a cor do mar. O resto da tela já funciona |
+| Carregando | "Carregando o mapa…" e um traço que vai e volta, sobre a cor do mar. O resto da tela já funciona |
 | Recorte sem pontos | O mapa no enquadramento do território, com o aviso e o botão dos acontecimentos sem ponto |
 
 ## Verificação

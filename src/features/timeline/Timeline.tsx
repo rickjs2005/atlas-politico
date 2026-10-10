@@ -35,6 +35,11 @@ interface TimelineProps {
   lanes?: readonly { rotulo: string; itens: readonly LaneItem[] }[];
   dataDeCorte: string | null;
   label: string;
+  /**
+   * Depois da primeira mudança de recorte feita pela pessoa: as marcas que
+   * voltam entram com uma transição curta, e a hachura acompanha o período.
+   */
+  animate?: boolean;
 }
 
 export function Timeline({
@@ -48,18 +53,25 @@ export function Timeline({
   lanes = [],
   dataDeCorte,
   label,
+  animate = false,
 }: TimelineProps) {
   const scroller = useRef<HTMLDivElement>(null);
   const eixo = useRef<HTMLDivElement>(null);
   // Largura do eixo, em pixels. Até ser medida, vale a da faixa mínima.
   const [largura, setLargura] = useState<number | null>(null);
   const [previa, setPrevia] = useState<TimeDomain | null>(null);
+  // A faixa está na tela. Em tela estreita ela some enquanto a leitura está
+  // aberta; ao voltar, a rolagem até o período e até a marca selecionada se
+  // repete, porque escondida a faixa não tem para onde rolar.
+  const [naTela, setNaTela] = useState(false);
 
   useEffect(() => {
     const alvo = eixo.current;
     if (!alvo) return;
     const observer = new ResizeObserver(([entrada]) => {
-      if (entrada && entrada.contentRect.width > 0) setLargura(Math.round(entrada.contentRect.width));
+      if (!entrada) return;
+      setNaTela(entrada.contentRect.width > 0);
+      if (entrada.contentRect.width > 0) setLargura(Math.round(entrada.contentRect.width));
     });
     observer.observe(alvo);
     return () => observer.disconnect();
@@ -69,7 +81,7 @@ export function Timeline({
   // isso, quem chega por um endereço com período veria só a hachura.
   useEffect(() => {
     const faixa = scroller.current;
-    if (!faixa || faixa.scrollWidth <= faixa.clientWidth) return;
+    if (!naTela || !faixa || faixa.scrollWidth <= faixa.clientWidth) return;
     if (periodo.de === null && periodo.ate === null) return;
     const trecho = spanOfYears(domain, periodo.de ?? domain.de, periodo.ate ?? domain.ate);
     const suave = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -77,11 +89,11 @@ export function Timeline({
       left: (trecho.inicio + trecho.largura / 2) * faixa.scrollWidth - faixa.clientWidth / 2,
       behavior: suave ? "smooth" : "auto",
     });
-  }, [periodo.de, periodo.ate, domain]);
+  }, [periodo.de, periodo.ate, domain, naTela]);
 
   // A marca selecionada tem prioridade: este efeito roda depois do anterior.
   useEffect(() => {
-    if (selectedSlug === null) return;
+    if (selectedSlug === null || !naTela) return;
     const marca = scroller.current?.querySelector<HTMLElement>(`[data-slug="${selectedSlug}"]`);
     if (!marca || !scroller.current) return;
     // Só a faixa rola: a página fica onde está.
@@ -94,7 +106,7 @@ export function Timeline({
       faixa.clientWidth / 2;
     const suave = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     faixa.scrollTo({ left: alvo, behavior: suave ? "smooth" : "auto" });
-  }, [selectedSlug]);
+  }, [selectedSlug, naTela]);
 
   // Cada marca reserva no eixo o espaço do próprio botão: marcas mais
   // próximas do que isso sobem de fileira, e nenhuma cobre a outra.
@@ -112,9 +124,11 @@ export function Timeline({
             onSelect={onSelect}
             label={label}
             markWidth={markWidth}
+            animate={animate}
           />
           <TimeAxis domain={domain} />
-          <PeriodShade domain={domain} periodo={previa ?? periodo} />
+          {/* Durante o arraste a hachura segue o ponteiro, sem transição. */}
+          <PeriodShade domain={domain} periodo={previa ?? periodo} animate={animate && previa === null} />
           {onPeriodChange && (
             <PeriodBrush
               domain={domain}

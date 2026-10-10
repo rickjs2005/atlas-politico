@@ -1,6 +1,6 @@
 # Arquitetura
 
-Descreve o que está implementado até a fase 7 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem sete: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md), [MAP.md](MAP.md), [COMPARISON.md](COMPARISON.md) e [PAGES.md](PAGES.md).
+Descreve o que está implementado até a fase 8 e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem sete: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md), [MAP.md](MAP.md), [COMPARISON.md](COMPARISON.md) e [PAGES.md](PAGES.md). O que cada página carrega, e as medições, estão em [PERFORMANCE.md](PERFORMANCE.md).
 
 ## Visão geral
 
@@ -39,11 +39,12 @@ HTML estático por rota em out/                             │
 | Pipeline | `src/lib/publication/` | Validação com diagnósticos, elegibilidade, montagem dos dados, relatório de cobertura, plano de importação | Ler arquivos, usar React |
 | Disco | `src/lib/content/` | Ler `content/`, gravar e ler `generated/`, sondar arquivos de mídia, orquestrar os comandos | Ser importada por código do navegador |
 | Estado | `src/lib/state/` | Estado da exploração e da comparação, seletores, parâmetros de URL, regras do endereço e do histórico, endereços entre telas com o contexto de retorno (`links.ts`), leitura do endereço no navegador (`location.tsx`) e os dois providers (memória e endereço) | Ler arquivos, importar Zod em tempo de execução |
+| Mídia | `src/lib/media/` | Molduras, larguras e nomes das versões preparadas dos retratos, e o manifesto do que foi gerado | Ler arquivos: o manifesto só é lido pelos comandos e pelos testes |
 | Configuração | `src/lib/site.ts` | O que depende de decisão do responsável pelo projeto. Hoje, o canal público de correção, ainda sem valor | Guardar conteúdo editorial |
 | Funcionalidades | `src/features/` | Mapa, acontecimentos, linha do tempo, comparação | Ler arquivos, guardar seleção própria |
 | Componentes | `src/components/` | Base visual compartilhada: cabeçalho, rodapé, retrato, cartão de pessoa, data, categoria, fontes, revisão, identificação da edição, perfil, cópia de link e as peças da linha do tempo (`time/`) | Ler arquivos, guardar estado da exploração |
 | Rotas | `src/app/` | Páginas. Único lugar que chama `getAtlasData()` e entrega os dados por props | |
-| Comandos | `scripts/` | Linha de comando dos dados, conferência e pré-visualização da saída | |
+| Comandos | `scripts/` | Linha de comando dos dados, preparo dos retratos, ajuste e conferência da saída estática, pré-visualização e medições | |
 
 As fronteiras são verificadas, e não só combinadas:
 
@@ -96,17 +97,21 @@ As fronteiras são verificadas, e não só combinadas:
 | Páginas `/`, `/politicos/[slug]`, `/comparar`, `/metodologia`, 404 | Build | Server Components. Viram HTML em `out/` |
 | Página `/acontecimentos/[slug]` | Build | Uma por acontecimento publicado |
 | Gerador de dados (`npm run data:build`) | Antes do build | Node, fora do Next. Grava `generated/` |
+| Preparo dos retratos (`npm run images`) | Quando um retrato ou o enquadramento muda | Node, com `sharp`. Grava `public/media/derivados/` e o manifesto. `images:check` roda antes de `dev` e de `build`, sem a biblioteca de imagem, e para o comando se as versões estiverem desatualizadas |
+| Ajuste da saída (`scripts/finalize-export.mjs`) | Depois de `next build`, no mesmo `npm run build` | Devolve os arquivos de segmento ao nome que o navegador pede, retira os arquivos do MapLibre que ninguém pede e completa o pré-carregamento das fontes nas páginas de acontecimento (D-77) |
 | `getAtlasData`, pipeline, schemas Zod | Build | Nunca chegam ao navegador |
 | Consultas de `src/lib/data/` | Build e navegador | Funções puras sobre os dados já gerados |
-| `SiteHeader`, `SiteFooter`, `PersonCard`, `Portrait`, `SourceList`, `SourceCatalog`, `RecordSources`, `EditionTag`, `TrajectoryLanes` | Build | Sem estado |
+| `SiteHeader`, `SiteFooter`, `PersonCard`, `SourceList`, `SourceCatalog`, `RecordSources`, `EditionTag`, `TrajectoryLanes` | Build | Sem estado |
 | `EventPanel`, `ProfilePanel` | Build ou navegador | Apresentação pura. Servem à página e ao painel |
-| `SiteNav` | Navegador | Só o abrir e fechar do menu em tela estreita |
+| `Portrait` | Build e navegador | Componente de cliente, sem estado. É o que mantém a dica de pré-carregamento da imagem só no HTML da página, fora do conteúdo que o roteador busca ao ver um link (D-75) |
+| `SiteNav`, `IntentLink` | Navegador | O abrir e fechar do menu em tela estreita, e o sinal de intenção que deixa o roteador adiantar o destino de um link (D-78) |
 | `Explorer` (exploração) e `Comparison` (comparação) | Navegador | Client Components. Recebem os dados por props, são pré-renderizados no HTML e hidratados |
 | `AtlasUrlStateProvider`, `EventList`, `Timeline`, `MapView` | Navegador | Idem, dentro do `Explorer`. O provider também envolve a `Comparison`. No HTML do build saem com o estado inicial; o endereço é lido depois da hidratação |
 | `EventReturn`, `CopyLink`, `CorrectionTemplate` | Navegador | Client Components pequenos dentro de páginas estáticas: o retorno da página do acontecimento, a cópia do link e o modelo de correção. No HTML do build saem sem contexto; o endereço e a origem são lidos depois da hidratação |
 | `UrlWatcher` (`src/lib/state/location.tsx`) | Só navegador | Único uso de `useSearchParams`, isolado em um `Suspense` sem saída visual, para as telas continuarem inteiras no HTML gerado. Serve à exploração, à comparação, ao retorno e ao modelo de correção |
 | `AtlasStateProvider` | Navegador | Estado em memória, para as telas de prova e os testes |
-| `MapCanvas` (MapLibre) | Só navegador | Carregado por `next/dynamic` com `ssr: false`. Não aparece no HTML do servidor. A instância é criada uma vez; filtros e seleção não a recriam |
+| `MapCanvas` (MapLibre) | Só navegador | Carregado por `next/dynamic` com `ssr: false`, e só quando a moldura do mapa está na tela ou perto dela. Não aparece no HTML do servidor. A instância é criada uma vez; filtros e seleção não a recriam |
+| Trecho de `layout.tsx` que marca o documento | Só navegador, antes do primeiro desenho | Em um link com consulta, encobre a área que vai mudar até o endereço ser lido (D-83). É o único script escrito dentro do HTML |
 | Contornos da base (`terra.geojson`, `estados-br.geojson`) | Só navegador | Arquivos próprios, publicados pelo bundler em `/_next/static/media/` e pedidos ao próprio site |
 | Worker do MapLibre | Só navegador | Arquivo próprio, publicado pelo bundler em `/_next/static/media/` |
 
@@ -182,6 +187,8 @@ Seletores puros, em `selectors.ts`:
 
 **Regra de consistência.** O acontecimento selecionado sempre pertence ao recorte visível. Se um filtro o esconde, a seleção é desfeita. Como lista, mapa e painel leem o mesmo `visible` e o mesmo `selected` do provider, eles não têm como mostrar recortes diferentes.
 
+**Identidade do recorte.** No provider do endereço, o período, as categorias e o recorte visível mantêm a mesma identidade enquanto não mudam. Abrir ou fechar um acontecimento muda o endereço, mas não refaz a lista, os pontos do mapa nem as contagens (D-81).
+
 **Onde o estado fica.** Dois providers entregam o mesmo contrato (`useAtlas()`: `state`, `dispatch`, `data`, `visible`, `visibleIds` e `selected`):
 
 | Provider | Onde o estado fica | Quem usa |
@@ -251,12 +258,14 @@ Dentro de `features/map`:
 | `content/drafts/` | Registros em pesquisa e importações | Em uso desde a fase 2 |
 | `content/published/` | A edição revisada | Em uso desde a fase 2 |
 | `scripts/` | Comandos de dados (`data.mts`, com `register.mjs`), conferência e pré-visualização da saída | Em uso desde a fase 3 |
-| `public/media/` | Retratos e imagens de acontecimentos | Em uso desde a fase 2 |
+| `public/media/` | Retratos e imagens de acontecimentos, como cadastrados. Em `derivados/`, as versões dos retratos que as páginas pedem | Em uso desde a fase 2; versões preparadas na fase 8 |
 | `src/app/fonts/` | Fontes tipográficas locais | Em uso desde a fase 4 |
 | `src/features/timeline/` | Linha do tempo, controles do recorte, escolha de período no eixo e cargos e partidos do período | Em uso desde a fase 4; completa na fase 5 |
 | `src/features/map/` | Mapa, base de contornos, marcadores, seletor, câmera e falhas | Em uso desde a fase 1; completo na fase 6 |
 | `src/features/comparison/` | Faixas das trajetórias na mesma escala | Em uso desde a fase 4; a tela foi ligada ao estado e ao endereço na fase 7 |
-| `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação e as páginas de perfil, de acontecimento e de metodologia, em três larguras | Em uso; cresce até a fase 9 |
+| `tests/e2e/` | Jornada principal com conteúdo real. Hoje cobre as telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação, as páginas de perfil, de acontecimento e de metodologia, e o acabamento (transições, continuidade da seleção, link com consulta), em quatro larguras | Em uso; cresce até a fase 9 |
+| `tests/export/` | O que só existe no build de produção: o que cada página pede e quando, o carregamento adiado do mapa, as versões dos retratos e a navegação pré-carregada. Roda sobre `out/`, servida por `npm run preview` | Em uso desde a fase 8 |
+| `docs/desempenho/` | Resultado bruto das medições, em JSON, um arquivo por build medido | Em uso desde a fase 8 |
 
 A pasta `public/geo/`, reservada na fase 1 para a base do mapa, deixou de existir na fase 6: os contornos ficam em `src/features/map/base/` e são publicados pelo bundler (D-58).
 

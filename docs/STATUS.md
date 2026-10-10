@@ -11,7 +11,216 @@ Atualizado em 9 de outubro de 2026.
 | 5. Aplicação e linha do tempo | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
 | 6. Mapa sincronizado | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
 | 7. Comparação, páginas e fontes | Concluída em 09/10/2026, com pendências e itens não verificados listados abaixo |
-| 8 a 10 | Não iniciadas |
+| 8. Acabamento visual e desempenho | Concluída em 09/10/2026, com medições de laboratório e pendências listadas abaixo |
+| 9 e 10 | Não iniciadas |
+
+## Fase 8 (acabamento visual e desempenho)
+
+Entrega: o acabamento da interface e o desempenho medido em build de produção. Retratos em versões preparadas, com o mesmo enquadramento nos dois perfis; a leitura com o título como âncora; a comparação com as faixas na primeira tela; transições curtas, que acompanham a seleção sem segurar o estado; o mapa carregado só quando vai ser usado; a saída estática corrigida; o link com consulta sem a tela errada; e as medições antes e depois. As condições e os resultados estão em [PERFORMANCE.md](PERFORMANCE.md); o movimento e os estados, em [INTERACTIONS.md](INTERACTIONS.md); a escala e os componentes, em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); as decisões, em [DECISIONS.md](DECISIONS.md), de D-74 a D-86; as capturas, em [capturas/fase-8/](capturas/README.md).
+
+Para abrir a versão de produção: `npm run build`, `npm run preview` e `http://localhost:4311/`. Em desenvolvimento: `npm run dev` e `http://localhost:3000/`.
+
+### Critério de conclusão do plano
+
+"O fluxo principal permanece legível e responsivo; animações ajudam a acompanhar a seleção; a entrada e as páginas de leitura funcionam sem depender do carregamento do mapa." As metas do plano: "buscar LCP até 2,5 segundos e CLS até 0,1 em medições documentadas", com os resultados de laboratório identificados como tais e o INP deixado para a observação de uso e para os dados de campo.
+
+O pedido da fase escreveu o critério com uma parte a mais: "fluxo principal legível e responsivo, transições que ajudam a acompanhar a seleção, conteúdo acessível sem esperar o mapa e desempenho documentado com medições reais". A tabela segue esta versão.
+
+| Parte do critério | Situação | Como foi conferido |
+| --- | --- | --- |
+| Fluxo principal legível e responsivo | Atendido em emulação | A jornada inteira (abrir, escolher a pessoa, mudar o período, abrir um acontecimento, ver a fonte e ir à comparação) passa em teste, em 1440×900 e em 390×844. Nas quatro larguras pedidas, 1440×900, 768×1024, 390×844 e 360×800, nenhuma das sete telas rola para o lado e o título cabe na largura; em 360×800, os controles da jornada têm 44 pixels de altura ou mais. As 39 capturas do build foram olhadas uma a uma. Nenhum aparelho real foi usado |
+| Transições que ajudam a acompanhar a seleção | Atendido | Com o movimento ligado, os testes conferem que o endereço e a tela mudam no clique, que seleções e filtros em sequência rápida deixam só o último estado, que a lista rola até o item escolhido em outra parte sem mover a página e que o foco vai para o título da leitura em celular. Quadros tirados no meio das transições, com a placa de vídeo, mostram a leitura já no lugar 50 ms depois do clique, a lista a caminho do item e o anel no marcador e na marca |
+| Conteúdo acessível sem esperar o mapa | Atendido | Sobre o build, pelos pedidos reais: a entrada, a comparação, a metodologia e a página 404 não pedem nada do mapa; a exploração em celular só o pede quando a vista **Mapa** é aberta; a página do acontecimento mostra o texto antes, e em celular o mapa espera a rolagem chegar perto |
+| Desempenho documentado com medições reais | Atendido, com resultados de laboratório | PERFORMANCE.md, com as condições, o que cada número é e o que ele não é, antes e depois medidos na mesma rodada. Nas cinco telas e nos dois perfis, o LCP ficou entre 320 e 1.612 ms, para uma meta de 2,5 segundos, e o CLS, em no máximo 0,022, para uma meta de 0,1. São resultados de laboratório, com celular emulado |
+
+### Passos do plano e situação de cada um
+
+| Passo | Situação |
+| --- | --- |
+| 1. Refinar abertura, tipografia, imagens e hierarquia dos detalhes | Feito: cartões da entrada antes dos números em tela estreita, retratos com o mesmo enquadramento, título maior que a data na leitura, cabeçalho do perfil com o retrato ao lado do nome, faixas da comparação na primeira tela (D-74, D-82) |
+| 2. Ajustar transições de pessoa, período e acontecimento | Feito, só com CSS e sem dependência nova: vista, recorte, troca de pessoa, marcadores, marcas, hachura do período e entrada do mapa (D-80) |
+| 3. Carregar o mapa quando necessário e reduzir seu peso na entrada | Feito. A entrada nunca pediu o mapa; a página do acontecimento deixou de carregá-lo abaixo da primeira tela, e o pacote passou a ser aquecido por intenção (D-76) |
+| 4. Otimizar imagens localmente antes do build e manter dimensões definidas | Feito: `npm run images`, nove versões WebP por retrato, dimensões declaradas e conferência no build (D-74, D-75) |
+| 5. Garantir funcionamento com movimento reduzido | Feito, com teste: transições, aviso de carregamento e rolagem ficam sem movimento, e os estados são os mesmos |
+| 6. Medir carregamento, estabilidade visual e resposta dos controles | Feito: `npm run measure`, com os dois builds alternados (D-84) |
+| 7. Conferir em computador e em um aparelho móvel real, quando disponível | Feito só em emulação. Não havia aparelho móvel disponível, e o navegador foi um Chromium sem interface. Fica para a fase 9 |
+
+### O que foi entregue
+
+- **Retratos preparados:** nove versões WebP de cada retrato, por moldura e por largura, de 1 a 53 KB, no lugar dos JPEG de 215 e de 290 KB. O enquadramento põe a linha dos olhos na mesma altura e o rosto no mesmo tamanho nos dois perfis. O original, a autoria e as condições de uso não mudaram.
+- **Abertura:** em tela estreita, os dois cartões vêm antes dos números da edição e cabem na primeira tela nas quatro larguras.
+- **Hierarquia da leitura:** no painel e na página do acontecimento, o título é o maior elemento, e a data continua acima dele, forte e em números de mesma largura. O perfil ganhou um cabeçalho com o retrato ao lado do nome.
+- **Comparação:** as faixas vêm logo abaixo do recorte, e as notas de leitura, depois delas e antes das colunas. O cabeçalho ficou menor em celular.
+- **Continuidade da seleção:** a lista rola até o item escolhido no mapa, na linha do tempo ou pelo endereço, por dentro dela; o perfil continua montado sob a leitura e volta como estava.
+- **Transições:** vista que entra, recorte que muda, troca de pessoa, marcadores e marcas que entram no recorte, hachura do período e entrada do mapa. Só CSS, 120 e 180 ms, depois da primeira ação da pessoa.
+- **Mapa sob demanda:** montagem a até 400 px da área visível, aquecimento por intenção no botão da vista **Mapa**, moldura com o tamanho final e aviso de carregamento com um traço que vai e volta.
+- **Link com consulta:** a área que depende da consulta fica encoberta, com o aviso "Abrindo a consulta do endereço…", até o endereço ser lido. Vale para a exploração e para a comparação.
+- **Saída estática ajustada** depois do build: arquivos de navegação no nome que o navegador pede, 4,5 MB de arquivos do MapLibre sem uso retirados, pré-carregamento da fonte nas páginas de acontecimento. A saída foi de 14,5 MB para 10,3 MB.
+- **Navegação por intenção:** o roteador só adianta o destino dos cartões da entrada; menu, nome do atlas e **Comparar as trajetórias** adiantam quando a pessoa aponta (`IntentLink`).
+- **Fontes:** o itálico serifado, sem uso, saiu. Duas estratégias de pré-carregamento foram medidas e descartadas.
+- **Estado com identidade estável:** selecionar e fechar um acontecimento deixaram de refazer o que não mudou.
+- **Medição:** `npm run measure` e `npm run measure:report`, com o resultado bruto em `docs/desempenho/`.
+- **Testes sobre o build:** `npm run test:export`, que confere o que cada página pede e quando.
+- **Capturas** do build, antes e depois, nas quatro larguras: `npm run capture:finish`.
+
+### Arquivos
+
+Comparação com o estado da fase 7: 61 arquivos de código e de documentação (14 novos, 46 alterados e 1 removido), mais 8 arquivos de medição, 18 versões de retrato e 78 capturas.
+
+| Onde | O quê |
+| --- | --- |
+| `docs/` | Novos: PERFORMANCE.md, `desempenho/` (8 arquivos de medição) e `capturas/fase-8/` (39 imagens, mais as 39 de `antes/`). Atualizados: ARCHITECTURE.md, COMPARISON.md, DECISIONS.md, DESIGN-SYSTEM.md, INTERACTIONS.md, MAP.md, TIMELINE.md, UX.md, STATUS.md e `capturas/README.md` |
+| `scripts/` | Novos: `images.mts`, `images.config.json`, `finalize-export.mjs`, `measure.mjs` e `measure-report.mjs`. Atualizados: `preview.mjs` (pasta e porta por variável, gzip, `ETag` e cache) e `check-export.mjs` |
+| `public/media/derivados/` | Novo: 18 arquivos WebP, gerados por `npm run images` |
+| `src/lib/media/` | Novos: `portraits.ts` (molduras, larguras e caminhos das versões) e `portraits.manifest.json` |
+| `src/lib/state/` | `AtlasUrlStateProvider.tsx`: identidade estável do recorte e retirada da marca do link com consulta |
+| `src/components/` | Novo: `IntentLink.tsx`. Atualizados: `Portrait.tsx`, `PersonCard.tsx`, `ProfilePanel.tsx`, `SiteNav.tsx`, `SiteHeader.tsx`, `SiteFooter.tsx` e `time/PeriodShade.tsx` |
+| `src/features/` | `map/MapView.tsx`, `map/PlaceMarker.tsx`, `map/base/README.md`, `events/EventPanel.tsx`, `timeline/Timeline.tsx`, `timeline/EventMarks.tsx` e `timeline/PeriodContext.tsx` |
+| `src/app/` | `layout.tsx`, `globals.css`, `page.tsx`, `not-found.tsx`, `politicos/[slug]/Explorer.tsx`, `comparar/Comparison.tsx`, `acontecimentos/[slug]/page.published.tsx`, `acontecimentos/[slug]/EventReturn.tsx`, `metodologia/page.tsx`, `dev/previa/page.dev.tsx` e `fonts/README.md`. Removido: `fonts/newsreader-latin-italic.woff2` |
+| `tests/` | Novos: `portraits.test.ts`, `e2e/acabamento.spec.ts`, `export/carregamento.spec.ts` e `export/acabamento.capture.ts`. Atualizados: `e2e/previa.spec.ts` e `e2e/prova.spec.ts` |
+| Raiz | `package.json` (seis comandos novos e o `sharp`), `package-lock.json`, `playwright.export.config.ts` (novo), `next.config.ts` (só comentário), README.md, `content/README.md` (nota sobre os retratos) e `.claude/project-state.md` |
+
+Nenhum registro de `content/` foi alterado. Uma dependência foi declarada, de desenvolvimento: o `sharp`, que já estava instalado como parte do Next (D-85). Nenhuma cor e nenhuma família tipográfica foram criadas. As capturas das fases 4 a 7 não foram refeitas.
+
+### Jornada implementada e o que segue em demonstração
+
+Implementado, com dados reais e teste de navegador:
+
+- A jornada principal, do começo ao fim, em computador e em celular.
+- Abertura nas quatro larguras, com os dois cartões inteiros na primeira tela e do mesmo tamanho.
+- Retratos na mesma moldura, com as dimensões declaradas e as versões certas para cada largura.
+- Título como âncora no painel e na página; faixas da comparação na primeira tela.
+- Seleção vinda da lista, da linha do tempo, do mapa e do endereço, com as partes no mesmo acontecimento.
+- Transições com o movimento ligado e com movimento reduzido.
+- Link com consulta na exploração e na comparação: encoberto, revelado, sem consulta, e a saída quando o código da página não chega.
+- Mapa indisponível e página do acontecimento aberta direto, que já vinham das fases 6 e 7, conferidos de novo no build e nas capturas.
+- Sobre o build: o que cada página pede, o mapa adiado, os retratos e a navegação.
+
+Em demonstração, com o contrato de cada um em INTERACTIONS.md, sem mudança nesta fase: canal de correção, endereço público, fonte indisponível, imagem de acontecimento, rótulos da base e lugares fora da América do Sul.
+
+### O que a fase 7 deixou para esta fase
+
+| Ponto | Como ficou |
+| --- | --- |
+| Acabamento do perfil, da metodologia e da barra do recorte da comparação | O perfil ganhou cabeçalho e ritmo próprios. A comparação mostra as faixas primeiro e tem o cabeçalho menor em celular. A metodologia foi conferida nas quatro larguras e ficou como estava |
+| Rever as transições com a comparação e com as páginas novas | Feito (D-80). A comparação e as páginas de leitura não ganharam transição de entrada: continuam com as de cor, de foco e da seta dos blocos que abrem |
+| Medir o peso do pacote do mapa e tirar do build o worker de desenvolvimento do MapLibre | Feito: o peso está em PERFORMANCE.md, e os seis arquivos sem uso saem depois do build (D-77) |
+| Conferir formato e peso das imagens | Feito (D-74) |
+| Conferir o movimento reduzido no que a fase acrescentar | Feito, com teste |
+| LCP, CLS e resposta dos controles, com o resultado identificado como de laboratório | Feito (PERFORMANCE.md) |
+| Abrir em uma janela visível e em um celular | Não feito: não havia aparelho, e o navegador foi um Chromium sem interface. As medições e os quadros das transições usaram a placa de vídeo da máquina |
+| Pendência 8 da fase 7: estado inicial por um instante | Resolvida para a exploração e a comparação (D-83). Nos links de retorno da página do acontecimento, a página não é encoberta: o contexto só muda os links |
+| Pendência 11 da fase 7: pedidos de pré-carregamento com 404 na saída estática | Resolvida (D-77) |
+| Ponto de atenção da fase 6: quadro opaco sobre o mapa parado, que não se sabia se acontecia com placa de vídeo | Conferido com a placa de vídeo: um quadro opaco aberto sobre o mapa não apaga a base. Por software, no mesmo roteiro, apaga. O defeito é do desenho por software, e o fundo a 98% continua porque é assim que os testes rodam (MAP.md) |
+
+### Problemas achados na conferência e corrigidos
+
+A conferência começou pelo build da fase 7: capturas das telas nas quatro larguras e uma medição completa, antes de qualquer mudança. Depois, cada mudança foi medida contra esse build.
+
+| Problema | Correção |
+| --- | --- |
+| Na entrada em celular com rede lenta, o maior elemento da tela era um retrato JPEG de até 290 KB, que só terminava de chegar depois de 4 segundos | Versões WebP por moldura e por largura, com prioridade só nos dois cartões |
+| As duas fotos oficiais têm cortes diferentes: na mesma moldura, um rosto ficava maior do que o outro | Enquadramento definido para cada retrato, com o mesmo critério |
+| Toda página com link para a entrada baixava os retratos dos cartões sem mostrá-los | `Portrait` passou a ser componente de cliente (D-75), com teste sobre o build |
+| No build feito no Windows, os arquivos de navegação saíam em pastas e o navegador os pedia com pontos: 404, e a troca de página recarregava o documento | Renomeados depois do build (D-77) |
+| Corrigido o 404, cada página passou a baixar e a processar o destino de todos os links visíveis | Pré-carregamento por intenção (D-78) |
+| O build publicava 4,5 MB de arquivos do MapLibre que nenhuma página pede | Retirados depois do build |
+| As 39 páginas de acontecimento saíam sem o pré-carregamento da fonte da interface | Completado depois do build |
+| A página do acontecimento carregava o mapa mesmo com ele abaixo da primeira tela | O mapa só é montado a até 400 px da área visível |
+| O trecho de script do link com consulta, posto no começo do `<body>`, atrasava o primeiro desenho de todas as telas, de 40 a 140 ms no perfil de celular | Passou para o fim do `<body>` |
+| Abrir um acontecimento refazia os pontos do mapa, os lugares, o agrupamento e as contagens, sem nada ter mudado; fechar reconstruía o perfil | Identidade estável do recorte e perfil montado sob a leitura (D-81) |
+| Escolher um acontecimento no mapa ou na linha do tempo não levava a lista até o item | A lista rola até ele, por dentro, sem mover a página |
+| Em celular, os cartões da entrada ficavam cortados no fim da primeira tela | Cartões antes dos números da edição |
+| Na comparação, quatro parágrafos empurravam as faixas para fora da primeira tela, em qualquer largura | Faixas logo abaixo do recorte |
+| Na leitura, a data era o maior elemento e disputava com o título | Título maior do que a data (D-82) |
+| Quem abria um link com consulta via primeiro a lista inteira e o perfil, e só depois o que o link pedia | Área encoberta, com aviso, até o endereço ser lido (D-83) |
+| O servidor de pré-visualização não mandava validadores de cache nem compressão, e as medições não pareciam com as de uma hospedagem | `scripts/preview.mjs` passou a responder com gzip, `ETag` e cache longo |
+| O itálico da Newsreader, de 143 KB, era publicado sem que nenhuma página o usasse | Arquivo removido |
+| Medidos em momentos diferentes, os mesmos arquivos davam resultados até 50% diferentes | Os dois builds são medidos na mesma rodada, com as execuções alternadas (D-84) |
+| O medidor deixava o worker do mapa (141 KB) fora do peso transferido, porque o navegador informa corpo de tamanho zero para o script de um worker | O medidor passou a usar o tamanho declarado pelo servidor, e a medição final foi refeita |
+| Com movimento reduzido, se o código da página não chegasse, o aviso "Abrindo a consulta do endereço…" continuava sobre a tela depois dos 6 segundos. A regra geral de movimento reduzido trocava a duração zero por 0,01 ms, e o aviso não chegava ao estado final | As duas regras do link com consulta ficaram fora da redução de movimento. O defeito foi achado quando o teste passou a esperar a tela aparecer de fato, em vez de conferir só a configuração |
+| O teste que protegia a D-75 passava com a regra quebrada: desde o pré-carregamento por intenção, a metodologia não busca mais a entrada sozinha, e o teste não exercitava nada | O teste passou a levar o ponteiro ao nome do atlas e a conferir que o conteúdo da entrada chega sem imagem. Com a regra quebrada, ele falha |
+| O servidor de desenvolvimento continuou servindo o CSS antigo depois de uma mudança em `globals.css`, mesmo reiniciado | O cache do Turbopack fica em `.next/dev` e sobrevive ao reinício: é preciso apagá-lo. Registrado nos pontos de atenção |
+| A documentação dizia que, sem JavaScript, a área encoberta aparecia em 6 segundos. Com o JavaScript desligado, o trecho não roda e nada é encoberto; os 6 segundos valem quando o código da página não chega | Texto corrigido em três documentos, e o teste passou a esperar a área aparecer de fato |
+
+### Verificações executadas
+
+Todas em 09/10/2026, com Node 24.15.0 no Windows 11.
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run lint` | Sem problemas |
+| `npm run typecheck` | Sem erros |
+| `npm run data:validate` | Nenhum erro; 5 pendências, que são os 5 rascunhos |
+| `npm run test` | 496 testes passando, em 24 arquivos. Eram 485 em 23: entraram os 11 das versões dos retratos |
+| `npm run build` | 47 páginas HTML, como antes. O ajuste da saída renomeou 44 arquivos de navegação, retirou 6 arquivos do MapLibre (4,5 MB) e completou o pré-carregamento da fonte em 42 páginas |
+| `npm run verify:export` | 276 arquivos, 10,3 MB; 39 acontecimentos com página, 5 rascunhos sem página, nenhum dado sintético, nenhuma rota de desenvolvimento. Passou a conferir também as versões dos retratos, os arquivos de navegação, os arquivos do MapLibre e o pré-carregamento da fonte |
+| `npm run test:e2e` | 201 testes passando: 14 da prova sintética, 7 dos dados reais, 26 da prévia, 40 da navegação temporal, 35 do mapa, 23 da comparação, 25 das páginas e 31 do acabamento, que são os desta fase. Eram 170 |
+| `npm run test:export` | 16 testes passando, sobre a saída estática servida por `scripts/preview.mjs` |
+| `npm run capture:finish` | 39 capturas do build final, mais as 39 do build da fase 7 em `antes/`, tiradas pelo mesmo roteiro. Conferidas uma a uma |
+| `npm run measure` | 5 telas, 2 perfis, 7 execuções de cada build, alternadas, com a placa de vídeo. Resultado em `docs/desempenho/antes.json` e `depois.json`; tabelas em PERFORMANCE.md |
+| Quadros no meio das transições | 15 quadros, com o movimento ligado e a placa de vídeo: seleção e filtro em computador, leitura e vista do mapa em celular, e o link com consulta antes e depois de o endereço ser lido. Olhados um a um; não ficam no repositório |
+| Larguras | 1440×900, 768×1024, 390×844 e 360×800, por teste e pelas capturas |
+| Movimento reduzido | É o modo padrão dos testes de navegador. Um teste confere que as transições e o traço do aviso de carregamento ficam sem movimento |
+| Mapa indisponível | Capturas em computador e em celular, sem WebGL: a lista de lugares no lugar do mapa, com a leitura funcionando |
+| Página de um acontecimento aberta direto | No build: o texto chega antes do mapa, nada se desloca, e em celular o mapa espera a rolagem |
+| Nenhum pedido a outro domínio | Conferido no build, nas telas principais |
+
+Dezenove regras foram quebradas de propósito, para confirmar que os testes falham. Onze no navegador: a lista sem rolar até o item, o perfil remontado a cada seleção, o título menor do que a data, os números da edição antes dos cartões, a marca do link com consulta nunca retirada, a área sem ser encoberta, a comparação fora da regra do link com consulta, a seleção esperando 400 ms, a redução de movimento desligada, um título mais largo do que a tela e a transição de vista desligada. Seis sobre o build: o mapa montado a 6.000 px da área visível, o retrato como componente de servidor, o menu adiantando todos os destinos, os cartões da entrada sem prioridade, os arquivos de navegação sem renomear e as páginas sem o pré-carregamento da fonte. Duas nas regras dos retratos: o nome do arquivo sem a moldura e um enquadramento alterado sem gerar as versões. Dezoito foram notadas na primeira passagem. Uma não foi, a do retrato como componente de servidor, e o teste foi refeito (tabela acima); repetida, foi notada. O código foi restaurado em todos os casos.
+
+### Implementado e não verificado
+
+- **Aparelho móvel real.** Não havia um disponível. Tela, toque, rede e processador foram emulados em um notebook. A rolagem com o dedo, a barra de endereço do navegador móvel e o tempo real para abrir a vista do mapa não foram vistos.
+- **Navegador com janela visível, Firefox e Safari.** Tudo foi conferido em um Chromium sem interface. As medições e os quadros das transições usaram a placa de vídeo; os testes, o desenho por software.
+- **Dados de campo e INP.** Não existem: o atlas não foi publicado.
+- **Hospedagem real.** A compressão, o protocolo e o cache do servidor local não são os de uma hospedagem. O cache longo para `/_next/static/` e o `404.html` dependem dela.
+- **Build no Linux ou no macOS.** Todos os builds foram feitos no Windows. O primeiro passo do ajuste da saída não deve ter o que fazer em outro sistema, e isso não foi visto.
+- **Navegador sem WebP.** O retrato não aparece; o nome e o texto continuam. Não foi testado.
+- **Leitor de tela.** Os dois avisos novos, "Abrindo a consulta do endereço…" e "Carregando o mapa…", têm `role="status"` e foram conferidos pela estrutura, não com um leitor de tela.
+- **Segunda visita.** Todas as medições são com o cache vazio.
+- **Leitura das telas por outra pessoa.** A hierarquia e o ritmo foram julgados por quem os fez, pelas capturas. A validação com pessoas é da fase 9.
+
+### Pendências reais
+
+1. **Revisão humana de todo o conteúdo.** Continua sendo a principal. É da fase 9.
+2. **Aparelho móvel real e navegador com janela.** Nada desta fase foi visto fora de um Chromium sem interface, com celular emulado.
+3. **Abrir a vista do mapa em celular com rede lenta leva perto de 4 segundos,** antes e depois. O gargalo é o pacote e o worker do MapLibre, e não há saída dentro do pacote (D-86).
+4. **O primeiro desenho da página do acontecimento em celular ficou 112 ms mais tarde** (de 1.032 para 1.144 ms, no perfil emulado). Está dentro da meta. Um terço vem do pré-carregamento da fonte, medido; o resto não foi isolado (PERFORMANCE.md, Leitura dos resultados).
+5. **Bloqueio de 0,5 a 0,9 segundo no carregamento, no perfil de celular.** Não mudou nesta fase.
+6. **Dados de campo e INP:** só depois da publicação.
+7. **Hospedagem** (fase 10): compressão, cache longo para `/_next/static/`, `404.html` e tipo de conteúdo dos arquivos `.mjs`. Medir de novo no endereço público.
+8. **Política de segurança de conteúdo** (fase 10): precisa permitir o trecho de script do link com consulta, que é o único escrito dentro do HTML.
+9. **Passos do ajuste da saída:** dependem das versões do Next e do MapLibre. Rever a cada atualização.
+10. **Navegador sem WebP** não mostra o retrato. Não há versão em outro formato.
+11. **A instância do mapa não é mantida na troca de pessoa** (D-86).
+12. **Capturas das fases 4 a 7** mostram a interface de antes do acabamento. Não foram refeitas; `docs/capturas/README.md` avisa.
+13. **Herdadas, sem mudança:** canal público de correção e domínio público, que são decisões do responsável; nome definitivo e retrato em cinza e recortado (D-42); a natureza de cada fonte, que não aparece nas páginas; 4 das 59 fontes sem data do documento; vídeo de demonstração não gravado; lacunas de conteúdo (lista na seção da fase 3).
+
+### Preparação para a fase 9 (revisão editorial, testes e validação com pessoas)
+
+O critério da fase 9, no plano: a jornada principal passa, não há informação publicada sem sustentação identificada, e as pendências restantes não prejudicam leitura ou interpretação. Situação de cada passo:
+
+| Passo da fase 9 | O que já existe | O que falta |
+| --- | --- | --- |
+| 1. Revisar a coleção final contra as fontes | 39 acontecimentos conferidos com assistência de IA, com o roteiro de revisão no fim de CONTENT-REVIEW.md | A revisão humana, que é a pendência principal desde a fase 2, e a decisão de quem a assina |
+| 2. Conferir todos os links de evidência e registrar a data | Os endereços conferem com os registros; nenhum foi aberto desde a pesquisa | Abrir as 59 fontes e registrar a data da conferência |
+| 3. Testar regras de datas, períodos, filtros e integridade | Testes unitários das regras e validação do conteúdo no build | Rodar de novo depois de cada ajuste no conteúdo |
+| 4. Testar escolha de pessoa, seleção, sincronização do mapa e comparação | Testes de navegador das fases 5 a 8, mais a jornada principal em computador e em celular | Repetir o que os ajustes da fase 9 afetarem |
+| 5. Testar acesso direto, recarregamento e voltar/avançar | Testes de navegador, e os testes sobre o build | O mesmo |
+| 6. Conferir teclado, foco, contraste, movimento reduzido e leitura em celular | Contraste medido em teste, foco e teclado por teste, movimento reduzido por teste | Leitor de tela, zoom de texto e um celular real |
+| 7. Testar falha do mapa e conteúdo sem coordenadas | Cinco falhas tratadas e testadas; acontecimentos sem ponto acessíveis pelo mapa | Ver a falha em um aparelho real |
+| 8. Três pessoas encontram um episódio e conferem a fonte | Nada | Recrutar, observar e registrar as dificuldades |
+
+Pontos de atenção para quem continuar:
+
+- Para ver o que a pessoa recebe, use o build: `npm run build` e `npm run preview`. O servidor de desenvolvimento não tem o ajuste da saída, e nele o pré-carregamento e os pacotes são outros.
+- Ao trocar um retrato ou o enquadramento, rode `npm run images` e olhe o resultado. O build recusa versões desatualizadas.
+- Os três passos de `scripts/finalize-export.mjs` corrigem defeitos de versões específicas do Next e do MapLibre. Ao atualizar qualquer um dos dois, confira se o defeito continua; se não, o passo sai.
+- Um link novo entre páginas precisa de uma decisão sobre o pré-carregamento: padrão só para o caminho principal, `IntentLink` para a navegação, `prefetch={false}` para o resto (D-78).
+- Em um teste que abre uma página com consulta, espere a marca `data-consulta` sair antes de agir.
+- Se o servidor de desenvolvimento mostrar o CSS antigo depois de uma mudança em `globals.css`, reiniciar não basta: apague `.next/dev` antes de subir de novo.
+- Para comparar o desempenho de uma mudança, meça os dois builds na mesma rodada (`--contra`). Números de rodadas diferentes não se comparam.
+- A medição leva perto de uma hora com 7 execuções e trava a máquina para outras tarefas: rodar testes ou builds ao mesmo tempo estraga os números.
 
 ## Fase 7 (comparação, páginas e fontes)
 
@@ -900,4 +1109,4 @@ Concluída em 08/10/2026 e registrada no commit `9be1013`. O que ela entregou es
 
 ## Próximo passo
 
-Fase 8: acabamento visual e desempenho. A fase 7 termina aqui; a fase 8 só começa com o próximo comando. Nada foi publicado, e o site continua com `noindex`.
+Fase 9: revisão editorial, testes e validação com pessoas. A fase 8 termina aqui; a fase 9 só começa com o próximo comando. Nada foi publicado, e o site continua com `noindex`.

@@ -6,6 +6,12 @@
 // acontecimento está aberto: a página do perfil e a exploração são a mesma
 // rota (docs/PAGES.md). O mesmo componente serve aos dois perfis, com as
 // mesmas seções na mesma ordem.
+//
+// Os registros (cargos, partidos, cobertura, fontes e rodapé) ficam em um
+// componente à parte, que só é refeito quando os dados dele mudam: os caminhos
+// do perfil acompanham a consulta, e os registros não.
+
+import { memo } from "react";
 
 import { EditionTag } from "@/components/EditionStatus";
 import { AffiliationList, MandateList } from "@/components/PeriodRecords";
@@ -16,7 +22,7 @@ import type { Coverage } from "@/lib/data/coverage";
 import { formatPeriod } from "@/lib/domain/dates";
 import type { Citacao, Edicao, Filiacao, Imagem, Mandato, Pessoa } from "@/lib/domain/types";
 
-interface ProfilePanelProps {
+interface ProfileRecordsProps {
   pessoa: Pessoa;
   retrato: Imagem | null;
   mandatos: readonly Mandato[];
@@ -28,9 +34,12 @@ interface ProfilePanelProps {
   edicao?: Edicao | null;
   /** As fontes de um cargo ou de uma filiação. Sem a função, elas não aparecem. */
   sourcesOf?: (registro: { fontes: readonly Citacao[] }) => readonly SourceEntry[];
+  headingLevel?: 2 | 3;
+}
+
+interface ProfilePanelProps extends ProfileRecordsProps {
   /** Caminhos a partir do perfil: comparar, copiar o link, metodologia. */
   actions?: React.ReactNode;
-  headingLevel?: 2 | 3;
 }
 
 const sectionTitle = "eyebrow text-ink-soft";
@@ -39,7 +48,32 @@ const sectionTitle = "eyebrow text-ink-soft";
 const all = <T,>(registros: readonly T[]) =>
   registros.map((registro) => ({ registro, situacao: "documentada" as const }));
 
-export function ProfilePanel({
+export function ProfilePanel({ actions, ...records }: ProfilePanelProps) {
+  const { pessoa, retrato, headingLevel = 2 } = records;
+  const Title = headingLevel === 2 ? "h2" : "h3";
+
+  return (
+    <article className="animate-enter space-y-6" data-perfil={pessoa.slug}>
+      <header className="grid grid-cols-[5.5rem_minmax(0,1fr)] items-center gap-4">
+        <Portrait nome={pessoa.nome} imagem={retrato} sizes="88px" decorative />
+        <div className="space-y-1.5">
+          <p className="eyebrow text-ink-soft">Perfil</p>
+          <Title className="font-serif text-[2rem] font-medium leading-none tracking-tight">
+            {pessoa.nome}
+          </Title>
+        </div>
+      </header>
+
+      <p className="font-serif text-[1.0625rem] leading-[1.6]">{pessoa.resumo}</p>
+
+      {actions}
+
+      <ProfileRecords {...records} />
+    </article>
+  );
+}
+
+const ProfileRecords = memo(function ProfileRecords({
   pessoa,
   retrato,
   mandatos,
@@ -48,28 +82,12 @@ export function ProfilePanel({
   fontes,
   edicao,
   sourcesOf,
-  actions,
   headingLevel = 2,
-}: ProfilePanelProps) {
-  const Title = headingLevel === 2 ? "h2" : "h3";
+}: ProfileRecordsProps) {
   const SectionTitle = headingLevel === 2 ? "h3" : "h4";
 
   return (
-    <article className="animate-enter space-y-6" data-perfil={pessoa.slug}>
-      <header className="grid grid-cols-[6.5rem_minmax(0,1fr)] items-end gap-4">
-        <Portrait nome={pessoa.nome} imagem={retrato} sizes="104px" decorative />
-        <div className="space-y-1 pb-1">
-          <p className="eyebrow text-ink-soft">Perfil</p>
-          <Title className="font-serif text-3xl font-medium leading-none tracking-tight">
-            {pessoa.nome}
-          </Title>
-        </div>
-      </header>
-
-      <p className="reading">{pessoa.resumo}</p>
-
-      {actions}
-
+    <>
       <section className="space-y-2" data-secao="cargos">
         <SectionTitle className={sectionTitle}>
           Cargos e funções <span className="numerals font-medium">({mandatos.length})</span>
@@ -116,6 +134,6 @@ export function ProfilePanel({
         {edicao != null && <EditionTag edicao={edicao} />}
         {retrato !== null && <PortraitCredit imagem={retrato} detail />}
       </footer>
-    </article>
+    </>
   );
-}
+});

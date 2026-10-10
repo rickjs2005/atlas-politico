@@ -2,7 +2,11 @@
 //   1. as páginas previstas foram geradas;
 //   2. nenhuma rota de desenvolvimento foi exportada;
 //   3. as páginas de acontecimento são exatamente as do conjunto gerado;
-//   4. nenhum dado sintético de teste aparece em arquivo algum de `out/`.
+//   4. nenhum dado sintético de teste aparece em arquivo algum de `out/`;
+//   5. as versões dos retratos estão publicadas;
+//   6. os arquivos de segmento têm o nome que o navegador pede, os arquivos do
+//      MapLibre que ninguém pede não foram publicados, e toda página pede cedo
+//      as mesmas fontes que a entrada (scripts/finalize-export.mjs).
 // Sai com código 1 se algo estiver fora do esperado.
 
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -98,8 +102,60 @@ if (existsSync(path.join(OUT_DIR, "generated"))) {
   problemas.push("A pasta generated/ foi exportada para out/.");
 }
 
+// As versões dos retratos que as páginas pedem (docs/PERFORMANCE.md, seção Imagens).
+const manifestoDeRetratos = path.resolve("src/lib/media/portraits.manifest.json");
+if (!existsSync(manifestoDeRetratos)) {
+  problemas.push("Falta o manifesto dos retratos. Rode `npm run images`.");
+} else {
+  const { imagens } = JSON.parse(readFileSync(manifestoDeRetratos, "utf8"));
+  for (const entrada of Object.values(imagens)) {
+    for (const [caminho, tamanho] of Object.entries(entrada.arquivos)) {
+      const publicado = path.join(OUT_DIR, caminho);
+      if (!existsSync(publicado)) problemas.push(`Versão de retrato ausente: ${caminho}`);
+      else if (statSync(publicado).size !== tamanho) problemas.push(`Versão de retrato diferente da registrada: ${caminho}`);
+    }
+  }
+}
+
 const arquivos = listFiles(OUT_DIR);
 let conferidos = 0;
+
+// Um arquivo de segmento dentro de uma pasta `__next.*` não é encontrado pelo
+// navegador, que o pede pelo nome com pontos.
+const emPasta = arquivos.filter((arquivo) =>
+  path.relative(OUT_DIR, path.dirname(arquivo)).split(path.sep).some((parte) => parte.startsWith("__next.")),
+);
+if (emPasta.length > 0) {
+  problemas.push(
+    `${emPasta.length} arquivos de segmento gravados em pastas, como ${path.relative(OUT_DIR, emPasta[0])}. ` +
+      "Rode `npm run build`, que termina com scripts/finalize-export.mjs.",
+  );
+}
+
+// Só o worker do MapLibre é pedido pelo navegador; o resto do pacote não deve ser publicado.
+const semUso = arquivos
+  .map((arquivo) => path.basename(arquivo))
+  .filter((nome) => /^maplibre-gl(-dev|-worker-dev|-shared|-shared-dev)?\.[^.]+\.mjs$/.test(nome));
+if (semUso.length > 0) problemas.push(`Arquivos do MapLibre sem uso na saída: ${semUso.join(", ")}`);
+
+// Toda página pede cedo as mesmas fontes que a entrada. As de acontecimento
+// saem do Next sem essa ligação, e o ajuste da saída a completa.
+const daEntrada = existsSync(path.join(OUT_DIR, "index.html"))
+  ? (readFileSync(path.join(OUT_DIR, "index.html"), "utf8").match(/<link rel="preload"[^>]*\bas="font"[^>]*>/g) ?? [])
+  : [];
+if (daEntrada.length > 0) {
+  const semFonte = arquivos.filter((arquivo) => {
+    if (!arquivo.endsWith(".html")) return false;
+    const html = readFileSync(arquivo, "utf8");
+    return !daEntrada.every((ligacao) => html.includes(ligacao));
+  });
+  if (semFonte.length > 0) {
+    problemas.push(
+      `${semFonte.length} páginas sem o pré-carregamento das fontes, como ${path.relative(OUT_DIR, semFonte[0])}. ` +
+        "Rode `npm run build`, que termina com scripts/finalize-export.mjs.",
+    );
+  }
+}
 
 for (const arquivo of arquivos) {
   if (!TEXT_EXTENSIONS.has(path.extname(arquivo))) continue;

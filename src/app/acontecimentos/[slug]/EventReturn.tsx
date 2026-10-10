@@ -41,7 +41,7 @@ export function EventReturn({ event, people, escala }: EventReturnProps) {
       <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
         {comparacao !== null && (
           <li>
-            <Link href={comparacao.href} className={link} data-retorno="comparacao">
+            <Link href={comparacao.href} prefetch={false} className={link} data-retorno="comparacao">
               <span>
                 <span aria-hidden="true">←&nbsp;</span>
                 Voltar à comparação
@@ -58,7 +58,7 @@ export function EventReturn({ event, people, escala }: EventReturnProps) {
           const volta = profileReturn(search, event, pessoa);
           return (
             <li key={pessoa.slug}>
-              <Link href={volta.href} className={link} data-retorno={pessoa.slug}>
+              <Link href={volta.href} prefetch={false} className={link} data-retorno={pessoa.slug}>
                 <span>
                   <span aria-hidden="true">←&nbsp;</span>
                   Trajetória de {pessoa.nome}

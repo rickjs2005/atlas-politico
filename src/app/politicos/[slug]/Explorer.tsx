@@ -16,7 +16,7 @@
 // de dois atributos calculados aqui: `data-pane` e `data-side`.
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { CopyLink } from "@/components/CopyLink";
 import { DateMark } from "@/components/DateMark";
@@ -26,7 +26,7 @@ import { ProfilePanel } from "@/components/ProfilePanel";
 import { EventList, eventItemId, noPointNote } from "@/features/events/EventList";
 import { EventPanel } from "@/features/events/EventPanel";
 import { clipGaps } from "@/features/events/chronology";
-import { MapView } from "@/features/map/MapView";
+import { MapView, warmUpMap } from "@/features/map/MapView";
 import { CategoryFilter } from "@/features/timeline/CategoryFilter";
 import { PeriodContext } from "@/features/timeline/PeriodContext";
 import { PeriodControl } from "@/features/timeline/PeriodControl";
@@ -75,6 +75,10 @@ interface ExplorerProps {
 }
 
 const pathOf = (slug: string) => `/politicos/${slug}`;
+
+// O último perfil aberto nesta visita. Quem chega de outro perfil vê a tela
+// nova entrar com uma transição curta; quem abre a página direto, não.
+let lastProfile: string | null = null;
 
 export function Explorer({ data, pessoaId, profiles }: ExplorerProps) {
   const pessoa = data.conjunto.pessoas.find((item) => item.id === pessoaId);
@@ -143,6 +147,19 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
   const dropped = droppedAt !== null && droppedAt === serializeAtlasParams(state);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const focusTitle = () => focusAfterRender(() => titleRef.current);
+  const listRef = useRef<HTMLElement>(null);
+  const listHeadRef = useRef<HTMLDivElement>(null);
+
+  // Veio de outro perfil: a tela entra com a transição de troca de pessoa.
+  const [switched] = useState(() => lastProfile !== null && lastProfile !== pessoa.slug);
+  useEffect(() => {
+    lastProfile = pessoa.slug;
+  }, [pessoa.slug]);
+  // As vistas só ganham transição de entrada depois da primeira troca feita
+  // pela pessoa: a tela não pisca ao carregar.
+  const [moved, setMoved] = useState(false);
+  // O mesmo para a linha que diz o resultado do recorte: só depois do primeiro filtro.
+  const [filtered, setFiltered] = useState(false);
 
   const lendo = selected !== null && folded !== selected.slug;
   const pane = lendo || tab === "perfil" ? "leitura" : tab;
@@ -169,8 +186,44 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
   // Abrangência nacional ou lugar não documentado: o mapa dá acesso a eles sem inventar um ponto.
   const semPonto = useMemo(() => listUnplaced(visible), [visible]);
 
-  const mandatos = data.conjunto.mandatos.filter((item) => item.pessoaId === pessoa.id);
-  const filiacoes = data.conjunto.filiacoes.filter((item) => item.pessoaId === pessoa.id);
+  // O que só depende da pessoa é montado uma vez: abrir um acontecimento ou
+  // mudar um filtro não refaz o perfil nem as faixas da linha do tempo.
+  const mandatos = useMemo(
+    () => data.conjunto.mandatos.filter((item) => item.pessoaId === pessoa.id),
+    [data, pessoa.id],
+  );
+  const filiacoes = useMemo(
+    () => data.conjunto.filiacoes.filter((item) => item.pessoaId === pessoa.id),
+    [data, pessoa.id],
+  );
+  const lanes = useMemo(
+    () => [
+      {
+        rotulo: "Cargos e funções",
+        itens: mandatos.map((item) => ({
+          id: item.id,
+          rotulo: item.cargo,
+          descricao: `${item.cargo}, ${item.instituicao}`,
+          periodo: item.periodo,
+        })),
+      },
+      {
+        rotulo: "Partidos",
+        itens: filiacoes.map((item) => ({
+          id: item.id,
+          rotulo: item.partido.sigla,
+          descricao: `${item.partido.sigla} (${item.partido.nome})`,
+          periodo: item.periodo,
+        })),
+      },
+    ],
+    [mandatos, filiacoes],
+  );
+  const fontesDoPerfil = useMemo(() => getSources(data, pessoa), [data, pessoa]);
+  const sourcesOf = useCallback(
+    (registro: Parameters<typeof getSources>[1]) => getSources(data, registro),
+    [data],
+  );
   const retrato = getImage(data, pessoa.retratoId);
   const dataDeCorte = data.conjunto.edicao?.dataDeCorte ?? null;
 
@@ -232,6 +285,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
     const proximo = transition(state, action, data, dominio);
     const fechou = state.acontecimento !== null && proximo.acontecimento === null;
     setDroppedAt(fechou ? serializeAtlasParams(proximo) : null);
+    setFiltered(true);
     dispatch(action);
   };
 
@@ -261,6 +315,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
     }
 
     setDroppedAt(null);
+    setMoved(true);
     dispatch({ type: "selectEvent", slug });
     if (slug === null) return;
     if (noMapaEstreito) {
@@ -273,6 +328,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
 
   const closeEvent = () => {
     const slug = state.acontecimento;
+    setMoved(true);
     dispatch({ type: "selectEvent", slug: null });
     // O foco volta para onde a leitura começou: o item da lista ou a vista do mapa.
     if (slug !== null) {
@@ -283,6 +339,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
 
   const chooseTab = (next: Tab) => {
     setTab(next);
+    setMoved(true);
     if (selected === null) return;
     // "Perfil" mostra o resumo da pessoa: o acontecimento aberto é fechado.
     // "Lista" e "Mapa" fecham a leitura e mantêm o acontecimento marcado.
@@ -290,13 +347,35 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
     else setFolded(selected.slug);
   };
 
+  // Seleção vinda do mapa, da linha do tempo ou do endereço: a lista rola até
+  // o item, para as partes continuarem mostrando o mesmo acontecimento. Só
+  // onde a lista rola por dentro e está à vista; a página não se move.
+  const selectedSlug = state.acontecimento;
+  useEffect(() => {
+    const area = listRef.current;
+    if (selectedSlug === null || !area) return;
+    if (area.clientHeight === 0 || area.scrollHeight <= area.clientHeight) return;
+    const item = document.getElementById(eventItemId(selectedSlug));
+    if (!item) return;
+    const quadro = area.getBoundingClientRect();
+    const alvo = item.getBoundingClientRect();
+    // O cabeçalho da lista fica preso ao topo e cobre o que passa por baixo dele.
+    const topo = quadro.top + (listHeadRef.current?.offsetHeight ?? 0);
+    if (alvo.top >= topo && alvo.bottom <= quadro.bottom) return;
+    const suave = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    area.scrollTo({ top: area.scrollTop + alvo.top - topo - 8, behavior: suave ? "smooth" : "auto" });
+  }, [selectedSlug, visible]);
+
   return (
     <div
       data-pane={pane}
       data-side={side}
+      data-moved={moved ? "" : undefined}
+      data-switched={switched ? "" : undefined}
       // Na vista do mapa em tela estreita, a área ocupa a tela abaixo do
       // cabeçalho: o mapa cabe inteiro e o toque nele não disputa com a rolagem.
-      className="group/x flex flex-1 flex-col max-md:data-[pane=mapa]:min-h-[calc(100dvh_-_var(--atlas-header-h))] md:h-[calc(100dvh_-_var(--atlas-header-h))] md:min-h-[40rem] md:flex-none"
+      // Vindo de outro perfil, a área de trabalho entra com a transição curta do atlas.
+      className="group/x relative flex flex-1 flex-col data-[switched]:animate-enter max-md:data-[pane=mapa]:min-h-[calc(100dvh_-_var(--atlas-header-h))] md:h-[calc(100dvh_-_var(--atlas-header-h))] md:min-h-[40rem] md:flex-none"
     >
       <h1 className="sr-only">Trajetória de {pessoa.nome}</h1>
 
@@ -312,6 +391,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
             imagem={retrato}
             shape="quadrado"
             sizes="56px"
+            loading="imediata"
             decorative
             className="w-10 shrink-0 md:w-14"
           />
@@ -321,7 +401,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
               {pessoa.nome}
             </p>
             {/* Com os filtros recolhidos, o recorte em vigor fica escrito aqui. */}
-            <p className="numerals truncate text-xs text-ink-soft xl:hidden">
+            <p className="numerals truncate text-xs text-ink-soft xl:hidden" data-aguarda-consulta>
               {periodoTexto} · {categoriasTexto}
             </p>
             <PersonSwitch options={switchOptions} size="compacto" className="mt-1 hidden xl:block" />
@@ -347,6 +427,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
         {/* Quem (onde não cabe ao lado do nome), quando e o quê. */}
         <div
           id="filtros"
+          data-aguarda-consulta
           className={`flex-wrap items-end gap-x-8 gap-y-3 max-xl:col-span-2 max-xl:pt-3 xl:flex xl:px-4 xl:py-3 ${
             filtersOpen ? "flex" : "hidden"
           }`}
@@ -387,6 +468,11 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
             id={tabId(item.id)}
             aria-pressed={!lendo && tab === item.id}
             onClick={() => chooseTab(item.id)}
+            // Quem leva o ponteiro, o dedo ou o foco à vista do mapa vai abri-la:
+            // o código do mapa começa a ser baixado antes do clique.
+            {...(item.id === "mapa"
+              ? { onPointerEnter: warmUpMap, onTouchStart: warmUpMap, onFocus: warmUpMap }
+              : {})}
             className={`h-11 border-b-2 border-transparent text-sm font-medium text-ink-soft aria-pressed:border-ink aria-pressed:text-ink ${item.className}`}
           >
             {item.label}
@@ -401,7 +487,17 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
           : `${dropped ? "O acontecimento aberto ficou fora do recorte e foi fechado. " : ""}${registrosTexto} em ${periodoTexto}, ${categoriasTexto}.`}
       </p>
 
-      <div className="explorer-grid min-h-0 flex-1">
+      {/* Quem abre um link com consulta vê este aviso no lugar da área de
+          trabalho até o endereço ser lido, em vez do recorte padrão. */}
+      <p
+        data-consulta-aviso
+        role="status"
+        className="pointer-events-none absolute inset-x-0 top-48 px-[var(--atlas-gutter)] text-center text-sm text-ink-soft"
+      >
+        Abrindo a consulta do endereço…
+      </p>
+
+      <div className="explorer-grid min-h-0 flex-1" data-aguarda-consulta>
         {/* Linha do tempo */}
         <section
           aria-labelledby="titulo-tempo"
@@ -425,26 +521,8 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
             onSelect={(slug) => openEvent(slug, "tempo")}
             periodo={state.periodo}
             onPeriodChange={choosePeriod}
-            lanes={[
-              {
-                rotulo: "Cargos e funções",
-                itens: mandatos.map((item) => ({
-                  id: item.id,
-                  rotulo: item.cargo,
-                  descricao: `${item.cargo}, ${item.instituicao}`,
-                  periodo: item.periodo,
-                })),
-              },
-              {
-                rotulo: "Partidos",
-                itens: filiacoes.map((item) => ({
-                  id: item.id,
-                  rotulo: item.partido.sigla,
-                  descricao: `${item.partido.sigla} (${item.partido.nome})`,
-                  periodo: item.periodo,
-                })),
-              },
-            ]}
+            lanes={lanes}
+            animate={filtered}
             dataDeCorte={dataDeCorte}
             label={`Linha do tempo de ${pessoa.nome}`}
           />
@@ -458,13 +536,15 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
 
         {/* Lista */}
         <section
+          ref={listRef}
           aria-labelledby="titulo-lista"
           // `relative`: o texto só para leitor de tela é posicionado de forma
           // absoluta; sem isso ele escapa da área com rolagem e estica a página.
-          className="explorer-lista relative order-2 hidden min-h-0 overflow-y-auto border-line max-md:group-data-[pane=lista]/x:block md:border-r md:max-xl:group-data-[side=lista]/x:block xl:block"
+          // Onde as vistas se alternam, a que entra faz isso com a transição curta.
+          className="explorer-lista relative order-2 hidden min-h-0 overflow-y-auto border-line max-xl:group-data-[moved]/x:animate-enter max-md:group-data-[pane=lista]/x:block md:border-r md:max-xl:group-data-[side=lista]/x:block xl:block"
         >
           {/* O que está sendo consultado: período, quantidade e cobertura. */}
-          <div className="sticky top-0 z-10 bg-paper px-3 pb-2.5 pt-3 max-md:static">
+          <div ref={listHeadRef} className="sticky top-0 z-10 bg-paper px-3 pb-2.5 pt-3 max-md:static">
             <div className="flex min-h-4 items-center justify-between gap-3">
               <h2 id="titulo-lista" className="eyebrow text-ink-soft">
                 Acontecimentos
@@ -475,7 +555,12 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
                 </button>
               )}
             </div>
-            <p className="numerals mt-1.5 text-sm">
+            {/* A chave troca com o recorte: a linha entra de novo, e a mudança de
+                resultado fica à vista mesmo quando a lista parece a mesma. */}
+            <p
+              key={`${periodoTexto}|${categoriasTexto}`}
+              className={`numerals mt-1.5 text-sm ${filtered ? "animate-enter" : ""}`}
+            >
               <span className="font-semibold">{periodoTexto}</span> · {registrosTexto}
             </p>
             <p className="text-xs text-ink-soft">
@@ -537,7 +622,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
         {/* Mapa */}
         <section
           aria-labelledby="titulo-mapa"
-          className="explorer-mapa relative order-2 hidden min-h-0 max-md:min-h-80 max-md:flex-1 max-md:group-data-[pane=mapa]/x:block md:block"
+          className="explorer-mapa relative order-2 hidden min-h-0 max-md:min-h-80 max-md:flex-1 max-md:group-data-[moved]/x:animate-enter max-md:group-data-[pane=mapa]/x:block md:block"
         >
           <h2 id="titulo-mapa" className="sr-only">
             Mapa
@@ -592,7 +677,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
         {/* Painel de leitura */}
         <section
           aria-labelledby="titulo-painel"
-          className="explorer-painel relative order-2 hidden min-h-0 overflow-y-auto border-line bg-raised px-[var(--atlas-gutter)] py-5 max-md:group-data-[pane=leitura]/x:block md:border-r md:px-5 md:max-xl:group-data-[side=leitura]/x:block xl:block xl:border-l xl:border-r-0"
+          className="explorer-painel relative order-2 hidden min-h-0 overflow-y-auto border-line bg-raised px-[var(--atlas-gutter)] py-5 max-xl:group-data-[moved]/x:animate-enter max-md:group-data-[pane=leitura]/x:block md:border-r md:px-5 md:max-xl:group-data-[side=leitura]/x:block xl:block xl:border-l xl:border-r-0"
           // Esc fecha a leitura quando o foco está nela.
           onKeyDown={(evento) => {
             if (evento.key === "Escape" && selected !== null) closeEvent();
@@ -601,7 +686,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
           <h2 id="titulo-painel" className="sr-only">
             Leitura
           </h2>
-          {selected ? (
+          {selected && (
             <EventPanel
               event={getEventView(data, selected)}
               headingLevel={3}
@@ -617,16 +702,19 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
               onClose={closeEvent}
               titleRef={titleRef}
             />
-          ) : (
+          )}
+          {/* O perfil continua montado enquanto um acontecimento está aberto, só
+              que escondido: fechar a leitura não o reconstrói. */}
+          <div hidden={selected !== null}>
             <ProfilePanel
               pessoa={pessoa}
               retrato={retrato}
               mandatos={mandatos}
               filiacoes={filiacoes}
               cobertura={getCoverage(data, pessoa.id)}
-              fontes={getSources(data, pessoa)}
+              fontes={fontesDoPerfil}
               edicao={data.conjunto.edicao}
-              sourcesOf={(registro) => getSources(data, registro)}
+              sourcesOf={sourcesOf}
               actions={
                 <nav aria-label="A partir deste perfil" className="flex flex-wrap items-start gap-x-4 gap-y-2">
                   <Link
@@ -639,6 +727,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
                   <CopyLink path={consulta} label="Copiar link desta consulta" />
                   <Link
                     href="/metodologia"
+                    prefetch={false}
                     className="inline-flex min-h-11 items-center text-sm font-medium underline decoration-line-strong hover:decoration-ink xl:min-h-9"
                   >
                     Metodologia e fontes
@@ -647,7 +736,7 @@ function Workspace({ pessoa, dominio, profiles }: WorkspaceProps) {
               }
               headingLevel={3}
             />
-          )}
+          </div>
         </section>
       </div>
     </div>

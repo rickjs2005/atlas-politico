@@ -133,15 +133,16 @@ export default function PreviewGuidePage() {
             <p className="font-serif text-[3.25rem] font-medium leading-[1.08] tracking-[-0.015em]">
               Título de acontecimento
             </p>
-            <p className="font-serif text-2xl font-medium leading-tight tracking-tight">Título no painel de leitura</p>
+            <p className="font-serif text-[1.75rem] font-medium leading-[1.15] tracking-tight">Título no painel de leitura</p>
             <p className="reading max-w-xl">
               Texto de leitura, em 18 pixels com entrelinha de 1,65. Serve ao resumo e ao contexto
-              de cada acontecimento, <em>com itálico para notas</em> e ênfase.
+              de cada acontecimento. A serifada entra só em romano: o texto do atlas não usa itálico
+              serifado.
             </p>
           </div>
           <div className="space-y-4">
             <p className="eyebrow text-ink-soft">Libre Franklin · interface, rótulos e números</p>
-            <p className="numerals text-[2.5rem] font-semibold leading-none tracking-tight">8 de janeiro de 2023</p>
+            <p className="numerals text-2xl font-semibold leading-none tracking-tight">8 de janeiro de 2023</p>
             <p className="numerals text-[1.0625rem] font-semibold">1975 · 1989 · 2002 · 2018 · 2026</p>
             <p className="text-sm">Texto de interface, em 14 pixels: botões, filtros, listas e metadados.</p>
             <p className="text-xs text-ink-soft">Texto pequeno, em 12 pixels: créditos e notas de precisão.</p>

@@ -8,10 +8,11 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | `fase-5/` | A navegação temporal: linha do tempo, lista, painel e a consulta no endereço | `npm run capture:timeline` | `tests/e2e/linha-do-tempo.capture.ts` |
 | `fase-6/` | O mapa sincronizado: marcadores, lista de um lugar, seleção, legenda e falhas | `npm run capture:map` | `tests/e2e/mapa.capture.ts` |
 | `fase-7/` | A comparação, o perfil, a página do acontecimento com o retorno, a cópia do link e a metodologia | `npm run capture:pages` | `tests/e2e/paginas.capture.ts` |
+| `fase-8/` | O acabamento: abertura, exploração, comparação e leitura, na saída estática. Em `fase-8/antes/`, as mesmas telas antes da fase | `npm run build` e `npm run capture:finish` | `tests/export/acabamento.capture.ts` |
 
-Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts` e `tests/e2e/paginas.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
+Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts`, `tests/e2e/paginas.spec.ts`, `tests/e2e/acabamento.spec.ts` e, sobre a saída estática, `tests/export/carregamento.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
 
-As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeitas depois. A exploração mudou desde a fase 4: a lista ganhou o cabeçalho com o período, o bloco de cargos e partidos e as linhas de lacuna, e a barra ganhou a troca de pessoa. O mapa mudou na fase 6: nas imagens anteriores, cada ponto é um círculo, sem nome, sem controles e sem legenda. Para o mapa atual, valem as de `fase-6/`; para o resto da exploração, as de `fase-5/`. A comparação, o perfil e a página do acontecimento mudaram na fase 7: para essas três, valem as de `fase-7/`.
+As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeitas depois. A exploração mudou desde a fase 4: a lista ganhou o cabeçalho com o período, o bloco de cargos e partidos e as linhas de lacuna, e a barra ganhou a troca de pessoa. O mapa mudou na fase 6: nas imagens anteriores, cada ponto é um círculo, sem nome, sem controles e sem legenda. Para o mapa atual, valem as de `fase-6/`; para o resto da exploração, as de `fase-5/`. A comparação, o perfil e a página do acontecimento mudaram na fase 7, e a fase 8 mexeu na hierarquia e nos retratos de todas as telas: para o estado atual, valem as de `fase-8/`; as de `fase-7/` continuam valendo para o que elas detalham e a fase 8 não refez (fontes de um cargo, cópia do link, modelo de correção).
 
 ## Larguras
 
@@ -22,6 +23,30 @@ As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeita
 | `--tablet` | 768×1024 |
 | `--celular` | 390×844 |
 | `--celular-estreito` | 360×800 |
+
+## Fase 8
+
+Tiradas da saída estática (`npm run build` e `npm run capture:finish`), e não do servidor de desenvolvimento: é o que a pessoa recebe. As de `fase-8/antes/` são as mesmas telas no build da fase 7, tiradas pelo mesmo roteiro antes de qualquer mudança.
+
+| Arquivo | O que mostra | Endereço | Larguras |
+| --- | --- | --- | --- |
+| `01-entrada` | A abertura: nome, frase, os dois cartões com o mesmo enquadramento e, em tela estreita, os cartões antes dos números da edição | `/` | As quatro |
+| `01-entrada-pagina-inteira` | A entrada até o rodapé | `/` | Computador e celular |
+| `02-exploracao` | Exploração sem seleção: lista, mapa, linha do tempo e perfil | `/politicos/lula/` | As quatro |
+| `02-exploracao-flavio-bolsonaro` | O outro perfil, na mesma composição | `/politicos/flavio-bolsonaro/` | Computador |
+| `03-acontecimento-aberto` | Acontecimento aberto pelo endereço: a lista rolada até o item, os marcadores e a marca com o anel, e o painel com o título acima da data em tamanho | `?de=2016&ate=2023&acontecimento=lula-2023-intervencao-federal-no-distrito-federal` | Computador, tablet e celular |
+| `04-mapa` | Vista do mapa em tela estreita | Aba **Mapa** | Os dois celulares |
+| `04-mapa-selecao` | Vista do mapa com um acontecimento marcado: a linha do tempo rolada até a marca | `?acontecimento=…`, aba **Mapa** | Celular |
+| `05-perfil` | Vista do perfil | Aba **Perfil** | Celular |
+| `06-filtros` | Filtros abertos em celular | `?de=2016&ate=2022`, botão **Filtros** | Celular |
+| `07-recorte-sem-registros` | Recorte vazio, com a explicação e a saída | `?de=1996&ate=2001` | Computador e celular |
+| `08-mapa-indisponivel` | Navegador sem WebGL: a lista de lugares no lugar do mapa | `?de=2016&ate=2023`, sem WebGL | Computador e celular |
+| `09-comparacao` | Comparação com período: as faixas logo abaixo do recorte | `/comparar/?de=2003&ate=2022` | As quatro |
+| `09-comparacao-colunas` | As colunas de cada pessoa, depois das notas de leitura | O mesmo endereço, rolado | Computador e celular |
+| `10-pagina-do-acontecimento` | Página de um acontecimento: retorno, data, título e texto | `/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/` | As quatro |
+| `10-pagina-do-acontecimento-fontes` | A mesma página, na altura das fontes | O mesmo endereço, rolado | Computador e celular |
+| `11-metodologia` | O começo da metodologia | `/metodologia/` | Computador e celular |
+| `12-pagina-nao-encontrada` | Página 404 | `/endereco-que-nao-existe/` | Computador e celular |
 
 ## Fase 7
 

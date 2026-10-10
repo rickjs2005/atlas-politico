@@ -378,7 +378,8 @@ test.describe("com movimento ligado", () => {
     await waitForMap(page);
     await lista(page).getByRole("button", { name: comPonto.titulo }).click();
 
-    const artigo = leitura(page).locator("article");
+    // O perfil continua montado sob a leitura, escondido (fase 8): o artigo é o do acontecimento.
+    const artigo = leitura(page).locator("article:not([data-perfil])");
     await expect(artigo).toBeVisible();
     const animacao = await artigo.evaluate((no) => {
       const estilo = getComputedStyle(no);

@@ -12,7 +12,7 @@
 // e não conclui nada a partir da quantidade de registros.
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 
 import { CopyLink } from "@/components/CopyLink";
 import { AffiliationList, MandateList } from "@/components/PeriodRecords";
@@ -161,12 +161,12 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
 
   return (
     <>
-      <header className="page space-y-3 py-8 md:py-10">
+      <header className="page space-y-3 py-6 md:py-10">
         <p className="eyebrow text-ink-soft">Mesmo período, mesmas categorias, mesma escala</p>
-        <h1 className="font-serif text-5xl font-medium leading-none tracking-tight md:text-6xl">
+        <h1 className="font-serif text-[2.5rem] font-medium leading-none tracking-tight md:text-6xl">
           Comparar trajetórias
         </h1>
-        <p className="reading max-w-2xl">
+        <p className="reading max-w-2xl max-md:text-base max-md:leading-relaxed">
           As duas trajetórias lado a lado, no mesmo intervalo de anos. A tela mostra o que o atlas
           registra para cada pessoa: acontecimentos, cargos, partidos e as fontes de cada registro.
         </p>
@@ -176,7 +176,7 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
       <section aria-label="Recorte" className="sticky top-0 z-20 border-y border-ink bg-paper">
         <div className="page flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-2.5 xl:items-end xl:py-3">
           {/* Com os filtros recolhidos, o recorte em vigor fica escrito aqui. */}
-          <p className="numerals min-w-0 flex-1 basis-0 text-sm xl:hidden">
+          <p className="numerals min-w-0 flex-1 basis-0 text-sm xl:hidden" data-aguarda-consulta>
             <span className="eyebrow mr-2 text-ink-soft">Recorte</span>
             <span className="font-semibold">{periodoTexto}</span> · {categoriasTexto}
           </p>
@@ -198,6 +198,7 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
 
           <div
             id="filtros-da-comparacao"
+            data-aguarda-consulta
             className={`w-full flex-wrap items-end gap-x-8 gap-y-3 xl:flex xl:w-auto ${filtersOpen ? "flex" : "hidden"}`}
           >
             <PeriodControl
@@ -245,7 +246,44 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
         Recorte da comparação: {periodoTexto}, {categoriasTexto}.
       </p>
 
-      <div className="page space-y-8 py-8 md:space-y-10">
+      <div className="relative">
+        {/* Link com consulta: o aviso fica sobre o lugar das trajetórias até o endereço ser lido. */}
+        <p
+          data-consulta-aviso
+          role="status"
+          className="pointer-events-none absolute inset-x-0 top-10 px-[var(--atlas-gutter)] text-center text-sm text-ink-soft"
+        >
+          Abrindo a consulta do endereço…
+        </p>
+
+      <div className="page space-y-8 py-6 md:space-y-10 md:py-8" data-aguarda-consulta>
+        <section ref={lanes} aria-labelledby="titulo-faixas" className="space-y-3">
+          <h2 id="titulo-faixas" className="sr-only">
+            Linha do tempo das trajetórias
+          </h2>
+          <TrajectoryLanes
+            domain={escala}
+            dataDeCorte={dataDeCorte}
+            periodo={state.periodo}
+            hrefOf={hrefOf}
+            lanes={cobertos.map(({ trajetoria, coberto }) => {
+              const todos = filterEvents(data, { pessoaIds: [trajetoria.pessoa.id] });
+              const noRecorte = new Set(trajetoria.acontecimentos.map((item) => item.id));
+              return {
+                pessoa: trajetoria.pessoa,
+                acontecimentos: todos,
+                foraDoRecorte: new Set(todos.filter((item) => !noRecorte.has(item.id)).map((item) => item.id)),
+                mandatos: data.conjunto.mandatos.filter((item) => item.pessoaId === trajetoria.pessoa.id),
+                filiacoes: data.conjunto.filiacoes.filter((item) => item.pessoaId === trajetoria.pessoa.id),
+                coberto,
+                lacunas: listGaps(data, trajetoria.pessoa.id),
+              };
+            })}
+          />
+        </section>
+
+        {/* As faixas vêm antes: são a comparação. O que elas não dizem sozinhas fica
+            logo abaixo, antes das colunas de cada pessoa. */}
         <section aria-labelledby="titulo-leitura" className="max-w-4xl space-y-2 text-sm">
           <h2 id="titulo-leitura" className={sectionTitle}>
             Como ler esta comparação
@@ -286,31 +324,6 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
           </ul>
         </section>
 
-        <section ref={lanes} aria-labelledby="titulo-faixas" className="space-y-3">
-          <h2 id="titulo-faixas" className="sr-only">
-            Linha do tempo das trajetórias
-          </h2>
-          <TrajectoryLanes
-            domain={escala}
-            dataDeCorte={dataDeCorte}
-            periodo={state.periodo}
-            hrefOf={hrefOf}
-            lanes={cobertos.map(({ trajetoria, coberto }) => {
-              const todos = filterEvents(data, { pessoaIds: [trajetoria.pessoa.id] });
-              const noRecorte = new Set(trajetoria.acontecimentos.map((item) => item.id));
-              return {
-                pessoa: trajetoria.pessoa,
-                acontecimentos: todos,
-                foraDoRecorte: new Set(todos.filter((item) => !noRecorte.has(item.id)).map((item) => item.id)),
-                mandatos: data.conjunto.mandatos.filter((item) => item.pessoaId === trajetoria.pessoa.id),
-                filiacoes: data.conjunto.filiacoes.filter((item) => item.pessoaId === trajetoria.pessoa.id),
-                coberto,
-                lacunas: listGaps(data, trajetoria.pessoa.id),
-              };
-            })}
-          />
-        </section>
-
         {/* Em tela estreita as colunas ficam uma abaixo da outra: o atalho leva a cada uma. */}
         <nav aria-label="Trajetórias nesta página" className="lg:hidden">
           <ul className="flex flex-wrap gap-1.5">
@@ -347,9 +360,59 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
           ))}
         </div>
       </div>
+      </div>
     </>
   );
 }
+
+interface PeriodRecordsProps {
+  data: AtlasData;
+  mandatos: Trajectory["mandatos"];
+  filiacoes: Trajectory["filiacoes"];
+  periodoTexto: string;
+}
+
+/** As duas listas trazem os mesmos registros, com a mesma situação? */
+const sameRecords = (
+  a: readonly { registro: unknown; situacao: string }[],
+  b: readonly { registro: unknown; situacao: string }[],
+) => a.length === b.length && a.every((item, i) => item.registro === b[i]?.registro && item.situacao === b[i]?.situacao);
+
+/**
+ * Cargos e partidos de uma pessoa no período, com as fontes de cada registro.
+ * Só dependem do período: marcar ou desmarcar uma categoria não os refaz.
+ */
+const PeriodRecords = memo(
+  function PeriodRecords({ data, mandatos, filiacoes, periodoTexto }: PeriodRecordsProps) {
+    const sourcesOf = (registro: Parameters<typeof getSources>[1]) => getSources(data, registro);
+    return (
+      <>
+        <section className="space-y-2" data-secao="cargos">
+          <h3 className={sectionTitle}>Cargos e funções em {periodoTexto}</h3>
+          <MandateList
+            itens={mandatos}
+            emptyText="Nenhum cargo ou função cadastrado neste período."
+            sourcesOf={sourcesOf}
+          />
+        </section>
+
+        <section className="space-y-2" data-secao="partidos">
+          <h3 className={sectionTitle}>Partidos em {periodoTexto}</h3>
+          <AffiliationList
+            itens={filiacoes}
+            emptyText="Nenhuma filiação cadastrada neste período."
+            sourcesOf={sourcesOf}
+          />
+        </section>
+      </>
+    );
+  },
+  (antes, depois) =>
+    antes.data === depois.data &&
+    antes.periodoTexto === depois.periodoTexto &&
+    sameRecords(antes.mandatos, depois.mandatos) &&
+    sameRecords(antes.filiacoes, depois.filiacoes),
+);
 
 interface PersonColumnProps {
   data: AtlasData;
@@ -384,7 +447,6 @@ function PersonColumn({
     ...mandatos.map((item) => item.registro),
     ...filiacoes.map((item) => item.registro),
   ]);
-  const sourcesOf = (registro: Parameters<typeof getSources>[1]) => getSources(data, registro);
 
   return (
     <section
@@ -448,23 +510,7 @@ function PersonColumn({
         </div>
       </section>
 
-      <section className="space-y-2" data-secao="cargos">
-        <h3 className={sectionTitle}>Cargos e funções em {periodoTexto}</h3>
-        <MandateList
-          itens={mandatos}
-          emptyText="Nenhum cargo ou função cadastrado neste período."
-          sourcesOf={sourcesOf}
-        />
-      </section>
-
-      <section className="space-y-2" data-secao="partidos">
-        <h3 className={sectionTitle}>Partidos em {periodoTexto}</h3>
-        <AffiliationList
-          itens={filiacoes}
-          emptyText="Nenhuma filiação cadastrada neste período."
-          sourcesOf={sourcesOf}
-        />
-      </section>
+      <PeriodRecords data={data} mandatos={mandatos} filiacoes={filiacoes} periodoTexto={periodoTexto} />
 
       <section className="space-y-2" data-secao="acontecimentos">
         <h3 className={sectionTitle}>

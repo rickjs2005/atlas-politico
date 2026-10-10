@@ -91,10 +91,11 @@ export default async function EventPage({ params }: EventPageProps) {
         <p className="eyebrow text-ink-soft">
           <CategoryLabel categoria={acontecimento.categoria} />
         </p>
-        <p className="numerals text-3xl font-semibold leading-none tracking-tight md:text-[2.5rem]">
+        {/* A data abre a página, forte e em números de mesma largura; o título é a âncora. */}
+        <p className="numerals text-xl font-semibold leading-none tracking-tight md:text-2xl">
           <time dateTime={acontecimento.data.valor}>{formatDate(acontecimento.data)}</time>
         </p>
-        {precisao !== null && <p className="text-sm italic text-ink-soft">{precisao}</p>}
+        {precisao !== null && <p className="-mt-1.5 text-sm italic text-ink-soft">{precisao}</p>}
         <h1 className="font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem]">
           {acontecimento.titulo}
         </h1>
@@ -150,10 +151,11 @@ export default async function EventPage({ params }: EventPageProps) {
             <ReviewNote editorial={acontecimento.editorial} />
             {edicao !== null && <EditionTag edicao={edicao} />}
             <p className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
-              <Link href="/metodologia" className={`inline-flex min-h-11 items-center md:min-h-0 ${textLink}`}>
+              <Link href="/metodologia" prefetch={false} className={`inline-flex min-h-11 items-center md:min-h-0 ${textLink}`}>
                 Como o atlas é feito
               </Link>
               <Link
+                prefetch={false}
                 href={`/metodologia/?acontecimento=${acontecimento.slug}#correcao`}
                 className={`inline-flex min-h-11 items-center md:min-h-0 ${textLink}`}
               >
@@ -170,6 +172,7 @@ export default async function EventPage({ params }: EventPageProps) {
               {pessoas.map((pessoa) => (
                 <li key={pessoa.id}>
                   <Link
+                    prefetch={false}
                     href={explorationHref(pessoa.slug, {
                       periodo: { de: null, ate: null },
                       categorias: [],
@@ -182,12 +185,12 @@ export default async function EventPage({ params }: EventPageProps) {
                 </li>
               ))}
               <li>
-                <Link href={comparisonHref()} className={`inline-flex min-h-11 items-center md:min-h-8 ${textLink}`}>
+                <Link href={comparisonHref()} prefetch={false} className={`inline-flex min-h-11 items-center md:min-h-8 ${textLink}`}>
                   Comparar as duas trajetórias
                 </Link>
               </li>
               <li>
-                <Link href="/metodologia" className={`inline-flex min-h-11 items-center md:min-h-8 ${textLink}`}>
+                <Link href="/metodologia" prefetch={false} className={`inline-flex min-h-11 items-center md:min-h-8 ${textLink}`}>
                   Metodologia e fontes
                 </Link>
               </li>
@@ -215,6 +218,7 @@ export default async function EventPage({ params }: EventPageProps) {
                     />
                     <div className="space-y-1 text-sm">
                       <Link
+                        prefetch={false}
                         href={`/politicos/${pessoa.slug}?acontecimento=${acontecimento.slug}`}
                         className="font-serif text-lg font-medium leading-none underline decoration-line-strong hover:decoration-ink"
                       >
@@ -284,7 +288,7 @@ export default async function EventPage({ params }: EventPageProps) {
                 </li>
               )}
               <li>
-                <Link href="/metodologia#creditos" className={textLink}>
+                <Link href="/metodologia#creditos" prefetch={false} className={textLink}>
                   Autoria e condições de uso de cada material
                 </Link>
               </li>

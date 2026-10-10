@@ -576,7 +576,7 @@ export default function MethodologyPage() {
               {PROFILES.map((perfil, indice) => (
                 <span key={perfil.slug}>
                   {indice > 0 && " e no "}
-                  <Link href={`/politicos/${perfil.slug}`} className={textLink}>
+                  <Link href={`/politicos/${perfil.slug}`} prefetch={false} className={textLink}>
                     perfil de {perfil.nome}
                   </Link>
                 </span>

@@ -6,15 +6,13 @@ import { SiteHeader } from "@/components/SiteHeader";
 
 import "./globals.css";
 
-// Fontes locais (src/app/fonts/README.md). O pré-carregamento vale para todos
-// os arquivos de uma família, e o itálico quase não aparece na primeira tela;
-// por isso a serifada não é pré-carregada e entra com um substituto de medidas
-// ajustadas. Afinar isso é trabalho da fase 8.
+// Fontes locais (src/app/fonts/README.md). A sem serifa, pequena, é
+// pré-carregada. A serifada não: medido na fase 8, pré-carregá-la não adianta
+// a chegada do arquivo, que a folha de estilo já revela cedo, e atrasa o
+// primeiro desenho das páginas de texto (docs/PERFORMANCE.md, seção Fontes).
+// Enquanto ela não chega, entra um substituto de medidas ajustadas.
 const newsreader = localFont({
-  src: [
-    { path: "./fonts/newsreader-latin.woff2", style: "normal", weight: "200 800" },
-    { path: "./fonts/newsreader-latin-italic.woff2", style: "italic", weight: "200 800" },
-  ],
+  src: [{ path: "./fonts/newsreader-latin.woff2", style: "normal", weight: "200 800" }],
   variable: "--font-newsreader",
   display: "swap",
   preload: false,
@@ -38,9 +36,26 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// As páginas são geradas sem a consulta do endereço: o HTML traz o recorte
+// padrão, e o recorte pedido só entra depois que o JavaScript lê o endereço.
+// Para quem abre um link com consulta não ver primeiro a tela errada, este
+// trecho roda antes de a página ser desenhada e marca o documento; o CSS
+// encobre a área que vai mudar, e quem lê o endereço tira a marca
+// (src/lib/state/AtlasUrlStateProvider.tsx, docs/PERFORMANCE.md).
+//
+// Ele fica no fim do `<body>`, e não no começo. Um script escrito no HTML
+// espera a folha de estilo que vem antes dele, e enquanto espera o navegador
+// para de ler a página: no começo do `<body>`, isso atrasava o primeiro
+// desenho de todas as telas (de 40 a 140 ms no perfil de celular, medido). No
+// fim, o HTML já foi lido quando ele roda, e a marca ainda chega antes do
+// primeiro desenho.
+const MARK_PENDING_QUERY =
+  "try{if(/^.(politicos|comparar)(.|$)/.test(location.pathname)&&/[?&](de|ate|categorias|acontecimento)=/.test(location.search))document.documentElement.setAttribute('data-consulta','')}catch(e){}";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${newsreader.variable} ${franklin.variable}`}>
+    // A marca da consulta é posta no `<html>` antes da hidratação.
+    <html lang="pt-BR" className={`${newsreader.variable} ${franklin.variable}`} suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col font-sans antialiased">
         <a
           href="#conteudo"
@@ -54,6 +69,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <SiteFooter />
+        <script dangerouslySetInnerHTML={{ __html: MARK_PENDING_QUERY }} />
       </body>
     </html>
   );

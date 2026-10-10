@@ -15,10 +15,9 @@ interface PersonCardProps {
   coberto: YearSpan | null;
   /** Quantos acontecimentos o atlas registra para a pessoa. */
   registros: number;
-  priority?: boolean;
 }
 
-export function PersonCard({ pessoa, retrato, coberto, registros, priority = false }: PersonCardProps) {
+export function PersonCard({ pessoa, retrato, coberto, registros }: PersonCardProps) {
   return (
     <Link
       href={`/politicos/${pessoa.slug}`}
@@ -27,8 +26,9 @@ export function PersonCard({ pessoa, retrato, coberto, registros, priority = fal
       <Portrait
         nome={pessoa.nome}
         imagem={retrato}
-        sizes="(min-width: 64rem) 22rem, 50vw"
-        priority={priority}
+        // Os dois cartões são a imagem principal da entrada, lado a lado.
+        sizes="(min-width: 64rem) 20rem, 50vw"
+        loading="prioritaria"
         decorative
       />
       <span className="flex flex-1 flex-col gap-2 border-t border-ink p-3 md:p-4">

@@ -7,12 +7,12 @@ export function SiteFooter() {
         <p>Atlas Político (nome provisório) · um projeto MilWeb</p>
         <ul className="flex flex-wrap gap-x-6 gap-y-1">
           <li>
-            <Link href="/metodologia" className="underline decoration-line-strong hover:decoration-ink">
+            <Link href="/metodologia" prefetch={false} className="underline decoration-line-strong hover:decoration-ink">
               Metodologia e fontes
             </Link>
           </li>
           <li>
-            <Link href="/metodologia#creditos" className="underline decoration-line-strong hover:decoration-ink">
+            <Link href="/metodologia#creditos" prefetch={false} className="underline decoration-line-strong hover:decoration-ink">
               Créditos
             </Link>
           </li>

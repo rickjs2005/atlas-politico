@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { IntentLink } from "@/components/IntentLink";
 
 import { PROFILES } from "@/lib/domain/profiles";
 
@@ -23,29 +23,29 @@ export default function NotFound() {
       <nav aria-label="Caminhos do atlas" className="mt-8 max-w-3xl">
         <ul className="divide-y divide-line border-y border-line">
           <li>
-            <Link href="/" className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised">
+            <IntentLink href="/" className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised">
               Voltar ao início <span aria-hidden="true">→</span>
-            </Link>
+            </IntentLink>
           </li>
           {PROFILES.map((perfil) => (
             <li key={perfil.slug}>
-              <Link
+              <IntentLink
                 href={`/politicos/${perfil.slug}`}
                 className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised"
               >
                 Trajetória de {perfil.nome} <span aria-hidden="true">→</span>
-              </Link>
+              </IntentLink>
             </li>
           ))}
           <li>
-            <Link href="/comparar" className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised">
+            <IntentLink href="/comparar" className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised">
               Comparar as trajetórias <span aria-hidden="true">→</span>
-            </Link>
+            </IntentLink>
           </li>
           <li>
-            <Link href="/metodologia" className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised">
+            <IntentLink href="/metodologia" className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised">
               Metodologia <span aria-hidden="true">→</span>
-            </Link>
+            </IntentLink>
           </li>
         </ul>
       </nav>

@@ -99,6 +99,9 @@
   --ease-atlas: var(--atlas-ease);
 
   --animate-enter: atlas-enter var(--atlas-base) var(--atlas-ease) both;
+  /* Só a opacidade: para o que tem a posição dada por `transform`, como os
+     marcadores do mapa e as marcas da linha do tempo. */
+  --animate-fade: atlas-fade var(--atlas-base) var(--atlas-ease) both;
 }
 
 @keyframes atlas-enter {
@@ -109,6 +112,15 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes atlas-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
@@ -156,6 +168,86 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+
+    /* As duas regras do link com consulta usam a animação como relógio, e não
+       como movimento. Com 0,01 ms no lugar de zero, o aviso não chegava ao
+       estado final e ficava sobre a tela depois do prazo. */
+    html[data-consulta] [data-aguarda-consulta],
+    html[data-consulta] [data-consulta-aviso] {
+      animation-duration: 0s !important;
+    }
+  }
+}
+
+/*
+  Link com consulta, antes de o endereço ser lido. O HTML do build traz o
+  recorte padrão; o recorte pedido só entra depois da hidratação. Enquanto
+  isso, a área que vai mudar fica encoberta, com um aviso no lugar, para a
+  pessoa não ver primeiro a tela errada. A marca é posta por um trecho em
+  `layout.tsx` e tirada por quem lê o endereço.
+
+  Se o JavaScript não chegar, a tela aparece assim mesmo, no recorte padrão,
+  depois de alguns segundos.
+*/
+html[data-consulta] [data-aguarda-consulta] {
+  visibility: hidden;
+  animation: atlas-reveal 0s linear 6s forwards;
+}
+
+[data-consulta-aviso] {
+  display: none;
+}
+
+html[data-consulta] [data-consulta-aviso] {
+  display: block;
+  animation: atlas-conceal 0s linear 6s forwards;
+}
+
+@keyframes atlas-reveal {
+  to {
+    visibility: visible;
+  }
+}
+
+@keyframes atlas-conceal {
+  to {
+    visibility: hidden;
+  }
+}
+
+/* Aviso de carregamento do mapa: o texto e, abaixo dele, um traço que vai e
+   volta. Com movimento reduzido, o traço fica parado. */
+.map-loading {
+  position: relative;
+  padding-bottom: 0.625rem;
+}
+
+.map-loading::before,
+.map-loading::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+}
+
+.map-loading::before {
+  width: 100%;
+  background-color: var(--atlas-map-grid);
+}
+
+.map-loading::after {
+  width: 40%;
+  background-color: var(--atlas-ink-faint);
+  animation: atlas-progress 1.1s var(--atlas-ease) infinite alternate;
+}
+
+@keyframes atlas-progress {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(150%);
   }
 }
 

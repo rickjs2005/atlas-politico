@@ -1,0 +1,98 @@
+{
+  "formato": "webp",
+  "imagens": {
+    "retrato-flavio-bolsonaro": {
+      "arquivos": {
+        "/media/derivados/retrato-flavio-bolsonaro-1x1-128.webp": 3106,
+        "/media/derivados/retrato-flavio-bolsonaro-1x1-192.webp": 5514,
+        "/media/derivados/retrato-flavio-bolsonaro-1x1-64.webp": 1040,
+        "/media/derivados/retrato-flavio-bolsonaro-1x1-96.webp": 2004,
+        "/media/derivados/retrato-flavio-bolsonaro-4x5-160.webp": 5332,
+        "/media/derivados/retrato-flavio-bolsonaro-4x5-240.webp": 9618,
+        "/media/derivados/retrato-flavio-bolsonaro-4x5-320.webp": 15108,
+        "/media/derivados/retrato-flavio-bolsonaro-4x5-480.webp": 21856,
+        "/media/derivados/retrato-flavio-bolsonaro-4x5-640.webp": 32386
+      },
+      "enquadramento": {
+        "quadrado": {
+          "altura": 760,
+          "largura": 760,
+          "x": 98,
+          "y": 40
+        },
+        "retrato": {
+          "altura": 1200,
+          "largura": 960,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "origem": "/media/retratos/flavio-bolsonaro.jpg",
+      "sha256": "ca64bff07ad1358c647c591c68052d4477388fe2ea25494af944028e1c45f6a1"
+    },
+    "retrato-lula": {
+      "arquivos": {
+        "/media/derivados/retrato-lula-1x1-128.webp": 2056,
+        "/media/derivados/retrato-lula-1x1-192.webp": 4112,
+        "/media/derivados/retrato-lula-1x1-64.webp": 840,
+        "/media/derivados/retrato-lula-1x1-96.webp": 1388,
+        "/media/derivados/retrato-lula-4x5-160.webp": 3606,
+        "/media/derivados/retrato-lula-4x5-240.webp": 7016,
+        "/media/derivados/retrato-lula-4x5-320.webp": 12414,
+        "/media/derivados/retrato-lula-4x5-480.webp": 25892,
+        "/media/derivados/retrato-lula-4x5-640.webp": 53762
+      },
+      "enquadramento": {
+        "quadrado": {
+          "altura": 700,
+          "largura": 700,
+          "x": 160,
+          "y": 45
+        },
+        "retrato": {
+          "altura": 1062,
+          "largura": 850,
+          "x": 85,
+          "y": 21
+        }
+      },
+      "origem": "/media/retratos/lula.jpg",
+      "sha256": "4a96423989c4a93a8be88eb9634e329d39f3b40f3b3ba2830c18c0539d1e8719"
+    }
+  },
+  "molduras": {
+    "quadrado": {
+      "codigo": "1x1",
+      "larguras": [
+        64,
+        96,
+        128,
+        192
+      ],
+      "proporcao": [
+        1,
+        1
+      ]
+    },
+    "retrato": {
+      "codigo": "4x5",
+      "larguras": [
+        160,
+        240,
+        320,
+        480,
+        640
+      ],
+      "proporcao": [
+        4,
+        5
+      ]
+    }
+  },
+  "qualidade": {
+    "acimaDe": 320,
+    "grande": 66,
+    "padrao": 78
+  }
+}
+

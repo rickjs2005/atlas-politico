@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { IntentLink } from "@/components/IntentLink";
 import { PersonCard } from "@/components/PersonCard";
 import { PortraitCredit } from "@/components/Portrait";
 import { TrajectoryLanes } from "@/features/comparison/TrajectoryLanes";
@@ -30,9 +31,12 @@ export default function HomePage() {
   const escala = getSharedSpan(data);
 
   return (
-    <div className="page space-y-12 py-8 md:space-y-16 md:py-14">
-      <section className="grid gap-x-16 gap-y-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,40rem)] lg:items-start">
-        <header className="space-y-5 lg:pt-7">
+    <div className="page space-y-12 py-7 md:space-y-16 md:py-14">
+      {/* Em tela estreita a ordem é: o que é o atlas, as duas trajetórias para
+          escolher e, só então, os números da edição. Em tela larga, o texto e os
+          números ficam à esquerda, centrados na altura dos cartões. */}
+      <section className="grid gap-x-16 gap-y-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,40rem)] lg:gap-y-8">
+        <header className="space-y-4 md:space-y-5 lg:self-end">
           <p className="eyebrow text-ink-soft">Linha do tempo · Mapa · Fontes</p>
           <h1 className="font-serif text-[3.25rem] font-medium leading-[0.95] tracking-[-0.02em] md:text-7xl">
             Atlas Político
@@ -41,7 +45,9 @@ export default function HomePage() {
             A trajetória pública de {nomes}, acontecimento por acontecimento, com a data, o lugar e
             o documento que sustenta cada registro.
           </p>
+        </header>
 
+        <div className="lg:col-start-1 lg:row-start-2 lg:self-start">
           {edicao === null ? (
             <p className="max-w-[34rem] border border-line-strong bg-notice px-4 py-3 text-sm">
               <strong>Em construção.</strong> Nenhuma edição de conteúdo foi publicada ainda.
@@ -70,16 +76,19 @@ export default function HomePage() {
                   {edicao.revisao.tipo === "humana"
                     ? `Revisado em ${formatDate({ valor: edicao.revisao.revisadoEm, precisao: "dia" })}.`
                     : "Conferência com as fontes assistida por IA. Revisão humana pendente."}{" "}
-                  <Link href="/metodologia" className="font-medium underline decoration-line-strong hover:decoration-ink">
+                  <Link href="/metodologia" prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink">
                     Metodologia e fontes
                   </Link>
                 </dd>
               </div>
             </dl>
           )}
-        </header>
+        </div>
 
-        <section aria-labelledby="perfis" className="space-y-3">
+        <section
+          aria-labelledby="perfis"
+          className="space-y-3 max-lg:row-start-2 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+        >
           <h2 id="perfis" className="eyebrow text-ink-soft">
             Escolha uma trajetória
           </h2>
@@ -94,7 +103,6 @@ export default function HomePage() {
                     retrato={retrato}
                     coberto={coberto}
                     registros={acontecimentos.length}
-                    priority
                   />
                 </li>
               ))}
@@ -120,12 +128,12 @@ export default function HomePage() {
                 Trecho sem marca é falta de registro nesta edição, e não falta de atividade.
               </p>
             </div>
-            <Link
+            <IntentLink
               href="/comparar"
               className="inline-flex min-h-11 items-center border border-ink px-4 text-sm font-medium no-underline hover:bg-ink hover:text-paper"
             >
               Comparar as trajetórias
-            </Link>
+            </IntentLink>
           </div>
           <TrajectoryLanes
             domain={escala}

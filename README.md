@@ -2,7 +2,7 @@
 
 Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa e acontecimentos acompanhados das fontes que os sustentam. Projeto de portfólio da MilWeb.
 
-**Estágio atual:** fases 1 a 7 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados, experiência e direção visual, aplicação com linha do tempo, mapa sincronizado, e comparação, páginas e fontes). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e as quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. A fase 5 tornou a exploração navegável no tempo: escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, abrir um acontecimento e ler os detalhes, com a consulta inteira no endereço. A fase 6 ligou o mapa a esse recorte: um marcador por lugar documentado, seleção nos dois sentidos, lista para os acontecimentos que dividem um lugar e leitura preservada quando o mapa falha. A fase 7 pôs a comparação no mesmo recorte para as duas pessoas, com a consulta no endereço; completou o perfil e a página de cada acontecimento, com fontes, créditos, revisão e edição; acrescentou **Copiar link** e o retorno com o recorte de antes; e escreveu a metodologia pública. Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
+**Estágio atual:** fases 1 a 8 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados, experiência e direção visual, aplicação com linha do tempo, mapa sincronizado, comparação, páginas e fontes, e acabamento visual e desempenho). O atlas tem a edição 0.1.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e as quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. A fase 5 tornou a exploração navegável no tempo: escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, abrir um acontecimento e ler os detalhes, com a consulta inteira no endereço. A fase 6 ligou o mapa a esse recorte: um marcador por lugar documentado, seleção nos dois sentidos, lista para os acontecimentos que dividem um lugar e leitura preservada quando o mapa falha. A fase 7 pôs a comparação no mesmo recorte para as duas pessoas, com a consulta no endereço; completou o perfil e a página de cada acontecimento, com fontes, créditos, revisão e edição; acrescentou **Copiar link** e o retorno com o recorte de antes; e escreveu a metodologia pública. A fase 8 fez o acabamento: retratos em versões locais do tamanho de cada tela, mapa carregado só quando vai ser usado, transições curtas que acompanham a seleção, abertura e leitura com a hierarquia revista, e o desempenho medido antes e depois ([docs/PERFORMANCE.md](docs/PERFORMANCE.md)). Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente; por isso o site não está pronto para publicação. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
 
 ## Requisitos
 
@@ -31,8 +31,9 @@ O Node 22.18 é o mínimo porque os comandos de dados rodam o TypeScript do proj
 | vitest | 5.0.3 | Testes das regras de dados, do pipeline e de estado |
 | @playwright/test | 1.63.0 | Testes de navegador e capturas da prévia |
 | eslint, eslint-config-next | 9.39.5, 16.4.0 | Lint e fronteiras entre camadas |
+| sharp | 0.35.5 | Só em desenvolvimento: prepara as versões dos retratos (`npm run images`). Não vai para o site |
 
-As fases 3 a 7 não acrescentaram nenhuma dependência. As fontes tipográficas (`src/app/fonts/`) e os contornos do mapa (`src/features/map/base/`) são arquivos do projeto, com a licença de cada um descrita na própria pasta. O mapa não usa tiles, chave de API nem serviço de terceiros.
+As fases 3 a 7 não acrescentaram nenhuma dependência. A fase 8 declarou uma, de desenvolvimento: o `sharp`, que já vinha instalado como parte do Next e passou a ser usado para preparar os retratos. As fontes tipográficas (`src/app/fonts/`) e os contornos do mapa (`src/features/map/base/`) são arquivos do projeto, com a licença de cada um descrita na própria pasta. O mapa não usa tiles, chave de API nem serviço de terceiros.
 
 ## Instalação
 
@@ -135,11 +136,26 @@ npm run data:report -- --out docs/DATA-REPORT.md
 ## Build estático
 
 ```bash
-npm run build     # gera os dados e depois a pasta out/
+npm run build     # gera os dados, confere os retratos, gera a pasta out/ e a ajusta
 npm run preview   # serve out/ em http://localhost:4311
 ```
 
 `out/` é um site de arquivos estáticos: pode ser servido por qualquer hospedagem, sem Node.js em produção. `next start` não se aplica a este projeto.
+
+`npm run build` faz quatro coisas, nesta ordem: gera os dados (`data:build`), confere se as versões dos retratos estão em dia (`images:check`), roda o `next build` e ajusta a saída (`scripts/finalize-export.mjs`). O ajuste devolve os arquivos de navegação ao nome que o navegador pede, retira os arquivos do MapLibre que ninguém pede e completa o pré-carregamento das fontes nas páginas de acontecimento. O motivo de cada passo está em [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
+
+`npm run preview` responde como uma hospedagem comum: compressão gzip, `ETag` e cache longo para os arquivos de `/_next/static/`.
+
+### Retratos
+
+As páginas não pedem o arquivo original de um retrato: pedem versões menores, já recortadas para cada moldura. Ao trocar um retrato em `public/media/retratos/`, ou o enquadramento em `scripts/images.config.json`:
+
+```bash
+npm run images         # gera public/media/derivados/ e o manifesto
+npm run images:check   # só confere; é o que `dev` e `build` rodam
+```
+
+Confira o resultado antes de continuar: o enquadramento é o mesmo critério para os dois perfis (linha dos olhos na mesma altura, rosto do mesmo tamanho).
 
 ## Verificação
 
@@ -147,17 +163,20 @@ npm run preview   # serve out/ em http://localhost:4311
 |---|---|
 | `npm run lint` | ESLint, incluindo as fronteiras entre camadas |
 | `npm run typecheck` | Gera os tipos de rota e roda o `tsc` |
-| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, endereço e histórico, comparação, endereços entre telas e retorno, pontos, lugares e câmera do mapa, linha do tempo, lista cronológica, cobertura e base visual, com o contraste das cores (Vitest) |
+| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, endereço e histórico, comparação, endereços entre telas e retorno, versões dos retratos, pontos, lugares e câmera do mapa, linha do tempo, lista cronológica, cobertura e base visual, com o contraste das cores (Vitest) |
 | `npm run build` | Gera os dados e o site. Falha se o conteúdo estiver inválido |
-| `npm run verify:export` | Confere `out/`: páginas previstas, uma página por acontecimento publicado e nenhuma por rascunho, nenhuma rota de desenvolvimento, nenhum dado sintético |
+| `npm run verify:export` | Confere `out/`: páginas previstas, uma página por acontecimento publicado e nenhuma por rascunho, nenhuma rota de desenvolvimento, nenhum dado sintético, versões dos retratos publicadas, arquivos de navegação no lugar, nenhum arquivo do MapLibre sem uso e o pré-carregamento da fonte em todas as páginas |
 | `npm run check` | Os cinco acima, em sequência |
-| `npm run test:e2e` | As telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação e as páginas de perfil, de acontecimento e de metodologia, em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
+| `npm run test:e2e` | As telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação, as páginas de perfil, de acontecimento e de metodologia e o acabamento (quatro larguras, transições, link com consulta e a jornada principal), em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
+| `npm run test:export` | Sobre a saída estática, depois de `npm run build`: o que cada página pede e quando, o mapa carregado só quando vai ser usado, as versões dos retratos e a navegação pré-carregada. Sobe o próprio servidor na porta 4311 |
+| `npm run measure -- --rotulo <nome>` | Mede carregamento, estabilidade visual, peso e resposta das interações sobre a saída estática, e grava `docs/desempenho/<nome>.json`. Com `--contra <nome>=<pasta>`, mede dois builds alternando as execuções |
+| `npm run capture:finish` | Refaz as capturas de `docs/capturas/fase-8/`, tiradas da saída estática |
 | `npm run capture:pages` | Refaz as capturas de `docs/capturas/fase-7/`. Não confere nada: só registra as telas |
 | `npm run capture:map` | Refaz as capturas de `docs/capturas/fase-6/`. Não confere nada: só registra as telas |
 | `npm run capture:timeline` | Refaz as capturas de `docs/capturas/fase-5/` com a interface atual |
 | `npm run capture:preview` | Refaz as capturas de `docs/capturas/fase-4/` com a interface atual |
 
-Antes de qualquer entrega: `npm run check` e `npm run test:e2e`.
+Antes de qualquer entrega: `npm run check`, `npm run test:e2e` e `npm run test:export`.
 
 ## Estrutura
 
@@ -166,10 +185,12 @@ content/
   published/     a edição: registros revisados, editados à mão
   drafts/        pesquisa em andamento e importações
 generated/       dados gerados por `npm run data:build` (fora do Git)
-docs/            arquitetura, dados, experiência, decisões, status e capturas
+docs/            arquitetura, dados, experiência, desempenho, decisões, status e capturas
+  desempenho/    resultado bruto das medições (JSON)
 public/
-  media/         retratos e imagens
-scripts/         comandos de dados, conferência e pré-visualização da saída
+  media/         retratos e imagens, como cadastrados
+    derivados/   versões dos retratos que as páginas pedem (geradas por `npm run images`)
+scripts/         comandos de dados, preparo dos retratos, ajuste, conferência, pré-visualização e medição da saída
 src/
   app/           rotas e páginas; fontes tipográficas em app/fonts/
   components/    base visual: retrato, data, categoria, fontes, perfil, cópia de link, troca de pessoa, peças da linha do tempo
@@ -181,13 +202,15 @@ src/
   lib/
     domain/      regras e contratos de dados, sem I/O
     data/        formato dos dados públicos, índices, pontos e consultas
+    media/       molduras, larguras e nomes das versões dos retratos
     publication/ validação, elegibilidade, relatório e importação, sem I/O
     content/     leitura de content/ e leitura e gravação de generated/
     state/       estado compartilhado, seletores, endereço, histórico e endereços entre telas
     site.ts      configuração que depende de decisão do responsável (canal de correção)
 tests/
   fixtures/sintetico/   dados de teste, todos marcados como sintéticos
-  e2e/                  testes de navegador
+  e2e/                  testes de navegador, sobre o servidor de desenvolvimento
+  export/               testes e capturas sobre a saída estática
 ```
 
 ## Documentação
@@ -203,6 +226,7 @@ tests/
 - [docs/MAP.md](docs/MAP.md): mapa: base e recursos locais, recorte, seleção, pontos sobrepostos, câmera, precisão, falhas e conferência.
 - [docs/COMPARISON.md](docs/COMPARISON.md): comparação: mesmo recorte e mesma escala, estado e endereço, datas e intervalos, linguagem e limites.
 - [docs/PAGES.md](docs/PAGES.md): perfis, página do acontecimento, fontes e créditos, copiar link, retorno, metodologia e configuração pendente.
+- [docs/PERFORMANCE.md](docs/PERFORMANCE.md): condições e resultados das medições antes e depois da fase 8, o que cada página carrega, imagens, fontes, mapa e limitações.
 - [docs/capturas/](docs/capturas/README.md): capturas reais das telas, por fase.
 - [docs/DECISIONS.md](docs/DECISIONS.md): decisões adotadas e seus motivos.
 - [docs/STATUS.md](docs/STATUS.md): situação de cada fase, limitações e preparação para a próxima.

@@ -1,0 +1,2424 @@
+{
+  "rotulo": "sem-serifa-com-pre-carregamento",
+  "medidoEm": "2026-10-09T18:38:32.497Z",
+  "condicoes": {
+    "tipo": "laboratório",
+    "pasta": "build de teste: Libre Franklin pré-carregada, Newsreader sem pré-carregamento",
+    "servidor": "scripts/preview.mjs, local, com gzip nos arquivos de texto",
+    "navegador": "Chromium 153.0.8010.12, sem interface",
+    "webgl": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "cache": "vazio a cada execução",
+    "execucoes": 5,
+    "resultado": "mediana das execuções",
+    "ordem": "execuções alternadas com as de sem-serifa-sem-pre-carregamento",
+    "perfis": {
+      "computador": "1440×900, rede a 10 Mbit/s com 40 ms de latência, CPU sem limite",
+      "celular": "390×844, toque, rede a 1,6 Mbit/s com 150 ms de latência, CPU 4 vezes mais lenta"
+    },
+    "maquina": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 8 núcleos, 8 GB, win32 10.0.26300, Node v24.15.0",
+    "observacao": "Medido antes da correção que passou a contar o worker do mapa no peso transferido: nas telas com mapa, o peso deste arquivo está sem o worker. Os tempos e o CLS não são afetados."
+  },
+  "resultados": [
+    {
+      "perfil": "computador",
+      "rota": "entrada",
+      "caminho": "/",
+      "mediana": {
+        "ttfb": 4,
+        "fcp": 308,
+        "lcp": 308,
+        "fontes": 430,
+        "cls": 0,
+        "clsMaximo": 0.0013,
+        "load": 439,
+        "bloqueio": 32,
+        "tarefasLongas": 1,
+        "mapaPronto": null,
+        "transferidoAteOLoad": 364042,
+        "transferidoTotal": 426537,
+        "arquivosTotal": 1119749,
+        "pedidos": 20
+      },
+      "lcpElemento": {
+        "tag": "img",
+        "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+        "area": 118522,
+        "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-320.webp"
+      },
+      "deslocamentos": [],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 13,
+            "transferido": 364042,
+            "arquivo": 859312
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 20963,
+              "arquivo": 148442
+            },
+            "javascript": {
+              "pedidos": 7,
+              "transferido": 142614,
+              "arquivo": 468293
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "imagem": {
+              "pedidos": 2,
+              "transferido": 27988,
+              "arquivo": 27522
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 20,
+            "transferido": 426537,
+            "arquivo": 1119749
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 20963,
+              "arquivo": 148442
+            },
+            "javascript": {
+              "pedidos": 10,
+              "transferido": 170322,
+              "arquivo": 551180
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "imagem": {
+              "pedidos": 2,
+              "transferido": 27988,
+              "arquivo": 27522
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            },
+            "dados": {
+              "pedidos": 4,
+              "transferido": 34787,
+              "arquivo": 177550
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/_next/static/media/libre_franklin_latin-s.p.07n4at6ntqcqu.woff2",
+            "tipo": "fonte",
+            "transferido": 29526,
+            "arquivo": 29292
+          },
+          {
+            "caminho": "/",
+            "tipo": "documento",
+            "transferido": 20963,
+            "arquivo": 148442
+          },
+          {
+            "caminho": "/politicos/lula/__next.politicos.$d$slug.__PAGE__.txt",
+            "tipo": "dados",
+            "transferido": 16981,
+            "arquivo": 84567
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": [
+          "/politicos/lula/",
+          "/politicos/flavio-bolsonaro/"
+        ]
+      },
+      "execucoes": [
+        {
+          "ttfb": 3.5,
+          "fcp": 308,
+          "lcp": 308,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 118522,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-320.webp"
+          },
+          "fontes": 428.09999999403954,
+          "cls": 0,
+          "domContentLoaded": 179.09999999403954,
+          "load": 435.29999999701977,
+          "tarefasLongas": 1,
+          "bloqueio": 32,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 4.5,
+          "fcp": 308,
+          "lcp": 308,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 118522,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-320.webp"
+          },
+          "fontes": 452.5,
+          "cls": 0,
+          "domContentLoaded": 183.59999999403954,
+          "load": 461.5,
+          "tarefasLongas": 1,
+          "bloqueio": 24,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 3.1000000089406967,
+          "fcp": 316,
+          "lcp": 316,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 118522,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-320.webp"
+          },
+          "fontes": 430.20000000298023,
+          "cls": 0.0012973304612482854,
+          "domContentLoaded": 174,
+          "load": 438.5,
+          "tarefasLongas": 2,
+          "bloqueio": 45,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 5.299999997019768,
+          "fcp": 428,
+          "lcp": 428,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 118522,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-320.webp"
+          },
+          "fontes": 537.1999999880791,
+          "cls": 0.0012973304612482854,
+          "domContentLoaded": 194,
+          "load": 552.7999999970198,
+          "tarefasLongas": 2,
+          "bloqueio": 145,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 3.0999999940395355,
+          "fcp": 304,
+          "lcp": 304,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 118522,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-320.webp"
+          },
+          "fontes": 413.29999999701977,
+          "cls": 0,
+          "domContentLoaded": 175.3999999910593,
+          "load": 420.3999999910593,
+          "tarefasLongas": 1,
+          "bloqueio": 30,
+          "mapa": {
+            "naAbertura": false
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "computador",
+      "rota": "exploracao",
+      "caminho": "/politicos/lula/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 428,
+        "lcp": 556,
+        "fontes": 523,
+        "cls": 0.0042,
+        "clsMaximo": 0.005,
+        "load": 893,
+        "bloqueio": 126,
+        "tarefasLongas": 2,
+        "mapaPronto": 1357,
+        "transferidoAteOLoad": 672221,
+        "transferidoTotal": 743419,
+        "arquivosTotal": 2861881,
+        "pedidos": 21,
+        "interacoes": {
+          "categoria": {
+            "evento": 112,
+            "eventoMaximo": 120,
+            "semRegistro": 0,
+            "dom": {
+              "lista": 58,
+              "marcadores": 58
+            }
+          },
+          "todasAsCategorias": {
+            "evento": 104,
+            "eventoMaximo": 112,
+            "semRegistro": 0,
+            "dom": {
+              "lista": 60
+            }
+          },
+          "selecao": {
+            "evento": 104,
+            "eventoMaximo": 112,
+            "semRegistro": 0,
+            "dom": {
+              "leitura": 75
+            }
+          },
+          "fechar": {
+            "evento": 88,
+            "eventoMaximo": 96,
+            "semRegistro": 0,
+            "dom": {
+              "leitura": 54
+            }
+          }
+        }
+      },
+      "lcpElemento": {
+        "tag": "p",
+        "classes": "font-serif text-[1.0625rem] leading-[1.6]",
+        "texto": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE), é presidente da ",
+        "area": 70771
+      },
+      "deslocamentos": [
+        {
+          "t": 539.6000000089407,
+          "valor": 0.00416419793274177,
+          "aposEntrada": false,
+          "nos": [
+            {
+              "tag": "li",
+              "texto": "1980. Só o ano está documentado.1980só o anoLula é preso com base na L"
+            },
+            {
+              "tag": "li",
+              "texto": "10 de fevereiro de 1980198010 fevLula participa da fundação do Partido"
+            },
+            {
+              "tag": "li",
+              "texto": "março de 1979. O dia não está documentado.1979marsem o diaGreve de 170"
+            }
+          ]
+        }
+      ],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 18,
+            "transferido": 672221,
+            "arquivo": 2098813
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 31411,
+              "arquivo": 208834
+            },
+            "imagem": {
+              "pedidos": 2,
+              "transferido": 4909,
+              "arquivo": 4446
+            },
+            "javascript": {
+              "pedidos": 11,
+              "transferido": 452659,
+              "arquivo": 1587516
+            },
+            "css": {
+              "pedidos": 2,
+              "transferido": 21481,
+              "arquivo": 136725
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 21,
+            "transferido": 743419,
+            "arquivo": 2861881
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 31411,
+              "arquivo": 208834
+            },
+            "imagem": {
+              "pedidos": 2,
+              "transferido": 4909,
+              "arquivo": 4446
+            },
+            "javascript": {
+              "pedidos": 12,
+              "transferido": 452961,
+              "arquivo": 2095830
+            },
+            "css": {
+              "pedidos": 2,
+              "transferido": 21481,
+              "arquivo": 136725
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            },
+            "dados": {
+              "pedidos": 2,
+              "transferido": 70896,
+              "arquivo": 254754
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/chunks/0v_b7a2atw5z0.js",
+            "tipo": "javascript",
+            "transferido": 282919,
+            "arquivo": 1037834
+          },
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/media/terra.1u7227buq3zqo.geojson",
+            "tipo": "dados",
+            "transferido": 46748,
+            "arquivo": 165426
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/politicos/lula/",
+            "tipo": "documento",
+            "transferido": 31411,
+            "arquivo": 208834
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": []
+      },
+      "execucoes": [
+        {
+          "ttfb": 2.9000000059604645,
+          "fcp": 428,
+          "lcp": 556,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.0625rem] leading-[1.6]",
+            "texto": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE), é presidente da ",
+            "area": 70771
+          },
+          "fontes": 519.3000000119209,
+          "cls": 0.00416419793274177,
+          "domContentLoaded": 194.1000000089407,
+          "load": 876.2000000029802,
+          "tarefasLongas": 1,
+          "bloqueio": 118,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 148.80000001192093,
+            "canvas": 908.1000000089407,
+            "pronto": 1336.800000011921
+          },
+          "interacoes": {
+            "categoria": {
+              "evento": 120,
+              "dom": {
+                "lista": 58.20000000298023,
+                "marcadores": 58.29999999701977
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 104,
+              "dom": {
+                "lista": 56.900000005960464
+              }
+            },
+            "selecao": {
+              "evento": 96,
+              "dom": {
+                "leitura": 75.20000000298023
+              }
+            },
+            "fechar": {
+              "evento": 88,
+              "dom": {
+                "leitura": 53.70000000298023
+              }
+            }
+          }
+        },
+        {
+          "ttfb": 3.5,
+          "fcp": 428,
+          "lcp": 556,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.0625rem] leading-[1.6]",
+            "texto": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE), é presidente da ",
+            "area": 70771
+          },
+          "fontes": 522.8000000119209,
+          "cls": 0.00416419793274177,
+          "domContentLoaded": 198.20000000298023,
+          "load": 893.1000000089407,
+          "tarefasLongas": 2,
+          "bloqueio": 126,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 138.5,
+            "canvas": 941.7000000029802,
+            "pronto": 1388.4000000059605
+          },
+          "interacoes": {
+            "categoria": {
+              "evento": 112,
+              "dom": {
+                "lista": 58.70000000298023,
+                "marcadores": 58.70000000298023
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 104,
+              "dom": {
+                "lista": 57
+              }
+            },
+            "selecao": {
+              "evento": 104,
+              "dom": {
+                "leitura": 80.09999999403954
+              }
+            },
+            "fechar": {
+              "evento": 80,
+              "dom": {
+                "leitura": 52.099999994039536
+              }
+            }
+          }
+        },
+        {
+          "ttfb": 3.699999988079071,
+          "fcp": 404,
+          "lcp": 552,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.0625rem] leading-[1.6]",
+            "texto": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE), é presidente da ",
+            "area": 70771
+          },
+          "fontes": 517.2999999970198,
+          "cls": 0.005044847075536909,
+          "domContentLoaded": 174.09999999403954,
+          "load": 913.8999999910593,
+          "tarefasLongas": 2,
+          "bloqueio": 153,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 126,
+            "canvas": 947.7999999970198,
+            "pronto": 1382.5999999940395
+          },
+          "interacoes": {
+            "categoria": {
+              "evento": 88,
+              "dom": {
+                "lista": 42.30000001192093,
+                "marcadores": 42.5
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 112,
+              "dom": {
+                "lista": 71.29999999701977
+              }
+            },
+            "selecao": {
+              "evento": 112,
+              "dom": {
+                "leitura": 80.20000000298023
+              }
+            },
+            "fechar": {
+              "evento": 96,
+              "dom": {
+                "leitura": 55.5
+              }
+            }
+          }
+        },
+        {
+          "ttfb": 2.7000000029802322,
+          "fcp": 412,
+          "lcp": 560,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.0625rem] leading-[1.6]",
+            "texto": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE), é presidente da ",
+            "area": 70771
+          },
+          "fontes": 524.5,
+          "cls": 0.005044847075536909,
+          "domContentLoaded": 182.8999999910593,
+          "load": 895.5999999940395,
+          "tarefasLongas": 1,
+          "bloqueio": 136,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 143.3999999910593,
+            "canvas": 945.5,
+            "pronto": 1356.5
+          },
+          "interacoes": {
+            "categoria": {
+              "evento": 120,
+              "dom": {
+                "lista": 56.70000000298023,
+                "marcadores": 56.900000005960464
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 96,
+              "dom": {
+                "lista": 59.5
+              }
+            },
+            "selecao": {
+              "evento": 96,
+              "dom": {
+                "leitura": 71.20000000298023
+              }
+            },
+            "fechar": {
+              "evento": 96,
+              "dom": {
+                "leitura": 55.29999999701977
+              }
+            }
+          }
+        },
+        {
+          "ttfb": 2.9000000059604645,
+          "fcp": 436,
+          "lcp": 580,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.0625rem] leading-[1.6]",
+            "texto": "Luiz Inácio Lula da Silva, nascido em Garanhuns (PE), é presidente da ",
+            "area": 70771
+          },
+          "fontes": 539.9000000059605,
+          "cls": 0.00416419793274177,
+          "domContentLoaded": 210.5,
+          "load": 878.8000000119209,
+          "tarefasLongas": 2,
+          "bloqueio": 119,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 145.80000001192093,
+            "canvas": 912.2000000029802,
+            "pronto": 1345.4000000059605
+          },
+          "interacoes": {
+            "categoria": {
+              "evento": 104,
+              "dom": {
+                "lista": 64.70000000298023,
+                "marcadores": 64.80000001192093
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 112,
+              "dom": {
+                "lista": 62.30000001192093
+              }
+            },
+            "selecao": {
+              "evento": 112,
+              "dom": {
+                "leitura": 72.5
+              }
+            },
+            "fechar": {
+              "evento": 80,
+              "dom": {
+                "leitura": 46.79999999701977
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "computador",
+      "rota": "acontecimento",
+      "caminho": "/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 332,
+        "lcp": 332,
+        "fontes": 465,
+        "cls": 0,
+        "clsMaximo": 0,
+        "load": 793,
+        "bloqueio": 47,
+        "tarefasLongas": 2,
+        "mapaPronto": 1266,
+        "transferidoAteOLoad": 628878,
+        "transferidoTotal": 700076,
+        "arquivosTotal": 2638956,
+        "pedidos": 19
+      },
+      "lcpElemento": {
+        "tag": "h1",
+        "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+        "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+        "area": 81000
+      },
+      "deslocamentos": [],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 16,
+            "transferido": 628878,
+            "arquivo": 1875888
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 8890,
+              "arquivo": 44982
+            },
+            "javascript": {
+              "pedidos": 10,
+              "transferido": 435675,
+              "arquivo": 1532049
+            },
+            "css": {
+              "pedidos": 2,
+              "transferido": 21481,
+              "arquivo": 136725
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 1071,
+              "arquivo": 840
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 19,
+            "transferido": 700076,
+            "arquivo": 2638956
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 8890,
+              "arquivo": 44982
+            },
+            "javascript": {
+              "pedidos": 11,
+              "transferido": 435977,
+              "arquivo": 2040363
+            },
+            "css": {
+              "pedidos": 2,
+              "transferido": 21481,
+              "arquivo": 136725
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 1071,
+              "arquivo": 840
+            },
+            "dados": {
+              "pedidos": 2,
+              "transferido": 70896,
+              "arquivo": 254754
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/chunks/0v_b7a2atw5z0.js",
+            "tipo": "javascript",
+            "transferido": 282919,
+            "arquivo": 1037834
+          },
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/media/terra.1u7227buq3zqo.geojson",
+            "tipo": "dados",
+            "transferido": 46748,
+            "arquivo": 165426
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/_next/static/media/libre_franklin_latin-s.p.07n4at6ntqcqu.woff2",
+            "tipo": "fonte",
+            "transferido": 29526,
+            "arquivo": 29292
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": []
+      },
+      "execucoes": [
+        {
+          "ttfb": 4.0999999940395355,
+          "fcp": 324,
+          "lcp": 324,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 464.70000000298023,
+          "cls": 0,
+          "domContentLoaded": 194.79999999701977,
+          "load": 755.2999999970198,
+          "tarefasLongas": 2,
+          "bloqueio": 40,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 133.70000000298023,
+            "canvas": 789.3999999910593,
+            "pronto": 1232.3999999910593
+          }
+        },
+        {
+          "ttfb": 2.5999999940395355,
+          "fcp": 356,
+          "lcp": 356,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 502.20000000298023,
+          "cls": 0,
+          "domContentLoaded": 220.59999999403954,
+          "load": 801.7000000029802,
+          "tarefasLongas": 2,
+          "bloqueio": 54,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 141.20000000298023,
+            "canvas": 837.2999999970198,
+            "pronto": 1293.9000000059605
+          }
+        },
+        {
+          "ttfb": 2.9000000059604645,
+          "fcp": 304,
+          "lcp": 304,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 448.30000001192093,
+          "cls": 0,
+          "domContentLoaded": 172.5,
+          "load": 728.8000000119209,
+          "tarefasLongas": 2,
+          "bloqueio": 41,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 148.6000000089407,
+            "canvas": 782.6000000089407,
+            "pronto": 1186.9000000059605
+          }
+        },
+        {
+          "ttfb": 2.4000000059604645,
+          "fcp": 356,
+          "lcp": 356,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 505.40000000596046,
+          "cls": 0,
+          "domContentLoaded": 221.40000000596046,
+          "load": 794.1000000089407,
+          "tarefasLongas": 2,
+          "bloqueio": 47,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 155.5,
+            "canvas": 829.5,
+            "pronto": 1305
+          }
+        },
+        {
+          "ttfb": 2.9000000059604645,
+          "fcp": 332,
+          "lcp": 332,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 442.30000001192093,
+          "cls": 0,
+          "domContentLoaded": 202.5,
+          "load": 792.7000000029802,
+          "tarefasLongas": 2,
+          "bloqueio": 51,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 153.90000000596046,
+            "canvas": 826.2000000029802,
+            "pronto": 1266.2000000029802
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "computador",
+      "rota": "metodologia",
+      "caminho": "/metodologia/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 316,
+        "lcp": 316,
+        "fontes": 411,
+        "cls": 0.0002,
+        "clsMaximo": 0.0002,
+        "load": 417,
+        "bloqueio": 0,
+        "tarefasLongas": 0,
+        "mapaPronto": null,
+        "transferidoAteOLoad": 346517,
+        "transferidoTotal": 346517,
+        "arquivosTotal": 884630,
+        "pedidos": 11
+      },
+      "lcpElemento": {
+        "tag": "p",
+        "classes": "reading max-w-[42rem] text-[1.0625rem] leading-relaxed",
+        "texto": "O atlas registra a trajetória pública de Flávio Bolsonaro e de Lula: c",
+        "area": 47520
+      },
+      "deslocamentos": [],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 11,
+            "transferido": 346517,
+            "arquivo": 884630
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 30405,
+              "arquivo": 198304
+            },
+            "javascript": {
+              "pedidos": 7,
+              "transferido": 143635,
+              "arquivo": 471271
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 11,
+            "transferido": 346517,
+            "arquivo": 884630
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 30405,
+              "arquivo": 198304
+            },
+            "javascript": {
+              "pedidos": 7,
+              "transferido": 143635,
+              "arquivo": 471271
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/metodologia/",
+            "tipo": "documento",
+            "transferido": 30405,
+            "arquivo": 198304
+          },
+          {
+            "caminho": "/_next/static/media/libre_franklin_latin-s.p.07n4at6ntqcqu.woff2",
+            "tipo": "fonte",
+            "transferido": 29526,
+            "arquivo": 29292
+          },
+          {
+            "caminho": "/_next/static/chunks/3dq6mtb_uoy25.css",
+            "tipo": "css",
+            "transferido": 10716,
+            "arquivo": 53763
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": []
+      },
+      "execucoes": [
+        {
+          "ttfb": 6.100000008940697,
+          "fcp": 336,
+          "lcp": 336,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading max-w-[42rem] text-[1.0625rem] leading-relaxed",
+            "texto": "O atlas registra a trajetória pública de Flávio Bolsonaro e de Lula: c",
+            "area": 47520
+          },
+          "fontes": 410.79999999701977,
+          "cls": 0.0001640625,
+          "domContentLoaded": 209,
+          "load": 417.29999999701977,
+          "tarefasLongas": 0,
+          "bloqueio": 0,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.7999999970197678,
+          "fcp": 308,
+          "lcp": 308,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading max-w-[42rem] text-[1.0625rem] leading-relaxed",
+            "texto": "O atlas registra a trajetória pública de Flávio Bolsonaro e de Lula: c",
+            "area": 47520
+          },
+          "fontes": 415.09999999403954,
+          "cls": 0.0001640625,
+          "domContentLoaded": 212.3999999910593,
+          "load": 422.70000000298023,
+          "tarefasLongas": 0,
+          "bloqueio": 0,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.7999999970197678,
+          "fcp": 316,
+          "lcp": 316,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading max-w-[42rem] text-[1.0625rem] leading-relaxed",
+            "texto": "O atlas registra a trajetória pública de Flávio Bolsonaro e de Lula: c",
+            "area": 47520
+          },
+          "fontes": 412.29999999701977,
+          "cls": 0.0001640625,
+          "domContentLoaded": 218.29999999701977,
+          "load": 419.70000000298023,
+          "tarefasLongas": 0,
+          "bloqueio": 0,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.7000000029802322,
+          "fcp": 300,
+          "lcp": 300,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading max-w-[42rem] text-[1.0625rem] leading-relaxed",
+            "texto": "O atlas registra a trajetória pública de Flávio Bolsonaro e de Lula: c",
+            "area": 47520
+          },
+          "fontes": 379.40000000596046,
+          "cls": 0.0001640625,
+          "domContentLoaded": 170.40000000596046,
+          "load": 386.20000000298023,
+          "tarefasLongas": 0,
+          "bloqueio": 0,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.7999999970197678,
+          "fcp": 320,
+          "lcp": 320,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading max-w-[42rem] text-[1.0625rem] leading-relaxed",
+            "texto": "O atlas registra a trajetória pública de Flávio Bolsonaro e de Lula: c",
+            "area": 47520
+          },
+          "fontes": 376.90000000596046,
+          "cls": 0.0001640625,
+          "domContentLoaded": 179.90000000596046,
+          "load": 382.70000000298023,
+          "tarefasLongas": 0,
+          "bloqueio": 0,
+          "mapa": {
+            "naAbertura": false
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "entrada",
+      "caminho": "/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 1160,
+        "lcp": 1160,
+        "fontes": 2172,
+        "cls": 0.0024,
+        "clsMaximo": 0.0024,
+        "load": 2195,
+        "bloqueio": 516,
+        "tarefasLongas": 3,
+        "mapaPronto": null,
+        "transferidoAteOLoad": 384268,
+        "transferidoTotal": 446763,
+        "arquivosTotal": 1139975,
+        "pedidos": 20
+      },
+      "lcpElemento": {
+        "tag": "img",
+        "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+        "area": 36511,
+        "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-480.webp"
+      },
+      "deslocamentos": [
+        {
+          "t": 2245.5,
+          "valor": 0.0023887077165831855,
+          "aposEntrada": false,
+          "nos": [
+            null
+          ]
+        }
+      ],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 13,
+            "transferido": 384268,
+            "arquivo": 879538
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 20963,
+              "arquivo": 148442
+            },
+            "javascript": {
+              "pedidos": 7,
+              "transferido": 142614,
+              "arquivo": 468293
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "imagem": {
+              "pedidos": 2,
+              "transferido": 48214,
+              "arquivo": 47748
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 20,
+            "transferido": 446763,
+            "arquivo": 1139975
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 20963,
+              "arquivo": 148442
+            },
+            "javascript": {
+              "pedidos": 10,
+              "transferido": 170322,
+              "arquivo": 551180
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "imagem": {
+              "pedidos": 2,
+              "transferido": 48214,
+              "arquivo": 47748
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            },
+            "dados": {
+              "pedidos": 4,
+              "transferido": 34787,
+              "arquivo": 177550
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/_next/static/media/libre_franklin_latin-s.p.07n4at6ntqcqu.woff2",
+            "tipo": "fonte",
+            "transferido": 29526,
+            "arquivo": 29292
+          },
+          {
+            "caminho": "/media/derivados/retrato-lula-4x5-480.webp",
+            "tipo": "imagem",
+            "transferido": 26125,
+            "arquivo": 25892
+          },
+          {
+            "caminho": "/media/derivados/retrato-flavio-bolsonaro-4x5-480.webp",
+            "tipo": "imagem",
+            "transferido": 22089,
+            "arquivo": 21856
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": [
+          "/politicos/flavio-bolsonaro/",
+          "/politicos/lula/"
+        ]
+      },
+      "execucoes": [
+        {
+          "ttfb": 2.7000000029802322,
+          "fcp": 1168,
+          "lcp": 1168,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 36511,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-480.webp"
+          },
+          "fontes": 2175,
+          "cls": 0.0023887077165831855,
+          "domContentLoaded": 735,
+          "load": 2200.2999999970198,
+          "tarefasLongas": 3,
+          "bloqueio": 471,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.3999999910593033,
+          "fcp": 1220,
+          "lcp": 1220,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 36511,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-480.webp"
+          },
+          "fontes": 2162,
+          "cls": 0.0023887077165831855,
+          "domContentLoaded": 733.5999999940395,
+          "load": 2187.199999988079,
+          "tarefasLongas": 3,
+          "bloqueio": 516,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.7000000029802322,
+          "fcp": 1160,
+          "lcp": 1160,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 36511,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-480.webp"
+          },
+          "fontes": 2171.7999999970198,
+          "cls": 0.0023887077165831855,
+          "domContentLoaded": 702.4000000059605,
+          "load": 2194.5,
+          "tarefasLongas": 3,
+          "bloqueio": 525,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.7000000029802322,
+          "fcp": 1152,
+          "lcp": 1152,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 36511,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-480.webp"
+          },
+          "fontes": 2190.9000000059605,
+          "cls": 0.0023887077165831855,
+          "domContentLoaded": 707.7999999970198,
+          "load": 2207.7000000029802,
+          "tarefasLongas": 3,
+          "bloqueio": 462,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.8999999910593033,
+          "fcp": 1136,
+          "lcp": 1136,
+          "lcpElemento": {
+            "tag": "img",
+            "classes": "absolute inset-0 h-full w-full object-cover mix-blend-multiply grayscale contrast-[1.06]",
+            "area": 36511,
+            "url": "http://localhost:4313/media/derivados/retrato-flavio-bolsonaro-4x5-480.webp"
+          },
+          "fontes": 2169.0999999940395,
+          "cls": 0.0023887077165831855,
+          "domContentLoaded": 699.3999999910593,
+          "load": 2192.199999988079,
+          "tarefasLongas": 3,
+          "bloqueio": 516,
+          "mapa": {
+            "naAbertura": false
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "exploracao",
+      "caminho": "/politicos/lula/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 1292,
+        "lcp": 1292,
+        "fontes": 2067,
+        "cls": 0,
+        "clsMaximo": 0,
+        "load": 2081,
+        "bloqueio": 648,
+        "tarefasLongas": 3,
+        "mapaPronto": null,
+        "transferidoAteOLoad": 374965,
+        "transferidoTotal": 374965,
+        "arquivosTotal": 974928,
+        "pedidos": 14,
+        "interacoes": {
+          "abrirMapa": {
+            "evento": 160,
+            "eventoMaximo": 168,
+            "semRegistro": 0,
+            "dom": {
+              "mapaPronto": 4105
+            }
+          },
+          "categoria": {
+            "evento": 152,
+            "eventoMaximo": 216,
+            "semRegistro": 0,
+            "dom": {
+              "lista": 123
+            }
+          },
+          "todasAsCategorias": {
+            "evento": 160,
+            "eventoMaximo": 168,
+            "semRegistro": 0,
+            "dom": {
+              "lista": 129
+            }
+          },
+          "selecao": {
+            "evento": 224,
+            "eventoMaximo": 240,
+            "semRegistro": 0,
+            "dom": {
+              "leitura": 202
+            }
+          },
+          "fechar": {
+            "evento": 184,
+            "eventoMaximo": 184,
+            "semRegistro": 0,
+            "dom": {
+              "leitura": 160
+            }
+          }
+        }
+      },
+      "lcpElemento": {
+        "tag": "span",
+        "classes": "block font-serif text-[1.0625rem] font-medium leading-snug",
+        "texto": "Lula é eleito presidente do Sindicato dos Metalúrgicos de São Bernardo",
+        "area": 18112
+      },
+      "deslocamentos": [],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 14,
+            "transferido": 374965,
+            "arquivo": 974928
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 31411,
+              "arquivo": 208834
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 2288,
+              "arquivo": 2056
+            },
+            "javascript": {
+              "pedidos": 9,
+              "transferido": 168789,
+              "arquivo": 548983
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 14,
+            "transferido": 374965,
+            "arquivo": 974928
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 31411,
+              "arquivo": 208834
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 2288,
+              "arquivo": 2056
+            },
+            "javascript": {
+              "pedidos": 9,
+              "transferido": 168789,
+              "arquivo": 548983
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/politicos/lula/",
+            "tipo": "documento",
+            "transferido": 31411,
+            "arquivo": 208834
+          },
+          {
+            "caminho": "/_next/static/media/libre_franklin_latin-s.p.07n4at6ntqcqu.woff2",
+            "tipo": "fonte",
+            "transferido": 29526,
+            "arquivo": 29292
+          },
+          {
+            "caminho": "/_next/static/chunks/34pnqula2kgjm.js",
+            "tipo": "javascript",
+            "transferido": 16294,
+            "arquivo": 48342
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": []
+      },
+      "execucoes": [
+        {
+          "ttfb": 3.2000000029802322,
+          "fcp": 1292,
+          "lcp": 1292,
+          "lcpElemento": {
+            "tag": "span",
+            "classes": "block font-serif text-[1.0625rem] font-medium leading-snug",
+            "texto": "Lula é eleito presidente do Sindicato dos Metalúrgicos de São Bernardo",
+            "area": 18112
+          },
+          "fontes": 2062.8999999910593,
+          "cls": 0,
+          "domContentLoaded": 627.0999999940395,
+          "load": 2080.7999999970198,
+          "tarefasLongas": 3,
+          "bloqueio": 603,
+          "mapa": {
+            "naAbertura": false
+          },
+          "interacoes": {
+            "abrirMapa": {
+              "evento": 152,
+              "dom": {
+                "mapaPronto": 4105.0999999940395
+              }
+            },
+            "categoria": {
+              "evento": 152,
+              "dom": {
+                "lista": 122.40000000596046
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 152,
+              "dom": {
+                "lista": 122.59999999403954
+              }
+            },
+            "selecao": {
+              "evento": 224,
+              "dom": {
+                "leitura": 201.8999999910593
+              }
+            },
+            "fechar": {
+              "evento": 184,
+              "dom": {
+                "leitura": 166
+              }
+            }
+          }
+        },
+        {
+          "ttfb": 2.5,
+          "fcp": 1400,
+          "lcp": 1400,
+          "lcpElemento": {
+            "tag": "span",
+            "classes": "block font-serif text-[1.0625rem] font-medium leading-snug",
+            "texto": "Lula é eleito presidente do Sindicato dos Metalúrgicos de São Bernardo",
+            "area": 18112
+          },
+          "fontes": 2053.2999999970198,
+          "cls": 0,
+          "domContentLoaded": 635.2999999970198,
+          "load": 2076.0999999940395,
+          "tarefasLongas": 3,
+          "bloqueio": 682,
+          "mapa": {
+            "naAbertura": false
+          },
+          "interacoes": {
+            "abrirMapa": {
+              "evento": 160,
+              "dom": {
+                "mapaPronto": 4055.3999999910593
+              }
+            },
+            "categoria": {
+              "evento": 216,
+              "dom": {
+                "lista": 184.5
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 168,
+              "dom": {
+                "lista": 133.8999999910593
+              }
+            },
+            "selecao": {
+              "evento": 224,
+              "dom": {
+                "leitura": 201.09999999403954
+              }
+            },
+            "fechar": {
+              "evento": 160,
+              "dom": {
+                "leitura": 137.59999999403954
+              }
+            }
+          }
+        },
+        {
+          "ttfb": 2.8999999910593033,
+          "fcp": 1244,
+          "lcp": 1244,
+          "lcpElemento": {
+            "tag": "span",
+            "classes": "block font-serif text-[1.0625rem] font-medium leading-snug",
+            "texto": "Lula é eleito presidente do Sindicato dos Metalúrgicos de São Bernardo",
+            "area": 18112
+          },
+          "fontes": 2108.8999999910593,
+          "cls": 0,
+          "domContentLoaded": 675.2000000029802,
+          "load": 2130,
+          "tarefasLongas": 3,
+          "bloqueio": 610,
+          "mapa": {
+            "naAbertura": false
+          },
+          "interacoes": {
+            "abrirMapa": {
+              "evento": 168,
+              "dom": {
+                "mapaPronto": 4011.2000000029802
+              }
+            },
+            "categoria": {
+              "evento": 152,
+              "dom": {
+                "lista": 122.90000000596046
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 160,
+              "dom": {
+                "lista": 134.90000000596046
+              }
+            },
+            "selecao": {
+              "evento": 240,
+              "dom": {
+                "leitura": 211.5
+              }
+            },
+            "fechar": {
+              "evento": 184,
+              "dom": {
+                "leitura": 158.70000000298023
+              }
+            }
+          }
+        },
+        {
+          "ttfb": 2.5,
+          "fcp": 1268,
+          "lcp": 1268,
+          "lcpElemento": {
+            "tag": "span",
+            "classes": "block font-serif text-[1.0625rem] font-medium leading-snug",
+            "texto": "Lula é eleito presidente do Sindicato dos Metalúrgicos de São Bernardo",
+            "area": 18112
+          },
+          "fontes": 2066.9000000059605,
+          "cls": 0,
+          "domContentLoaded": 635.5,
+          "load": 2080.7000000029802,
+          "tarefasLongas": 4,
+          "bloqueio": 717,
+          "mapa": {
+            "naAbertura": false
+          },
+          "interacoes": {
+            "abrirMapa": {
+              "evento": 152,
+              "dom": {
+                "mapaPronto": 4192.600000008941
+              }
+            },
+            "categoria": {
+              "evento": 160,
+              "dom": {
+                "lista": 124
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 152,
+              "dom": {
+                "lista": 125.09999999403954
+              }
+            },
+            "selecao": {
+              "evento": 232,
+              "dom": {
+                "leitura": 210
+              }
+            },
+            "fechar": {
+              "evento": 184,
+              "dom": {
+                "leitura": 167.70000000298023
+              }
+            }
+          }
+        },
+        {
+          "ttfb": 2.7000000029802322,
+          "fcp": 1408,
+          "lcp": 1408,
+          "lcpElemento": {
+            "tag": "span",
+            "classes": "block font-serif text-[1.0625rem] font-medium leading-snug",
+            "texto": "Lula é eleito presidente do Sindicato dos Metalúrgicos de São Bernardo",
+            "area": 18112
+          },
+          "fontes": 2084.2999999970198,
+          "cls": 0,
+          "domContentLoaded": 659.5999999940395,
+          "load": 2101.2999999970198,
+          "tarefasLongas": 3,
+          "bloqueio": 648,
+          "mapa": {
+            "naAbertura": false
+          },
+          "interacoes": {
+            "abrirMapa": {
+              "evento": 160,
+              "dom": {
+                "mapaPronto": 4154.0999999940395
+              }
+            },
+            "categoria": {
+              "evento": 152,
+              "dom": {
+                "lista": 122.6000000089407
+              }
+            },
+            "todasAsCategorias": {
+              "evento": 160,
+              "dom": {
+                "lista": 128.5
+              }
+            },
+            "selecao": {
+              "evento": 224,
+              "dom": {
+                "leitura": 201.8999999910593
+              }
+            },
+            "fechar": {
+              "evento": 184,
+              "dom": {
+                "leitura": 160.1000000089407
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "acontecimento",
+      "caminho": "/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 1156,
+        "lcp": 1156,
+        "fontes": 1998,
+        "cls": 0.0218,
+        "clsMaximo": 0.0218,
+        "load": 2022,
+        "bloqueio": 532,
+        "tarefasLongas": 3,
+        "mapaPronto": null,
+        "transferidoAteOLoad": 334792,
+        "transferidoTotal": 334792,
+        "arquivosTotal": 754941,
+        "pedidos": 13
+      },
+      "lcpElemento": {
+        "tag": "p",
+        "classes": "font-serif text-[1.375rem] leading-[1.45]",
+        "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+        "area": 76254
+      },
+      "deslocamentos": [
+        {
+          "t": 2097.5999999940395,
+          "valor": 0.021768674581830873,
+          "aposEntrada": false,
+          "nos": [
+            {
+              "tag": "div",
+              "classes": "mt-8 grid gap-x-16 gap-y-10 lg:grid-cols-[minmax(0,42rem)_minmax(0,22rem)]",
+              "texto": "ResumoEm 8 de janeiro de 2023, Lula decretou intervenção federal na ár"
+            },
+            {
+              "tag": "div",
+              "classes": "min-w-0 ",
+              "texto": "Copiar link"
+            }
+          ]
+        }
+      ],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 13,
+            "transferido": 334792,
+            "arquivo": 754941
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 8890,
+              "arquivo": 44982
+            },
+            "javascript": {
+              "pedidos": 8,
+              "transferido": 151805,
+              "arquivo": 493516
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 1620,
+              "arquivo": 1388
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 13,
+            "transferido": 334792,
+            "arquivo": 754941
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 8890,
+              "arquivo": 44982
+            },
+            "javascript": {
+              "pedidos": 8,
+              "transferido": 151805,
+              "arquivo": 493516
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 1620,
+              "arquivo": 1388
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/_next/static/media/libre_franklin_latin-s.p.07n4at6ntqcqu.woff2",
+            "tipo": "fonte",
+            "transferido": 29526,
+            "arquivo": 29292
+          },
+          {
+            "caminho": "/_next/static/chunks/3dq6mtb_uoy25.css",
+            "tipo": "css",
+            "transferido": 10716,
+            "arquivo": 53763
+          },
+          {
+            "caminho": "/_next/static/chunks/0ceurjuwyjy96.js",
+            "tipo": "javascript",
+            "transferido": 10191,
+            "arquivo": 27139
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": []
+      },
+      "execucoes": [
+        {
+          "ttfb": 2.8999999910593033,
+          "fcp": 1152,
+          "lcp": 1152,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 2003.7999999970198,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 699.3999999910593,
+          "load": 2022.7999999970198,
+          "tarefasLongas": 3,
+          "bloqueio": 532,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.7000000029802322,
+          "fcp": 1156,
+          "lcp": 1156,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 1997.5,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 668.7000000029802,
+          "load": 2017.2999999970198,
+          "tarefasLongas": 3,
+          "bloqueio": 508,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.7999999970197678,
+          "fcp": 1184,
+          "lcp": 1184,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 1995.2999999970198,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 710.5999999940395,
+          "load": 2021.7999999970198,
+          "tarefasLongas": 3,
+          "bloqueio": 554,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.9000000059604645,
+          "fcp": 1188,
+          "lcp": 1188,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 1998.6000000089407,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 696.2000000029802,
+          "load": 2026.300000011921,
+          "tarefasLongas": 3,
+          "bloqueio": 609,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 3.0999999940395355,
+          "fcp": 1156,
+          "lcp": 1156,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 1976.9000000059605,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 675.0999999940395,
+          "load": 1995,
+          "tarefasLongas": 3,
+          "bloqueio": 509,
+          "mapa": {
+            "naAbertura": false
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "metodologia",
+      "caminho": "/metodologia/",
+      "mediana": {
+        "ttfb": 2,
+        "fcp": 1348,
+        "lcp": 1348,
+        "fontes": 1925,
+        "cls": 0.0187,
+        "clsMaximo": 0.0187,
+        "load": 1948,
+        "bloqueio": 199,
+        "tarefasLongas": 2,
+        "mapaPronto": null,
+        "transferidoAteOLoad": 346517,
+        "transferidoTotal": 346517,
+        "arquivosTotal": 884630,
+        "pedidos": 11
+      },
+      "lcpElemento": {
+        "tag": "p",
+        "classes": "reading text-xl leading-snug",
+        "texto": "O que o atlas registra, como seleciona, de onde tira cada afirmação, c",
+        "area": 26775
+      },
+      "deslocamentos": [
+        {
+          "t": 2036.5,
+          "valor": 0.018727171533571885,
+          "aposEntrada": false,
+          "nos": [
+            {
+              "tag": "div",
+              "classes": "mt-8 grid gap-x-14 gap-y-8 lg:grid-cols-[14rem_minmax(0,1fr)]",
+              "texto": "Nesta páginaObjetivo e escopoSeleção dos acontecimentosFontesRevisãoDa"
+            },
+            {
+              "tag": "p",
+              "classes": "text-sm text-ink-soft ",
+              "texto": "Edição 0.1.0 · registros até 8 de outubro de 2026 · conferência com as"
+            }
+          ]
+        }
+      ],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 11,
+            "transferido": 346517,
+            "arquivo": 884630
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 30405,
+              "arquivo": 198304
+            },
+            "javascript": {
+              "pedidos": 7,
+              "transferido": 143635,
+              "arquivo": 471271
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 11,
+            "transferido": 346517,
+            "arquivo": 884630
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 30405,
+              "arquivo": 198304
+            },
+            "javascript": {
+              "pedidos": 7,
+              "transferido": 143635,
+              "arquivo": 471271
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/metodologia/",
+            "tipo": "documento",
+            "transferido": 30405,
+            "arquivo": 198304
+          },
+          {
+            "caminho": "/_next/static/media/libre_franklin_latin-s.p.07n4at6ntqcqu.woff2",
+            "tipo": "fonte",
+            "transferido": 29526,
+            "arquivo": 29292
+          },
+          {
+            "caminho": "/_next/static/chunks/3dq6mtb_uoy25.css",
+            "tipo": "css",
+            "transferido": 10716,
+            "arquivo": 53763
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": []
+      },
+      "execucoes": [
+        {
+          "ttfb": 2.7000000029802322,
+          "fcp": 1288,
+          "lcp": 1288,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading text-xl leading-snug",
+            "texto": "O que o atlas registra, como seleciona, de onde tira cada afirmação, c",
+            "area": 26775
+          },
+          "fontes": 1927.4000000059605,
+          "cls": 0.018727171533571885,
+          "domContentLoaded": 662.5999999940395,
+          "load": 1948.0999999940395,
+          "tarefasLongas": 2,
+          "bloqueio": 215,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.2999999970197678,
+          "fcp": 1348,
+          "lcp": 1348,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading text-xl leading-snug",
+            "texto": "O que o atlas registra, como seleciona, de onde tira cada afirmação, c",
+            "area": 26775
+          },
+          "fontes": 1922.9000000059605,
+          "cls": 0.018727171533571885,
+          "domContentLoaded": 642.2000000029802,
+          "load": 1953.7000000029802,
+          "tarefasLongas": 2,
+          "bloqueio": 199,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.300000011920929,
+          "fcp": 1300,
+          "lcp": 1300,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading text-xl leading-snug",
+            "texto": "O que o atlas registra, como seleciona, de onde tira cada afirmação, c",
+            "area": 26775
+          },
+          "fontes": 1922.4000000059605,
+          "cls": 0.018727171533571885,
+          "domContentLoaded": 638.4000000059605,
+          "load": 1936.800000011921,
+          "tarefasLongas": 2,
+          "bloqueio": 201,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.3999999910593033,
+          "fcp": 1440,
+          "lcp": 1440,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading text-xl leading-snug",
+            "texto": "O que o atlas registra, como seleciona, de onde tira cada afirmação, c",
+            "area": 26775
+          },
+          "fontes": 1950.5,
+          "cls": 0.018727171533571885,
+          "domContentLoaded": 706.5,
+          "load": 1969.2000000029802,
+          "tarefasLongas": 3,
+          "bloqueio": 178,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 2.3999999910593033,
+          "fcp": 1412,
+          "lcp": 1412,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "reading text-xl leading-snug",
+            "texto": "O que o atlas registra, como seleciona, de onde tira cada afirmação, c",
+            "area": 26775
+          },
+          "fontes": 1924.8999999910593,
+          "cls": 0.018727171533571885,
+          "domContentLoaded": 682.8999999910593,
+          "load": 1934.7999999970198,
+          "tarefasLongas": 2,
+          "bloqueio": 196,
+          "mapa": {
+            "naAbertura": false
+          }
+        }
+      ]
+    }
+  ]
+}

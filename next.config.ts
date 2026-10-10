@@ -46,8 +46,9 @@ export default function nextConfig(phase: string): NextConfig {
     // `/rota` vira `out/rota/index.html`, formato que qualquer hospedagem de
     // arquivos serve sem regra de reescrita.
     trailingSlash: true,
-    // Sem servidor não há otimização de imagem em tempo de execução; as
-    // imagens serão preparadas localmente antes do build (fase 8).
+    // Sem servidor não há otimização de imagem em tempo de execução. Os
+    // retratos são preparados localmente antes do build (`npm run images`) e
+    // pedidos por uma `<img>` com `srcset` próprio (docs/DECISIONS.md, D-74 e D-75).
     images: { unoptimized: true },
     reactStrictMode: true,
     pageExtensions,

@@ -1,6 +1,6 @@
 # Sistema de design
 
-Fases 4 a 7. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. As fases 5, 6 e 7 não criaram token nem cor: acrescentaram componentes sobre a mesma base. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
+Fases 4 a 8. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. As fases 5 a 8 não criaram cor nem família tipográfica: acrescentaram componentes sobre a mesma base. A fase 8 afinou a escala da leitura, o enquadramento dos retratos e o movimento. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
 
 Regra geral: **os tokens de `src/app/globals.css` são a única origem das cores, das famílias e das medidas de movimento.** Os componentes usam as classes geradas a partir deles (`bg-paper`, `text-ink-soft`, `font-serif`). Cor escrita direto em um componente é erro.
 
@@ -75,22 +75,26 @@ Duas famílias, em arquivos locais (`src/app/fonts/`, licença OFL 1.1), carrega
 
 | Família | Classe | Onde |
 | --- | --- | --- |
-| Newsreader (variável, 200 a 800, com itálico) | `font-serif` | Nome do atlas, títulos, nome das pessoas, resumo e contexto |
+| Newsreader (variável, 200 a 800, só em romano) | `font-serif` | Nome do atlas, títulos, nome das pessoas, resumo e contexto |
 | Libre Franklin (variável, 100 a 900) | `font-sans` | Interface, rótulos, metadados e todos os números |
+
+Enquanto o arquivo de uma fonte não chega, o texto aparece em um substituto de medidas ajustadas, e a troca é feita sem esconder nada (`font-display: swap`). Só a sem serifa é pré-carregada: a fase 8 mediu o pré-carregamento da serifada, e ele atrasava o primeiro desenho sem adiantar a fonte (PERFORMANCE.md, seção Fontes). O itálico serifado saiu do projeto na fase 8, por não ter uso; as notas em itálico são da sem serifa (`src/app/fonts/README.md`).
 
 ### Escala em uso
 
 | Papel | Família | Tamanho | Entrelinha | Peso |
 | --- | --- | --- | --- | --- |
 | Nome do atlas na entrada | Serifada | 52 px; 72 px a partir de 768 px | 0,95 | 500 |
-| Título de página (comparação, guia) | Serifada | 48 px; 60 px a partir de 768 px | 1 | 500 |
+| Título de página (comparação, guia) | Serifada | 40 px na comparação e 48 px no guia; 60 px a partir de 768 px | 1 | 500 |
 | Título de acontecimento na página | Serifada | 34 px; 52 px a partir de 768 px | 1,08 | 500 |
 | Título de seção | Serifada | 24 a 30 px | 1,2 a 1,33 | 500 |
-| Título no painel de leitura | Serifada | 24 px | 1,25 | 500 |
+| Título no painel de leitura | Serifada | 28 px | 1,15 | 500 |
+| Nome no perfil | Serifada | 32 px | 1 | 500 |
+| Apresentação no perfil | Serifada | 17 px | 1,6 | 400 |
 | Título de item da lista | Serifada | 17 px | 1,375 | 500 |
 | Resumo na página do acontecimento | Serifada | 22 px | 1,45 | 400 |
 | Texto de leitura (`reading`) | Serifada | 18 px | 1,65 | 400 |
-| Data por extenso em destaque | Sem serifa | 28 px no painel; 30 a 40 px na página | 1 | 600 |
+| Data por extenso, acima do título | Sem serifa | 18 px no painel; 20 px na página, 24 px a partir de 768 px | 1 | 600 |
 | Ano na lista (`DateMark`) | Sem serifa | 17 px | 1 | 600 |
 | Texto de interface | Sem serifa | 14 px | 1,43 | 400 a 500 |
 | Texto pequeno | Sem serifa | 12 px | 1,33 | 400 |
@@ -104,6 +108,8 @@ Utilitários próprios, definidos em `globals.css`:
 | `numerals` | Números alinhados e de mesma largura, para anos e datas em coluna |
 | `reading` | Texto de leitura longa, serifado, 18 px com entrelinha 1,65 |
 | `page` | Largura útil das páginas (até 1312 px) com a margem lateral do projeto |
+
+**Hierarquia da leitura.** O título é a âncora: é o que se lê primeiro no painel e na página do acontecimento. A data vem acima dele, em sem serifa de peso 600 e números de mesma largura, forte e menor. Na fase 4 a data era maior do que o título, e os dois disputavam. Abaixo vêm o resumo, o contexto em tinta suave e, com rótulo próprio, cargos, lugares e fontes.
 
 O texto de leitura não ocupa a largura da tela: na página do acontecimento o resumo fica em uma coluna de até 672 px e o contexto em até 608 px; no painel da exploração, a coluna tem cerca de 390 px.
 
@@ -163,11 +169,14 @@ Todos em `src/components/` (base, sem estado) ou em `src/features/` (ligados a u
 | Componente | Arquivo | Notas |
 | --- | --- | --- |
 | `PersonCard` | `src/components/PersonCard.tsx` | Cartão da entrada. Retrato 4:5, nome, período coberto, quantidade de registros e a chamada. O cartão inteiro é o link |
-| `Portrait` | `src/components/Portrait.tsx` | Moldura 4:5 ou quadrada, foto em tons de cinza mesclada ao papel, recorte pelo topo. Sem arquivo, mostra as iniciais na mesma área |
+| `Portrait` | `src/components/Portrait.tsx` | Moldura 4:5 ou quadrada, foto em tons de cinza mesclada ao papel. Pede a versão já recortada para a moldura, na largura que a tela precisa (`srcset`), com as dimensões declaradas. Três modos de carregamento: prioritária, imediata e adiada. Sem arquivo, mostra as iniciais na mesma área |
 | `PortraitCredit` | `src/components/Portrait.tsx` | Crédito e o tratamento aplicado: "Exibida em tons de cinza e recortada". Com `detail`, traz também o link para a página de origem e o caminho para as condições de uso, na metodologia |
-| `ProfilePanel` | `src/components/ProfilePanel.tsx` | Perfil no painel: retrato, resumo, caminhos (`actions`), cargos e funções e partidos com as fontes de cada registro, cobertura da edição, fontes do perfil, revisão, edição e crédito do retrato |
+| `ProfilePanel` | `src/components/ProfilePanel.tsx` | Perfil no painel: retrato, resumo, caminhos (`actions`), cargos e funções e partidos com as fontes de cada registro, cobertura da edição, fontes do perfil, revisão, edição e crédito do retrato. Os registros ficam em um componente que só é refeito quando os dados mudam |
 | `SiteNav` | `src/components/SiteNav.tsx` | Destinos do cabeçalho, com os perfis em ordem alfabética |
+| `IntentLink` | `src/components/IntentLink.tsx` | Link que só adianta o destino quando a pessoa aponta, toca ou foca. Para o menu, o nome do atlas, **Comparar as trajetórias** e os caminhos da página 404. Não tem desenho próprio |
 | `PersonSwitch` | `src/components/PersonSwitch.tsx` | Troca de pessoa dentro da exploração. Todos os perfis, em ordem alfabética e com o mesmo desenho: o aberto em tinta, com `aria-current`, e os outros como links. Dois tamanhos: de toque (44 px) e compacto (24 px), para a barra em tela larga |
+
+**Enquadramento dos retratos.** As duas fotos oficiais têm cortes diferentes. As versões que as páginas usam saem de um enquadramento definido para cada uma (`scripts/images.config.json`), de modo que, na mesma moldura, a linha dos olhos fique na mesma altura e o rosto tenha o mesmo tamanho. A moldura 4:5 serve aos cartões e ao perfil; a quadrada, às miniaturas. O tratamento em tons de cinza continua sendo de CSS, e o arquivo original não é alterado (PERFORMANCE.md, seção Imagens).
 
 ### Marcações temporais
 
@@ -260,6 +269,8 @@ Lugares próximos dividem um marcador, e o texto ao lado passa a dizer quantos s
 **Seletor.** Quadro de papel elevado com borda de tinta, e uma das duas sombras do atlas, porque flutua sobre o mapa. Cabeçalho com o rótulo "No mapa", o nome do lugar em serifada e a quantidade. Um trecho por lugar, com o nome em negrito e a precisão da coordenada. Cada acontecimento é um botão de 44 px ou mais: data, título em serifada e categoria com a forma. O selecionado usa o mesmo filete e o mesmo fundo de acento da lista de acontecimentos. Em tela estreita é uma folha de lado a lado, na parte de baixo do mapa; nas demais, um quadro de 320 px no canto esquerdo.
 
 **Controles.** Três botões empilhados, de papel elevado com borda, 44 px em telas estreitas e médias e 36 px em tela larga. Desativado: traço na cor de linha.
+
+**Carregando.** A moldura na cor do mar, já no tamanho final, com "Carregando o mapa…" e, abaixo do texto, um traço de 2 px que vai e volta sobre um trilho na cor da grade. Pronto, o mapa entra com 180 ms de opacidade.
 
 **Legenda.** Resumo de uma linha, sempre à vista ("Legenda · pontos aproximados"). Aberta, mostra só os símbolos que o recorte em vigor usa, cada um com o próprio `MarkerSymbol`, e o texto sobre a base. O fundo é papel elevado a 95%, e a 98% com a legenda aberta: nunca opaco, pelo motivo descrito em MAP.md.
 

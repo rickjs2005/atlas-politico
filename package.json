@@ -6,8 +6,8 @@
     "node": "^22.18.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
-    "dev": "npm run data:build && next dev",
-    "build": "npm run data:build && next build",
+    "dev": "npm run data:build && npm run images:check && next dev",
+    "build": "npm run data:build && npm run images:check && next build && node scripts/finalize-export.mjs",
     "preview": "node scripts/preview.mjs",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
@@ -17,7 +17,13 @@
     "capture:timeline": "playwright test --project=capturas linha-do-tempo.capture",
     "capture:map": "playwright test --project=capturas mapa.capture",
     "capture:pages": "playwright test --project=capturas paginas.capture",
+    "capture:finish": "playwright test -c playwright.export.config.ts --project=capturas",
+    "test:export": "playwright test -c playwright.export.config.ts --project=exportacao",
     "verify:export": "node scripts/check-export.mjs",
+    "measure": "node scripts/measure.mjs",
+    "measure:report": "node scripts/measure-report.mjs",
+    "images": "node --import ./scripts/register.mjs scripts/images.mts",
+    "images:check": "node --import ./scripts/register.mjs scripts/images.mts --check",
     "data:validate": "node --import ./scripts/register.mjs scripts/data.mts validate",
     "data:build": "node --import ./scripts/register.mjs scripts/data.mts build",
     "data:report": "node --import ./scripts/register.mjs scripts/data.mts report",
@@ -42,6 +48,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.0.3"

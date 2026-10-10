@@ -100,7 +100,7 @@ Recarregar, voltar e avançar restauram a mesma consulta. Não há ciclo entre e
 
 ### Exportação estática
 
-A página é gerada no build sem query string. O HTML traz as duas trajetórias inteiras, no recorte inicial, e o endereço é lido depois da hidratação. Quem chega por um link com consulta vê o recorte inicial por um instante. É o mesmo comportamento da exploração (D-49).
+A página é gerada no build sem query string. O HTML traz as duas trajetórias inteiras, no recorte inicial, e o endereço é lido depois da hidratação. Quem chega por um link com consulta vê as trajetórias encobertas, com o aviso "Abrindo a consulta do endereço…", até o endereço ser lido: a tela aparece já no recorte pedido (DECISIONS.md, D-83). É o mesmo comportamento da exploração (D-49).
 
 ## Mesma escala, mesmo recorte
 

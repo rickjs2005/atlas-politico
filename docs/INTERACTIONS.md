@@ -1,6 +1,6 @@
 # Interações
 
-Fases 4 a 7. Como a exploração se comporta: o estado que as partes compartilham, o que cada ação faz em cada largura, o teclado, os estados previstos, o movimento e o contrato do que ainda é demonstração. As telas estão em [UX.md](UX.md), os componentes em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) a navegação temporal, com o endereço e o histórico, em [TIMELINE.md](TIMELINE.md), e o mapa, em [MAP.md](MAP.md). A comparação está em [COMPARISON.md](COMPARISON.md); as páginas, as fontes e o compartilhamento, em [PAGES.md](PAGES.md).
+Fases 4 a 8. Como a exploração se comporta: o estado que as partes compartilham, o que cada ação faz em cada largura, o teclado, os estados previstos, o movimento e o contrato do que ainda é demonstração. As telas estão em [UX.md](UX.md), os componentes em [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) a navegação temporal, com o endereço e o histórico, em [TIMELINE.md](TIMELINE.md), e o mapa, em [MAP.md](MAP.md). A comparação está em [COMPARISON.md](COMPARISON.md); as páginas, as fontes e o compartilhamento, em [PAGES.md](PAGES.md). O que cada tela carrega, e quando, está em [PERFORMANCE.md](PERFORMANCE.md).
 
 ## Estado compartilhado
 
@@ -43,8 +43,8 @@ O que acontece ao escolher um acontecimento, por origem e por largura:
 
 Em qualquer caso, as quatro partes passam a mostrar o mesmo acontecimento:
 
-- **Lista:** filete de acento à esquerda, fundo de acento suave e `aria-pressed="true"`.
-- **Linha do tempo:** anel de acento em volta da marca, haste até o eixo e `aria-pressed="true"`. Em tela estreita, a faixa rola até a marca ficar à vista.
+- **Lista:** filete de acento à esquerda, fundo de acento suave e `aria-pressed="true"`. Quando a seleção vem do mapa, da linha do tempo ou do endereço, a lista rola até o item, por dentro dela: a página não se move, e o foco fica onde a pessoa está. Se o item já está à vista, nada rola.
+- **Linha do tempo:** anel de acento em volta da marca, haste até o eixo e `aria-pressed="true"`. Em tela estreita, a faixa rola até a marca ficar à vista, inclusive quando ela volta à tela depois de uma leitura.
 - **Mapa:** os marcadores de todos os lugares do acontecimento ganham um anel de acento, inclusive quando o lugar está agrupado com outros. A câmera só se move se algum desses lugares não estiver à vista: então vai ao lugar, ou enquadra todos. Com o cartão aberto em tela estreita, o enquadramento deixa os lugares acima dele. Acontecimento sem ponto não move a câmera, e o mapa diz o motivo.
 - **Leitura:** o acontecimento, com título, data, resumo, contexto, lugares, fontes e revisão.
 
@@ -103,7 +103,7 @@ Fase 7. O desenho de cada tela está em COMPARISON.md e PAGES.md; aqui fica o qu
 | Parte | Comportamento |
 | --- | --- |
 | Primeiro Tab da página | Link **Pular para o conteúdo** |
-| Cabeçalho | Links em ordem; em tela estreita, o botão **Menu** abre o painel (`aria-expanded`) e Esc o fecha |
+| Cabeçalho | Links em ordem; em tela estreita, o botão **Menu** abre o painel (`aria-expanded`) e Esc o fecha. O foco em um link do menu já começa a adiantar o destino, como o ponteiro |
 | Filtros | Campos nativos de seleção e botões; Tab na ordem de leitura. Em um campo de ano, as setas percorrem os anos e a consulta acompanha; a sequência inteira conta como um passo no histórico |
 | Troca de pessoa | Links, na ordem do documento; o perfil aberto não é link e leva `aria-current="page"` |
 | Cargos e partidos do período | Elemento nativo de abrir e fechar: Enter ou espaço no título |
@@ -138,7 +138,9 @@ Não verificado nesta fase: leitura real com NVDA, VoiceOver ou TalkBack. A estr
 
 | Estado | O que a interface mostra | Onde ver |
 | --- | --- | --- |
-| Mapa carregando | Moldura na cor do mar com "Carregando o mapa…" (`role="status"`). A lista e a linha do tempo já funcionam | Qualquer exploração, nos primeiros instantes |
+| Mapa carregando | Moldura na cor do mar, já no tamanho final, com "Carregando o mapa…" e um traço que vai e volta (`role="status"`). A lista e a linha do tempo já funcionam. Pronto, o mapa entra com 180 ms de opacidade, sem deslocar nada | Qualquer exploração, nos primeiros instantes |
+| Mapa fora da área visível | Não é carregado: nem o pacote, nem os contornos. Começa a carregar quando a moldura chega a 400 px da área visível | Página de um acontecimento em celular; exploração em celular, fora da vista **Mapa** |
+| Acontecimento aberto, com o perfil por baixo | O perfil continua montado, escondido da tela e de leitores de tela. Ao fechar a leitura, volta como estava, com as fontes que a pessoa tinha aberto | Abrir as fontes de um cargo, abrir um acontecimento e fechar |
 | Nada selecionado | Painel com o perfil da pessoa (tela larga); lista inteira (demais) | `/politicos/lula/` |
 | Acontecimento selecionado | Marcado nas quatro partes | Clicar em qualquer item |
 | Período ou categoria sem registros | "Nenhum registro do atlas neste recorte. Isso indica falta de registro nesta edição, e não falta de atividade pública no período." e o botão **Limpar período e categorias**. Mapa sem pontos; linha do tempo sem marcas, com o período em claro | `/politicos/lula/?de=1996&ate=2001` |
@@ -158,6 +160,7 @@ Não verificado nesta fase: leitura real com NVDA, VoiceOver ou TalkBack. A estr
 | Perfil sem retrato | Iniciais do nome na mesma moldura | Só no guia `/dev/previa/` |
 | Falha do mapa | Uma mensagem com o motivo, a saída quando há (**Tentar de novo** ou **Recarregar a página**) e a lista de lugares do recorte, com coordenada e precisão, selecionável | Guia `/dev/previa/`; `/dev/prova/`, com **Simular navegador sem WebGL** |
 | Desenho do mapa interrompido | "O navegador interrompeu o desenho do mapa. Tentando retomar…", sobre o mapa. Se o navegador não devolver o contexto em 5 segundos, a lista de lugares assume | Só em teste, com a extensão `WEBGL_lose_context` |
+| Link com consulta, antes de o endereço ser lido | A área que depende da consulta fica encoberta, com o aviso "Abrindo a consulta do endereço…" (`role="status"`). O nome da pessoa e o cabeçalho continuam à vista. Lido o endereço, a tela aparece já no recorte pedido; se o código da página não chegar, aparece sozinha em 6 segundos, no recorte padrão | Qualquer endereço de exploração ou de comparação com `de`, `ate`, `categorias` ou `acontecimento`, em rede lenta |
 | Endereço com parâmetro inválido | O parâmetro é descartado sozinho, a página abre com o resto e o endereço é corrigido no lugar | `/politicos/lula/?acontecimento=nao-existe&de=abcd` |
 | Acontecimento de outro perfil ou fora do recorte pedido | Não abre: o painel fica no perfil e os filtros valem | `/politicos/lula/?de=2020&ate=2022&acontecimento=lula-2018-prisao-em-curitiba` |
 | Janela baixa, em tela média ou larga | O mapa fica com pelo menos 40% da altura da área de trabalho; a linha do tempo rola por dentro | Janela de 1280×720 |
@@ -197,10 +200,26 @@ Curto e com função. Duas durações e uma curva, em tokens:
 | Linha do tempo rola até o período escolhido, em tela estreita | A mesma rolagem | Mostrar o trecho em claro, e não só a hachura |
 | Rótulo e faixa do ano sob o ponteiro, no eixo | Sem transição | Seguir o ponteiro sem atraso |
 | Seta do bloco de cargos e partidos gira ao abrir | 120 ms | Dizer que o bloco abriu |
+| Vista que entra (lista, mapa ou leitura), onde as vistas se alternam | 180 ms, opacidade e 4 px | Mostrar que a vista trocou. Só em telas estreitas e médias, e só depois da primeira troca feita pela pessoa |
+| Área de trabalho, ao chegar de outro perfil | 180 ms, opacidade e 4 px | Marcar a troca de pessoa. Quem abre a página direto não vê a transição |
+| Linha com o período e a quantidade, sobre a lista, ao mudar o recorte | 180 ms, opacidade e 4 px | Dizer que o resultado mudou, mesmo quando a lista parece a mesma |
+| Marcadores do mapa e marcas da linha do tempo que entram no recorte | 180 ms, só opacidade | Mostrar o que entrou. A posição deles é dada por `transform`, e por isso não sobem |
+| Hachura do período, ao mudar o período pelos campos | 180 ms, na largura | Acompanhar o intervalo. Durante o arraste no eixo não há transição: a hachura segue o ponteiro |
+| Anel de seleção nos marcadores e nas marcas | 120 ms | Mostrar para onde a seleção foi |
+| Lista rola até o item selecionado em outra parte | Rolagem suave do navegador | Manter as partes no mesmo acontecimento |
+| Mapa, ao terminar de carregar | 180 ms, opacidade | Entrar sobre a moldura sem um corte seco |
+| Traço do aviso de carregamento do mapa | 1,1 s, vai e volta | Dizer que o mapa está a caminho |
 
-Não há animação de entrada de página, rolagem com efeito, paralaxe nem movimento contínuo.
+Regras, com teste (`tests/e2e/acabamento.spec.ts`):
 
-**Movimento reduzido.** Com `prefers-reduced-motion: reduce`, as animações e transições de CSS caem para 0,01 ms, a rolagem da linha do tempo é imediata e o MapLibre troca o movimento de câmera por um salto. As mudanças de estado são as mesmas. Os testes de navegador rodam nesse modo.
+- **O estado vem antes.** O endereço muda no próprio clique, e a tela já é a nova antes de o navegador desenhar o primeiro quadro. Nenhuma ação espera uma transição terminar.
+- **Só CSS.** As transições são de opacidade, de `transform` e de cor, com as duas durações do atlas. Não há fila de animações em JavaScript: uma sequência rápida de cliques deixa na tela só o último estado.
+- **Nada ao carregar.** A página abre sem animação de entrada. As transições de vista e de recorte só passam a valer depois da primeira ação da pessoa.
+- **A câmera do mapa** segue as regras da fase 6 (MAP.md, seção Câmera): nada mudou.
+
+Não há rolagem com efeito nem paralaxe. O único movimento contínuo é o traço do aviso de carregamento do mapa.
+
+**Movimento reduzido.** Com `prefers-reduced-motion: reduce`, as animações e transições de CSS caem para 0,01 ms, o traço do carregamento fica parado, a rolagem da lista e da linha do tempo é imediata e o MapLibre troca o movimento de câmera por um salto. As mudanças de estado são as mesmas. As duas regras do link com consulta, que usam uma animação como relógio para revelar a tela se o código não chegar, ficam fora dessa redução. Os testes de navegador rodam nesse modo; os de transição ligam o movimento de propósito.
 
 ## Em demonstração
 
@@ -218,4 +237,4 @@ O que funciona mas ainda não é a implementação final, e o contrato que a fas
 | Lugares fora da América do Sul | Não são desenhados; entram na lista **sem ponto no mapa**, com o nome | Um contorno mundial e a caixa de `MAP_LIMITS` ampliada (`src/features/map/base/README.md`) |
 | Guia de estados | `/dev/previa/`, só no servidor de desenvolvimento | Não entra no build |
 
-O que não é demonstração: a seleção compartilhada, os filtros, a consulta no endereço com voltar e avançar, a troca de pessoa, a lista cronológica com lacunas, os cargos e partidos do período, o mapa sincronizado com o seletor de lugares, a composição por largura, o painel, o perfil, a página do acontecimento com o retorno, as fontes, a comparação com a consulta no endereço, a cópia do link, a metodologia, os estados de falha e a página 404 usam os dados gerados reais e têm teste de navegador (`tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts` e `tests/e2e/paginas.spec.ts`).
+O que não é demonstração: a seleção compartilhada, os filtros, a consulta no endereço com voltar e avançar, a troca de pessoa, a lista cronológica com lacunas, os cargos e partidos do período, o mapa sincronizado com o seletor de lugares, a composição por largura, o painel, o perfil, a página do acontecimento com o retorno, as fontes, a comparação com a consulta no endereço, a cópia do link, a metodologia, as transições, o carregamento adiado do mapa, os estados de falha e a página 404 usam os dados gerados reais e têm teste de navegador (`tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts`, `tests/e2e/paginas.spec.ts` e `tests/e2e/acabamento.spec.ts`, mais `tests/export/carregamento.spec.ts`, sobre a saída estática).

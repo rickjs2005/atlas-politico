@@ -48,7 +48,7 @@ export function MarkerSymbol({ categoria, count, broad = false, selected = false
   if (count === 1 && categoria) {
     return (
       <span
-        className={`grid size-6 place-items-center rounded-full border border-ink bg-raised ${broad ? "border-dashed" : ""} ${anel}`}
+        className={`grid size-6 place-items-center rounded-full border border-ink bg-raised transition-shadow duration-[var(--atlas-fast)] ${broad ? "border-dashed" : ""} ${anel}`}
       >
         <CategoryMark categoria={categoria} size={12} />
       </span>
@@ -57,7 +57,7 @@ export function MarkerSymbol({ categoria, count, broad = false, selected = false
 
   return (
     <span
-      className={`numerals grid h-7 min-w-7 place-items-center rounded-full border-2 border-raised bg-ink px-1.5 text-[0.8125rem] font-semibold leading-none text-paper ${broad ? tracejado : ""} ${anel}`}
+      className={`numerals grid h-7 min-w-7 place-items-center rounded-full border-2 border-raised bg-ink px-1.5 text-[0.8125rem] font-semibold leading-none text-paper transition-shadow duration-[var(--atlas-fast)] ${broad ? tracejado : ""} ${anel}`}
     >
       {count}
     </span>
@@ -107,7 +107,8 @@ export function PlaceMarker({ group, selected, open, controls, onActivate }: Pla
     </>
   );
 
-  const base = "relative grid size-11 place-items-center rounded-full";
+  // O marcador que entra no recorte aparece com uma transição curta de opacidade.
+  const base = "relative grid size-11 animate-fade place-items-center rounded-full";
   const dados = {
     "data-marker": group.id,
     "data-events": group.events.map((item) => item.slug).join(" "),

@@ -1,0 +1,660 @@
+{
+  "rotulo": "acontecimento-sem-pre-carregamento",
+  "medidoEm": "2026-10-09T19:40:41.146Z",
+  "condicoes": {
+    "tipo": "laboratório",
+    "pasta": "build final, sem o pré-carregamento de fonte nas páginas de acontecimento (sem o passo 3 de scripts/finalize-export.mjs)",
+    "servidor": "scripts/preview.mjs, local, com gzip nos arquivos de texto",
+    "navegador": "Chromium 153.0.8010.12, sem interface",
+    "webgl": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "cache": "vazio a cada execução",
+    "execucoes": 7,
+    "resultado": "mediana das execuções",
+    "ordem": "execuções alternadas com as de acontecimento-com-pre-carregamento",
+    "perfis": {
+      "computador": "1440×900, rede a 10 Mbit/s com 40 ms de latência, CPU sem limite",
+      "celular": "390×844, toque, rede a 1,6 Mbit/s com 150 ms de latência, CPU 4 vezes mais lenta"
+    },
+    "maquina": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 8 núcleos, 8 GB, win32 10.0.26300, Node v24.15.0"
+  },
+  "resultados": [
+    {
+      "perfil": "computador",
+      "rota": "acontecimento",
+      "caminho": "/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/",
+      "mediana": {
+        "ttfb": 4,
+        "fcp": 296,
+        "lcp": 296,
+        "fontes": 541,
+        "cls": 0.0001,
+        "clsMaximo": 0.0001,
+        "load": 784,
+        "bloqueio": 4,
+        "tarefasLongas": 1,
+        "bloqueioDosQuadros": 51,
+        "quadrosLongos": 2,
+        "mapaPronto": 1252,
+        "transferidoAteOLoad": 628817,
+        "transferidoTotal": 844784,
+        "arquivosTotal": 2638820,
+        "pedidos": 19
+      },
+      "lcpElemento": {
+        "tag": "h1",
+        "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+        "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+        "area": 81000
+      },
+      "deslocamentos": [],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 16,
+            "transferido": 628817,
+            "arquivo": 1875752
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 8829,
+              "arquivo": 44846
+            },
+            "javascript": {
+              "pedidos": 10,
+              "transferido": 435675,
+              "arquivo": 1532049
+            },
+            "css": {
+              "pedidos": 2,
+              "transferido": 21481,
+              "arquivo": 136725
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 1071,
+              "arquivo": 840
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 19,
+            "transferido": 844784,
+            "arquivo": 2638820
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 8829,
+              "arquivo": 44846
+            },
+            "javascript": {
+              "pedidos": 11,
+              "transferido": 580746,
+              "arquivo": 2040363
+            },
+            "css": {
+              "pedidos": 2,
+              "transferido": 21481,
+              "arquivo": 136725
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 1071,
+              "arquivo": 840
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            },
+            "dados": {
+              "pedidos": 2,
+              "transferido": 70896,
+              "arquivo": 254754
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/chunks/0v_b7a2atw5z0.js",
+            "tipo": "javascript",
+            "transferido": 282919,
+            "arquivo": 1037834
+          },
+          {
+            "caminho": "/_next/static/media/maplibre-gl-worker.3kt9ml364_7vk.mjs",
+            "tipo": "javascript",
+            "transferido": 145071,
+            "arquivo": 508314
+          },
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/media/terra.1u7227buq3zqo.geojson",
+            "tipo": "dados",
+            "transferido": 46748,
+            "arquivo": 165426
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": []
+      },
+      "execucoes": [
+        {
+          "ttfb": 6.200000017881393,
+          "fcp": 264,
+          "lcp": 264,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 648.3000000119209,
+          "cls": 5.8180217978395054e-05,
+          "domContentLoaded": 248.7000000178814,
+          "load": 1140.2000000178814,
+          "tarefasLongas": 1,
+          "bloqueio": 7,
+          "quadrosLongos": 2,
+          "bloqueioDosQuadros": 44.7,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 133.59999999403954,
+            "canvas": 1173.4000000059605,
+            "pronto": 1633.300000011921
+          }
+        },
+        {
+          "ttfb": 3.7999999821186066,
+          "fcp": 284,
+          "lcp": 284,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 532.1999999880791,
+          "cls": 5.8180217978395054e-05,
+          "domContentLoaded": 270.59999999403954,
+          "load": 768.7999999821186,
+          "tarefasLongas": 0,
+          "bloqueio": 0,
+          "quadrosLongos": 1,
+          "bloqueioDosQuadros": 38.9,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 125.2999999821186,
+            "canvas": 831,
+            "pronto": 1237.9000000059605
+          }
+        },
+        {
+          "ttfb": 3.7000000178813934,
+          "fcp": 300,
+          "lcp": 300,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 546.6000000238419,
+          "cls": 5.8180217978395054e-05,
+          "domContentLoaded": 286.80000001192093,
+          "load": 774.4000000059605,
+          "tarefasLongas": 1,
+          "bloqueio": 2,
+          "quadrosLongos": 2,
+          "bloqueioDosQuadros": 37.099999999999994,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 152.30000001192093,
+            "canvas": 808.5,
+            "pronto": 1252
+          }
+        },
+        {
+          "ttfb": 3.5,
+          "fcp": 296,
+          "lcp": 296,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 541.1999999880791,
+          "cls": 5.8180217978395054e-05,
+          "domContentLoaded": 326.19999998807907,
+          "load": 788.5999999940395,
+          "tarefasLongas": 1,
+          "bloqueio": 9,
+          "quadrosLongos": 2,
+          "bloqueioDosQuadros": 53.099999999999994,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 132.69999998807907,
+            "canvas": 833.3999999761581,
+            "pronto": 1286.3999999761581
+          }
+        },
+        {
+          "ttfb": 3.2999999821186066,
+          "fcp": 320,
+          "lcp": 320,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 542.0999999940395,
+          "cls": 5.8180217978395054e-05,
+          "domContentLoaded": 349,
+          "load": 794.4000000059605,
+          "tarefasLongas": 1,
+          "bloqueio": 4,
+          "quadrosLongos": 2,
+          "bloqueioDosQuadros": 51.1,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 138.69999998807907,
+            "canvas": 842,
+            "pronto": 1248.2999999821186
+          }
+        },
+        {
+          "ttfb": 3.4000000059604645,
+          "fcp": 300,
+          "lcp": 300,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 538.7000000178814,
+          "cls": 5.8180217978395054e-05,
+          "domContentLoaded": 286.59999999403954,
+          "load": 783.7000000178814,
+          "tarefasLongas": 1,
+          "bloqueio": 7,
+          "quadrosLongos": 3,
+          "bloqueioDosQuadros": 62.800000000000004,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 149.7000000178814,
+            "canvas": 821.3000000119209,
+            "pronto": 1258.300000011921
+          }
+        },
+        {
+          "ttfb": 3.5,
+          "fcp": 284,
+          "lcp": 284,
+          "lcpElemento": {
+            "tag": "h1",
+            "classes": "font-serif text-[2.125rem] font-medium leading-[1.08] tracking-[-0.015em] md:text-[3.25rem",
+            "texto": "Lula decreta intervenção federal na segurança pública do Distrito Fede",
+            "area": 81000
+          },
+          "fontes": 497.7000000178814,
+          "cls": 5.8180217978395054e-05,
+          "domContentLoaded": 269.30000001192093,
+          "load": 767.3000000119209,
+          "tarefasLongas": 0,
+          "bloqueio": 0,
+          "quadrosLongos": 1,
+          "bloqueioDosQuadros": 51.7,
+          "mapa": {
+            "naAbertura": true,
+            "moldura": 131.2000000178814,
+            "canvas": 799.4000000059605,
+            "pronto": 1230.4000000059605
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "acontecimento",
+      "caminho": "/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/",
+      "mediana": {
+        "ttfb": 4,
+        "fcp": 1144,
+        "lcp": 1144,
+        "fontes": 2083,
+        "cls": 0.0218,
+        "clsMaximo": 0.0218,
+        "load": 2103,
+        "bloqueio": 182,
+        "tarefasLongas": 2,
+        "bloqueioDosQuadros": 593,
+        "quadrosLongos": 4,
+        "mapaPronto": null,
+        "transferidoAteOLoad": 334731,
+        "transferidoTotal": 334731,
+        "arquivosTotal": 754805,
+        "pedidos": 13
+      },
+      "lcpElemento": {
+        "tag": "p",
+        "classes": "font-serif text-[1.375rem] leading-[1.45]",
+        "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+        "area": 76254
+      },
+      "deslocamentos": [
+        {
+          "t": 2158.5999999940395,
+          "valor": 0.021768674581830873,
+          "aposEntrada": false,
+          "nos": [
+            {
+              "tag": "div",
+              "classes": "mt-8 grid gap-x-16 gap-y-10 lg:grid-cols-[minmax(0,42rem)_minmax(0,22rem)]",
+              "texto": "ResumoEm 8 de janeiro de 2023, Lula decretou intervenção federal na ár"
+            },
+            {
+              "tag": "div",
+              "classes": "min-w-0 ",
+              "texto": "Copiar link"
+            }
+          ]
+        }
+      ],
+      "recursos": {
+        "ateOLoad": {
+          "total": {
+            "pedidos": 13,
+            "transferido": 334731,
+            "arquivo": 754805
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 8829,
+              "arquivo": 44846
+            },
+            "javascript": {
+              "pedidos": 8,
+              "transferido": 151805,
+              "arquivo": 493516
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 1620,
+              "arquivo": 1388
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "total": {
+          "total": {
+            "pedidos": 13,
+            "transferido": 334731,
+            "arquivo": 754805
+          },
+          "porTipo": {
+            "documento": {
+              "pedidos": 1,
+              "transferido": 8829,
+              "arquivo": 44846
+            },
+            "javascript": {
+              "pedidos": 8,
+              "transferido": 151805,
+              "arquivo": 493516
+            },
+            "css": {
+              "pedidos": 1,
+              "transferido": 10716,
+              "arquivo": 53763
+            },
+            "imagem": {
+              "pedidos": 1,
+              "transferido": 1620,
+              "arquivo": 1388
+            },
+            "fonte": {
+              "pedidos": 2,
+              "transferido": 161761,
+              "arquivo": 161292
+            }
+          }
+        },
+        "maiores": [
+          {
+            "caminho": "/_next/static/media/newsreader_latin-s.0dc79pquxokce.woff2",
+            "tipo": "fonte",
+            "transferido": 132235,
+            "arquivo": 132000
+          },
+          {
+            "caminho": "/_next/static/chunks/3dmm3v_fq28gc.js",
+            "tipo": "javascript",
+            "transferido": 72270,
+            "arquivo": 229820
+          },
+          {
+            "caminho": "/_next/static/chunks/29r-xunj0ib4x.js",
+            "tipo": "javascript",
+            "transferido": 45912,
+            "arquivo": 164858
+          },
+          {
+            "caminho": "/_next/static/media/libre_franklin_latin-s.p.07n4at6ntqcqu.woff2",
+            "tipo": "fonte",
+            "transferido": 29526,
+            "arquivo": 29292
+          },
+          {
+            "caminho": "/_next/static/chunks/3dq6mtb_uoy25.css",
+            "tipo": "css",
+            "transferido": 10716,
+            "arquivo": 53763
+          },
+          {
+            "caminho": "/_next/static/chunks/0ceurjuwyjy96.js",
+            "tipo": "javascript",
+            "transferido": 10191,
+            "arquivo": 27139
+          }
+        ],
+        "externos": [],
+        "comErro": [],
+        "falhas": []
+      },
+      "execucoes": [
+        {
+          "ttfb": 5.800000011920929,
+          "fcp": 1116,
+          "lcp": 1116,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 2061.7000000178814,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 1134.9000000059605,
+          "load": 2084.100000023842,
+          "tarefasLongas": 2,
+          "bloqueio": 182,
+          "quadrosLongos": 4,
+          "bloqueioDosQuadros": 575.3000000000001,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 4.399999976158142,
+          "fcp": 1108,
+          "lcp": 1108,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 2053,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 1125.3999999761581,
+          "load": 2070.5,
+          "tarefasLongas": 2,
+          "bloqueio": 159,
+          "quadrosLongos": 4,
+          "bloqueioDosQuadros": 543.1,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 8,
+          "fcp": 1052,
+          "lcp": 1052,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 2007.800000011921,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 1078.699999988079,
+          "load": 2030.300000011921,
+          "tarefasLongas": 3,
+          "bloqueio": 216,
+          "quadrosLongos": 4,
+          "bloqueioDosQuadros": 529.6,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 3.4000000059604645,
+          "fcp": 1144,
+          "lcp": 1144,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 2082.5,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 1169.2999999821186,
+          "load": 2103.199999988079,
+          "tarefasLongas": 2,
+          "bloqueio": 176,
+          "quadrosLongos": 4,
+          "bloqueioDosQuadros": 593.3,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 3.5,
+          "fcp": 1176,
+          "lcp": 1176,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 2116.300000011921,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 1192.6000000238419,
+          "load": 2133.300000011921,
+          "tarefasLongas": 2,
+          "bloqueio": 182,
+          "quadrosLongos": 4,
+          "bloqueioDosQuadros": 623.5,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 3.2000000178813934,
+          "fcp": 1192,
+          "lcp": 1192,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 2136.7000000178814,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 1208.4000000059605,
+          "load": 2156.0999999940395,
+          "tarefasLongas": 2,
+          "bloqueio": 157,
+          "quadrosLongos": 4,
+          "bloqueioDosQuadros": 627.5,
+          "mapa": {
+            "naAbertura": false
+          }
+        },
+        {
+          "ttfb": 3.2999999821186066,
+          "fcp": 1200,
+          "lcp": 1200,
+          "lcpElemento": {
+            "tag": "p",
+            "classes": "font-serif text-[1.375rem] leading-[1.45]",
+            "texto": "Em 8 de janeiro de 2023, Lula decretou intervenção federal na área de ",
+            "area": 76254
+          },
+          "fontes": 2147.7999999821186,
+          "cls": 0.021768674581830873,
+          "domContentLoaded": 1224.4000000059605,
+          "load": 2166.4000000059605,
+          "tarefasLongas": 2,
+          "bloqueio": 183,
+          "quadrosLongos": 4,
+          "bloqueioDosQuadros": 649.0000000000001,
+          "mapa": {
+            "naAbertura": false
+          }
+        }
+      ]
+    }
+  ]
+}

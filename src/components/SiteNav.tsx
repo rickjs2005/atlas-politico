@@ -4,9 +4,10 @@
 // estreitas, viram um painel aberto por um botão, para o cabeçalho ocupar uma
 // linha só e deixar a tela para o conteúdo.
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
+
+import { IntentLink } from "./IntentLink";
 
 interface NavItem {
   href: string;
@@ -40,14 +41,15 @@ export function SiteNav({ items }: { items: readonly NavItem[] }) {
   const links = (onNavigate?: () => void) =>
     items.map((item) => (
       <li key={item.href}>
-        <Link
+        {/* O destino só é adiantado quando a pessoa aponta ou foca o link. */}
+        <IntentLink
           href={item.href}
           aria-current={isCurrent(item.href) ? "page" : undefined}
           onClick={onNavigate}
           className="block py-2 text-sm text-ink-soft underline-offset-[0.4em] hover:text-ink aria-[current=page]:font-semibold aria-[current=page]:text-ink aria-[current=page]:underline md:py-1"
         >
           {item.label}
-        </Link>
+        </IntentLink>
       </li>
     ));
 

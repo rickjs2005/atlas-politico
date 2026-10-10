@@ -27,6 +27,8 @@ interface EventMarksProps {
   label: string;
   /** Espaço que cada marca precisa no eixo, de 0 a 1. */
   markWidth?: number;
+  /** As marcas que voltam ao recorte entram com uma transição curta. */
+  animate?: boolean;
 }
 
 export const MARK_ROW_HEIGHT = 24;
@@ -51,6 +53,7 @@ export function EventMarks({
   onSelect,
   label,
   markWidth = DEFAULT_MARK_WIDTH,
+  animate = false,
 }: EventMarksProps) {
   const container = useRef<HTMLDivElement>(null);
   const { marcas, fileiras } = markRows(domain, allEvents, markWidth);
@@ -123,7 +126,7 @@ export function EventMarks({
               tabIndex={entrada?.item.id === item.id ? 0 : -1}
               onClick={() => onSelect(selecionado ? null : item.slug)}
               onKeyDown={(evento) => moveFocus(evento, indice)}
-              className="group absolute grid size-6 -translate-x-1/2 place-items-center rounded-full outline-offset-1 transition-transform duration-[var(--atlas-fast)] hover:scale-125 aria-pressed:z-10 aria-pressed:scale-125 aria-pressed:bg-raised aria-pressed:shadow-[0_0_0_2px_var(--atlas-accent)]"
+              className={`group absolute grid size-6 -translate-x-1/2 place-items-center rounded-full outline-offset-1 transition-[transform,box-shadow,background-color] duration-[var(--atlas-fast)] hover:scale-125 aria-pressed:z-10 aria-pressed:scale-125 aria-pressed:bg-raised aria-pressed:shadow-[0_0_0_2px_var(--atlas-accent)] ${animate ? "animate-fade" : ""}`}
               style={{ left: `${centro * 100}%`, top: base }}
             >
               <CategoryMark categoria={item.categoria} size={12} />

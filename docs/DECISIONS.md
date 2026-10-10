@@ -338,7 +338,7 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Decisão (fase 4).** A terra, as fronteiras e as divisas dos estados vêm de dois arquivos GeoJSON derivados do Natural Earth 1:50m, recortados para a América do Sul e guardados em `src/features/map/base/`. O Brasil aparece em tom mais claro. Não há rótulos.
 
-**Motivo.** A base da fase 1 era só uma grade de meridianos e paralelos, e os pontos ficavam sem referência. O Natural Earth é de domínio público e cabe em 255 KB, o que permite continuar sem tiles e sem pedir nada a terceiros. Rótulos exigem arquivos de glyphs, que são decisão da fase 6.
+**Motivo.** A base da fase 1 era só uma grade de meridianos e paralelos, e os pontos ficavam sem referência. O Natural Earth é de domínio público e cabe em 249 KB, o que permite continuar sem tiles e sem pedir nada a terceiros. Rótulos exigem arquivos de glyphs, que são decisão da fase 6.
 
 **Consequência.** O zoom ao selecionar é contido (até 4,5), porque de perto um contorno sem nomes deixa de situar o ponto. `buildBaseStyle(base)` isola a base: a fase 6 pode trocá-la sem mexer em quem usa o mapa.
 
@@ -584,6 +584,110 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 
 **Consequência.** O que depende de configuração está em [PAGES.md](PAGES.md), seção Configuração pendente.
 
+## D-74. Retratos em versões locais, por moldura e por largura, com enquadramento próprio
+
+**Decisão (fase 8).** `npm run images` gera, de cada retrato de perfil, nove arquivos WebP já recortados: a moldura 4:5 em cinco larguras, de 160 a 640 px, e a quadrada em quatro, de 64 a 192 px. O recorte de cada retrato está em `scripts/images.config.json`, em pixels do original. Um manifesto registra de que original e de que configuração as versões saíram, e `images:check` roda antes de `dev` e de `build`. O arquivo original não é alterado e continua sendo o que o conteúdo cadastra.
+
+**Motivo.** Os dois JPEG, de 215 e 290 KB, eram servidos para tudo, até para miniaturas de 48 px. Na entrada em celular com rede lenta, o maior elemento da tela era um retrato, e ele só terminava de chegar depois de 4 segundos. Sem servidor não há redimensionamento em tempo de execução: as versões têm de existir antes do build. As duas fotos oficiais têm cortes diferentes, e o recorte pelo topo deixava um rosto maior do que o outro na mesma moldura.
+
+**Consequência.** Cada página pede de 1 a 53 KB por retrato. O enquadramento põe a linha dos olhos na mesma altura e o rosto no mesmo tamanho nos dois perfis; é uma escolha de apresentação, e por isso fica em um arquivo de configuração, e não no conteúdo. Trocar um retrato pede rodar `npm run images` e conferir o resultado: o build recusa versões desatualizadas. O original segue publicado em `/media/retratos/`, sem que nenhuma página o peça. Um navegador sem suporte a WebP não mostra o retrato; o nome e o texto continuam.
+
+## D-75. A imagem do retrato usa `srcset` próprio, em um componente de cliente
+
+**Decisão (fase 8).** `Portrait` escreve uma `<img>` com a lista das versões (`srcset`), as dimensões declaradas e o modo de carregamento: prioritária (os dois cartões da entrada), imediata (miniatura da primeira tela) ou adiada. Deixou de usar `next/image`. O componente é de cliente.
+
+**Motivo.** Sem servidor de imagens, o `next/image` só repassava o arquivo original (`unoptimized`, D-03). O caminho que a documentação do Next 16.4 indica para a exportação estática é um carregador próprio, com uma lista global de larguras; com dois retratos e duas molduras, a lista direta na imagem dá o mesmo resultado sem essa configuração. O componente é de cliente por um efeito medido: uma imagem que carrega logo, quando renderizada em um Server Component, entra como dica de pré-carregamento no conteúdo que o roteador busca ao ver um link. Toda página com link para a entrada baixava os retratos dos cartões sem mostrá-los.
+
+**Consequência.** A dica fica só no HTML da própria página. Um teste sobre o build leva o ponteiro ao nome do atlas, a partir da metodologia, e confere que o conteúdo da entrada chega sem imagem nenhuma. Com o pré-carregamento por intenção (D-78), o caso que sobrou é esse: sem a regra, apontar para um link da entrada já baixaria os dois retratos. O componente não tem estado, e o código dele já estava no pacote do navegador, por causa da exploração.
+
+## D-76. O mapa é montado perto da área visível, e aquecido só por intenção
+
+**Decisão (fase 8).** `MapView` monta o mapa quando a moldura está na tela ou a menos de 400 px dela. Levar o ponteiro, o dedo ou o foco ao botão da vista **Mapa** começa a baixar o pacote. Não há pré-carregamento em tempo ocioso.
+
+**Motivo.** A página de um acontecimento carregava o mapa mesmo com ele abaixo da primeira tela: em celular, o pacote do MapLibre, o worker e os contornos disputavam a rede e o processador com a leitura. Baixar o mapa em tempo ocioso, na exploração em celular, gastaria perto de 500 KB de dados de quem nunca abre a vista do mapa, e a fase 6 já garantia que quem fica na lista não baixa o pacote.
+
+**Consequência.** A abertura e as páginas de leitura mostram o conteúdo sem esperar o mapa. Em celular com rede lenta, abrir a vista do mapa continua levando alguns segundos: o custo é do pacote e do worker do MapLibre, que o atlas não tem como reduzir. Enquanto isso a moldura já tem o tamanho final, com o aviso e um traço que vai e volta, e o mapa entra sem deslocar nada.
+
+## D-77. A saída estática é ajustada depois do build
+
+**Decisão (fase 8).** `scripts/finalize-export.mjs` roda no fim de `npm run build` e faz três coisas: devolve os arquivos de segmento ao nome que o navegador pede, retira os arquivos do MapLibre que nenhuma página pede e completa o pré-carregamento das fontes nas páginas de acontecimento. `npm run verify:export` confere os três.
+
+**Motivo.** Cada passo corrige um defeito observado na saída, e nenhum tem opção de configuração. No Windows, a exportação do Next 16.4 grava os arquivos de segmento em pastas, com as barras do sistema, e o navegador os pede com pontos: os pedidos davam 404 e a navegação caía no carregamento da página inteira. O MapLibre procura o próprio worker com um endereço montado em tempo de execução, e por isso o bundler publica a pasta `dist` inteira do pacote: 4,5 MB de arquivos de desenvolvimento e cópias. A rota dos acontecimentos tem uma extensão condicional (D-06), o nome dela não bate com o do registro de fontes do Next, e as 39 páginas saíam sem o pré-carregamento das fontes.
+
+**Consequência.** Um build feito no Linux ou no macOS não deve ter o que renomear; isso não foi conferido, porque todos os builds foram feitos no Windows. O pré-carregamento da fonte foi medido na página de um acontecimento, com o build final com e sem ele: as fontes ficam prontas 100 ms antes, e o primeiro desenho vem 16 ms depois em computador e 36 ms depois no perfil de celular. Ficou, para as 39 páginas se comportarem como as outras. Os três precisam ser revistos ao atualizar o Next ou o MapLibre: se o defeito sumir, o passo correspondente sai. Com os arquivos de segmento no lugar, o roteador passou a pré-carregar o destino dos links, o que levou à D-78.
+
+## D-78. O roteador só adianta o destino por intenção, fora os cartões da entrada
+
+**Decisão (fase 8).** O pré-carregamento padrão do Next fica só nos dois cartões da entrada. O menu, o nome do atlas, o botão **Comparar as trajetórias** e os caminhos da página 404 usam `IntentLink`: o destino é adiantado quando a pessoa leva o ponteiro, o dedo ou o foco ao link. Os links secundários têm `prefetch={false}`: retorno e **Continuar no atlas** na página do acontecimento, links para a metodologia dentro do texto, rodapé, créditos e todo link que leva uma consulta no endereço.
+
+**Motivo.** Para uma rota estática, o padrão é baixar a página inteira do destino assim que o link aparece na tela. Enquanto os pedidos davam 404 isso não custava nada; corrigidos (D-77), cada página passou a baixar e a processar o conteúdo de todos os links visíveis. Com o menu em todas as páginas, eram quatro páginas a mais a cada visita, e a medição mostrou o trabalho depois do carregamento subindo nas telas de leitura. Cada endereço com consulta, além disso, conta como um destino à parte.
+
+**Consequência.** Ir da entrada a uma trajetória não espera a rede. Pelo menu, o destino começa a vir quando o ponteiro chega ao link, e em geral já está pronto no clique; em tela de toque, o adiantamento é o tempo entre o toque e a navegação. Os outros links buscam o destino ao serem acionados. O padrão segue o que a documentação do Next 16.4 descreve como pré-carregamento por passagem do ponteiro, com o foco e o toque somados.
+
+## D-79. A fonte serifada continua sem pré-carregamento, e o itálico serifado saiu
+
+**Decisão (fase 8).** A Newsreader continua sendo carregada quando a folha de estilo a pede, sem pré-carregamento; só a Libre Franklin é pré-carregada. O arquivo do itálico da Newsreader saiu do projeto.
+
+**Motivo.** A D-41 deixou para esta fase afinar o carregamento da serifada. O pré-carregamento foi construído e medido contra o build sem ele, com as execuções alternadas. Não adiantou a chegada da fonte: nos dois casos ela fica pronta por volta de 0,4 segundo no perfil de computador e de 2 segundos no de celular, porque a folha de estilo já a revela cedo. E atrasou o primeiro desenho das páginas de texto no perfil de computador, em 44 ms na página de um acontecimento e em 96 ms na metodologia: o arquivo, de 129 KB, disputa a rede com a folha de estilo. No perfil de celular não houve diferença, nem no deslocamento de layout. O caminho contrário também foi medido: sem pré-carregar nenhuma fonte, o primeiro desenho em celular adianta de 8 a 80 ms, mas a entrada passa a se deslocar quando a fonte da interface chega (de 0,002 para 0,020), e em computador o resultado é misto. O itálico, de 143 KB, não é usado por nenhum texto das páginas.
+
+**Consequência.** O texto aparece primeiro no substituto de medidas ajustadas e troca para a Newsreader quando ela chega. Em rede lenta, um título pode mudar de quebra de linha nessa troca: é o deslocamento medido na página do acontecimento em celular, de 0,02. As notas em itálico são da sem serifa. Um texto serifado em itálico pede o arquivo de volta.
+
+## D-80. Transições só em CSS, depois da primeira ação, com o estado na frente
+
+**Decisão (fase 8).** As transições são de opacidade, de `transform` e de cor, com as duas durações do atlas (120 e 180 ms). O estado e o endereço mudam no clique; a transição só acompanha. Nenhuma vale ao carregar a página: as de vista e de recorte começam depois da primeira ação da pessoa, e a de troca de pessoa, só para quem veio de outro perfil. Os marcadores do mapa e as marcas da linha do tempo, que têm a posição dada por `transform`, usam uma entrada só de opacidade.
+
+**Motivo.** O pedido da fase é que a transição ajude a acompanhar a seleção sem segurar o estado, sem acumular em interações rápidas e sem tirar o controle de quem navega. Com CSS, não existe fila: o que está na tela é sempre o último estado, e a animação pertence ao elemento que entrou. Uma entrada animada ao carregar atrasaria o primeiro desenho do conteúdo.
+
+**Consequência.** Nenhuma dependência nova. O movimento reduzido já estava coberto pela regra global, que zera durações. A câmera do mapa não mudou (D-61). O que as transições fazem e não fazem está em [INTERACTIONS.md](INTERACTIONS.md), seção Movimento, com teste.
+
+## D-81. Recorte com identidade estável, e o perfil montado sob a leitura
+
+**Decisão (fase 8).** No provider do endereço, o período, as categorias e o recorte visível são os mesmos objetos enquanto não mudam. O perfil continua montado, escondido, enquanto um acontecimento está aberto. Os blocos de cargos e partidos só são refeitos quando o período ou os registros mudam.
+
+**Motivo.** Abrir um acontecimento muda o endereço, e o estado era lido de novo por inteiro: a lista do recorte ganhava outra identidade, e com ela os pontos do mapa, os lugares, o agrupamento e as contagens eram refeitos, sem que nada tivesse mudado. Fechar a leitura reconstruía o perfil inteiro, com as fontes de cada cargo.
+
+**Consequência.** Selecionar e fechar refazem só o que mudou. O perfil volta como a pessoa o deixou, com as fontes que estavam abertas. Ele fica fora da tela e da árvore de acessibilidade pelo atributo `hidden`.
+
+## D-82. O título é a âncora da leitura, e a comparação mostra as faixas primeiro
+
+**Decisão (fase 8).** No painel e na página do acontecimento, o título passou a ser maior do que a data, que continua acima dele, forte e em números de mesma largura. Na comparação, as faixas vêm logo abaixo do recorte, e as notas de leitura, depois delas e antes das colunas. Na entrada em tela estreita, os dois cartões vêm antes dos números da edição.
+
+**Motivo.** Na fase 4 a data era o maior elemento da leitura e disputava com o título. Na comparação, quatro parágrafos empurravam as faixas para fora da primeira tela, em qualquer largura. Na entrada em celular, os cartões ficavam cortados no fim da primeira tela, e o acesso à exploração dependia de rolar.
+
+**Consequência.** A data continua sendo o primeiro dado da leitura, e na lista o ano segue em destaque: a cronologia não perdeu a referência. As notas da comparação continuam obrigatórias e antes de qualquer lista. Ajusta a D-37: as datas continuam abrindo cada item, e o maior elemento da leitura passa a ser o título.
+
+## D-83. Link com consulta: a área que vai mudar fica encoberta até o endereço ser lido
+
+**Decisão (fase 8).** Em uma página de exploração ou de comparação aberta com consulta no endereço, um trecho de script no fim do `<body>` marca o documento antes do primeiro desenho. O CSS encobre a área que depende da consulta e mostra o aviso "Abrindo a consulta do endereço…". Lido o endereço, a marca sai e a tela aparece já no recorte pedido. Se o código da página não chegar, a área aparece sozinha depois de 6 segundos, no recorte padrão. Com o JavaScript desligado no navegador, o trecho não roda e nada é encoberto.
+
+**Motivo.** Era o ponto que a D-49 deixou para esta fase. O HTML do build traz o recorte padrão, e quem abria um link copiado via primeiro a lista inteira e o perfil, e só depois o período e o acontecimento do link. Um instante de tela errada é pior do que um instante de aviso: a pessoa lê o que não pediu.
+
+**Consequência.** Só vale para endereços com `de`, `ate`, `categorias` ou `acontecimento`, nas rotas `/politicos/` e `/comparar/`. O script fica no fim do `<body>` por um efeito medido: no começo, ele esperava a folha de estilo e parava a leitura do HTML, o que atrasava o primeiro desenho de todas as telas, de 40 a 140 ms no perfil de celular. No fim, o HTML já foi lido quando ele roda. Em uma conexão rápida, a parte de cima da página pode ser desenhada um instante antes de a marca chegar. É o único script escrito dentro do HTML; uma política de segurança de conteúdo, na fase 10, precisa permiti-lo. A página do acontecimento não é encoberta: o contexto de retorno só muda os links. As duas regras usam uma animação de duração zero como relógio, e por isso ficam fora da redução de movimento: com os 0,01 ms que a regra geral impõe, o aviso não chegava ao estado final e ficava sobre a tela depois do prazo.
+
+## D-84. Medição de laboratório própria, com os dois builds alternados
+
+**Decisão (fase 8).** As medições são feitas por `scripts/measure.mjs`: um Chromium controlado pelo Playwright abre cada rota sobre a saída estática, com o cache vazio, em dois perfis de rede e de processador, e lê as entradas de desempenho do próprio navegador. Para comparar dois builds, as execuções se alternam, e o resultado é a mediana. O servidor local responde como uma hospedagem comum, com compressão e validadores de cache.
+
+**Motivo.** O pedido é medir antes e depois em condições comparáveis e não chamar uma aproximação pelo nome de outra métrica. Medidos em momentos diferentes, os mesmos arquivos deram resultados até 50% diferentes no perfil com o processador limitado: o estado da máquina pesava mais do que as mudanças. Alternar as execuções tira esse efeito da comparação. Uma ferramenta própria não acrescenta dependência e mede também o que as prontas não medem: quando o mapa fica pronto e quanto tempo cada parte da tela leva para mudar depois de um clique.
+
+**Consequência.** O que cada número é, e o que ele não é, está em [PERFORMANCE.md](PERFORMANCE.md). São resultados de laboratório, em um navegador sem interface: servem para comparar builds, e não para prever a experiência em um aparelho. O WebGL é desenhado por software, como nos testes, ou pela placa de vídeo da máquina (`--webgl placa`). As medições registradas usaram a placa: por software, o desenho do mapa ocupava o processador mais do que em um navegador comum. A avaliação com dados de campo fica para depois da publicação.
+
+## D-85. `sharp` como dependência de desenvolvimento
+
+**Decisão (fase 8).** O `sharp` foi declarado em `devDependencies`, na versão que já estava instalada como parte opcional do Next.
+
+**Motivo.** Preparar as versões dos retratos pede redimensionar, recortar e gravar WebP. O pacote já estava em `node_modules`; declará-lo evita depender de um pacote opcional de outro.
+
+**Consequência.** Nada vai para o site: só `npm run images` o usa. A conferência que roda antes de `dev` e de `build` não carrega a biblioteca.
+
+## D-86. O que ficou fora desta fase
+
+**Decisão (fase 8).** Não foram feitos: redução do pacote do MapLibre ou troca por uma base mais leve; imagens em AVIF ou com mais de um formato; subconjunto menor das fontes; tema escuro; rótulos da base do mapa; endereço canônico, sitemap e imagem de compartilhamento; medição em aparelho real e com dados de campo; e a manutenção da instância do mapa na troca de pessoa.
+
+**Motivo.** O pacote do mapa é o que é, e a base de contornos, com 249 KB e duas casas decimais, não é o gargalo. O WebP atende a todos os navegadores atuais com um arquivo por largura. Reduzir as fontes pede uma ferramenta que o projeto não tem instalada. Manter o mapa entre os perfis mexeria nas regras de câmera da fase 6. O resto é das fases 9 e 10.
+
+**Consequência.** As pendências estão em [STATUS.md](STATUS.md) e em [PERFORMANCE.md](PERFORMANCE.md), seção Pendências.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
@@ -591,13 +695,14 @@ Registro das decisões do projeto, com o motivo de cada uma: fase 1 (D-01 a D-21
 | Comando de promoção de rascunhos e verificador de evidências (D-36) | Quando o volume de conteúdo pedir |
 | Exigir revisão humana como condição de publicação | Fase 9 |
 | Canal público de correção (D-70) e quem assina a revisão humana | Decisão do responsável pelo projeto |
-| Arquivos de segmento do Next na saída estática, pedidos com ponto e gravados em pastas (STATUS.md) | Fase 8 ou 10 |
+| Passos de `scripts/finalize-export.mjs` (D-77): rever a cada atualização do Next ou do MapLibre | Quando a versão mudar |
 | Nome definitivo do atlas (o rodapé diz "nome provisório") | Decisão do responsável pelo projeto |
 | Exibir em cinza e recortado o retrato cuja condição de uso é "livre com crédito" (D-42) | Decisão do responsável pelo projeto |
-| Como evitar o instante de estado inicial para quem chega por um link com consulta (D-49) | Fase 8 |
+| Política de segurança de conteúdo que permita o trecho de script da D-83 | Fase 10 |
 | Fechar a leitura criando entrada no histórico ou voltando nele (D-50) | Fase 9, com pessoas usando |
 | Domínio público, endereço canônico, `metadataBase` e sitemap (D-69) | Fase 10 |
 | Mostrar a natureza de cada fonte nas páginas, com um campo novo no conteúdo (D-71) | Quando a edição pedir |
 | Rótulos da base do mapa, com glyphs locais (D-58) | Quando uma edição pedir nomes de estados ou de países |
 | Contorno mundial, para lugares fora da América do Sul (D-62) | Quando o conteúdo tiver o primeiro lugar fora da área |
-| Peso do pacote do mapa e momento de carregá-lo | Fase 8 |
+| Peso do MapLibre na vista do mapa em rede lenta (D-76) | Sem saída dentro do pacote; reavaliar se a base mudar |
+| Tratamento do retrato quando o navegador não tem WebP (D-74) | Fase 9, se a validação mostrar esse caso |

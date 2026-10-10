@@ -8,6 +8,11 @@
 // parte, como presença incerta: é lacuna do conjunto, dita como lacuna.
 //
 // O bloco abre e fecha. Quem decide o estado é quem o usa.
+//
+// Só é refeito quando o período, os registros ou o estado de aberto mudam:
+// abrir um acontecimento ou marcar uma categoria não passam por aqui.
+
+import { memo } from "react";
 
 import { AffiliationList, MandateList } from "@/components/PeriodRecords";
 import type { PeriodMatch } from "@/lib/data/queries";
@@ -34,7 +39,7 @@ function split<T>(itens: readonly PeriodMatch<T>[]) {
   };
 }
 
-export function PeriodContext({
+export const PeriodContext = memo(function PeriodContext({
   periodLabel,
   mandatos,
   filiacoes,
@@ -111,4 +116,4 @@ export function PeriodContext({
       </div>
     </details>
   );
-}
+});
