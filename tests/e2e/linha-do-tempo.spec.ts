@@ -163,7 +163,12 @@ test.describe("entrada e troca de pessoa", () => {
     if (compartilhado === undefined) return;
 
     await page.goto(`${LULA}?acontecimento=${compartilhado.slug}`);
-    await trajetorias(page).getByRole("link", { name: flavio.nome }).click();
+    // O link da troca só leva o acontecimento depois que a página leu o endereço: o
+    // HTML chega com o link limpo. Clicar antes disso (visto no runner da CI, com o
+    // servidor de desenvolvimento lento) troca de pessoa sem o acontecimento.
+    const troca = trajetorias(page).getByRole("link", { name: flavio.nome });
+    await expect(troca).toHaveAttribute("href", `${FLAVIO}?acontecimento=${compartilhado.slug}`);
+    await troca.click();
 
     await expectUrl(page, `${FLAVIO}?acontecimento=${compartilhado.slug}`);
     await expect(leitura(page).getByRole("heading", { name: compartilhado.titulo })).toBeVisible();

@@ -976,9 +976,15 @@ test.describe("com movimento ligado", () => {
   test("a câmera chega ao lugar selecionado ao fim do movimento", async ({ page }) => {
     await page.goto(LULA);
     await waitForMap(page);
+    // Com movimento ligado, cada aproximação anima por meio segundo a partir do
+    // zoom do instante: um segundo clique dado no meio da animação parte do
+    // valor intermediário e fica abaixo do esperado (4,97 no runner da CI, que
+    // desenha por software). Cada passo espera o anterior chegar.
+    const inicial = await zoomDoMapa(page);
     await controle(page, "Aproximar").click();
+    await expect.poll(() => zoomDoMapa(page)).toBeGreaterThan(inicial + 0.9);
     await controle(page, "Aproximar").click();
-    await expect.poll(() => zoomDoMapa(page)).toBeGreaterThan(5);
+    await expect.poll(() => zoomDoMapa(page)).toBeGreaterThan(Math.max(5, inicial + 1.9));
     await arrastarMapa(page, -320, -220);
 
     const quadro = (await canvas(page).boundingBox())!;
