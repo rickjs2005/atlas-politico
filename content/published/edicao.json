@@ -422,6 +422,36 @@
           "id": "flavio-bolsonaro-presidente-da-comissao-de-seguranca-publica"
         }
       ]
+    },
+    {
+      "data": "2026-10-11",
+      "descricao": "Ajuste de redação, sem mudança de fato: nas citações dos atos do Executivo, a palavra \"nota\" (a indicação de mensagem de veto no cabeçalho das páginas do Planalto) foi trocada por \"indicação\", porque as telas de comparação reservam \"nota\" para dizer o que o atlas não dá.",
+      "itens": [
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-decreto-11377-2023-intervencao-df"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-14843-2024-saidas-temporarias"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-15358-2026-crime-organizado"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-complementar-214-2025-ibs-cbs"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-15270-2025-imposto-de-renda"
+        }
+      ]
     }
   ]
 }

@@ -118,12 +118,15 @@ test.describe("exploração em tela larga", () => {
     await expect(mapa(page)).toBeVisible();
     await expect(page.getByRole("group", { name: "Vista" })).toBeHidden();
 
-    const { pagina, janela } = await page.evaluate(() => ({
-      pagina: document.documentElement.scrollHeight,
+    const { trabalho, janela, rolagem } = await page.evaluate(() => ({
+      trabalho: document.querySelector(".explorer-grid")!.getBoundingClientRect().bottom,
       janela: window.innerHeight,
+      rolagem: window.scrollY,
     }));
-    // A área de trabalho ocupa a altura da tela; o que passa dela é só o rodapé.
-    expect(pagina - janela).toBeLessThan(200);
+    // A área de trabalho ocupa a altura da tela, sem a página ter rolado; o que passa dela (as decisões documentadas e o rodapé) fica abaixo, por rolagem.
+    expect(rolagem).toBe(0);
+    expect(trabalho).toBeLessThanOrEqual(janela + 1);
+    await expect(page.locator("#decisoes")).toHaveCount(1);
     await expectNoOverflow(page);
   });
 

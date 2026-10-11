@@ -44,6 +44,13 @@ const conjunto = JSON.parse(readFileSync("generated/dados/conjunto.json", "utf8"
   lugares: { id: string; nome: string }[];
   fontes: { id: string; titulo: string; autoria: string; url: string }[];
   imagens: { id: string; credito: string; autoria: string; origem: string; condicoesDeUso: string }[];
+  // As coleções de decisões: aqui só interessam as citações delas.
+  proposicoes: { fontes: Citacao[] }[];
+  votacoes: { fontes: Citacao[] }[];
+  votos: { fontes: Citacao[] }[];
+  atosExecutivos: { fontes: Citacao[] }[];
+  coberturaPolitica: { fontes: Citacao[] }[];
+  identidadesInstitucionais: { fontes: Citacao[] }[];
 };
 
 const flavio = conjunto.pessoas.find((pessoa) => pessoa.slug === "flavio-bolsonaro")!;
@@ -549,10 +556,19 @@ test.describe("metodologia", () => {
     await expect(page.locator("#objetivo [data-numeros]")).toContainText(
       `${conjunto.acontecimentos.length} acontecimentos, ${conjunto.mandatos.length} cargos e funções, ${conjunto.filiacoes.length} filiações partidárias e ${conjunto.fontes.length} fontes`,
     );
-    const citacoes = [...conjunto.pessoas, ...conjunto.mandatos, ...conjunto.filiacoes, ...conjunto.acontecimentos].reduce(
-      (total, registro) => total + registro.fontes.length,
-      0,
-    );
+    // As citações são as de todos os registros da edição, inclusive os das decisões.
+    const citacoes = [
+      ...conjunto.pessoas,
+      ...conjunto.mandatos,
+      ...conjunto.filiacoes,
+      ...conjunto.acontecimentos,
+      ...conjunto.proposicoes,
+      ...conjunto.votacoes,
+      ...conjunto.votos,
+      ...conjunto.atosExecutivos,
+      ...conjunto.coberturaPolitica,
+      ...conjunto.identidadesInstitucionais,
+    ].reduce((total, registro) => total + registro.fontes.length, 0);
     await expect(page.locator("#fontes")).toContainText(`${conjunto.fontes.length} documentos e ${citacoes} citações`);
     await expect(page.locator("#selecao tbody tr")).toHaveCount(5);
 

@@ -75,7 +75,7 @@
     "fontes": [
       {
         "fonteId": "planalto-lei-14843-2024",
-        "localizacao": "Cabeçalho (nota \"Mensagem de veto\" e \"Promulgação partes vetadas\"), dispositivos marcados (VETADO) e fecho",
+        "localizacao": "Cabeçalho, com as indicações Mensagem de veto e Promulgação partes vetadas,, dispositivos marcados (VETADO) e fecho",
         "evidencia": "Lei sancionada em 11 de abril de 2024 com veto parcial: a página marca como vetados os incisos I e III do art. 122 da Lei de Execução Penal e o inciso I do art. 3º, e traz a promulgação das partes vetadas em 12 de junho de 2024, assinada pelo vice-presidente no exercício do cargo."
       },
       {
@@ -125,7 +125,7 @@
     "fontes": [
       {
         "fonteId": "planalto-lei-15358-2026",
-        "localizacao": "Cabeçalho (nota \"Mensagem de veto\"), ementa, dispositivos marcados (VETADO) e fecho",
+        "localizacao": "Cabeçalho, com a indicação Mensagem de veto,, ementa, dispositivos marcados (VETADO) e fecho",
         "evidencia": "Lei sancionada em 24 de março de 2026 com veto parcial; institui o Marco Legal do Combate ao Crime Organizado e marca três dispositivos como vetados."
       },
       {
@@ -174,7 +174,7 @@
     "fontes": [
       {
         "fonteId": "planalto-lei-complementar-200-2023",
-        "localizacao": "Cabeçalho (notas \"Mensagem de veto\" e \"Promulgação partes vetadas\"), ementa, dispositivos marcados (VETADO) e fecho",
+        "localizacao": "Cabeçalho, com as indicações Mensagem de veto e Promulgação partes vetadas,, ementa, dispositivos marcados (VETADO) e fecho",
         "evidencia": "Lei complementar sancionada em 30 de agosto de 2023 com veto parcial; institui o regime fiscal sustentável e altera a Lei de Responsabilidade Fiscal; a página marca dois dispositivos como vetados e traz a promulgação de parte vetada."
       },
       {
@@ -243,7 +243,7 @@
     "fontes": [
       {
         "fonteId": "planalto-lei-complementar-214-2025",
-        "localizacao": "Cabeçalho (notas \"Mensagem de veto\" e \"Promulgação partes vetadas\"), ementa, dispositivos marcados (VETADO) e fecho",
+        "localizacao": "Cabeçalho, com as indicações Mensagem de veto e Promulgação partes vetadas,, ementa, dispositivos marcados (VETADO) e fecho",
         "evidencia": "Lei complementar sancionada em 16 de janeiro de 2025 com veto parcial; institui o IBS, a CBS e o Imposto Seletivo e cria o Comitê Gestor do IBS."
       },
       {
@@ -287,7 +287,7 @@
     "fontes": [
       {
         "fonteId": "planalto-lei-15270-2025",
-        "localizacao": "Cabeçalho (sem nota de mensagem de veto), art. 1º, tabela de redução e fecho",
+        "localizacao": "Cabeçalho, sem indicação de mensagem de veto,, art. 1º, tabela de redução e fecho",
         "evidencia": "Lei sancionada em 26 de novembro de 2025, sem dispositivo marcado como vetado na página; altera as Leis nºs 9.250 e 9.249 para instituir a redução do imposto sobre a renda, com imposto zero até R$ 5.000,00 mensais, e a tributação mínima de altas rendas."
       },
       {

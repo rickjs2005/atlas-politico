@@ -16,6 +16,7 @@ import { MIN_GAP_YEARS, getCoverage } from "@/lib/data/coverage";
 import { findPersonBySlug, listSourcesOf, type SourceUse } from "@/lib/data/queries";
 import type { Categoria } from "@/lib/domain/categories";
 import { formatDate, formatPeriod } from "@/lib/domain/dates";
+import type { Citacao } from "@/lib/domain/schemas";
 import { PROFILES } from "@/lib/domain/profiles";
 import { SITE } from "@/lib/site";
 
@@ -91,12 +92,76 @@ function groupByOrganization(fontes: readonly SourceUse[]): { nome: string; font
   return [...grupos].map(([nome, itens]) => ({ nome, fontes: itens }));
 }
 
+/**
+ * Um registro de decisão com as referências diretas dele (o texto de referência
+ * do objeto votado, a página oficial do ato) contadas como citações, para o
+ * catálogo listar o documento e contar o registro que o usa.
+ */
+function comReferencias(
+  registro: { fontes: readonly Citacao[] },
+  referencias: readonly { fonteId: string; localizacao: string }[],
+): { fontes: readonly Citacao[] } {
+  return {
+    fontes: [
+      ...registro.fontes,
+      ...referencias.map((referencia) => ({
+        fonteId: referencia.fonteId,
+        localizacao: referencia.localizacao,
+        evidencia: "Referência direta do registro.",
+      })),
+    ],
+  };
+}
+
 export default function MethodologyPage() {
   const data = getAtlasData();
-  const { edicao, imagens, acontecimentos, mandatos, filiacoes, pessoas, fontes } = data.conjunto;
-  const registros = [...pessoas, ...mandatos, ...filiacoes, ...acontecimentos];
+  const {
+    edicao,
+    imagens,
+    acontecimentos,
+    mandatos,
+    filiacoes,
+    pessoas,
+    fontes,
+    proposicoes,
+    votacoes,
+    votos,
+    atosExecutivos,
+    coberturaPolitica,
+    identidadesInstitucionais,
+  } = data.conjunto;
+  // Todos os registros da edição, inclusive os das decisões (docs/DATA-PIPELINE.md).
+  const registros = [
+    ...pessoas,
+    ...mandatos,
+    ...filiacoes,
+    ...acontecimentos,
+    ...proposicoes,
+    ...votacoes,
+    ...votos,
+    ...atosExecutivos,
+    ...coberturaPolitica,
+    ...identidadesInstitucionais,
+  ];
   const citacoes = registros.reduce((total, registro) => total + registro.fontes.length, 0);
-  const catalogo = groupByOrganization(listSourcesOf(data, registros));
+  const catalogo = groupByOrganization(
+    listSourcesOf(data, [
+      ...pessoas,
+      ...mandatos,
+      ...filiacoes,
+      ...acontecimentos,
+      ...proposicoes,
+      ...votacoes.map((votacao) =>
+        comReferencias(votacao, votacao.objeto.textoReferencia === null ? [] : [votacao.objeto.textoReferencia]),
+      ),
+      ...votos,
+      ...atosExecutivos.map((ato) =>
+        comReferencias(ato, [{ fonteId: ato.atoOficial.fonteId, localizacao: ato.atoOficial.identificador }]),
+      ),
+      ...coberturaPolitica,
+      ...identidadesInstitucionais,
+    ]),
+  );
   const nomes = PROFILES.map((perfil) => perfil.nome).join(" e de ");
   const corte = edicao === null ? null : formatDate({ valor: edicao.dataDeCorte, precisao: "dia" });
   const perfis = PROFILES.flatMap((perfil) => {
@@ -598,8 +663,8 @@ export default function MethodologyPage() {
             <p className={prose}>
               Os documentos que sustentam os registros, agrupados por quem os publicou. Cada um traz
               a data do documento, a data de acesso e a quantidade de registros que o citam. O trecho
-              usado em cada registro está junto dele: na página do acontecimento, ou ao lado de cada
-              cargo e de cada filiação no{" "}
+              usado em cada registro está junto dele: na página do acontecimento, em cada cartão de
+              voto ou de ato, ou ao lado de cada cargo e de cada filiação no{" "}
               {PROFILES.map((perfil, indice) => (
                 <span key={perfil.slug}>
                   {indice > 0 && " e no "}
