@@ -99,6 +99,12 @@ describe("regras de publicação", () => {
       conjunto.mandatos.length +
       conjunto.filiacoes.length +
       conjunto.acontecimentos.length +
+      conjunto.proposicoes.length +
+      conjunto.votacoes.length +
+      conjunto.votos.length +
+      conjunto.atosExecutivos.length +
+      conjunto.coberturaPolitica.length +
+      conjunto.identidadesInstitucionais.length +
       conjunto.lugares.length +
       conjunto.fontes.length +
       conjunto.imagens.length;

@@ -41,7 +41,7 @@ import {
   type Severidade,
 } from "@/lib/publication/diagnostics";
 import { renderImportReport } from "@/lib/publication/import";
-import { COLECOES } from "@/lib/publication/sources";
+import { COLECOES, COLECOES_FACTUAIS } from "@/lib/publication/sources";
 
 const USAGE = `Uso: node --import ./scripts/register.mjs scripts/data.mts <comando> [opções]
 
@@ -81,9 +81,7 @@ function printDiagnostics(diagnostics: readonly Diagnostic[], mostrar: readonly 
 function describeCounts(resultado: BuildResult): string {
   const { registros, candidatos } = resultado.validacao;
   const lidos = COLECOES.map((colecao) => `${registros[colecao].length} ${colecao}`).join(", ");
-  const elegiveis = (["pessoas", "mandatos", "filiacoes", "acontecimentos"] as const)
-    .map((colecao) => `${candidatos[colecao].size} ${colecao}`)
-    .join(", ");
+  const elegiveis = COLECOES_FACTUAIS.map((colecao) => `${candidatos[colecao].size} ${colecao}`).join(", ");
   return `Registros lidos: ${lidos}.\nRevisados em content/published: ${elegiveis}.`;
 }
 

@@ -976,6 +976,30 @@ Recolher tudo leva mais tempo: as jornadas de teste pelo cenário passaram a and
 
 **Consequência.** O fluxo foi escrito e não rodou antes do primeiro push que o contém: o primeiro resultado real é o do GitHub, e o que ele apontar é a próxima correção. A regra fixa da MilWeb não muda: commit e push antes de qualquer deploy, e deploy só com pedido.
 
+## D-122. Decisões políticas no modelo: três naturezas, seis coleções, formato gerado 2
+
+**Decisão (histórico de votos e Escrivão, entrega P0, 10 de outubro de 2026).** O conjunto ganhou seis coleções factuais, com estado editorial e a mesma régua de evidência das demais: `proposicoes`, `votacoes`, `votos`, `atosExecutivos`, `coberturaPolitica` e `identidadesInstitucionais` ([DATA_MODEL.md](DATA_MODEL.md), seção Decisões políticas). O modelo separa três naturezas que não se confundem: o voto parlamentar (manifestação individual em uma votação identificada, com o objeto votado), o ato do Executivo (sanção, veto, medida provisória, decreto, iniciativa, cada tipo com campos próprios) e a participação como autoria ou relatoria, que fica fora desta entrega. O voto só existe com documento, em três tipos (`voto-individual`, `ausencia-documentada`, `nao-votou-documentado`), sempre com o valor original do acervo; a falta de linha nunca vira ausência. O mandato ganhou o campo opcional `casa`, que dá a competência. O formato dos dados gerados passou a 2, e a leitura recusa a saída anterior. O conteúdo continua em JSON versionado: nenhum banco entra só para cadastrar decisões.
+
+**Motivo.** O relatório de arquitetura e narrativa de 10 de outubro pediu um histórico de decisões comparável entre os dois perfis, com as distinções que a documentação da Câmara e do Senado exigem (objeto votado, orientação de bancada, ausentes não listados) e as da Constituição (sanção e veto para leis; promulgação pelas Mesas para emendas). O modelo anterior tinha pessoas, mandatos, filiações e acontecimentos; "acrescentar um arquivo de votos sem estender o contrato não basta", porque as coleções são listas explícitas em várias camadas.
+
+**Consequência.** Schemas, integridade, validação com diagnósticos próprios (`mandato-de-outra-pessoa`, `fora-do-mandato`, `competencia-nao-confirmada`, `casa-diferente`, `voto-repetido`, `retificacao-incoerente`), seleção publicável, importação, índices, recorte por pessoa, barreira de release e fixtures sintéticas cobrem as seis coleções; 43 testes novos. As telas do atlas e o jogo ainda não mostram decisões: isso é a entrega P1.
+
+## D-123. A consulta comparativa responde cinco coisas, pela competência do mandato e pela cobertura da pesquisa
+
+**Decisão.** `resolveParticipation` (`src/lib/data/participation.ts`) devolve um resultado discriminado para uma pessoa em uma votação: `registro`, `nao-se-aplica`, `competencia-nao-confirmada`, `sem-registro-individual` ou `pesquisa-pendente`. A competência vem das datas documentadas do mandato na casa da votação (`competenceOf`, a mesma regra de períodos da exploração: limite desconhecido nunca vira data). A diferença entre "sem registro individual" e "pesquisa pendente" vem da cobertura da pesquisa: só com um acervo consultado por inteiro para a pessoa, o tema e a data (estado `completa`) a falta de linha é uma afirmação sobre o material; antes disso é limitação do conjunto. Votação simbólica ou secreta nunca tem registro individual.
+
+**Motivo.** Um booleano, ou um `null` com vários sentidos, faria a interface tratar "não procuramos" como "não votou". A política editorial não permite essa inferência, e o jogo não pode pedir que o jogador a faça.
+
+**Consequência.** A interface, quando mostrar decisões, mostra o motivo de cada resposta sem voto, com as palavras de `PARTICIPACAO_EXPLICACOES`. Para o conteúdo real, os mandatos precisam ganhar `casa` (uma edição de conteúdo, com as fontes que já têm) antes de a consulta responder algo além de "competência não confirmada".
+
+## D-124. Importação de decisões: captura bruta, adaptador por provedor, rascunho sempre
+
+**Decisão.** `npm run importar:decisoes` (`scripts/importar-decisoes.mts`) é o único comando do projeto que consulta a rede. Ele guarda cada resposta como captura em `research/capturas/` (URL, instante, status, bytes, resumo SHA-256), normaliza pelo adaptador do provedor (`src/lib/import/senado.ts`, `src/lib/import/camara.ts`, funções puras testadas sobre amostras reais) e entrega o pacote ao mesmo caminho de `data:import`: tudo entra como rascunho, com a pendência do que conferir, e a revisão feita na origem não é aceita. O build nunca consulta rede. Os adaptadores não deduzem: sem a linha da pessoa não há voto; o tema fica vazio; o objeto votado é lido das palavras do acervo como primeira leitura, a conferir na ata.
+
+**Motivo.** O que a pesquisa dos contratos mostrou em 10 de outubro: o Senado cobre o mandato inteiro desde 2019 pelo webservice (o limite de 12 meses é só do CSV), com as siglas de comparecimento documentando ausência e não voto; a Câmara não tem endpoint por deputado, limita a janela a três meses, não lista ausentes e só tem votos individuais a partir de 2001, de modo que a legislatura de 1987 a 1991 de Lula e a Constituinte não têm registro individual no acervo; a Alerj só tem votações simbólicas nas amostras; o Planalto serve leis e mensagens de veto em HTML estático e bloqueia o portal com desafio de JavaScript. Uma importação que inferisse ausência ou posição nesses casos escreveria o que o documento não diz.
+
+**Consequência.** Capturas e pacotes ficam em `research/`, fora do que o pipeline lê. Atos do Executivo são cadastro à mão por enquanto. O primeiro recorte real (um trimestre do Senado, 10 votações e 10 votos de Flávio Bolsonaro, em simulação) passou de ponta a ponta sem rejeição; nada foi gravado nos rascunhos ainda, porque a seleção do recorte e os critérios são decisão editorial da entrega P1.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |
@@ -1005,3 +1029,6 @@ Recolher tudo leva mais tempo: as jornadas de teste pelo cenário passaram a and
 | Escopo de propostas, projetos legislativos, votos e posicionamentos (auditoria externa de 10/10/2026, achado A-01): o atlas e o jogo cobrem os 39 acontecimentos cadastrados, e a política editorial exclui opinião e declaração isolada; um produto que prometa "todas as propostas" exige contratos, fontes e política novos, para os dois personagens ou com o recorte declarado | Decisão do responsável pelo projeto, antes de qualquer código |
 | Licença do código (auditoria, achado A-10): não há arquivo LICENSE, e `npm run verify:release` avisa | Decisão do responsável pelo projeto |
 | Links permanentes para capítulo, separação dos diálogos do `GameShell` e sincronia entre abas (auditoria, P2) | Quando o jogo ganhar novos modos |
+| Recorte documental das decisões a publicar (quais votações e atos, com que critérios, para os dois), temas de cada proposição, e `casa` nos mandatos reais (D-122, D-123) | Entrega P1 do histórico de votos, por decisão editorial do responsável |
+| Autoria e relatoria como entidades próprias (D-122) | Se a experiência exigir, depois da primeira investigação jogável |
+| Fonte das votações da Alerj (só simbólicas nas amostras) e da Constituinte (sem registro individual na API da Câmara) (D-124) | Pesquisa documental fora das APIs: atas e Arquivo Histórico |

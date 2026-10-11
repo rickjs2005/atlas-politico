@@ -201,10 +201,10 @@ describe("fontes de um conjunto de registros", () => {
 
   it("cada documento aparece uma vez, com a quantidade de registros que o citam", () => {
     const usos = listSourcesOf(data, registros).map((item) => [item.fonte.id, item.registros]);
-    // Acontecimentos 01, 02 e 07, o mandato e a filiação citam o documento 01; o 03 cita o 02 e o 03.
+    // Acontecimentos 01, 02 e 07, os dois mandatos e a filiação citam o documento 01; o 03 cita o 02 e o 03.
     expect(usos).toEqual([
       ["sintetico-fonte-02", 1],
-      ["sintetico-fonte-01", 5],
+      ["sintetico-fonte-01", 6],
       ["sintetico-fonte-03", 1],
     ]);
   });

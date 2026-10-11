@@ -1,0 +1,24 @@
+[
+  {
+    "id": "sintetico-ato-01",
+    "tipo": "veto-parcial",
+    "atribuicao": { "tipo": "autor-documentado", "pessoaId": "sintetico-pessoa-a", "mandatoId": "sintetico-mandato-a2" },
+    "data": { "valor": "1997-06-10", "precisao": "dia" },
+    "atoOficial": { "identificador": "[SINTÉTICO] Mensagem fictícia nº 1/1997", "fonteId": "sintetico-fonte-02" },
+    "proposicaoIds": ["sintetico-proposicao-03"],
+    "mensagem": "[SINTÉTICO] Mensagem fictícia nº 1/1997",
+    "dispositivosAlvo": ["Art. 2º, inciso I"],
+    "temas": ["reforma-do-estado"],
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Texto fictício da mensagem de veto",
+        "evidencia": "[SINTÉTICO] Trecho fictício que cita o dispositivo vetado."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

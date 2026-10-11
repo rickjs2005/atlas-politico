@@ -1,0 +1,125 @@
+[
+  {
+    "ano": 2024,
+    "casaSessao": "SF",
+    "codigoMateria": 166054,
+    "codigoSessao": 520516,
+    "codigoSessaoLegislativa": 873,
+    "codigoSessaoVotacao": 7029,
+    "dataApresentacao": "2024-11-11",
+    "dataSessao": "2025-11-25",
+    "descricaoVotacao": "Votação nominal do Projeto de Lei Complementar nº 185, de 2024, nos termos dos pareceres.",
+    "ementa": "Regulamenta a aposentadoria especial dos Agentes Comunitários de Saúde e dos Agentes de Combate às Endemias, estabelecida pelo § 10 do artigo 198 da Constituição Federal.",
+    "idProcesso": 8746475,
+    "identificacao": "PLP 185/2024",
+    "informeLegislativo": {
+      "casaColegiado": "SF",
+      "casaEnteAdm": "SF",
+      "codigoColegiado": 1998,
+      "data": "2025-11-25",
+      "id": 2266086,
+      "idEnteAdm": 13594,
+      "idEvento": 11200550,
+      "nomeColegiado": "Plenário do Senado Federal",
+      "nomeEnteAdm": "Secretaria de Atas e Diários",
+      "numeroAutuacao": 1,
+      "siglaColegiado": "PLEN",
+      "siglaEnteAdm": "SEADI",
+      "texto": "(Sessão Deliberativa Ordinária realizada em 25/11/2025) \r\nDiscussão encerrada. \r\nAprovado o projeto com o seguinte resultado: Sim 57, Abst. 2, Presidente 1, Total 60; tendo o Sr. Presidente Senador Davi Alcolumbre anunciado manifestação favorável recebida dos Senadores Eduardo Gomes, Daniella Ribeiro, Ciro Nogueira, Efraim Filho, Weverton Rocha, Tereza Cristina, Fernando Dueire, Paulo Paim e Romário. \r\nEncaminhado à publicação o Parecer nº 174, de 2025-PLEN/SF, da Comissão Diretora, apresentando a redação final. \r\nAprovada a redação final. \r\nÀ Câmara dos Deputados."
+    },
+    "numero": "185",
+    "numeroSessao": 175,
+    "resultadoVotacao": "A",
+    "sequencialSessao": 1,
+    "sequencialVotacao": 4345,
+    "sigla": "PLP",
+    "siglaTipoSessao": "DOR",
+    "totalVotosAbstencao": null,
+    "totalVotosNao": null,
+    "totalVotosSim": null,
+    "votacaoSecreta": "N",
+    "votos": [
+      {
+        "codigoParlamentar": 5672,
+        "descricaoVotoParlamentar": null,
+        "nomeParlamentar": "Alan Rick",
+        "sexoParlamentar": "M",
+        "siglaPartidoParlamentar": "REPUBLICANOS",
+        "siglaUFParlamentar": "AC",
+        "siglaVotoParlamentar": "Sim"
+      },
+      {
+        "codigoParlamentar": 5982,
+        "descricaoVotoParlamentar": null,
+        "nomeParlamentar": "Alessandro Vieira",
+        "sexoParlamentar": "M",
+        "siglaPartidoParlamentar": "MDB",
+        "siglaUFParlamentar": "SE",
+        "siglaVotoParlamentar": "Sim"
+      },
+      {
+        "codigoParlamentar": 6358,
+        "descricaoVotoParlamentar": null,
+        "nomeParlamentar": "Ana Paula Lobato",
+        "sexoParlamentar": "F",
+        "siglaPartidoParlamentar": "PDT",
+        "siglaUFParlamentar": "MA",
+        "siglaVotoParlamentar": "Sim"
+      },
+      {
+        "codigoParlamentar": 5967,
+        "descricaoVotoParlamentar": null,
+        "nomeParlamentar": "Angelo Coronel",
+        "sexoParlamentar": "M",
+        "siglaPartidoParlamentar": "PSD",
+        "siglaUFParlamentar": "BA",
+        "siglaVotoParlamentar": "Sim"
+      },
+      {
+        "codigoParlamentar": 6009,
+        "descricaoVotoParlamentar": "Licença saúde",
+        "nomeParlamentar": "Astronauta Marcos Pontes",
+        "sexoParlamentar": "M",
+        "siglaPartidoParlamentar": "PL",
+        "siglaUFParlamentar": "SP",
+        "siglaVotoParlamentar": "LS"
+      },
+      {
+        "codigoParlamentar": 6350,
+        "descricaoVotoParlamentar": null,
+        "nomeParlamentar": "Augusta Brito",
+        "sexoParlamentar": "F",
+        "siglaPartidoParlamentar": "PT",
+        "siglaUFParlamentar": "CE",
+        "siglaVotoParlamentar": "Sim"
+      },
+      {
+        "codigoParlamentar": 4639,
+        "descricaoVotoParlamentar": null,
+        "nomeParlamentar": "Beto Faro",
+        "sexoParlamentar": "M",
+        "siglaPartidoParlamentar": "PT",
+        "siglaUFParlamentar": "PA",
+        "siglaVotoParlamentar": "Sim"
+      },
+      {
+        "codigoParlamentar": 5936,
+        "descricaoVotoParlamentar": null,
+        "nomeParlamentar": "Carlos Portinho",
+        "sexoParlamentar": "M",
+        "siglaPartidoParlamentar": "PL",
+        "siglaUFParlamentar": "RJ",
+        "siglaVotoParlamentar": "Sim"
+      },
+      {
+        "codigoParlamentar": 5990,
+        "descricaoVotoParlamentar": "Presente – Não registrou voto",
+        "nomeParlamentar": "Carlos Viana",
+        "sexoParlamentar": "M",
+        "siglaPartidoParlamentar": "PODE",
+        "siglaUFParlamentar": "MG",
+        "siglaVotoParlamentar": "P-NRV"
+      }
+    ]
+  }
+]

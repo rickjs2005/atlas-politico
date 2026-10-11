@@ -1,0 +1,21 @@
+[
+  {
+    "id": "sintetico-identidade-01",
+    "pessoaId": "sintetico-pessoa-a",
+    "provedor": "senado",
+    "idExterno": "9999",
+    "instituicao": "senado-federal",
+    "validade": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Perfil fictício no acervo",
+        "evidencia": "[SINTÉTICO] Trecho fictício com o código da pessoa no acervo."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

@@ -17,19 +17,27 @@ import { SYNTHETIC_PREFIX } from "@/lib/domain/integrity";
 import {
   ENTIDADES,
   acontecimentoSchema,
+  atoExecutivoSchema,
+  coberturaPoliticaSchema,
   filiacaoSchema,
   fonteSchema,
+  identidadeInstitucionalSchema,
   imagemSchema,
   lugarSchema,
   mandatoSchema,
   pessoaSchema,
+  proposicaoSchema,
+  votacaoSchema,
+  votoSchema,
   type Citacao,
 } from "@/lib/domain/schemas";
 
 import { formatFieldPath, type Entidade } from "./diagnostics";
 import {
   COLECOES,
+  COLECOES_COM_CITACAO,
   ENTIDADE_DA_COLECAO,
+  emptyByCollection,
   isColecao,
   isFactual,
   type Colecao,
@@ -42,6 +50,12 @@ const SCHEMAS: Record<Colecao, z.ZodType<{ id: string }>> = {
   mandatos: mandatoSchema,
   filiacoes: filiacaoSchema,
   acontecimentos: acontecimentoSchema,
+  proposicoes: proposicaoSchema,
+  votacoes: votacaoSchema,
+  votos: votoSchema,
+  atosExecutivos: atoExecutivoSchema,
+  coberturaPolitica: coberturaPoliticaSchema,
+  identidadesInstitucionais: identidadeInstitucionalSchema,
   lugares: lugarSchema,
   fontes: fonteSchema,
   imagens: imagemSchema,
@@ -111,15 +125,7 @@ export function planImport(
   origem: ImportOrigin,
   hoje: string,
 ): ImportPlan {
-  const gravar: ImportPlan["gravar"] = {
-    pessoas: [],
-    mandatos: [],
-    filiacoes: [],
-    acontecimentos: [],
-    lugares: [],
-    fontes: [],
-    imagens: [],
-  };
+  const gravar: ImportPlan["gravar"] = emptyByCollection<unknown>();
   const registro: Importacao = {
     data: hoje,
     origem,
@@ -284,7 +290,7 @@ export function planImport(
 
     if (isFactual(colecao)) {
       const fontes = dados.fontes as Citacao[];
-      if (fontes.length === 0) {
+      if (fontes.length === 0 && (COLECOES_COM_CITACAO as readonly string[]).includes(colecao)) {
         pendencias.push("Sem fonte: registrar ao menos uma citação, com o trecho e o que ele sustenta.");
       }
       for (const citacao of fontes) missing("fontes", citacao.fonteId);
@@ -292,8 +298,27 @@ export function planImport(
     if (colecao === "pessoas" && typeof dados.retratoId === "string") {
       missing("imagens", dados.retratoId);
     }
-    if (colecao === "mandatos" || colecao === "filiacoes") {
+    if (colecao === "mandatos" || colecao === "filiacoes" || colecao === "coberturaPolitica" || colecao === "identidadesInstitucionais") {
       missing("pessoas", dados.pessoaId as string);
+    }
+    if (colecao === "votacoes") {
+      const votacao = votacaoSchema.parse(dados);
+      missing("proposicoes", votacao.proposicaoId);
+      if (votacao.objeto.textoReferencia !== null) missing("fontes", votacao.objeto.textoReferencia.fonteId);
+    }
+    if (colecao === "votos") {
+      const voto = votoSchema.parse(dados);
+      missing("pessoas", voto.pessoaId);
+      missing("mandatos", voto.mandatoId);
+      missing("votacoes", voto.votacaoId);
+      if (voto.situacao.tipo === "retificado") missing("votos", voto.situacao.substituidoPor);
+    }
+    if (colecao === "atosExecutivos") {
+      const ato = atoExecutivoSchema.parse(dados);
+      missing("pessoas", ato.atribuicao.pessoaId);
+      missing("mandatos", ato.atribuicao.mandatoId);
+      for (const id of new Set(ato.proposicaoIds)) missing("proposicoes", id);
+      missing("fontes", ato.atoOficial.fonteId);
     }
     if (colecao === "acontecimentos") {
       const acontecimento = acontecimentoSchema.parse(dados);

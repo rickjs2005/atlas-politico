@@ -8,7 +8,8 @@ O pipeline roda só na máquina de quem edita e no build. Não há servidor, ban
 
 ```
 content/published/   a edição: edicao.json e sete coleções      (editado à mão)
-content/drafts/      pesquisa em andamento e importações        (editado à mão e por data:import)
+content/drafts/      pesquisa em andamento e importações        (editado à mão, por data:import e por importar:decisoes)
+research/            capturas brutas dos acervos e pacotes      (escrito por importar:decisoes; nunca lido pelo pipeline)
 public/media/        arquivos das imagens cadastradas
         │
         │  npm run data:build
@@ -34,8 +35,9 @@ Três regras sustentam o resto:
 
 | Pasta | Conteúdo | Quem escreve |
 | --- | --- | --- |
-| `content/published/` | `edicao.json` e uma lista por coleção: `pessoas`, `mandatos`, `filiacoes`, `acontecimentos`, `lugares`, `fontes`, `imagens` | Edição manual |
-| `content/drafts/` | As mesmas listas, parciais, e `importacoes.json` (registro das importações) | Edição manual e `data:import` |
+| `content/published/` | `edicao.json` e uma lista por coleção: `pessoas`, `mandatos`, `filiacoes`, `acontecimentos`, `proposicoes`, `votacoes`, `votos`, `atosExecutivos`, `coberturaPolitica`, `identidadesInstitucionais`, `lugares`, `fontes`, `imagens` | Edição manual |
+| `content/drafts/` | As mesmas listas, parciais, e `importacoes.json` (registro das importações) | Edição manual, `data:import` e `importar:decisoes` |
+| `research/` | Capturas brutas dos acervos oficiais e os pacotes normalizados de cada importação de decisões. Nunca lida pelo pipeline | `importar:decisoes` |
 | `public/media/` | Arquivo de cada imagem cadastrada em `imagens.json` | Edição manual |
 | `docs/evidencias/` | Trechos conferidos na fase 2. Lido só pelo relatório, nunca pelo build | Não muda |
 
@@ -80,7 +82,9 @@ generated/
 
 ## Estados editoriais e elegibilidade
 
-Os estados são os de [EDITORIAL.md](EDITORIAL.md): `rascunho`, `em-revisao` e `revisado`. Valem para pessoa, mandato, filiação e acontecimento. Lugar, fonte e imagem não têm estado: são cadastros de referência.
+Os estados são os de [EDITORIAL.md](EDITORIAL.md): `rascunho`, `em-revisao` e `revisado`. Valem para as dez coleções factuais: pessoa, mandato, filiação, acontecimento, proposição, votação, voto, ato do Executivo, cobertura da pesquisa e identidade institucional (`COLECOES_FACTUAIS`, em `src/lib/publication/sources.ts`). Lugar, fonte e imagem não têm estado: são cadastros de referência. A cobertura da pesquisa é a única factual que não exige citação ao ser revisada: a evidência dela são os acervos que ela descreve.
+
+Entre as decisões políticas valem mais quatro regras (docs/DATA_MODEL.md, seção Decisões políticas): o voto e o ato só entram com a pessoa, o mandato, a votação e a proposição que citam também elegíveis; voto ou ato fora do período documentado do mandato, ou de mandato de outra pessoa ou de outra casa, é erro; dois votos vigentes da mesma pessoa na mesma votação são erro (a retificação aponta o que vale); e a fonte do ato oficial e a do texto votado entram pelo uso, como qualquer citação.
 
 ### Regra de elegibilidade
 
@@ -200,6 +204,8 @@ Texto é comparado pelo código dos caracteres, e não pelas regras de um idioma
 A ordem de `pessoas` é técnica. A ordem em que os perfis aparecem na interface é decisão de apresentação (`PROFILES`, D-14).
 
 ### `dados/indices.json`
+
+Desde o formato 2, os índices também cobrem as decisões políticas: `proposicoes` (por id, por tema, por instituição), `votacoes` (por id, por proposição, por instituição, por ano e por tema da proposição votada, em ordem cronológica), `votos` (por id, por votação, por pessoa, e `vigentePorVotacaoEPessoa`, que diz qual voto vale para cada par), `atosExecutivos` (por id, por pessoa, por tema, por ano, por proposição), `coberturaPolitica` e `identidadesInstitucionais` (por id e por pessoa). Todos os temas aparecem, mesmo vazios.
 
 Listas de `id`, nunca cópias de registros. Toda lista de acontecimentos está em ordem cronológica.
 
@@ -354,6 +360,7 @@ As fronteiras são regras de lint (`eslint.config.mjs`). `src/lib/content/publis
 | `npm run data:build` | Valida e gera `generated/` | `generated/` |
 | `npm run data:report` | Relatório de cobertura, pendências e erros, em Markdown | Nada, ou o arquivo de `--out` |
 | `npm run data:import -- <arquivo.json>` | Importa um pacote para os rascunhos | `content/drafts/` |
+| `npm run importar:decisoes -- <senado\|camara> …` | Captura os acervos oficiais, normaliza e importa decisões como rascunho (seção Importação de decisões). Único comando que consulta a rede | `research/capturas/`, `research/pacotes/`, `content/drafts/` |
 | `npm run data:query -- [filtros]` | Consulta os dados gerados | Nada |
 
 Código de saída: `0` quando deu certo; `1` quando o conteúdo tem erro; `2` quando o comando foi usado de forma errada, ou os dados gerados não existem ou são de outra versão do conteúdo.
@@ -415,7 +422,7 @@ Os scripts rodam o TypeScript do projeto direto no Node, sem compilar. Exigem No
 }
 ```
 
-O campo `editorial` pode faltar. As coleções aceitas são as sete; `edicao` não é importável.
+O campo `editorial` pode faltar. As coleções aceitas são as treze; `edicao` não é importável.
 
 Regras:
 
@@ -441,7 +448,27 @@ O relatório sai no terminal. Origem e resultado ficam em `content/drafts/import
 
 **Importar não publica.** Depois de importar, o registro segue o caminho de qualquer rascunho: pesquisa, revisão e promoção.
 
-Coletores de sites e integrações recorrentes não foram feitos. Quando houver uma necessidade concreta, o coletor produz um pacote neste formato e usa o mesmo comando.
+### Importação de decisões
+
+`npm run importar:decisoes -- <senado|camara> [opções]` é o único comando do projeto que consulta a rede; o build nunca consulta. Ele captura as respostas dos acervos oficiais como chegaram, normaliza pelo adaptador do provedor e entrega um pacote ao mesmo caminho de `data:import`: tudo entra como rascunho, com as pendências do que a revisão precisa conferir.
+
+```
+npm run importar:decisoes -- senado --parlamentar 5894 --pessoa flavio-bolsonaro --mandato flavio-bolsonaro-senador-2019 --de 2025-02-01 --ate 2025-04-30
+npm run importar:decisoes -- camara --deputado 139289 --pessoa lula --mandato lula-deputado-federal-1987-1991 --de 1987-02-01 --ate 1991-01-31 --limite 50
+```
+
+Fluxo: **captura** (`research/capturas/<id>.json`: URL, instante, status, bytes, resumo SHA-256 e a resposta) → **normalização** (`src/lib/import/senado.ts`, `src/lib/import/camara.ts`, funções puras com testes sobre amostras reais em `tests/fixtures/apis/`) → **pacote** (`research/pacotes/`) → **importação** para `content/drafts/`, com a linha em `importacoes.json`. `--dry-run` não grava nada no projeto e mostra o relatório.
+
+O que cada adaptador faz, pelo contrato observado em 10 de outubro de 2026:
+
+| Provedor | Consulta | O que vira | Cuidados |
+| --- | --- | --- | --- |
+| Senado (`/dadosabertos/votacao?codigoParlamentar=…`, com `dataInicio` e `dataFim`) | A lista de votações nominais do Plenário em que o acervo registra o parlamentar, com os votos de todos | Uma proposição por matéria, uma votação por `codigoSessaoVotacao`, o voto do parlamentar, a fonte (a própria consulta) e uma cobertura da pesquisa | Até 10 requisições por segundo; 429 e 503 sob carga. "Sim", "Não" e "Abstenção" viram posição; "Votou" (votação secreta) vira `OUTRO`, participação sem posição; as siglas de comparecimento (lista oficial em `/plenario/lista/tiposComparecimento`) viram ausência documentada (NCom, AUS, LS, LP, MIS, AP…) ou não voto documentado (P-NRV, PR, PS…). Comissões não entram (serviço próprio). O serviço antigo `/senador/{código}/votacoes` está descontinuado |
+| Câmara (`/api/v2/votacoes` por janelas de até três meses, depois `/votacoes/{id}` e `/votacoes/{id}/votos`) | Todas as votações listadas no período; o voto do deputado só quando a lista nominal o traz | Uma proposição por `proposicoesAfetadas[0]` (ou `objetosPossiveis[0]`), uma votação por id, o voto do deputado, a fonte por votação e uma cobertura da varredura | Não há endpoint de votações por deputado (405). A lista de votos não traz ausentes, e votos individuais existem a partir de 2001: a legislatura de 1987 a 1991 tem votações sem votos, e a Constituinte não aparece como órgão. "Artigo 17" vira não voto documentado (quem preside não vota), com pendência de conferir |
+
+O importador nunca deduz: sem a linha da pessoa não há voto, e a falta de linha fica anotada nas lacunas da cobertura. A classificação por tema fica vazia, porque é decisão editorial. Depois de importar, o caminho é o de qualquer rascunho: conferir cada voto contra a ata ou o painel, decidir o objeto votado, classificar os temas, mover para `content/published/` e registrar em `alteracoes`.
+
+Fora do alcance dos adaptadores, pelo que a pesquisa dos acervos mostrou: a **Alerj** publica as proposições e as transcrições por legislatura em bases Domino instáveis, e as votações registradas nas amostras são simbólicas, sem lista nominal; o **Planalto** serve os textos de lei, as mensagens de veto (com os dispositivos) e os decretos em HTML estático em `ccivil_03`, mas o portal e as fichas de metadados ficam atrás de um desafio de JavaScript. Atos do Executivo são, por ora, cadastro à mão, com a mensagem ou a lei lida.
 
 ## Relatório de cobertura
 

@@ -53,9 +53,15 @@ describe("geração", () => {
     ]);
     expect(gravacao?.manifest.contagens).toEqual({
       pessoas: 2,
-      mandatos: 3,
+      mandatos: 4,
       filiacoes: 1,
       acontecimentos: 7,
+      proposicoes: 3,
+      votacoes: 6,
+      votos: 3,
+      atosExecutivos: 1,
+      coberturaPolitica: 2,
+      identidadesInstitucionais: 1,
       lugares: 6,
       fontes: 3,
       imagens: 0,
@@ -255,10 +261,14 @@ describe("pasta controlada pelo gerador", () => {
     projeto.writeFile("vizinho.json", "{}");
 
     // A pessoa B sai da edição, com tudo o que depende dela.
+    const deA = (item: { pessoaId: string }) => item.pessoaId === "teste-pessoa-a";
     projeto.write("published", {
       pessoas: base.pessoas.slice(0, 1),
-      mandatos: base.mandatos.slice(0, 1),
+      mandatos: base.mandatos.filter(deA),
       acontecimentos: base.acontecimentos.filter((item) => !item.pessoaIds.includes("teste-pessoa-b")),
+      votos: base.votos.filter(deA),
+      coberturaPolitica: base.coberturaPolitica.filter(deA),
+      identidadesInstitucionais: base.identidadesInstitucionais.filter(deA),
       edicao: { ...base.edicao, cobertura: base.edicao.cobertura.slice(0, 1) },
     });
     const { resultado, gravacao } = runBuild(projeto.paths);

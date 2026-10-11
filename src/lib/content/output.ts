@@ -29,6 +29,7 @@ import path from "node:path";
 
 import { filterPoints } from "@/lib/data/points";
 import type { AtlasData, EventPointCollection, Indexes, PublishedSet } from "@/lib/data/types";
+import { COLECOES, type Colecao } from "@/lib/publication/sources";
 import { stableStringify } from "@/lib/publication/stable-json";
 
 import { FORMAT_VERSION } from "./sources";
@@ -54,16 +55,7 @@ export interface Manifest {
   edicao: { versao: string; dataDeCorte: string } | null;
   /** Impressão digital das fontes editoriais que produziram esta saída. */
   entrada: string;
-  contagens: {
-    pessoas: number;
-    mandatos: number;
-    filiacoes: number;
-    acontecimentos: number;
-    lugares: number;
-    fontes: number;
-    imagens: number;
-    pontos: number;
-  };
+  contagens: Record<Colecao, number> & { pontos: number };
   /** Arquivos de dados, com tamanho e resumo para conferência na leitura. */
   arquivos: { caminho: string; bytes: number; sha256: string }[];
 }
@@ -107,13 +99,7 @@ export function serializeAtlasData(
         : { versao: conjunto.edicao.versao, dataDeCorte: conjunto.edicao.dataDeCorte },
     entrada,
     contagens: {
-      pessoas: conjunto.pessoas.length,
-      mandatos: conjunto.mandatos.length,
-      filiacoes: conjunto.filiacoes.length,
-      acontecimentos: conjunto.acontecimentos.length,
-      lugares: conjunto.lugares.length,
-      fontes: conjunto.fontes.length,
-      imagens: conjunto.imagens.length,
+      ...(Object.fromEntries(COLECOES.map((colecao) => [colecao, conjunto[colecao].length])) as Record<Colecao, number>),
       pontos: data.pontos.features.length,
     },
     arquivos: [...arquivos]

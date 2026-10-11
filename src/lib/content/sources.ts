@@ -3,8 +3,8 @@
 // ao pipeline (`src/lib/publication`), que decide o que é erro.
 //
 // Contrato das pastas:
-//   content/published/  edicao.json e uma lista por coleção (pessoas, mandatos,
-//                       filiacoes, acontecimentos, lugares, fontes, imagens);
+//   content/published/  edicao.json e uma lista por coleção (as de
+//                       src/lib/publication/sources.ts, `COLECOES`);
 //   content/drafts/     as mesmas listas, parciais, e importacoes.json.
 // Arquivo ausente é lista vazia. Qualquer outro `.json` é erro, para um nome
 // digitado errado não virar uma coleção vazia em silêncio.
@@ -29,8 +29,14 @@ import { canonicalJson } from "@/lib/publication/stable-json";
 
 import { probeMedia } from "./media";
 
-/** Versão do formato dos dados gerados. Muda quando o formato da saída muda. */
-export const FORMAT_VERSION = 1;
+/**
+ * Versão do formato dos dados gerados. Muda quando o formato da saída muda.
+ * 1: as sete coleções da edição 0.1; 2: as seis coleções de decisões políticas
+ * (proposições, votações, votos, atos do Executivo, cobertura da pesquisa e
+ * identidades institucionais) e os índices delas. Saída de outra versão é
+ * recusada na leitura, sem tentar aproveitar.
+ */
+export const FORMAT_VERSION = 2;
 
 export interface ProjectPaths {
   /** Raiz do projeto: os caminhos dos diagnósticos são escritos a partir dela. */

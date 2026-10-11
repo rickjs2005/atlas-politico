@@ -10,6 +10,7 @@
 // qualquer tipo). Aqui a régua é a da publicação: só revisão humana.
 
 import type { Conjunto } from "@/lib/domain/types";
+import { COLECOES_FACTUAIS } from "@/lib/publication/sources";
 
 export interface ReleaseIssue {
   /** `bloqueia` recusa a release; `aviso` só registra uma decisão em aberto. */
@@ -31,8 +32,8 @@ export interface ReleaseContext {
   licenca: boolean;
 }
 
-/** As coleções com estado editorial, as mesmas de `checkPublication`. */
-const FACTUAIS = ["pessoas", "mandatos", "filiacoes", "acontecimentos"] as const;
+/** As coleções com estado editorial, as mesmas do pipeline: toda afirmação factual passa pela mesma régua. */
+const FACTUAIS = COLECOES_FACTUAIS;
 
 /** O que a barreira lê do conjunto: só as coleções factuais, as do conjunto publicado ou as dos dados gerados. */
 export type ReleaseCollections = Pick<Conjunto, (typeof FACTUAIS)[number]>;

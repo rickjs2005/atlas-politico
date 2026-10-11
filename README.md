@@ -184,6 +184,7 @@ Confira o resultado antes de continuar: o enquadramento é o mesmo critério par
 | `npm run game:coverage` | Regrava `docs/GAME-COVERAGE.md`, a matriz acontecimento → personagem → capítulo, a partir dos dados; com `-- --check`, só confere |
 | `npm run review:human` | Regrava `docs/HUMAN-REVIEW.md`, a lista do que precisa de revisão humana, trecho a trecho, a partir dos dados; com `-- --check`, só confere |
 | `npm run verify:release` | A barreira de release: recusa a publicação, com o diagnóstico, enquanto houver registro sem revisão humana ou domínio e canal de correção sem valor; avisa sobre indexação desligada e falta de licença. Não é o build: `npm run check` continua passando com o conteúdo em conferência ([docs/DEPLOY.md](docs/DEPLOY.md)) |
+| `npm run importar:decisoes -- <senado\|camara> …` | Captura votações e votos dos acervos oficiais (Senado, Câmara), normaliza e importa tudo como rascunho em `content/drafts/`, com as capturas brutas em `research/`. Único comando que consulta a rede; `--dry-run` não grava nada ([docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md), seção Importação de decisões) |
 | `node scripts/capture-art.mjs --saida <pasta>` | Com `npm run dev` rodando, captura a galeria da arte do jogo (cenas, peças e as figuras por época) como PNG |
 | `node scripts/share-image.mjs` | Regrava `public/share/atlas.png`, a imagem da prévia de compartilhamento |
 | `npm run capture:finish` | Refaz as capturas de `docs/capturas/fase-8/`, tiradas da saída estática |
@@ -206,6 +207,7 @@ docs/            arquitetura, dados, experiência, desempenho, decisões, status
 public/
   media/         retratos e imagens, como cadastrados
     derivados/   versões dos retratos que as páginas pedem (geradas por `npm run images`)
+research/        capturas brutas dos acervos oficiais e pacotes de importação de decisões (nunca lidos pelo pipeline)
 scripts/         comandos de dados, preparo dos retratos, ajuste, conferência, pré-visualização e medição da saída
 src/
   app/           rotas e páginas; fontes tipográficas em app/fonts/

@@ -108,6 +108,12 @@ describe("elegibilidade", () => {
       fixtures.mandatos.length +
       fixtures.filiacoes.length +
       fixtures.acontecimentos.length +
+      fixtures.proposicoes.length +
+      fixtures.votacoes.length +
+      fixtures.votos.length +
+      fixtures.atosExecutivos.length +
+      fixtures.coberturaPolitica.length +
+      fixtures.identidadesInstitucionais.length +
       fixtures.lugares.length +
       fixtures.fontes.length;
     const sinteticos = withCode(projeto, "dado-sintetico");
@@ -142,15 +148,17 @@ describe("elegibilidade", () => {
     const dependentes = withCode(projeto, "referencia-fora-da-publicacao");
 
     expect(ok).toBe(false);
-    // Dois mandatos, quatro acontecimentos e a cobertura da edição dependem da pessoa B.
+    // Dois mandatos, quatro acontecimentos, um voto, uma cobertura de pesquisa e a cobertura da edição dependem da pessoa B.
     expect(dependentes.map((item) => item.id).sort()).toEqual([
       "0.0.1",
+      "teste-cobertura-01",
       "teste-evento-03",
       "teste-evento-04",
       "teste-evento-05",
       "teste-evento-06",
       "teste-mandato-b1",
       "teste-mandato-b2",
+      "teste-voto-03",
     ]);
     expect(formatDiagnostic(dependentes.find((item) => item.id === "teste-evento-04")!)).toBe(
       'content/published/acontecimentos.json · acontecimento "teste-evento-04" · pessoaIds: Depende de pessoa "teste-pessoa-b", que não entra na publicação (estado "em-revisao").',
@@ -338,18 +346,19 @@ describe("datas", () => {
   });
 
   it("período com início depois do fim é erro; entre datas parciais, só quando nenhuma leitura é coerente", () => {
+    // O mandato B1 não tem voto nem ato apontando para ele: mudar o período dele não mexe na competência de nenhuma decisão.
     const incoerente = project((base) => {
-      base.mandatos[0]!.periodo = {
+      base.mandatos[1]!.periodo = {
         inicio: { tipo: "data", valor: "2010-07", precisao: "mes" },
         fim: { tipo: "data", valor: "2010-06", precisao: "mes" },
       };
     });
     expect(errorLines(incoerente)).toEqual([
-      'content/published/mandatos.json · mandato "teste-mandato-a1" · periodo.fim: Período incoerente: o início (julho de 2010) é posterior ao fim (junho de 2010).',
+      'content/published/mandatos.json · mandato "teste-mandato-b1" · periodo.fim: Período incoerente: o início (julho de 2010) é posterior ao fim (junho de 2010).',
     ]);
 
     const coerente = project((base) => {
-      base.mandatos[0]!.periodo = {
+      base.mandatos[1]!.periodo = {
         inicio: { tipo: "data", valor: "2010", precisao: "ano" },
         fim: { tipo: "data", valor: "2010-06", precisao: "mes" },
       };

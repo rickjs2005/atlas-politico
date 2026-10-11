@@ -16,8 +16,54 @@ Atualizado em 10 de outubro de 2026.
 | 10. Publicação e apresentação | Não iniciada |
 | Jogo, etapa 1 (fora do plano de 10 fases) | Primeira versão jogável feita em 10/10/2026: dois capítulos de cada personagem, conferidos no build estático. Revisão humana e validação com pessoas continuam pendentes |
 | Jogo, versão de lançamento (candidata) | Feita em 10/10/2026: onze capítulos sobre os 39 acontecimentos, quatro tipos de tarefa, ficha judicial, cinco ambientes novos e três figuras de cada personagem, conferidos no build estático. **Revisão humana, validação com pessoas, domínio e deploy pendentes**, e são o que decide o lançamento |
+| Histórico de decisões e Escrivão, entrega P0 (contratos e evidência) | Feita em 10/10/2026: seis coleções de decisões políticas no modelo e no pipeline, consulta comparativa discriminada, importador do Senado e da Câmara com capturas, tudo como rascunho. **Nenhum conteúdo real cadastrado ainda; a interface e o jogo não mostram decisões.** Entrega P1 (investigação jogável e Escrivão) não iniciada ([VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md)) |
 
 O código e o conteúdo estão em repositório público no GitHub desde 10 de outubro de 2026: https://github.com/rickjs2005/atlas-politico. Tudo é versionado na `main`, sem ramos. O site não foi publicado: não há hospedagem nem deploy, que é o último passo e depende de autorização do responsável pelo projeto.
+
+## Histórico de decisões e Escrivão, entrega P0 (contratos e evidência)
+
+Feita em 10 de outubro de 2026, a partir do relatório de arquitetura e narrativa trazido pelo responsável pelo projeto (plano e situação em [VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md); decisões D-122 a D-124). É a base para o histórico de votos parlamentares e de atos do Executivo, comparável entre os dois perfis por votação e por tema, e para a investigação documental no jogo. Nesta entrega entrou só o que o relatório chama de P0: contratos, pipeline, consulta e importação, com fixtures fictícias; nenhum voto ou ato real foi cadastrado, e nenhuma tela mostra decisões ainda.
+
+| Parte | Situação |
+| --- | --- |
+| Seis coleções factuais novas: proposições, votações, votos, atos do Executivo, cobertura da pesquisa e identidades institucionais | **Feitas,** com estado editorial, citações e a mesma régua de evidência das demais; mandato com o campo opcional `casa` (D-122) |
+| Três naturezas sem confusão: voto parlamentar, ato do Executivo, participação | **Voto e ato modelados;** autoria e relatoria ficam para depois, como entidade própria se a experiência exigir |
+| Estados: favor, contra, abstenção, obstrução, outro registro, ausência documentada, não votou documentado; nunca ausência inferida | **Feitos** no contrato do voto; a falta de linha no acervo não produz registro |
+| Consulta comparativa discriminada: registro, não se aplica, competência não confirmada, sem registro individual, pesquisa pendente | **Feita** (`resolveParticipation`, D-123), pela competência do mandato na casa e pela cobertura da pesquisa |
+| Integridade e validação: referências, mandato da pessoa e da casa, competência, voto vigente único, retificação, data de corte | **Feitas,** com diagnósticos próprios e erro na publicação |
+| Pipeline, índices, manifesto, recorte por pessoa, importação, barreira de release | **Estendidos** às seis coleções; formato dos dados gerados na versão 2 |
+| Importador dos acervos oficiais com captura bruta, IDs externos, valor original e relatório | **Feito** para o Senado e a Câmara (`npm run importar:decisoes`, D-124); tudo entra como rascunho; Alerj e Planalto ficaram fora dos adaptadores, pelo que a pesquisa mostrou |
+| Pesquisa dos contratos das APIs | **Feita** por dois agentes de IA, sem registrar fato sobre as pessoas; resumo em DATA-PIPELINE.md |
+| Conteúdo real (recorte, temas, `casa` dos mandatos) | **Não feito:** decisão editorial da entrega P1 |
+| Telas do atlas e missão do jogo com decisões; Escrivão | **Não iniciados:** entrega P1 |
+
+### O que foi entregue
+
+- **Domínio:** `src/lib/domain/decisions.ts` (temas, instituições, provedores, modalidades, objetos, resultados, posições, tipos de ato, estados de cobertura, respostas da consulta, com rótulos e explicações) e os seis schemas em `src/lib/domain/schemas.ts`; `competenceOf` e as regras novas em `integrity.ts`.
+- **Pipeline:** coleções, diagnósticos, validação, seleção, importação, índices, recorte por pessoa e barreira de release cobrem as seis coleções; `scripts/data.mts` conta todas as factuais.
+- **Consulta:** `src/lib/data/participation.ts`.
+- **Importação:** `src/lib/import/` (capturas, requisições com ritmo e nova tentativa, adaptadores do Senado e da Câmara) e `scripts/importar-decisoes.mts`; `research/` para capturas e pacotes.
+- **Fixtures:** seis arquivos sintéticos novos e um mandato executivo fictício, cobrindo as cinco respostas da consulta; amostras reais das APIs, reduzidas, em `tests/fixtures/apis/`.
+- **Testes:** `tests/decisions.test.ts` (27) e `tests/import-decisoes.test.ts` (16); os anteriores ajustados às contagens e listas novas.
+- **Documentos:** VOTOS-E-ESCRIVAO.md (novo), DATA_MODEL.md, DATA-PIPELINE.md, EDITORIAL.md, DECISIONS.md, ARCHITECTURE.md, README.md, `research/README.md` e este status.
+
+### Verificações
+
+Todas em 10 de outubro de 2026, uma de cada vez: `npm run typecheck` e `npm run lint`, passando; `npm run test`, 814 testes em 37 arquivos, todos passando; `npm run build`, com o formato 2 e as contagens novas no manifesto (todas zero no conteúdo real), e `npm run verify:export`, 302 arquivos e 50 páginas; `npm run importar:decisoes -- senado … --dry-run` para um trimestre de 2025 do senador 5894: 7 proposições, 10 votações, 10 votos e a cobertura, 29 registros aceitos como rascunho, nenhum rejeitado, nada gravado; `npm run importar:decisoes -- camara … --dry-run` para fevereiro a julho de 1987 do deputado 139289: nenhuma votação listada pelo acervo, só a cobertura da pesquisa. As suítes de navegador não foram repetidas: nenhuma tela mudou.
+
+### Implementado e não verificado
+
+- **Importação gravando de verdade.** Só a simulação rodou. A primeira importação real depende do recorte decidido.
+- **Adaptador da Câmara com votos.** A varredura de 1987 não encontrou votações; o caminho com lista de votos foi conferido só com a amostra real de 2026 nos testes.
+- **Ritmo contra os limites reais.** A espera e a nova tentativa foram testadas com respostas simuladas; nenhum 429 apareceu nas consultas reais.
+
+### Pendências reais
+
+1. **Recorte documental e critérios,** para os dois, e a classificação dos temas: decisão editorial (P1).
+2. **`casa` nos mandatos reais:** sem ela a consulta responde "competência não confirmada" para tudo.
+3. **Conteúdo real:** importar, conferir contra as atas e os painéis, promover e revisar; a Câmara de 1987 a 1991, a Constituinte e a Alerj pedem pesquisa documental fora das APIs; os atos do Executivo são cadastro à mão.
+4. **Telas e jogo:** cartões, comparação por tema, missão documental, salas, Escrivão (P1).
+5. **Autoria e relatoria** como entidades próprias, se a experiência exigir (P2).
 
 ## Jogo, versão de lançamento (candidata)
 

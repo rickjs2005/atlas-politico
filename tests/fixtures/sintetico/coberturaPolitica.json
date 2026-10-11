@@ -1,0 +1,48 @@
+[
+  {
+    "id": "sintetico-cobertura-01",
+    "pessoaId": "sintetico-pessoa-b",
+    "tema": "saude",
+    "periodo": { "inicio": { "tipo": "data", "valor": "2019-02-01", "precisao": "dia" }, "fim": { "tipo": "em-curso" } },
+    "acervos": [
+      {
+        "nome": "[SINTÉTICO] Acervo fictício de votações",
+        "url": "https://exemplo.gov.br/acervo-ficticio",
+        "consultadoEm": "2026-10-08",
+        "recorte": "[SINTÉTICO] Todas as votações nominais do plenário de 2019 a 2026, páginas 1 a 3.",
+        "completa": true
+      }
+    ],
+    "criterios": "[SINTÉTICO] Votações nominais do plenário sobre o tema, no período do mandato.",
+    "estado": "completa",
+    "lacunas": [],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-cobertura-02",
+    "pessoaId": "sintetico-pessoa-a",
+    "tema": "geral",
+    "periodo": { "inicio": { "tipo": "data", "valor": "2003-02-01", "precisao": "dia" }, "fim": { "tipo": "data", "valor": "2006", "precisao": "ano" } },
+    "acervos": [
+      {
+        "nome": "[SINTÉTICO] Acervo fictício de votações",
+        "url": "https://exemplo.gov.br/acervo-ficticio",
+        "consultadoEm": "2026-10-08",
+        "recorte": "[SINTÉTICO] Só o ano de 2004; os demais anos não foram percorridos.",
+        "completa": false
+      }
+    ],
+    "criterios": "[SINTÉTICO] Votações nominais do plenário no período do mandato.",
+    "estado": "parcial",
+    "lacunas": ["[SINTÉTICO] Os anos de 2003, 2005 e 2006 não foram consultados."],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

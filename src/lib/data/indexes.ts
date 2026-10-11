@@ -4,8 +4,18 @@
 
 import { CATEGORIAS, type Categoria } from "@/lib/domain/categories";
 import { yearOf } from "@/lib/domain/dates";
+import { TEMAS, type Tema } from "@/lib/domain/decisions";
 
 import type { Indexes, PublishedSet } from "./types";
+
+/** Uma lista por tema, todas presentes, preenchidas pelos registros que citam cada tema. */
+function byTheme(registros: readonly { id: string; temas: readonly Tema[] }[]): Record<Tema, string[]> {
+  const porTema = Object.fromEntries(TEMAS.map((tema) => [tema, [] as string[]])) as Record<Tema, string[]>;
+  for (const registro of registros) {
+    for (const tema of new Set(registro.temas)) porTema[tema].push(registro.id);
+  }
+  return porTema;
+}
 
 function positions(registros: readonly { id: string }[]): Record<string, number> {
   return Object.fromEntries(registros.map((registro, posicao) => [registro.id, posicao]));
@@ -29,6 +39,13 @@ function group<T extends { id: string }>(
 
 export function buildIndexes(conjunto: PublishedSet): Indexes {
   const { pessoas, mandatos, filiacoes, acontecimentos, lugares, fontes, imagens } = conjunto;
+  const { proposicoes, votacoes, votos, atosExecutivos, coberturaPolitica, identidadesInstitucionais } = conjunto;
+
+  const temasDaProposicao = new Map(proposicoes.map((item) => [item.id, item.temas]));
+  const vigentePorVotacaoEPessoa: Record<string, string> = {};
+  for (const voto of votos) {
+    if (voto.situacao.tipo === "vigente") vigentePorVotacaoEPessoa[`${voto.votacaoId}:${voto.pessoaId}`] = voto.id;
+  }
 
   const porCategoria = Object.fromEntries(
     CATEGORIAS.map((categoria) => [categoria, [] as string[]]),
@@ -67,6 +84,39 @@ export function buildIndexes(conjunto: PublishedSet): Indexes {
     filiacoes: {
       porId: positions(filiacoes),
       porPessoa: group(filiacoes, (item) => [item.pessoaId]),
+    },
+    proposicoes: {
+      porId: positions(proposicoes),
+      porTema: byTheme(proposicoes),
+      porInstituicao: group(proposicoes, (item) => [item.instituicao]),
+    },
+    votacoes: {
+      porId: positions(votacoes),
+      porProposicao: group(votacoes, (item) => [item.proposicaoId]),
+      porInstituicao: group(votacoes, (item) => [item.instituicao]),
+      porAno: group(votacoes, (item) => [String(yearOf(item.data))]),
+      porTema: byTheme(votacoes.map((item) => ({ id: item.id, temas: temasDaProposicao.get(item.proposicaoId) ?? [] }))),
+    },
+    votos: {
+      porId: positions(votos),
+      porVotacao: group(votos, (item) => [item.votacaoId]),
+      porPessoa: group(votos, (item) => [item.pessoaId]),
+      vigentePorVotacaoEPessoa,
+    },
+    atosExecutivos: {
+      porId: positions(atosExecutivos),
+      porPessoa: group(atosExecutivos, (item) => [item.atribuicao.pessoaId]),
+      porTema: byTheme(atosExecutivos),
+      porAno: group(atosExecutivos, (item) => [String(yearOf(item.data))]),
+      porProposicao: group(atosExecutivos, (item) => item.proposicaoIds),
+    },
+    coberturaPolitica: {
+      porId: positions(coberturaPolitica),
+      porPessoa: group(coberturaPolitica, (item) => [item.pessoaId]),
+    },
+    identidadesInstitucionais: {
+      porId: positions(identidadesInstitucionais),
+      porPessoa: group(identidadesInstitucionais, (item) => [item.pessoaId]),
     },
     lugares: { porId: positions(lugares) },
     fontes: { porId: positions(fontes) },

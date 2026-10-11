@@ -16,27 +16,40 @@ import {
   formatDate,
   type Periodo,
 } from "@/lib/domain/dates";
-import { SYNTHETIC_PREFIX } from "@/lib/domain/integrity";
+import { SYNTHETIC_PREFIX, competenceOf } from "@/lib/domain/integrity";
 import {
   acontecimentoSchema,
+  atoExecutivoSchema,
+  coberturaPoliticaSchema,
   edicaoSchema,
   filiacaoSchema,
   fonteSchema,
+  identidadeInstitucionalSchema,
   imagemSchema,
   lugarSchema,
   mandatoSchema,
   pessoaSchema,
+  proposicaoSchema,
+  votacaoSchema,
+  votoSchema,
   type Acontecimento,
+  type AtoExecutivo,
   type Citacao,
+  type CoberturaPolitica,
   type Edicao,
   type Editorial,
   type Filiacao,
   type Fonte,
+  type IdentidadeInstitucional,
   type Imagem,
   type Lugar,
   type Mandato,
   type Pessoa,
+  type Proposicao,
+  type Votacao,
+  type Voto,
 } from "@/lib/domain/schemas";
+import type { DataHistorica } from "@/lib/domain/types";
 
 import {
   formatFieldPath,
@@ -53,7 +66,10 @@ import {
   COLECOES_FACTUAIS,
   EDITION_FILE,
   ENTIDADE_DA_COLECAO,
+  isFactual,
+  isReference,
   type Colecao,
+  type ColecaoDeReferencia,
   type ColecaoFactual,
   type FormatoDeMidia,
   type Pasta,
@@ -65,6 +81,12 @@ export interface RecordByCollection {
   mandatos: Mandato;
   filiacoes: Filiacao;
   acontecimentos: Acontecimento;
+  proposicoes: Proposicao;
+  votacoes: Votacao;
+  votos: Voto;
+  atosExecutivos: AtoExecutivo;
+  coberturaPolitica: CoberturaPolitica;
+  identidadesInstitucionais: IdentidadeInstitucional;
   lugares: Lugar;
   fontes: Fonte;
   imagens: Imagem;
@@ -103,6 +125,12 @@ const SCHEMAS: { [K in Colecao]: z.ZodType<RecordByCollection[K]> } = {
   mandatos: mandatoSchema,
   filiacoes: filiacaoSchema,
   acontecimentos: acontecimentoSchema,
+  proposicoes: proposicaoSchema,
+  votacoes: votacaoSchema,
+  votos: votoSchema,
+  atosExecutivos: atoExecutivoSchema,
+  coberturaPolitica: coberturaPoliticaSchema,
+  identidadesInstitucionais: identidadeInstitucionalSchema,
   lugares: lugarSchema,
   fontes: fonteSchema,
   imagens: imagemSchema,
@@ -151,16 +179,19 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
     mandatos: [],
     filiacoes: [],
     acontecimentos: [],
+    proposicoes: [],
+    votacoes: [],
+    votos: [],
+    atosExecutivos: [],
+    coberturaPolitica: [],
+    identidadesInstitucionais: [],
     lugares: [],
     fontes: [],
     imagens: [],
   };
-  const candidatos: Validation["candidatos"] = {
-    pessoas: new Set(),
-    mandatos: new Set(),
-    filiacoes: new Set(),
-    acontecimentos: new Set(),
-  };
+  const candidatos = Object.fromEntries(
+    COLECOES_FACTUAIS.map((colecao) => [colecao, new Set<string>()]),
+  ) as Validation["candidatos"];
 
   // -------------------------------------------------------------------------
   // 1. Edição
@@ -391,25 +422,28 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
     mandatos: indexById(registros.mandatos),
     filiacoes: indexById(registros.filiacoes),
     acontecimentos: indexById(registros.acontecimentos),
+    proposicoes: indexById(registros.proposicoes),
+    votacoes: indexById(registros.votacoes),
+    votos: indexById(registros.votos),
+    atosExecutivos: indexById(registros.atosExecutivos),
+    coberturaPolitica: indexById(registros.coberturaPolitica),
+    identidadesInstitucionais: indexById(registros.identidadesInstitucionais),
     lugares: indexById(registros.lugares),
     fontes: indexById(registros.fontes),
     imagens: indexById(registros.imagens),
   };
 
-  const usados = { lugares: new Set<string>(), fontes: new Set<string>(), imagens: new Set<string>() };
+  const usados: Record<ColecaoDeReferencia, Set<string>> = { lugares: new Set(), fontes: new Set(), imagens: new Set() };
   const corte = edicao === null ? null : calcInterval({ valor: edicao.dataDeCorte, precisao: "dia" });
 
   /** Por que o alvo de uma referência não entra na publicação; `null` se entra. */
-  const whyNotPublishable = (
-    colecao: "pessoas" | "lugares" | "fontes" | "imagens",
-    id: string,
-  ): string | null => {
+  const whyNotPublishable = (colecao: Colecao, id: string): string | null => {
     const alvo = porId[colecao].get(id);
     if (alvo === undefined) return null;
     if (alvo.pasta === "drafts") return `está em ${pastas.drafts}`;
-    if (colecao === "pessoas" && !candidatos.pessoas.has(id)) {
-      const pessoa = porId.pessoas.get(id);
-      return `estado "${pessoa?.dados.editorial.estado ?? "desconhecido"}"`;
+    if (isFactual(colecao) && !candidatos[colecao].has(id)) {
+      const estado = (alvo.dados as { editorial: Editorial }).editorial.estado;
+      return `estado "${estado}"`;
     }
     return null;
   };
@@ -433,14 +467,9 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
       mensagem,
     });
 
-  const checkReference = (
-    ctx: Context,
-    colecao: "pessoas" | "lugares" | "fontes" | "imagens",
-    id: string,
-    campo: string,
-  ) => {
+  const checkReference = (ctx: Context, colecao: Colecao, id: string, campo: string) => {
     const alvo = ENTIDADE_DA_COLECAO[colecao];
-    if (colecao !== "pessoas") usados[colecao].add(id);
+    if (isReference(colecao)) usados[colecao].add(id);
 
     if (!porId[colecao].has(id)) {
       if (!recusados.has(`${colecao}:${id}`)) {
@@ -480,7 +509,7 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
     }
   };
 
-  const checkPeriodAgainstCut = (ctx: Context, periodo: Periodo) => {
+  const checkPeriodAgainstCut = (ctx: Context, periodo: Periodo, campo = "periodo") => {
     if (corte === null || edicao === null) return;
     for (const lado of ["inicio", "fim"] as const) {
       const limite = periodo[lado];
@@ -488,11 +517,56 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
       relate(
         ctx,
         "data-apos-corte",
-        `periodo.${lado}`,
+        `${campo}.${lado}`,
         lado === "fim"
           ? `Fim (${formatDate(limite)}) posterior à data de corte da edição (${edicao.dataDeCorte}). Um período vigente na data de corte usa "em-curso".`
           : `Início (${formatDate(limite)}) posterior à data de corte da edição (${edicao.dataDeCorte}).`,
       );
+    }
+  };
+
+  const checkDateAgainstCut = (ctx: Context, data: DataHistorica, campo: string) => {
+    if (corte === null || edicao === null) return;
+    if (calcInterval(data).inicio > corte.fim) {
+      relate(ctx, "data-apos-corte", campo, `Data (${formatDate(data)}) posterior à data de corte da edição (${edicao.dataDeCorte}).`);
+    }
+  };
+
+  /**
+   * O mandato pelo qual a pessoa agiu: precisa ser dela, da casa da decisão e
+   * tocar a data. Fora do período documentado é problema; período que não
+   * basta para decidir é aviso, e a consulta responde "competência não
+   * confirmada".
+   */
+  const checkMandate = (ctx: Context, pessoaId: string, mandatoId: string, data: DataHistorica, campo: string, casa?: string) => {
+    const mandato = porId.mandatos.get(mandatoId)?.dados;
+    if (mandato === undefined || edicao === null) return;
+    if (mandato.pessoaId !== pessoaId) {
+      // Com a pessoa do mandato inexistente, o problema já está apontado no mandato: sem cascata.
+      if (porId.pessoas.has(mandato.pessoaId)) {
+        relate(ctx, "mandato-de-outra-pessoa", campo, `O mandato "${mandatoId}" é de outra pessoa ("${mandato.pessoaId}").`);
+      }
+      return;
+    }
+    if (casa !== undefined && mandato.casa !== undefined && mandato.casa !== casa) {
+      relate(ctx, "casa-diferente", campo, `O mandato é da casa "${mandato.casa}", e a decisão é de "${casa}".`);
+    }
+    const competencia = competenceOf(mandato, data, edicao.dataDeCorte);
+    if (competencia === "fora") {
+      relate(ctx, "fora-do-mandato", campo, `A data da decisão (${formatDate(data)}) fica fora do período documentado do mandato "${mandatoId}".`);
+    } else if (competencia === "nao-confirmada" || (casa !== undefined && mandato.casa === undefined)) {
+      diagnostics.push({
+        severidade: "aviso",
+        codigo: "competencia-nao-confirmada",
+        arquivo: ctx.arquivo,
+        entidade: ctx.entidade,
+        id: ctx.id,
+        campo,
+        mensagem:
+          mandato.casa === undefined && casa !== undefined
+            ? `O mandato "${mandatoId}" não declara a casa (campo "casa"): a consulta comparativa responderá "competência não confirmada".`
+            : `As datas documentadas do mandato "${mandatoId}" não bastam para confirmar que ele vigorava em ${formatDate(data)}.`,
+      });
     }
   };
 
@@ -544,15 +618,92 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
 
     if (dados.imagemId !== null) checkReference(ctx, "imagens", dados.imagemId, "imagemId");
     checkCitations(ctx, dados.fontes);
+    checkDateAgainstCut(ctx, dados.data, "data");
+  }
 
-    if (corte !== null && edicao !== null && calcInterval(dados.data).inicio > corte.fim) {
-      relate(
-        ctx,
-        "data-apos-corte",
-        "data",
-        `Data (${formatDate(dados.data)}) posterior à data de corte da edição (${edicao.dataDeCorte}).`,
-      );
+  // -------------------------------------------------------------------------
+  // 4b. Decisões políticas: referências, competência, voto vigente, retificação
+  // -------------------------------------------------------------------------
+
+  const contexto = (colecao: ColecaoFactual, dados: { id: string }, arquivo: string): Context => ({
+    entidade: ENTIDADE_DA_COLECAO[colecao],
+    id: dados.id,
+    arquivo,
+    strict: candidatos[colecao].has(dados.id),
+  });
+
+  for (const { dados, arquivo } of registros.proposicoes) {
+    checkCitations(contexto("proposicoes", dados, arquivo), dados.fontes);
+  }
+
+  for (const { dados, arquivo } of registros.votacoes) {
+    const ctx = contexto("votacoes", dados, arquivo);
+    checkReference(ctx, "proposicoes", dados.proposicaoId, "proposicaoId");
+    if (dados.objeto.textoReferencia !== null) {
+      checkReference(ctx, "fontes", dados.objeto.textoReferencia.fonteId, "objeto.textoReferencia.fonteId");
     }
+    checkCitations(ctx, dados.fontes);
+    checkDateAgainstCut(ctx, dados.data, "data");
+  }
+
+  // Uma linha vigente por pessoa e votação. Com um dos dois fora da publicação, é só pendência.
+  const vigentes = new Map<string, { id: string; strict: boolean }>();
+  for (const { dados, arquivo } of registros.votos) {
+    const ctx = contexto("votos", dados, arquivo);
+    checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
+    checkReference(ctx, "mandatos", dados.mandatoId, "mandatoId");
+    checkReference(ctx, "votacoes", dados.votacaoId, "votacaoId");
+    checkCitations(ctx, dados.fontes);
+    const votacao = porId.votacoes.get(dados.votacaoId)?.dados;
+    if (votacao !== undefined) checkMandate(ctx, dados.pessoaId, dados.mandatoId, votacao.data, "mandatoId", votacao.instituicao);
+
+    if (dados.situacao.tipo === "vigente") {
+      const chave = `${dados.votacaoId}:${dados.pessoaId}`;
+      const outro = vigentes.get(chave);
+      if (outro === undefined) {
+        vigentes.set(chave, { id: dados.id, strict: ctx.strict });
+      } else {
+        relate(
+          { ...ctx, strict: ctx.strict && outro.strict },
+          "voto-repetido",
+          "situacao",
+          `Já há um voto vigente desta pessoa nesta votação: "${outro.id}". Retifique um dos dois (situacao.tipo "retificado", apontando o que vale).`,
+        );
+      }
+      continue;
+    }
+    const substituto = porId.votos.get(dados.situacao.substituidoPor)?.dados;
+    if (substituto === undefined) {
+      checkReference(ctx, "votos", dados.situacao.substituidoPor, "situacao.substituidoPor");
+    } else if (substituto.votacaoId !== dados.votacaoId || substituto.pessoaId !== dados.pessoaId) {
+      relate(ctx, "retificacao-incoerente", "situacao.substituidoPor", `O voto "${substituto.id}" é de outra votação ou de outra pessoa: não pode substituir este.`);
+    }
+  }
+
+  for (const { dados, arquivo } of registros.atosExecutivos) {
+    const ctx = contexto("atosExecutivos", dados, arquivo);
+    checkReference(ctx, "pessoas", dados.atribuicao.pessoaId, "atribuicao.pessoaId");
+    checkReference(ctx, "mandatos", dados.atribuicao.mandatoId, "atribuicao.mandatoId");
+    checkMandate(ctx, dados.atribuicao.pessoaId, dados.atribuicao.mandatoId, dados.data, "atribuicao.mandatoId");
+    checkRepeated(ctx, dados.proposicaoIds, "proposicaoIds", "identificador de proposição");
+    for (const id of new Set(dados.proposicaoIds)) checkReference(ctx, "proposicoes", id, "proposicaoIds");
+    checkReference(ctx, "fontes", dados.atoOficial.fonteId, "atoOficial.fonteId");
+    checkCitations(ctx, dados.fontes);
+    checkDateAgainstCut(ctx, dados.data, "data");
+  }
+
+  for (const { dados, arquivo } of registros.coberturaPolitica) {
+    const ctx = contexto("coberturaPolitica", dados, arquivo);
+    checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
+    checkCitations(ctx, dados.fontes);
+    checkPeriodAgainstCut(ctx, dados.periodo);
+  }
+
+  for (const { dados, arquivo } of registros.identidadesInstitucionais) {
+    const ctx = contexto("identidadesInstitucionais", dados, arquivo);
+    checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
+    checkCitations(ctx, dados.fontes);
+    if (dados.validade !== null) checkPeriodAgainstCut(ctx, dados.validade, "validade");
   }
 
   // -------------------------------------------------------------------------

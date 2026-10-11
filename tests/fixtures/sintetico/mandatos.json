@@ -4,9 +4,18 @@
     "pessoaId": "sintetico-pessoa-a",
     "cargo": "[SINTÉTICO] Cargo de teste",
     "instituicao": "Instituição de teste",
+    "casa": "senado-federal",
     "periodo": {
-      "inicio": { "tipo": "data", "valor": "2003-02-01", "precisao": "dia" },
-      "fim": { "tipo": "data", "valor": "2006", "precisao": "ano" }
+      "inicio": {
+        "tipo": "data",
+        "valor": "2003-02-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2006",
+        "precisao": "ano"
+      }
     },
     "fontes": [
       {
@@ -17,7 +26,11 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": {
+        "tipo": "humana",
+        "revisadoPor": "Fixture sintética",
+        "revisadoEm": "2026-10-08"
+      }
     }
   },
   {
@@ -26,8 +39,14 @@
     "cargo": "[SINTÉTICO] Cargo de teste com início não documentado",
     "instituicao": "Instituição de teste",
     "periodo": {
-      "inicio": { "tipo": "desconhecida" },
-      "fim": { "tipo": "data", "valor": "2015-03", "precisao": "mes" }
+      "inicio": {
+        "tipo": "desconhecida"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2015-03",
+        "precisao": "mes"
+      }
     },
     "fontes": [
       {
@@ -38,7 +57,11 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": {
+        "tipo": "humana",
+        "revisadoPor": "Fixture sintética",
+        "revisadoEm": "2026-10-08"
+      }
     }
   },
   {
@@ -46,9 +69,16 @@
     "pessoaId": "sintetico-pessoa-b",
     "cargo": "[SINTÉTICO] Cargo de teste em curso",
     "instituicao": "Instituição de teste",
+    "casa": "camara-dos-deputados",
     "periodo": {
-      "inicio": { "tipo": "data", "valor": "2019", "precisao": "ano" },
-      "fim": { "tipo": "em-curso" }
+      "inicio": {
+        "tipo": "data",
+        "valor": "2019",
+        "precisao": "ano"
+      },
+      "fim": {
+        "tipo": "em-curso"
+      }
     },
     "fontes": [
       {
@@ -59,7 +89,45 @@
     ],
     "editorial": {
       "estado": "revisado",
-      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+      "revisao": {
+        "tipo": "humana",
+        "revisadoPor": "Fixture sintética",
+        "revisadoEm": "2026-10-08"
+      }
+    }
+  },
+  {
+    "id": "sintetico-mandato-a2",
+    "pessoaId": "sintetico-pessoa-a",
+    "cargo": "[SINTÉTICO] Chefe do Executivo de teste",
+    "instituicao": "Instituição executiva de teste",
+    "casa": "presidencia-da-republica",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "1996-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "1999-12-31",
+        "precisao": "dia"
+      }
+    },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Seção de teste 2",
+        "evidencia": "[SINTÉTICO] Trecho fictício com início e fim do mandato."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "humana",
+        "revisadoPor": "Fixture sintética",
+        "revisadoEm": "2026-10-08"
+      }
     }
   }
 ]

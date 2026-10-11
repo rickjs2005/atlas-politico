@@ -1,0 +1,66 @@
+[
+  {
+    "id": "sintetico-voto-01",
+    "votacaoId": "sintetico-votacao-01",
+    "pessoaId": "sintetico-pessoa-a",
+    "mandatoId": "sintetico-mandato-a1",
+    "registro": { "tipo": "voto-individual", "posicao": "FAVOR", "valorOriginal": "Sim" },
+    "proveniencia": { "provedor": "senado", "registroExternoId": "fixture-voto-1", "capturaId": null },
+    "situacao": { "tipo": "vigente" },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Lista nominal fictícia, linha da pessoa A",
+        "evidencia": "[SINTÉTICO] Pessoa A — Sim."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-voto-02",
+    "votacaoId": "sintetico-votacao-01",
+    "pessoaId": "sintetico-pessoa-a",
+    "mandatoId": "sintetico-mandato-a1",
+    "registro": { "tipo": "voto-individual", "posicao": "CONTRA", "valorOriginal": "Não" },
+    "proveniencia": { "provedor": "senado", "registroExternoId": "fixture-voto-1-captura-antiga", "capturaId": null },
+    "situacao": {
+      "tipo": "retificado",
+      "substituidoPor": "sintetico-voto-01",
+      "motivo": "[SINTÉTICO] A captura anterior trazia o valor trocado; a lista nominal confirma Sim."
+    },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Lista nominal fictícia, captura anterior",
+        "evidencia": "[SINTÉTICO] Pessoa A — Não (valor da captura substituída)."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-voto-03",
+    "votacaoId": "sintetico-votacao-03",
+    "pessoaId": "sintetico-pessoa-b",
+    "mandatoId": "sintetico-mandato-b2",
+    "registro": { "tipo": "ausencia-documentada", "valorOriginal": "Ausente", "motivoDocumentado": "[SINTÉTICO] Licença fictícia registrada na ata." },
+    "proveniencia": { "provedor": "camara", "registroExternoId": "fixture-ausencia-3", "capturaId": null },
+    "situacao": { "tipo": "vigente" },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Ata fictícia, registro de ausências",
+        "evidencia": "[SINTÉTICO] Pessoa B — ausente, em licença."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

@@ -6,6 +6,7 @@ import type { FeatureCollection, Point } from "geojson";
 
 import type { Categoria } from "@/lib/domain/categories";
 import type { Precisao } from "@/lib/domain/dates";
+import type { Tema } from "@/lib/domain/decisions";
 import type { PrecisaoGeografica } from "@/lib/domain/geo";
 import type { Conjunto, Edicao } from "@/lib/domain/schemas";
 
@@ -36,6 +37,37 @@ export interface Indexes {
   pessoas: { porId: Record<string, number>; porSlug: Record<string, string> };
   mandatos: { porId: Record<string, number>; porPessoa: Record<string, string[]> };
   filiacoes: { porId: Record<string, number>; porPessoa: Record<string, string[]> };
+  /** Decisões políticas (docs/DATA_MODEL.md, seção Decisões). Listas de votação em ordem cronológica. */
+  proposicoes: {
+    porId: Record<string, number>;
+    /** Todos os temas aparecem, mesmo vazios. */
+    porTema: Record<Tema, string[]>;
+    porInstituicao: Record<string, string[]>;
+  };
+  votacoes: {
+    porId: Record<string, number>;
+    porProposicao: Record<string, string[]>;
+    porInstituicao: Record<string, string[]>;
+    porAno: Record<string, string[]>;
+    /** Pelos temas da proposição votada. Todos os temas aparecem. */
+    porTema: Record<Tema, string[]>;
+  };
+  votos: {
+    porId: Record<string, number>;
+    porVotacao: Record<string, string[]>;
+    porPessoa: Record<string, string[]>;
+    /** `votacaoId:pessoaId` para o `id` do voto vigente. */
+    vigentePorVotacaoEPessoa: Record<string, string>;
+  };
+  atosExecutivos: {
+    porId: Record<string, number>;
+    porPessoa: Record<string, string[]>;
+    porTema: Record<Tema, string[]>;
+    porAno: Record<string, string[]>;
+    porProposicao: Record<string, string[]>;
+  };
+  coberturaPolitica: { porId: Record<string, number>; porPessoa: Record<string, string[]> };
+  identidadesInstitucionais: { porId: Record<string, number>; porPessoa: Record<string, string[]> };
   lugares: { porId: Record<string, number> };
   fontes: { porId: Record<string, number> };
   imagens: { porId: Record<string, number> };

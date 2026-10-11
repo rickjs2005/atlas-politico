@@ -4,8 +4,9 @@
 //
 // REGRA DE ELEGIBILIDADE (docs/DATA-PIPELINE.md, seção Elegibilidade)
 //
-// Um registro factual (pessoa, mandato, filiação, acontecimento) entra na
-// publicação quando:
+// Um registro factual (pessoa, mandato, filiação, acontecimento, proposição,
+// votação, voto, ato do Executivo, cobertura da pesquisa, identidade
+// institucional) entra na publicação quando:
 //   1. está em content/published/;
 //   2. tem estado editorial `revisado`, com revisão identificada (tipo, quem e
 //      quando) e ao menos uma citação que diga a fonte, o trecho e o que ele
@@ -136,8 +137,15 @@ export function selectPublishable(validacao: Validation): {
   const mandatos = pick(registros.mandatos, candidatos.mandatos);
   const filiacoes = pick(registros.filiacoes, candidatos.filiacoes);
   const acontecimentos = pick(registros.acontecimentos, candidatos.acontecimentos);
+  const proposicoes = pick(registros.proposicoes, candidatos.proposicoes);
+  const votacoes = pick(registros.votacoes, candidatos.votacoes);
+  const votos = pick(registros.votos, candidatos.votos);
+  const atosExecutivos = pick(registros.atosExecutivos, candidatos.atosExecutivos);
+  const coberturaPolitica = pick(registros.coberturaPolitica, candidatos.coberturaPolitica);
+  const identidadesInstitucionais = pick(registros.identidadesInstitucionais, candidatos.identidadesInstitucionais);
 
-  // Lugares, fontes e imagens entram pelo uso: só o que um registro elegível cita.
+  // Lugares, fontes e imagens entram pelo uso: só o que um registro elegível
+  // cita, nas citações e nas referências documentais do objeto votado e do ato oficial.
   const citados = (itens: readonly { fontes: readonly Citacao[] }[]) =>
     itens.flatMap((item) => item.fontes.map((citacao) => citacao.fonteId));
   const fontesUsadas = new Set([
@@ -145,6 +153,14 @@ export function selectPublishable(validacao: Validation): {
     ...citados(mandatos),
     ...citados(filiacoes),
     ...citados(acontecimentos),
+    ...citados(proposicoes),
+    ...citados(votacoes),
+    ...citados(votos),
+    ...citados(atosExecutivos),
+    ...citados(coberturaPolitica),
+    ...citados(identidadesInstitucionais),
+    ...votacoes.flatMap((item) => (item.objeto.textoReferencia === null ? [] : [item.objeto.textoReferencia.fonteId])),
+    ...atosExecutivos.map((item) => item.atoOficial.fonteId),
   ]);
   const lugaresUsados = new Set(
     acontecimentos.flatMap((item) =>
@@ -190,6 +206,12 @@ export function selectPublishable(validacao: Validation): {
       mandatos: [...mandatos].sort(compareByPeriod),
       filiacoes: [...filiacoes].sort(compareByPeriod),
       acontecimentos: [...acontecimentos].sort(compareByDate),
+      proposicoes: sortById(proposicoes),
+      votacoes: [...votacoes].sort(compareByDate),
+      votos: sortById(votos),
+      atosExecutivos: [...atosExecutivos].sort(compareByDate),
+      coberturaPolitica: sortById(coberturaPolitica),
+      identidadesInstitucionais: sortById(identidadesInstitucionais),
       lugares: sortById(lugares),
       fontes: sortById(fontes),
       imagens: sortById(imagens),
@@ -247,9 +269,13 @@ export function verifyAtlasData(
     }
   }
 
-  const ordenado = [...conjunto.acontecimentos].sort(compareByDate);
-  if (ordenado.some((item, posicao) => item !== conjunto.acontecimentos[posicao])) {
-    report("acontecimentos", "Os acontecimentos não estão em ordem cronológica estável.");
+  const cronologicas = { acontecimentos: "Os acontecimentos", votacoes: "As votações", atosExecutivos: "Os atos do Executivo" } as const;
+  for (const nome of ["acontecimentos", "votacoes", "atosExecutivos"] as const) {
+    const lista = conjunto[nome];
+    const ordenado = [...lista].sort(compareByDate);
+    if (ordenado.some((item, posicao) => item !== lista[posicao])) {
+      report(nome, `${cronologicas[nome]} não estão em ordem cronológica estável.`);
+    }
   }
 
   if (canonicalJson(indices) !== canonicalJson(buildIndexes(conjunto))) {

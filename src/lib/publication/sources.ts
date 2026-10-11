@@ -2,7 +2,7 @@
 // validar. Só tipos e constantes; quem abre os arquivos é `src/lib/content`.
 //
 // As fontes editoriais são duas pastas:
-//   content/published/  a edição: `edicao.json` e as sete coleções;
+//   content/published/  a edição: `edicao.json` e as treze coleções;
 //   content/drafts/     a pesquisa em andamento e o que chega por importação:
 //                       coleções parciais, que podem citar registros da edição.
 // As duas são lidas juntas, e cada registro lembra de qual pasta veio.
@@ -14,6 +14,12 @@ export const COLECOES = [
   "mandatos",
   "filiacoes",
   "acontecimentos",
+  "proposicoes",
+  "votacoes",
+  "votos",
+  "atosExecutivos",
+  "coberturaPolitica",
+  "identidadesInstitucionais",
   "lugares",
   "fontes",
   "imagens",
@@ -21,14 +27,42 @@ export const COLECOES = [
 export type Colecao = (typeof COLECOES)[number];
 
 /** Coleções com estado editorial: fazem afirmações que dependem de revisão. */
-export const COLECOES_FACTUAIS = ["pessoas", "mandatos", "filiacoes", "acontecimentos"] as const;
+export const COLECOES_FACTUAIS = [
+  "pessoas",
+  "mandatos",
+  "filiacoes",
+  "acontecimentos",
+  "proposicoes",
+  "votacoes",
+  "votos",
+  "atosExecutivos",
+  "coberturaPolitica",
+  "identidadesInstitucionais",
+] as const;
 export type ColecaoFactual = (typeof COLECOES_FACTUAIS)[number];
+
+/** Coleções de referência, sem estado editorial: entram pelo uso. */
+export const COLECOES_DE_REFERENCIA = ["lugares", "fontes", "imagens"] as const;
+export type ColecaoDeReferencia = (typeof COLECOES_DE_REFERENCIA)[number];
+
+/**
+ * Coleções factuais que exigem ao menos uma citação quando revisadas. A
+ * cobertura da pesquisa fica de fora: a evidência dela são os acervos
+ * consultados, que o próprio registro descreve.
+ */
+export const COLECOES_COM_CITACAO = COLECOES_FACTUAIS.filter((colecao) => colecao !== "coberturaPolitica") as readonly Exclude<ColecaoFactual, "coberturaPolitica">[];
 
 export const ENTIDADE_DA_COLECAO: Record<Colecao, Entidade> = {
   pessoas: "pessoa",
   mandatos: "mandato",
   filiacoes: "filiacao",
   acontecimentos: "acontecimento",
+  proposicoes: "proposicao",
+  votacoes: "votacao",
+  votos: "voto",
+  atosExecutivos: "ato-executivo",
+  coberturaPolitica: "cobertura-politica",
+  identidadesInstitucionais: "identidade-institucional",
   lugares: "lugar",
   fontes: "fonte",
   imagens: "imagem",
@@ -50,6 +84,15 @@ export function isColecao(valor: string): valor is Colecao {
 
 export function isFactual(colecao: Colecao): colecao is ColecaoFactual {
   return (COLECOES_FACTUAIS as readonly string[]).includes(colecao);
+}
+
+export function isReference(colecao: Colecao): colecao is ColecaoDeReferencia {
+  return (COLECOES_DE_REFERENCIA as readonly string[]).includes(colecao);
+}
+
+/** Um objeto com uma lista vazia por coleção, para iniciar acumuladores sem repetir a lista. */
+export function emptyByCollection<T>(): Record<Colecao, T[]> {
+  return Object.fromEntries(COLECOES.map((colecao) => [colecao, [] as T[]])) as Record<Colecao, T[]>;
 }
 
 /** Um arquivo editorial lido: de onde veio e o JSON como está. */
@@ -96,15 +139,7 @@ export function emptySources(
   return {
     pastas,
     edicao: null,
-    colecoes: {
-      pessoas: [],
-      mandatos: [],
-      filiacoes: [],
-      acontecimentos: [],
-      lugares: [],
-      fontes: [],
-      imagens: [],
-    },
+    colecoes: emptyByCollection<SourceFile>(),
     importacoes: null,
     problemas: [],
     midia: {},

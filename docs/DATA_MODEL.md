@@ -145,6 +145,62 @@ O uso que um registro faz de uma fonte.
 | `cobertura` | lista de `{ pessoaId, periodo, observacao? }` | Período que o conjunto cobre para cada pessoa |
 | `alteracoes` | lista de `{ data, descricao, itens }` | Registro de alterações. `itens` aponta os registros afetados (`{ entidade, id }`) |
 
+## Decisões políticas
+
+Entraram em 10 de outubro de 2026 (D-122), para o histórico de votos e de atos do Executivo. Três naturezas que o modelo não confunde: o **voto parlamentar** (manifestação individual em uma votação identificada), o **ato do Executivo** (sanção, veto, medida provisória, decreto, iniciativa) e a **participação** como autoria ou relatoria, que não é voto e fica fora desta entrega. Os contratos estão em `src/lib/domain/schemas.ts`, seção Decisões políticas; as taxonomias, em `src/lib/domain/decisions.ts`.
+
+Os sete temas da comparação por assunto: `economia`, `seguranca-publica`, `saude`, `educacao`, `reforma-do-estado`, `meio-ambiente`, `direitos-das-mulheres`. São separados das categorias dos acontecimentos: um registro pode ter mais de um tema, e classificar é decisão editorial, a justificar na revisão. "Não localizado em Saúde" não significa "nunca atuou em Saúde".
+
+As instituições: `camara-dos-deputados`, `senado-federal`, `congresso-nacional`, `assembleia-nacional-constituinte` (separada da Câmara de propósito), `alerj` e `presidencia-da-republica`. O **mandato** ganhou o campo opcional `casa`, com uma dessas; é ele que dá competência para votar, e sem ele a consulta responde "competência não confirmada".
+
+### Proposição (`proposicoes.json`)
+
+A matéria votada ou referida: `instituicao`, `jurisdicao` (`federal` ou `estadual`), `identidadeExterna` (`provedor` e `id` no acervo oficial, nunca o nome), `tipo` (a sigla da casa: PL, PEC, PLP, MPV, PDL, REQ, PLV), `numero` e `ano` (ou `null`), `ementa`, `temas`, `fontes` e `editorial`. Temas repetidos são recusados.
+
+### Votação (`votacoes.json`)
+
+Uma decisão sobre um objeto: `proposicaoId`, `instituicao`, `orgao` (`plenario`, ou `comissao` com o nome), `identidadeExterna`, `data`, `etapa` (como a casa a nomeia: "1º turno", "turno único"), `objeto` (`tipo`: `texto-principal`, `substitutivo`, `emenda`, `destaque`, `requerimento` ou `outro`; `identificacao`; `descricao`; `textoReferencia`, um documento apontado com `fonteId`, `localizacao` e `capturaId`), `modalidade` (`nominal`, `simbolica`, `secreta`), `resultadoOficial` (`estado` e o `valorOriginal` como o acervo escreve), `fontes` e `editorial`. "FAVOR" em uma votação é favorável a **este objeto**: um requerimento de urgência não é o mérito, e uma emenda não é o projeto inteiro.
+
+### Voto (`votos.json`)
+
+A manifestação ou situação individual **comprovada**: `votacaoId`, `pessoaId`, `mandatoId` (o mandato pelo qual a pessoa participou), `registro`, `proveniencia` (`provedor`, `registroExternoId`, `capturaId`), `situacao`, `fontes` e `editorial`. O `registro` é um de três tipos, sempre com o `valorOriginal` do acervo:
+
+| Tipo | Campos | Quando |
+| --- | --- | --- |
+| `voto-individual` | `posicao` (`FAVOR`, `CONTRA`, `ABSTENCAO`, `OBSTRUCAO`, `OUTRO`), `valorOriginal` | Manifestação registrada. `OUTRO` guarda o valor sem correspondência segura e vai à revisão |
+| `ausencia-documentada` | `valorOriginal`, `motivoDocumentado` (opcional) | O documento registra a ausência (licença, missão, comunicação) |
+| `nao-votou-documentado` | `valorOriginal`, `motivoDocumentado` (obrigatório) | Presente sem votar, presidência da sessão, impedimento regimental |
+
+A falta de uma linha no acervo **não produz ausência**: sem documento, não há voto. "Sem registro individual" e "não se aplica" pertencem à consulta comparativa, não a este contrato. A `situacao` é `vigente` ou `retificado` (com `substituidoPor` e `motivo`): há uma linha vigente por pessoa e votação, e a retificada fica, apontando a que a substituiu.
+
+### Ato do Executivo (`atosExecutivos.json`)
+
+Discriminado por `tipo`, cada um com os campos que o distinguem: `sancao-expressa`; `sancao-tacita` (com `evidenciaDoProcedimento`: a sanção tácita é efeito do procedimento, não declaração de apoio); `veto-total` (com `mensagem`); `veto-parcial` (com `mensagem` e `dispositivosAlvo`, ao menos um: o veto não atinge o projeto inteiro); `medida-provisoria` (com `medida` número e ano, e `versao`); `decreto` (com `decreto` número e ano); `iniciativa` (proposição apresentada). Comuns: `atribuicao` (`autor-documentado`, com `pessoaId` e `mandatoId`: quem praticou o ato, pelo documento), `data`, `atoOficial` (`identificador` e `fonteId`), `proposicaoIds`, `temas`, `fontes`, `editorial`. Não existe "voto presidencial" nem "sanção de PEC": emendas constitucionais são promulgadas pelas Mesas.
+
+### Cobertura da pesquisa (`coberturaPolitica.json`)
+
+O que foi pesquisado para uma pessoa, em um tema (ou `geral`) e um período, em quais acervos (`nome`, `url`, `consultadoEm`, `recorte`, `completa`), com `criterios`, `estado` (`completa`, `parcial`, `pendente`) e `lacunas`. É o que separa "a fonte não individualiza" de "a pesquisa ainda não encontrou". Não exige citação: os acervos são a evidência. Tem estado editorial, como os demais.
+
+### Identidade institucional (`identidadesInstitucionais.json`)
+
+A pessoa em cada acervo oficial: `provedor`, `idExterno`, `instituicao`, `validade` (período ou `null`), `fontes`, `editorial`. A pessoa, a matéria e a votação se resolvem por identificadores, nunca por comparação de nome.
+
+### Competência e consulta comparativa
+
+A competência de um mandato para uma decisão segue a regra dos períodos (`competenceOf`, em `src/lib/domain/integrity.ts`): as datas documentadas tocam a data da decisão (`dentro`), provam que não tocam (`fora`) ou não bastam (`nao-confirmada`). Um limite desconhecido nunca vira data. Voto ou ato fora do período documentado do mandato é erro; casa do mandato diferente da casa da decisão é erro; mandato sem `casa` é aviso.
+
+A consulta (`resolveParticipation`, em `src/lib/data/participation.ts`) responde uma de cinco coisas para uma pessoa em uma votação, e nunca um booleano nem `null` com vários sentidos:
+
+| Resposta | Quando |
+| --- | --- |
+| `registro` | Há voto vigente, com o mandato pelo qual a pessoa participou |
+| `nao-se-aplica` | As datas documentadas dos mandatos provam que a pessoa não ocupava cargo com competência naquela casa e data |
+| `competencia-nao-confirmada` | Há mandato na casa cujas datas não decidem, ou algum mandato sem a casa declarada |
+| `sem-registro-individual` | A pessoa podia votar, e o material não individualiza: votação simbólica ou secreta, ou acervo consultado por inteiro (cobertura `completa`) sem linha da pessoa |
+| `pesquisa-pendente` | A pessoa podia votar e a pesquisa do recorte está `parcial`, `pendente` ou não declarada |
+
+Dois modos de comparação, pela política editorial: **mesma votação** (os registros de participação, com "não se aplica" onde não havia competência; nunca promete um voto por linha para os dois) e **mesmo tema** (registros das duas trajetórias por tema, cada um com cargo, instituição, data, tipo e fonte, com a diferença institucional explícita). Sem pontuação, vencedor ou percentual.
+
 ## Regras temporais
 
 ### Data histórica

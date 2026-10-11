@@ -1,0 +1,68 @@
+[
+  {
+    "id": "sintetico-proposicao-01",
+    "instituicao": "senado-federal",
+    "jurisdicao": "federal",
+    "identidadeExterna": { "provedor": "senado", "id": "fixture-materia-1" },
+    "tipo": "PL",
+    "numero": 1234,
+    "ano": 2004,
+    "ementa": "[SINTÉTICO] Proposição fictícia sobre um assunto econômico, para testar o contrato.",
+    "temas": ["economia"],
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Ficha fictícia da matéria",
+        "evidencia": "[SINTÉTICO] Trecho fictício com a ementa e o número."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-proposicao-02",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": { "provedor": "camara", "id": "fixture-proposicao-2" },
+    "tipo": "PL",
+    "numero": 99,
+    "ano": 2019,
+    "ementa": "[SINTÉTICO] Proposição fictícia que toca saúde e educação ao mesmo tempo.",
+    "temas": ["saude", "educacao"],
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Ficha fictícia da proposição",
+        "evidencia": "[SINTÉTICO] Trecho fictício com a ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-proposicao-03",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": { "provedor": "camara", "id": "fixture-proposicao-3" },
+    "tipo": "PL",
+    "numero": 10,
+    "ano": 1996,
+    "ementa": "[SINTÉTICO] Proposição fictícia de 1996 sobre a organização do Estado, vetada em parte.",
+    "temas": ["reforma-do-estado"],
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Ficha fictícia da proposição de 1996",
+        "evidencia": "[SINTÉTICO] Trecho fictício com a ementa e o ano."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

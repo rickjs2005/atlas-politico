@@ -33,6 +33,13 @@ export type DiagnosticCode =
   | "referencia-fora-da-publicacao"
   | "data-apos-corte"
   | "fonte-incoerente"
+  // decisões políticas
+  | "mandato-de-outra-pessoa"
+  | "fora-do-mandato"
+  | "competencia-nao-confirmada"
+  | "casa-diferente"
+  | "voto-repetido"
+  | "retificacao-incoerente"
   // mídia
   | "midia-ausente"
   | "midia-invalida"

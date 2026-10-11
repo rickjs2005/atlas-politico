@@ -89,6 +89,19 @@ Publicação: o conjunto atual, todo com revisão assistida por IA, serve ao des
 
 A regra que decide, a partir do estado e da pasta, o que entra nos dados do site está em [DATA-PIPELINE.md](DATA-PIPELINE.md), seção "Estados editoriais e elegibilidade". O mesmo documento diz como promover um rascunho e como tirar um registro do ar.
 
+## Decisões políticas: votos e atos
+
+Desde 10 de outubro de 2026 o modelo aceita proposições, votações, votos, atos do Executivo, cobertura da pesquisa e identidades institucionais ([DATA_MODEL.md](DATA_MODEL.md), seção Decisões políticas). As regras de seleção acima continuam valendo; estas se somam a elas:
+
+1. **Voto é fato com documento.** Um voto entra só com a lista nominal, a ata ou o painel que o registra, citados com o trecho. A falta de uma linha no acervo não vira ausência: a ausência é um registro, com o documento que a traz (licença, missão, comunicação). Orientação de bancada não é voto individual.
+2. **"A favor" é a favor do objeto votado.** Uma votação diz o que foi posto em votação: texto principal, substitutivo, emenda, destaque, requerimento. Um voto favorável a um requerimento de urgência não é apoio ao mérito, e um voto em uma emenda não é voto no projeto inteiro. O registro nunca converte isso em "favorável à segurança" ou "contra a educação".
+3. **Os três estados não bastam.** Além de favor, contra e ausência, o modelo conserva abstenção, obstrução, não voto com motivo documentado e "outro registro" (o valor original do acervo, até a revisão classificar). A consulta comparativa distingue ainda "não se aplica" (a pessoa não ocupava cargo com competência), "competência não confirmada", "sem registro individual" (a fonte não individualiza) e "pesquisa pendente" (o conjunto ainda não procurou). Nenhum desses é juízo sobre a pessoa; o jogo não premia interpretar uma ausência como desinteresse.
+4. **Presidência é outro tipo de histórico.** Sanção expressa ou tácita, veto total ou parcial (com os dispositivos), medida provisória, decreto e iniciativa são atos próprios, atribuídos a quem o documento diz que os praticou. Não há "voto presidencial" nem "sanção de PEC". Sanção tácita é efeito do procedimento, não declaração de apoio.
+5. **Tema é decisão editorial.** A classificação nos sete temas (economia, segurança pública, saúde, educação, reforma do Estado, meio ambiente, direitos das mulheres) é feita na revisão e justificada; um registro pode ter mais de um tema. "Não localizado em um tema" não significa "nunca atuou nele".
+6. **Cobertura declarada, não prometida.** Cada recorte pesquisado tem um registro de cobertura (pessoa, tema, período, acervos, critérios, estado, lacunas). Não se chama uma amostra editorial de "todas as votações", e não se calcula percentual de cobertura sem um inventário como denominador.
+7. **Mesma régua para os dois.** Os mesmos contratos, critérios, campos, acesso às fontes e explicações para as duas trajetórias; os mandatos são comparáveis por tema, não por contagem. A Constituinte é identificada separadamente da Câmara; a Alerj entra no recorte de Flávio Bolsonaro. Sem pontuação, vencedor ou percentual a partir de mandatos incomparáveis e amostras incompletas.
+8. **Importação não publica.** O que chega dos acervos entra como rascunho, com a captura bruta guardada e as pendências escritas; revisão humana só é registrada quando uma pessoa a fez. A barreira de release vale para estas coleções como para as demais.
+
 ## Correção
 
 1. **Quem aponta.** Qualquer pessoa. O canal público ainda não foi definido; é uma decisão pendente do responsável pelo projeto.

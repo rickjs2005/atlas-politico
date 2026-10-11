@@ -1,0 +1,170 @@
+[
+  {
+    "id": "sintetico-votacao-01",
+    "proposicaoId": "sintetico-proposicao-01",
+    "instituicao": "senado-federal",
+    "orgao": { "tipo": "plenario" },
+    "identidadeExterna": { "provedor": "senado", "id": "fixture-votacao-1" },
+    "data": { "valor": "2004-05-12", "precisao": "dia" },
+    "etapa": "turno único",
+    "objeto": {
+      "tipo": "texto-principal",
+      "identificacao": null,
+      "descricao": "[SINTÉTICO] O texto principal da proposição fictícia, sem emendas.",
+      "textoReferencia": { "fonteId": "sintetico-fonte-01", "localizacao": "Objeto da votação", "capturaId": null }
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": { "estado": "aprovado", "valorOriginal": "Aprovado" },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Lista nominal fictícia",
+        "evidencia": "[SINTÉTICO] Trecho fictício com a data, o objeto e o resultado."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-votacao-02",
+    "proposicaoId": "sintetico-proposicao-01",
+    "instituicao": "senado-federal",
+    "orgao": { "tipo": "comissao", "nome": "[SINTÉTICO] Comissão de teste" },
+    "identidadeExterna": { "provedor": "senado", "id": "fixture-votacao-2" },
+    "data": { "valor": "2004-06-01", "precisao": "dia" },
+    "etapa": "votação do requerimento de urgência",
+    "objeto": {
+      "tipo": "requerimento",
+      "identificacao": "REQ 7/2004 fictício",
+      "descricao": "[SINTÉTICO] Pedido fictício de urgência, e não o mérito do projeto.",
+      "textoReferencia": null
+    },
+    "modalidade": "simbolica",
+    "resultadoOficial": { "estado": "aprovado", "valorOriginal": "Aprovado por votação simbólica" },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Ata fictícia da comissão",
+        "evidencia": "[SINTÉTICO] Trecho fictício com o requerimento e o resultado simbólico."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-votacao-03",
+    "proposicaoId": "sintetico-proposicao-02",
+    "instituicao": "camara-dos-deputados",
+    "orgao": { "tipo": "plenario" },
+    "identidadeExterna": { "provedor": "camara", "id": "fixture-votacao-3" },
+    "data": { "valor": "2020-03-10", "precisao": "dia" },
+    "etapa": "1º turno",
+    "objeto": {
+      "tipo": "emenda",
+      "identificacao": "Emenda fictícia nº 3",
+      "descricao": "[SINTÉTICO] Uma emenda fictícia ao texto, e não o projeto inteiro.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": { "estado": "rejeitado", "valorOriginal": "Rejeitada" },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Painel fictício da votação",
+        "evidencia": "[SINTÉTICO] Trecho fictício com a emenda e o resultado."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-votacao-04",
+    "proposicaoId": "sintetico-proposicao-01",
+    "instituicao": "senado-federal",
+    "orgao": { "tipo": "plenario" },
+    "identidadeExterna": { "provedor": "senado", "id": "fixture-votacao-4" },
+    "data": { "valor": "2005-02-20", "precisao": "dia" },
+    "etapa": "turno único",
+    "objeto": {
+      "tipo": "substitutivo",
+      "identificacao": "Substitutivo fictício da comissão",
+      "descricao": "[SINTÉTICO] O substitutivo, e não o texto original.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": { "estado": "aprovado", "valorOriginal": "Aprovado" },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Lista nominal fictícia de 2005",
+        "evidencia": "[SINTÉTICO] Trecho fictício com o substitutivo e o resultado; a pessoa A não aparece na lista capturada."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-votacao-05",
+    "proposicaoId": "sintetico-proposicao-02",
+    "instituicao": "camara-dos-deputados",
+    "orgao": { "tipo": "plenario" },
+    "identidadeExterna": { "provedor": "camara", "id": "fixture-votacao-5" },
+    "data": { "valor": "2021-05-05", "precisao": "dia" },
+    "etapa": "2º turno",
+    "objeto": {
+      "tipo": "texto-principal",
+      "identificacao": null,
+      "descricao": "[SINTÉTICO] O texto principal em segundo turno.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": { "estado": "aprovado", "valorOriginal": "Aprovado" },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Painel fictício da votação de 2021",
+        "evidencia": "[SINTÉTICO] Trecho fictício com o resultado; a lista nominal completa não traz a pessoa B."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-votacao-06",
+    "proposicaoId": "sintetico-proposicao-03",
+    "instituicao": "camara-dos-deputados",
+    "orgao": { "tipo": "plenario" },
+    "identidadeExterna": { "provedor": "camara", "id": "fixture-votacao-6" },
+    "data": { "valor": "2016-08-10", "precisao": "dia" },
+    "etapa": "turno único",
+    "objeto": {
+      "tipo": "destaque",
+      "identificacao": "Destaque fictício nº 2",
+      "descricao": "[SINTÉTICO] Um destaque para votação em separado de um dispositivo.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": { "estado": "prejudicado", "valorOriginal": "Prejudicado" },
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Painel fictício da votação de 2016",
+        "evidencia": "[SINTÉTICO] Trecho fictício com o destaque e o resultado."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "[SINTÉTICO] Revisor de teste", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

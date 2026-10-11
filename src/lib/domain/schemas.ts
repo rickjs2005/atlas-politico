@@ -10,10 +10,23 @@ import { z } from "zod";
 import { CATEGORIAS } from "./categories";
 import {
   PRECISOES,
+  YEAR_BOUNDS,
   analyzeDate,
   findPeriodProblem,
   type DataHistorica,
 } from "./dates";
+import {
+  ESTADOS_DE_COBERTURA,
+  INSTITUICOES,
+  JURISDICOES,
+  MODALIDADES_DE_VOTACAO,
+  OBJETOS_VOTADOS,
+  POSICOES_DE_VOTO,
+  PROVEDORES,
+  RESULTADOS_DE_VOTACAO,
+  TEMAS,
+  TEMAS_DE_COBERTURA,
+} from "./decisions";
 import { PRECISOES_GEOGRAFICAS, isInsideBrazilBox } from "./geo";
 
 // Mensagens do próprio Zod em português, para quem lê o erro de validação.
@@ -259,6 +272,12 @@ export const mandatoSchema = z
     pessoaId: idSchema,
     cargo: texto,
     instituicao: texto,
+    /**
+     * A casa em que o mandato dá competência para votar, pela taxonomia das
+     * decisões. Sem ela, a consulta comparativa responde "competência não
+     * confirmada" para as votações dessa casa, em vez de deduzir pelo nome.
+     */
+    casa: z.enum(INSTITUICOES).optional(),
     periodo: periodoSchema,
     fontes: z.array(citacaoSchema),
     editorial: editorialSchema,
@@ -305,6 +324,253 @@ export const acontecimentoSchema = z
   .superRefine(requireEvidenceWhenReviewed);
 
 // ---------------------------------------------------------------------------
+// Decisões políticas: proposição, votação, voto, ato do Executivo, cobertura
+// da pesquisa e identidade institucional (docs/DATA_MODEL.md, seção Decisões)
+// ---------------------------------------------------------------------------
+
+/** Identificador do registro em um acervo oficial. A pessoa, a matéria e a votação se resolvem por ele, nunca pelo nome. */
+const identidadeExternaSchema = z.strictObject({
+  provedor: z.enum(PROVEDORES),
+  id: texto,
+});
+
+/**
+ * Um documento de referência apontado sem citação de trecho: diz qual fonte e
+ * onde olhar, e qual captura bruta (pasta de pesquisa, fora do conteúdo) guarda
+ * a resposta usada. Diferente de `citacaoSchema`, que também diz o que o
+ * trecho sustenta.
+ */
+const referenciaDocumentalSchema = z.strictObject({
+  fonteId: idSchema,
+  localizacao: texto,
+  capturaId: idSchema.nullable(),
+});
+
+function requireDistinctThemes(registro: { temas: readonly string[] }, ctx: z.RefinementCtx) {
+  if (new Set(registro.temas).size !== registro.temas.length) {
+    ctx.addIssue({ code: "custom", message: "O mesmo tema aparece mais de uma vez.", path: ["temas"] });
+  }
+}
+
+export const proposicaoSchema = z
+  .strictObject({
+    id: idSchema,
+    instituicao: z.enum(INSTITUICOES),
+    jurisdicao: z.enum(JURISDICOES),
+    identidadeExterna: identidadeExternaSchema,
+    /** A sigla do tipo, como a casa a usa: PL, PEC, PLP, MPV, PDL, REQ, PLV. */
+    tipo: texto,
+    numero: z.number().int().positive().nullable(),
+    ano: z.number().int().min(YEAR_BOUNDS.min).max(YEAR_BOUNDS.max).nullable(),
+    ementa: texto,
+    /** Classificação temática: decisão editorial, a justificar na revisão. Pode ser mais de um tema. */
+    temas: z.array(z.enum(TEMAS)),
+    fontes: z.array(citacaoSchema),
+    editorial: editorialSchema,
+  })
+  .superRefine(requireEvidenceWhenReviewed)
+  .superRefine(requireDistinctThemes);
+
+const orgaoSchema = z.discriminatedUnion("tipo", [
+  z.strictObject({ tipo: z.literal("plenario") }),
+  z.strictObject({ tipo: z.literal("comissao"), nome: texto }),
+]);
+
+/** O que foi posto em votação: "FAVOR" é favorável a isto, e não ao projeto inteiro. */
+const objetoVotadoSchema = z.strictObject({
+  tipo: z.enum(OBJETOS_VOTADOS),
+  /** Número da emenda, do destaque ou do requerimento, ou a versão do texto, quando existe. */
+  identificacao: texto.nullable(),
+  descricao: texto,
+  /** O documento que diz o que foi votado, quando é outro que o do resultado. */
+  textoReferencia: referenciaDocumentalSchema.nullable(),
+});
+
+const resultadoOficialSchema = z.strictObject({
+  estado: z.enum(RESULTADOS_DE_VOTACAO),
+  /** O resultado como o acervo o escreve. */
+  valorOriginal: texto,
+});
+
+export const votacaoSchema = z
+  .strictObject({
+    id: idSchema,
+    proposicaoId: idSchema,
+    instituicao: z.enum(INSTITUICOES),
+    orgao: orgaoSchema,
+    identidadeExterna: identidadeExternaSchema,
+    data: dataHistoricaSchema,
+    /** A etapa da tramitação a que a decisão pertence, como a casa a nomeia: "1º turno", "turno único", "requerimento de urgência". */
+    etapa: texto,
+    objeto: objetoVotadoSchema,
+    modalidade: z.enum(MODALIDADES_DE_VOTACAO),
+    resultadoOficial: resultadoOficialSchema,
+    fontes: z.array(citacaoSchema),
+    editorial: editorialSchema,
+  })
+  .superRefine(requireEvidenceWhenReviewed);
+
+/**
+ * O registro individual, só com documento. A falta de uma linha no acervo não
+ * produz ausência: "sem registro individual" e "não se aplica" pertencem à
+ * consulta comparativa, não a este contrato.
+ */
+const registroIndividualSchema = z.discriminatedUnion("tipo", [
+  z.strictObject({
+    tipo: z.literal("voto-individual"),
+    posicao: z.enum(POSICOES_DE_VOTO),
+    /** O valor como o acervo o escreve (Sim, Não, Abstenção, Obstrução, P-NRV...). */
+    valorOriginal: texto,
+  }),
+  z.strictObject({
+    tipo: z.literal("ausencia-documentada"),
+    valorOriginal: texto,
+    /** Licença, missão oficial ou outro motivo que o documento registra. */
+    motivoDocumentado: texto.optional(),
+  }),
+  z.strictObject({
+    tipo: z.literal("nao-votou-documentado"),
+    valorOriginal: texto,
+    /** Impedimento regimental, presidência da sessão ou situação equivalente, como o documento diz. */
+    motivoDocumentado: texto,
+  }),
+]);
+
+/** De onde o registro veio: provedor, identificador no acervo e a captura bruta usada. */
+const provenienciaSchema = z.strictObject({
+  provedor: z.enum(PROVEDORES),
+  registroExternoId: texto,
+  capturaId: idSchema.nullable(),
+});
+
+/** Uma linha vigente por pessoa e votação; a retificada fica, apontando a que a substituiu e por quê. */
+const situacaoDoVotoSchema = z.discriminatedUnion("tipo", [
+  z.strictObject({ tipo: z.literal("vigente") }),
+  z.strictObject({ tipo: z.literal("retificado"), substituidoPor: idSchema, motivo: texto }),
+]);
+
+export const votoSchema = z
+  .strictObject({
+    id: idSchema,
+    votacaoId: idSchema,
+    pessoaId: idSchema,
+    /** O mandato pelo qual a pessoa participou: é o que dá a competência. */
+    mandatoId: idSchema,
+    registro: registroIndividualSchema,
+    proveniencia: provenienciaSchema,
+    situacao: situacaoDoVotoSchema,
+    fontes: z.array(citacaoSchema),
+    editorial: editorialSchema,
+  })
+  .superRefine(requireEvidenceWhenReviewed);
+
+/** Quem praticou o ato, pelo documento. Um ato ocorrido durante um governo pode ter outro signatário. */
+const atribuicaoSchema = z.strictObject({
+  tipo: z.literal("autor-documentado"),
+  pessoaId: idSchema,
+  mandatoId: idSchema,
+});
+
+const atoOficialSchema = z.strictObject({
+  /** Como o ato é identificado: "Lei nº 14.000/2020", "Mensagem nº 123/2024", "Decreto nº 11.000/2022". */
+  identificador: texto,
+  fonteId: idSchema,
+});
+
+const numeroEAno = z.strictObject({
+  numero: z.number().int().positive(),
+  ano: z.number().int().min(YEAR_BOUNDS.min).max(YEAR_BOUNDS.max),
+});
+
+const atoBase = {
+  id: idSchema,
+  atribuicao: atribuicaoSchema,
+  data: dataHistoricaSchema,
+  atoOficial: atoOficialSchema,
+  /** As proposições a que o ato se refere, quando documentadas. */
+  proposicaoIds: z.array(idSchema),
+  temas: z.array(z.enum(TEMAS)),
+  fontes: z.array(citacaoSchema),
+  editorial: editorialSchema,
+};
+
+/**
+ * Atos do Executivo, cada tipo com os campos que o distinguem. Veto parcial
+ * exige os dispositivos; sanção tácita, a evidência do procedimento; medida
+ * provisória, a identificação e a versão. Não há objeto genérico.
+ */
+export const atoExecutivoSchema = z
+  .discriminatedUnion("tipo", [
+    z.strictObject({ ...atoBase, tipo: z.literal("sancao-expressa"), proposicaoIds: z.array(idSchema).min(1) }),
+    z.strictObject({
+      ...atoBase,
+      tipo: z.literal("sancao-tacita"),
+      proposicaoIds: z.array(idSchema).min(1),
+      /** O que documenta o decurso do prazo sem manifestação: a sanção tácita é efeito do procedimento, e não declaração de apoio. */
+      evidenciaDoProcedimento: texto,
+    }),
+    z.strictObject({ ...atoBase, tipo: z.literal("veto-total"), proposicaoIds: z.array(idSchema).min(1), mensagem: texto }),
+    z.strictObject({
+      ...atoBase,
+      tipo: z.literal("veto-parcial"),
+      proposicaoIds: z.array(idSchema).min(1),
+      mensagem: texto,
+      /** Os dispositivos vetados, como a mensagem os cita. O veto não atinge o projeto inteiro. */
+      dispositivosAlvo: z.array(texto).min(1),
+    }),
+    z.strictObject({ ...atoBase, tipo: z.literal("medida-provisoria"), medida: numeroEAno, versao: texto }),
+    z.strictObject({ ...atoBase, tipo: z.literal("decreto"), decreto: numeroEAno }),
+    z.strictObject({ ...atoBase, tipo: z.literal("iniciativa"), proposicaoIds: z.array(idSchema).min(1) }),
+  ])
+  .superRefine(requireEvidenceWhenReviewed)
+  .superRefine(requireDistinctThemes);
+
+/**
+ * O que foi pesquisado para uma pessoa, em um tema e um período, em quais
+ * acervos e com que resultado. É o que separa "a fonte não individualiza" de
+ * "a pesquisa ainda não encontrou". Não cita trechos: os acervos são a evidência.
+ */
+export const coberturaPoliticaSchema = z.strictObject({
+  id: idSchema,
+  pessoaId: idSchema,
+  tema: z.enum(TEMAS_DE_COBERTURA),
+  periodo: periodoSchema,
+  acervos: z
+    .array(
+      z.strictObject({
+        nome: texto,
+        url: urlSchema,
+        consultadoEm: dataCompletaSchema,
+        /** O recorte consultado: filtros, datas, páginas percorridas. */
+        recorte: texto,
+        /** A consulta percorreu todo o recorte, ou parou (paginação, falha, limite do serviço). */
+        completa: z.boolean(),
+      }),
+    )
+    .min(1),
+  criterios: texto,
+  estado: z.enum(ESTADOS_DE_COBERTURA),
+  lacunas: z.array(texto),
+  fontes: z.array(citacaoSchema),
+  editorial: editorialSchema,
+});
+
+/** A pessoa em cada acervo oficial, pelo identificador que o acervo usa. */
+export const identidadeInstitucionalSchema = z
+  .strictObject({
+    id: idSchema,
+    pessoaId: idSchema,
+    provedor: z.enum(PROVEDORES),
+    idExterno: texto,
+    instituicao: z.enum(INSTITUICOES),
+    /** Quando a identidade vale, se o acervo a limita a um período. */
+    validade: periodoSchema.nullable(),
+    fontes: z.array(citacaoSchema),
+    editorial: editorialSchema,
+  })
+  .superRefine(requireEvidenceWhenReviewed);
+
+// ---------------------------------------------------------------------------
 // Edição e conjunto
 // ---------------------------------------------------------------------------
 
@@ -313,6 +579,12 @@ export const ENTIDADES = [
   "mandato",
   "filiacao",
   "acontecimento",
+  "proposicao",
+  "votacao",
+  "voto",
+  "ato-executivo",
+  "cobertura-politica",
+  "identidade-institucional",
   "lugar",
   "fonte",
   "imagem",
@@ -349,6 +621,12 @@ export const conjuntoSchema = z.strictObject({
   mandatos: z.array(mandatoSchema),
   filiacoes: z.array(filiacaoSchema),
   acontecimentos: z.array(acontecimentoSchema),
+  proposicoes: z.array(proposicaoSchema),
+  votacoes: z.array(votacaoSchema),
+  votos: z.array(votoSchema),
+  atosExecutivos: z.array(atoExecutivoSchema),
+  coberturaPolitica: z.array(coberturaPoliticaSchema),
+  identidadesInstitucionais: z.array(identidadeInstitucionalSchema),
   lugares: z.array(lugarSchema),
   fontes: z.array(fonteSchema),
   imagens: z.array(imagemSchema),
@@ -364,5 +642,13 @@ export type Mandato = z.infer<typeof mandatoSchema>;
 export type Filiacao = z.infer<typeof filiacaoSchema>;
 export type Localizacao = z.infer<typeof localizacaoSchema>;
 export type Acontecimento = z.infer<typeof acontecimentoSchema>;
+export type Proposicao = z.infer<typeof proposicaoSchema>;
+export type Votacao = z.infer<typeof votacaoSchema>;
+export type ObjetoVotadoRegistro = z.infer<typeof objetoVotadoSchema>;
+export type Voto = z.infer<typeof votoSchema>;
+export type RegistroIndividual = z.infer<typeof registroIndividualSchema>;
+export type AtoExecutivo = z.infer<typeof atoExecutivoSchema>;
+export type CoberturaPolitica = z.infer<typeof coberturaPoliticaSchema>;
+export type IdentidadeInstitucional = z.infer<typeof identidadeInstitucionalSchema>;
 export type Edicao = z.infer<typeof edicaoSchema>;
 export type Conjunto = z.infer<typeof conjuntoSchema>;
