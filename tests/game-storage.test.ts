@@ -13,6 +13,7 @@ import { PROGRESS_VERSION, type ChapterSpec, type PlayerProgress } from "@/lib/g
 const capitulo = (numero: number, eventId: string): ChapterSpec => ({
   id: `teste-${numero}`,
   personagem: "lula",
+  sala: "historico",
   numero,
   titulo: `Capítulo ${numero}`,
   periodo: { de: 1970 + numero, ate: 1970 + numero },

@@ -27,9 +27,18 @@ export const GAME_PERSON_PARAM = "personagem";
 
 const PERSON_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-/** A entrada do jogo, ou o jogo de um personagem. */
-export function gameHref(personagem?: string): string {
-  return personagem === undefined ? "/jogo/" : `/jogo/${personagem}/`;
+/**
+ * A entrada do jogo, o jogo de um personagem (a sala Histórico, a trajetória
+ * em capítulos) ou uma sala temática dele.
+ */
+export function gameHref(personagem?: string, sala?: string): string {
+  if (personagem === undefined) return "/jogo/";
+  return sala === undefined || sala === "historico" ? `/jogo/${personagem}/` : `/jogo/${personagem}/${sala}/`;
+}
+
+/** A página de uma pessoa, aberta na decisão: o cartão dela na seção de decisões. */
+export function decisionHref(pessoaSlug: string, decisaoId: string): string {
+  return `/politicos/${pessoaSlug}/#decisao-${encodeURIComponent(decisaoId)}`;
 }
 
 /**

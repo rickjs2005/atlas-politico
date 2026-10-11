@@ -2,7 +2,7 @@
 
 Tudo o que o atlas afirma sobre pessoas, mandatos e acontecimentos mora aqui, em JSON versionado. O código nunca traz conteúdo embutido.
 
-Situação: edição 0.1.1, com data de corte em 8 de outubro de 2026. São 39 acontecimentos conferidos e 5 rascunhos. Toda a conferência foi assistida por IA; a revisão humana está pendente (ver `docs/CONTENT-REVIEW.md`).
+Situação: edição 0.2.0, com data de corte em 8 de outubro de 2026. São 39 acontecimentos conferidos, 5 rascunhos de acontecimento e a primeira amostra de decisões políticas: 6 votos (com 6 votações e 7 proposições) e 6 atos do Executivo, com 4 declarações de cobertura da pesquisa e 1 identidade institucional (a seleção está em `research/selecao-decisoes-2026-10.md`). Toda a conferência foi assistida por IA; a revisão humana está pendente (ver `docs/CONTENT-REVIEW.md` e `docs/HUMAN-REVIEW.md`).
 
 As páginas não leem estas pastas. Elas leem `generated/`, que `npm run data:build` produz depois de validar o conteúdo. O funcionamento está em `docs/DATA-PIPELINE.md`.
 
@@ -17,6 +17,8 @@ A edição: os registros que passaram pela revisão.
 | `mandatos.json` | Mandatos e funções, com período |
 | `filiacoes.json` | Filiações partidárias, com período |
 | `acontecimentos.json` | Acontecimentos |
+| `proposicoes.json`, `votacoes.json`, `votos.json`, `atosExecutivos.json` | Decisões políticas: a proposição, a votação, o voto individual e o ato do Executivo (`docs/DATA_MODEL.md`, seção Decisões). Só a amostra documentada; nunca inferidos |
+| `coberturaPolitica.json`, `identidadesInstitucionais.json` | O que foi pesquisado para cada pessoa, tema e período, com as lacunas; e a pessoa em cada acervo oficial, pelo identificador que o acervo usa |
 | `lugares.json` | Lugares com coordenada, precisão e origem |
 | `fontes.json` | Documentos citados |
 | `imagens.json` | Imagens com autoria, crédito e condições de uso. Os arquivos ficam em `public/media/`. Depois de trocar o arquivo de um retrato, rode `npm run images`: as páginas pedem versões preparadas dele, e o build recusa versões desatualizadas |
@@ -34,8 +36,8 @@ Regras:
 
 Pesquisa em andamento e o que chega por importação. Nada desta pasta é publicado.
 
-- As mesmas sete coleções, parciais: só os registros em pesquisa.
-- `importacoes.json`: registro de cada importação, escrito por `npm run data:import`.
+- As mesmas treze coleções, parciais: só os registros em pesquisa.
+- `importacoes.json`: registro de cada importação, escrito por `npm run data:import` e por `npm run importar:decisoes`.
 - Um rascunho pode citar pessoas, lugares e fontes de `published/`.
 - Todo rascunho traz `pendencias`: o que falta para ser conferido.
 - `id` e `slug` são únicos somando as duas pastas.

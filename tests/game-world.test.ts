@@ -49,6 +49,7 @@ const CENA: SceneSpec = {
 const CAPITULO: ChapterSpec = {
   id: "teste-1",
   personagem: "lula",
+  sala: "historico",
   numero: 1,
   titulo: "Capítulo de teste",
   periodo: { de: 1980, ate: 1986 },

@@ -19,11 +19,13 @@ import { AffiliationList, MandateList } from "@/components/PeriodRecords";
 import { Portrait } from "@/components/Portrait";
 import { SourceCatalog } from "@/components/SourceList";
 import { TrajectoryLanes } from "@/features/comparison/TrajectoryLanes";
+import { DecisionsByTheme, SAMPLE_NOTICE } from "@/features/decisions/DecisionsByTheme";
 import { EventLinkList } from "@/features/events/EventLinkList";
 import { clipGaps } from "@/features/events/chronology";
 import { CategoryFilter } from "@/features/timeline/CategoryFilter";
 import { PeriodControl } from "@/features/timeline/PeriodControl";
 import { getCoveredSpan, getSharedSpan, listGaps, type YearSpan } from "@/lib/data/coverage";
+import { listDecisionViews } from "@/lib/data/decisions";
 import { filterEvents, getImage, getSources, listSourcesOf, type Trajectory } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
 import { CATEGORIAS, CATEGORY_LABELS, type Categoria } from "@/lib/domain/categories";
@@ -36,6 +38,7 @@ import {
   ORIGIN_COMPARISON,
   carryFromComparison,
   comparisonHref,
+  decisionHref,
   eventHref,
   explorationHref,
   type Recorte,
@@ -156,6 +159,12 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
     coberto: getCoveredSpan(data, trajetoria.pessoa.id),
     lacunas: clipGaps(listGaps(data, trajetoria.pessoa.id), anos),
   }));
+  // As decisões documentadas de cada pessoa, para a comparação por tema. Não seguem o recorte de anos: são a amostra inteira da edição.
+  const colunasDeDecisoes = useMemo(
+    () => trajetorias.map(({ pessoa }) => ({ pessoa: { id: pessoa.id, slug: pessoa.slug, nome: pessoa.nome }, decisoes: listDecisionViews(data, pessoa.id) })),
+    [data, trajetorias],
+  );
+  const totalDeDecisoes = colunasDeDecisoes.reduce((soma, coluna) => soma + coluna.decisoes.length, 0);
   // Quem tem a cobertura começando depois do início do período consultado.
   const semCobertura = cobertos.filter(({ coberto }) => coberto !== null && coberto.de > anos.de);
 
@@ -359,6 +368,20 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
             />
           ))}
         </div>
+
+        {/* As decisões por tema: o mesmo tema, lado a lado, com a instituição e o cargo de cada decisão à vista. Não entra no recorte de anos. */}
+        <section id="decisoes" aria-labelledby="titulo-decisoes" className="space-y-5 border-t border-ink pt-8" data-secao="decisoes" data-quantas={totalDeDecisoes}>
+          <div className="max-w-3xl space-y-2">
+            <p className="eyebrow text-ink-soft">Decisões documentadas, por tema</p>
+            <h2 id="titulo-decisoes" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
+              Votos e atos no mesmo tema
+            </h2>
+            <p className="text-sm text-ink-soft" data-aviso-amostra>
+              {SAMPLE_NOTICE} Esta seção não segue o recorte de anos acima: mostra a amostra inteira da edição.
+            </p>
+          </div>
+          <DecisionsByTheme colunas={colunasDeDecisoes} headingLevel={3} hrefOf={decisionHref} />
+        </section>
       </div>
       </div>
     </>

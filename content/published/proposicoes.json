@@ -1,0 +1,226 @@
+[
+  {
+    "id": "senado-plp-93-2023",
+    "instituicao": "senado-federal",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "157826"
+    },
+    "tipo": "PLP",
+    "numero": 93,
+    "ano": 2023,
+    "ementa": "Institui regime fiscal sustentável para garantir a estabilidade macroeconômica do País e criar as condições adequadas ao crescimento socioeconômico, com fundamento no art. 6º da Emenda Constitucional nº 126, de 21 de dezembro de 2022, e no inciso VIII do caput e no parágrafo único do art. 163 da Constituição Federal; e altera a Lei Complementar nº 101, de 4 de maio de 2000 (Lei de Responsabilidade Fiscal), e a Lei nº 10.633, de 27 de dezembro de 2002.",
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2023-06-21",
+        "localizacao": "item com codigoSessaoVotacao=6714",
+        "evidencia": "identificacao: PLP 93/2023; ementa: Institui regime fiscal sustentável para garantir a estabilidade macroeconômica do País e criar as condições adequadas ao crescimento socioeconômico, com fundamento no art. 6º da Emenda Constitucional nº 126, de 21 de dezembro de 2022, e no inciso VIII do caput e no parágrafo único do art. 163 da Constituição Federal; e altera a Lei Complementar nº 101, de 4 de maio de 2000 (Lei de Responsabilidade Fiscal), e a Lei nº 10.633, de 27 de dezembro de 2002."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC); identificação, número, ano e ementa conferidos na resposta do acervo. O tema é classificação editorial pela ementa (política fiscal e tributária). Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-pec-45-2019",
+    "instituicao": "senado-federal",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "158930"
+    },
+    "tipo": "PEC",
+    "numero": 45,
+    "ano": 2019,
+    "ementa": "Altera o Sistema Tributário Nacional.",
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2023-11-08",
+        "localizacao": "item com codigoSessaoVotacao=6773",
+        "evidencia": "identificacao: PEC 45/2019; ementa: Altera o Sistema Tributário Nacional."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC); identificação, número, ano e ementa conferidos na resposta do acervo. O tema é classificação editorial pela ementa (política fiscal e tributária). Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-pl-2253-2022",
+    "instituicao": "senado-federal",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "154451"
+    },
+    "tipo": "PL",
+    "numero": 2253,
+    "ano": 2022,
+    "ementa": "Altera a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para dispor sobre a monitoração eletrônica do preso, prever a realização de exame criminológico para progressão de regime e extinguir o benefício da saída temporária.",
+    "temas": [
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-02-20",
+        "localizacao": "item com codigoSessaoVotacao=6818",
+        "evidencia": "identificacao: PL 2253/2022; ementa: Altera a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para dispor sobre a monitoração eletrônica do preso, prever a realização de exame criminológico para progressão de regime e extinguir o benefício da saída temporária."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC); identificação, número, ano e ementa conferidos na resposta do acervo. O tema é classificação editorial pela ementa (direito penal, execução penal e segurança pública). Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-pec-45-2023",
+    "instituicao": "senado-federal",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "160011"
+    },
+    "tipo": "PEC",
+    "numero": 45,
+    "ano": 2023,
+    "ementa": "Altera o art. 5º da Constituição Federal, para prever como mandado de criminalização a posse e o porte de entorpecentes e drogas afins sem autorização ou em desacordo com determinação legal ou regulamentar.",
+    "temas": [
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-04-16",
+        "localizacao": "item com codigoSessaoVotacao=6824",
+        "evidencia": "identificacao: PEC 45/2023; ementa: Altera o art. 5º da Constituição Federal, para prever como mandado de criminalização a posse e o porte de entorpecentes e drogas afins sem autorização ou em desacordo com determinação legal ou regulamentar."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC); identificação, número, ano e ementa conferidos na resposta do acervo. O tema é classificação editorial pela ementa (direito penal, execução penal e segurança pública). Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-plp-68-2024",
+    "instituicao": "senado-federal",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "164914"
+    },
+    "tipo": "PLP",
+    "numero": 68,
+    "ano": 2024,
+    "ementa": "Institui o Imposto sobre Bens e Serviços (IBS), a Contribuição Social sobre Bens e Serviços (CBS) e o Imposto Seletivo (IS); e dá outras providências.",
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-12-12",
+        "localizacao": "item com codigoSessaoVotacao=6899",
+        "evidencia": "identificacao: PLP 68/2024; ementa: Institui o Imposto sobre Bens e Serviços (IBS), a Contribuição Social sobre Bens e Serviços (CBS) e o Imposto Seletivo (IS); e dá outras providências."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC); identificação, número, ano e ementa conferidos na resposta do acervo. O tema é classificação editorial pela ementa (política fiscal e tributária). Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-pl-5582-2025",
+    "instituicao": "senado-federal",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "171725"
+    },
+    "tipo": "PL",
+    "numero": 5582,
+    "ano": 2025,
+    "ementa": "Institui o marco legal do combate ao crime organizado no Brasil; tipifica os crimes de domínio social estruturado e de favorecimento ao domínio social estruturado; e altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 (Código Penal), e 3.689, de 3 de outubro de 1941 (Código de Processo Penal), e as Leis nºs 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), 7.210, de 11 de julho de 1984 (Lei de Execução Penal), 11.343, de 23 de agosto de 2006, 10.826, de 22 de dezembro de 2003, 9.613, de 3 de março de 1998, e 4.737, de 15 de julho de 1965 (Código Eleitoral).",
+    "temas": [
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2025-12-10",
+        "localizacao": "item com codigoSessaoVotacao=7037",
+        "evidencia": "identificacao: PL 5582/2025; ementa: Institui o marco legal do combate ao crime organizado no Brasil; tipifica os crimes de domínio social estruturado e de favorecimento ao domínio social estruturado; e altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 (Código Penal), e 3.689, de 3 de outubro de 1941 (Código de Processo Penal), e as Leis nºs 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), 7.210, de 11 de julho de 1984 (Lei de Execução Penal), 11.343, de 23 de agosto de 2006, 10.826, de 22 de dezembro de 2003, 9.613, de 3 de março de 1998, e 4.737, de 15 de julho de 1965 (Código Eleitoral)."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC); identificação, número, ano e ementa conferidos na resposta do acervo. O tema é classificação editorial pela ementa (direito penal, execução penal e segurança pública). Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-pl-1087-2025",
+    "instituicao": "senado-federal",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "170775"
+    },
+    "tipo": "PL",
+    "numero": 1087,
+    "ano": 2025,
+    "ementa": "Altera as Leis nºs 9.250, de 26 de dezembro de 1995, e 9.249, de 26 de dezembro de 1995, para instituir a redução do imposto sobre a renda devido nas bases de cálculo mensal e anual e a tributação mínima para as pessoas físicas que auferem altas rendas; e dá outras providências.",
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-materia-pl-1087-2025",
+        "localizacao": "Campos IdentificacaoMateria, DadosBasicosMateria, SituacaoAtual e NormaGerada",
+        "evidencia": "PL 1087/2025, de origem na Câmara dos Deputados, apresentado ao Senado em 7 de outubro de 2025; aprovado pelo Plenário em 5 de novembro de 2025 e remetido à sanção; norma gerada: Lei nº 15.270, de 26 de novembro de 2025."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Ficha da matéria lida no webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC). O webservice de votações nominais não traz votação deste projeto com registro do senador 5894: não há registro individual a importar. Tema classificado pela ementa (imposto de renda). Revisão humana pendente."
+      }
+    }
+  }
+]

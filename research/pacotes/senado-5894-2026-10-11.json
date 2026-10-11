@@ -1,0 +1,339 @@
+{
+  "fontes": [
+    {
+      "id": "senado-dadosabertos-votacao-5894-2026-10-11",
+      "titulo": "Dados Abertos do Senado Federal: votações nominais do parlamentar 5894",
+      "autoria": "Senado Federal",
+      "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2025-12-10&dataFim=2025-12-10",
+      "dataDocumento": {
+        "tipo": "desconhecida"
+      },
+      "acessadoEm": "2026-10-11"
+    }
+  ],
+  "proposicoes": [
+    {
+      "id": "senado-pec-169-2019",
+      "instituicao": "senado-federal",
+      "jurisdicao": "federal",
+      "identidadeExterna": {
+        "provedor": "senado",
+        "id": "171481"
+      },
+      "tipo": "PEC",
+      "numero": 169,
+      "ano": 2019,
+      "ementa": "Altera o art. 37 da Constituição Federal para permitir a acumulação remunerada de um cargo de professor com outro de qualquer natureza.",
+      "temas": [],
+      "fontes": [
+        {
+          "fonteId": "senado-dadosabertos-votacao-5894-2026-10-11",
+          "localizacao": "item com codigoSessaoVotacao=7035",
+          "evidencia": "identificacao: PEC 169/2019; ementa: Altera o art. 37 da Constituição Federal para permitir a acumulação remunerada de um cargo de professor com outro de qualquer natureza."
+        }
+      ],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Classificar os temas da proposição (decisão editorial).",
+          "Conferir a ementa e o número na ficha da matéria."
+        ]
+      }
+    },
+    {
+      "id": "senado-pl-5582-2025",
+      "instituicao": "senado-federal",
+      "jurisdicao": "federal",
+      "identidadeExterna": {
+        "provedor": "senado",
+        "id": "171725"
+      },
+      "tipo": "PL",
+      "numero": 5582,
+      "ano": 2025,
+      "ementa": "Institui o marco legal do combate ao crime organizado no Brasil; tipifica os crimes de domínio social estruturado e de favorecimento ao domínio social estruturado; e altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 (Código Penal), e 3.689, de 3 de outubro de 1941 (Código de Processo Penal), e as Leis nºs 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), 7.210, de 11 de julho de 1984 (Lei de Execução Penal), 11.343, de 23 de agosto de 2006, 10.826, de 22 de dezembro de 2003, 9.613, de 3 de março de 1998, e 4.737, de 15 de julho de 1965 (Código Eleitoral).",
+      "temas": [],
+      "fontes": [
+        {
+          "fonteId": "senado-dadosabertos-votacao-5894-2026-10-11",
+          "localizacao": "item com codigoSessaoVotacao=7037",
+          "evidencia": "identificacao: PL 5582/2025; ementa: Institui o marco legal do combate ao crime organizado no Brasil; tipifica os crimes de domínio social estruturado e de favorecimento ao domínio social estruturado; e altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 (Código Penal), e 3.689, de 3 de outubro de 1941 (Código de Processo Penal), e as Leis nºs 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), 7.210, de 11 de julho de 1984 (Lei de Execução Penal), 11.343, de 23 de agosto de 2006, 10.826, de 22 de dezembro de 2003, 9.613, de 3 de março de 1998, e 4.737, de 15 de julho de 1965 (Código Eleitoral)."
+        }
+      ],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Classificar os temas da proposição (decisão editorial).",
+          "Conferir a ementa e o número na ficha da matéria."
+        ]
+      }
+    }
+  ],
+  "votacoes": [
+    {
+      "id": "senado-votacao-7035",
+      "proposicaoId": "senado-pec-169-2019",
+      "instituicao": "senado-federal",
+      "orgao": {
+        "tipo": "plenario"
+      },
+      "identidadeExterna": {
+        "provedor": "senado",
+        "id": "7035"
+      },
+      "data": {
+        "valor": "2025-12-10",
+        "precisao": "dia"
+      },
+      "etapa": "1º turno",
+      "objeto": {
+        "tipo": "emenda",
+        "identificacao": null,
+        "descricao": "Votação nominal do 1º turno da Proposta de Emenda à Constituição nº 169, de 2019, nos termos do parecer.",
+        "textoReferencia": null
+      },
+      "modalidade": "nominal",
+      "resultadoOficial": {
+        "estado": "aprovado",
+        "valorOriginal": "A"
+      },
+      "fontes": [
+        {
+          "fonteId": "senado-dadosabertos-votacao-5894-2026-10-11",
+          "localizacao": "item com codigoSessaoVotacao=7035",
+          "evidencia": "descricaoVotacao: Votação nominal do 1º turno da Proposta de Emenda à Constituição nº 169, de 2019, nos termos do parecer.; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+        }
+      ],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Conferir o objeto votado e o turno contra a ata ou o painel da sessão.",
+          "Conferir o resultado oficial."
+        ]
+      }
+    },
+    {
+      "id": "senado-votacao-7036",
+      "proposicaoId": "senado-pec-169-2019",
+      "instituicao": "senado-federal",
+      "orgao": {
+        "tipo": "plenario"
+      },
+      "identidadeExterna": {
+        "provedor": "senado",
+        "id": "7036"
+      },
+      "data": {
+        "valor": "2025-12-10",
+        "precisao": "dia"
+      },
+      "etapa": "2º turno",
+      "objeto": {
+        "tipo": "emenda",
+        "identificacao": null,
+        "descricao": "Votação nominal do 2º turno da Proposta de Emenda à Constituição nº 169, de 2019.",
+        "textoReferencia": null
+      },
+      "modalidade": "nominal",
+      "resultadoOficial": {
+        "estado": "aprovado",
+        "valorOriginal": "A"
+      },
+      "fontes": [
+        {
+          "fonteId": "senado-dadosabertos-votacao-5894-2026-10-11",
+          "localizacao": "item com codigoSessaoVotacao=7036",
+          "evidencia": "descricaoVotacao: Votação nominal do 2º turno da Proposta de Emenda à Constituição nº 169, de 2019.; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+        }
+      ],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Conferir o objeto votado e o turno contra a ata ou o painel da sessão.",
+          "Conferir o resultado oficial."
+        ]
+      }
+    },
+    {
+      "id": "senado-votacao-7037",
+      "proposicaoId": "senado-pl-5582-2025",
+      "instituicao": "senado-federal",
+      "orgao": {
+        "tipo": "plenario"
+      },
+      "identidadeExterna": {
+        "provedor": "senado",
+        "id": "7037"
+      },
+      "data": {
+        "valor": "2025-12-10",
+        "precisao": "dia"
+      },
+      "etapa": "etapa não informada pelo acervo",
+      "objeto": {
+        "tipo": "emenda",
+        "identificacao": null,
+        "descricao": "Votação nominal da Emenda nº 117 (Substitutivo) ao Projeto de Lei nº 5.582, de 2025, nos termos do parecer.",
+        "textoReferencia": null
+      },
+      "modalidade": "nominal",
+      "resultadoOficial": {
+        "estado": "aprovado",
+        "valorOriginal": "A"
+      },
+      "fontes": [
+        {
+          "fonteId": "senado-dadosabertos-votacao-5894-2026-10-11",
+          "localizacao": "item com codigoSessaoVotacao=7037",
+          "evidencia": "descricaoVotacao: Votação nominal da Emenda nº 117 (Substitutivo) ao Projeto de Lei nº 5.582, de 2025, nos termos do parecer.; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+        }
+      ],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Conferir o objeto votado e o turno contra a ata ou o painel da sessão.",
+          "Conferir o resultado oficial."
+        ]
+      }
+    }
+  ],
+  "votos": [
+    {
+      "id": "senado-voto-7035-5894",
+      "votacaoId": "senado-votacao-7035",
+      "pessoaId": "flavio-bolsonaro",
+      "mandatoId": "flavio-bolsonaro-senador-2019",
+      "registro": {
+        "tipo": "voto-individual",
+        "posicao": "FAVOR",
+        "valorOriginal": "Sim"
+      },
+      "proveniencia": {
+        "provedor": "senado",
+        "registroExternoId": "7035:5894",
+        "capturaId": "senado-votacao-5894-2026-10-11-225c99"
+      },
+      "situacao": {
+        "tipo": "vigente"
+      },
+      "fontes": [
+        {
+          "fonteId": "senado-dadosabertos-votacao-5894-2026-10-11",
+          "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=7035",
+          "evidencia": "siglaVotoParlamentar: Sim"
+        }
+      ],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Conferir o voto contra a lista nominal da sessão (ata ou painel)."
+        ]
+      }
+    },
+    {
+      "id": "senado-voto-7036-5894",
+      "votacaoId": "senado-votacao-7036",
+      "pessoaId": "flavio-bolsonaro",
+      "mandatoId": "flavio-bolsonaro-senador-2019",
+      "registro": {
+        "tipo": "voto-individual",
+        "posicao": "FAVOR",
+        "valorOriginal": "Sim"
+      },
+      "proveniencia": {
+        "provedor": "senado",
+        "registroExternoId": "7036:5894",
+        "capturaId": "senado-votacao-5894-2026-10-11-225c99"
+      },
+      "situacao": {
+        "tipo": "vigente"
+      },
+      "fontes": [
+        {
+          "fonteId": "senado-dadosabertos-votacao-5894-2026-10-11",
+          "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=7036",
+          "evidencia": "siglaVotoParlamentar: Sim"
+        }
+      ],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Conferir o voto contra a lista nominal da sessão (ata ou painel)."
+        ]
+      }
+    },
+    {
+      "id": "senado-voto-7037-5894",
+      "votacaoId": "senado-votacao-7037",
+      "pessoaId": "flavio-bolsonaro",
+      "mandatoId": "flavio-bolsonaro-senador-2019",
+      "registro": {
+        "tipo": "voto-individual",
+        "posicao": "FAVOR",
+        "valorOriginal": "Sim"
+      },
+      "proveniencia": {
+        "provedor": "senado",
+        "registroExternoId": "7037:5894",
+        "capturaId": "senado-votacao-5894-2026-10-11-225c99"
+      },
+      "situacao": {
+        "tipo": "vigente"
+      },
+      "fontes": [
+        {
+          "fonteId": "senado-dadosabertos-votacao-5894-2026-10-11",
+          "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=7037",
+          "evidencia": "siglaVotoParlamentar: Sim"
+        }
+      ],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Conferir o voto contra a lista nominal da sessão (ata ou painel)."
+        ]
+      }
+    }
+  ],
+  "coberturaPolitica": [
+    {
+      "id": "senado-cobertura-5894-2026-10-11",
+      "pessoaId": "flavio-bolsonaro",
+      "tema": "geral",
+      "periodo": {
+        "inicio": {
+          "tipo": "data",
+          "valor": "2025-12-10",
+          "precisao": "dia"
+        },
+        "fim": {
+          "tipo": "data",
+          "valor": "2025-12-10",
+          "precisao": "dia"
+        }
+      },
+      "acervos": [
+        {
+          "nome": "Dados Abertos do Senado Federal, votações nominais do Plenário",
+          "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2025-12-10&dataFim=2025-12-10",
+          "consultadoEm": "2026-10-11",
+          "recorte": "codigoParlamentar=5894, de 2025-12-10 a 2025-12-10: 3 votações na resposta",
+          "completa": true
+        }
+      ],
+      "criterios": "Todas as votações do Plenário em que o acervo registra o parlamentar, no período; as de comissão não entram (serviço próprio, votacaoComissao).",
+      "estado": "parcial",
+      "lacunas": [
+        "Votações em comissões não foram importadas.",
+        "Em votação secreta o acervo registra só a participação, sem a posição."
+      ],
+      "fontes": [],
+      "editorial": {
+        "estado": "rascunho",
+        "pendencias": [
+          "Conferir o recorte e decidir se a cobertura é completa para o período, depois de revisar os votos."
+        ]
+      }
+    }
+  ]
+}

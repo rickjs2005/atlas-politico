@@ -222,11 +222,25 @@ describe("conteúdo do repositório", () => {
     for (const lugar of conjunto.lugares) {
       expect(indices.acontecimentos.porLugar[lugar.id]?.length ?? 0, lugar.id).toBeGreaterThan(0);
     }
-    const citadas = new Set(
-      [...conjunto.pessoas, ...conjunto.mandatos, ...conjunto.filiacoes, ...conjunto.acontecimentos]
+    // Toda coleção factual cita fontes; as votações e os atos também apontam documentos de referência sem citação de trecho.
+    const citadas = new Set([
+      ...[
+        ...conjunto.pessoas,
+        ...conjunto.mandatos,
+        ...conjunto.filiacoes,
+        ...conjunto.acontecimentos,
+        ...conjunto.proposicoes,
+        ...conjunto.votacoes,
+        ...conjunto.votos,
+        ...conjunto.atosExecutivos,
+        ...conjunto.coberturaPolitica,
+        ...conjunto.identidadesInstitucionais,
+      ]
         .flatMap((registro) => registro.fontes)
         .map((citacao) => citacao.fonteId),
-    );
+      ...conjunto.votacoes.flatMap((item) => (item.objeto.textoReferencia === null ? [] : [item.objeto.textoReferencia.fonteId])),
+      ...conjunto.atosExecutivos.map((item) => item.atoOficial.fonteId),
+    ]);
     expect(conjunto.fontes.map((fonte) => fonte.id).sort()).toEqual([...citadas].sort());
   });
 

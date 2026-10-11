@@ -1,16 +1,20 @@
 "use client";
 
 // Painel de capítulos e tarefas: o caminho sem o canvas. Lista os capítulos
-// com a situação de cada um e, para o capítulo aberto, o objetivo, os
-// registros e as ações da tarefa, todas por botão: recolher, ler de novo o
-// que já foi recolhido, responder (ordem, documento ou lugar), atravessar a
-// saída. É o mesmo progresso da cena, com a mesma regra: a saída abre com
-// todos os registros recolhidos e a tarefa cumprida.
+// da sala com a situação de cada um e, para o capítulo aberto, o objetivo, os
+// registros (acontecimentos e decisões) e as ações da tarefa, todas por
+// botão: recolher, ler de novo o que já foi recolhido, responder (ordem,
+// documento, lugar ou decisão), atravessar a saída. É o mesmo progresso da
+// cena, com a mesma regra: a saída abre com todos os registros recolhidos e a
+// tarefa cumprida. Traz também as preferências (o humor do Escrivão) e os
+// caminhos para as outras salas.
 
 import Link from "next/link";
 
 import { formatDate, yearOf } from "@/lib/domain/dates";
-import { isAnswerPending, isTaskDone, missingRecords, requiredRecords } from "@/lib/game/mission";
+import { ESCRIVAO_NOME } from "@/lib/game/escrivao";
+import { isAnswerPending, isTaskDone, missingRecords, recordIds, requiredRecords } from "@/lib/game/mission";
+import type { RoomSpec } from "@/lib/game/rooms";
 import { getScene } from "@/lib/game/scenes";
 import { EPOCA_LABEL, type ChapterSpec, type ChapterStatus, type GameContent, type PlayerProgress } from "@/lib/game/types";
 import { chapterStatus, taskStateOf } from "@/lib/game/progress";
@@ -28,16 +32,23 @@ const STATUS_LABEL: Record<ChapterStatus, string> = {
 
 interface ChapterPanelProps {
   content: GameContent;
+  /** A sala aberta e os capítulos dela. */
+  sala: RoomSpec;
   capitulos: readonly ChapterSpec[];
+  /** As outras salas do personagem, com capítulos. */
+  outrasSalas: readonly RoomSpec[];
   progresso: PlayerProgress;
   aberto: ChapterSpec;
   duravel: boolean;
-  onCollect(eventId: string): void;
+  /** O humor do Escrivão está ligado. */
+  humor: boolean;
+  onToggleHumor(): void;
+  onCollect(id: string): void;
   /** Abre de novo um registro já recolhido, sem mexer no progresso. */
-  onRead(eventId: string): void;
+  onRead(id: string): void;
   /** O registro que acabou de ser relido: na volta, o foco fica no botão dele, e não no rodapé. */
   focoEm: string | null;
-  /** Abre a resposta da tarefa (ordem, documento ou lugar). */
+  /** Abre a resposta da tarefa (ordem, documento, lugar ou decisão). */
   onAnswer(): void;
   onCrossExit(): void;
   onOpenChapter(id: string): void;
@@ -47,10 +58,14 @@ interface ChapterPanelProps {
 
 export function ChapterPanel({
   content,
+  sala,
   capitulos,
+  outrasSalas,
   progresso,
   aberto,
   duravel,
+  humor,
+  onToggleHumor,
   onCollect,
   onRead,
   focoEm,
@@ -64,10 +79,11 @@ export function ChapterPanel({
   const concluida = isTaskDone(aberto.tarefa, tarefa);
   const exigidos = requiredRecords(aberto.tarefa);
   const respostaPendente = isAnswerPending(aberto.tarefa, tarefa);
-  const saida: ExitState = { tarefaConcluida: concluida, faltam: missingRecords(aberto, tarefa).length, total: aberto.eventIds.length };
+  const ids = recordIds(aberto);
+  const saida: ExitState = { tarefaConcluida: concluida, faltam: missingRecords(aberto, tarefa).length, total: ids.length };
   const saidaAberta = exitOpen(saida);
   // Na volta de uma releitura, o foco vai para o botão do registro lido, que continua na lista.
-  const focoNoRegistro = focoEm !== null && aberto.eventIds.includes(focoEm) && tarefa.recolhidos.includes(focoEm);
+  const focoNoRegistro = focoEm !== null && ids.includes(focoEm) && tarefa.recolhidos.includes(focoEm);
   const cena = getScene(aberto.cena);
   const statusAberto = chapterStatus(progresso, aberto.id);
   const periodo = (capitulo: ChapterSpec) => (capitulo.periodo.de === capitulo.periodo.ate ? `${capitulo.periodo.de}` : `${capitulo.periodo.de}–${capitulo.periodo.ate}`);
@@ -75,14 +91,14 @@ export function ChapterPanel({
   return (
     <Dialog
       nome="painel"
-      eyebrow={content.personagem.nome}
+      eyebrow={`${content.personagem.nome} · Sala ${sala.nome}`}
       titulo="Capítulos e tarefas"
       tamanho="largo"
       onClose={onClose}
       acoes={
         <>
           <button type="button" className={quietButton} onClick={onReset} data-reiniciar>
-            Reiniciar a trajetória
+            Reiniciar o progresso
           </button>
           <button type="button" className={primaryButton} onClick={onClose} {...(focoNoRegistro ? {} : { "data-foco-inicial": true })}>
             Voltar ao jogo
@@ -93,7 +109,7 @@ export function ChapterPanel({
       <div className="space-y-6">
         <section aria-labelledby="painel-capitulos" className="space-y-2">
           <h3 id="painel-capitulos" className="eyebrow text-ink-soft">
-            Capítulos
+            Capítulos da sala {sala.nome}
           </h3>
           <ol className="divide-y divide-line border-y border-line">
             {capitulos.map((capitulo) => {
@@ -142,26 +158,30 @@ export function ChapterPanel({
             {!saidaAberta && ` ${EXIT_RULE}`}
           </p>
           <ul className="divide-y divide-line border-y border-line">
-            {aberto.eventIds.map((eventId, indice) => {
-              const registro = content.registros[eventId];
+            {ids.map((id, indice) => {
+              const registro = content.registros[id];
+              const decisao = content.decisoes[id];
+              const documento = registro ?? decisao;
               const posicao = cena.registros[indice];
-              if (registro === undefined) return null;
-              const recolhido = tarefa.recolhidos.includes(eventId);
-              const exigido = exigidos.includes(eventId);
+              if (documento === undefined) return null;
+              const recolhido = tarefa.recolhidos.includes(id);
+              const exigido = exigidos.includes(id);
               return (
                 <li
-                  key={eventId}
+                  key={id}
                   className="flex flex-wrap items-center gap-x-4 gap-y-1 py-2 text-sm"
-                  data-registro={eventId}
+                  data-registro={id}
+                  data-natureza={registro !== undefined ? "acontecimento" : "decisao"}
                   data-recolhido={recolhido ? "sim" : "nao"}
                   data-x={posicao?.x}
                   data-y={posicao?.y}
                 >
                   {/* Em tela estreita, o texto fica com a linha inteira e a ação desce para a de baixo. */}
                   <span className="min-w-[13rem] flex-1">
-                    <span className="numerals font-semibold">{formatDate(registro.data)}</span> · {registro.titulo}
+                    <span className="numerals font-semibold">{formatDate(documento.data)}</span> · {documento.titulo}
+                    {decisao !== undefined && <span className="text-ink-soft"> · {decisao.natureza === "voto" ? "voto parlamentar" : "ato do Executivo"}</span>}
                     {exigido && <span className="text-ink-soft"> · pedido pela tarefa</span>}
-                    {registro.ordemEmAberto && (
+                    {registro?.ordemEmAberto && (
                       <span className="block text-xs italic text-ink-soft" data-ordem-em-aberto>
                         ordem dentro de {yearOf(registro.data)} não documentada
                       </span>
@@ -174,11 +194,11 @@ export function ChapterPanel({
                       <button
                         type="button"
                         className={quietButton}
-                        onClick={() => onRead(eventId)}
-                        data-ler={eventId}
+                        onClick={() => onRead(id)}
+                        data-ler={id}
                         // Há um botão destes por registro: o nome diz qual, começando pelo texto que se vê.
-                        aria-label={`Ler de novo: ${registro.titulo}`}
-                        {...(focoNoRegistro && focoEm === eventId ? { "data-foco-inicial": true } : {})}
+                        aria-label={`Ler de novo: ${documento.titulo}`}
+                        {...(focoNoRegistro && focoEm === id ? { "data-foco-inicial": true } : {})}
                       >
                         Ler de novo
                       </button>
@@ -186,13 +206,7 @@ export function ChapterPanel({
                   ) : statusAberto === "bloqueado" ? (
                     <span className="eyebrow text-ink-soft">no cenário</span>
                   ) : (
-                    <button
-                      type="button"
-                      className={secondaryButton}
-                      onClick={() => onCollect(eventId)}
-                      data-recolher={eventId}
-                      aria-label={`Recolher pelo painel: ${registro.titulo}`}
-                    >
+                    <button type="button" className={secondaryButton} onClick={() => onCollect(id)} data-recolher={id} aria-label={`Recolher pelo painel: ${documento.titulo}`}>
                       Recolher pelo painel
                     </button>
                   )}
@@ -218,15 +232,42 @@ export function ChapterPanel({
           </p>
         </section>
 
+        <section aria-labelledby="painel-preferencias" className="space-y-2 text-sm">
+          <h3 id="painel-preferencias" className="eyebrow text-ink-soft">
+            Preferências
+          </h3>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p className="flex-1 min-w-[14rem]" id="painel-humor-descricao">
+              O {ESCRIVAO_NOME}, guia fictício, faz falas de humor sobre papelada e sobre ele mesmo, iguais para os dois personagens. Elas são ficção, marcadas
+              como tal, e podem ser desligadas; a instrução e o que vem dos registros continuam.
+            </p>
+            <button type="button" className={secondaryButton} onClick={onToggleHumor} aria-pressed={humor} aria-describedby="painel-humor-descricao" data-humor={humor ? "ligado" : "desligado"}>
+              {humor ? "Desligar o humor" : "Ligar o humor"}
+            </button>
+          </div>
+        </section>
+
         <section aria-labelledby="painel-progresso" className="space-y-1 text-sm">
           <h3 id="painel-progresso" className="eyebrow text-ink-soft">
-            Progresso
+            Progresso e outras salas
           </h3>
           <p data-progresso-duravel={duravel ? "sim" : "nao"}>
             {duravel
-              ? "O progresso fica guardado neste navegador, separado por personagem. Abrir um link direto não altera o progresso."
+              ? "O progresso fica guardado neste navegador, separado por personagem e por sala. Abrir um link direto não altera o progresso."
               : "O armazenamento do navegador está indisponível: o progresso vale enquanto esta página estiver aberta, e se perde ao recarregar ou fechar."}
           </p>
+          {outrasSalas.length > 0 && (
+            <ul className="space-y-1" aria-label="Outras salas deste personagem">
+              {outrasSalas.map((outra) => (
+                <li key={outra.id}>
+                  <Link href={gameHref(content.personagem.slug, outra.id)} prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink" data-ir-para-sala={outra.id}>
+                    Sala {outra.nome}
+                  </Link>
+                  <span className="text-ink-soft"> · {outra.descricao}</span>
+                </li>
+              ))}
+            </ul>
+          )}
           <p>
             <Link
               href={explorationHref(content.personagem.slug, { periodo: { de: null, ate: null }, categorias: [], acontecimento: null })}

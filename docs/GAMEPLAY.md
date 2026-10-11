@@ -2,9 +2,9 @@
 
 O atlas tem um segundo caminho de leitura: um jogo em que o visitante escolhe Lula ou Flávio Bolsonaro, controla um personagem por cenários isométricos e percorre a trajetória pública inteira em capítulos. Em cada capítulo há registros do atlas espalhados pelo cenário e uma tarefa curta; com todos os registros recolhidos e a tarefa cumprida, a saída abre e leva ao capítulo seguinte.
 
-A versão candidata a lançamento cobre **todos os 39 acontecimentos publicados da edição 0.1.1**: seis capítulos de Lula e cinco de Flávio Bolsonaro, com quatro tipos de tarefa, sete ambientes, uma figura de cada personagem por época, a ficha judicial dos episódios de processo, o progresso salvo por personagem (com migração do formato da etapa 1) e o caminho de ida e volta até as fichas e as fontes. A matriz acontecimento → personagem → capítulo é gerada dos dados em [GAME-COVERAGE.md](GAME-COVERAGE.md). O que está pronto, o que foi conferido e o que falta está em [STATUS.md](STATUS.md) e em [GAME-RELEASE.md](GAME-RELEASE.md).
+O jogo tem três **salas** (D-125). A sala **Histórico** é a de investigação: a trajetória em capítulos, por período, sobre **todos os 39 acontecimentos publicados**, seis capítulos de Lula e cinco de Flávio Bolsonaro. As salas **Economia** e **Segurança pública** reúnem as decisões políticas documentadas de cada tema (votos nominais e atos do Executivo), um capítulo por personagem, sobre a amostra da edição 0.2.0. São cinco tipos de tarefa, nove ambientes em quinze cenas, uma figura de cada personagem por época, a ficha judicial dos episódios de processo, o progresso salvo por personagem e por sala (com migração dos formatos anteriores), o guia fictício, o Escrivão, e o caminho de ida e volta até as fichas, os cartões de decisão e as fontes. A matriz acontecimento → personagem → capítulo e decisão → capítulos é gerada dos dados em [GAME-COVERAGE.md](GAME-COVERAGE.md). O que está pronto, o que foi conferido e o que falta está em [STATUS.md](STATUS.md), em [GAME-RELEASE.md](GAME-RELEASE.md) e em [VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md).
 
-O jogo não muda o que o atlas afirma. Ele não tem conteúdo editorial próprio: cada registro que aparece é um acontecimento publicado, com o título, a data, o resumo, o contexto, o lugar documentado e as fontes do conjunto. Toda a conferência desse conteúdo continua sendo assistida por IA, com a revisão humana pendente ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)), e as sessões de validação com três pessoas continuam por fazer ([USER-VALIDATION.md](USER-VALIDATION.md)). O jogo diz isso nas próprias telas.
+O jogo não muda o que o atlas afirma. Ele não tem conteúdo editorial próprio: cada registro que aparece é um acontecimento ou uma decisão publicada, com o título, a data, o resumo, o contexto, o lugar documentado, o cargo e as fontes do conjunto. Toda a conferência desse conteúdo continua sendo assistida por IA, com a revisão humana pendente ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)), e as sessões de validação com três pessoas continuam por fazer ([USER-VALIDATION.md](USER-VALIDATION.md)). O jogo diz isso nas próprias telas.
 
 ## Como abrir
 
@@ -15,8 +15,9 @@ npm run preview    # serve out/ em http://localhost:4311
 
 | Endereço | O que é |
 | --- | --- |
-| `http://localhost:4311/jogo/` | Entrada do jogo: escolha do personagem, prévia do mundo, capítulos e onde cada um parou |
-| `http://localhost:4311/jogo/lula/` e `/jogo/flavio-bolsonaro/` | O jogo de cada personagem, no capítulo em que parou |
+| `http://localhost:4311/jogo/` | Entrada do jogo: escolha do personagem, prévia do mundo, capítulos da trajetória, as salas temáticas e onde cada um parou |
+| `http://localhost:4311/jogo/lula/` e `/jogo/flavio-bolsonaro/` | A sala Histórico de cada personagem, no capítulo em que parou |
+| `http://localhost:4311/jogo/lula/economia/`, `/jogo/lula/seguranca-publica/` e os mesmos de `/jogo/flavio-bolsonaro/` | As salas temáticas de cada personagem |
 | `http://localhost:4311/` | Entrada do atlas, com o acesso **Jogar com** abaixo de cada cartão |
 
 Em desenvolvimento: `npm run dev` e `http://localhost:3000/jogo/`. A galeria da arte, que só existe em desenvolvimento, fica em `http://localhost:3000/dev/jogo-arte/` (com `?parado`, cada peça é desenhada uma vez; é assim que `node scripts/capture-art.mjs` a captura).
@@ -42,19 +43,29 @@ transição: capítulo concluído; o próximo, com período, cenário, época e 
 capítulo seguinte ... até o fim da trajetória, que aponta para o atlas completo
 ```
 
-1. **Entrada.** Os dois personagens aparecem com o mesmo cartão, em ordem alfabética: prévia do cenário do primeiro capítulo, retrato, capítulos com os períodos e a situação neste navegador: "Começar" para quem não jogou, "Continuar" para quem já recolheu algum registro, com o capítulo em que parou, e "Rever" para quem concluiu a trajetória. A página diz que os cenários são representações, que o guia é fictício e qual é a situação da revisão do conteúdo.
+1. **Entrada.** Os dois personagens aparecem com o mesmo cartão, em ordem alfabética: prévia do cenário do primeiro capítulo, retrato, os capítulos da trajetória com os períodos, as salas temáticas com a quantidade de decisões, e a situação de cada sala neste navegador: "Começar" para quem não jogou, "Continuar" para quem já recolheu algum registro, com o capítulo em que parou, e "Rever" para quem concluiu a sala. A página diz que os cenários são representações, que o guia, o Escrivão, é fictício e tem o humor desligável, e qual é a situação da revisão do conteúdo.
 2. **Cena.** Ocupa a altura da janela abaixo do cabeçalho. O personagem aparece de corpo inteiro, na figura da época do capítulo, anda nas oito direções, para nas paredes e nos móveis, e a câmera o acompanha.
 3. **Objetivo.** Fica escrito sobre a cena, com o capítulo, o período, o nome do cenário (apresentado como cenário) e a época da figura. Logo abaixo, a contagem: quantos registros já foram recolhidos, de quantos, e o que ainda segura a porta.
-4. **Registros.** Cada acontecimento do capítulo é uma pasta de documentos que paira sobre uma marca no chão. Perto de uma delas, a pasta ganha destaque, aparece um anel no chão e a dica do que fazer; a tecla de interação recolhe e abre o registro: data na precisão documentada, título, categoria, lugar documentado, resumo, o contexto da ficha, a ficha judicial quando o registro é de processo, as fontes com o que cada uma sustenta, a situação da revisão e o caminho para a ficha completa.
+4. **Registros.** Cada acontecimento ou decisão do capítulo é uma pasta de documentos que paira sobre uma marca no chão. Perto de uma delas, a pasta ganha destaque, aparece um anel no chão e a dica do que fazer; a tecla de interação recolhe e abre o registro. Um acontecimento mostra data na precisão documentada, título, categoria, lugar documentado, resumo, o contexto da ficha, a ficha judicial quando o registro é de processo, as fontes com o que cada uma sustenta, a situação da revisão e o caminho para a ficha completa. Uma decisão mostra o mesmo cartão do atlas: cargo e instituição pelos quais a pessoa decidiu, data, o objeto votado e a manifestação registrada com o valor original do acervo (ou o tipo do ato e os campos que o distinguem), a proposição, as fontes, a revisão e o caminho para o cartão na página da pessoa. O Escrivão comenta a descoberta, em camadas separadas (abaixo).
 5. **Saída.** É uma porta no vão da parede da frente. Fica fechada, com uma tranca e um cadeado, enquanto faltar a tarefa ou algum registro do capítulo, e diz o que falta. Com todos os registros recolhidos e a tarefa cumprida, o texto do objetivo muda, a tranca some, a folha gira para fora, a placa sobre a porta acende e o degrau ganha setas que apontam para fora. Atravessa quem anda para dentro da porta ou quem, ao lado dela, usa a tecla ou o botão de interação.
 6. **Transição.** Ao atravessar, uma tela curta diz o capítulo concluído e apresenta o seguinte: título, período, cenário, época da figura e o contexto do capítulo (o motivo do agrupamento, que diz quais registros ele reúne).
-7. **Fim da trajetória.** Depois do último capítulo, a tela diz quantos capítulos e quantos acontecimentos foram percorridos e leva à trajetória completa no atlas, à comparação e à escolha de personagem. Não há nota, vitória nem elogio.
+7. **Fim da sala.** Depois do último capítulo, a tela diz quantos capítulos e quantos registros foram percorridos e leva à trajetória completa no atlas, aos cartões de decisão, à comparação, às outras salas e à escolha de personagem. Não há nota, vitória nem elogio.
+
+## Salas
+
+| Sala | Natureza | O que reúne | Rota |
+| --- | --- | --- | --- |
+| Histórico | investigação | A trajetória em capítulos, por período: os acontecimentos publicados, e, em um capítulo de cada personagem, a decisão documentada ligada a um deles | `/jogo/<personagem>/` |
+| Economia | tema | As decisões documentadas no tema Economia: votos registrados e atos do Executivo | `/jogo/<personagem>/economia/` |
+| Segurança pública | tema | As decisões documentadas no tema Segurança pública | `/jogo/<personagem>/seguranca-publica/` |
+
+A sala (`RoomId`, `src/lib/game/rooms.ts`) é o que o jogador escolhe na entrada e o que agrupa a progressão: cada sala tem o primeiro capítulo disponível desde o início, e concluir um capítulo libera o seguinte da mesma sala. Ela não é a cena (`SceneId`, o layout de um capítulo) nem uma categoria do atlas; Histórico não é um tema político. Os dois personagens têm as mesmas três salas, com as mesmas regras (teste). As salas temáticas são curtas de propósito: a amostra da edição tem três decisões por personagem e tema, e a tela diz que é amostra, e não o histórico completo (D-128).
 
 ## Capítulos
 
-Os capítulos são agrupamentos de acontecimentos publicados, pelo `id` do conjunto. A definição está em `src/lib/game/chapters.ts`; um teste confere cada capítulo contra o conteúdo da edição (`tests/game-chapters.test.ts`), e outro confere que todo acontecimento de cada personagem está em um capítulo dele (`tests/game-coverage.test.ts`). As datas de cada registro, por capítulo, estão em [GAME-COVERAGE.md](GAME-COVERAGE.md), gerado por `npm run game:coverage`.
+Os capítulos são agrupamentos de registros publicados, pelo `id` do conjunto: acontecimentos (`eventIds`) e decisões (`decisaoIds`). A definição está em `src/lib/game/chapters.ts`; um teste confere cada capítulo contra o conteúdo da edição (`tests/game-chapters.test.ts`), e outro confere que todo acontecimento de cada personagem está em um capítulo dele e que toda decisão publicada, em um tema com sala, está no capítulo da sala do tema (`tests/game-coverage.test.ts`). As datas de cada registro, por capítulo, estão em [GAME-COVERAGE.md](GAME-COVERAGE.md), gerado por `npm run game:coverage`.
 
-### Lula
+### Lula, sala Histórico
 
 | Capítulo | Período | Cenário | Figura | Registros | Tarefa |
 | --- | --- | --- | --- | --- | --- |
@@ -62,20 +73,31 @@ Os capítulos são agrupamentos de acontecimentos publicados, pelo `id` do conju
 | 2. Constituinte e disputas presidenciais | 1986–1994 | Plenário da Constituinte | anos intermediários | 3 | ordem: a Constituinte e a primeira disputa presidencial |
 | 3. Presidência: eleição e reeleição | 2002–2006 | Comitê de campanha | anos intermediários | 2 | documento que sustenta o registro da eleição de 2002 |
 | 4. Nomeação suspensa, processos e prisão | 2016–2019 | Sala de audiências | anos recentes | 6 | ordem: a condenação em primeira instância e a confirmação pelo TRF4 |
-| 5. Anulação, terceira eleição e intervenção federal | 2021–2023 | Gabinete | anos recentes | 3 | lugar documentado da anulação das condenações |
+| 5. Anulação, terceira eleição e intervenção federal | 2021–2023 | Gabinete | anos recentes | 3 acontecimentos e 1 decisão | decisão: a evidência e a interpretação do Decreto nº 11.377/2023 |
 | 6. Convenção e primeiro turno de 2026 | 2026 | Auditório de convenção | anos recentes | 2 | documento que sustenta o registro do primeiro turno |
 
-### Flávio Bolsonaro
+### Flávio Bolsonaro, sala Histórico
 
 | Capítulo | Período | Cenário | Figura | Registros | Tarefa |
 | --- | --- | --- | --- | --- | --- |
 | 1. Assembleia e disputa pela Prefeitura | 2002–2016 | Salão da Assembleia | primeiros anos | 5 | encontrar o registro da primeira eleição, de 2002 |
 | 2. Senado: eleição, Mesa e partido | 2018–2019 | Plenário do Senado | anos intermediários | 3 | ordem: a eleição para o Senado e a 3ª Secretaria da Mesa |
 | 3. Denúncia, partidos e decisões judiciais | 2020–2022 | Sala de audiências | anos intermediários | 6 | documento que sustenta a decisão do STJ |
-| 4. Liderança da Minoria, relatoria e comissão | 2023–2025 | Sala de comissão | anos recentes | 3 | lugar documentado do projeto relatado |
-| 5. Indicação, convenção e primeiro turno | 2025–2026 | Auditório de convenção | anos recentes | 3 | ordem: a convenção do PL e o primeiro turno |
+| 4. Liderança da Minoria, relatoria e comissão | 2023–2025 | Sala de comissão | anos recentes | 3 acontecimentos e 1 decisão | decisão: a evidência e a interpretação do voto no PL 2.253/2022 |
+| 5. Indicação, convenção e primeiro turno | 2025–2026 | Auditório de convenção | anos recentes | 3 | lugar documentado da convenção do PL |
 
-São os 39 acontecimentos publicados: 20 de Lula e 20 de Flávio Bolsonaro, contando o primeiro turno de 2026, que é dos dois e aparece uma vez na trajetória de cada um. Nenhum ficou de fora; a lista de exclusões justificadas (`EXCLUSIONS`, em `src/lib/game/coverage.ts`) está vazia, e o teste exige justificativa escrita para qualquer acontecimento que não esteja em capítulo.
+São os 39 acontecimentos publicados: 20 de Lula e 20 de Flávio Bolsonaro, contando o primeiro turno de 2026, que é dos dois e aparece uma vez na trajetória de cada um. Nenhum ficou de fora; a lista de exclusões justificadas (`EXCLUSIONS`, em `src/lib/game/coverage.ts`) está vazia, e o teste exige justificativa escrita para qualquer acontecimento que não esteja em capítulo. Até a entrega P1 o capítulo 5 de Lula pedia o lugar da anulação, o 4 de Flávio Bolsonaro o lugar do projeto relatado e o 5 dele a ordem da convenção e do primeiro turno; a troca está em D-126, e as respostas guardadas para essas três tarefas caem pela assinatura, sem apagar o que foi recolhido.
+
+### Salas temáticas
+
+| Sala | Personagem | Capítulo | Período | Cenário | Registros | Tarefa |
+| --- | --- | --- | --- | --- | --- | --- |
+| Economia | Lula | Regime fiscal, reforma tributária e imposto de renda | 2023–2025 | Sala de arquivo | 3 atos | decisão: a Lei Complementar nº 200/2023 (veto parcial) |
+| Economia | Flávio Bolsonaro | Regime fiscal, reforma tributária e sua regulamentação | 2023–2024 | Sala de arquivo | 3 votos | decisão: o voto no PLP 93/2023 |
+| Segurança pública | Lula | Intervenção federal, saídas temporárias e crime organizado | 2023–2026 | Sala de arquivo | 3 atos | decisão: a Lei nº 14.843/2024 (veto parcial) |
+| Segurança pública | Flávio Bolsonaro | Saídas temporárias, drogas na Constituição e crime organizado | 2024–2025 | Sala de arquivo | 3 votos | decisão: o voto no 2º turno da PEC 45/2023 |
+
+As doze decisões são a amostra da edição 0.2.0 (`research/selecao-decisoes-2026-10.md`). Quatro proposições têm decisão dos dois (o regime fiscal, a regulamentação da reforma tributária, as saídas temporárias e o crime organizado), e a comparação do atlas diz, em cada uma, que um voto no Senado e uma sanção na Presidência são coisas diferentes. A decisão da trajetória (o decreto da intervenção, o voto nas saídas temporárias) aparece também na sala do tema: a matriz de cobertura mostra os dois lugares.
 
 ### Por que estes agrupamentos
 
@@ -85,7 +107,7 @@ São os 39 acontecimentos publicados: 20 de Lula e 20 de Flávio Bolsonaro, cont
 - **Dentro de um capítulo, a ordem em aberto é dita.** O registro da prisão de 1980 leva, no jogo, o mesmo aviso que leva na lista do atlas: "ordem dentro de 1980 não documentada". A regra é a mesma função (`findUndeterminedOrder`, no domínio).
 - **Os episódios judiciais ficam juntos, com a ficha própria.** O capítulo 4 de Lula reúne a nomeação suspensa, a condenação, a confirmação, a prisão, o registro indeferido e a soltura; o 5 traz a anulação. O capítulo 3 de Flávio Bolsonaro reúne a denúncia, a anulação pelo STJ de decisões da investigação e a rejeição da denúncia, com as filiações e a liderança do mesmo período. Em todos, a ficha judicial (abaixo) mostra a natureza do registro e as decisões relacionadas, inclusive as de outro capítulo, com a própria data.
 - **O primeiro turno de 2026 é apuração parcial.** O registro traz os números com 99,99% das urnas apuradas, como a notícia do TSE os publicou, e o motivo dos dois capítulos diz "apuração parcial". Trocar pelos números da totalização final é uma atualização de conteúdo, com nova entrada na edição e documento oficial lido; o jogo não renomeia nada. O segundo turno é posterior à data de corte e não existe no jogo.
-- **Mesmo tratamento.** Os dois personagens passam pelas três épocas da figura, pelos quatro tipos de tarefa (cada trajetória tem pelo menos três, nunca dois iguais seguidos), por cenários próprios de cada período e pela mesma ficha judicial. Nenhuma cor identifica pessoa ou partido, e os cenários não trazem símbolo, sigla, foto nem bandeira reconhecível.
+- **Mesmo tratamento.** Os dois personagens passam pelas três épocas da figura, pelos cinco tipos de tarefa (cada trajetória tem pelo menos quatro, nunca dois iguais seguidos), por cenários próprios de cada período, pelas mesmas três salas e pela mesma ficha judicial. Nenhuma cor identifica pessoa ou partido, e os cenários não trazem símbolo, sigla, foto nem bandeira reconhecível.
 
 ### Datas das tarefas de ordem
 
@@ -110,16 +132,17 @@ Cada tarefa tem objetivo, ação esperada e condição de conclusão escritos no
 | `ordem` | Recolher dois registros e pô-los em ordem cronológica | Recolher os dois; o jogo mostra os dois com as datas e pergunta qual veio primeiro | A ordem certa foi confirmada |
 | `fonte` | Associar o registro pedido ao documento que o sustenta | Recolher o registro; o jogo mostra o registro e três documentos, e pergunta qual o sustenta | O documento certo foi confirmado |
 | `lugar` | Relacionar o registro pedido ao lugar em que o atlas o documenta | Recolher o registro; o jogo mostra o registro e três lugares, e pergunta em qual o atlas o documenta | O lugar certo foi confirmado |
+| `decisao` | Conferir a evidência de uma decisão e interpretar o que ela documenta | Recolher a decisão; o jogo pergunta, em duas etapas, qual documento a sustenta (três documentos do capítulo) e o que o registro documenta (três interpretações que trocam uma coisa só: a posição ou o objeto votado, ou dois outros tipos de ato) | O documento e a interpretação certos foram confirmados, nessa ordem |
 
-As opções das tarefas de documento e de lugar saem dos próprios registros, nunca de texto escrito no jogo: o documento certo é o primeiro que o registro cita (e qualquer documento citado por ele conta como certo), e as duas alternativas erradas são documentos citados por outros registros do capítulo e por nenhuma citação do registro pedido; o lugar certo é o documentado na ficha, e as alternativas são lugares documentados de outros registros da trajetória. A ordem das opções é fixa e não deixa a certa sempre em primeiro. Um teste confere, sobre o conteúdo real, que toda tarefa de documento e de lugar tem a opção certa e duas erradas.
+As opções das tarefas de documento, de lugar e de decisão saem dos próprios registros, nunca de texto escrito no jogo: o documento certo é o primeiro que o registro cita (e qualquer documento citado por ele conta como certo), e as duas alternativas erradas são documentos citados por outros registros do capítulo, acontecimentos ou decisões, e por nenhuma citação do registro pedido; o lugar certo é o documentado na ficha, e as alternativas são lugares documentados de outros registros da trajetória; a interpretação certa é a manifestação e o objeto votado do registro (ou o tipo do ato), e as erradas trocam a posição, o objeto ou o tipo. A ordem das opções é fixa e não deixa a certa sempre em primeiro. Um teste confere, sobre o conteúdo real, que toda tarefa de documento, de lugar e de decisão tem a opção certa e duas erradas.
 
-Uma resposta errada explica e deixa tentar de novo. Na ordem, a explicação mostra os dois registros com as datas, o mais antigo primeiro. No documento, diz de qual registro do capítulo é o documento escolhido, com a data, e lembra que a lista de documentos está no registro recolhido; a resposta certa diz o que o documento sustenta. No lugar, diz de qual registro é o lugar escolhido, com a data. Não há penalidade: nada é perdido, a contagem de tentativas é só informação e a saída continua fechada até a resposta certa. Dá para fechar a pergunta e responder depois, pelo guia, pelo painel ou pela janela da saída fechada.
+Uma resposta errada explica e deixa tentar de novo. Na ordem, a explicação mostra os dois registros com as datas, o mais antigo primeiro. No documento, diz de qual registro do capítulo é o documento escolhido, com a data, e lembra que a lista de documentos está no registro recolhido; a resposta certa diz o que o documento sustenta. No lugar, diz de qual registro é o lugar escolhido, com a data. Na decisão, a evidência errada é explicada como no documento, e a interpretação errada diz o que o registro documenta de fato (o objeto votado e a manifestação, com o valor original; ou o tipo do ato, com a definição geral do tipo) e lembra que isso está escrito no cartão. A etapa da evidência fica guardada: quem fecha a pergunta no meio volta à interpretação. Não há penalidade: nada é perdido, a contagem de tentativas é só informação e a saída continua fechada até a resposta certa. Dá para fechar a pergunta e responder depois, pelo Escrivão, pelo painel ou pela janela da saída fechada.
 
 Os outros registros do cenário não são exigidos pela tarefa, mas são exigidos pela saída. As pastas são iguais por fora: quem procura o registro pedido abre e lê os outros no caminho.
 
 ### O que abre a saída
 
-A saída de um capítulo abre com duas condições juntas: **a tarefa cumprida e todos os registros do capítulo recolhidos**, e não só os que a tarefa pede (`isExitOpen`, em `src/lib/game/mission.ts`). Cumprir a tarefa não abre a porta sozinho, e recolher tudo sem responder também não. A regra foi pedida pelo responsável pelo projeto em 10 de outubro de 2026 (D-109) e vale para as quatro tarefas.
+A saída de um capítulo abre com duas condições juntas: **a tarefa cumprida e todos os registros do capítulo recolhidos**, acontecimentos e decisões, e não só os que a tarefa pede (`isExitOpen`, em `src/lib/game/mission.ts`). Cumprir a tarefa não abre a porta sozinho, e recolher tudo sem responder também não. A regra foi pedida pelo responsável pelo projeto em 10 de outubro de 2026 (D-109) e vale para as cinco tarefas.
 
 | Situação | O que a cena diz | A saída |
 | --- | --- | --- |
@@ -148,7 +171,9 @@ Valem as regras de [EDITORIAL.md](EDITORIAL.md), mais estas:
 - **O jogo não escreve fatos.** Título, data, categoria, lugar, resumo, contexto e fontes de um registro vêm dos dados gerados. Os textos próprios do jogo (título, motivo e objetivo de cada capítulo, nome do cenário, natureza e relações da ficha judicial) só dizem o que os registros sustentam, e testes conferem que nenhum deles traz fala atribuída nem decide culpa.
 - **A data aparece na precisão do registro.** Um acontecimento de que só se sabe o ano aparece com o ano e o aviso "Só o ano está documentado". Quando essa data não decide a posição do registro em relação a outro, ele leva também o aviso "ordem dentro de [ano] não documentada".
 - **A situação da revisão aparece em toda leitura.** O registro recolhido traz a mesma nota das outras telas do atlas: conferido com as fontes, com assistência de IA, e revisão humana pendente. A entrada do jogo e o rodapé da página do jogo repetem a frase da edição.
-- **Nenhuma fala é atribuída às pessoas retratadas.** Os personagens não falam. Quem orienta é o **Arquivista**, um guia identificado como personagem fictício.
+- **Nenhuma fala é atribuída às pessoas retratadas.** Os personagens não falam. Quem orienta é o **Escrivão**, um guia identificado como personagem fictício (chamado Arquivista até a versão de lançamento; D-127).
+- **O Escrivão fala em três camadas, separadas na tela.** A **instrução** diz o que fazer agora e aparece sempre. A **informação documental** é um modelo preenchido só com campos do registro publicado (data, título, quantas fontes, cargo, instituição, manifestação, tipo do ato): o Escrivão repete o conjunto, não escreve fato. O **humor** é ficção sobre papelada, carimbos, gavetas e o próprio Escrivão, marcada como ficção, igual para os dois personagens e para as três salas, e a pessoa pode desligar (pelo painel ou pelo diálogo do Escrivão; a preferência fica no navegador). Nenhuma fala cita pessoa, partido ou lado, atribui fala, traz juízo ou escreve data fora da camada documental: o catálogo (`src/lib/game/escrivao/`) é validado por teste, e a seleção roda as falas pelo histórico do que já foi dito, sem sorteio e sem IA durante a partida.
+- **As decisões aparecem como o cartão do atlas.** Cargo e instituição, data, objeto votado e manifestação com o valor original (ou tipo do ato e seus campos), proposição, fontes e revisão, com o aviso de que a posição vale para o objeto votado. O jogo não interpreta por ninguém: a tarefa de decisão aceita só o que está escrito no cartão.
 - **O cenário é uma representação.** Não afirma que a pessoa esteve naquele lugar nem que os fatos aconteceram nele. O nome do lugar aparece sempre com o rótulo "cenário", e a frase está na entrada do jogo, no diálogo do guia e no rodapé da página do jogo.
 - **A figura de cada época é estilizada.** Cada personagem tem três figuras, uma por época dos capítulos (primeiros anos, anos intermediários, anos recentes), que mudam cabelo, barba e roupa com a mesma escala para os dois. Não afirmam a aparência real da pessoa em cada data, e o cabeçalho da cena, a transição, o painel e o guia dizem qual figura é (D-111).
 - **O progresso é de quem joga.** Concluir um capítulo não avalia a pessoa retratada: não há nota, vitória, derrota nem elogio.
@@ -173,7 +198,8 @@ Valem as regras de [EDITORIAL.md](EDITORIAL.md), mais estas:
 
 ## Acessibilidade
 
-- **Tudo pode ser feito sem o cenário.** O painel **Capítulos e tarefas** lista os capítulos com a situação, o tipo de tarefa e o período de cada um, e, para o capítulo aberto, o objetivo, o motivo, os registros e os botões para recolher, ler de novo um registro já recolhido, responder a tarefa (ordenar, indicar o documento, indicar o lugar) e atravessar a saída, que só é oferecida quando está aberta. Cada botão de recolher e de reler diz, no nome, qual é o registro; na volta de uma releitura, o foco fica no botão do registro lido. É o mesmo progresso da cena, com a mesma regra.
+- **Tudo pode ser feito sem o cenário.** O painel **Capítulos e tarefas** lista os capítulos da sala com a situação, o tipo de tarefa e o período de cada um, e, para o capítulo aberto, o objetivo, o motivo, os registros (acontecimentos e decisões) e os botões para recolher, ler de novo um registro já recolhido, responder a tarefa (ordenar, indicar o documento, indicar o lugar, conferir e interpretar a decisão) e atravessar a saída, que só é oferecida quando está aberta. Traz também as preferências (o humor do Escrivão) e os caminhos para as outras salas. Cada botão de recolher e de reler diz, no nome, qual é o registro; na volta de uma releitura, o foco fica no botão do registro lido. É o mesmo progresso da cena, com a mesma regra.
+- **As falas do Escrivão são texto comum**, com `role="status"` e a camada dita a quem ouve a página ("Instrução", "Do registro", "Humor do Escrivão, ficção"). A caixa dele sobre a cena tem o próprio botão de fechar e some com uma janela aberta.
 - **Foco.** Cada diálogo prende o foco enquanto está aberto, fecha com Esc e devolve o foco à cena. Quando os botões de um diálogo mudam (as tarefas trocam **Confirmar** por **Tentar de novo** ou **Continuar**), o foco vai para o botão que entrou. Com um diálogo aberto, a cena e os botões sobre ela saem da tabulação (`inert`). O foco é o contorno do atlas; na cena, ele é desenhado para dentro e por cima do canvas. Se a cena não carregou, o foco volta ao botão **Capítulos e tarefas**.
 - **O menu do site continua por cima.** As janelas do jogo ficam em uma camada própria, abaixo do cabeçalho: em celular, o menu abre sobre elas.
 - **Leitores de tela.** A cena é uma região com nome e instruções; a dica do que está ao alcance e os retornos da tarefa são anunciados (`role="status"`). O conteúdo de cada registro é texto comum. Nenhum leitor de tela foi usado na conferência.
@@ -182,8 +208,8 @@ Valem as regras de [EDITORIAL.md](EDITORIAL.md), mais estas:
 
 ## Progresso
 
-- Um progresso por personagem, em `localStorage`, na chave `atlas-politico:jogo:<personagem>`.
-- Formato com versão (`versao: 3`): por capítulo, a situação (`bloqueado`, `disponivel` ou `concluido`) e o estado da tarefa (registros recolhidos, resposta confirmada, tentativas e, com a confirmação, a assinatura da tarefa respondida).
+- Um progresso por personagem, em `localStorage`, na chave `atlas-politico:jogo:<personagem>`, com os capítulos de todas as salas; a progressão (primeiro disponível, seguinte liberado ao concluir) corre dentro de cada sala. As preferências do jogo (o humor do Escrivão) ficam em outra chave, `atlas-politico:jogo:preferencias`, iguais para os dois personagens.
+- Formato com versão (`versao: 4`): por capítulo, a situação (`bloqueado`, `disponivel` ou `concluido`) e o estado da tarefa (registros recolhidos, resposta confirmada, tentativas, com a confirmação a assinatura da tarefa respondida e, na tarefa de decisão, a etapa da evidência). A versão 3 é lida como a 4 sem a etapa da evidência; as versões 1 e 2, pela migração abaixo.
 - **A confirmação pertence a uma tarefa.** A assinatura é o tipo e os identificadores que a tarefa pede (`taskSignature`, por exemplo `ordem:a+b`). Se a tarefa de um capítulo mudar sob os mesmos identificadores (a ordem de dois registros vira o documento de um deles, ou passa a pedir outro par), a resposta antiga deixa de valer na leitura: o capítulo reabre com o que foi recolhido e as tentativas, e só a pergunta é feita de novo. A versão do formato é do armazenamento; a assinatura é o que diz a qual tarefa a resposta pertence (D-119).
 - **Migração explícita das versões 1 e 2.** A etapa 1 guardava a tarefa com `ordemConfirmada`; a versão 2 chamou o campo de `confirmada`, porque vale para a ordem, o documento e o lugar; nenhuma das duas guardava a assinatura. A leitura aceita as três versões e devolve sempre a atual; o nome antigo só vale na versão 1, e o novo nas seguintes. Uma confirmação das versões 1 e 2 migra pela tabela congelada do que cada capítulo pedia então (`LEGACY_SIGNATURES`, em `progress.ts`): se a tarefa continua a mesma, a confirmação ganha a assinatura; se mudou, cai (`parseProgress`, com testes em `tests/game-progress.test.ts` e no navegador). Quem terminou os dois capítulos da etapa 1 reabre o jogo com o capítulo 3 disponível e os dois primeiros concluídos: o progresso não se perde e os capítulos novos ficam liberados.
 - Transições previsíveis: no início, só o primeiro capítulo está disponível; atravessar a saída aberta marca o capítulo como concluído e libera o seguinte; reiniciar volta ao início. Um capítulo concluído pode ser revisto sem mudar nada: nele tudo já foi recolhido, e os registros são relidos pelo painel (**Ler de novo**), de onde também se chega à ficha de cada um.
@@ -202,23 +228,26 @@ Dados históricos, configuração dos capítulos, regras de missão, estado do j
 | --- | --- | --- | --- |
 | Dados históricos | `generated/dados/`, pelo pipeline | Os acontecimentos, com datas, lugares, contexto e fontes | Não mudam por causa do jogo |
 | Recorte para o jogo | `src/lib/game/content.ts` | Os registros citados pelos capítulos, com as fontes resolvidas (e o que cada uma sustenta), o lugar documentado, a situação da revisão e a marca de ordem em aberto. Montado no build | Não escreve texto |
-| Capítulos | `src/lib/game/chapters.ts` | Identificadores dos acontecimentos, tarefa, cenário e época de cada capítulo | Não repete conteúdo editorial |
-| Cobertura | `src/lib/game/coverage.ts` | A matriz acontecimento → personagem → capítulo e as exclusões justificadas; gera [GAME-COVERAGE.md](GAME-COVERAGE.md) | Não decide capítulos |
+| Capítulos | `src/lib/game/chapters.ts` | Sala, identificadores dos acontecimentos e das decisões, tarefa, cenário e época de cada capítulo | Não repete conteúdo editorial |
+| Salas | `src/lib/game/rooms.ts` | As três salas (investigação e temas), com nome e descrição, e o agrupamento dos capítulos por sala | Não é cena nem categoria |
+| Cartão de decisão | `src/lib/data/decisions.ts` | A visão de leitura de um voto ou de um ato, a mesma do atlas, montada no build | Não escreve fato |
+| Escrivão | `src/lib/game/escrivao/` | O catálogo de falas em três camadas, o seletor puro com controle de repetição e a validação | Não cita pessoa nem partido; não usa IA |
+| Cobertura | `src/lib/game/coverage.ts` | A matriz acontecimento → personagem → capítulo, decisão → capítulos e as exclusões justificadas; gera [GAME-COVERAGE.md](GAME-COVERAGE.md) | Não decide capítulos |
 | Ficha judicial | `src/lib/game/judicial.ts` | A natureza de cada episódio de processo e as decisões relacionadas, por identificador | Não escreve fatos novos |
 | Cenários | `src/lib/game/scenes/` | O mapa de cada cena, os objetos, a paleta e a arte que a desenha | Não conhece o desenho |
-| Regras de missão | `src/lib/game/mission.ts` | Recolher, cumprir a tarefa, abrir a saída, decidir a ordem, montar as opções de documento e de lugar, avaliar uma resposta | Não guarda estado |
-| Progresso | `src/lib/game/progress.ts`, `storage.ts` | Situação dos capítulos, transições, formato salvo com migração, armazenamento | Não conhece a interface |
+| Regras de missão | `src/lib/game/mission.ts` | Recolher, cumprir a tarefa, abrir a saída, decidir a ordem, montar as opções de documento, de lugar e de interpretação, avaliar uma resposta, inclusive as duas etapas da decisão | Não guarda estado |
+| Progresso | `src/lib/game/progress.ts`, `storage.ts`, `preferences.ts` | Situação dos capítulos por sala, transições, formato salvo com migração, armazenamento, preferências | Não conhece a interface |
 | Mundo | `src/lib/game/world/` | Projeção isométrica, grade e colisão, movimento, alcance, câmera, direcional | Não desenha |
 | Desenho | `src/features/game/draw/` | Personagens por época, as nove artes de ambiente (`arts/`), objetos, registro e efeitos, por código | Não conhece regras |
 | Motor | `src/features/game/engine/` | Laço de animação, entrada, ordem de profundidade | Não conhece capítulos |
-| Interface | `src/features/game/` | A casca (`GameShell`), o palco (`GameStage`), os diálogos (registro, ordem, escolha, guia, saída fechada, reinício, transição, fim), o painel, o HUD, o toque, a entrada | Não lê arquivos |
-| Rotas | `src/app/jogo/` | `/jogo/` e `/jogo/[personagem]/`, geradas no build | |
+| Interface | `src/features/game/` e `src/features/decisions/` | A casca (`GameShell`), o palco (`GameStage`), os diálogos (registro, decisão recolhida, ordem, escolha, tarefa de decisão, Escrivão, saída fechada, reinício, transição, fim), o painel, o HUD com a caixa do Escrivão, o toque, a entrada; o cartão de decisão e a comparação por tema, usados também pelo atlas | Não lê arquivos |
+| Rotas | `src/app/jogo/` | `/jogo/`, `/jogo/[personagem]/` (a sala Histórico) e `/jogo/[personagem]/[sala]/` (as salas temáticas), geradas no build | |
 
 `src/lib/game/` é puro: sem React, sem arquivos, sem o Zod. O ESLint confere, como nas outras camadas.
 
 ### Cena e arte
 
-Uma **cena** (`SceneId`) é o layout de um capítulo: mapa, objetos, paleta, posições. Uma **arte** (`SceneArtId`, em `src/features/game/draw/arts/`) é o que desenha piso, paredes, porta e materiais. Cada cena aponta a arte que a desenha; duas cenas podem dividir uma arte com paleta e disposição próprias, como as duas salas de audiências e os dois auditórios. São onze cenas e nove artes: as quatro da etapa 1 (salão de sindicato, plenário de constituinte, salão de assembleia, plenário de senado) e as cinco novas (comitê de campanha, sala de audiências, gabinete, sala de comissão, auditório de convenção). Um teste confere que toda cena aponta uma arte registrada, que toda arte é usada e que duas cenas da mesma arte têm paletas diferentes (D-112).
+Uma **cena** (`SceneId`) é o layout de um capítulo: mapa, objetos, paleta, posições. Uma **arte** (`SceneArtId`, em `src/features/game/draw/arts/`) é o que desenha piso, paredes, porta e materiais. Cada cena aponta a arte que a desenha; duas cenas podem dividir uma arte com paleta e disposição próprias, como as duas salas de audiências e os dois auditórios. São quinze cenas e nove artes: as quatro da etapa 1 (salão de sindicato, plenário de constituinte, salão de assembleia, plenário de senado), as cinco da versão de lançamento (comitê de campanha, sala de audiências, gabinete, sala de comissão, auditório de convenção) e, para as salas temáticas, quatro salas de arquivo que reaproveitam as artes do gabinete e da sala de comissão com paletas próprias. Um teste confere que toda cena aponta uma arte registrada, que toda arte é usada e que duas cenas da mesma arte têm paletas diferentes (D-112).
 
 ### Por que canvas 2D, e não uma biblioteca de jogo
 
@@ -247,7 +276,7 @@ O registro recolhido tem o link **Abrir a ficha completa no atlas**, para `/acon
 
 - **2.5D isométrico, desenhado por código.** Célula de 64 por 32 pixels, personagens de corpo inteiro, paredes de fundo em pé e parapeito baixo na frente, para o interior ficar à vista.
 - **A identidade do atlas como base.** Papel e grafite, contorno fino, luz do alto à esquerda, sombra elíptica no chão. O laranja queimado do atlas fica reservado ao que pede ação: a marca e a etiqueta do registro, o anel de alcance, a placa e as setas da saída aberta.
-- **Personagens por época.** Os dois jogáveis têm três figuras cada, com o mesmo esqueleto, o mesmo traço e o mesmo ciclo de caminhada: Lula de camisa de mangas dobradas, cabelo e barba escuros (primeiros anos), de terno com cabelo e barba grisalhos (anos intermediários) e de terno com a barba branca (anos recentes); Flávio Bolsonaro sem barba, de terno cinza (primeiros anos), com a barba rente (anos intermediários) e com fios mais claros e terno escuro (anos recentes). O Arquivista, de colete, óculos e pasta, não muda. Nenhum tem cor, símbolo ou gesto de partido.
+- **Personagens por época.** Os dois jogáveis têm três figuras cada, com o mesmo esqueleto, o mesmo traço e o mesmo ciclo de caminhada: Lula de camisa de mangas dobradas, cabelo e barba escuros (primeiros anos), de terno com cabelo e barba grisalhos (anos intermediários) e de terno com a barba branca (anos recentes); Flávio Bolsonaro sem barba, de terno cinza (primeiros anos), com a barba rente (anos intermediários) e com fios mais claros e terno escuro (anos recentes). O Escrivão, de colete, óculos e pasta, não muda. Nenhum tem cor, símbolo ou gesto de partido.
 - **Um lugar por capítulo.** Cada cena tem piso, paredes, objetos e cores próprios, e os períodos novos têm ambientes novos, e não a aparência dos quatro da etapa 1: ladrilho vinílico, cortiça com papéis e cartazes sem texto no comitê de campanha; lambri alto, tábua corrida, bancada do juízo e fileiras de público nas salas de audiências; painéis de madeira, carpete de lã, sofás e mapa sem nomes no gabinete; painéis acústicos, placas de carpete e tela apagada na sala de comissão; cortinas de palco, treliça, telão apagado e cadeiras em fileiras nos auditórios de convenção. Objetos novos: balcão, cartaz, tela, fileira e sofá.
 - **Objetos legíveis.** O registro é o único objeto com papel pardo e etiqueta em acento. A saída é um portal mais alto que o personagem, com a porta de cada ambiente.
 - **Animações curtas com função.** O registro balança de leve; ao ser recolhido, a pasta sobe e some; a tranca some e a porta gira; as setas do degrau piscam em sequência; a transição apresenta o capítulo seguinte.
@@ -267,21 +296,21 @@ Nenhum serviço foi contratado, e o jogo não depende de API, login, banco de da
 
 | O quê | Onde |
 | --- | --- |
-| Regras de missão (quatro tarefas), progresso e migração, armazenamento, mundo, entrada, ficha judicial, registro da arte, capítulos e cobertura contra o conteúdo | `tests/game-*.test.ts` (Vitest) |
-| Endereços do jogo e retorno da ficha | `tests/links.test.ts` |
-| Movimento, colisão, interação, saída bloqueada até a tarefa e todos os registros, conclusão, avanço, nova tentativa nas três tarefas com resposta, a trajetória inteira dos dois personagens até o fim, a ficha judicial, a figura por época, progresso separado, recarga, migração da versão 1, painel com releitura, toque em pé e deitado, avisos editoriais e ida às fontes | `tests/e2e/jogo.spec.ts`, no servidor de desenvolvimento (`npm run test:e2e`) e sobre a saída estática (`npm run test:journeys`) |
-| O que cada página pede, o palco em pacote à parte, a página sem mapa, a página sem JavaScript e a falha de um pacote | `tests/export/jogo.spec.ts` (`npm run test:export`) |
+| Regras de missão (cinco tarefas, com as duas etapas da decisão), salas e progressão por sala, progresso e migração (formatos 1 a 4), preferências, armazenamento, mundo, entrada, ficha judicial, registro da arte, o catálogo e a seleção do Escrivão, o cartão de decisão, capítulos e cobertura (acontecimentos e decisões) contra o conteúdo | `tests/game-*.test.ts`, `tests/decisions-view.test.ts` (Vitest) |
+| Endereços do jogo, das salas, do cartão de decisão e retorno da ficha | `tests/links.test.ts` |
+| Movimento, colisão, interação, saída bloqueada até a tarefa e todos os registros, conclusão, avanço, nova tentativa nas tarefas com resposta, a trajetória inteira dos dois personagens até o fim, a missão da sala Histórico (decisão no cenário, evidência, interpretação, erro e conclusão com o Escrivão), a sala temática inteira com o progresso separado da trajetória, o Escrivão na entrada e na ajuda com o humor desligável e a preferência guardada, a ficha judicial, a figura por época, progresso separado, recarga, migração da versão 1, painel com releitura, toque em pé e deitado, avisos editoriais e ida às fontes | `tests/e2e/jogo.spec.ts`, no servidor de desenvolvimento (`npm run test:e2e`) e sobre a saída estática (`npm run test:journeys`) |
+| O que cada página pede, inclusive as das salas temáticas, o palco em pacote à parte, a página sem mapa, a página sem JavaScript e a falha de um pacote | `tests/export/jogo.spec.ts` (`npm run test:export`) |
 | Contraste, alvos e ordem de foco das duas telas do jogo | `npm run audit:a11y` |
 | Carregamento e cadência de quadros das páginas do jogo, em laboratório | `npm run measure:game -- --rotulo <nome>` |
-| Capturas da versão implementada | `docs/capturas/jogo-lancamento/` (`npm run capture:game`) |
+| Capturas da versão de lançamento e do percurso das salas e decisões | `docs/capturas/jogo-lancamento/` (`npm run capture:game`) e `docs/capturas/jogo-salas/` (`npx playwright test -c playwright.export.config.ts --project=capturas jogo-salas.capture`) |
 | A galeria da arte, peça por peça | `node scripts/capture-art.mjs --saida <pasta>`, com `npm run dev` rodando |
 
 O toque e o layout de celular foram conferidos em emulação. Nenhum aparelho real foi usado. Os resultados estão em [STATUS.md](STATUS.md). A cadência medida em 10 de outubro de 2026: 58 quadros por segundo em computador, e 19 a 24 no celular emulado, com a CPU 4 vezes mais lenta e o canvas desenhado por software ([PERFORMANCE.md](PERFORMANCE.md), seção Páginas do jogo); em aparelho real, por medir.
 
 ## Como acrescentar um capítulo
 
-1. Escolha acontecimentos publicados próximos no assunto e no tempo, todos posteriores, sem ambiguidade de data, aos do capítulo anterior. Se a tarefa for de ordem, as datas dos dois têm de decidir a ordem; se for de documento ou de lugar, o registro pedido precisa de fonte ou de lugar documentado, e os outros registros, de documentos ou lugares diferentes.
-2. Acrescente o capítulo em `src/lib/game/chapters.ts`, com os identificadores, a tarefa, o cenário e a época. O título e o motivo são inventários do que os registros dizem.
+1. Escolha acontecimentos publicados próximos no assunto e no tempo, todos posteriores, sem ambiguidade de data, aos do capítulo anterior da mesma sala (na trajetória). Se a tarefa for de ordem, as datas dos dois têm de decidir a ordem; se for de documento ou de lugar, o registro pedido precisa de fonte ou de lugar documentado, e os outros registros, de documentos ou lugares diferentes; se for de decisão, a decisão precisa estar publicada (voto vigente ou ato da pessoa), com fonte, e os outros registros do capítulo, com documentos diferentes.
+2. Acrescente o capítulo em `src/lib/game/chapters.ts`, com a sala, os identificadores (`eventIds` e, se houver, `decisaoIds`), a tarefa, o cenário e a época. O título e o motivo são inventários do que os registros dizem; o motivo de uma sala temática diz que é amostra. Toda decisão publicada em um tema com sala precisa estar no capítulo da sala daquele tema (ou em `DECISION_EXCLUSIONS`, com o motivo).
 3. Crie a cena em `src/lib/game/scenes/`, apontando uma arte existente ou uma nova em `src/features/game/draw/arts/`: o mapa, os objetos, a paleta e as posições dos registros, na ordem dos identificadores. Nenhum registro ao lado da porta nem atrás de um objeto alto.
 4. Se o registro for um episódio de processo, acrescente a ficha em `src/lib/game/judicial.ts`, só com o que o contexto do registro diz.
 5. Rode `npx vitest run tests/game-chapters.test.ts tests/game-coverage.test.ts tests/game-judicial.test.ts tests/game-draw-registry.test.ts` e `npm run game:coverage`.
@@ -289,7 +318,7 @@ O toque e o layout de celular foram conferidos em emulação. Nenhum aparelho re
 
 ## O que falta
 
-1. **Revisão humana do conteúdo** ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)) e **validação com três pessoas, com celular real** ([USER-VALIDATION.md](USER-VALIDATION.md)): decidem a publicação.
+1. **Revisão humana do conteúdo**, inclusive das decisões ([HUMAN-REVIEW.md](HUMAN-REVIEW.md), seção 6) e **validação com três pessoas, com celular real** ([USER-VALIDATION.md](USER-VALIDATION.md), com o roteiro curto das salas e decisões): decidem a publicação.
 2. **Aparelho real, leitor de tela e outros navegadores,** que não foram usados.
 3. **Domínio, indexação e publicação,** preparados em [DEPLOY.md](DEPLOY.md) e só com autorização.
 4. **Som,** deixado para depois.

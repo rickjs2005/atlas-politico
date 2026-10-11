@@ -1000,6 +1000,40 @@ Recolher tudo leva mais tempo: as jornadas de teste pelo cenário passaram a and
 
 **Consequência.** Capturas e pacotes ficam em `research/`, fora do que o pipeline lê. Atos do Executivo são cadastro à mão por enquanto. O primeiro recorte real (um trimestre do Senado, 10 votações e 10 votos de Flávio Bolsonaro, em simulação) passou de ponta a ponta sem rejeição; nada foi gravado nos rascunhos ainda, porque a seleção do recorte e os critérios são decisão editorial da entrega P1.
 
+## D-125. Salas do jogo: a investigação e os temas, com progressão própria
+
+**Decisão (entrega P1, 10 e 11 de outubro de 2026).** O jogo ganhou salas (`RoomId`, `src/lib/game/rooms.ts`): **Histórico**, a sala de investigação, com a trajetória em capítulos por período, e as salas temáticas **Economia** e **Segurança pública**, com as decisões documentadas de cada tema, um capítulo por personagem. A sala é o que o jogador escolhe na entrada e o que agrupa a progressão (bloqueado, disponível, concluído, dentro de cada sala); não é a cena (`SceneId`, o layout de um capítulo) nem uma categoria do atlas, e nenhuma delas é "tema político" por si: Histórico é investigação. Cada sala temática tem rota própria (`/jogo/<personagem>/<sala>/`); a sala Histórico continua em `/jogo/<personagem>/`. Um progresso só por personagem guarda todas as salas; a leitura reaplica a regra por sala.
+
+**Motivo.** O recorte decidido pelo responsável pelo projeto: dois temas, Histórico como sala de investigação, as trajetórias e a progressão existentes preservadas. Pôr as decisões de 2023 a 2026 na fila da trajetória quebraria a regra de que todo registro de um capítulo é anterior ao do seguinte; uma sala à parte mantém a regra onde ela faz sentido e dá às decisões o próprio percurso.
+
+**Consequência.** Entrada do jogo com as salas de cada personagem; painel, HUD, transição e fim dizem a sala; os dois personagens têm as mesmas três salas, com as mesmas regras (teste). As cenas das salas temáticas reaproveitam as artes do gabinete e da sala de comissão, com paletas próprias (D-112). Uma decisão ligada a um acontecimento da trajetória aparece também no capítulo dele (a sala Histórico tem a missão documental); a matriz de cobertura mostra os dois lugares.
+
+## D-126. A tarefa de decisão em duas etapas, e o que mudou nos capítulos
+
+**Decisão.** A quinta tarefa, `decisao`, pede o registro de uma decisão (voto ou ato) e duas respostas sobre ele: primeiro o documento que o sustenta (a evidência, pelas mesmas opções da tarefa de documento, agora sobre acontecimentos e decisões do capítulo), depois a interpretação do que o registro documenta: a manifestação e o objeto votado, no voto; o tipo do ato, no ato. As opções da interpretação vêm do próprio cartão e trocam uma coisa só (a posição ou o objeto; dois tipos de ato com que o tipo certo se confunde). A etapa da evidência fica no progresso (`evidencia`, formato 4) e só vale com a decisão recolhida e a tarefa ainda de decisão; a confirmação continua presa à assinatura (D-119). Errar explica e deixa tentar de novo, sem penalidade; a saída continua exigindo todos os registros.
+
+Na trajetória, o capítulo 5 de Lula ganhou o Decreto nº 11.377/2023 (a decisão do acontecimento da intervenção) e a tarefa de decisão; o capítulo 4 de Flávio Bolsonaro ganhou o voto no PL 2.253/2022 (o projeto que ele relatou) e a tarefa de decisão; o capítulo 5 de Flávio Bolsonaro trocou a ordem pelo lugar (a convenção em São Paulo), para os quatro tipos de antes continuarem na trajetória. As respostas guardadas para essas três tarefas caem na leitura, pela assinatura; o que foi recolhido e as tentativas ficam.
+
+**Motivo.** O relatório pediu uma missão completa, explorar, recolher, conferir a evidência, interpretar e abrir a passagem, em que a resposta certa avalie compreensão documental. Perguntar só "a favor ou contra" ensinaria a ler um rótulo; perguntar o objeto votado e o tipo do ato é o que a política editorial diz ser a leitura correta de um voto e de um ato (EDITORIAL.md, seção Decisões políticas).
+
+**Consequência.** `GameDecision` é o mesmo cartão do atlas (`src/lib/data/decisions.ts`), montado no build; o jogo não escreve fato sobre a decisão. Os textos de definição dos tipos de ato (`ATO_DEFINICOES`) são definições gerais, e não afirmações sobre as pessoas. Testes: `tests/game-decision-task.test.ts`, `tests/game-chapters.test.ts`, as jornadas em `tests/e2e/jogo.spec.ts`.
+
+## D-127. O Escrivão: três camadas, catálogo validado, sem IA na partida
+
+**Decisão.** O guia fictício do jogo passou a se chamar Escrivão em toda a interface (era Arquivista até a versão de lançamento). Ele fala pelo catálogo de `src/lib/game/escrivao/`, em três camadas que a interface separa e marca: a **instrução** (obrigatória, o que fazer agora), a **informação documental** (modelos preenchidos só com campos do registro publicado: data, título, fontes, cargo, instituição, manifestação, tipo do ato) e o **humor** (ficção sobre papelada, carimbos, gavetas e o próprio Escrivão, igual para os dois personagens, que a pessoa pode desligar). As falas existem por sala e por evento (entrada, ajuda, descoberta, fonte, erro, conclusão), com um reserva por evento; a seleção é uma função pura que roda as falas pelo histórico do que já foi dito, sem sorteio; a preferência de humor fica no navegador, fora do progresso. Não há IA durante a partida.
+
+**Motivo.** Humor sobre as pessoas retratadas quebraria a regra de mesmo tratamento e viraria juízo; humor sobre a burocracia e sobre o próprio guia não. A camada documental só pode repetir o conjunto, por isso é um modelo com campos e não um texto livre. Quem não quer humor em um tema sensível desliga, e nada do jogo depende dele.
+
+**Consequência.** `validateCatalog` recusa fala que cite pessoa, partido ou lado, que atribua fala, que traga juízo, data escrita à mão fora da camada documental, travessão ou campo desconhecido, e exige instrução de reserva e humor suficiente por evento; o teste aplica a validação ao catálogo inteiro. As falas aparecem com `role="status"` e a camada dita a quem ouve a página. Teste: `tests/game-escrivao.test.ts`.
+
+## D-128. A amostra de decisões da edição 0.2.0: recorte, critérios e o que fica fora
+
+**Decisão.** A primeira amostra de decisões publicadas segue o recorte decidido pelo responsável pelo projeto em 10 de outubro de 2026: temas Economia e Segurança pública; de 1º de janeiro de 2023 à data de corte; Flávio Bolsonaro pelas manifestações individuais documentadas no Senado e Lula pelos atos presidenciais com atribuição e alcance documentados; até doze decisões, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem igualar quantidades à força e sem olhar se a decisão favorece ou prejudica alguém. Entraram seis votos nominais e seis atos; quatro proposições têm decisão dos dois. A seleção, os excluídos e as lacunas estão em [../research/selecao-decisoes-2026-10.md](../research/selecao-decisoes-2026-10.md), e a cobertura declarada de cada pessoa e tema diz "amostra, parcial". A interface diz em toda tela de decisões que é amostra, e não histórico completo.
+
+**Motivo.** Um histórico completo de votos de um senador tem centenas de itens e pede uma revisão humana que não existe ainda; uma amostra pequena, documentada e declarada como tal é o que a política editorial permite publicar sem fingir inventário.
+
+**Consequência.** Quem quiser ampliar a amostra segue o mesmo caminho: importar por dia de sessão (`npm run importar:decisoes`), corrigir o objeto votado pela descrição do acervo, classificar o tema com justificativa, criar uma fonte por consulta, promover e registrar em `alteracoes`. O importador passou a ler melhor o objeto ("ressalvados os destaques" não é destaque; a Proposta de Emenda à Constituição não é emenda; a emenda substitutiva é substitutivo), e a cobertura declara as lacunas conhecidas: a votação de 10 de janeiro de 2023 sobre a intervenção no DF não está no webservice para o parlamentar; o PL 1087/2025 não tem votação nominal com registro dele.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |

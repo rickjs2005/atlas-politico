@@ -13,7 +13,7 @@ export const gabinete: SceneSpec = {
   mapa: [
     "############",
     "#oo.o....oo#",
-    "#.......o..#",
+    "#..4....o..#",
     "#..S..1....#",
     "#G.....o...E",
     "#.o.o....o.#",
@@ -52,10 +52,12 @@ export const gabinete: SceneSpec = {
   spawn: { x: 3, y: 3 },
   guia: { x: 1, y: 4 },
   saida: { x: 11, y: 4, lado: "leste" },
-  // Nenhum fica na diagonal atrás da porta, que os esconderia.
+  // Nenhum fica na diagonal atrás da porta, que os esconderia. O quarto é a
+  // decisão do capítulo (o decreto), junto da estante do fundo.
   registros: [
     { x: 6, y: 3 },
     { x: 4, y: 6 },
     { x: 8, y: 7 },
+    { x: 3, y: 2 },
   ],
 };

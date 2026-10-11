@@ -5,17 +5,31 @@
 // identificador do conjunto publicado; os textos, as datas e as fontes chegam
 // pelos dados gerados, como em qualquer outra tela do atlas.
 
+import type { DecisionView } from "@/lib/data/decisions";
 import type { Categoria, DataHistorica, Editorial, Fonte } from "@/lib/domain/types";
 import type { ProfileSlug } from "@/lib/domain/profiles";
 
 export type PersonagemSlug = ProfileSlug;
 
 // ---------------------------------------------------------------------------
+// Salas
+// ---------------------------------------------------------------------------
+
+/**
+ * As salas do jogo (D-125). `historico` é a sala de investigação: a
+ * trajetória em capítulos, por período. `economia` e `seguranca-publica` são
+ * salas temáticas: as decisões políticas (votos e atos) de cada tema. A sala
+ * não é a cena (`SceneId`, o layout de um capítulo) nem uma categoria do
+ * atlas: é o agrupamento que o jogador escolhe na entrada.
+ */
+export type RoomId = "historico" | "economia" | "seguranca-publica";
+
+// ---------------------------------------------------------------------------
 // Capítulos e tarefas
 // ---------------------------------------------------------------------------
 
 /**
- * A tarefa de um capítulo. Quatro tipos:
+ * A tarefa de um capítulo. Cinco tipos:
  *   `registro`  encontrar e recolher o registro de um acontecimento;
  *   `ordem`     recolher dois registros e pô-los em ordem cronológica. As
  *               datas dos dois têm de decidir a ordem sem ambiguidade (um
@@ -23,15 +37,20 @@ export type PersonagemSlug = ProfileSlug;
  *   `fonte`     recolher um registro e indicar, entre documentos do capítulo,
  *               o que o sustenta;
  *   `lugar`     recolher um registro e indicar o lugar em que o atlas o
- *               documenta, entre lugares da trajetória.
- * As opções das tarefas de fonte e de lugar saem dos próprios registros
- * (src/lib/game/mission.ts): o jogo não escreve alternativa nenhuma.
+ *               documenta, entre lugares da trajetória;
+ *   `decisao`   recolher o registro de uma decisão (voto ou ato) e, em duas
+ *               etapas, indicar o documento que a sustenta e interpretar o que
+ *               ela documenta (a manifestação e o objeto votado, ou o tipo do
+ *               ato). As duas etapas são conferidas contra o próprio registro.
+ * As opções das tarefas de fonte, de lugar e de decisão saem dos próprios
+ * registros (src/lib/game/mission.ts): o jogo não escreve fato nenhum.
  */
 export type TaskSpec =
   | { tipo: "registro"; eventId: string }
   | { tipo: "ordem"; eventIds: readonly [string, string] }
   | { tipo: "fonte"; eventId: string }
-  | { tipo: "lugar"; eventId: string };
+  | { tipo: "lugar"; eventId: string }
+  | { tipo: "decisao"; decisaoId: string };
 
 export type TaskType = TaskSpec["tipo"];
 
@@ -53,7 +72,11 @@ export type SceneId =
   | "gabinete"
   | "comissao"
   | "convencao-a"
-  | "convencao-b";
+  | "convencao-b"
+  | "arquivo-economia-a"
+  | "arquivo-economia-b"
+  | "arquivo-seguranca-a"
+  | "arquivo-seguranca-b";
 
 /**
  * A época da figura do personagem no capítulo: variações estilizadas de
@@ -73,12 +96,14 @@ export interface ChapterSpec {
   /** Identificador estável, usado no progresso salvo. */
   id: string;
   personagem: PersonagemSlug;
-  /** Posição na trajetória do personagem, a partir de 1. */
+  /** A sala a que o capítulo pertence. A progressão (bloqueado, disponível, concluído) corre dentro de cada sala. */
+  sala: RoomId;
+  /** Posição na sala, a partir de 1. */
   numero: number;
   titulo: string;
-  /** Anos que o capítulo cobre, pelas datas dos acontecimentos citados. */
+  /** Anos que o capítulo cobre, pelas datas dos registros citados. */
   periodo: { de: number; ate: number };
-  /** Por que estes acontecimentos formam um capítulo (docs/GAMEPLAY.md). */
+  /** Por que estes registros formam um capítulo (docs/GAMEPLAY.md). */
   motivo: string;
   /** Objetivo curto, mostrado ao jogador. */
   objetivo: string;
@@ -88,6 +113,13 @@ export interface ChapterSpec {
    * registros no cenário. A tarefa exige alguns deles; a saída, todos.
    */
   eventIds: readonly string[];
+  /**
+   * Decisões políticas do capítulo (votos e atos do Executivo), pelo `id` do
+   * conjunto publicado. Aparecem como registros no cenário, nas posições
+   * depois das dos acontecimentos (`recordIds`, em mission.ts). Ausente ou
+   * vazio nos capítulos só de acontecimentos.
+   */
+  decisaoIds?: readonly string[];
   tarefa: TaskSpec;
   cena: SceneId;
   epoca: Epoca;
@@ -104,15 +136,17 @@ export type ChapterStatus = "bloqueado" | "disponivel" | "concluido";
  * generalizou para `confirmada`, que vale para qualquer tarefa com resposta
  * (ordem, fonte, lugar); a 3 guarda, junto com a confirmação, a assinatura
  * da tarefa respondida (`taskSignature`), para uma resposta antiga não
- * concluir uma tarefa que mudou sob os mesmos identificadores. A leitura
- * migra as versões 1 e 2 (src/lib/game/progress.ts).
+ * concluir uma tarefa que mudou sob os mesmos identificadores; a 4 guarda a
+ * etapa de evidência da tarefa de decisão (`evidencia`) e lê capítulos de
+ * mais de uma sala. A leitura migra as versões 1, 2 e 3
+ * (src/lib/game/progress.ts).
  */
-export const PROGRESS_VERSION = 3;
+export const PROGRESS_VERSION = 4;
 
 export interface TaskState {
   /** Registros recolhidos neste capítulo, na ordem em que foram recolhidos. */
   recolhidos: string[];
-  /** Tarefa com resposta (ordem, fonte, lugar): a resposta certa foi confirmada. */
+  /** Tarefa com resposta (ordem, fonte, lugar, decisão): a resposta certa foi confirmada. */
   confirmada: boolean;
   /** Tarefa com resposta: quantas tentativas foram feitas (só informação; não pune). */
   tentativas: number;
@@ -122,6 +156,12 @@ export interface TaskState {
    * capítulo mudar, a confirmação deixa de valer na leitura do progresso.
    */
   assinatura?: string;
+  /**
+   * Tarefa de decisão: a primeira etapa (o documento que sustenta o registro)
+   * foi confirmada. Só existe quando verdadeira. A segunda etapa, a
+   * interpretação, é o que `confirmada` registra.
+   */
+  evidencia?: true;
 }
 
 export interface ChapterProgress {
@@ -181,11 +221,24 @@ export interface GameRecord {
   ordemEmAberto: boolean;
 }
 
+/**
+ * Uma decisão política como o jogo a apresenta: o mesmo cartão do atlas
+ * (src/lib/data/decisions.ts), com cargo, instituição, data, objeto,
+ * manifestação ou tipo do ato, fontes e a situação da revisão.
+ */
+export type GameDecision = DecisionView;
+
+/** O que registros e decisões têm em comum, para as regras que servem aos dois. */
+export type GameDocument = Pick<GameRecord, "id" | "titulo" | "data" | "fontes">;
+
 export interface GameContent {
   personagem: { slug: PersonagemSlug; nome: string };
+  /** Todos os capítulos do personagem, de todas as salas, na ordem de `chapters.ts`. */
   capitulos: readonly ChapterSpec[];
   /** Por `id` de acontecimento. Só os citados pelos capítulos. */
   registros: Record<string, GameRecord>;
+  /** Por `id` de voto ou de ato. Só os citados pelos capítulos. */
+  decisoes: Record<string, GameDecision>;
 }
 
 // ---------------------------------------------------------------------------
@@ -263,7 +316,7 @@ export interface SceneSpec {
   spawn: { x: number; y: number };
   guia: { x: number; y: number };
   saida: { x: number; y: number; lado: ExitSide };
-  /** Posições dos registros, na ordem de `ChapterSpec.eventIds`. */
+  /** Posições dos registros, na ordem de `recordIds` (os acontecimentos e depois as decisões do capítulo). */
   registros: readonly { x: number; y: number }[];
 }
 
@@ -293,7 +346,7 @@ export type InteractableKind = "registro" | "guia" | "saida";
 
 export interface Interactable {
   tipo: InteractableKind;
-  /** `eventId` para registros; `guia` ou `saida` para os demais. */
+  /** O `id` do acontecimento ou da decisão para registros; `guia` ou `saida` para os demais. */
   id: string;
   x: number;
   y: number;

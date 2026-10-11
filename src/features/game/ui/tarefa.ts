@@ -10,6 +10,7 @@ export const TASK_TYPE_LABEL: Record<TaskType, string> = {
   ordem: "colocar dois registros em ordem",
   fonte: "associar um registro ao documento que o sustenta",
   lugar: "relacionar um registro ao lugar documentado",
+  decisao: "conferir a evidência e interpretar uma decisão",
 };
 
 /** O botão que abre a resposta da tarefa, quando os registros pedidos já foram recolhidos. */
@@ -17,6 +18,7 @@ export function answerLabel(tipo: TaskType): string {
   if (tipo === "ordem") return "Ordenar os registros";
   if (tipo === "fonte") return "Indicar o documento";
   if (tipo === "lugar") return "Indicar o lugar";
+  if (tipo === "decisao") return "Conferir e interpretar a decisão";
   return "";
 }
 
@@ -25,6 +27,7 @@ export function pendingSentence(tipo: TaskType): string {
   if (tipo === "ordem") return "Os dois registros da tarefa estão com você. Falta colocá-los em ordem.";
   if (tipo === "fonte") return "O registro da tarefa está com você. Falta indicar o documento que o sustenta.";
   if (tipo === "lugar") return "O registro da tarefa está com você. Falta indicar o lugar em que o atlas o documenta.";
+  if (tipo === "decisao") return "O registro da decisão está com você. Falta indicar o documento que a sustenta e interpretar o que ela documenta.";
   return "";
 }
 
@@ -33,6 +36,7 @@ export function hudPendingSentence(tipo: TaskType): string {
   if (tipo === "ordem") return "Os dois registros da tarefa estão com você. Para colocá-los em ordem, abra Como jogar ou Capítulos e tarefas.";
   if (tipo === "fonte") return "O registro da tarefa está com você. Para indicar o documento que o sustenta, abra Como jogar ou Capítulos e tarefas.";
   if (tipo === "lugar") return "O registro da tarefa está com você. Para indicar o lugar documentado, abra Como jogar ou Capítulos e tarefas.";
+  if (tipo === "decisao") return "O registro da decisão está com você. Para conferir a evidência e interpretar a decisão, abra Como jogar ou Capítulos e tarefas.";
   return "";
 }
 
@@ -41,5 +45,6 @@ export function countingSentence(tipo: TaskType): string {
   if (tipo === "ordem") return "a saída abre com todos e a ordem certa";
   if (tipo === "fonte") return "a saída abre com todos e o documento certo";
   if (tipo === "lugar") return "a saída abre com todos e o lugar certo";
+  if (tipo === "decisao") return "a saída abre com todos e a interpretação certa";
   return "a saída abre com todos";
 }

@@ -63,7 +63,8 @@ As telas (docs/UX.md):
 | Comparação | http://localhost:3000/comparar/ |
 | Metodologia | http://localhost:3000/metodologia/ |
 | Jogo: escolha do personagem | http://localhost:3000/jogo/ |
-| Jogo: os capítulos de cada personagem | http://localhost:3000/jogo/lula/ e http://localhost:3000/jogo/flavio-bolsonaro/ |
+| Jogo: a trajetória de cada personagem (sala Histórico) | http://localhost:3000/jogo/lula/ e http://localhost:3000/jogo/flavio-bolsonaro/ |
+| Jogo: as salas temáticas, com as decisões documentadas | http://localhost:3000/jogo/lula/economia/, http://localhost:3000/jogo/lula/seguranca-publica/ e os mesmos de `flavio-bolsonaro` |
 | Guia de estados, só em desenvolvimento | http://localhost:3000/dev/previa/ |
 | Galeria da arte do jogo, só em desenvolvimento | http://localhost:3000/dev/jogo-arte/ |
 
@@ -221,7 +222,7 @@ src/
   lib/
     domain/      regras e contratos de dados, sem I/O
     data/        formato dos dados públicos, índices, pontos e consultas
-    game/        regras do jogo, sem interface: capítulos, cenários, missão, progresso e mundo
+    game/        regras do jogo, sem interface: capítulos, salas, cenários, missão, progresso, preferências, mundo e o Escrivão
     media/       molduras, larguras e nomes das versões dos retratos
     publication/ validação, elegibilidade, relatório e importação, sem I/O
     content/     leitura de content/ e leitura e gravação de generated/
@@ -245,7 +246,8 @@ tests/
 - [docs/TIMELINE.md](docs/TIMELINE.md): navegação temporal: troca de pessoa, filtros, datas, seleção, endereço, histórico e o contrato com o mapa.
 - [docs/MAP.md](docs/MAP.md): mapa: base e recursos locais, recorte, seleção, pontos sobrepostos, câmera, precisão, falhas e conferência.
 - [docs/COMPARISON.md](docs/COMPARISON.md): comparação: mesmo recorte e mesma escala, estado e endereço, datas e intervalos, linguagem e limites.
-- [docs/GAMEPLAY.md](docs/GAMEPLAY.md): o jogo: fluxo, os onze capítulos, as quatro tarefas, a ficha judicial, regras editoriais, controles, progresso com migração, arquitetura, direção visual e o que falta.
+- [docs/GAMEPLAY.md](docs/GAMEPLAY.md): o jogo: fluxo, as três salas, os capítulos, as cinco tarefas (inclusive a decisão em duas etapas), o Escrivão, a ficha judicial, regras editoriais, controles, progresso com migração, arquitetura, direção visual e o que falta.
+- [docs/VOTOS-E-ESCRIVAO.md](docs/VOTOS-E-ESCRIVAO.md): o histórico de decisões e o Escrivão: o que o relatório pediu, o que a pesquisa dos acervos mostrou, as entregas P0 e P1 e o que fica para a P2.
 - [docs/GAME-RELEASE.md](docs/GAME-RELEASE.md): o plano até a versão de lançamento, os riscos de prazo, as pendências humanas e os cortes possíveis.
 - [docs/GAME-COVERAGE.md](docs/GAME-COVERAGE.md): a matriz acontecimento → personagem → capítulo, gerada dos dados.
 - [docs/HUMAN-REVIEW.md](docs/HUMAN-REVIEW.md): a lista do que precisa de revisão humana, trecho a trecho, gerada dos dados.

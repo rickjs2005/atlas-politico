@@ -109,6 +109,7 @@
     "pessoaId": "lula",
     "cargo": "Deputado federal constituinte (SP)",
     "instituicao": "Câmara dos Deputados",
+    "casa": "camara-dos-deputados",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -134,7 +135,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026: Câmara dos Deputados, pelo mandato de deputado federal. A Assembleia Nacional Constituinte (1987 a 1988) é instituição própria no modelo e não está declarada neste mandato: as decisões da Constituinte, se entrarem, pedem registro próprio."
       }
     }
   },
@@ -143,6 +144,7 @@
     "pessoaId": "lula",
     "cargo": "Presidente da República (primeiro mandato)",
     "instituicao": "Presidência da República",
+    "casa": "presidencia-da-republica",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -173,7 +175,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -182,6 +184,7 @@
     "pessoaId": "lula",
     "cargo": "Presidente da República (segundo mandato)",
     "instituicao": "Presidência da República",
+    "casa": "presidencia-da-republica",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -212,7 +215,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -221,6 +224,7 @@
     "pessoaId": "lula",
     "cargo": "Presidente da República (terceiro mandato)",
     "instituicao": "Presidência da República",
+    "casa": "presidencia-da-republica",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -249,7 +253,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -258,6 +262,7 @@
     "pessoaId": "flavio-bolsonaro",
     "cargo": "Deputado estadual (quatro mandatos consecutivos)",
     "instituicao": "Assembleia Legislativa do Estado do Rio de Janeiro (Alerj)",
+    "casa": "alerj",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -293,7 +298,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -302,6 +307,7 @@
     "pessoaId": "flavio-bolsonaro",
     "cargo": "Senador (RJ)",
     "instituicao": "Senado Federal",
+    "casa": "senado-federal",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -330,7 +336,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -339,6 +345,7 @@
     "pessoaId": "flavio-bolsonaro",
     "cargo": "3º secretário da Comissão Diretora",
     "instituicao": "Senado Federal",
+    "casa": "senado-federal",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -364,7 +371,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -373,6 +380,7 @@
     "pessoaId": "flavio-bolsonaro",
     "cargo": "Vice-líder do Governo no Congresso Nacional",
     "instituicao": "Congresso Nacional",
+    "casa": "congresso-nacional",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -398,7 +406,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -407,6 +415,7 @@
     "pessoaId": "flavio-bolsonaro",
     "cargo": "Líder do Patriota no Senado",
     "instituicao": "Senado Federal",
+    "casa": "senado-federal",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -432,7 +441,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -441,6 +450,7 @@
     "pessoaId": "flavio-bolsonaro",
     "cargo": "Líder do PL no Senado",
     "instituicao": "Senado Federal",
+    "casa": "senado-federal",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -466,7 +476,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -475,6 +485,7 @@
     "pessoaId": "flavio-bolsonaro",
     "cargo": "Líder da Minoria no Congresso Nacional",
     "instituicao": "Congresso Nacional",
+    "casa": "congresso-nacional",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -500,7 +511,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   },
@@ -509,6 +520,7 @@
     "pessoaId": "flavio-bolsonaro",
     "cargo": "Presidente da Comissão de Segurança Pública",
     "instituicao": "Senado Federal",
+    "casa": "senado-federal",
     "periodo": {
       "inicio": {
         "tipo": "data",
@@ -537,7 +549,7 @@
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
         "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente."
+        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
       }
     }
   }

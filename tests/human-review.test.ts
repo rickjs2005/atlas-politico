@@ -15,11 +15,20 @@ const data = buildAtlasData(readSources(resolvePaths())).data!;
 const texto = renderHumanReview(data);
 
 describe("lista de revisão humana", () => {
-  it("cita todo acontecimento, filiação e mandato publicado, com todas as fontes", () => {
+  it("cita todo acontecimento, filiação, mandato, decisão, cobertura e identidade publicados, com todas as fontes", () => {
     for (const item of data.conjunto.acontecimentos) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const item of data.conjunto.filiacoes) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const item of data.conjunto.mandatos) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.votos) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.votacoes) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.proposicoes) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.atosExecutivos) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.coberturaPolitica) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.identidadesInstitucionais) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const fonte of data.conjunto.fontes) expect(texto, fonte.id).toContain(fonte.url);
+    // A seção das decisões vem depois das demais e diz que a amostra não é o histórico completo.
+    expect(texto).toContain("## 6. Decisões políticas: votos e atos do Executivo");
+    expect(texto).toContain("não o histórico completo");
   });
 
   it("começa pelos episódios judiciais, e cada um deles está na seção judicial", () => {

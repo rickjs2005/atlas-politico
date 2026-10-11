@@ -9,6 +9,7 @@
 // porta, a bandeira e a planta, que balançam, e os efeitos. Sem isso, os
 // milhares de traços do cenário seriam refeitos sessenta vezes por segundo.
 
+import { recordIds } from "@/lib/game/mission";
 import type { ChapterSpec, Interactable, PersonagemSlug, PlayerState, PropKind, SceneSpec } from "@/lib/game/types";
 import { sceneBounds, type Camera, type Viewport } from "@/lib/game/world/camera";
 import { CELL, cellAt } from "@/lib/game/world/grid";
@@ -284,12 +285,12 @@ export function renderScene(ctx: CanvasRenderingContext2D, state: RenderState, v
     });
   });
 
-  // Registros ainda no cenário.
-  state.chapter.eventIds.forEach((eventId, indice) => {
+  // Registros ainda no cenário: os acontecimentos e as decisões do capítulo, nas posições da cena.
+  recordIds(state.chapter).forEach((id, indice) => {
     const posicao = scene.registros[indice];
-    if (posicao === undefined || state.recolhidos.includes(eventId)) return;
+    if (posicao === undefined || state.recolhidos.includes(id)) return;
     const { sx, sy } = toScreen(posicao.x + 0.5, posicao.y + 0.5);
-    const destaque = state.alcance?.tipo === "registro" && state.alcance.id === eventId;
+    const destaque = state.alcance?.tipo === "registro" && state.alcance.id === id;
     drawables.push({ z: posicao.x + posicao.y, draw: () => RECORD_ART.draw(d, sx, sy, destaque) });
   });
 

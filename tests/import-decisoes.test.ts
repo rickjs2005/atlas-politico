@@ -123,6 +123,11 @@ describe("Senado: a resposta vira proposição, votação, voto e cobertura, tud
     expect(inferObjeto("Votação nominal do Projeto de Lei Complementar nº 185, de 2024, nos termos dos pareceres.")).toBe("texto-principal");
     expect(inferObjeto("Destaque para votação em separado")).toBe("destaque");
     expect(inferObjeto("Coisa nenhuma")).toBe("outro");
+    // O que abre a descrição manda: o texto do projeto "ressalvados os destaques" não é destaque, a Proposta de Emenda à Constituição não é emenda, e a emenda substitutiva é substitutivo.
+    expect(inferObjeto("Votação nominal do Projeto de Lei nº 2.253, de 2022, nos termos do parecer, ressalvados os destaques.")).toBe("texto-principal");
+    expect(inferObjeto("Votação nominal da Proposta de Emenda à Constituição nº 45, de 2019, nos termos do Parecer, em segundo turno.")).toBe("texto-principal");
+    expect(inferObjeto("Votação nominal da Emenda nº 2.171(Substitutivo) ao PLP 68/24 com Emendas e supressão, nos termos dos pareceres, ressalvados os destaques.")).toBe("substitutivo");
+    expect(inferObjeto("Votação nominal da Emenda nº 5, de Plenário, ao PL 1, nos termos do parecer.")).toBe("emenda");
     expect(inferEtapa("PEC nº 25, de 2017 (2º turno)")).toBe("2º turno");
     expect(inferEtapa("Votação em primeiro turno")).toBe("1º turno");
     expect(inferEtapa("PL 1, turno único")).toBe("turno único");

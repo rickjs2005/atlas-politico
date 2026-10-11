@@ -17,6 +17,7 @@ import {
   eventHref,
   eventHrefFromGame,
   explorationHref,
+  decisionHref,
   gameHref,
   gameReturn,
   hasRecorte,
@@ -231,9 +232,16 @@ describe("ida e volta entre o jogo e a página do acontecimento", () => {
     { slug: "sintetico-pessoa-b", nome: "Pessoa B" },
   ];
 
-  it("o jogo tem um endereço de entrada e um por personagem", () => {
+  it("o jogo tem um endereço de entrada, um por personagem (a sala Histórico) e um por sala temática", () => {
     expect(gameHref()).toBe("/jogo/");
     expect(gameHref("sintetico-pessoa-a")).toBe("/jogo/sintetico-pessoa-a/");
+    expect(gameHref("sintetico-pessoa-a", "historico")).toBe("/jogo/sintetico-pessoa-a/");
+    expect(gameHref("sintetico-pessoa-a", "economia")).toBe("/jogo/sintetico-pessoa-a/economia/");
+    expect(gameHref("sintetico-pessoa-a", "seguranca-publica")).toBe("/jogo/sintetico-pessoa-a/seguranca-publica/");
+  });
+
+  it("a decisão aberta no atlas é a âncora do cartão na página da pessoa", () => {
+    expect(decisionHref("sintetico-pessoa-a", "sintetico-voto-01")).toBe("/politicos/sintetico-pessoa-a/#decisao-sintetico-voto-01");
   });
 
   it("a ficha aberta pelo jogo diz de onde a pessoa veio, e não leva progresso", () => {

@@ -1,10 +1,13 @@
-# Pesquisa: capturas e pacotes de importação
+# Pesquisa: capturas, pacotes de importação e seleção das decisões
 
 Pasta de pesquisa, fora das raízes editoriais que o pipeline lê (`content/`). Nada aqui chega às páginas por si; o que entra no site passa por `content/drafts/`, pela revisão e por `content/published/` ([DATA-PIPELINE.md](../docs/DATA-PIPELINE.md)).
 
-| Pasta | O que guarda | Quem escreve |
+| Pasta ou arquivo | O que guarda | Quem escreve |
 | --- | --- | --- |
 | `capturas/` | Respostas brutas dos acervos oficiais, uma por requisição: URL, instante, status, tamanho, resumo SHA-256 e a resposta como chegou. Os registros importados apontam para elas por `capturaId` | `npm run importar:decisoes` |
 | `pacotes/` | O pacote JSON normalizado de cada importação, no formato que `npm run data:import` aceita, antes de entrar em `content/drafts/` | `npm run importar:decisoes` |
+| `selecao-decisoes-2026-10.md` | A seleção da amostra de decisões da edição 0.2.0: o recorte decidido pelo responsável pelo projeto, os critérios, o que entrou, o que ficou de fora com o motivo, as lacunas e como reproduzir (D-128) | À mão, na curadoria |
+| `candidatos-votos-senado-2023-2026.md` e `.json` | A triagem completa das 423 votações do Plenário do Senado com registro do senador 5894, de 2023 a 2026, pelo webservice de dados abertos: contagens, tabela, classificação por tema pela ementa, lacunas e as URLs chamadas | Levantamento assistido por IA, 10 de outubro de 2026 |
+| `candidatos-atos-presidenciais-2023-2026.md` e `.json` | Os 53 atos presidenciais de 2023 a 2026 confirmados nas páginas do Portal da Legislação (e nas mensagens de veto), nos temas Economia e Segurança pública, com identificador, data, ementa, tipo, origem, dispositivos vetados, URL e trecho | Levantamento assistido por IA, 10 de outubro de 2026 |
 
-O resumo SHA-256 permite conferir a integridade do que foi guardado; não prova, sozinho, a veracidade do documento. Uma captura do Senado com todas as votações de um mandato tem perto de 2,6 MB: use `--de` e `--ate` para recortar, e apague capturas repetidas antes de versionar.
+O resumo SHA-256 permite conferir a integridade do que foi guardado; não prova, sozinho, a veracidade do documento. Uma captura do Senado com todas as votações de um mandato tem perto de 2,6 MB: use `--de` e `--ate` para recortar (a amostra da edição 0.2.0 foi importada um dia de sessão por vez), e apague capturas repetidas antes de versionar. As triagens são levantamentos, não conteúdo: nenhuma linha delas afirma fato no atlas sem passar pela revisão.

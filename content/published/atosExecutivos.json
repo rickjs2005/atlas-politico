@@ -1,0 +1,309 @@
+[
+  {
+    "id": "planalto-decreto-11377-2023-intervencao-df",
+    "tipo": "decreto",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2023"
+    },
+    "data": {
+      "valor": "2023-01-08",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Decreto nº 11.377, de 8 de janeiro de 2023",
+      "fonteId": "planalto-decreto-11377-2023"
+    },
+    "proposicaoIds": [],
+    "decreto": {
+      "numero": 11377,
+      "ano": 2023
+    },
+    "temas": [
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-decreto-11377-2023",
+        "localizacao": "Ementa, art. 1º e fecho do decreto",
+        "evidencia": "Decreta intervenção federal no Distrito Federal, limitada à área de segurança pública, até 31 de janeiro de 2023; assinado em Brasília em 8 de janeiro de 2023 pelo presidente Luiz Inácio Lula da Silva e pelo ministro da Justiça."
+      },
+      {
+        "fonteId": "senado-dadosabertos-decreto-legislativo-1-2023",
+        "localizacao": "Campos normaNome, dataassinatura e ementa",
+        "evidencia": "O Decreto Legislativo nº 1, de 10 de janeiro de 2023, aprova a intervenção federal na área de segurança pública do Distrito Federal, nos termos do Decreto nº 11.377."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Conferido na página do ato no Portal da Legislação (ccivil_03), em 10 de outubro de 2026, com assistência de IA: identificação, data, ementa, nota de mensagem de veto e dispositivos marcados (VETADO); a mensagem de veto, quando há, foi lida na própria página dela. A aprovação pelo Congresso (Decreto Legislativo nº 1/2023) é documentada pela ficha da norma no Senado; a votação nominal daquela sessão não aparece no webservice de votações por parlamentar. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-14843-2024-saidas-temporarias",
+    "tipo": "veto-parcial",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2023"
+    },
+    "data": {
+      "valor": "2024-04-11",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 14.843, de 11 de abril de 2024",
+      "fonteId": "planalto-lei-14843-2024"
+    },
+    "proposicaoIds": [
+      "senado-pl-2253-2022"
+    ],
+    "mensagem": "Mensagem nº 144, de 11 de abril de 2024",
+    "dispositivosAlvo": [
+      "Art. 2º do Projeto de Lei, na parte em que altera os incisos I e III do caput do art. 122 da Lei nº 7.210, de 11 de julho de 1984",
+      "Inciso I do caput do art. 3º do Projeto de Lei"
+    ],
+    "temas": [
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-14843-2024",
+        "localizacao": "Cabeçalho (nota \"Mensagem de veto\" e \"Promulgação partes vetadas\"), dispositivos marcados (VETADO) e fecho",
+        "evidencia": "Lei sancionada em 11 de abril de 2024 com veto parcial: a página marca como vetados os incisos I e III do art. 122 da Lei de Execução Penal e o inciso I do art. 3º, e traz a promulgação das partes vetadas em 12 de junho de 2024, assinada pelo vice-presidente no exercício do cargo."
+      },
+      {
+        "fonteId": "planalto-mensagem-144-2024",
+        "localizacao": "Dispositivos vetados e razões do veto",
+        "evidencia": "A Mensagem nº 144 veta o art. 2º na parte em que altera os incisos I e III do caput do art. 122 da Lei nº 7.210 e o inciso I do caput do art. 3º do projeto, por inconstitucionalidade."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Conferido na página do ato no Portal da Legislação (ccivil_03), em 10 de outubro de 2026, com assistência de IA: identificação, data, ementa, nota de mensagem de veto e dispositivos marcados (VETADO); a mensagem de veto, quando há, foi lida na própria página dela. A derrubada do veto e a promulgação das partes vetadas, em 12 de junho de 2024, não são atos do presidente: constam da página como ato do vice-presidente no exercício do cargo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-15358-2026-crime-organizado",
+    "tipo": "veto-parcial",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2023"
+    },
+    "data": {
+      "valor": "2026-03-24",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 15.358, de 24 de março de 2026",
+      "fonteId": "planalto-lei-15358-2026"
+    },
+    "proposicaoIds": [
+      "senado-pl-5582-2025"
+    ],
+    "mensagem": "Mensagem nº 216, de 24 de março de 2026",
+    "dispositivosAlvo": [
+      "§ 3º do art. 2º do Projeto de Lei",
+      "Art. 33 do Projeto de Lei, na parte em que altera o inciso II do caput do art. 91 do Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal)",
+      "Art. 43 do Projeto de Lei"
+    ],
+    "temas": [
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-15358-2026",
+        "localizacao": "Cabeçalho (nota \"Mensagem de veto\"), ementa, dispositivos marcados (VETADO) e fecho",
+        "evidencia": "Lei sancionada em 24 de março de 2026 com veto parcial; institui o Marco Legal do Combate ao Crime Organizado e marca três dispositivos como vetados."
+      },
+      {
+        "fonteId": "planalto-mensagem-216-2026",
+        "localizacao": "Dispositivos vetados e razões do veto",
+        "evidencia": "A Mensagem nº 216 veta o § 3º do art. 2º, o art. 33 na parte que altera o inciso II do caput do art. 91 do Código Penal e o art. 43 do projeto."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Conferido na página do ato no Portal da Legislação (ccivil_03), em 10 de outubro de 2026, com assistência de IA: identificação, data, ementa, nota de mensagem de veto e dispositivos marcados (VETADO); a mensagem de veto, quando há, foi lida na própria página dela. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-complementar-200-2023-regime-fiscal",
+    "tipo": "veto-parcial",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2023"
+    },
+    "data": {
+      "valor": "2023-08-30",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei Complementar nº 200, de 30 de agosto de 2023",
+      "fonteId": "planalto-lei-complementar-200-2023"
+    },
+    "proposicaoIds": [
+      "senado-plp-93-2023"
+    ],
+    "mensagem": "Mensagem nº 431, de 30 de agosto de 2023",
+    "dispositivosAlvo": [
+      "§ 3º do art. 7º do Projeto de Lei Complementar",
+      "Art. 11 do Projeto de Lei Complementar, na parte em que altera o § 7º do art. 4º da Lei Complementar nº 101, de 4 de maio de 2000"
+    ],
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-complementar-200-2023",
+        "localizacao": "Cabeçalho (notas \"Mensagem de veto\" e \"Promulgação partes vetadas\"), ementa, dispositivos marcados (VETADO) e fecho",
+        "evidencia": "Lei complementar sancionada em 30 de agosto de 2023 com veto parcial; institui o regime fiscal sustentável e altera a Lei de Responsabilidade Fiscal; a página marca dois dispositivos como vetados e traz a promulgação de parte vetada."
+      },
+      {
+        "fonteId": "planalto-mensagem-431-2023",
+        "localizacao": "Dispositivos vetados e razões do veto",
+        "evidencia": "A Mensagem nº 431 veta o § 3º do art. 7º e o art. 11 na parte em que altera o § 7º do art. 4º da Lei Complementar nº 101."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Conferido na página do ato no Portal da Legislação (ccivil_03), em 10 de outubro de 2026, com assistência de IA: identificação, data, ementa, nota de mensagem de veto e dispositivos marcados (VETADO); a mensagem de veto, quando há, foi lida na própria página dela. A promulgação da parte vetada, depois da derrubada do veto pelo Congresso, consta da página com data de 22 de dezembro de 2023 e não é ato do presidente. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-complementar-214-2025-ibs-cbs",
+    "tipo": "veto-parcial",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2023"
+    },
+    "data": {
+      "valor": "2025-01-16",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei Complementar nº 214, de 16 de janeiro de 2025",
+      "fonteId": "planalto-lei-complementar-214-2025"
+    },
+    "proposicaoIds": [
+      "senado-plp-68-2024"
+    ],
+    "mensagem": "Mensagem nº 88, de 16 de janeiro de 2025",
+    "dispositivosAlvo": [
+      "Incisos V e X do caput do art. 26",
+      "Inciso III do § 1º do art. 26",
+      "§ 5º e § 6º do art. 26",
+      "§ 8º do art. 26",
+      "§ 2º do art. 36",
+      "§ 4º do art. 138",
+      "Inciso II do § 9º do art. 138",
+      "§ 4º do art. 183",
+      "Inciso III do § 1º do art. 231",
+      "Inciso III do § 1º do art. 252",
+      "§ 2º do art. 332",
+      "Art. 334",
+      "Inciso I do caput do art. 413",
+      "§ 4º do art. 429",
+      "§ 5º do art. 444",
+      "Inciso II do § 1º do art. 454",
+      "§ 5º do art. 462",
+      "Art. 494",
+      "Art. 495",
+      "Art. 517, na parte em que inclui a alínea \"b\" do inciso XII-A do § 1º do art. 13 da Lei Complementar nº 123, de 2006",
+      "Art. 536",
+      "Itens 1.4, 1.5, 1.8 e 1.9 do Anexo XI"
+    ],
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-complementar-214-2025",
+        "localizacao": "Cabeçalho (notas \"Mensagem de veto\" e \"Promulgação partes vetadas\"), ementa, dispositivos marcados (VETADO) e fecho",
+        "evidencia": "Lei complementar sancionada em 16 de janeiro de 2025 com veto parcial; institui o IBS, a CBS e o Imposto Seletivo e cria o Comitê Gestor do IBS."
+      },
+      {
+        "fonteId": "planalto-mensagem-88-2025",
+        "localizacao": "Lista de dispositivos vetados e razões do veto",
+        "evidencia": "A Mensagem nº 88 relaciona os dispositivos do Projeto de Lei Complementar nº 68/2024 vetados, a começar pelos incisos V e X do caput do art. 26."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Conferido na página do ato no Portal da Legislação (ccivil_03), em 10 de outubro de 2026, com assistência de IA: identificação, data, ementa, nota de mensagem de veto e dispositivos marcados (VETADO); a mensagem de veto, quando há, foi lida na própria página dela. A página compilada incorpora alterações posteriores (inclusive marcas de veto de outra lei): a lista de dispositivos segue a Mensagem nº 88, e não a contagem de marcas na página. A promulgação dos incisos V e X do art. 26, em 1º de julho de 2025, depois da derrubada do veto, não entra como decisão. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-15270-2025-imposto-de-renda",
+    "tipo": "sancao-expressa",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2023"
+    },
+    "data": {
+      "valor": "2025-11-26",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 15.270, de 26 de novembro de 2025",
+      "fonteId": "planalto-lei-15270-2025"
+    },
+    "proposicaoIds": [
+      "senado-pl-1087-2025"
+    ],
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-15270-2025",
+        "localizacao": "Cabeçalho (sem nota de mensagem de veto), art. 1º, tabela de redução e fecho",
+        "evidencia": "Lei sancionada em 26 de novembro de 2025, sem dispositivo marcado como vetado na página; altera as Leis nºs 9.250 e 9.249 para instituir a redução do imposto sobre a renda, com imposto zero até R$ 5.000,00 mensais, e a tributação mínima de altas rendas."
+      },
+      {
+        "fonteId": "senado-dadosabertos-materia-pl-1087-2025",
+        "localizacao": "Campo NormaGerada da ficha da matéria",
+        "evidencia": "A ficha do PL 1087/2025 registra como norma gerada a Lei nº 15.270, de 26 de novembro de 2025, publicada no Diário Oficial da União de 27 de novembro de 2025."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Conferido na página do ato no Portal da Legislação (ccivil_03), em 10 de outubro de 2026, com assistência de IA: identificação, data, ementa, nota de mensagem de veto e dispositivos marcados (VETADO); a mensagem de veto, quando há, foi lida na própria página dela. A origem na ficha do Planalto não informa o projeto; a ligação com o PL 1087/2025 vem da ficha da matéria no Senado. Revisão humana pendente."
+      }
+    }
+  }
+]

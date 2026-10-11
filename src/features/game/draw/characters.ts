@@ -1,4 +1,4 @@
-// Personagens: Lula, Flávio Bolsonaro e o guia (o Arquivista, personagem
+// Personagens: Lula, Flávio Bolsonaro e o guia (o Escrivão, personagem
 // fictício). Desenho vetorial por código, em cartum editorial, com repouso e
 // caminhada.
 //
@@ -226,11 +226,11 @@ const FLAVIO_LOOKS: Record<Epoca, Look> = {
 };
 
 // ---------------------------------------------------------------------------
-// O Arquivista
+// O Escrivão (chamado Arquivista até a versão de lançamento; D-127)
 // ---------------------------------------------------------------------------
 
 const ARCHIVIST: CharacterSpec = {
-  nome: "Arquivista",
+  nome: "Escrivão",
   pasta: true,
   ritmo: 0.9,
   build: {
@@ -284,5 +284,5 @@ export function characterArt(personagem: PersonagemSlug, epoca: Epoca): Characte
   return CHARACTERS[personagem][epoca];
 }
 
-/** O Arquivista: guia fictício, identificado como tal na interface. */
+/** O Escrivão: guia fictício, identificado como tal na interface. */
 export const GUIDE: CharacterArt = character(ARCHIVIST);

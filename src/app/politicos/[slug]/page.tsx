@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { EditionStatus } from "@/components/EditionStatus";
+import { DecisionsByTheme, SAMPLE_NOTICE } from "@/features/decisions/DecisionsByTheme";
 import { getAtlasData } from "@/lib/content/published";
 import { getCoveredSpan } from "@/lib/data/coverage";
+import { listDecisionViews } from "@/lib/data/decisions";
 import { findPersonBySlug } from "@/lib/data/queries";
 import { sliceForPerson } from "@/lib/data/slice";
 import { PROFILES, findProfile } from "@/lib/domain/profiles";
@@ -66,12 +68,26 @@ export default async function ProfilePage({ params }: PageProps<"/politicos/[slu
     };
   });
 
+  // A página carrega só os registros desta trajetória.
+  const recorte = sliceForPerson(data, pessoa.id);
+  const decisoes = listDecisionViews(recorte, pessoa.id);
+
   return (
-    <Explorer
-      // A página carrega só os registros desta trajetória.
-      data={sliceForPerson(data, pessoa.id)}
-      pessoaId={pessoa.id}
-      profiles={profiles}
-    />
+    <>
+      <Explorer data={recorte} pessoaId={pessoa.id} profiles={profiles} />
+      {/* As decisões documentadas (votos e atos), por tema, abaixo da exploração: o cartão de cada uma tem âncora própria. */}
+      <section id="decisoes" aria-labelledby="titulo-decisoes" className="page space-y-5 border-t border-ink py-8 md:py-10" data-secao="decisoes" data-quantas={decisoes.length}>
+        <div className="max-w-3xl space-y-2">
+          <p className="eyebrow text-ink-soft">Decisões documentadas</p>
+          <h2 id="titulo-decisoes" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
+            Votos e atos de {pessoa.nome}, por tema
+          </h2>
+          <p className="text-sm text-ink-soft" data-aviso-amostra>
+            {SAMPLE_NOTICE}
+          </p>
+        </div>
+        <DecisionsByTheme colunas={[{ pessoa: { id: pessoa.id, slug: pessoa.slug, nome: pessoa.nome }, decisoes }]} headingLevel={3} anchorOf={(id) => `decisao-${id}`} />
+      </section>
+    </>
   );
 }

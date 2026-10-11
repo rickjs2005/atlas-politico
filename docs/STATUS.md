@@ -16,9 +16,40 @@ Atualizado em 10 de outubro de 2026.
 | 10. Publicação e apresentação | Não iniciada |
 | Jogo, etapa 1 (fora do plano de 10 fases) | Primeira versão jogável feita em 10/10/2026: dois capítulos de cada personagem, conferidos no build estático. Revisão humana e validação com pessoas continuam pendentes |
 | Jogo, versão de lançamento (candidata) | Feita em 10/10/2026: onze capítulos sobre os 39 acontecimentos, quatro tipos de tarefa, ficha judicial, cinco ambientes novos e três figuras de cada personagem, conferidos no build estático. **Revisão humana, validação com pessoas, domínio e deploy pendentes**, e são o que decide o lançamento |
-| Histórico de decisões e Escrivão, entrega P0 (contratos e evidência) | Feita em 10/10/2026: seis coleções de decisões políticas no modelo e no pipeline, consulta comparativa discriminada, importador do Senado e da Câmara com capturas, tudo como rascunho. **Nenhum conteúdo real cadastrado ainda; a interface e o jogo não mostram decisões.** Entrega P1 (investigação jogável e Escrivão) não iniciada ([VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md)) |
+| Histórico de decisões e Escrivão, entrega P1 (investigação jogável) | Feita em 10 e 11/10/2026: salas Histórico, Economia e Segurança pública com progressão própria; tarefa de decisão em duas etapas (evidência e interpretação); o Escrivão com catálogo validado, três camadas e humor desligável; cartões de voto e ato e comparação por tema no atlas; edição 0.2.0 com a amostra de 12 decisões reais (6 votos do Senado, 6 atos do Planalto), `casa` nos mandatos e cobertura declarada. **Revisão humana e celular real pendentes** ([VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md), [HUMAN-REVIEW.md](HUMAN-REVIEW.md)) |
+| Histórico de decisões e Escrivão, entrega P0 (contratos e evidência) | Feita em 10/10/2026: seis coleções de decisões políticas no modelo e no pipeline, consulta comparativa discriminada, importador do Senado e da Câmara com capturas, tudo como rascunho ([VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md)) |
 
 O código e o conteúdo estão em repositório público no GitHub desde 10 de outubro de 2026: https://github.com/rickjs2005/atlas-politico. Tudo é versionado na `main`, sem ramos. O site não foi publicado: não há hospedagem nem deploy, que é o último passo e depende de autorização do responsável pelo projeto.
+
+## Histórico de decisões e Escrivão, entrega P1 (investigação jogável)
+
+Entregue em 10 e 11 de outubro de 2026, pelo recorte que o responsável pelo projeto decidiu em 10 de outubro (D-128). Plano e situação em [VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md); as decisões de projeto em [DECISIONS.md](DECISIONS.md), D-125 a D-128.
+
+### O que ficou pronto
+
+- **Salas (D-125).** `RoomId` com Histórico (a trajetória, investigação), Economia e Segurança pública (as decisões do tema), progressão própria em cada sala, rotas `/jogo/<personagem>/economia/` e `/jogo/<personagem>/seguranca-publica/`, entrada do jogo com as salas de cada personagem e a situação de cada uma, quatro cenas novas de sala de arquivo (artes do gabinete e da sala de comissão, paletas próprias).
+- **Missão documental (D-126).** Tarefa `decisao`: recolher a decisão, indicar o documento que a sustenta, interpretar o que ela documenta, abrir a passagem. Na trajetória, Lula 5 (o Decreto nº 11.377/2023) e Flávio Bolsonaro 4 (o voto no PL 2.253/2022); nas salas temáticas, uma missão por personagem e tema. Progresso no formato 4, com a etapa da evidência e a migração das versões 1 a 3.
+- **Escrivão (D-127).** Nome novo em toda a interface; catálogo em `src/lib/game/escrivao/` com 100 falas em três camadas (instrução, documental, humor), por sala e evento; seletor determinístico com controle de repetição; validação por teste (sem pessoa, partido, data escrita, juízo, travessão); humor desligável pelo painel e pelo diálogo do Escrivão, preferência em `localStorage` (`atlas-politico:jogo:preferencias`).
+- **Atlas.** Cartões de voto e ato (`DecisionCard`) na página da pessoa (`/politicos/<slug>/#decisoes`) e comparação por tema em `/comparar/`, com cargo, instituição, data, objeto, manifestação ou tipo do ato, fontes e revisão; aviso de amostra em toda tela; "mesma proposição" marcada quando os dois têm decisão.
+- **Conteúdo (edição 0.2.0).** 12 decisões: 6 votos nominais do senador no Plenário do Senado (importados do webservice em 11/10/2026, UTC, com as capturas em `research/capturas/`), 6 atos do presidente lidos no Portal da Legislação (1 decreto, 1 sanção sem veto, 4 sanções com veto parcial, com as mensagens e os dispositivos); 7 proposições; `casa` nos 12 mandatos de casas e órgãos; 4 declarações de cobertura (amostra, parcial, com as lacunas); 1 identidade institucional; 18 fontes novas. A seleção, os excluídos e as lacunas estão em `research/selecao-decisoes-2026-10.md`. Tudo conferido com assistência de IA; revisão humana pendente (`npm run review:human`, seção 6).
+
+### Verificações feitas
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run typecheck`, `npm run lint` | limpos |
+| `npm run test` (Vitest) | 41 arquivos, 858 testes verdes, 44 novos (Escrivão, salas e progresso v4, tarefa de decisão, cartão de decisão, endereços) |
+| `npm run build` + `npm run verify:export` | 55 páginas, inclusive as 4 das salas temáticas; 322 arquivos conferidos |
+| `npm run test:export` | 35 de 35 (com servidor de pré-visualização novo: o antigo guarda o build anterior em memória) |
+| Jornadas sobre o build (`tests/e2e/jogo.spec.ts`) | entrada, regra da saída, Escrivão e salas temáticas, missão da sala Histórico, documento e lugar, trajetória inteira dos dois: verdes |
+| `npm run game:coverage`, `npm run review:human` | documentos regenerados e conferidos por teste |
+
+### Pendências
+
+- **Revisão humana** de tudo, inclusive da seção 6 de [HUMAN-REVIEW.md](HUMAN-REVIEW.md) (decisões, cobertura e identidades), antes de qualquer publicação; a barreira de release continua recusando a edição sem ela.
+- **Celular real**: só emulação. O roteiro curto para o responsável pelo projeto executar está em [USER-VALIDATION.md](USER-VALIDATION.md), seção "Salas e decisões em celular real".
+- **Leitor de tela** não foi usado; o Escrivão e os cartões saem como texto comum, com `role="status"` nas falas.
+- **Atas e painéis das sessões** não foram abertos: a conferência dos votos ficou no webservice de dados abertos.
 
 ## Histórico de decisões e Escrivão, entrega P0 (contratos e evidência)
 

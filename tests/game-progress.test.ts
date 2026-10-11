@@ -27,6 +27,7 @@ import { PROGRESS_VERSION, type ChapterSpec, type PlayerProgress, type TaskSpec,
 const capitulo = (numero: number, tarefa: TaskSpec, outros: string[] = []): ChapterSpec => ({
   id: `teste-${numero}`,
   personagem: "lula",
+  sala: "historico",
   numero,
   titulo: `Capítulo ${numero}`,
   periodo: { de: 1970 + numero, ate: 1970 + numero },
@@ -255,7 +256,7 @@ describe("leitura do progresso salvo", () => {
   });
 
   it("recusa versão desconhecida ou ausente; aceita a atual e as anteriores", () => {
-    expect(READABLE_VERSIONS).toEqual([1, 2, PROGRESS_VERSION]);
+    expect(READABLE_VERSIONS).toEqual([1, 2, 3, PROGRESS_VERSION]);
     expect(parseProgress(salvo({ versao: PROGRESS_VERSION + 1 }), "lula", CAPITULOS)).toBeNull();
     expect(parseProgress(salvo({ versao: String(PROGRESS_VERSION) }), "lula", CAPITULOS)).toBeNull();
     expect(parseProgress(salvo({ versao: 0 }), "lula", CAPITULOS)).toBeNull();

@@ -1,0 +1,177 @@
+[
+  {
+    "id": "cobertura-flavio-bolsonaro-economia-2023-2026",
+    "pessoaId": "flavio-bolsonaro",
+    "tema": "economia",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2023-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2026-10-08",
+        "precisao": "dia"
+      }
+    },
+    "acervos": [
+      {
+        "nome": "Dados Abertos do Senado Federal, votações nominais do Plenário por parlamentar",
+        "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2023-01-01&dataFim=2026-10-08",
+        "consultadoEm": "2026-10-10",
+        "recorte": "codigoParlamentar=5894, sete janelas semestrais de 2023-01-01 a 2026-10-08: 423 votações na resposta, 183 nominais abertas (145 com posição) e 240 secretas",
+        "completa": true
+      }
+    ],
+    "criterios": "Amostra, e não histórico completo: até doze decisões no total dos dois perfis, nos temas Economia e Segurança pública, de 1º de janeiro de 2023 à data de corte, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem olhar se a decisão favorece ou prejudica alguém. A triagem completa, os registros excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md.",
+    "estado": "parcial",
+    "lacunas": [
+      "Só as votações escolhidas para a amostra foram registradas; as demais votações da triagem por tema ficaram fora e estão listadas na pesquisa.",
+      "Votações secretas (indicações de autoridades) registram só a participação, sem a posição.",
+      "Votações simbólicas e votações em comissão não aparecem no acervo consultado.",
+      "Sessões do Congresso Nacional (vetos, orçamento) não aparecem na consulta por parlamentar."
+    ],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "cobertura-flavio-bolsonaro-seguranca-publica-2023-2026",
+    "pessoaId": "flavio-bolsonaro",
+    "tema": "seguranca-publica",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2023-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2026-10-08",
+        "precisao": "dia"
+      }
+    },
+    "acervos": [
+      {
+        "nome": "Dados Abertos do Senado Federal, votações nominais do Plenário por parlamentar",
+        "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2023-01-01&dataFim=2026-10-08",
+        "consultadoEm": "2026-10-10",
+        "recorte": "codigoParlamentar=5894, sete janelas semestrais de 2023-01-01 a 2026-10-08: 423 votações na resposta, 183 nominais abertas (145 com posição) e 240 secretas",
+        "completa": true
+      }
+    ],
+    "criterios": "Amostra, e não histórico completo: até doze decisões no total dos dois perfis, nos temas Economia e Segurança pública, de 1º de janeiro de 2023 à data de corte, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem olhar se a decisão favorece ou prejudica alguém. A triagem completa, os registros excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md.",
+    "estado": "parcial",
+    "lacunas": [
+      "Só as votações escolhidas para a amostra foram registradas; as demais votações da triagem por tema ficaram fora e estão listadas na pesquisa.",
+      "Votações secretas (indicações de autoridades) registram só a participação, sem a posição.",
+      "Votações simbólicas e votações em comissão não aparecem no acervo consultado.",
+      "Sessões do Congresso Nacional (vetos, orçamento) não aparecem na consulta por parlamentar.",
+      "A votação de 10 de janeiro de 2023 sobre o Decreto Legislativo nº 1/2023 (intervenção federal no Distrito Federal) não aparece no acervo consultado para o parlamentar; sem a linha do acervo, nenhum voto foi registrado para ela."
+    ],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "cobertura-lula-economia-2023-2026",
+    "pessoaId": "lula",
+    "tema": "economia",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2023-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2026-10-08",
+        "precisao": "dia"
+      }
+    },
+    "acervos": [
+      {
+        "nome": "Portal da Legislação (Planalto), páginas estáticas de leis, leis complementares, medidas provisórias, decretos e mensagens de veto",
+        "url": "https://www.planalto.gov.br/ccivil_03/",
+        "consultadoEm": "2026-10-10",
+        "recorte": "Índices anuais de 2023 a 2026 e páginas dos atos candidatos; 31 atos do tema confirmados na triagem (research/candidatos-atos-presidenciais-2023-2026.md)",
+        "completa": false
+      }
+    ],
+    "criterios": "Amostra, e não histórico completo: até doze decisões no total dos dois perfis, nos temas Economia e Segurança pública, de 1º de janeiro de 2023 à data de corte, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem olhar se a decisão favorece ou prejudica alguém. A triagem completa, os registros excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md.",
+    "estado": "parcial",
+    "lacunas": [
+      "Só os atos escolhidos para a amostra foram registrados; os demais atos da triagem estão listados na pesquisa.",
+      "Atos assinados pelo vice-presidente no exercício do cargo não são atribuídos ao presidente.",
+      "A derrubada de vetos e a promulgação de partes vetadas pelo Congresso não são atos do Executivo e não entram como decisão dele."
+    ],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "cobertura-lula-seguranca-publica-2023-2026",
+    "pessoaId": "lula",
+    "tema": "seguranca-publica",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2023-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2026-10-08",
+        "precisao": "dia"
+      }
+    },
+    "acervos": [
+      {
+        "nome": "Portal da Legislação (Planalto), páginas estáticas de leis, leis complementares, medidas provisórias, decretos e mensagens de veto",
+        "url": "https://www.planalto.gov.br/ccivil_03/",
+        "consultadoEm": "2026-10-10",
+        "recorte": "Índices anuais de 2023 a 2026 e páginas dos atos candidatos; 22 atos do tema confirmados na triagem (research/candidatos-atos-presidenciais-2023-2026.md)",
+        "completa": false
+      }
+    ],
+    "criterios": "Amostra, e não histórico completo: até doze decisões no total dos dois perfis, nos temas Economia e Segurança pública, de 1º de janeiro de 2023 à data de corte, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem olhar se a decisão favorece ou prejudica alguém. A triagem completa, os registros excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md.",
+    "estado": "parcial",
+    "lacunas": [
+      "Só os atos escolhidos para a amostra foram registrados; os demais atos da triagem estão listados na pesquisa.",
+      "Atos assinados pelo vice-presidente no exercício do cargo não são atribuídos ao presidente.",
+      "A derrubada de vetos e a promulgação de partes vetadas pelo Congresso não são atos do Executivo e não entram como decisão dele."
+    ],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente."
+      }
+    }
+  }
+]

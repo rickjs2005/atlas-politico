@@ -1,22 +1,24 @@
-// Os capítulos do jogo contra o conteúdo real da edição: todo acontecimento
-// citado existe e é do personagem, todo acontecimento do personagem está em
-// um capítulo dele, as tarefas têm o que precisam (datas que decidem, opções
-// que vêm dos registros), as cenas batem com os capítulos e tudo é alcançável
-// a pé.
+// Os capítulos do jogo contra o conteúdo real da edição: todo acontecimento e
+// toda decisão citados existem e são do personagem, todo acontecimento do
+// personagem está em um capítulo dele, as tarefas têm o que precisam (datas
+// que decidem, opções que vêm dos registros), as salas têm a progressão
+// própria, as cenas batem com os capítulos e tudo é alcançável a pé.
 
 import { describe, expect, it } from "vitest";
 
 import { readSources, resolvePaths } from "@/lib/content/sources";
+import { findDecisionView, listDecisionViews, type DecisionView } from "@/lib/data/decisions";
 import { lookup } from "@/lib/data/lookup";
 import { findEventById, findPersonBySlug } from "@/lib/data/queries";
-import { analyzeDate, compareDates, formatDate, yearOf } from "@/lib/domain/dates";
+import { analyzeDate, compareDates, formatDate, yearOf, type DataHistorica } from "@/lib/domain/dates";
 import { findUndeterminedOrder } from "@/lib/domain/order";
 import { PROFILES } from "@/lib/domain/profiles";
 import { CHAPTERS, chaptersOf, findChapter } from "@/lib/game/chapters";
-import { buildGameContent, playableChapters } from "@/lib/game/content";
-import { DISTRACTORS, correctOrder, datesDecideOrder, placeLabel, placeOptions, sourceOptions } from "@/lib/game/mission";
+import { buildGameContent, documentsOf, playableChapters } from "@/lib/game/content";
+import { DISTRACTORS, correctInterpretation, correctOrder, datesDecideOrder, interpretationOptions, placeLabel, placeOptions, recordIds, sourceOptions } from "@/lib/game/mission";
+import { ROOMS, chaptersInRoom, roomsWithChapters } from "@/lib/game/rooms";
 import { SCENES, getScene } from "@/lib/game/scenes";
-import type { ChapterSpec, GameContent, SceneId, SceneSpec, TaskType } from "@/lib/game/types";
+import type { ChapterSpec, GameContent, RoomId, SceneId, SceneSpec, TaskType } from "@/lib/game/types";
 import { CELL, cellAt, isBlocked, neighbours, reachable, readMarkers } from "@/lib/game/world/grid";
 import { initialPlayer } from "@/lib/game/world/movement";
 import { buildAtlasData } from "@/lib/publication/build";
@@ -32,6 +34,15 @@ const evento = (id: string) => {
   return acontecimento;
 };
 
+const decisao = (id: string): DecisionView => {
+  const view = findDecisionView(data, id);
+  if (view === null) throw new Error(`Decisão ${id} não está na edição.`);
+  return view;
+};
+
+/** A data de um registro do capítulo, seja acontecimento ou decisão. */
+const dataDe = (id: string): DataHistorica => (findEventById(data, id)?.data ?? decisao(id).data);
+
 const chave = (c: { x: number; y: number }) => `${c.x},${c.y}`;
 
 /** Células de um caractere do mapa. */
@@ -43,14 +54,30 @@ function cellsOf(scene: SceneSpec, caractere: string): string[] {
   return celulas.sort();
 }
 
+const HISTORICO: RoomId = "historico";
+
 describe("capítulos da edição", () => {
-  it("cada personagem tem pelo menos cinco capítulos, numerados de 1 em sequência", () => {
+  it("a trajetória tem pelo menos cinco capítulos por personagem, e cada sala numera os seus de 1 em sequência", () => {
     for (const slug of SLUGS) {
       const capitulos = chaptersOf(slug);
-      expect(capitulos.length, slug).toBeGreaterThanOrEqual(5);
-      expect(capitulos.map((capitulo) => capitulo.numero), slug).toEqual(capitulos.map((_, indice) => indice + 1));
+      expect(chaptersInRoom(capitulos, HISTORICO).length, slug).toBeGreaterThanOrEqual(5);
+      for (const sala of roomsWithChapters(capitulos)) {
+        const daSala = chaptersInRoom(capitulos, sala.id);
+        expect(daSala.map((capitulo) => capitulo.numero), `${slug} ${sala.id}`).toEqual(daSala.map((_, indice) => indice + 1));
+      }
       for (const capitulo of capitulos) expect(capitulo.personagem).toBe(slug);
+      // A ordem de chaptersOf é a das salas e, em cada sala, a dos números.
+      const ordemDasSalas = ROOMS.map((sala) => sala.id);
+      for (let i = 1; i < capitulos.length; i += 1) {
+        const antes = capitulos[i - 1]!;
+        const depois = capitulos[i]!;
+        expect(ordemDasSalas.indexOf(depois.sala), `${slug} capítulos ${i} e ${i + 1}`).toBeGreaterThanOrEqual(ordemDasSalas.indexOf(antes.sala));
+      }
     }
+  });
+
+  it("os dois personagens têm as três salas, com as mesmas regras", () => {
+    for (const slug of SLUGS) expect(roomsWithChapters(chaptersOf(slug)).map((sala) => sala.id), slug).toEqual(["historico", "economia", "seguranca-publica"]);
   });
 
   it("os identificadores são únicos, cada um encontrado por findChapter, e todos são de um perfil da edição", () => {
@@ -77,6 +104,25 @@ describe("capítulos da edição", () => {
     }
   });
 
+  it("toda decisão citada existe no conjunto publicado, é da pessoa e tem o tema da sala quando a sala é temática", () => {
+    for (const capitulo of CHAPTERS) {
+      const pessoa = findPersonBySlug(data, capitulo.personagem)!;
+      const ids = capitulo.decisaoIds ?? [];
+      expect(new Set(ids).size, capitulo.id).toBe(ids.length);
+      const sala = ROOMS.find((item) => item.id === capitulo.sala)!;
+      for (const id of ids) {
+        const view = decisao(id);
+        expect(view.pessoaId, `${capitulo.id} cita ${id}`).toBe(pessoa.id);
+        if (sala.tema !== null) expect(view.temas, `${capitulo.id} cita ${id}`).toContain(sala.tema);
+      }
+      // As salas temáticas são só de decisões; a trajetória tem acontecimentos.
+      if (sala.natureza === "tema") {
+        expect(capitulo.eventIds, capitulo.id).toEqual([]);
+        expect(ids.length, capitulo.id).toBeGreaterThan(0);
+      } else expect(capitulo.eventIds.length, capitulo.id).toBeGreaterThan(0);
+    }
+  });
+
   it("todo acontecimento publicado de cada personagem está em um capítulo dele: a cobertura é completa", () => {
     for (const slug of SLUGS) {
       const pessoa = findPersonBySlug(data, slug)!;
@@ -86,32 +132,62 @@ describe("capítulos da edição", () => {
     }
   });
 
-  it("o período do capítulo é o dos anos dos seus acontecimentos", () => {
+  it("toda decisão publicada de cada personagem está no capítulo da sala do seu tema, e no máximo em um capítulo da trajetória", () => {
+    for (const slug of SLUGS) {
+      const pessoa = findPersonBySlug(data, slug)!;
+      const capitulos = chaptersOf(slug);
+      for (const view of listDecisionViews(data, pessoa.id)) {
+        for (const tema of view.temas) {
+          const sala = ROOMS.find((item) => item.tema === tema);
+          if (sala === undefined) continue;
+          const daSala = chaptersInRoom(capitulos, sala.id).filter((capitulo) => (capitulo.decisaoIds ?? []).includes(view.id));
+          expect(daSala.length, `${slug} ${view.id} na sala ${sala.id}`).toBe(1);
+        }
+        const naTrajetoria = chaptersInRoom(capitulos, HISTORICO).filter((capitulo) => (capitulo.decisaoIds ?? []).includes(view.id));
+        expect(naTrajetoria.length, `${slug} ${view.id} na trajetória`).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
+  it("a decisão da trajetória está no capítulo do acontecimento a que se liga, pelo período", () => {
+    // A decisão de um capítulo da trajetória tem a data dentro do período do capítulo.
+    for (const capitulo of CHAPTERS.filter((item) => item.sala === HISTORICO)) {
+      for (const id of capitulo.decisaoIds ?? []) {
+        const ano = yearOf(decisao(id).data);
+        expect(ano, `${capitulo.id} ${id}`).toBeGreaterThanOrEqual(capitulo.periodo.de);
+        expect(ano, `${capitulo.id} ${id}`).toBeLessThanOrEqual(capitulo.periodo.ate);
+      }
+    }
+    expect(CHAPTERS.filter((item) => item.sala === HISTORICO && (item.decisaoIds?.length ?? 0) > 0).map((item) => item.personagem).sort()).toEqual([...SLUGS].sort());
+  });
+
+  it("o período do capítulo é o dos anos dos seus registros, acontecimentos e decisões", () => {
     for (const capitulo of CHAPTERS) {
-      const anos = capitulo.eventIds.map((id) => yearOf(evento(id).data));
+      const anos = recordIds(capitulo).map((id) => yearOf(dataDe(id)));
       expect(capitulo.periodo.de, capitulo.id).toBe(Math.min(...anos));
       expect(capitulo.periodo.ate, capitulo.id).toBe(Math.max(...anos));
     }
   });
 
-  it("passar de um capítulo ao seguinte nunca sugere uma ordem que as datas não decidem", () => {
+  it("na trajetória, passar de um capítulo ao seguinte nunca sugere uma ordem que as datas não decidem", () => {
     // Todo registro de um capítulo é anterior, sem ambiguidade, a todo registro
     // do capítulo seguinte: pela data e pela precisão, e não pelo ano. Dois
     // capítulos podem dividir um ano quando as datas, com dia, decidem; um par
-    // de mesmo ano com um deles só no ano fica no mesmo capítulo.
+    // de mesmo ano com um deles só no ano fica no mesmo capítulo. As salas
+    // temáticas não são cronológicas entre si: a regra é da trajetória.
     let fronteirasNoMesmoAno = 0;
     for (const slug of SLUGS) {
-      const capitulos = chaptersOf(slug);
+      const capitulos = chaptersInRoom(chaptersOf(slug), HISTORICO);
       for (let i = 1; i < capitulos.length; i += 1) {
         const anterior = capitulos[i - 1]!;
         const seguinte = capitulos[i]!;
         expect(seguinte.periodo.de, `${slug} capítulo ${i + 1}`).toBeGreaterThanOrEqual(anterior.periodo.ate);
         if (seguinte.periodo.de === anterior.periodo.ate) fronteirasNoMesmoAno += 1;
-        for (const antes of anterior.eventIds) {
-          for (const depois of seguinte.eventIds) {
+        for (const antes of recordIds(anterior)) {
+          for (const depois of recordIds(seguinte)) {
             const onde = `${antes} (capítulo ${anterior.numero}) e ${depois} (capítulo ${seguinte.numero})`;
-            expect(datesDecideOrder(evento(antes).data, evento(depois).data), onde).toBe(true);
-            expect(compareDates(evento(antes).data, evento(depois).data), onde).toBeLessThan(0);
+            expect(datesDecideOrder(dataDe(antes), dataDe(depois)), onde).toBe(true);
+            expect(compareDates(dataDe(antes), dataDe(depois)), onde).toBeLessThan(0);
           }
         }
       }
@@ -155,31 +231,35 @@ describe("capítulos da edição", () => {
     }
   });
 
-  it("as tarefas de documento e de lugar citam um acontecimento do capítulo", () => {
+  it("as tarefas de documento e de lugar citam um acontecimento do capítulo, e a de decisão cita uma decisão dele", () => {
     for (const capitulo of CHAPTERS) {
-      if (capitulo.tarefa.tipo !== "fonte" && capitulo.tarefa.tipo !== "lugar") continue;
-      expect(capitulo.eventIds, capitulo.id).toContain(capitulo.tarefa.eventId);
+      if (capitulo.tarefa.tipo === "fonte" || capitulo.tarefa.tipo === "lugar") expect(capitulo.eventIds, capitulo.id).toContain(capitulo.tarefa.eventId);
+      if (capitulo.tarefa.tipo === "decisao") expect(capitulo.decisaoIds ?? [], capitulo.id).toContain(capitulo.tarefa.decisaoId);
     }
+    // Toda sala temática pede a interpretação de uma decisão.
+    for (const capitulo of CHAPTERS.filter((item) => item.sala !== HISTORICO)) expect(capitulo.tarefa.tipo, capitulo.id).toBe("decisao");
   });
 
-  it("cada personagem tem pelo menos três tipos de tarefa, distribuídos, e os quatro tipos aparecem no jogo", () => {
+  it("a trajetória tem pelo menos quatro tipos de tarefa, distribuídos, e os cinco tipos aparecem no jogo", () => {
     const todos = new Set<TaskType>();
     for (const slug of SLUGS) {
-      const tipos = chaptersOf(slug).map((capitulo) => capitulo.tarefa.tipo);
-      expect(new Set(tipos).size, slug).toBeGreaterThanOrEqual(3);
-      // Distribuídos: nenhum tipo em dois capítulos seguidos.
+      const tipos = chaptersInRoom(chaptersOf(slug), HISTORICO).map((capitulo) => capitulo.tarefa.tipo);
+      expect(new Set(tipos).size, slug).toBeGreaterThanOrEqual(4);
+      // Distribuídos: nenhum tipo em dois capítulos seguidos da trajetória.
       for (let i = 1; i < tipos.length; i += 1) expect(tipos[i], `${slug} capítulos ${i} e ${i + 1}`).not.toBe(tipos[i - 1]);
       tipos.forEach((tipo) => todos.add(tipo));
     }
-    expect([...todos].sort()).toEqual(["fonte", "lugar", "ordem", "registro"]);
+    expect([...todos].sort()).toEqual(["decisao", "fonte", "lugar", "ordem", "registro"]);
   });
 
-  it("cada capítulo tem a época da figura, e as épocas seguem a ordem dos capítulos", () => {
+  it("cada capítulo tem a época da figura, e na trajetória as épocas seguem a ordem dos capítulos", () => {
     const ordem = { inicio: 0, meio: 1, atual: 2 };
     for (const slug of SLUGS) {
-      const epocas = chaptersOf(slug).map((capitulo) => ordem[capitulo.epoca]);
+      const epocas = chaptersInRoom(chaptersOf(slug), HISTORICO).map((capitulo) => ordem[capitulo.epoca]);
       for (let i = 1; i < epocas.length; i += 1) expect(epocas[i]!, `${slug} capítulo ${i + 1}`).toBeGreaterThanOrEqual(epocas[i - 1]!);
     }
+    // As salas temáticas são de decisões recentes: a figura dos anos recentes.
+    for (const capitulo of CHAPTERS.filter((item) => item.sala !== HISTORICO)) expect(capitulo.epoca, capitulo.id).toBe("atual");
   });
 });
 
@@ -211,9 +291,9 @@ describe("cenas dos capítulos", () => {
     }
   });
 
-  it("a cena de cada capítulo tem tantas posições de registro quantos acontecimentos", () => {
+  it("a cena de cada capítulo tem tantas posições de registro quantos registros, acontecimentos e decisões", () => {
     for (const capitulo of CHAPTERS) {
-      expect(getScene(capitulo.cena).registros.length, capitulo.id).toBe(capitulo.eventIds.length);
+      expect(getScene(capitulo.cena).registros.length, capitulo.id).toBe(recordIds(capitulo).length);
     }
   });
 
@@ -292,13 +372,16 @@ describe("cenas dos capítulos", () => {
 describe("conteúdo do jogo", () => {
   const conteudos = SLUGS.map((slug) => [slug, buildGameContent(data, slug)] as const);
 
-  it("buildGameContent devolve o personagem, os capítulos e um registro por acontecimento citado", () => {
+  it("buildGameContent devolve o personagem, os capítulos, um registro por acontecimento citado e uma decisão por decisão citada", () => {
     for (const [slug, content] of conteudos) {
       expect(content, slug).not.toBeNull();
       expect(content!.personagem).toEqual({ slug, nome: findPersonBySlug(data, slug)!.nome });
       expect(content!.capitulos).toEqual(chaptersOf(slug));
       const citados = new Set(content!.capitulos.flatMap((capitulo) => capitulo.eventIds));
       expect(Object.keys(content!.registros).sort()).toEqual([...citados].sort());
+      const decisoesCitadas = new Set(content!.capitulos.flatMap((capitulo) => capitulo.decisaoIds ?? []));
+      expect(Object.keys(content!.decisoes).sort()).toEqual([...decisoesCitadas].sort());
+      expect(decisoesCitadas.size, slug).toBeGreaterThan(0);
     }
   });
 
@@ -326,6 +409,27 @@ describe("conteúdo do jogo", () => {
           expect(["data", "desconhecida"], onde).toContain(fonte.dataDocumento.tipo);
           expect(fonte.url, onde).toMatch(/^https:\/\//);
         }
+      }
+    }
+  });
+
+  it("toda decisão do jogo é o cartão do atlas: cargo, instituição, data, objeto ou tipo do ato, fontes e revisão", () => {
+    for (const [slug, content] of conteudos) {
+      for (const view of Object.values(content!.decisoes)) {
+        const onde = `${slug} ${view.id}`;
+        expect(view, onde).toEqual(decisao(view.id));
+        expect(view.titulo.length, onde).toBeGreaterThan(0);
+        expect(analyzeDate(view.data).ok, onde).toBe(true);
+        expect(view.cargo, onde).not.toBeNull();
+        expect(view.temas.length, onde).toBeGreaterThan(0);
+        expect(view.fontes.length, onde).toBeGreaterThan(0);
+        for (const fonte of view.fontes) expect(fonte.url, onde).toMatch(/^https:\/\//);
+        if (view.natureza === "voto") {
+          expect(view.votacao.objeto.descricao.length, onde).toBeGreaterThan(0);
+          expect(view.proposicoes.length, onde).toBe(1);
+        } else expect(view.ato.identificador.length, onde).toBeGreaterThan(0);
+        expect(view.editorial.estado, onde).toBe("revisado");
+        if (view.editorial.estado === "revisado") expect(view.editorial.revisao.tipo, onde).toBe("assistida-por-ia");
       }
     }
   });
@@ -415,6 +519,28 @@ describe("conteúdo do jogo", () => {
     }
   });
 
+  it("a tarefa de decisão tem, na evidência, a opção certa e duas erradas de registros do capítulo e, na interpretação, a certa única entre três", () => {
+    for (const [, content] of conteudos) {
+      const documentos = documentsOf(content!);
+      for (const capitulo of content!.capitulos) {
+        if (capitulo.tarefa.tipo !== "decisao") continue;
+        const pedida = content!.decisoes[capitulo.tarefa.decisaoId]!;
+        const evidencia = sourceOptions(capitulo, documentos, capitulo.tarefa.decisaoId);
+        expect(evidencia.length, capitulo.id).toBe(1 + DISTRACTORS);
+        const citadas = new Set(pedida.fontes.map((fonte) => fonte.id));
+        expect(evidencia.filter((opcao) => citadas.has(opcao.id)).length, capitulo.id).toBe(1);
+        const doCapitulo = new Set(recordIds(capitulo).flatMap((id) => documentos[id]!.fontes.map((fonte) => fonte.id)));
+        for (const opcao of evidencia) expect(doCapitulo.has(opcao.id), `${capitulo.id}: ${opcao.id}`).toBe(true);
+
+        const interpretacao = interpretationOptions(pedida);
+        expect(interpretacao.length, capitulo.id).toBe(1 + DISTRACTORS);
+        expect(new Set(interpretacao.map((opcao) => opcao.id)).size, capitulo.id).toBe(interpretacao.length);
+        expect(interpretacao.filter((opcao) => opcao.id === correctInterpretation(pedida).id).length, capitulo.id).toBe(1);
+        for (const opcao of interpretacao) expect(opcao.rotulo.length, capitulo.id).toBeGreaterThan(0);
+      }
+    }
+  });
+
   it("o registro cuja data não decide a ordem em relação a outro leva a marca, como na lista do atlas", () => {
     let marcados = 0;
     for (const [slug, content] of conteudos) {
@@ -457,6 +583,10 @@ describe("conteúdo do jogo", () => {
         });
         expect(registro.editorial.revisao.tipo, onde).toBe("assistida-por-ia");
       }
+      for (const view of Object.values(content!.decisoes)) {
+        if (view.editorial.estado !== "revisado") continue;
+        expect("observacoes" in view.editorial.revisao, `${slug} ${view.id}`).toBe(false);
+      }
     }
   });
 
@@ -474,13 +604,17 @@ describe("conteúdo do jogo", () => {
     for (const [slug, content] of conteudos) expect(playableChapters(content!), slug).toEqual(content!.capitulos);
   });
 
-  it("playableChapters tira o capítulo cujo registro falta", () => {
+  it("playableChapters tira o capítulo cujo registro ou cuja decisão falta", () => {
     const [, content] = conteudos[0]!;
     const [primeiro, ...resto] = content!.capitulos as [ChapterSpec, ...ChapterSpec[]];
     const registros = { ...content!.registros };
     delete registros[primeiro.eventIds[0]!];
     const semUm: GameContent = { ...content!, registros };
     expect(playableChapters(semUm)).toEqual(resto);
+    const comDecisao = content!.capitulos.find((capitulo) => (capitulo.decisaoIds?.length ?? 0) > 0)!;
+    const decisoes = { ...content!.decisoes };
+    delete decisoes[comDecisao.decisaoIds![0]!];
+    expect(playableChapters({ ...content!, decisoes }).map((capitulo) => capitulo.id)).not.toContain(comDecisao.id);
   });
 
   it("sem o personagem nos dados, não há conteúdo", () => {
@@ -511,15 +645,15 @@ describe("textos dos capítulos", () => {
     }
   });
 
-  it("os anos, as datas e as contagens escritos nos textos são os dos registros do capítulo", () => {
+  it("os anos, as datas e as contagens escritos nos textos são os dos registros do capítulo, acontecimentos e decisões", () => {
     // Os textos são escritos à mão. Se uma data do conteúdo for corrigida, o
     // texto do capítulo não pode continuar afirmando a antiga.
     const NUMERAIS: Record<string, number> = { Dois: 2, Três: 3, Quatro: 4, Cinco: 5, Seis: 6, Sete: 7, Oito: 8, Nove: 9 };
     const MES = "janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro";
     for (const capitulo of CHAPTERS) {
-      const eventos = capitulo.eventIds.map(evento);
-      const anos = new Set(eventos.map((item) => yearOf(item.data)));
-      const datas = eventos.map((item) => formatDate(item.data));
+      const datasDosRegistros = recordIds(capitulo).map(dataDe);
+      const anos = new Set(datasDosRegistros.map(yearOf));
+      const datas = datasDosRegistros.map((item) => formatDate(item));
 
       for (const campo of ["titulo", "motivo", "objetivo"] as const) {
         const texto = capitulo[campo];
@@ -539,7 +673,9 @@ describe("textos dos capítulos", () => {
       // O motivo abre com a quantidade de registros do capítulo.
       const numeral = capitulo.motivo.match(/^(\S+) registros\b/)?.[1];
       expect(numeral, `${capitulo.id}: o motivo começa pela quantidade de registros`).toBeDefined();
-      expect(NUMERAIS[numeral!], `${capitulo.id}: ${numeral} registros`).toBe(capitulo.eventIds.length);
+      expect(NUMERAIS[numeral!], `${capitulo.id}: ${numeral} registros`).toBe(recordIds(capitulo).length);
+      // Nas salas temáticas, o motivo diz que é amostra.
+      if (capitulo.sala !== HISTORICO) expect(capitulo.motivo, capitulo.id).toContain("amostra");
     }
   });
 
@@ -550,6 +686,10 @@ describe("textos dos capítulos", () => {
       if (capitulo.tarefa.tipo === "ordem") expect(capitulo.objetivo, capitulo.id).toMatch(/em ordem/);
       if (capitulo.tarefa.tipo === "fonte") expect(capitulo.objetivo, capitulo.id).toMatch(/documento/);
       if (capitulo.tarefa.tipo === "lugar") expect(capitulo.objetivo, capitulo.id).toMatch(/lugar/);
+      if (capitulo.tarefa.tipo === "decisao") {
+        expect(capitulo.objetivo, capitulo.id).toMatch(/documento/);
+        expect(capitulo.objetivo, capitulo.id).toMatch(/interprete/);
+      }
     }
   });
 });

@@ -92,6 +92,7 @@ const recolhidos = (...ids: string[]): TaskState => ids.reduce(collect, initialT
 const capitulo = (tarefa: TaskSpec, eventIds: string[], id = "capitulo-de-teste"): ChapterSpec => ({
   id,
   personagem: "lula",
+  sala: "historico",
   numero: 1,
   titulo: "Capítulo de teste",
   periodo: { de: 1980, ate: 1989 },

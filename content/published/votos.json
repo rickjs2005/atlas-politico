@@ -1,0 +1,212 @@
+[
+  {
+    "id": "senado-voto-6714-5894",
+    "votacaoId": "senado-votacao-6714",
+    "pessoaId": "flavio-bolsonaro",
+    "mandatoId": "flavio-bolsonaro-senador-2019",
+    "registro": {
+      "tipo": "voto-individual",
+      "posicao": "CONTRA",
+      "valorOriginal": "Não"
+    },
+    "proveniencia": {
+      "provedor": "senado",
+      "registroExternoId": "6714:5894",
+      "capturaId": "senado-votacao-5894-2026-10-11-594316"
+    },
+    "situacao": {
+      "tipo": "vigente"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2023-06-21",
+        "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6714",
+        "evidencia": "siglaVotoParlamentar: Não"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Voto conferido no campo siglaVotoParlamentar da resposta do webservice de dados abertos do Senado, em 11 de outubro de 2026 (UTC), com a captura bruta guardada em research/capturas. A lista nominal da ata não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-voto-6777-5894",
+    "votacaoId": "senado-votacao-6777",
+    "pessoaId": "flavio-bolsonaro",
+    "mandatoId": "flavio-bolsonaro-senador-2019",
+    "registro": {
+      "tipo": "voto-individual",
+      "posicao": "CONTRA",
+      "valorOriginal": "Não"
+    },
+    "proveniencia": {
+      "provedor": "senado",
+      "registroExternoId": "6777:5894",
+      "capturaId": "senado-votacao-5894-2026-10-11-fba77f"
+    },
+    "situacao": {
+      "tipo": "vigente"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2023-11-08",
+        "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6777",
+        "evidencia": "siglaVotoParlamentar: Não"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Voto conferido no campo siglaVotoParlamentar da resposta do webservice de dados abertos do Senado, em 11 de outubro de 2026 (UTC), com a captura bruta guardada em research/capturas. A lista nominal da ata não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-voto-6818-5894",
+    "votacaoId": "senado-votacao-6818",
+    "pessoaId": "flavio-bolsonaro",
+    "mandatoId": "flavio-bolsonaro-senador-2019",
+    "registro": {
+      "tipo": "voto-individual",
+      "posicao": "FAVOR",
+      "valorOriginal": "Sim"
+    },
+    "proveniencia": {
+      "provedor": "senado",
+      "registroExternoId": "6818:5894",
+      "capturaId": "senado-votacao-5894-2026-10-11-308eea"
+    },
+    "situacao": {
+      "tipo": "vigente"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-02-20",
+        "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6818",
+        "evidencia": "siglaVotoParlamentar: Sim"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Voto conferido no campo siglaVotoParlamentar da resposta do webservice de dados abertos do Senado, em 11 de outubro de 2026 (UTC), com a captura bruta guardada em research/capturas. A lista nominal da ata não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-voto-6825-5894",
+    "votacaoId": "senado-votacao-6825",
+    "pessoaId": "flavio-bolsonaro",
+    "mandatoId": "flavio-bolsonaro-senador-2019",
+    "registro": {
+      "tipo": "voto-individual",
+      "posicao": "FAVOR",
+      "valorOriginal": "Sim"
+    },
+    "proveniencia": {
+      "provedor": "senado",
+      "registroExternoId": "6825:5894",
+      "capturaId": "senado-votacao-5894-2026-10-11-31d03f"
+    },
+    "situacao": {
+      "tipo": "vigente"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-04-16",
+        "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6825",
+        "evidencia": "siglaVotoParlamentar: Sim"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Voto conferido no campo siglaVotoParlamentar da resposta do webservice de dados abertos do Senado, em 11 de outubro de 2026 (UTC), com a captura bruta guardada em research/capturas. A lista nominal da ata não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-voto-6899-5894",
+    "votacaoId": "senado-votacao-6899",
+    "pessoaId": "flavio-bolsonaro",
+    "mandatoId": "flavio-bolsonaro-senador-2019",
+    "registro": {
+      "tipo": "voto-individual",
+      "posicao": "CONTRA",
+      "valorOriginal": "Não"
+    },
+    "proveniencia": {
+      "provedor": "senado",
+      "registroExternoId": "6899:5894",
+      "capturaId": "senado-votacao-5894-2026-10-11-c33bec"
+    },
+    "situacao": {
+      "tipo": "vigente"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-12-12",
+        "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6899",
+        "evidencia": "siglaVotoParlamentar: Não"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Voto conferido no campo siglaVotoParlamentar da resposta do webservice de dados abertos do Senado, em 11 de outubro de 2026 (UTC), com a captura bruta guardada em research/capturas. A lista nominal da ata não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-voto-7037-5894",
+    "votacaoId": "senado-votacao-7037",
+    "pessoaId": "flavio-bolsonaro",
+    "mandatoId": "flavio-bolsonaro-senador-2019",
+    "registro": {
+      "tipo": "voto-individual",
+      "posicao": "FAVOR",
+      "valorOriginal": "Sim"
+    },
+    "proveniencia": {
+      "provedor": "senado",
+      "registroExternoId": "7037:5894",
+      "capturaId": "senado-votacao-5894-2026-10-11-225c99"
+    },
+    "situacao": {
+      "tipo": "vigente"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2025-12-10",
+        "localizacao": "votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=7037",
+        "evidencia": "siglaVotoParlamentar: Sim"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Voto conferido no campo siglaVotoParlamentar da resposta do webservice de dados abertos do Senado, em 11 de outubro de 2026 (UTC), com a captura bruta guardada em research/capturas. A lista nominal da ata não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  }
+]

@@ -67,7 +67,8 @@ describe("figuras dos personagens", () => {
       expect(new Set(figuras.map((figura) => figura.altura)).size, slug).toBe(1);
       for (const figura of figuras) expect(typeof figura.draw).toBe("function");
     }
-    expect(GUIDE.nome).toBe("Arquivista");
+    // O guia fictício é o Escrivão (chamado Arquivista até a versão de lançamento; D-127).
+    expect(GUIDE.nome).toBe("Escrivão");
   });
 
   it("cada capítulo pede uma época que existe, e os dois personagens passam pelas três", () => {

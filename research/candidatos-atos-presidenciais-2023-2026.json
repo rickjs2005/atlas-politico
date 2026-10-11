@@ -1,0 +1,909 @@
+{
+  "geradoEm": "2026-10-10",
+  "escopo": "Atos do presidente Luiz Inácio Lula da Silva, 2023-01-01 a 2026-10-08, temas economia e segurança pública, verificados em ccivil_03 (Planalto) e webservice do Senado",
+  "totais": {
+    "economia": 31,
+    "seguranca": 22,
+    "total": 53
+  },
+  "atos": [
+    {
+      "tema": "economia",
+      "identificador": "Lei Complementar nº 200, de 30 de agosto de 2023",
+      "data": "2023-08-30",
+      "ementa": "Institui regime fiscal sustentável para garantir a estabilidade macroeconômica do País e criar as condições adequadas ao crescimento socioeconômico, com fundamento no art. 6º da Emenda Constitucional nº 126, de 21 de dezembro de 2022, e no inciso VIII do caput e no parágrafo único do art. 163 da Constituição Federal; e altera a Lei Complementar nº 101, de 4 de maio de 2000 (Lei de Responsabilidade Fiscal).",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei Complementar nº 93, de 2023 (informado na Mensagem nº 431/2023)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 431, de 30 de agosto de 2023",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vep/VEP-0431-23.htm",
+        "dispositivos": [
+          "§ 3º do art. 7º do Projeto de Lei Complementar",
+          "Art. 11 do Projeto de Lei Complementar, na parte em que altera o § 7º do art. 4º da Lei Complementar nº 101, de 4 de maio de 2000"
+        ],
+        "data": "2023-08-30",
+        "proposicao": "PLP 93/2023"
+      },
+      "desdobramento": "Promulgação de parte vetada em 22/12/2023 (DOU de 22.12.2023, edição extra): o § 7º do art. 4º da LC 101/2000 (art. 11) foi promulgado após derrubada do veto pelo Congresso; a página traz a seção '(Promulgação partes vetadas)'. Texto compilado já incorpora alterações das LC 207/2024 e 223/2025.",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp200.htm",
+      "trecho": "\"Mensagem de veto\"; \"O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei Complementar\"; \"§ 3º (VETADO)\"; \"§ 7º (VETADO)\"; \"Brasília, 30 de agosto de 2023\"; assinam Lula, Fernando Haddad e Simone Tebet.",
+      "fonteSecundaria": "Senado (webservice) confirma 'Lei Complementar nº 200 de 30/08/2023', mesma ementa: https://legis.senado.leg.br/dadosabertos/legislacao/lista?tipo=LCP&ano=2023&numero=200",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Medida Provisória nº 1.172, de 1º de maio de 2023",
+      "data": "2023-05-01",
+      "ementa": "Dispõe sobre o valor do salário mínimo a vigorar a partir de 1º de maio de 2023.",
+      "tipo": "medida provisória",
+      "origem": "Iniciativa do Presidente da República (art. 62 da Constituição)",
+      "desdobramento": "Convertida na Lei nº 14.663, de 2023 (nota no cabeçalho da página). Fixou o salário mínimo em R$ 1.320,00 e revogou a MP 1.143/2022.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/Mpv/mpv1172.htm",
+      "trecho": "\"O PRESIDENTE DA REPÚBLICA, no uso da atribuição que lhe confere o art. 62 da Constituição, adota a seguinte Medida Provisória, com força de lei\"; \"Convertida na Lei 14.663, de 2023\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.663, de 28 de agosto de 2023",
+      "data": "2023-08-28",
+      "ementa": "Define o valor do salário mínimo a partir de 1º de maio de 2023; estabelece a política de valorização permanente do salário mínimo a vigorar a partir de 1º de janeiro de 2024; e altera os valores da tabela mensal do Imposto sobre a Renda da Pessoa Física de que trata o art. 1º da Lei nº 11.482, de 31 de maio de 2007, e os valores de dedução previstos no art. 4º da Lei nº 9.250, de 26 de dezembro de 1995.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Conversão da Medida Provisória nº 1.172, de 2023 (nota no cabeçalho)",
+      "desdobramento": "Política de valorização: INPC acumulado + crescimento real do PIB de dois anos antes (art. 3º). Serviu de base aos Decretos 11.864/2023, 12.342/2024 e 12.797/2025.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/L14663.htm",
+      "trecho": "\"Conversão da Medida Provisória nº 1.172, de 2023\"; \"Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei\"; sem nota de mensagem de veto e sem dispositivo (VETADO); \"Brasília, 28 de agosto de 2023\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Decreto nº 11.864, de 27 de dezembro de 2023",
+      "data": "2023-12-27",
+      "ementa": "Dispõe sobre o valor do salário mínimo a vigorar a partir de 1º de janeiro de 2024.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV, da Constituição e Lei nº 14.663/2023 (preâmbulo)",
+      "desdobramento": "Art. 1º: salário mínimo de R$ 1.412,00 a partir de 1º/01/2024.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Decreto/D11864.htm",
+      "trecho": "\"tendo em vista o disposto na Lei nº 14.663, de 28 de agosto de 2023, DECRETA: Art. 1º A partir de 1º de janeiro de 2024, o valor do salário mínimo será de R$ 1.412,00\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Decreto nº 12.342, de 30 de dezembro de 2024",
+      "data": "2024-12-30",
+      "ementa": "Dispõe sobre o valor do salário mínimo a vigorar a partir de 1º de janeiro de 2025.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV, da Constituição, Lei nº 14.663/2023 e art. 4º da Lei nº 15.077/2024 (preâmbulo)",
+      "desdobramento": "Art. 1º: salário mínimo de R$ 1.518,00 a partir de 1º/01/2025.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Decreto/D12342.htm",
+      "trecho": "\"DECRETA: Art. 1º A partir de 1º de janeiro de 2025, o valor do salário mínimo será de R$ 1.518,00\"; \"Brasília, 30 de dezembro de 2024\"; assinam Lula, Haddad e Luiz Marinho.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Decreto nº 12.797, de 23 de dezembro de 2025",
+      "data": "2025-12-23",
+      "ementa": "Dispõe sobre o valor do salário mínimo a vigorar a partir de 1º de janeiro de 2026.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV, da Constituição, Lei nº 14.663/2023 e Lei nº 15.077/2024 (preâmbulo)",
+      "desdobramento": "Art. 1º: salário mínimo de R$ 1.621,00 a partir de 1º/01/2026.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Decreto/D12797.htm",
+      "trecho": "\"DECRETA: Art. 1º A partir de 1º de janeiro de 2026, o valor do salário mínimo será de R$ 1.621,00\"; \"Brasília, 23 de dezembro de 2025\"; assinam Lula, Dario Durigan, Simone Tebet e Luiz Marinho.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.754, de 12 de dezembro de 2023",
+      "data": "2023-12-12",
+      "ementa": "Dispõe sobre a tributação de aplicações em fundos de investimento no País e da renda auferida por pessoas físicas residentes no País em aplicações financeiras, entidades controladas e trusts no exterior; altera as Leis nºs 11.033, de 21 de dezembro de 2004, 8.668, de 25 de junho de 1993, e 10.406, de 10 de janeiro de 2002 (Código Civil); revoga dispositivos das Leis nºs 4.728, de 14 de julho de 1965, 9.250, de 26 de dezembro de 1995, 9.532, de 10 de dezembro de 1997, 10.426, de 24 de abril de 2002, 10.892, de 13 de julho de 2004, e 11.033, de 21 de dezembro de 2004, do Decreto-Lei nº 2.287, de 23 de julho de 1986, e das Medidas Provisórias nºs 2.189-49, de 23 de agosto de 2001, e 2.158-35, de 24 de agosto de 2001; e dá outras providências.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 4.173, de 2023 (Mensagem nº 681/2023)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 681, de 12 de dezembro de 2023",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/Msg/Vep/VEP-681-23.htm",
+        "dispositivos": [
+          "§ 7º do art. 21 do Projeto de Lei"
+        ],
+        "data": "2023-12-12",
+        "proposicao": "PL 4.173/2023"
+      },
+      "desdobramento": "Página registra 'Vide Medida Provisória nº 1.303, de 2025' (vigência encerrada, ADC 67/2025).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/L14754.htm",
+      "trecho": "\"Mensagem de veto\"; \"§ 7º (VETADO)\"; \"Brasília, 12 de dezembro de 2023\"; assinam Lula e Fernando Haddad; DOU de 13.12.2023.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Mensagem nº 619, de 23 de novembro de 2023 (veto total ao Projeto de Lei nº 334, de 2023)",
+      "data": "2023-11-23",
+      "ementa": "Projeto de Lei nº 334, de 2023, que \"Prorroga até 31 de dezembro de 2027 os prazos de que tratam os arts. 7º e 8º da Lei nº 12.546, de 14 de dezembro de 2011, e o caput do § 21 do art. 8º da Lei nº 10.865, de 30 de abril de 2004, e dá outras providências.\" (ementa do projeto, transcrita da mensagem; a página traz grafia com erro tipográfico \"2 004\" e \"daì́\")",
+      "tipo": "veto total",
+      "origem": "Projeto de Lei nº 334, de 2023 (desoneração da folha de pagamento)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 619, de 23 de novembro de 2023",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vet/VET-0619-23.htm",
+        "dispositivos": [
+          "Projeto de Lei inteiro (veto integral)"
+        ],
+        "data": "2023-11-23",
+        "proposicao": "PL 334/2023"
+      },
+      "desdobramento": "Razão declarada: renúncia de receita sem demonstrativo de impacto (art. 113 do ADCT, art. 14 da LRF, arts. 131 e 132 da LDO 2023). Seguiu-se a MP 1.202/2023 e, depois, a Lei 14.973/2024. A derrubada do veto pelo Congresso não aparece no ccivil_03 (ver lacunas).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vet/VET-0619-23.htm",
+      "trecho": "\"decidi vetar integralmente, por contrariedade ao interesse público e por inconstitucionalidade, o Projeto de Lei nº 334, de 2023\"; DOU de 23.11.2023, edição extra.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Medida Provisória nº 1.202, de 28 de dezembro de 2023",
+      "data": "2023-12-28",
+      "ementa": "Revoga os benefícios fiscais de que tratam o art. 4º da Lei nº 14.148, de 3 de maio de 2021, e os art. 7º a art. 10 da Lei nº 12.546, de 14 de dezembro de 2011, desonera parcialmente a contribuição previdenciária sobre a folha de pagamento, revoga a alíquota reduzida da contribuição previdenciária aplicável a determinados Municípios e limita a compensação de créditos decorrentes de decisões judiciais transitadas em julgado.",
+      "tipo": "medida provisória",
+      "origem": "Iniciativa do Presidente da República (art. 62 da Constituição)",
+      "desdobramento": "Arts. 1º a 5º (reoneração gradual e Perse) marcados 'Revogado pela Medida Provisória nº 1.208, de 2024'; a parte remanescente foi 'Convertida na Lei nº 14.873, de 2024' (limite de compensação de créditos judiciais). Índice de MPs registra 'Prorrogação parcial de prazo'.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/Mpv/mpv1202.htm",
+      "trecho": "\"adota a seguinte Medida Provisória, com força de lei\"; \"(Revogado pela Medida Provisória nº 1.208, de 2024)\"; \"Convertida na Lei nº 14.873, de 2024\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Medida Provisória nº 1.208, de 27 de fevereiro de 2024",
+      "data": "2024-02-27",
+      "ementa": "Revoga dispositivos da Medida Provisória nº 1.202, de 28 de dezembro de 2023.",
+      "tipo": "medida provisória",
+      "origem": "Iniciativa do Presidente da República (art. 62 da Constituição)",
+      "desdobramento": "Vigência encerrada (Ato Declaratório nº 44/2024 do Congresso, link na página). Retirou da MP 1.202 a reoneração da folha, devolvendo o tema ao Congresso.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Mpv/mpv1208.htm",
+      "trecho": "\"Vigência encerrada\"; \"adota a seguinte Medida Provisória, com força de lei\"; \"Brasília, 27 de fevereiro de 2024\"; assinam Lula e Haddad.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.873, de 28 de maio de 2024",
+      "data": "2024-05-28",
+      "ementa": "Altera a Lei nº 9.430, de 27 de dezembro de 1996, para limitar a compensação tributária dos créditos decorrentes de decisões judiciais transitadas em julgado.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Conversão da Medida Provisória nº 1.202, de 2023 (a página grafa 'de 2024')",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/Lei/L14873.htm",
+      "trecho": "\"Conversão da Medida Provisória nº 1.202\"; \"eu sanciono a seguinte Lei\"; sem mensagem de veto; \"Brasília, 28 de maio de 2024\"; assinam Lula e Haddad.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.973, de 16 de setembro de 2024",
+      "data": "2024-09-16",
+      "ementa": "Estabelece regime de transição para a contribuição substitutiva prevista nos arts. 7º e 8º da Lei nº 12.546, de 14 de dezembro de 2011, e para o adicional sobre a Cofins-Importação previsto no § 21 do art. 8º da Lei nº 10.865, de 30 de abril de 2004; altera as Leis nºs 8.212, de 24 de julho de 1991, 8.742, de 7 de dezembro de 1993, 10.522, de 19 de julho de 2002, 10.779, de 25 de novembro de 2003, 10.865, de 30 de abril de 2004, 12.546, de 14 de dezembro de 2011, e 13.988, de 14 de abril de 2020; e revoga dispositivos dos Decretos-Lei nºs 1.737, de 20 de dezembro de 1979, e 2.323, de 26 de fevereiro de 1987, e das Leis nºs 9.703, de 17 de novembro de 1998, e 11.343, de 23 de agosto de 2006, e a Lei nº 12.099, de 27 de novembro de 2009.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 1.847, de 2024 (Mensagem nº 1.097/2024)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 1.097, de 16 de setembro de 2024",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/Msg/Vep/VEP-1097-24.htm",
+        "dispositivos": [
+          "Art. 19 do Projeto de Lei, na parte em que institui o Capítulo II-A e na parte em que inclui o art. 15-A à Lei nº 13.988, de 14 de abril de 2020",
+          "Art. 24 do Projeto de Lei",
+          "Art. 26 do Projeto de Lei",
+          "Art. 48 do Projeto de Lei"
+        ],
+        "data": "2024-09-16",
+        "proposicao": "PL 1.847/2024"
+      },
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L14973.htm",
+      "trecho": "\"Mensagem de veto\"; \"Art. 24. (VETADO)\", \"Art. 26. (VETADO)\", \"Art. 48. (VETADO)\"; \"Brasília, 16 de setembro de 2024\"; assinam Lula, Haddad e Jorge Messias.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Medida Provisória nº 1.185, de 30 de agosto de 2023",
+      "data": "2023-08-30",
+      "ementa": "Dispõe sobre o crédito fiscal decorrente de subvenção para a implantação ou a expansão de empreendimento econômico.",
+      "tipo": "medida provisória",
+      "origem": "Iniciativa do Presidente da República (art. 62 da Constituição)",
+      "desdobramento": "Convertida na Lei nº 14.789, de 2023 (nota no cabeçalho).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/Mpv/mpv1185.htm",
+      "trecho": "\"Convertida na Lei nº 14.789, de 2023\"; \"adota a seguinte Medida Provisória, com força de lei\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.789, de 29 de dezembro de 2023",
+      "data": "2023-12-29",
+      "ementa": "Dispõe sobre o crédito fiscal decorrente de subvenção para implantação ou expansão de empreendimento econômico; altera as Leis nºs 9.249, de 26 de dezembro de 1995, 14.592, de 30 de maio de 2023, e 14.754, de 12 de dezembro de 2023; e revoga dispositivos do Decreto-Lei nº 1.598, de 26 de dezembro de 1977, e das Leis nºs 10.637, de 30 de dezembro de 2002, 10.833, de 29 de dezembro de 2003, e 12.973, de 13 de maio de 2014.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Conversão da Medida Provisória nº 1.185, de 2023 (nota no cabeçalho)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/L14789.htm",
+      "trecho": "\"Conversão da Medida Provisória nº 1.185, de 2023\"; sem mensagem de veto e sem (VETADO); \"Brasília, 29 de dezembro de 2023\"; assinam Lula e Haddad; DOU de 29.12.2023, edição extra.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei Complementar nº 214, de 16 de janeiro de 2025",
+      "data": "2025-01-16",
+      "ementa": "Institui o Imposto sobre Bens e Serviços (IBS), a Contribuição Social sobre Bens e Serviços (CBS) e o Imposto Seletivo (IS); cria o Comitê Gestor do IBS e altera a legislação tributária.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei Complementar nº 68, de 2024 (Mensagem nº 88/2025)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 88, de 16 de janeiro de 2025",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Msg/Vep/VEP-88-25.htm",
+        "dispositivos": [
+          "Incisos V e X do caput do art. 26",
+          "Inciso III do § 1º do art. 26",
+          "§ 5º e § 6º do art. 26",
+          "§ 8º do art. 26",
+          "§ 4º do art. 183",
+          "§ 2º do art. 36",
+          "§ 4º do art. 138",
+          "Inciso II do § 9º do art. 138",
+          "Inciso III do § 1º do art. 231",
+          "Inciso III do § 1º do art. 252",
+          "§ 2º do art. 332",
+          "Art. 334",
+          "Inciso I do caput do art. 413",
+          "§ 4º do art. 429",
+          "§ 5º do art. 444",
+          "§ 5º do art. 462",
+          "Inciso II do § 1º do art. 454",
+          "Art. 494",
+          "Art. 495",
+          "Art. 536",
+          "Art. 517, na parte em que inclui a alínea 'b' do inciso XII-A do § 1º do art. 13 da Lei Complementar nº 123/2006",
+          "Itens 1.4, 1.5, 1.8 e 1.9 do Anexo XI"
+        ],
+        "data": "2025-01-16",
+        "proposicao": "PLP 68/2024"
+      },
+      "desdobramento": "Promulgação de partes vetadas em 1º/07/2025 (DOU de 2.7.2025), assinada por Lula: incisos V e X do caput do art. 26 (fundos de investimento e fundos patrimoniais). O texto da página (5,4 MB) já incorpora alterações da LC 227/2026, inclusive novos dispositivos marcados (VETADO) oriundos daquela lei; a lista acima segue a Mensagem nº 88.",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm",
+      "trecho": "\"Mensagem de veto\"; \"(Promulgação partes vetadas)\"; \"eu sanciono a seguinte Lei Complementar\"; \"Brasília, 16 de janeiro de 2025\"; assinam Lula, Luiz Paulo Teixeira, Haddad, Márcio França, Esther Dweck, Alckmin e Marina Silva.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei Complementar nº 227, de 13 de janeiro de 2026",
+      "data": "2026-01-13",
+      "ementa": "Institui o Comitê Gestor do Imposto sobre Bens e Serviços (CGIBS); dispõe sobre o processo administrativo tributário do Imposto sobre Bens e Serviços (IBS) e sobre a distribuição do produto da arrecadação do IBS aos entes federativos; institui normais gerais relativas ao Imposto sobre Transmissão Causa mortis e Doação de Quaisquer Bens ou Direitos (ITCMD); altera a Lei nº 5.172, de 25 de outubro de 1966 (Código Tributário Nacional), a Lei nº 1.079, de 10 de abril de 1950, a Lei nº 9.430, de 27 de dezembro de 1996, a Lei nº 10.893, de 13 julho de 2004, a Lei nº 14.113, de 25 de dezembro de 2020, a Lei Complementar nº 63, de 11 de janeiro de 1990, a Lei Complementar nº 87, de 13 de setembro de 1996 (Lei Kandir), a Lei Complementar nº 123, de 14 de dezembro de 2006, a Lei Complementar nº 141, de 13 de janeiro de 2012, a Lei Complementar nº 192, de 11 de março de 2022, a Lei Complementar nº 214, de 16 de janeiro de 2025, o Decreto-Lei nº 37, de 18 de novembro de 1966, e o Decreto nº 70.235, de 6 de março de 1972; e revoga dispositivos da Lei nº 10.833, de 29 [ementa continua na página; transcrição interrompida neste ponto]",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei Complementar nº 108, de 2024 (Mensagem nº 36/2026)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 36, de 13 de janeiro de 2026",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vep/VEP-36-26.htm",
+        "dispositivos": [
+          "Parágrafo 5º do art. 5º",
+          "Art. 165, na parte que inclui o art. 35-A na Lei nº 5.172/1966",
+          "Art. 174, na parte que altera o § 3º e o inciso III do § 4º do art. 12 da LC 214/2025",
+          "Art. 174, na parte que inclui o § 5º ao art. 116 da LC 214/2025",
+          "Art. 174, na parte que altera o inciso I do § 4º, § 5º e 8º, e inclui o § 10 ao art. 293 da LC 214/2025",
+          "Art. 174, na parte que altera o § 9º do art. 293 da LC 214/2025",
+          "Art. 174, na parte que inclui o § 3º ao art. 327-A da LC 214/2025",
+          "Art. 174, na parte que altera o inciso III do § 2º do art. 341-F da LC 214/2025",
+          "Art. 174, na parte que altera o item 2 do Anexo VII da LC 214/2025"
+        ],
+        "data": "2026-01-13",
+        "proposicao": "PLP 108/2024"
+      },
+      "url": "https://www.planalto.gov.br/ccivil_03/LEIS/LCP/Lcp227.htm",
+      "trecho": "\"Mensagem de veto\"; \"Brasília, 13 de janeiro de 2026; 205º da Independência\"; assinam Lula, Luiz Paulo Teixeira, Haddad, Márcio França, Alckmin e outros; DOU de 14.1.2026.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei Complementar nº 225, de 8 de janeiro de 2026",
+      "data": "2026-01-08",
+      "ementa": "Institui o Código de Defesa do Contribuinte.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei Complementar nº 125, de 2022 (Mensagem nº 22/2026)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 22, de 8 de janeiro de 2026",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vep/VEP-22-26.htm",
+        "dispositivos": [
+          "Inciso II do caput do art. 8º",
+          "Inciso I do § 2º do art. 31",
+          "Inciso I do caput e § 3º e § 4º do art. 32",
+          "Inciso III do caput do art. 32",
+          "§ 1º do art. 32"
+        ],
+        "data": "2026-01-08",
+        "proposicao": "PLP 125/2022"
+      },
+      "url": "https://www.planalto.gov.br/ccivil_03/LEIS/LCP/Lcp225.htm",
+      "trecho": "\"Mensagem de veto\"; \"eu sanciono a seguinte Lei Complementar\"; \"Brasília, 8 de janeiro de 2026\"; assinam Lula, Dario Durigan, Alckmin e outros; DOU de 9.1.2026.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 15.270, de 26 de novembro de 2025",
+      "data": "2025-11-26",
+      "ementa": "Altera a Lei nº 9.250, de 26 de dezembro de 1995, e a Lei nº 9.249, de 26 de dezembro de 1995, para instituir a redução do imposto sobre a renda devido nas bases de cálculo mensal e anual e a tributação mínima para as pessoas físicas que auferem altas rendas; e dá outras providências.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página",
+      "desdobramento": "Art. 3º-A da Lei 9.250: a partir de janeiro de 2026, redução do IR mensal 'até R$ 5.000,00 ... de modo que o imposto devido seja zero' e redução decrescente até R$ 7.350,00; tributação mínima de altas rendas. Efeitos a partir de 1º/01/2026 (art. 8º).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15270.htm",
+      "trecho": "Sem nota de mensagem de veto e sem (VETADO); \"eu sanciono a seguinte Lei\"; \"Brasília, 26 de novembro de 2025\"; assinam Lula, Haddad, Manoel Carlos de Almeida Neto e Simone Tebet; DOU de 27.11.2025.",
+      "fonteSecundaria": "Senado (webservice) confirma 'Lei nº 15.270 de 26/11/2025', mesma ementa.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Medida Provisória nº 1.164, de 2 de março de 2023",
+      "data": "2023-03-02",
+      "ementa": "Institui o Programa Bolsa Família e altera a Lei nº 8.742, de 7 de dezembro de 1993, que dispõe sobre a organização da Assistência Social, e a Lei nº 10.820, de 17 de dezembro de 2003, que dispõe sobre a autorização para desconto em folha de pagamento.",
+      "tipo": "medida provisória",
+      "origem": "Iniciativa do Presidente da República (art. 62 da Constituição)",
+      "desdobramento": "Convertida na Lei 14.601, de 2023 (nota no cabeçalho); regulamentada pelo Decreto 11.566/2023.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Mpv/mpv1164.htm",
+      "trecho": "\"Convertida na Lei 14.601, de 2023\"; \"adota a seguinte Medida Provisória, com força de lei\"; \"Brasília, 2 de março de 2023\"; assinam Lula, Wellington Dias, Haddad e Tebet.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.601, de 19 de junho de 2023",
+      "data": "2023-06-19",
+      "ementa": "Institui o Programa Bolsa Família; altera a Lei nº 8.742, de 7 de dezembro de 1993 (Lei Orgânica da Assistência Social), a Lei nº 10.820, de 17 de dezembro de 2003, que dispõe sobre a autorização para desconto em folha de pagamento, e a Lei nº 10.779, de 25 de novembro de 2003; e revoga dispositivos das Leis nºs 14.284, de 29 de dezembro de 2021, e 14.342, de 18 de maio de 2022, e a Medida Provisória nº 1.155, de 1º de janeiro de 2023.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Conversão da Medida Provisória nº 1.164, de 2023 (nota no cabeçalho)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Lei/L14601.htm",
+      "trecho": "\"Conversão da Medida Provisória nº 1.164, de 2023\"; sem mensagem de veto e sem (VETADO); \"Brasília, 19 de junho de 2023\"; assinam Lula, Wellington Dias, Haddad e Tebet.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.690, de 3 de outubro de 2023",
+      "data": "2023-10-03",
+      "ementa": "Institui o Programa Emergencial de Renegociação de Dívidas de Pessoas Físicas Inadimplentes – Desenrola Brasil; estabelece normas para facilitação de acesso a crédito e mitigação de riscos de inadimplemento e de superendividamento de pessoas físicas; altera a Consolidação das Leis do Trabalho, aprovada pelo Decreto-Lei nº 5.452, de 1º de maio de 1943, e as Leis nºs 10.406, de 10 de janeiro de 2002 (Código Civil), 10.522, de 19 de julho de 2002 e 12.087, de 11 de novembro de 2009; e revoga dispositivo da Lei nº 4.737, de 15 de julho de 1965 (Código Eleitoral), e a Medida Provisória nº 1.176, de 5 de junho de 2023.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página (a lei revoga a MP 1.176/2023, que instituiu o programa)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Lei/L14690.htm",
+      "trecho": "Sem nota de mensagem de veto e sem (VETADO); \"eu sanciono a seguinte Lei\"; \"Brasília, 3 de outubro de 2023\"; DOU de 3.10.2023, edição extra.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.620, de 13 de julho de 2023",
+      "data": "2023-07-13",
+      "ementa": "Dispõe sobre o Programa Minha Casa, Minha Vida, altera o Decreto-Lei nº 3.365, de 21 de junho de 1941 (Lei da Desapropriação), a Lei nº 4.591, de 16 de dezembro de 1964, a Lei nº 6.015, de 31 de dezembro de 1973 (Lei dos Registros Públicos), a Lei nº 6.766, de 19 de dezembro de 1979, a Lei nº 8.036, de 11 de maio de 1990 (Lei do FGTS), a Lei nº 8.677, de 13 de julho de 1993, a Lei nº 9.472, de 16 de julho de 1997, a Lei nº 9.514, de 20 de novembro de 1997, a Lei nº 10.188, de 12 de fevereiro de 2001, a Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), a Lei nº 10.931, de 2 de agosto de 2004, a Lei nº 11.977, de 7 de julho de 2009, a Lei nº 12.462, de 4 de agosto de 2011, a Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), a Lei nº 13.465, de 11 de julho de 2017, a Lei nº 14.063, de 23 de setembro de 2020, a Lei nº 14.133, de 1º de abril de 2021 (Lei de Licitações e Contratos Administrativos), a Lei nº 14.300, de 6 de janeiro de 2022, e a Lei nº 14.382, de 27 de junho de 2022, e revoga dispositivos da Lei nº 14.118, de 12 de janeiro de 2021.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei de Conversão nº 14, de 2023 (Medida Provisória nº 1.162, de 14 de fevereiro de 2023)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 326, de 13 de julho de 2023",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vep/VEP-0326-23.htm",
+        "dispositivos": [
+          "§ 14 do art. 6º",
+          "Inciso VI do caput do art. 15",
+          "Art. 31, na parte em que insere o § 11 no art. 4º da Lei nº 10.931/2004",
+          "Art. 24, na parte em que insere o art. 22-A na Lei nº 6.766/1979",
+          "Art. 37",
+          "Art. 38, na parte em que insere o parágrafo único no art. 24 da Lei nº 14.300/2022",
+          "Art. 27",
+          "Art. 36, na parte em que insere o parágrafo único no art. 17-A da Lei nº 14.063/2020"
+        ],
+        "data": "2023-07-13",
+        "proposicao": "PLV 14/2023 (MP 1.162/2023)"
+      },
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Lei/L14620.htm",
+      "trecho": "\"Mensagem de veto\"; \"Conversão da Medida Provisória nº 1.162, de 2023\"; oito marcas (VETADO); \"Brasília, 13 de julho de 2023\"; assinam Lula, Jader Filho, Waldez Góes, Haddad, Alckmin, Dino, Alexandre Silveira e Tebet.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.611, de 3 de julho de 2023",
+      "data": "2023-07-03",
+      "ementa": "Dispõe sobre a igualdade salarial e de critérios remuneratórios entre mulheres e homens; e altera a Consolidação das Leis do Trabalho, aprovada pelo Decreto-Lei nº 5.452, de 1º de maio de 1943.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Lei/L14611.htm",
+      "trecho": "\"Regulamento\" (Decreto 11.795); sem mensagem de veto e sem (VETADO); \"Brasília, 3 de julho de 2023\"; DOU de 4.7.2023.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.790, de 29 de dezembro de 2023",
+      "data": "2023-12-29",
+      "ementa": "Dispõe sobre a modalidade lotérica denominada apostas de quota fixa; altera as Leis nºs 5.768, de 20 de dezembro de 1971, e 13.756, de 12 de dezembro de 2018, e a Medida Provisória nº 2.158-35, de 24 de agosto de 2001; revoga dispositivos do Decreto-Lei nº 204, de 27 de fevereiro de 1967; e dá outras providências.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 3.626, de 2023 (Mensagem nº 749/2023)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 749, de 30 de dezembro de 2023",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vep/VEP-749-23.htm",
+        "dispositivos": [
+          "§ 1º, § 2º e § 3º do art. 31",
+          "Art. 53 e Anexo I",
+          "Art. 55",
+          "Art. 56"
+        ],
+        "data": "2023-12-30",
+        "proposicao": "PL 3.626/2023"
+      },
+      "desdobramento": "Promulgação de partes vetadas em 21/05/2024 (DOU de 22.5.2024), assinada por Lula: §§ 1º, 2º e 3º do art. 31 (prêmio líquido no IR das apostas). Página registra revogações posteriores pela MP 1.394/2026.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Lei/L14790.htm",
+      "trecho": "\"Mensagem de veto\"; \"(Promulgação partes vetadas)\"; \"Art. 53. (VETADO)\", \"Art. 55. (VETADO)\", \"Art. 56. (VETADO)\"; \"eu promulgo ... as seguintes partes vetadas da Lei nº 14.790\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Medida Provisória nº 1.206, de 6 de fevereiro de 2024",
+      "data": "2024-02-06",
+      "ementa": "Altera os valores da tabela progressiva mensal do Imposto sobre a Renda da Pessoa Física de que trata o art. 1º da Lei nº 11.482, de 31 de maio de 2007.",
+      "tipo": "medida provisória",
+      "origem": "Iniciativa do Presidente da República (art. 62 da Constituição)",
+      "desdobramento": "Revogada pela Lei nº 14.848, de 2024 (nota no cabeçalho).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Mpv/mpv1206.htm",
+      "trecho": "\"Revogada pela Lei nº 14.848, de 2024\"; \"Brasília, 6 de fevereiro de 2024\"; assinam Lula e Haddad; DOU de 6.2.2024, edição extra.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.848, de 1º de maio de 2024",
+      "data": "2024-05-01",
+      "ementa": "Altera os valores da tabela progressiva mensal do Imposto sobre a Renda da Pessoa Física de que trata o art. 1º da Lei nº 11.482, de 31 de maio de 2007; e revoga a Medida Provisória nº 1.206, de 6 de fevereiro de 2024.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página (revoga a MP 1.206/2024)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Lei/L14848.htm",
+      "trecho": "Sem mensagem de veto e sem (VETADO); \"eu sanciono a seguinte Lei\"; \"Brasília, 1º de maio de 2024\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Medida Provisória nº 1.294, de 11 de abril de 2025",
+      "data": "2025-04-11",
+      "ementa": "Altera os valores da tabela progressiva mensal do Imposto sobre a Renda da Pessoa Física de que trata o art. 1º da Lei nº 11.482, de 31 de maio de 2007.",
+      "tipo": "medida provisória",
+      "origem": "Iniciativa do Presidente da República (art. 62 da Constituição)",
+      "desdobramento": "Revogada pela Lei nº 15.191, de 2025 (nota no cabeçalho).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Mpv/mpv1294.htm",
+      "trecho": "\"(Revogada pela Lei nº 15.191, de 2025)\"; \"adota a seguinte Medida Provisória, com força de lei\"; \"Brasília, 11 de abril de 2025\"; assinam Lula e Haddad.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 15.191, de 11 de agosto de 2025",
+      "data": "2025-08-11",
+      "ementa": "Altera a Lei nº 11.482, de 31 de maio de 2007, a fim de modificar os valores da tabela progressiva mensal do Imposto sobre a Renda da Pessoa Física (IRPF); e revoga a Medida Provisória nº 1.294, de 11 de abril de 2025.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página (revoga a MP 1.294/2025)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Lei/L15191.htm",
+      "trecho": "Sem mensagem de veto e sem (VETADO); \"Brasília, 11 de agosto de 2025; 204º da Independência\"; DOU de 11.8.2025.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 14.995, de 10 de outubro de 2024",
+      "data": "2024-10-10",
+      "ementa": "Institui o Programa Acredita no Primeiro Passo e o Programa de Mobilização de Capital Privado Externo e Proteção Cambial – Programa Eco Invest Brasil; altera a Lei nº 13.999, de 18 de maio de 2020, para instituir o Programa de Crédito e Financiamento de Dívidas de Microempreendedores Individuais e Microempresas – Procred 360; institui o Programa de Renegociação de Dívidas de Microempreendedores Individuais, Microempresas, Empresas de Pequeno Porte e Sociedades Cooperativas –Desenrola Pequenos Negócios; cria linha de crédito especial para financiar a aquisição de veículos destinados à renovação da frota utilizada na prestação de serviços de táxi; altera a Medida Provisória nº 2.196-3, de 24 de agosto de 2001, e as Leis nºs 7.827, de 27 de setembro de 1989, 10.735, de 11 de setembro de 2003, 12.087, de 11 de novembro de 2009, 13.340, de 28 de setembro de 2016, 13.606, de 9 de janeiro de 2018, 14.042, de 19 de agosto de 2020, 14.165, de 10 de junho de 2021, e 14.166, de 10 de junho de 2021; e dá outras providências.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 1.725, de 2024 (Mensagem nº 1.255/2024); a lei convalida atos da MP 1.213/2024",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 1.255, de 10 de outubro de 2024",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Msg/Vep/VEP-1255-24.htm",
+        "dispositivos": [
+          "Art. 17 e art. 18",
+          "Art. 43, na parte em que altera o art. 3º-C da Lei nº 13.340/2016",
+          "Art. 43, na parte em que altera os art. 4º e art. 10-A da Lei nº 13.340/2016, e art. 44, na parte que altera o art. 20 da Lei nº 13.606/2018",
+          "Art. 44, na parte em que altera o art. 36 da Lei nº 13.606/2018",
+          "Art. 45",
+          "Art. 47, na parte em que altera o art. 6º da Lei nº 14.166/2021",
+          "Art. 51"
+        ],
+        "data": "2024-10-10",
+        "proposicao": "PL 1.725/2024"
+      },
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Lei/L14995.htm",
+      "trecho": "\"Mensagem de veto\"; catorze marcas (VETADO); \"Brasília, 10 de outubro de 2024; 203º da Independência\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Medida Provisória nº 1.303, de 11 de junho de 2025",
+      "data": "2025-06-11",
+      "ementa": "Dispõe sobre a tributação de aplicações financeiras e ativos virtuais no País e dá outras providências.",
+      "tipo": "medida provisória",
+      "origem": "Iniciativa do Presidente da República (art. 62 da Constituição)",
+      "desdobramento": "Caducou: Ato Declaratório do Presidente da Mesa do Congresso Nacional nº 67, de 2025, declara que a MP 'teve seu prazo de vigência encerrado no dia 8 de outubro de 2025'.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Mpv/mpv1303.htm",
+      "trecho": "\"Vigência encerrada\" (link para ADC 67/2025); \"adota a seguinte Medida Provisória, com força de lei\"; \"Brasília, 11 de junho de 2025\"; assinam Lula, Haddad e Esther Dweck.",
+      "fonteSecundaria": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Congresso/adc-67-mpv1.303.htm",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "economia",
+      "identificador": "Lei nº 15.327, de 6 de janeiro de 2026",
+      "data": "2026-01-06",
+      "ementa": "Veda descontos relativos a mensalidades associativas nos benefícios administrados pelo Instituto Nacional do Seguro Social (INSS); estabelece busca ativa a beneficiários lesados em decorrência de descontos indevidos e prevê o seu ressarcimento; e altera o Decreto-Lei nº 3.240, de 8 de maio de 1941, para disciplinar o sequestro de bens por crimes que envolvam descontos indevidos nos benefícios do INSS, a Lei nº 8.213, de 24 de julho de 1991, para assegurar a proteção de dados pessoais, e as Leis nºs 10.820, de 17 de dezembro de 2003, e 12.213, de 20 de janeiro de 2010.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 1.546, de 2024 (Mensagem nº 9/2026)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 9, de 6 de janeiro de 2026",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vep/VEP-9-26.htm",
+        "dispositivos": [
+          "§ 1º e § 2º do art. 3º",
+          "Art. 9º",
+          "Art. 4º",
+          "Art. 6º, na parte em que inclui o inciso VII e altera o § 2º do art. 115 da Lei nº 8.213/1991",
+          "Art. 6º, na parte em que inclui o § 11 no art. 115 da Lei nº 8.213/1991",
+          "Art. 7º",
+          "Art. 11"
+        ],
+        "data": "2026-01-06",
+        "proposicao": "PL 1.546/2024"
+      },
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Lei/L15327.htm",
+      "trecho": "\"Mensagem de veto\"; nove marcas (VETADO); \"Brasília, 6 de janeiro de 2026; 205º da Independência\"; DOU de 7.1.2026.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 11.366, de 1º de janeiro de 2023",
+      "data": "2023-01-01",
+      "ementa": "Suspende os registros para a aquisição e transferência de armas e de munições de uso restrito por caçadores, colecionadores, atiradores e particulares, restringe os quantitativos de aquisição de armas e de munições de uso permitido, suspende a concessão de novos registros de clubes e de escolas de tiro, suspende a concessão de novos registros de colecionadores, de atiradores e de caçadores, e institui grupo de trabalho para apresentar nova regulamentação à Lei nº 10.826, de 22 de dezembro de 2003.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV, da Constituição e Lei nº 10.826/2003 (preâmbulo)",
+      "desdobramento": "'(Revogado pelo Decreto nº 11.615, de 2023)'; nota '(Vide ADC 85)' do STF. Publicado no DOU de 2.1.2023, edição extra.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/decreto/D11366.htm",
+      "trecho": "\"O PRESIDENTE DA REPÚBLICA, no uso da atribuição que lhe confere o art. 84, caput, inciso IV, da Constituição ... DECRETA\"; \"Brasília, 1º de janeiro de 2023\"; assinam Lula e Flávio Dino.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 11.377, de 8 de janeiro de 2023",
+      "data": "2023-01-08",
+      "ementa": "Decreta intervenção federal no Distrito Federal com o objetivo de pôr termo ao grave comprometimento da ordem pública, nos termos em que especifica.",
+      "tipo": "decreto",
+      "origem": "Art. 84, X, e art. 34, III, da Constituição (preâmbulo)",
+      "desdobramento": "Art. 1º: intervenção até 31/01/2023, limitada à segurança pública; art. 2º nomeia interventor Ricardo Garcia Cappelli. Aprovada pelo Decreto Legislativo nº 1, de 10/01/2023 (Senado, webservice, id 36753151): 'Aprova a intervenção federal na área de segurança pública do Distrito Federal, nos termos do Decreto nº 11.377, de 8 de janeiro de 2023, com o objetivo de pôr fim a grave comprometimento da ordem pública.' Publicado no DOU, edição extra de 10/01/2023.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/decreto/D11377.htm",
+      "trecho": "\"Art. 1º Fica decretada intervenção federal no Distrito Federal até 31 de janeiro de 2023.\"; \"Brasília, 8 de janeiro de 2023\"; assinam Lula e Flávio Dino; DOU de 8.1.2023, edição extra.",
+      "fonteSecundaria": "https://legis.senado.leg.br/dadosabertos/legislacao/36753151 e https://legis.senado.leg.br/norma/36753151 (Decreto Legislativo nº 1/2023)",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 11.615, de 21 de julho de 2023",
+      "data": "2023-07-21",
+      "ementa": "Regulamenta a Lei nº 10.826, de 22 de dezembro de 2003, para estabelecer regras e procedimentos relativos à aquisição, ao registro, à posse, ao porte, ao cadastro e à comercialização nacional de armas de fogo, munições e acessórios, disciplinar as atividades de caça excepcional, de caça de subsistência, de tiro desportivo e de colecionamento de armas de fogo, munições e acessórios, disciplinar o funcionamento das entidades de tiro desportivo e dispor sobre a estruturação do Sistema Nacional de Armas - Sinarm.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV, da Constituição e Lei nº 10.826/2003 (preâmbulo)",
+      "desdobramento": "Art. 83 revoga dispositivos dos Decretos 9.607/2018 e 9.847/2019 e o Decreto 11.366/2023; alterado pelo Decreto 12.345/2024. Nota '(Vide ADC 85)'.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/decreto/D11615.htm",
+      "trecho": "\"DECRETA: ... Art. 1º Este Decreto regulamenta a Lei nº 10.826\"; \"Art. 83. Ficam revogados\"; \"Brasília, 21 de julho de 2023\"; assinam Lula, José Múcio e Flávio Dino.",
+      "fonteSecundaria": "Senado (webservice) confirma 'Decreto nº 11.615 de 21/07/2023', mesma ementa.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 12.345, de 30 de dezembro de 2024",
+      "data": "2024-12-30",
+      "ementa": "Altera o Decreto nº 11.615, de 21 de julho de 2023, que regulamenta a Lei nº 10.826, de 22 de dezembro de 2003, para estabelecer regras e procedimentos relativos à aquisição, ao registro, à posse, ao porte, ao cadastro e à comercialização nacional de armas de fogo, munições e acessórios, disciplinar as atividades de caça excepcional, de caça de subsistência, de tiro desportivo e de colecionamento de armas de fogo, munições e acessórios, disciplinar o funcionamento das entidades de tiro desportivo e dispor sobre a estruturação do Sistema Nacional de Armas –Sinarm.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV, da Constituição e Lei nº 10.826/2003 (preâmbulo)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Decreto/D12345.htm",
+      "trecho": "\"DECRETA: Art. 1º O ...\"; \"Brasília, 30 de dezembro de 2024\"; assinam Lula, José Múcio, Andre Ribeiro e Ricardo Lewandowski; DOU de 31.12.2024.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 14.843, de 11 de abril de 2024",
+      "data": "2024-04-11",
+      "ementa": "Altera a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para dispor sobre a monitoração eletrônica do preso, prever a realização de exame criminológico para progressão de regime e restringir o benefício da saída temporária.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 2.253, de 2022 (Mensagem nº 144/2024)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 144, de 11 de abril de 2024",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/Msg/Vep/VEP-144-24.htm",
+        "dispositivos": [
+          "Art. 2º do Projeto de Lei, na parte em que altera os incisos I e III do caput do art. 122 da Lei nº 7.210, de 11 de julho de 1984 ('I - (revogado);' e 'III - (revogado).')",
+          "Inciso I do caput do art. 3º do Projeto de Lei ('I - incisos I e III do caput do art. 122; e')"
+        ],
+        "data": "2024-04-11",
+        "proposicao": "PL 2.253/2022"
+      },
+      "desdobramento": "Veto fundado em inconstitucionalidade (art. 226 da Constituição, ADPF 347). Derrubada: a página traz '(Promulgação partes vetadas)' com texto de 12/06/2024 (DOU de 13.6.2024) assinado pelo Vice-Presidente Geraldo Alckmin 'no exercício do cargo de Presidente da República', promulgando a revogação dos incisos I e III do art. 122 da LEP (fim da saída temporária para visita à família e para participação em atividades de retorno ao convívio social). A página grafa, com erro, 'Lei nº 14.843, de 11 de abril de 2023'.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L14843.htm",
+      "trecho": "\"Mensagem de veto\"; \"(Promulgação partes vetadas)\"; \"I - (VETADO)\", \"III - (VETADO)\"; \"Brasília, 11 de abril de 2024\"; assinam Lula, Silvio Almeida, Anielle Franco, Lewandowski e Jorge Messias.",
+      "fonteSecundaria": "Senado (webservice) confirma 'Lei nº 14.843 de 11/04/2024', mesma ementa.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 14.811, de 12 de janeiro de 2024",
+      "data": "2024-01-12",
+      "ementa": "Institui medidas de proteção à criança e ao adolescente contra a violência nos estabelecimentos educacionais ou similares, prevê a Política Nacional de Prevenção e Combate ao Abuso e Exploração Sexual da Criança e do Adolescente e altera o Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal), e as Leis nºs 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), e 8.069, de 13 de julho de 1990 (Estatuto da Criança e do Adolescente).",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página",
+      "desdobramento": "Cria o art. 146-A do Código Penal (bullying e cyberbullying) e amplia o rol de crimes hediondos (art. 7º).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L14811.htm",
+      "trecho": "Sem nota de mensagem de veto e sem (VETADO); \"eu sanciono a seguinte Lei\"; \"Brasília, 12 de janeiro de 2024\"; assinam Lula, Camilo Santana, Flávio Dino e Nísia Trindade; DOU de 15.1.2024.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 15.358, de 24 de março de 2026",
+      "data": "2026-03-24",
+      "ementa": "Institui o Marco Legal do Combate ao Crime Organizado no Brasil (Lei Raul Jungmann); tipifica os crimes de domínio social estruturado e de favorecimento ao domínio social estruturado; e altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 (Código Penal), e 3.689, de 3 de outubro de 1941 (Código de Processo Penal), e as Leis nºs 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), 7.210, de 11 de julho de 1984 (Lei de Execução Penal), 11.343, de 23 de agosto de 2006, 10.826, de 22 de dezembro de 2003, 9.613, de 3 de março de 1998, 4.737, de 15 de julho de 1965 (Código Eleitoral) ; 13.756, de 12 de dezembro de 2018; e 14.790, de 29 de dezembro de 2023.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 5.582, de 2025 (Mensagem nº 216/2026)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 216, de 24 de março de 2026",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vep/VEP-216-26.htm",
+        "dispositivos": [
+          "§ 3º do art. 2º do Projeto de Lei (pena para quem pratica as condutas sem integrar organização criminosa ultraviolenta)",
+          "Art. 33 do Projeto de Lei, na parte em que altera o inciso II do caput do art. 91 do Decreto-Lei nº 2.848/1940 (perda de bens em favor da União, dos Estados ou do DF)",
+          "Art. 43 do Projeto de Lei (prazo de 180 dias para proposta de reestruturação dos fundos federais de segurança pública)"
+        ],
+        "data": "2026-03-24",
+        "proposicao": "PL 5.582/2025"
+      },
+      "desdobramento": "É a chamada lei 'antifacção': a sanção ocorreu em 2026 (não em 2025). Define 'organização criminosa ultraviolenta, denominada facção criminosa' (art. 2º, § 2º).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Lei/L15358.htm",
+      "trecho": "\"Mensagem de veto\"; \"§ 3º (VETADO)\", \"II - (VETADO)\", \"Art. 43. (VETADO)\"; \"Brasília, 24 de março de 2026; 205º da Independência\"; assinam Lula, Macaé Evaristo, Wellington César Lima e Silva, Tebet, Boulos e Messias; DOU de 25.3.2026.",
+      "fonteSecundaria": "Senado (webservice) confirma 'Lei nº 15.358 de 24/03/2026', mesma ementa.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 15.245, de 29 de outubro de 2025",
+      "data": "2025-10-29",
+      "ementa": "Altera o Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal), para dispor sobre o crime de associação criminosa, a Lei nº 12.694, de 24 de julho de 2012, para ampliar a proteção pessoal dos agentes públicos ou processuais envolvidos no combate ao crime organizado, e a Lei nº 12.850, de 2 de agosto de 2013, para tipificar as condutas de obstrução de ações contra o crime organizado e de conspiração para obstrução de ações contra o crime organizado.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Lei/L15245.htm",
+      "trecho": "Sem nota de mensagem de veto e sem (VETADO); \"eu sanciono a seguinte Lei\"; \"Brasília, 29 de outubro de 2025\"; assinam Lula e Lewandowski; DOU de 30.10.2025.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 14.994, de 9 de outubro de 2024",
+      "data": "2024-10-09",
+      "ementa": "Altera o Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal), o Decreto-Lei nº 3.688, de 3 de outubro de 1941 (Lei das Contravenções Penais), a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), a Lei nº 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), a Lei nº 11.340, de 7 de agosto de 2006 (Lei Maria da Penha) e o Decreto-Lei nº 3.689, de 3 de outubro de 1941 (Código de Processo Penal), para tornar o feminicídio crime autônomo, agravar a sua pena e a de outros crimes praticados contra a mulher por razões da condição do sexo feminino, bem como para estabelecer outras medidas destinadas a prevenir e coibir a violência praticada contra a mulher.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Lei/L14994.htm",
+      "trecho": "Sem nota de mensagem de veto e sem (VETADO); \"Brasília, 9 de outubro de 2024\"; assinam Lula, Macaé Evaristo, Manoel Carlos de Almeida Neto, Aparecida Gonçalves e Tebet; DOU de 10.10.2024.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 14.751, de 12 de dezembro de 2023",
+      "data": "2023-12-12",
+      "ementa": "Institui a Lei Orgânica Nacional das Polícias Militares e dos Corpos de Bombeiros Militares dos Estados, do Distrito Federal e dos Territórios, nos termos do inciso XXI do caput do art. 22 da Constituição Federal, altera a Lei nº 13.675, de 11 de junho de 2018, e revoga dispositivos do Decreto-Lei nº 667, de 2 de julho de 1969.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 3.045, de 2022 (PL nº 4.363, de 2001, na Câmara) (Mensagem nº 678/2023)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 678, de 12 de dezembro de 2023",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vep/VEP-678-23.htm",
+        "dispositivos": [
+          "Inciso IX do caput do art. 5º",
+          "Inciso XIX do caput do art. 5º",
+          "§ 1º do art. 5º",
+          "Inciso X do caput do art. 6º",
+          "§ 1º do art. 6º",
+          "§ 8º do art. 10",
+          "§ 1º e § 2º do art. 15",
+          "§ 6º do art. 15",
+          "§ 5º do art. 16",
+          "Incisos XII, XX, XXI, XXII, XXVIII e XXXV do caput do art. 18",
+          "Inciso II do caput do art. 19",
+          "Incisos III, IV e V do caput do art. 19",
+          "Art. 20",
+          "Art. 21",
+          "§ 2º do art. 22",
+          "§ 3º do art. 28",
+          "§ 6º do art. 29",
+          "§ 3º do art. 35",
+          "Caput, incisos I e II e §§ 1º, 2º e 3º do art. 40",
+          "Art. 41"
+        ],
+        "data": "2023-12-12",
+        "proposicao": "PL 3.045/2022"
+      },
+      "desdobramento": "Promulgação de partes vetadas em 12/06/2024 pelo Vice-Presidente em exercício (Alckmin): § 2º do art. 15, inciso XII do art. 18, § 2º do art. 22, § 3º do art. 28, § 6º do art. 29, entre outros listados na página.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Lei/L14751.htm",
+      "trecho": "\"Mensagem de veto\"; \"(Promulgação partes vetadas)\"; 28 marcas (VETADO); \"Brasília, 12 de dezembro de 2023\" e \"Brasília, 12 de junho de 2024\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 14.735, de 23 de novembro de 2023",
+      "data": "2023-11-23",
+      "ementa": "Institui a Lei Orgânica Nacional das Polícias Civis, dispõe sobre suas normas gerais de funcionamento e dá outras providências.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 4.503, de 2023 (PL nº 1.949, de 2007, na Câmara) (Mensagem nº 620/2023)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 620, de 23 de novembro de 2023",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vep/VEP-620-23.htm",
+        "dispositivos": [
+          "Incisos IX e XV do caput do art. 5º",
+          "Parágrafo único do art. 17",
+          "Parágrafo único do art. 25",
+          "Incisos X, XI, XII, XIII, XVI, XVII, XIX, XX, XXI, XXII a XXVII e XXVIII do caput do art. 30",
+          "§§ 1º, 8º, 11, 16 e 19 do art. 30",
+          "Art. 31",
+          "§§ 1º a 6º do art. 38",
+          "Art. 42",
+          "Art. 43",
+          "§ 2º do art. 44",
+          "Art. 48"
+        ],
+        "data": "2023-11-23",
+        "proposicao": "PL 4.503/2023"
+      },
+      "desdobramento": "Promulgação de partes vetadas em 12/06/2024 (DOU de 13.6.2024) pelo Vice-Presidente em exercício (Alckmin): incisos X, XI, XIX e XXVIII e § 8º do art. 30.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Lei/L14735.htm",
+      "trecho": "\"Mensagem de veto\"; \"(Promulgação partes vetadas)\"; 37 marcas (VETADO); DOU de 23.11.2023, edição extra.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 14.967, de 9 de setembro de 2024",
+      "data": "2024-09-09",
+      "ementa": "Institui o Estatuto da Segurança Privada e da Segurança das Instituições Financeiras; altera a Lei nº 10.826, de 22 de dezembro de 2003 (Estatuto do Desarmamento), a Lei nº 10.446, de 8 de maio de 2002, a Lei nº 10.637, de 30 de dezembro de 2002, a Lei nº 10.833, de 29 de dezembro de 2003, e o Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal); revoga a Lei nº 7.102, de 20 de junho de 1983, a Lei nº 8.863, de 28 de março de 1994, e dispositivos da Lei nº 11.718, de 20 de junho de 2008, da Lei nº 9.017, de 30 de março de 1995, e da Medida Provisória nº 2.184-23, de 24 de agosto de 2001; e dá outras providências.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Substitutivo da Câmara dos Deputados nº 6, de 2016, ao Projeto de Lei nº 135, de 2010 (Mensagem nº 1.059/2024)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 1.059, de 9 de setembro de 2024",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Msg/Vep/VEP-1059-24.htm",
+        "dispositivos": [
+          "§ 2º do art. 7º",
+          "Inciso VI do caput do art. 19",
+          "§ 2º, § 3º, § 4º e § 5º do art. 20",
+          "Art. 71"
+        ],
+        "data": "2024-09-09",
+        "proposicao": "SCD 6/2016 ao PL 135/2010"
+      },
+      "desdobramento": "Regulamento: Decreto 13.012/2026 (link na página).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Lei/L14967.htm",
+      "trecho": "\"Mensagem de veto\"; \"Regulamento\"; sete marcas (VETADO); \"Brasília, 9 de setembro de 2024; 203º da Independência\".",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 15.306, de 22 de dezembro de 2025",
+      "data": "2025-12-22",
+      "ementa": "Altera a Lei nº 10.826, de 22 de dezembro de 2003 (Estatuto do Desarmamento), para conceder porte de arma de fogo aos policiais legislativos das Assembleias Legislativas dos Estados e da Câmara Legislativa do Distrito Federal.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 5.948, de 2023 (Mensagem nº 1.892/2025)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 1.892, de 22 de dezembro de 2025",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Msg/Vep/VEP-1892-25.htm",
+        "dispositivos": [
+          "Art. 1º do Projeto de Lei, na parte em que altera os § 2º e § 4º do art. 6º da Lei nº 10.826/2003"
+        ],
+        "data": "2025-12-22",
+        "proposicao": "PL 5.948/2023"
+      },
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Lei/L15306.htm",
+      "trecho": "\"Mensagem de veto\"; \"§ 2º (VETADO)\", \"§ 4º (VETADO)\"; \"Brasília, 22 de dezembro de 2025\"; assinam Lula e Lewandowski; DOU de 23.12.2025.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 15.407, de 11 de maio de 2026",
+      "data": "2026-05-11",
+      "ementa": "Altera a Lei nº 11.671, de 8 de maio de 2008, para incluir em estabelecimentos penais federais de segurança máxima o preso, provisório ou condenado, pela prática do crime de homicídio qualificado previsto no inciso VII do § 2º do art. 121 do Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal), e a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para dispor sobre a aplicação do regime disciplinar diferenciado, na forma que especifica.",
+      "tipo": "sanção com veto parcial",
+      "origem": "Projeto de Lei nº 5.391, de 2020 (Mensagem nº 389/2026)",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 389, de 11 de maio de 2026",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/msg/vep/vep-389-26.htm",
+        "dispositivos": [
+          "Art. 3º, na parte em que acrescenta o inciso III ao § 1º do art. 52 da Lei nº 7.210/1984",
+          "Art. 3º, na parte em que acrescenta o inciso IV ao § 1º do art. 52 da Lei nº 7.210/1984",
+          "Art. 3º, na parte em que acrescenta o § 8º ao art. 52 da Lei nº 7.210/1984",
+          "Art. 3º, na parte em que acrescenta o § 9º ao art. 52 da Lei nº 7.210/1984"
+        ],
+        "data": "2026-05-11",
+        "proposicao": "PL 5.391/2020"
+      },
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Lei/l15407.htm",
+      "trecho": "\"Mensagem de veto\"; quatro marcas (VETADO); \"Brasília, 11 de maio de 2026; 205º da Independência\"; assinam Lula, Wellington César Lima e Silva e Jorge Messias; DOU de 12.5.2026, retificado em 22.5.2026.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Lei nº 15.272, de 26 de novembro de 2025",
+      "data": "2025-11-26",
+      "ementa": "Altera o Decreto-Lei nº 3.689, de 3 de outubro de 1941 (Código de Processo Penal), para dispor sobre as circunstâncias que recomendam a conversão da prisão em flagrante em preventiva, sobre a coleta de material biológico para obtenção e armazenamento do perfil genético do custodiado e sobre os critérios para aferição da periculosidade do agente para concessão de prisão preventiva, inclusive quando da audiência de custódia.",
+      "tipo": "sanção expressa sem veto",
+      "origem": "Não informada na página",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Lei/L15272.htm",
+      "trecho": "Sem nota de mensagem de veto e sem (VETADO); \"Brasília, 26 de novembro de 2025; 204º da Independência\"; DOU de 27.11.2025.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Mensagem nº 17, de 8 de janeiro de 2026 (veto total ao Projeto de Lei nº 2.162, de 2023)",
+      "data": "2026-01-08",
+      "ementa": "Projeto de Lei nº 2.162, de 2023, que \"Altera a Lei nº 7.210, de 11 de julho de 1984 – Lei de Execução Penal e o Decreto-Lei nº 2.848, de 7 de dezembro de 1940 – Código Penal.\" (ementa do projeto, transcrita da mensagem)",
+      "tipo": "veto total",
+      "origem": "Projeto de Lei nº 2.162, de 2023",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 17, de 8 de janeiro de 2026",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vet/VET-017-26.htm",
+        "dispositivos": [
+          "Projeto de Lei inteiro (veto integral)"
+        ],
+        "data": "2026-01-08",
+        "proposicao": "PL 2.162/2023"
+      },
+      "desdobramento": "Razão declarada: 'a redução da resposta penal a crimes contra o Estado Democrático de Direito'. Veto derrubado: a Lei nº 15.402, de 8 de maio de 2026 (progressão de regime na LEP) foi promulgada pelo Presidente do Senado, Davi Alcolumbre, 'nos termos do § 7º do art. 66 da Constituição', após o Congresso rejeitar o veto total. A Lei 15.402 não é ato presidencial.",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vet/VET-017-26.htm",
+      "trecho": "\"decidi vetar integralmente, por inconstitucionalidade e contrariedade ao interesse público, o Projeto de Lei nº 2.162, de 2023\"; DOU de 8.1.2026, edição extra.",
+      "fonteSecundaria": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Lei/l15402.htm (\"Faço saber que o Congresso Nacional rejeitou o veto total aposto ao Projeto de Lei nº 2.162, de 2023, e eu, Davi Alcolumbre, Presidente do Senado Federal ... promulgo a seguinte Lei\")",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Mensagem nº 423, de 19 de maio de 2026 (veto total ao Projeto de Lei nº 2.234, de 2023)",
+      "data": "2026-05-19",
+      "ementa": "Projeto de Lei nº 2.234, de 2023, que \"Altera a Lei nº 13.756, de 12 de dezembro de 2018, para contemplar a atividade de segurança viária e os agentes de trânsito nos projetos a serem apoiados pelo Fundo Nacional de Segurança Pública (FNSP), e a Lei nº 9.503, de 23 de setembro de 1997 (Código de Trânsito Brasileiro), para destinar 5% (cinco por cento) do valor arrecadado com as multas de trânsito ao FNSP.\" (ementa do projeto, transcrita da mensagem)",
+      "tipo": "veto total",
+      "origem": "Projeto de Lei nº 2.234, de 2023",
+      "mensagemDeVeto": {
+        "numero": "Mensagem nº 423, de 19 de maio de 2026",
+        "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vet/vet-423-26.htm",
+        "dispositivos": [
+          "Projeto de Lei inteiro (veto integral)"
+        ],
+        "data": "2026-05-19",
+        "proposicao": "PL 2.234/2023"
+      },
+      "desdobramento": "Razão declarada: vinculação permanente de receita de multas ao FNSP sem cláusula de vigência (art. 147 da Lei 15.321/2025) e sem estimativa de impacto (arts. 113 e 138 do ADCT).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vet/vet-423-26.htm",
+      "trecho": "\"decidi vetar integralmente, por inconstitucionalidade e por contrariedade ao interesse público, o Projeto de Lei nº 2.234, de 2023\"; DOU de 20.5.2026.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 12.966, de 12 de maio de 2026",
+      "data": "2026-05-12",
+      "ementa": "Institui o Programa Brasil contra o Crime Organizado.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV e VI, 'a', da Constituição; Leis 12.850/2013 e 13.675/2018 (preâmbulo)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Decreto/d12966.htm",
+      "trecho": "\"DECRETA: CAPÍTULO I\"; \"Brasília, 12 de maio de 2026; 205º da Independência\"; assinam Lula e Wellington César Lima e Silva; DOU de 13.5.2026.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 12.341, de 23 de dezembro de 2024",
+      "data": "2024-12-23",
+      "ementa": "Regulamenta a Lei nº 13.060, de 22 de dezembro de 2014, para disciplinar o uso da força e dos instrumentos de menor potencial ofensivo pelos profissionais de segurança pública.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV e VI, 'a', da Constituição; Lei 13.060/2014 e Lei 13.675/2018 (preâmbulo)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2024/Decreto/D12341.htm",
+      "trecho": "\"DECRETA: CAPÍTULO I\"; \"Brasília, 23 de dezembro de 2024\"; assinam Lula e Lewandowski; DOU de 24.12.2024.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 11.765, de 1º de novembro de 2023",
+      "data": "2023-11-01",
+      "ementa": "Autoriza o emprego das Forças Armadas para a Garantia da Lei e da Ordem em portos e aeroportos.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV, VI 'a' e XIII, da Constituição; arts. 15, 16 e 16-A da LC 97/1999 (preâmbulo)",
+      "desdobramento": "Art. 1º: período de 6/11/2023 a 3/5/2024, prorrogado (texto compilado mostra 'até 4 de junho de 2024'; índice registra o Decreto 12.013/2024 alterando o prazo).",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Decreto/D11765.htm",
+      "trecho": "\"Art. 1º Fica autorizado, no período de 6 de novembro de 2023 ... o emprego das Forças Armadas para a Garantia da Lei e da Ordem\"; \"Brasília, 1º de novembro de 2023\"; assinam Lula, José Múcio e Flávio Dino.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 11.843, de 21 de dezembro de 2023",
+      "data": "2023-12-21",
+      "ementa": "Regulamenta a assistência à pessoa egressa de que tratam os art. 10, art. 11, art. 25, art. 26 e art. 27 da Lei nº 7.210, de 11 de julho de 1984, e institui a Política Nacional de Atenção à Pessoa Egressa do Sistema Prisional.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV e VI, 'a', da Constituição; arts. 10, 11, 25, 26 e 27 da LEP (preâmbulo)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Decreto/D11843.htm",
+      "trecho": "\"DECRETA: CAPÍTULO I\"; \"Brasília, 21 de dezembro de 2023\"; assinam Lula e Flávio Dino; DOU de 22.12.2023.",
+      "acessadoEm": "2026-10-10"
+    },
+    {
+      "tema": "seguranca",
+      "identificador": "Decreto nº 11.436, de 15 de março de 2023",
+      "data": "2023-03-15",
+      "ementa": "Regulamenta a Lei nº 11.530, de 24 de outubro de 2007, para estabelecer os eixos prioritários para a execução do Programa Nacional de Segurança Pública com Cidadania - Pronasci, no biênio 2023-2024, denominado Pronasci 2, e dispõe sobre o Projeto Bolsa-Formação.",
+      "tipo": "decreto",
+      "origem": "Art. 84, IV e VI, 'a', da Constituição; Lei 11.530/2007 (preâmbulo)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Decreto/D11436.htm",
+      "trecho": "\"DECRETA: CAPÍTULO I\"; \"Brasília, 15 de março de 2023\"; assinam Lula e Flávio Dino; DOU de 16.3.2023.",
+      "acessadoEm": "2026-10-10"
+    }
+  ]
+}

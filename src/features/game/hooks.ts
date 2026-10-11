@@ -7,6 +7,7 @@
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 
+import { DEFAULT_PREFERENCES, PREFERENCES_KEY, parsePreferences, serializePreferences, type GamePreferences } from "@/lib/game/preferences";
 import { initialProgress } from "@/lib/game/progress";
 import { createProgressStore, type ProgressStore } from "@/lib/game/storage";
 import type { ChapterSpec, PersonagemSlug, PlayerProgress } from "@/lib/game/types";
@@ -87,7 +88,49 @@ export function useGameProgress(personagem: PersonagemSlug, capitulos: readonly 
 }
 
 // ---------------------------------------------------------------------------
-// Preferências e janela
+// Preferências do jogo (as mesmas para os dois personagens)
+// ---------------------------------------------------------------------------
+
+const preferenceListeners = new Set<() => void>();
+let preferencias: GamePreferences | null = null;
+
+function readPreferences(): GamePreferences {
+  if (preferencias !== null) return preferencias;
+  try {
+    const bruto = window.localStorage.getItem(PREFERENCES_KEY);
+    preferencias = bruto === null ? DEFAULT_PREFERENCES : parsePreferences(JSON.parse(bruto));
+  } catch {
+    preferencias = DEFAULT_PREFERENCES;
+  }
+  return preferencias;
+}
+
+function writePreferences(proximas: GamePreferences) {
+  preferencias = proximas;
+  try {
+    window.localStorage.setItem(PREFERENCES_KEY, serializePreferences(proximas));
+  } catch {
+    // Sem armazenamento, a preferência vale enquanto a página estiver aberta.
+  }
+  for (const listener of preferenceListeners) listener();
+}
+
+function subscribePreferences(listener: () => void) {
+  preferenceListeners.add(listener);
+  return () => {
+    preferenceListeners.delete(listener);
+  };
+}
+
+/** As preferências e como mudá-las. O HTML do build sai com o padrão. */
+export function useGamePreferences() {
+  const atual = useSyncExternalStore(subscribePreferences, readPreferences, () => DEFAULT_PREFERENCES);
+  const setHumor = useCallback((humor: boolean) => writePreferences({ ...readPreferences(), humor }), []);
+  return { preferencias: atual, setHumor };
+}
+
+// ---------------------------------------------------------------------------
+// Preferências do navegador e janela
 // ---------------------------------------------------------------------------
 
 function useMediaQuery(consulta: string, padrao: boolean): boolean {

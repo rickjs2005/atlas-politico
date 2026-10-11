@@ -712,5 +712,207 @@
       "precisao": "dia"
     },
     "acessadoEm": "2026-10-09"
+  },
+  {
+    "id": "senado-dadosabertos-votacao-5894-2023-06-21",
+    "titulo": "Dados Abertos do Senado Federal: votações nominais do Plenário de 21 de junho de 2023 com registro do senador 5894",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2023-06-21&dataFim=2023-06-21",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-dadosabertos-votacao-5894-2023-11-08",
+    "titulo": "Dados Abertos do Senado Federal: votações nominais do Plenário de 8 de novembro de 2023 com registro do senador 5894",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2023-11-08&dataFim=2023-11-08",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-dadosabertos-votacao-5894-2024-02-20",
+    "titulo": "Dados Abertos do Senado Federal: votações nominais do Plenário de 20 de fevereiro de 2024 com registro do senador 5894",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2024-02-20&dataFim=2024-02-20",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-dadosabertos-votacao-5894-2024-04-16",
+    "titulo": "Dados Abertos do Senado Federal: votações nominais do Plenário de 16 de abril de 2024 com registro do senador 5894",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2024-04-16&dataFim=2024-04-16",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-dadosabertos-votacao-5894-2024-12-12",
+    "titulo": "Dados Abertos do Senado Federal: votações nominais do Plenário de 12 de dezembro de 2024 com registro do senador 5894",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2024-12-12&dataFim=2024-12-12",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-dadosabertos-votacao-5894-2025-12-10",
+    "titulo": "Dados Abertos do Senado Federal: votações nominais do Plenário de 10 de dezembro de 2025 com registro do senador 5894",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2025-12-10&dataFim=2025-12-10",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-dadosabertos-materia-pl-1087-2025",
+    "titulo": "Dados Abertos do Senado Federal: ficha da matéria PL 1087/2025",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/materia/PL/1087/2025",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-decreto-11377-2023",
+    "titulo": "Decreto nº 11.377, de 8 de janeiro de 2023",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/decreto/D11377.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2023-01-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "senado-dadosabertos-decreto-legislativo-1-2023",
+    "titulo": "Dados Abertos do Senado Federal: Decreto Legislativo nº 1, de 10 de janeiro de 2023",
+    "autoria": "Senado Federal",
+    "url": "https://legis.senado.leg.br/dadosabertos/legislacao/36753151",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2023-01-10",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-14843-2024",
+    "titulo": "Lei nº 14.843, de 11 de abril de 2024",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L14843.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2024-04-11",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-mensagem-144-2024",
+    "titulo": "Mensagem nº 144, de 11 de abril de 2024 (veto parcial ao Projeto de Lei nº 2.253, de 2022)",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/Msg/Vep/VEP-144-24.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2024-04-11",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-lei-15358-2026",
+    "titulo": "Lei nº 15.358, de 24 de março de 2026",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Lei/L15358.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-03-24",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-mensagem-216-2026",
+    "titulo": "Mensagem nº 216, de 24 de março de 2026 (veto parcial ao Projeto de Lei nº 5.582, de 2025)",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vep/VEP-216-26.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-03-24",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-lei-complementar-200-2023",
+    "titulo": "Lei Complementar nº 200, de 30 de agosto de 2023",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp200.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2023-08-30",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-mensagem-431-2023",
+    "titulo": "Mensagem nº 431, de 30 de agosto de 2023 (veto parcial ao Projeto de Lei Complementar nº 93, de 2023)",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vep/VEP-0431-23.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2023-08-30",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-lei-complementar-214-2025",
+    "titulo": "Lei Complementar nº 214, de 16 de janeiro de 2025",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2025-01-16",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-mensagem-88-2025",
+    "titulo": "Mensagem nº 88, de 16 de janeiro de 2025 (veto parcial ao Projeto de Lei Complementar nº 68, de 2024)",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Msg/Vep/VEP-88-25.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2025-01-16",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-lei-15270-2025",
+    "titulo": "Lei nº 15.270, de 26 de novembro de 2025",
+    "autoria": "Presidência da República",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15270.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2025-11-26",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-10"
   }
 ]

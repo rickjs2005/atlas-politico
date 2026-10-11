@@ -1,22 +1,36 @@
 # Jogo: matriz de cobertura
 
-Gerado por `npm run game:coverage` a partir dos dados publicados (edição 0.1.1, data de corte 2026-10-08) e de `src/lib/game/chapters.ts`. Não edite à mão: o teste `tests/game-coverage.test.ts` confere que este arquivo está em dia e que nenhum acontecimento ficou fora dos capítulos sem justificativa.
+Gerado por `npm run game:coverage` a partir dos dados publicados (edição 0.2.0, data de corte 2026-10-08) e de `src/lib/game/chapters.ts`. Não edite à mão: o teste `tests/game-coverage.test.ts` confere que este arquivo está em dia e que nenhum acontecimento ficou fora dos capítulos sem justificativa.
 
 Acontecimentos publicados: 39. Em capítulos: 39. O primeiro turno de 2026 pertence aos dois personagens e aparece uma vez na trajetória de cada um.
 
+Decisões publicadas (votos vigentes e atos do Executivo): 12. Em capítulos: 12. Uma decisão aparece na sala do seu tema e, quando está ligada a um acontecimento da trajetória, também no capítulo dele.
+
 ## Flávio Bolsonaro
 
-20 acontecimentos, 5 capítulos, 20 em capítulo.
+20 acontecimentos, 7 capítulos em 3 salas, 20 acontecimentos em capítulo, 6 decisões publicadas, 6 em capítulo.
 
-### Capítulos
+### Sala Histórico
 
 | Nº | Capítulo | Período | Cenário | Época da figura | Registros | Tarefa |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Assembleia e disputa pela Prefeitura (`flavio-bolsonaro-1-alerj`) | 2002–2016 | Salão da Assembleia (`alerj`, arte `alerj`) | figura dos primeiros anos | 5 | encontrar um registro: `flavio-bolsonaro-2002-eleito-deputado-estadual` |
 | 2 | Senado: eleição, Mesa e partido (`flavio-bolsonaro-2-senado`) | 2018–2019 | Plenário do Senado (`senado`, arte `senado`) | figura dos anos intermediários | 3 | ordem de dois registros: `flavio-bolsonaro-2018-eleito-senador` e `flavio-bolsonaro-2019-terceiro-secretario-do-senado` |
 | 3 | Denúncia, partidos e decisões judiciais (`flavio-bolsonaro-3-denuncia`) | 2020–2022 | Sala de audiências (`tribunal-b`, arte `tribunal`) | figura dos anos intermediários | 6 | documento que sustenta: `flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao` |
-| 4 | Liderança da Minoria, relatoria e comissão (`flavio-bolsonaro-4-minoria`) | 2023–2025 | Sala de comissão (`comissao`, arte `comissao`) | figura dos anos recentes | 3 | lugar documentado: `flavio-bolsonaro-2024-relatoria-das-saidas-temporarias` |
-| 5 | Indicação, convenção e primeiro turno (`flavio-bolsonaro-5-eleicao-2026`) | 2025–2026 | Auditório de convenção (`convencao-b`, arte `convencao`) | figura dos anos recentes | 3 | ordem de dois registros: `flavio-bolsonaro-2026-convencao-do-pl` e `eleicao-2026-primeiro-turno` |
+| 4 | Liderança da Minoria, relatoria e comissão (`flavio-bolsonaro-4-minoria`) | 2023–2025 | Sala de comissão (`comissao`, arte `comissao`) | figura dos anos recentes | 4 (3 acontecimentos, 1 decisões) | evidência e interpretação de uma decisão: `senado-voto-6818-5894` |
+| 5 | Indicação, convenção e primeiro turno (`flavio-bolsonaro-5-eleicao-2026`) | 2025–2026 | Auditório de convenção (`convencao-b`, arte `convencao`) | figura dos anos recentes | 3 | lugar documentado: `flavio-bolsonaro-2026-convencao-do-pl` |
+
+### Sala Economia
+
+| Nº | Capítulo | Período | Cenário | Época da figura | Registros | Tarefa |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Regime fiscal, reforma tributária e sua regulamentação (`flavio-bolsonaro-economia`) | 2023–2024 | Sala de arquivo (`arquivo-economia-b`, arte `gabinete`) | figura dos anos recentes | 3 (0 acontecimentos, 3 decisões) | evidência e interpretação de uma decisão: `senado-voto-6714-5894` |
+
+### Sala Segurança pública
+
+| Nº | Capítulo | Período | Cenário | Época da figura | Registros | Tarefa |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Saídas temporárias, drogas na Constituição e crime organizado (`flavio-bolsonaro-seguranca-publica`) | 2024–2025 | Sala de arquivo (`arquivo-seguranca-b`, arte `comissao`) | figura dos anos recentes | 3 (0 acontecimentos, 3 decisões) | evidência e interpretação de uma decisão: `senado-voto-6825-5894` |
 
 ### Acontecimento → capítulo
 
@@ -43,11 +57,22 @@ Acontecimentos publicados: 39. Em capítulos: 39. O primeiro turno de 2026 perte
 | 25 de julho de 2026 | PL oficializa a candidatura de Flávio Bolsonaro à Presidência | `flavio-bolsonaro-2026-convencao-do-pl` | 5. Indicação, convenção e primeiro turno |
 | 4 de outubro de 2026 | Flávio Bolsonaro e Lula passam ao segundo turno da eleição presidencial | `eleicao-2026-primeiro-turno` | 5. Indicação, convenção e primeiro turno |
 
+### Decisão → capítulos
+
+| Data | Decisão | Natureza | Temas | Identificador | Capítulos |
+| --- | --- | --- | --- | --- | --- |
+| 21 de junho de 2023 | Votação: PLP 93/2023, texto principal | voto | Economia | `senado-voto-6714-5894` | Economia, 1. Regime fiscal, reforma tributária e sua regulamentação |
+| 8 de novembro de 2023 | Votação: PEC 45/2019, texto principal | voto | Economia | `senado-voto-6777-5894` | Economia, 1. Regime fiscal, reforma tributária e sua regulamentação |
+| 20 de fevereiro de 2024 | Votação: PL 2253/2022, texto principal | voto | Segurança pública | `senado-voto-6818-5894` | Histórico, 4. Liderança da Minoria, relatoria e comissão; Segurança pública, 1. Saídas temporárias, drogas na Constituição e crime organizado |
+| 16 de abril de 2024 | Votação: PEC 45/2023, texto principal | voto | Segurança pública | `senado-voto-6825-5894` | Segurança pública, 1. Saídas temporárias, drogas na Constituição e crime organizado |
+| 12 de dezembro de 2024 | Votação: PLP 68/2024, substitutivo | voto | Economia | `senado-voto-6899-5894` | Economia, 1. Regime fiscal, reforma tributária e sua regulamentação |
+| 10 de dezembro de 2025 | Votação: PL 5582/2025, substitutivo | voto | Segurança pública | `senado-voto-7037-5894` | Segurança pública, 1. Saídas temporárias, drogas na Constituição e crime organizado |
+
 ## Lula
 
-20 acontecimentos, 6 capítulos, 20 em capítulo.
+20 acontecimentos, 8 capítulos em 3 salas, 20 acontecimentos em capítulo, 6 decisões publicadas, 6 em capítulo.
 
-### Capítulos
+### Sala Histórico
 
 | Nº | Capítulo | Período | Cenário | Época da figura | Registros | Tarefa |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -55,8 +80,20 @@ Acontecimentos publicados: 39. Em capítulos: 39. O primeiro turno de 2026 perte
 | 2 | Constituinte e disputas presidenciais (`lula-2-constituinte`) | 1986–1994 | Plenário da Constituinte (`constituinte`, arte `constituinte`) | figura dos anos intermediários | 3 | ordem de dois registros: `lula-1986-eleito-deputado-federal-constituinte` e `lula-1989-primeira-candidatura-a-presidencia` |
 | 3 | Presidência: eleição e reeleição (`lula-3-presidencia`) | 2002–2006 | Comitê de campanha (`comite`, arte `comite`) | figura dos anos intermediários | 2 | documento que sustenta: `lula-2002-eleito-presidente` |
 | 4 | Nomeação suspensa, processos e prisão (`lula-4-processos`) | 2016–2019 | Sala de audiências (`tribunal-a`, arte `tribunal`) | figura dos anos recentes | 6 | ordem de dois registros: `lula-2017-condenacao-em-primeira-instancia` e `lula-2018-tribunal-confirma-condenacao` |
-| 5 | Anulação, terceira eleição e intervenção federal (`lula-5-anulacao`) | 2021–2023 | Gabinete (`gabinete`, arte `gabinete`) | figura dos anos recentes | 3 | lugar documentado: `lula-2021-stf-anula-condenacoes` |
+| 5 | Anulação, terceira eleição e intervenção federal (`lula-5-anulacao`) | 2021–2023 | Gabinete (`gabinete`, arte `gabinete`) | figura dos anos recentes | 4 (3 acontecimentos, 1 decisões) | evidência e interpretação de uma decisão: `planalto-decreto-11377-2023-intervencao-df` |
 | 6 | Convenção e primeiro turno de 2026 (`lula-6-eleicao-2026`) | 2026 | Auditório de convenção (`convencao-a`, arte `convencao`) | figura dos anos recentes | 2 | documento que sustenta: `eleicao-2026-primeiro-turno` |
+
+### Sala Economia
+
+| Nº | Capítulo | Período | Cenário | Época da figura | Registros | Tarefa |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Regime fiscal, reforma tributária e imposto de renda (`lula-economia`) | 2023–2025 | Sala de arquivo (`arquivo-economia-a`, arte `gabinete`) | figura dos anos recentes | 3 (0 acontecimentos, 3 decisões) | evidência e interpretação de uma decisão: `planalto-lei-complementar-200-2023-regime-fiscal` |
+
+### Sala Segurança pública
+
+| Nº | Capítulo | Período | Cenário | Época da figura | Registros | Tarefa |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Intervenção federal, saídas temporárias e crime organizado (`lula-seguranca-publica`) | 2023–2026 | Sala de arquivo (`arquivo-seguranca-a`, arte `comissao`) | figura dos anos recentes | 3 (0 acontecimentos, 3 decisões) | evidência e interpretação de uma decisão: `planalto-lei-14843-2024-saidas-temporarias` |
 
 ### Acontecimento → capítulo
 
@@ -83,6 +120,17 @@ Acontecimentos publicados: 39. Em capítulos: 39. O primeiro turno de 2026 perte
 | 2 de agosto de 2026 | PT oficializa a candidatura de Lula à reeleição | `lula-2026-convencao-do-pt` | 6. Convenção e primeiro turno de 2026 |
 | 4 de outubro de 2026 | Flávio Bolsonaro e Lula passam ao segundo turno da eleição presidencial | `eleicao-2026-primeiro-turno` | 6. Convenção e primeiro turno de 2026 |
 
+### Decisão → capítulos
+
+| Data | Decisão | Natureza | Temas | Identificador | Capítulos |
+| --- | --- | --- | --- | --- | --- |
+| 8 de janeiro de 2023 | Decreto nº 11.377, de 8 de janeiro de 2023 | ato do Executivo | Segurança pública | `planalto-decreto-11377-2023-intervencao-df` | Histórico, 5. Anulação, terceira eleição e intervenção federal; Segurança pública, 1. Intervenção federal, saídas temporárias e crime organizado |
+| 30 de agosto de 2023 | Lei Complementar nº 200, de 30 de agosto de 2023 | ato do Executivo | Economia | `planalto-lei-complementar-200-2023-regime-fiscal` | Economia, 1. Regime fiscal, reforma tributária e imposto de renda |
+| 11 de abril de 2024 | Lei nº 14.843, de 11 de abril de 2024 | ato do Executivo | Segurança pública | `planalto-lei-14843-2024-saidas-temporarias` | Segurança pública, 1. Intervenção federal, saídas temporárias e crime organizado |
+| 16 de janeiro de 2025 | Lei Complementar nº 214, de 16 de janeiro de 2025 | ato do Executivo | Economia | `planalto-lei-complementar-214-2025-ibs-cbs` | Economia, 1. Regime fiscal, reforma tributária e imposto de renda |
+| 26 de novembro de 2025 | Lei nº 15.270, de 26 de novembro de 2025 | ato do Executivo | Economia | `planalto-lei-15270-2025-imposto-de-renda` | Economia, 1. Regime fiscal, reforma tributária e imposto de renda |
+| 24 de março de 2026 | Lei nº 15.358, de 24 de março de 2026 | ato do Executivo | Segurança pública | `planalto-lei-15358-2026-crime-organizado` | Segurança pública, 1. Intervenção federal, saídas temporárias e crime organizado |
+
 ## Exclusões justificadas
 
-Nenhuma: todos os acontecimentos publicados dos dois personagens estão em capítulos.
+Nenhuma: todos os acontecimentos e todas as decisões publicadas dos dois personagens estão em capítulos.

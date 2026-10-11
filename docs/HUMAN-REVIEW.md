@@ -1,6 +1,6 @@
 # Revisão humana: o que conferir, trecho a trecho
 
-Gerado por `npm run review:human` a partir dos dados publicados (edição 0.1.1, data de corte 2026-10-08). Não edite à mão: o teste `tests/human-review.test.ts` confere que este arquivo está em dia. A conferência registrada no conteúdo é toda assistida por IA (0 registros com revisão humana); a política editorial ([EDITORIAL.md](EDITORIAL.md)) condiciona a publicação à revisão por uma pessoa, e a lista abaixo é o roteiro dela.
+Gerado por `npm run review:human` a partir dos dados publicados (edição 0.2.0, data de corte 2026-10-08). Não edite à mão: o teste `tests/human-review.test.ts` confere que este arquivo está em dia. A conferência registrada no conteúdo é toda assistida por IA (0 registros com revisão humana); a política editorial ([EDITORIAL.md](EDITORIAL.md)) condiciona a publicação à revisão por uma pessoa, e a lista abaixo é o roteiro dela.
 
 ## Como usar
 
@@ -9,7 +9,7 @@ Gerado por `npm run review:human` a partir dos dados publicados (edição 0.1.1,
 3. Só depois da leitura real, a pessoa que conferiu registra a revisão como humana no conteúdo (`revisao.tipo: "humana"`, com nome e data). O código e os scripts nunca fazem isso sozinhos.
 4. Marque a caixa de cada item com o nome e a data. O arquivo gerado é regravado pelo comando; guarde as marcações em cópia própria ou no controle de versão da edição.
 
-Resumo: 39 acontecimentos (10 judiciais, 16 eleitorais, 4 de partidos, 3 de mandatos e funções, 6 demais), 8 filiações, 15 mandatos, 60 fontes.
+Resumo: 39 acontecimentos (10 judiciais, 16 eleitorais, 4 de partidos, 3 de mandatos e funções, 6 demais), 8 filiações, 15 mandatos, 12 decisões políticas (6 votos e 6 atos do Executivo, sobre 7 proposições), 4 declarações de cobertura da pesquisa, 1 identidades institucionais, 78 fontes.
 
 ## 1. Episódios judiciais (10 acontecimentos)
 
@@ -458,7 +458,7 @@ Cargo, instituição e período, inclusive os em curso na data de corte.
 
 ### Flávio Bolsonaro: Deputado estadual (quatro mandatos consecutivos), Assembleia Legislativa do Estado do Rio de Janeiro (Alerj), 2003 a 2019
 
-- Identificador: `flavio-bolsonaro-deputado-estadual-2003-2019` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `flavio-bolsonaro-deputado-estadual-2003-2019` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Flávio Bolsonaro e Lula disputam o segundo turno das eleições para presidente](https://www12.senado.leg.br/noticias/materias/2026/10/04/flavio-bolsonaro-e-lula-disputam-o-segundo-turno-das-eleicoes-para-presidente), Agência Senado. Onde olhar: Parágrafo sobre a carreira de Flávio Bolsonaro. Sustenta: Deputado estadual a partir de 2003; saiu da Assembleia Legislativa em 2019 para o Senado.
   - [DivulgaCandContas: candidatura de Flávio Bolsonaro a presidente em 2026](https://divulgacandcontas.tse.jus.br/divulga/#/candidato/BRASIL/BR/20322002026/280002551544/2026/BR), Tribunal Superior Eleitoral. Onde olhar: Lista de eleições anteriores da ficha do candidato. Sustenta: Eleito deputado estadual em 2006, 2010 e 2014.
@@ -467,7 +467,7 @@ Cargo, instituição e período, inclusive os em curso na data de corte.
 
 ### Flávio Bolsonaro: Senador (RJ), Senado Federal, desde 1º de fevereiro de 2019
 
-- Identificador: `flavio-bolsonaro-senador-2019` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `flavio-bolsonaro-senador-2019` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Dados Abertos do Senado: mandatos do senador Flávio Bolsonaro](https://legis.senado.leg.br/dadosabertos/senador/5894/mandatos), Senado Federal. Onde olhar: Mandato 532: legislaturas e exercícios. Sustenta: Titular pelo Rio de Janeiro nas legislaturas 56 e 57, de 1º de fevereiro de 2019 a 31 de janeiro de 2027, em exercício desde o início.
   - [Perfil do senador Flávio Bolsonaro](https://www25.senado.leg.br/pt_BR/web/senadores/senador/-/perfil/5894), Senado Federal. Onde olhar: Quadro Chapa. Sustenta: Em exercício na data de acesso.
@@ -475,42 +475,42 @@ Cargo, instituição e período, inclusive os em curso na data de corte.
 
 ### Flávio Bolsonaro: 3º secretário da Comissão Diretora, Senado Federal, 6 de fevereiro de 2019 a 14 de dezembro de 2020
 
-- Identificador: `flavio-bolsonaro-terceiro-secretario-do-senado` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `flavio-bolsonaro-terceiro-secretario-do-senado` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Dados Abertos do Senado: cargos do senador Flávio Bolsonaro](https://legis.senado.leg.br/dadosabertos/senador/5894/cargos), Senado Federal. Onde olhar: Cargo na Comissão Diretora do Senado Federal (CDIR). Sustenta: 3º secretário de 6 de fevereiro de 2019 a 14 de dezembro de 2020.
 - [ ] Conferido por: ______ em ____/____/______
 
 ### Flávio Bolsonaro: Vice-líder do Governo no Congresso Nacional, Congresso Nacional, 6 de abril de 2020 a 31 de janeiro de 2023
 
-- Identificador: `flavio-bolsonaro-vice-lider-do-governo-no-congresso` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `flavio-bolsonaro-vice-lider-do-governo-no-congresso` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Dados Abertos do Senado: cargos de liderança do senador Flávio Bolsonaro](https://legis.senado.leg.br/dadosabertos/composicao/lideranca?codigoParlamentar=5894), Senado Federal. Onde olhar: Liderança do Governo no Congresso Nacional. Sustenta: Vice-líder de 6 de abril de 2020 a 31 de janeiro de 2023.
 - [ ] Conferido por: ______ em ____/____/______
 
 ### Flávio Bolsonaro: Líder do Patriota no Senado, Senado Federal, junho de 2021 a 29 de novembro de 2021
 
-- Identificador: `flavio-bolsonaro-lider-do-patriota-no-senado` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `flavio-bolsonaro-lider-do-patriota-no-senado` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Dados Abertos do Senado: cargos de liderança do senador Flávio Bolsonaro](https://legis.senado.leg.br/dadosabertos/composicao/lideranca?codigoParlamentar=5894), Senado Federal. Onde olhar: Liderança de Partido no Senado Federal (Patriota). Sustenta: Líder até 29 de novembro de 2021. A designação aparece com 4 de junho de 2021 no campo de data e 7 de junho na observação do mesmo registro; o início fica com a precisão de mês.
 - [ ] Conferido por: ______ em ____/____/______
 
 ### Flávio Bolsonaro: Líder do PL no Senado, Senado Federal, 10 de junho de 2022 a 16 de fevereiro de 2023
 
-- Identificador: `flavio-bolsonaro-lider-do-pl-no-senado` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `flavio-bolsonaro-lider-do-pl-no-senado` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Dados Abertos do Senado: cargos de liderança do senador Flávio Bolsonaro](https://legis.senado.leg.br/dadosabertos/composicao/lideranca?codigoParlamentar=5894), Senado Federal. Onde olhar: Liderança de Partido no Senado Federal (PL), duas designações seguidas. Sustenta: Líder de 10 de junho de 2022 a 31 de janeiro de 2023 e de 1º a 16 de fevereiro de 2023.
 - [ ] Conferido por: ______ em ____/____/______
 
 ### Flávio Bolsonaro: Líder da Minoria no Congresso Nacional, Congresso Nacional, 5 de abril de 2023 a 26 de fevereiro de 2025
 
-- Identificador: `flavio-bolsonaro-lider-da-minoria-no-congresso` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `flavio-bolsonaro-lider-da-minoria-no-congresso` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Dados Abertos do Senado: cargos de liderança do senador Flávio Bolsonaro](https://legis.senado.leg.br/dadosabertos/composicao/lideranca?codigoParlamentar=5894), Senado Federal. Onde olhar: Liderança da Minoria no Congresso Nacional. Sustenta: Líder de 5 de abril de 2023 a 26 de fevereiro de 2025.
 - [ ] Conferido por: ______ em ____/____/______
 
 ### Flávio Bolsonaro: Presidente da Comissão de Segurança Pública, Senado Federal, desde 19 de fevereiro de 2025
 
-- Identificador: `flavio-bolsonaro-presidente-da-comissao-de-seguranca-publica` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `flavio-bolsonaro-presidente-da-comissao-de-seguranca-publica` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Dados Abertos do Senado: cargos do senador Flávio Bolsonaro](https://legis.senado.leg.br/dadosabertos/senador/5894/cargos), Senado Federal. Onde olhar: Cargo na Comissão de Segurança Pública (CSP). Sustenta: Presidente desde 19 de fevereiro de 2025, sem data de fim registrada.
   - [Flávio Bolsonaro e Lula disputam o segundo turno das eleições para presidente](https://www12.senado.leg.br/noticias/materias/2026/10/04/flavio-bolsonaro-e-lula-disputam-o-segundo-turno-das-eleicoes-para-presidente), Agência Senado. Onde olhar: Parágrafo sobre a carreira de Flávio Bolsonaro. Sustenta: Em outubro de 2026 presidia a comissão.
@@ -533,7 +533,7 @@ Cargo, instituição e período, inclusive os em curso na data de corte.
 
 ### Lula: Deputado federal constituinte (SP), Câmara dos Deputados, 1º de fevereiro de 1987 a 1991
 
-- Identificador: `lula-deputado-federal-1987-1991` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `lula-deputado-federal-1987-1991` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026: Câmara dos Deputados, pelo mandato de deputado federal. A Assembleia Nacional Constituinte (1987 a 1988) é instituição própria no modelo e não está declarada neste mandato: as decisões da Constituinte, se entrarem, pedem registro próprio.
 - Fontes:
   - [Biografia do deputado federal Luiz Inácio Lula da Silva](https://www.camara.leg.br/deputados/139289/biografia), Câmara dos Deputados. Onde olhar: Seção Mandatos (na Câmara dos Deputados) e registro da 48ª Legislatura. Sustenta: Mandato de 1987 a 1991 por São Paulo, pelo PT, com posse em 1º de fevereiro de 1987.
 - [ ] Conferido por: ______ em ____/____/______
@@ -547,7 +547,7 @@ Cargo, instituição e período, inclusive os em curso na data de corte.
 
 ### Lula: Presidente da República (primeiro mandato), Presidência da República, 1º de janeiro de 2003 a 1º de janeiro de 2007
 
-- Identificador: `lula-presidente-da-republica-2003-2007` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `lula-presidente-da-republica-2003-2007` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Congresso empossa Lula e Alckmin na Presidência da República](https://www12.senado.leg.br/noticias/materias/2023/01/01/congresso-empossa-lula-e-alckmin-na-presidencia-da-republica), Agência Senado. Onde olhar: Terceiro parágrafo. Sustenta: Esteve à frente do Palácio do Planalto de 1º de janeiro de 2003 a 1º de janeiro de 2011.
   - [Veja a íntegra do discurso de posse do presidente Lula](https://www.camara.leg.br/noticias/93776-veja-a-integra-do-discurso-de-posse-do-presidente-lula), Agência Câmara de Notícias. Onde olhar: Data da publicação e primeiro parágrafo do discurso. Sustenta: Posse do segundo mandato em 1º de janeiro de 2007, quatro anos depois da primeira.
@@ -555,7 +555,7 @@ Cargo, instituição e período, inclusive os em curso na data de corte.
 
 ### Lula: Presidente da República (segundo mandato), Presidência da República, 1º de janeiro de 2007 a 1º de janeiro de 2011
 
-- Identificador: `lula-presidente-da-republica-2007-2011` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `lula-presidente-da-republica-2007-2011` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Veja a íntegra do discurso de posse do presidente Lula](https://www.camara.leg.br/noticias/93776-veja-a-integra-do-discurso-de-posse-do-presidente-lula), Agência Câmara de Notícias. Onde olhar: Data da publicação e primeiro parágrafo do discurso. Sustenta: Posse do segundo mandato em 1º de janeiro de 2007.
   - [Congresso empossa Lula e Alckmin na Presidência da República](https://www12.senado.leg.br/noticias/materias/2023/01/01/congresso-empossa-lula-e-alckmin-na-presidencia-da-republica), Agência Senado. Onde olhar: Terceiro parágrafo. Sustenta: Deixou a Presidência em 1º de janeiro de 2011.
@@ -563,7 +563,7 @@ Cargo, instituição e período, inclusive os em curso na data de corte.
 
 ### Lula: Presidente da República (terceiro mandato), Presidência da República, desde 1º de janeiro de 2023
 
-- Identificador: `lula-presidente-da-republica-2023` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente.
+- Identificador: `lula-presidente-da-republica-2023` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-09; observações: Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro.
 - Fontes:
   - [Congresso empossa Lula e Alckmin na Presidência da República](https://www12.senado.leg.br/noticias/materias/2023/01/01/congresso-empossa-lula-e-alckmin-na-presidencia-da-republica), Agência Senado. Onde olhar: Primeiro parágrafo. Sustenta: Posse em 1º de janeiro de 2023.
   - [Flávio Bolsonaro (PL) e Lula (PT) vão disputar o 2º turno para a Presidência da República](https://www.tse.jus.br/comunicacao/noticias/2026/Outubro/flavio-bolsonaro-e-lula-vao-disputar-o-2o-turno-para-a-presidencia-da-republica), Tribunal Superior Eleitoral. Onde olhar: Parágrafo sobre Lula. Sustenta: Em outubro de 2026 exercia o terceiro mandato.
@@ -633,4 +633,195 @@ Datas na precisão documentada, lugares e o que cada citação sustenta.
   - [Pela segunda vez, Congresso acaba com saídas temporárias de presos em feriados](https://www12.senado.leg.br/noticias/materias/2024/05/28/pela-segunda-vez-congresso-acaba-com-saidas-temporarias-de-presos-em-feriados), Agência Senado. Onde olhar: Primeiro e segundo parágrafos e data de publicação. Sustenta: Veto do presidente Lula e derrubada pelo Congresso em 28 de maio de 2024.
   - [Flávio Bolsonaro e Lula disputam o segundo turno das eleições para presidente](https://www12.senado.leg.br/noticias/materias/2026/10/04/flavio-bolsonaro-e-lula-disputam-o-segundo-turno-das-eleicoes-para-presidente), Agência Senado. Onde olhar: Parágrafo sobre a carreira de Flávio Bolsonaro. Sustenta: Relator do texto que resultou na Lei 14.843, de 2024.
   - [Perfil do senador Flávio Bolsonaro](https://www25.senado.leg.br/pt_BR/web/senadores/senador/-/perfil/5894), Senado Federal. Onde olhar: Rodapé da página. Sustenta: Sede do Senado Federal em Brasília.
+- [ ] Conferido por: ______ em ____/____/______
+
+## 6. Decisões políticas: votos e atos do Executivo (12 decisões, 4 coberturas da pesquisa e 1 identidades institucionais)
+
+Cada decisão é uma amostra documentada, e não o histórico completo. Conferir, no voto: a votação (objeto votado, etapa, modalidade e resultado oficial) contra a ata ou o painel da sessão, e a manifestação registrada com o valor original do acervo. No ato do Executivo: o identificador, a data, o tipo (sanção, veto parcial com os dispositivos, decreto) contra a página oficial e a mensagem de veto. Um voto em requerimento ou em substitutivo não é voto no projeto inteiro, e a posição vale só para o objeto votado. Conferir também a cobertura declarada da pesquisa, com as lacunas, e a classificação de temas, que é decisão editorial.
+
+### 8 de janeiro de 2023: Decreto nº 11.377, de 8 de janeiro de 2023
+
+- Identificador: `planalto-decreto-11377-2023-intervencao-df` · Pessoa: Lula · Ato do Executivo · Presidência da República · Temas: Segurança pública · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Presidente da República (terceiro mandato), Presidência da República (`lula-presidente-da-republica-2023`)
+- **Ato a conferir:** Decreto; Decreto nº 11.377, de 8 de janeiro de 2023; Decreto: 11377/2023
+- Fontes:
+  - [Decreto nº 11.377, de 8 de janeiro de 2023](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/decreto/D11377.htm), Presidência da República. Onde olhar: Ementa, art. 1º e fecho do decreto. Sustenta: Decreta intervenção federal no Distrito Federal, limitada à área de segurança pública, até 31 de janeiro de 2023; assinado em Brasília em 8 de janeiro de 2023 pelo presidente Luiz Inácio Lula da Silva e pelo ministro da Justiça.
+  - [Dados Abertos do Senado Federal: Decreto Legislativo nº 1, de 10 de janeiro de 2023](https://legis.senado.leg.br/dadosabertos/legislacao/36753151), Senado Federal. Onde olhar: Campos normaNome, dataassinatura e ementa. Sustenta: O Decreto Legislativo nº 1, de 10 de janeiro de 2023, aprova a intervenção federal na área de segurança pública do Distrito Federal, nos termos do Decreto nº 11.377.
+  - Documento oficial do ato: [Decreto nº 11.377, de 8 de janeiro de 2023](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/decreto/D11377.htm)
+- [ ] Conferido por: ______ em ____/____/______
+
+### 21 de junho de 2023: Votação: PLP 93/2023, texto principal
+
+- Identificador: `senado-voto-6714-5894` · Pessoa: Flávio Bolsonaro · Voto parlamentar · Senado Federal · Temas: Economia · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Senador (RJ), Senado Federal (`flavio-bolsonaro-senador-2019`)
+- **Votação a conferir** (`senado-votacao-6714`): Texto principal; Votação nominal do Projeto de Lei Complementar nº 39, de 2023,e das emendas, nos termos do parecer, ressalvados os destaques.; etapa: Turno não informado pelo acervo; Plenário, nominal; resultado oficial: aprovado (valor original "A").
+- **Manifestação a conferir:** Contra (valor original "Não")
+- **Proposição a conferir** (`senado-plp-93-2023`): PLP 93/2023, Senado Federal: Institui regime fiscal sustentável para garantir a estabilidade macroeconômica do País e criar as condições adequadas ao crescimento socioeconômico, com fundamento no art. 6º da Emenda Constitucional nº 126, de 21 de dezembro de 2022, e no inciso VIII do caput e no parágrafo único do art. 163 da Constituição Federal; e altera a Lei Complementar nº 101, de 4 de maio de 2000 (Lei de Responsabilidade Fiscal), e a Lei nº 10.633, de 27 de dezembro de 2002.
+- Fontes:
+  - [Dados Abertos do Senado Federal: votações nominais do Plenário de 21 de junho de 2023 com registro do senador 5894](https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2023-06-21&dataFim=2023-06-21), Senado Federal. Onde olhar: votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6714. Sustenta: siglaVotoParlamentar: Não
+- [ ] Conferido por: ______ em ____/____/______
+
+### 30 de agosto de 2023: Lei Complementar nº 200, de 30 de agosto de 2023
+
+- Identificador: `planalto-lei-complementar-200-2023-regime-fiscal` · Pessoa: Lula · Ato do Executivo · Presidência da República · Temas: Economia · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Presidente da República (terceiro mandato), Presidência da República (`lula-presidente-da-republica-2023`)
+- **Ato a conferir:** Veto parcial; Lei Complementar nº 200, de 30 de agosto de 2023; Mensagem de veto: Mensagem nº 431, de 30 de agosto de 2023; Dispositivos vetados: § 3º do art. 7º do Projeto de Lei Complementar; Art. 11 do Projeto de Lei Complementar, na parte em que altera o § 7º do art. 4º da Lei Complementar nº 101, de 4 de maio de 2000
+- **Proposição a conferir** (`senado-plp-93-2023`): PLP 93/2023, Senado Federal: Institui regime fiscal sustentável para garantir a estabilidade macroeconômica do País e criar as condições adequadas ao crescimento socioeconômico, com fundamento no art. 6º da Emenda Constitucional nº 126, de 21 de dezembro de 2022, e no inciso VIII do caput e no parágrafo único do art. 163 da Constituição Federal; e altera a Lei Complementar nº 101, de 4 de maio de 2000 (Lei de Responsabilidade Fiscal), e a Lei nº 10.633, de 27 de dezembro de 2002.
+- Fontes:
+  - [Lei Complementar nº 200, de 30 de agosto de 2023](https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp200.htm), Presidência da República. Onde olhar: Cabeçalho (notas "Mensagem de veto" e "Promulgação partes vetadas"), ementa, dispositivos marcados (VETADO) e fecho. Sustenta: Lei complementar sancionada em 30 de agosto de 2023 com veto parcial; institui o regime fiscal sustentável e altera a Lei de Responsabilidade Fiscal; a página marca dois dispositivos como vetados e traz a promulgação de parte vetada.
+  - [Mensagem nº 431, de 30 de agosto de 2023 (veto parcial ao Projeto de Lei Complementar nº 93, de 2023)](https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2023/Msg/Vep/VEP-0431-23.htm), Presidência da República. Onde olhar: Dispositivos vetados e razões do veto. Sustenta: A Mensagem nº 431 veta o § 3º do art. 7º e o art. 11 na parte em que altera o § 7º do art. 4º da Lei Complementar nº 101.
+  - Documento oficial do ato: [Lei Complementar nº 200, de 30 de agosto de 2023](https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp200.htm)
+- [ ] Conferido por: ______ em ____/____/______
+
+### 8 de novembro de 2023: Votação: PEC 45/2019, texto principal
+
+- Identificador: `senado-voto-6777-5894` · Pessoa: Flávio Bolsonaro · Voto parlamentar · Senado Federal · Temas: Economia · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Senador (RJ), Senado Federal (`flavio-bolsonaro-senador-2019`)
+- **Votação a conferir** (`senado-votacao-6777`): Texto principal; Votação nominal da Proposta de Emenda à Constituição nº 45, de 2019, nos termos do Parecer, em segundo turno.; etapa: 2º turno; Plenário, nominal; resultado oficial: aprovado (valor original "A").
+- **Manifestação a conferir:** Contra (valor original "Não")
+- **Proposição a conferir** (`senado-pec-45-2019`): PEC 45/2019, Senado Federal: Altera o Sistema Tributário Nacional.
+- Fontes:
+  - [Dados Abertos do Senado Federal: votações nominais do Plenário de 8 de novembro de 2023 com registro do senador 5894](https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2023-11-08&dataFim=2023-11-08), Senado Federal. Onde olhar: votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6777. Sustenta: siglaVotoParlamentar: Não
+- [ ] Conferido por: ______ em ____/____/______
+
+### 20 de fevereiro de 2024: Votação: PL 2253/2022, texto principal
+
+- Identificador: `senado-voto-6818-5894` · Pessoa: Flávio Bolsonaro · Voto parlamentar · Senado Federal · Temas: Segurança pública · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Senador (RJ), Senado Federal (`flavio-bolsonaro-senador-2019`)
+- **Votação a conferir** (`senado-votacao-6818`): Texto principal; Votação nominal do Projeto de Lei nº 2.253, de 2022, nos termos do parecer, ressalvados os destaques.; etapa: Turno não informado pelo acervo; Plenário, nominal; resultado oficial: aprovado (valor original "A").
+- **Manifestação a conferir:** A favor (valor original "Sim")
+- **Proposição a conferir** (`senado-pl-2253-2022`): PL 2253/2022, Senado Federal: Altera a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para dispor sobre a monitoração eletrônica do preso, prever a realização de exame criminológico para progressão de regime e extinguir o benefício da saída temporária.
+- Fontes:
+  - [Dados Abertos do Senado Federal: votações nominais do Plenário de 20 de fevereiro de 2024 com registro do senador 5894](https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2024-02-20&dataFim=2024-02-20), Senado Federal. Onde olhar: votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6818. Sustenta: siglaVotoParlamentar: Sim
+- [ ] Conferido por: ______ em ____/____/______
+
+### 11 de abril de 2024: Lei nº 14.843, de 11 de abril de 2024
+
+- Identificador: `planalto-lei-14843-2024-saidas-temporarias` · Pessoa: Lula · Ato do Executivo · Presidência da República · Temas: Segurança pública · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Presidente da República (terceiro mandato), Presidência da República (`lula-presidente-da-republica-2023`)
+- **Ato a conferir:** Veto parcial; Lei nº 14.843, de 11 de abril de 2024; Mensagem de veto: Mensagem nº 144, de 11 de abril de 2024; Dispositivos vetados: Art. 2º do Projeto de Lei, na parte em que altera os incisos I e III do caput do art. 122 da Lei nº 7.210, de 11 de julho de 1984; Inciso I do caput do art. 3º do Projeto de Lei
+- **Proposição a conferir** (`senado-pl-2253-2022`): PL 2253/2022, Senado Federal: Altera a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para dispor sobre a monitoração eletrônica do preso, prever a realização de exame criminológico para progressão de regime e extinguir o benefício da saída temporária.
+- Fontes:
+  - [Lei nº 14.843, de 11 de abril de 2024](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L14843.htm), Presidência da República. Onde olhar: Cabeçalho (nota "Mensagem de veto" e "Promulgação partes vetadas"), dispositivos marcados (VETADO) e fecho. Sustenta: Lei sancionada em 11 de abril de 2024 com veto parcial: a página marca como vetados os incisos I e III do art. 122 da Lei de Execução Penal e o inciso I do art. 3º, e traz a promulgação das partes vetadas em 12 de junho de 2024, assinada pelo vice-presidente no exercício do cargo.
+  - [Mensagem nº 144, de 11 de abril de 2024 (veto parcial ao Projeto de Lei nº 2.253, de 2022)](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/Msg/Vep/VEP-144-24.htm), Presidência da República. Onde olhar: Dispositivos vetados e razões do veto. Sustenta: A Mensagem nº 144 veta o art. 2º na parte em que altera os incisos I e III do caput do art. 122 da Lei nº 7.210 e o inciso I do caput do art. 3º do projeto, por inconstitucionalidade.
+  - Documento oficial do ato: [Lei nº 14.843, de 11 de abril de 2024](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L14843.htm)
+- [ ] Conferido por: ______ em ____/____/______
+
+### 16 de abril de 2024: Votação: PEC 45/2023, texto principal
+
+- Identificador: `senado-voto-6825-5894` · Pessoa: Flávio Bolsonaro · Voto parlamentar · Senado Federal · Temas: Segurança pública · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Senador (RJ), Senado Federal (`flavio-bolsonaro-senador-2019`)
+- **Votação a conferir** (`senado-votacao-6825`): Texto principal; Votação nominal da Proposta de Emenda à Constituição nº 45, de 2023, nos termos do parecer (2º Turno).; etapa: 2º turno; Plenário, nominal; resultado oficial: aprovado (valor original "A").
+- **Manifestação a conferir:** A favor (valor original "Sim")
+- **Proposição a conferir** (`senado-pec-45-2023`): PEC 45/2023, Senado Federal: Altera o art. 5º da Constituição Federal, para prever como mandado de criminalização a posse e o porte de entorpecentes e drogas afins sem autorização ou em desacordo com determinação legal ou regulamentar.
+- Fontes:
+  - [Dados Abertos do Senado Federal: votações nominais do Plenário de 16 de abril de 2024 com registro do senador 5894](https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2024-04-16&dataFim=2024-04-16), Senado Federal. Onde olhar: votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6825. Sustenta: siglaVotoParlamentar: Sim
+- [ ] Conferido por: ______ em ____/____/______
+
+### 12 de dezembro de 2024: Votação: PLP 68/2024, substitutivo
+
+- Identificador: `senado-voto-6899-5894` · Pessoa: Flávio Bolsonaro · Voto parlamentar · Senado Federal · Temas: Economia · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Senador (RJ), Senado Federal (`flavio-bolsonaro-senador-2019`)
+- **Votação a conferir** (`senado-votacao-6899`): Substitutivo (Emenda nº 2.171 (Substitutivo)); Votação nominal da Emenda nº 2.171(Substitutivo) ao PLP 68/24 com Emendas e supressão, nos termos dos pareceres, ressalvados os destaques.; etapa: Turno não informado pelo acervo; Plenário, nominal; resultado oficial: aprovado (valor original "A").
+- **Manifestação a conferir:** Contra (valor original "Não")
+- **Proposição a conferir** (`senado-plp-68-2024`): PLP 68/2024, Senado Federal: Institui o Imposto sobre Bens e Serviços (IBS), a Contribuição Social sobre Bens e Serviços (CBS) e o Imposto Seletivo (IS); e dá outras providências.
+- Fontes:
+  - [Dados Abertos do Senado Federal: votações nominais do Plenário de 12 de dezembro de 2024 com registro do senador 5894](https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2024-12-12&dataFim=2024-12-12), Senado Federal. Onde olhar: votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=6899. Sustenta: siglaVotoParlamentar: Não
+- [ ] Conferido por: ______ em ____/____/______
+
+### 16 de janeiro de 2025: Lei Complementar nº 214, de 16 de janeiro de 2025
+
+- Identificador: `planalto-lei-complementar-214-2025-ibs-cbs` · Pessoa: Lula · Ato do Executivo · Presidência da República · Temas: Economia · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Presidente da República (terceiro mandato), Presidência da República (`lula-presidente-da-republica-2023`)
+- **Ato a conferir:** Veto parcial; Lei Complementar nº 214, de 16 de janeiro de 2025; Mensagem de veto: Mensagem nº 88, de 16 de janeiro de 2025; Dispositivos vetados: Incisos V e X do caput do art. 26; Inciso III do § 1º do art. 26; § 5º e § 6º do art. 26; § 8º do art. 26; § 2º do art. 36; § 4º do art. 138; Inciso II do § 9º do art. 138; § 4º do art. 183; Inciso III do § 1º do art. 231; Inciso III do § 1º do art. 252; § 2º do art. 332; Art. 334; Inciso I do caput do art. 413; § 4º do art. 429; § 5º do art. 444; Inciso II do § 1º do art. 454; § 5º do art. 462; Art. 494; Art. 495; Art. 517, na parte em que inclui a alínea "b" do inciso XII-A do § 1º do art. 13 da Lei Complementar nº 123, de 2006; Art. 536; Itens 1.4, 1.5, 1.8 e 1.9 do Anexo XI
+- **Proposição a conferir** (`senado-plp-68-2024`): PLP 68/2024, Senado Federal: Institui o Imposto sobre Bens e Serviços (IBS), a Contribuição Social sobre Bens e Serviços (CBS) e o Imposto Seletivo (IS); e dá outras providências.
+- Fontes:
+  - [Lei Complementar nº 214, de 16 de janeiro de 2025](https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm), Presidência da República. Onde olhar: Cabeçalho (notas "Mensagem de veto" e "Promulgação partes vetadas"), ementa, dispositivos marcados (VETADO) e fecho. Sustenta: Lei complementar sancionada em 16 de janeiro de 2025 com veto parcial; institui o IBS, a CBS e o Imposto Seletivo e cria o Comitê Gestor do IBS.
+  - [Mensagem nº 88, de 16 de janeiro de 2025 (veto parcial ao Projeto de Lei Complementar nº 68, de 2024)](https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2025/Msg/Vep/VEP-88-25.htm), Presidência da República. Onde olhar: Lista de dispositivos vetados e razões do veto. Sustenta: A Mensagem nº 88 relaciona os dispositivos do Projeto de Lei Complementar nº 68/2024 vetados, a começar pelos incisos V e X do caput do art. 26.
+  - Documento oficial do ato: [Lei Complementar nº 214, de 16 de janeiro de 2025](https://www.planalto.gov.br/ccivil_03/leis/lcp/Lcp214.htm)
+- [ ] Conferido por: ______ em ____/____/______
+
+### 26 de novembro de 2025: Lei nº 15.270, de 26 de novembro de 2025
+
+- Identificador: `planalto-lei-15270-2025-imposto-de-renda` · Pessoa: Lula · Ato do Executivo · Presidência da República · Temas: Economia · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Presidente da República (terceiro mandato), Presidência da República (`lula-presidente-da-republica-2023`)
+- **Ato a conferir:** Sanção expressa; Lei nº 15.270, de 26 de novembro de 2025
+- **Proposição a conferir** (`senado-pl-1087-2025`): PL 1087/2025, Senado Federal: Altera as Leis nºs 9.250, de 26 de dezembro de 1995, e 9.249, de 26 de dezembro de 1995, para instituir a redução do imposto sobre a renda devido nas bases de cálculo mensal e anual e a tributação mínima para as pessoas físicas que auferem altas rendas; e dá outras providências.
+- Fontes:
+  - [Lei nº 15.270, de 26 de novembro de 2025](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15270.htm), Presidência da República. Onde olhar: Cabeçalho (sem nota de mensagem de veto), art. 1º, tabela de redução e fecho. Sustenta: Lei sancionada em 26 de novembro de 2025, sem dispositivo marcado como vetado na página; altera as Leis nºs 9.250 e 9.249 para instituir a redução do imposto sobre a renda, com imposto zero até R$ 5.000,00 mensais, e a tributação mínima de altas rendas.
+  - [Dados Abertos do Senado Federal: ficha da matéria PL 1087/2025](https://legis.senado.leg.br/dadosabertos/materia/PL/1087/2025), Senado Federal. Onde olhar: Campo NormaGerada da ficha da matéria. Sustenta: A ficha do PL 1087/2025 registra como norma gerada a Lei nº 15.270, de 26 de novembro de 2025, publicada no Diário Oficial da União de 27 de novembro de 2025.
+  - Documento oficial do ato: [Lei nº 15.270, de 26 de novembro de 2025](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/lei/L15270.htm)
+- [ ] Conferido por: ______ em ____/____/______
+
+### 10 de dezembro de 2025: Votação: PL 5582/2025, substitutivo
+
+- Identificador: `senado-voto-7037-5894` · Pessoa: Flávio Bolsonaro · Voto parlamentar · Senado Federal · Temas: Segurança pública · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Senador (RJ), Senado Federal (`flavio-bolsonaro-senador-2019`)
+- **Votação a conferir** (`senado-votacao-7037`): Substitutivo (Emenda nº 117 (Substitutivo)); Votação nominal da Emenda nº 117 (Substitutivo) ao Projeto de Lei nº 5.582, de 2025, nos termos do parecer.; etapa: Turno não informado pelo acervo; Plenário, nominal; resultado oficial: aprovado (valor original "A").
+- **Manifestação a conferir:** A favor (valor original "Sim")
+- **Proposição a conferir** (`senado-pl-5582-2025`): PL 5582/2025, Senado Federal: Institui o marco legal do combate ao crime organizado no Brasil; tipifica os crimes de domínio social estruturado e de favorecimento ao domínio social estruturado; e altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 (Código Penal), e 3.689, de 3 de outubro de 1941 (Código de Processo Penal), e as Leis nºs 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), 7.210, de 11 de julho de 1984 (Lei de Execução Penal), 11.343, de 23 de agosto de 2006, 10.826, de 22 de dezembro de 2003, 9.613, de 3 de março de 1998, e 4.737, de 15 de julho de 1965 (Código Eleitoral).
+- Fontes:
+  - [Dados Abertos do Senado Federal: votações nominais do Plenário de 10 de dezembro de 2025 com registro do senador 5894](https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2025-12-10&dataFim=2025-12-10), Senado Federal. Onde olhar: votos[] com codigoParlamentar=5894, no item com codigoSessaoVotacao=7037. Sustenta: siglaVotoParlamentar: Sim
+- [ ] Conferido por: ______ em ____/____/______
+
+### 24 de março de 2026: Lei nº 15.358, de 24 de março de 2026
+
+- Identificador: `planalto-lei-15358-2026-crime-organizado` · Pessoa: Lula · Ato do Executivo · Presidência da República · Temas: Segurança pública · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10
+- **Cargo a conferir:** Presidente da República (terceiro mandato), Presidência da República (`lula-presidente-da-republica-2023`)
+- **Ato a conferir:** Veto parcial; Lei nº 15.358, de 24 de março de 2026; Mensagem de veto: Mensagem nº 216, de 24 de março de 2026; Dispositivos vetados: § 3º do art. 2º do Projeto de Lei; Art. 33 do Projeto de Lei, na parte em que altera o inciso II do caput do art. 91 do Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal); Art. 43 do Projeto de Lei
+- **Proposição a conferir** (`senado-pl-5582-2025`): PL 5582/2025, Senado Federal: Institui o marco legal do combate ao crime organizado no Brasil; tipifica os crimes de domínio social estruturado e de favorecimento ao domínio social estruturado; e altera os Decretos-Leis nºs 2.848, de 7 de dezembro de 1940 (Código Penal), e 3.689, de 3 de outubro de 1941 (Código de Processo Penal), e as Leis nºs 8.072, de 25 de julho de 1990 (Lei dos Crimes Hediondos), 7.210, de 11 de julho de 1984 (Lei de Execução Penal), 11.343, de 23 de agosto de 2006, 10.826, de 22 de dezembro de 2003, 9.613, de 3 de março de 1998, e 4.737, de 15 de julho de 1965 (Código Eleitoral).
+- Fontes:
+  - [Lei nº 15.358, de 24 de março de 2026](https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Lei/L15358.htm), Presidência da República. Onde olhar: Cabeçalho (nota "Mensagem de veto"), ementa, dispositivos marcados (VETADO) e fecho. Sustenta: Lei sancionada em 24 de março de 2026 com veto parcial; institui o Marco Legal do Combate ao Crime Organizado e marca três dispositivos como vetados.
+  - [Mensagem nº 216, de 24 de março de 2026 (veto parcial ao Projeto de Lei nº 5.582, de 2025)](https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Msg/Vep/VEP-216-26.htm), Presidência da República. Onde olhar: Dispositivos vetados e razões do veto. Sustenta: A Mensagem nº 216 veta o § 3º do art. 2º, o art. 33 na parte que altera o inciso II do caput do art. 91 do Código Penal e o art. 43 do projeto.
+  - Documento oficial do ato: [Lei nº 15.358, de 24 de março de 2026](https://www.planalto.gov.br/ccivil_03/_Ato2023-2026/2026/Lei/L15358.htm)
+- [ ] Conferido por: ______ em ____/____/______
+
+### Cobertura da pesquisa: Flávio Bolsonaro, Economia, 1º de janeiro de 2023 a 8 de outubro de 2026
+
+- Identificador: `cobertura-flavio-bolsonaro-economia-2023-2026` · Estado: parcial · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10; observações: Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente.
+- **Critérios a conferir:** Amostra, e não histórico completo: até doze decisões no total dos dois perfis, nos temas Economia e Segurança pública, de 1º de janeiro de 2023 à data de corte, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem olhar se a decisão favorece ou prejudica alguém. A triagem completa, os registros excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md.
+- Acervo: [Dados Abertos do Senado Federal, votações nominais do Plenário por parlamentar](https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2023-01-01&dataFim=2026-10-08), consultado em 2026-10-10; recorte: codigoParlamentar=5894, sete janelas semestrais de 2023-01-01 a 2026-10-08: 423 votações na resposta, 183 nominais abertas (145 com posição) e 240 secretas; consulta completa.
+- Lacuna declarada: Só as votações escolhidas para a amostra foram registradas; as demais votações da triagem por tema ficaram fora e estão listadas na pesquisa.
+- Lacuna declarada: Votações secretas (indicações de autoridades) registram só a participação, sem a posição.
+- Lacuna declarada: Votações simbólicas e votações em comissão não aparecem no acervo consultado.
+- Lacuna declarada: Sessões do Congresso Nacional (vetos, orçamento) não aparecem na consulta por parlamentar.
+- [ ] Conferido por: ______ em ____/____/______
+
+### Cobertura da pesquisa: Flávio Bolsonaro, Segurança pública, 1º de janeiro de 2023 a 8 de outubro de 2026
+
+- Identificador: `cobertura-flavio-bolsonaro-seguranca-publica-2023-2026` · Estado: parcial · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10; observações: Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente.
+- **Critérios a conferir:** Amostra, e não histórico completo: até doze decisões no total dos dois perfis, nos temas Economia e Segurança pública, de 1º de janeiro de 2023 à data de corte, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem olhar se a decisão favorece ou prejudica alguém. A triagem completa, os registros excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md.
+- Acervo: [Dados Abertos do Senado Federal, votações nominais do Plenário por parlamentar](https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2023-01-01&dataFim=2026-10-08), consultado em 2026-10-10; recorte: codigoParlamentar=5894, sete janelas semestrais de 2023-01-01 a 2026-10-08: 423 votações na resposta, 183 nominais abertas (145 com posição) e 240 secretas; consulta completa.
+- Lacuna declarada: Só as votações escolhidas para a amostra foram registradas; as demais votações da triagem por tema ficaram fora e estão listadas na pesquisa.
+- Lacuna declarada: Votações secretas (indicações de autoridades) registram só a participação, sem a posição.
+- Lacuna declarada: Votações simbólicas e votações em comissão não aparecem no acervo consultado.
+- Lacuna declarada: Sessões do Congresso Nacional (vetos, orçamento) não aparecem na consulta por parlamentar.
+- Lacuna declarada: A votação de 10 de janeiro de 2023 sobre o Decreto Legislativo nº 1/2023 (intervenção federal no Distrito Federal) não aparece no acervo consultado para o parlamentar; sem a linha do acervo, nenhum voto foi registrado para ela.
+- [ ] Conferido por: ______ em ____/____/______
+
+### Cobertura da pesquisa: Lula, Economia, 1º de janeiro de 2023 a 8 de outubro de 2026
+
+- Identificador: `cobertura-lula-economia-2023-2026` · Estado: parcial · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10; observações: Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente.
+- **Critérios a conferir:** Amostra, e não histórico completo: até doze decisões no total dos dois perfis, nos temas Economia e Segurança pública, de 1º de janeiro de 2023 à data de corte, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem olhar se a decisão favorece ou prejudica alguém. A triagem completa, os registros excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md.
+- Acervo: [Portal da Legislação (Planalto), páginas estáticas de leis, leis complementares, medidas provisórias, decretos e mensagens de veto](https://www.planalto.gov.br/ccivil_03/), consultado em 2026-10-10; recorte: Índices anuais de 2023 a 2026 e páginas dos atos candidatos; 31 atos do tema confirmados na triagem (research/candidatos-atos-presidenciais-2023-2026.md); consulta incompleta.
+- Lacuna declarada: Só os atos escolhidos para a amostra foram registrados; os demais atos da triagem estão listados na pesquisa.
+- Lacuna declarada: Atos assinados pelo vice-presidente no exercício do cargo não são atribuídos ao presidente.
+- Lacuna declarada: A derrubada de vetos e a promulgação de partes vetadas pelo Congresso não são atos do Executivo e não entram como decisão dele.
+- [ ] Conferido por: ______ em ____/____/______
+
+### Cobertura da pesquisa: Lula, Segurança pública, 1º de janeiro de 2023 a 8 de outubro de 2026
+
+- Identificador: `cobertura-lula-seguranca-publica-2023-2026` · Estado: parcial · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10; observações: Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente.
+- **Critérios a conferir:** Amostra, e não histórico completo: até doze decisões no total dos dois perfis, nos temas Economia e Segurança pública, de 1º de janeiro de 2023 à data de corte, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem olhar se a decisão favorece ou prejudica alguém. A triagem completa, os registros excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md.
+- Acervo: [Portal da Legislação (Planalto), páginas estáticas de leis, leis complementares, medidas provisórias, decretos e mensagens de veto](https://www.planalto.gov.br/ccivil_03/), consultado em 2026-10-10; recorte: Índices anuais de 2023 a 2026 e páginas dos atos candidatos; 22 atos do tema confirmados na triagem (research/candidatos-atos-presidenciais-2023-2026.md); consulta incompleta.
+- Lacuna declarada: Só os atos escolhidos para a amostra foram registrados; os demais atos da triagem estão listados na pesquisa.
+- Lacuna declarada: Atos assinados pelo vice-presidente no exercício do cargo não são atribuídos ao presidente.
+- Lacuna declarada: A derrubada de vetos e a promulgação de partes vetadas pelo Congresso não são atos do Executivo e não entram como decisão dele.
+- [ ] Conferido por: ______ em ____/____/______
+
+### Identidade institucional: Flávio Bolsonaro em Senado Federal
+
+- Identificador: `identidade-flavio-bolsonaro-senado-5894` · Provedor: senado · Identificador externo: 5894 · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-10; observações: Identificador conferido no endereço do serviço de mandatos do senador e nas respostas do webservice de votações, em 10 de outubro de 2026, com assistência de IA. Revisão humana pendente.
+- Fontes:
+  - [Dados Abertos do Senado: mandatos do senador Flávio Bolsonaro](https://legis.senado.leg.br/dadosabertos/senador/5894/mandatos), Senado Federal. Onde olhar: Endereço do serviço (/senador/5894/mandatos) e campo CodigoParlamentar. Sustenta: O código 5894 identifica o senador no serviço de dados abertos do Senado Federal.
 - [ ] Conferido por: ______ em ____/____/______

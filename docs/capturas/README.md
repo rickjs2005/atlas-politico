@@ -12,6 +12,7 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | `jogo-etapa-1/` | O jogo na etapa 1, na saída estática: entrada do atlas com o acesso, escolha de personagem, os dois capítulos de cada personagem, registro, tarefa de ordem, painel, guia, fim da etapa, celular, rodapé e a volta da ficha. Guardadas como história; o roteiro passou a gravar em `jogo-lancamento/` | (roteiro da etapa 1) | |
 | `jogo-lancamento/` | O jogo na versão de lançamento, na saída estática: os onze capítulos, as quatro tarefas, a ficha judicial, as figuras por época, o painel, o fim da trajetória, celular em pé e deitado, guia, saída fechada, rodapé e a volta da ficha | `npm run build` e `npm run capture:game` | `tests/export/jogo.capture.ts` |
 | `fase-9/` | As oito telas da conferência final, nas quatro larguras, com a edição 0.1.1; o relatório da passagem de acessibilidade; e a linha do tempo antes e depois da correção da hachura | `npm run build` e `npm run audit:a11y -- --saida docs/capturas/fase-9` | `scripts/audit-a11y.mjs` |
+| `jogo-salas/` | A entrega P1 do jogo, na saída estática com a edição 0.2.0: a entrada com as salas temáticas, a missão da sala Histórico passo a passo (a decisão no cenário, o cartão, a evidência errada e certa com o Escrivão, a interpretação, a saída aberta), o painel com as preferências, a sala Economia (cena, painel e fim), as decisões na página da pessoa e na comparação por tema, e o celular na sala Segurança pública | `npm run build` e `npx playwright test -c playwright.export.config.ts --project=capturas jogo-salas.capture` | `tests/export/jogo-salas.capture.ts` |
 
 Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts`, `tests/e2e/paginas.spec.ts`, `tests/e2e/acabamento.spec.ts` e, sobre a saída estática, `tests/export/carregamento.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
 
@@ -46,7 +47,7 @@ Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o 
 | `<personagem>-21` e `-22` | A transição para o fim e a tela de fim da trajetória |
 | `<personagem>-23` a `-28-celular-...` | A cena, o registro, o painel, um capítulo avançado e a tarefa de documento em celular, com os controles de toque |
 | `29-celular-deitado` e `30-celular-deitado-capitulo-4` | A cena em celular deitado, em dois cenários |
-| `31-guia-como-jogar` | A janela do guia: o Arquivista como personagem fictício, o objetivo, como se joga, o aviso do cenário e da figura |
+| `31-guia-como-jogar` | A janela do guia: o Escrivão (então chamado Arquivista) como personagem fictício, o objetivo, como se joga, o aviso do cenário e da figura |
 | `32` e `33` | O painel com o aviso de ordem não documentada e o registro de data parcial |
 | `34` a `36` | A tarefa cumprida com a saída fechada, a janela da saída fechada e o personagem diante da porta aberta |
 | `37-rodape-da-pagina-do-jogo` | A página do jogo rolada até o fim, de propósito |
@@ -81,7 +82,7 @@ Tiradas da saída estática em 10 de outubro de 2026, com o conteúdo da ediçã
 | `20-painel-com-o-aviso-de-ordem` | O painel do capítulo 1 de Lula, com o motivo do agrupamento e o aviso de ordem não documentada |
 | `21-registro-com-a-ordem-nao-documentada` | O registro de data parcial, com os dois avisos e a situação da revisão |
 | `22-diante-da-porta-aberta` | O personagem diante da saída aberta: a folha girada, a placa acesa e as setas no degrau |
-| `23-guia-como-jogar` | A janela do guia: o Arquivista identificado como personagem fictício, o objetivo, como se joga e o aviso de que o cenário é representação |
+| `23-guia-como-jogar` | A janela do guia: o Escrivão (então chamado Arquivista) identificado como personagem fictício, o objetivo, como se joga e o aviso de que o cenário é representação |
 | `24-rodape-da-pagina-do-jogo` | A página do jogo rolada até o fim, de propósito: o que fica abaixo do palco (o aviso do cenário, a situação da revisão e o caminho para escolher outro personagem) |
 | `25-tarefa-cumprida-e-saida-fechada` | A tarefa cumprida e registros por recolher: o objetivo diz quantos faltam, a contagem aparece sobre a cena e a porta continua trancada |
 | `26-saida-fechada-o-que-falta` | A janela da saída fechada: a regra, os registros recolhidos e os que faltam, e a situação da tarefa |
@@ -217,3 +218,27 @@ Quase todos os estados são abertos pelo próprio endereço, que é como a consu
 Em computador e em tablet, `06` e `07` saem iguais quando as fontes já cabem na primeira tela.
 
 As capturas escondem o indicador do servidor de desenvolvimento do Next, que não faz parte da tela, e rodam com movimento reduzido, como os testes.
+
+## Jogo, salas e decisões (entrega P1)
+
+Tiradas em 11 de outubro de 2026, da saída estática com a edição 0.2.0, em 1440×900 (e 390×844 nas de celular). O percurso é o da missão documental: explorar, recolher a decisão, conferir a evidência, interpretar e abrir a passagem, com o Escrivão em cada passo.
+
+| Arquivo | O que mostra |
+| --- | --- |
+| `01-entrada-com-salas` | A escolha de personagem com os capítulos da trajetória e as duas salas temáticas de cada um, com a quantidade de decisões e a situação |
+| `02-historico-entrada-com-o-escrivao` | O capítulo 5 de Lula ao abrir: a caixa do Escrivão sobre a cena, com a instrução, a informação do registro e o humor em itálico |
+| `03-historico-decisao-ao-alcance` | A pasta da decisão (o decreto da intervenção) ao alcance, com a dica de interação |
+| `04-decisao-recolhida-cartao` | O cartão da decisão recolhida: cargo e instituição, data, tipo do ato, documento oficial, proposições, fontes e revisão, com a fala de descoberta do Escrivão |
+| `05-decisao-etapa-1-evidencia` | A tarefa de decisão, etapa 1: qual documento sustenta o registro, com a fala do Escrivão sobre a fonte |
+| `06-decisao-evidencia-errada-com-o-escrivao` | A opção errada: a explicação de quem é o documento, sem penalidade, e a fala de erro do Escrivão |
+| `07-decisao-etapa-2-interpretacao` | A etapa 2: o que o registro documenta, com o cartão completo ao lado e as três interpretações |
+| `08-decisao-interpretacao-certa` | A interpretação certa: a explicação do que o registro documenta e o que falta para a saída |
+| `09-historico-saida-aberta-com-o-escrivao` | A saída aberta depois dos outros registros, com a caixa de conclusão do Escrivão |
+| `10-painel-com-decisao-e-preferencias` | O painel: a decisão entre os registros, a tarefa concluída, as preferências com o botão do humor e as outras salas |
+| `11-sala-economia-cena` | A sala Economia de Lula: a sala de arquivo, o cabeçalho com a sala e a caixa do Escrivão |
+| `12-sala-economia-painel` | O painel da sala: os três atos como registros, o tipo de cada um e o caminho para as outras salas |
+| `13-sala-economia-fim` | O fim da sala, com o aviso de amostra e os caminhos para o atlas e para a outra sala |
+| `14-atlas-decisoes-da-pessoa` | A seção Decisões documentadas na página da pessoa, por tema, com o aviso de amostra |
+| `15-atlas-comparacao-por-tema` | A comparação por tema, com as duas colunas e a marca de mesma proposição |
+| `16-celular-sala-seguranca-cena` | O celular na sala Segurança pública de Flávio Bolsonaro, com o direcional e o botão de ação |
+| `17-celular-decisao-recolhida` | O cartão de um voto no celular: manifestação registrada, objeto votado, resultado e fontes |

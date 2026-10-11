@@ -1,0 +1,113 @@
+{
+  "id": "senado-votacao-5894-2026-10-11-308eea",
+  "provedor": "senado",
+  "url": "https://legis.senado.leg.br/dadosabertos/votacao?codigoParlamentar=5894&dataInicio=2024-02-20&dataFim=2024-02-20",
+  "capturadoEm": "2026-10-11T01:17:38.796Z",
+  "status": 200,
+  "bytes": 5816,
+  "sha256": "308eeaeeeaa7a921dd93db14d6a757114bb7b5b1131520ecab215ee1e49d390a",
+  "resposta": [
+    {
+      "ano": 2022,
+      "casaSessao": "SF",
+      "codigoMateria": 154451,
+      "codigoSessao": 384251,
+      "codigoSessaoLegislativa": 871,
+      "codigoSessaoVotacao": 6818,
+      "dataApresentacao": "2022-08-04",
+      "dataSessao": "2024-02-20",
+      "descricaoVotacao": "Votação nominal do Projeto de Lei nº 2.253, de 2022, nos termos do parecer, ressalvados os destaques.",
+      "ementa": "Altera a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para dispor sobre a monitoração eletrônica do preso, prever a realização de exame criminológico para progressão de regime e extinguir o benefício da saída temporária.",
+      "idProcesso": 8294609,
+      "identificacao": "PL 2253/2022",
+      "informeLegislativo": {
+        "casaColegiado": "SF",
+        "casaEnteAdm": "SF",
+        "codigoColegiado": 1998,
+        "data": "2024-02-20",
+        "id": 2178836,
+        "idEnteAdm": 13594,
+        "idEvento": 10666025,
+        "nomeColegiado": "Plenário do Senado Federal",
+        "nomeEnteAdm": "Secretaria de Atas e Diários",
+        "numeroAutuacao": 1,
+        "siglaColegiado": "PLEN",
+        "siglaEnteAdm": "SEADI",
+        "texto": "(Sessão Deliberativa Ordinária, realizada em 20/02/2024) \r\nEncaminhadas à publicação as Emenda nºs 7 a 9-PLEN.   \r\nProferido pelo Senador Flávio Bolsonaro o Parecer nº 2, de 2024–PLEN/SF, favorável ao Projeto e às Emendas nºs 2, 5 e 6-CSP; e contrário às Emendas nºs 7, 8 e 9-PLEN.   \r\nDiscussão encerrada. \r\nEncaminhado à publicação e deferido o RQS nº 84/2024, da Liderança do PT, que solicita destaque para votação em separado da Emenda nº 8-PLEN ao Projeto de Lei nº 2253/2024. \r\nEncaminhado à publicação e deferido o RQS nº 85/2024, da Liderança do PSB, que solicita destaque para votação em separado da Emenda nº 9-PLEN ao Projeto de Lei nº 2253/2024. \r\nAprovado o projeto e as Emendas nºs 2, 5 e 6-CSP, nos termos do parecer, em turno único, ressalvados os destaques, com o seguinte resultado: Sim - 62, Não - 2, Abst. - 1, Presidente - 1, Total - 66. \r\nRejeitada a Emenda nº 8-PLEN, destacada pela Liderança do PT, com o seguinte resultado: Sim - 27, Não - 37, Presidente - 1, Total - 65. \r\nRejeitada a Emenda nº 9, destacada pela Liderança do PSB, com os votos contrários das Senadoras Zenaide Maia e Leila; e dos Senadores Fabiano Contarato, Weverton, Randolfe Rodrigues, Jacques Wagner, Jorge Kajuru e Otto Alencar. \r\nAprovada a Redação Final, nos termos do Parecer nº 3/2024-PLEN/SF, da Comissão Diretora.   \r\nA matéria retorna à Câmara dos Deputados.\r\n(Encaminhada à publicação Declaração de Voto do Senador Alessandro Vieira)"
+      },
+      "numero": "2253",
+      "numeroSessao": 5,
+      "resultadoVotacao": "A",
+      "sequencialSessao": 1,
+      "sequencialVotacao": 4140,
+      "sigla": "PL",
+      "siglaTipoSessao": "DOR",
+      "totalVotosAbstencao": null,
+      "totalVotosNao": null,
+      "totalVotosSim": null,
+      "votacaoSecreta": "N",
+      "votos": [
+        {
+          "codigoParlamentar": 5894,
+          "descricaoVotoParlamentar": null,
+          "nomeParlamentar": "Flávio Bolsonaro",
+          "sexoParlamentar": "M",
+          "siglaPartidoParlamentar": "PL",
+          "siglaUFParlamentar": "RJ",
+          "siglaVotoParlamentar": "Sim"
+        }
+      ]
+    },
+    {
+      "ano": 2022,
+      "casaSessao": "SF",
+      "codigoMateria": 154451,
+      "codigoSessao": 384251,
+      "codigoSessaoLegislativa": 871,
+      "codigoSessaoVotacao": 6819,
+      "dataApresentacao": "2022-08-04",
+      "dataSessao": "2024-02-20",
+      "descricaoVotacao": "Votação nominal da Emenda nº 8 ao Projeto de Lei nº 2.253, de 2022, destacada.",
+      "ementa": "Altera a Lei nº 7.210, de 11 de julho de 1984 (Lei de Execução Penal), para dispor sobre a monitoração eletrônica do preso, prever a realização de exame criminológico para progressão de regime e extinguir o benefício da saída temporária.",
+      "idProcesso": 8294609,
+      "identificacao": "PL 2253/2022",
+      "informeLegislativo": {
+        "casaColegiado": "SF",
+        "casaEnteAdm": "SF",
+        "codigoColegiado": 1998,
+        "data": "2024-02-20",
+        "id": 2178836,
+        "idEnteAdm": 13594,
+        "idEvento": 10666025,
+        "nomeColegiado": "Plenário do Senado Federal",
+        "nomeEnteAdm": "Secretaria de Atas e Diários",
+        "numeroAutuacao": 1,
+        "siglaColegiado": "PLEN",
+        "siglaEnteAdm": "SEADI",
+        "texto": "(Sessão Deliberativa Ordinária, realizada em 20/02/2024) \r\nEncaminhadas à publicação as Emenda nºs 7 a 9-PLEN.   \r\nProferido pelo Senador Flávio Bolsonaro o Parecer nº 2, de 2024–PLEN/SF, favorável ao Projeto e às Emendas nºs 2, 5 e 6-CSP; e contrário às Emendas nºs 7, 8 e 9-PLEN.   \r\nDiscussão encerrada. \r\nEncaminhado à publicação e deferido o RQS nº 84/2024, da Liderança do PT, que solicita destaque para votação em separado da Emenda nº 8-PLEN ao Projeto de Lei nº 2253/2024. \r\nEncaminhado à publicação e deferido o RQS nº 85/2024, da Liderança do PSB, que solicita destaque para votação em separado da Emenda nº 9-PLEN ao Projeto de Lei nº 2253/2024. \r\nAprovado o projeto e as Emendas nºs 2, 5 e 6-CSP, nos termos do parecer, em turno único, ressalvados os destaques, com o seguinte resultado: Sim - 62, Não - 2, Abst. - 1, Presidente - 1, Total - 66. \r\nRejeitada a Emenda nº 8-PLEN, destacada pela Liderança do PT, com o seguinte resultado: Sim - 27, Não - 37, Presidente - 1, Total - 65. \r\nRejeitada a Emenda nº 9, destacada pela Liderança do PSB, com os votos contrários das Senadoras Zenaide Maia e Leila; e dos Senadores Fabiano Contarato, Weverton, Randolfe Rodrigues, Jacques Wagner, Jorge Kajuru e Otto Alencar. \r\nAprovada a Redação Final, nos termos do Parecer nº 3/2024-PLEN/SF, da Comissão Diretora.   \r\nA matéria retorna à Câmara dos Deputados.\r\n(Encaminhada à publicação Declaração de Voto do Senador Alessandro Vieira)"
+      },
+      "numero": "2253",
+      "numeroSessao": 5,
+      "resultadoVotacao": "R",
+      "sequencialSessao": 2,
+      "sequencialVotacao": 4141,
+      "sigla": "PL",
+      "siglaTipoSessao": "DOR",
+      "totalVotosAbstencao": null,
+      "totalVotosNao": null,
+      "totalVotosSim": null,
+      "votacaoSecreta": "N",
+      "votos": [
+        {
+          "codigoParlamentar": 5894,
+          "descricaoVotoParlamentar": null,
+          "nomeParlamentar": "Flávio Bolsonaro",
+          "sexoParlamentar": "M",
+          "siglaPartidoParlamentar": "PL",
+          "siglaUFParlamentar": "RJ",
+          "siglaVotoParlamentar": "Não"
+        }
+      ]
+    }
+  ]
+}

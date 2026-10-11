@@ -64,7 +64,7 @@ Depois, abra o link que a pessoa produziu em outra aba ou em outro aparelho e ve
 
 Dizer: "O site tem um jogo. Jogue com a pessoa que você ainda não escolheu nas tarefas anteriores até passar para o segundo capítulo. Depois me diga: o que você precisou fazer para a porta abrir, e o que era aquele lugar?"
 
-Se houver tempo, peça um segundo capítulo com tarefa de documento ou de lugar (capítulo 3 de Lula, capítulo 3 ou 4 de Flávio Bolsonaro, pelo painel **Capítulos e tarefas** não dá para pular; se a pessoa já tem progresso, use o personagem em que ela está).
+Se houver tempo, peça um segundo capítulo com tarefa de documento ou de lugar (capítulo 3 de Lula, capítulo 3 ou 5 de Flávio Bolsonaro; a tarefa de decisão está no capítulo 5 de Lula e no 4 de Flávio Bolsonaro). Pelo painel **Capítulos e tarefas** não dá para pular; se a pessoa já tem progresso, use o personagem em que ela está. As salas temáticas (Economia e Segurança pública) abrem da entrada do jogo sem depender da trajetória.
 
 ## Gabarito para quem aplica
 
@@ -185,6 +185,26 @@ Respostas às perguntas do fim: (a preencher, numeradas de 1 a 15)
 4. Troque a situação no topo deste documento e no [STATUS.md](STATUS.md) só quando as três fichas estiverem preenchidas.
 
 | Problema observado | Em quantas pessoas | Tipo | O que fazer |
+| --- | --- | --- | --- |
+| (a preencher) | | | |
+
+## Salas e decisões em celular real
+
+Roteiro curto para o responsável pelo projeto executar em um celular de verdade (a entrega P1 só foi conferida em emulação). Leva uns quinze minutos. Anote o aparelho, o navegador e o que aconteceu em cada passo.
+
+1. Abra `/jogo/` no celular. Confira: os dois cartões cabem na tela sem rolagem lateral; cada cartão mostra as duas salas temáticas com a quantidade de decisões e o botão **Começar**; o texto diz que o Escrivão é fictício e que o humor pode ser desligado.
+2. Toque em **Começar** na sala Economia de qualquer um dos dois. Confira: a cena ocupa a tela; a caixa do Escrivão aparece sobre a cena com a instrução e uma fala de humor em itálico, e fecha pelo botão **Fechar**; o cabeçalho diz "Sala Economia · Capítulo 1".
+3. Com o direcional, ande até uma pasta e toque no botão de ação. Confira: o cartão da decisão abre com cargo, instituição, data, o tipo do ato ou a manifestação registrada, as fontes e a nota de revisão; dá para rolar o cartão inteiro; o botão **Guardar e responder** (na decisão da tarefa) ou **Guardar e continuar** fica alcançável sem rolar a página.
+4. Na pergunta da tarefa (duas etapas): erre de propósito uma vez em cada etapa e leia a explicação; confira que a fala de erro do Escrivão aparece e que **Tentar de novo** devolve a pergunta. Acerte as duas. Confira o aviso "Tarefa concluída" e o que falta para a saída.
+5. Abra **Capítulos e tarefas**, desligue o humor em **Preferências** e feche. Toque em **Como jogar**: confira que não há mais fala em itálico, só a instrução e o que vem do registro. Recarregue a página: o humor continua desligado.
+6. Recolha as outras pastas pelo painel ou pela cena até a saída abrir; confira a caixa de conclusão do Escrivão sobre a cena e atravesse a porta. Confira a tela "Fim da sala Economia", com o aviso de amostra e os links para a outra sala e para a trajetória.
+7. Volte a `/jogo/`: a sala Economia do personagem deve estar "concluída" ("Rever") e a trajetória dele, "Ainda não jogado". Entre na trajetória e confira que o capítulo 1 começa do zero.
+8. Deite o celular na sala Segurança pública: o palco inteiro, o direcional e o botão de ação devem caber na janela, e a caixa do Escrivão some para não cobrir a cena.
+9. Abra `/politicos/lula/` e role até **Decisões documentadas**: os cartões aparecem por tema, com o aviso de amostra; toque em um link de fonte e confira que abre em nova aba. Repita em `/comparar/`, seção **Votos e atos no mesmo tema**: as duas colunas por tema e a marca "mesma proposição" onde os dois têm decisão.
+
+Registre aqui o resultado:
+
+| Passo | Aparelho e navegador | O que aconteceu | Correção necessária |
 | --- | --- | --- | --- |
 | (a preencher) | | | |
 

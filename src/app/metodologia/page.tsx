@@ -582,7 +582,7 @@ export default function MethodologyPage() {
                   mudam de cabelo, barba e roupa conforme a época do capítulo, de forma estilizada; não afirmam a aparência
                   real em cada data.
                 </li>
-                <li>O Arquivista, que guia o jogo, é um personagem fictício e não retrata ninguém.</li>
+                <li>O Escrivão, que guia o jogo, é um personagem fictício e não retrata ninguém; as falas de humor dele são ficção sobre papelada e sobre ele mesmo, iguais para os dois personagens, e podem ser desligadas.</li>
                 <li>
                   Os registros do jogo são os acontecimentos desta edição, com data, lugar e fontes; o jogo não tem conteúdo
                   editorial próprio nem atribui falas às pessoas retratadas.

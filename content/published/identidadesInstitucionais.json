@@ -1,0 +1,26 @@
+[
+  {
+    "id": "identidade-flavio-bolsonaro-senado-5894",
+    "pessoaId": "flavio-bolsonaro",
+    "provedor": "senado",
+    "idExterno": "5894",
+    "instituicao": "senado-federal",
+    "validade": null,
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio-mandatos",
+        "localizacao": "Endereço do serviço (/senador/5894/mandatos) e campo CodigoParlamentar",
+        "evidencia": "O código 5894 identifica o senador no serviço de dados abertos do Senado Federal."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Identificador conferido no endereço do serviço de mandatos do senador e nas respostas do webservice de votações, em 10 de outubro de 2026, com assistência de IA. Revisão humana pendente."
+      }
+    }
+  }
+]

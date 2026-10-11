@@ -42,16 +42,19 @@ A consequência editorial: a comparação por **mesma votação** só é possív
 
 **Aceite conferido:** referência quebrada, atribuição sem mandato da pessoa, voto fora do mandato ou de outra casa, dois votos vigentes e retificação incoerente são erros na publicação; o build é determinístico (formato 2, manifesto com as contagens); as seis coleções participam da barreira de release; 814 testes de regra passando, 43 deles novos; a importação do Senado passou de ponta a ponta em simulação (um trimestre: 7 proposições, 10 votações, 10 votos), e a da Câmara, para 1987, trouxe só a cobertura, como o acervo permite.
 
-### P1, primeira investigação jogável: não iniciada
+### P1, primeira investigação jogável: feita em 10 e 11 de outubro de 2026, com uma pendência
 
-- [ ] Decidir o recorte documental (quais votações e atos, com que critérios, para os dois) e publicar, após revisão, um conjunto pequeno com as lacunas descritas.
-- [ ] Dar `casa` aos mandatos reais e classificar os temas das proposições (decisões editoriais).
-- [ ] Cartões tipados de voto e ato, e a comparação com cargo, data, objeto, ação e evidência, nas páginas do atlas.
-- [ ] Missão curta de interpretar a decisão (objeto votado, manifestação, ausência contra lacuna, veto parcial), integrada à coleta e à saída.
-- [ ] Preservar o progresso; invalidar só confirmações incompatíveis com a nova definição (a assinatura da tarefa já faz isso).
-- [ ] `RoomId` sem reaproveitar `SceneId` como classificação política.
-- [ ] Escrivão: nome visível, catálogo validado, seletor puro, fallback e preferências; falas de entrada, ajuda, fonte e conclusão em Histórico, Economia e Segurança.
-- [ ] Fluxo completo na exportação estática e em celular real.
+O recorte foi decidido pelo responsável pelo projeto em 10 de outubro de 2026: temas Economia e Segurança pública; a sala Histórico como sala de investigação, e não como tema; período de 1º de janeiro de 2023 à data de corte; Flávio Bolsonaro pelas manifestações individuais documentadas no Senado, Lula pelos atos presidenciais com atribuição e alcance documentados; até doze decisões no total, escolhidas por abrangência, efeito institucional e qualidade da evidência, sem igualar quantidades à força. A seleção, os excluídos e as lacunas estão em [../research/selecao-decisoes-2026-10.md](../research/selecao-decisoes-2026-10.md).
+
+- [x] Recorte documental decidido e publicado como amostra: seis votos nominais no Plenário do Senado (importados do webservice, com as capturas em `research/capturas/`) e seis atos do presidente da República lidos no Portal da Legislação, com as mensagens de veto e os dispositivos; quatro proposições com decisão dos dois (D-128).
+- [x] `casa` nos doze mandatos de casas e órgãos; temas classificados pela ementa, com a justificativa em cada registro; a Constituinte continua instituição própria, não declarada no mandato de deputado federal (ambiguidade anotada).
+- [x] Cartões tipados de voto e ato (`DecisionCard`) e comparação por tema (`DecisionsByTheme`) na página da pessoa (`/politicos/<slug>/#decisoes`) e na comparação, com cargo, instituição, data, objeto, manifestação ou tipo do ato, fontes e revisão, e o aviso de amostra.
+- [x] Tarefa de decisão em duas etapas, a evidência e a interpretação (D-126), integrada à coleta e à saída; na trajetória, a decisão ligada a um acontecimento (o decreto da intervenção, o voto nas saídas temporárias); nas salas temáticas, as decisões do tema.
+- [x] Progresso preservado: formato 4, com a etapa de evidência; a assinatura reabre só as tarefas que mudaram (Lula 5 e Flávio 4 viraram decisão; Flávio 5 virou lugar).
+- [x] `RoomId` separado de `SceneId` (D-125): Histórico, Economia e Segurança pública, com progressão própria e rotas próprias.
+- [x] Escrivão (D-127): nome visível em toda a interface, catálogo validado por teste, seletor puro com controle de repetição, reserva por evento, preferência de humor guardada no navegador, falas de entrada, ajuda, descoberta, fonte, erro e conclusão nas três salas.
+- [x] Fluxo completo na exportação estática: testes de exportação e jornadas sobre o build (`tests/export/jogo.spec.ts`, `tests/e2e/jogo.spec.ts`, seção "Escrivão e salas temáticas").
+- [ ] Celular real: pendente. O roteiro curto para a validação está em [USER-VALIDATION.md](USER-VALIDATION.md), seção Salas e decisões.
 
 ### P2, ampliação: depois de validar a experiência
 

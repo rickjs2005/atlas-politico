@@ -1,0 +1,481 @@
+[
+  {
+    "data": "2026-10-11",
+    "origem": {
+      "arquivo": "senado-5894-2026-10-11.json",
+      "sha256": "4d15e193d4258e3ae63a2d42006198f2f232c6f75d8fd5761c260852274a296b",
+      "descricao": "Dados Abertos do Senado, votações do Plenário de 2023-06-21 com registro do senador 5894, para a amostra de decisões da edição 0.2.0"
+    },
+    "aceitos": [
+      {
+        "entidade": "fonte",
+        "id": "senado-dadosabertos-votacao-5894-2026-10-11"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-msf-24-2023"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-msf-25-2023"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-msf-29-2023"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-msf-34-2023"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-plp-93-2023"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6710"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6711"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6712"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6713"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6714"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6715"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6716"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6717"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6710-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6711-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6712-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6713-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6714-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6715-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6716-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6717-5894"
+      },
+      {
+        "entidade": "cobertura-politica",
+        "id": "senado-cobertura-5894-2026-10-11"
+      }
+    ],
+    "pendentes": [],
+    "rejeitados": [],
+    "existentes": []
+  },
+  {
+    "data": "2026-10-11",
+    "origem": {
+      "arquivo": "senado-5894-2026-10-11.json",
+      "sha256": "0a8f7682ce9c1b2216c61676f3aba8c69154a4c834034d189f8667a054f53e0f",
+      "descricao": "Dados Abertos do Senado, votações do Plenário de 2023-11-08 com registro do senador 5894, para a amostra de decisões da edição 0.2.0"
+    },
+    "aceitos": [
+      {
+        "entidade": "proposicao",
+        "id": "senado-pec-45-2019"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6773"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6774"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6775"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6776"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6777"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6773-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6774-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6775-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6776-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6777-5894"
+      }
+    ],
+    "pendentes": [],
+    "rejeitados": [
+      {
+        "posicao": "fontes[0]",
+        "entidade": "fonte",
+        "id": "senado-dadosabertos-votacao-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-dadosabertos-votacao-5894-2026-10-11\" já existe em content/drafts/fontes.json. O registro existente foi preservado."
+        ]
+      },
+      {
+        "posicao": "coberturaPolitica[0]",
+        "entidade": "cobertura-politica",
+        "id": "senado-cobertura-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-cobertura-5894-2026-10-11\" já existe em content/drafts/coberturaPolitica.json. O registro existente foi preservado."
+        ]
+      }
+    ],
+    "existentes": []
+  },
+  {
+    "data": "2026-10-11",
+    "origem": {
+      "arquivo": "senado-5894-2026-10-11.json",
+      "sha256": "07eee9962ce74c4e6a7b89871e282834b2bd7c329a48861c2bf4abd9932ed69d",
+      "descricao": "Dados Abertos do Senado, votações do Plenário de 2024-02-20 com registro do senador 5894, para a amostra de decisões da edição 0.2.0"
+    },
+    "aceitos": [
+      {
+        "entidade": "proposicao",
+        "id": "senado-pl-2253-2022"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6818"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6819"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6818-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6819-5894"
+      }
+    ],
+    "pendentes": [],
+    "rejeitados": [
+      {
+        "posicao": "fontes[0]",
+        "entidade": "fonte",
+        "id": "senado-dadosabertos-votacao-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-dadosabertos-votacao-5894-2026-10-11\" já existe em content/drafts/fontes.json. O registro existente foi preservado."
+        ]
+      },
+      {
+        "posicao": "coberturaPolitica[0]",
+        "entidade": "cobertura-politica",
+        "id": "senado-cobertura-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-cobertura-5894-2026-10-11\" já existe em content/drafts/coberturaPolitica.json. O registro existente foi preservado."
+        ]
+      }
+    ],
+    "existentes": []
+  },
+  {
+    "data": "2026-10-11",
+    "origem": {
+      "arquivo": "senado-5894-2026-10-11.json",
+      "sha256": "3623778043ba5cef76862ee54f1aabab4b672e0cf905592fb839a874f6700860",
+      "descricao": "Dados Abertos do Senado, votações do Plenário de 2024-04-16 com registro do senador 5894, para a amostra de decisões da edição 0.2.0"
+    },
+    "aceitos": [
+      {
+        "entidade": "proposicao",
+        "id": "senado-pec-45-2023"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6824"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6825"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6824-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6825-5894"
+      }
+    ],
+    "pendentes": [],
+    "rejeitados": [
+      {
+        "posicao": "fontes[0]",
+        "entidade": "fonte",
+        "id": "senado-dadosabertos-votacao-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-dadosabertos-votacao-5894-2026-10-11\" já existe em content/drafts/fontes.json. O registro existente foi preservado."
+        ]
+      },
+      {
+        "posicao": "coberturaPolitica[0]",
+        "entidade": "cobertura-politica",
+        "id": "senado-cobertura-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-cobertura-5894-2026-10-11\" já existe em content/drafts/coberturaPolitica.json. O registro existente foi preservado."
+        ]
+      }
+    ],
+    "existentes": []
+  },
+  {
+    "data": "2026-10-11",
+    "origem": {
+      "arquivo": "senado-5894-2026-10-11.json",
+      "sha256": "f1c0969fcc850009f62ccc19a0dcb7e9676b820501a6e2a18e92044cd96a36dc",
+      "descricao": "Dados Abertos do Senado, votações do Plenário de 2024-12-12 com registro do senador 5894, para a amostra de decisões da edição 0.2.0"
+    },
+    "aceitos": [
+      {
+        "entidade": "proposicao",
+        "id": "senado-msf-31-2024"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-msf-56-2024"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-ofs-1-2024"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-ofs-2-2024"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-ofs-7-2024"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-pl-576-2021"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-plp-68-2024"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6893"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6894"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6895"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6896"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6897"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6898"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6899"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6900"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6901"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-6902"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6893-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6894-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6895-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6896-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6897-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6898-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6899-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6900-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6901-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-6902-5894"
+      }
+    ],
+    "pendentes": [],
+    "rejeitados": [
+      {
+        "posicao": "fontes[0]",
+        "entidade": "fonte",
+        "id": "senado-dadosabertos-votacao-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-dadosabertos-votacao-5894-2026-10-11\" já existe em content/drafts/fontes.json. O registro existente foi preservado."
+        ]
+      },
+      {
+        "posicao": "coberturaPolitica[0]",
+        "entidade": "cobertura-politica",
+        "id": "senado-cobertura-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-cobertura-5894-2026-10-11\" já existe em content/drafts/coberturaPolitica.json. O registro existente foi preservado."
+        ]
+      }
+    ],
+    "existentes": []
+  },
+  {
+    "data": "2026-10-11",
+    "origem": {
+      "arquivo": "senado-5894-2026-10-11.json",
+      "sha256": "2bb1fd4f8c42e54b18d82d65430dca2a5563d1e924419de43ed09d52e78a97ff",
+      "descricao": "Dados Abertos do Senado, votações do Plenário de 2025-12-10 com registro do senador 5894, para a amostra de decisões da edição 0.2.0"
+    },
+    "aceitos": [
+      {
+        "entidade": "proposicao",
+        "id": "senado-pec-169-2019"
+      },
+      {
+        "entidade": "proposicao",
+        "id": "senado-pl-5582-2025"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-7035"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-7036"
+      },
+      {
+        "entidade": "votacao",
+        "id": "senado-votacao-7037"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-7035-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-7036-5894"
+      },
+      {
+        "entidade": "voto",
+        "id": "senado-voto-7037-5894"
+      }
+    ],
+    "pendentes": [],
+    "rejeitados": [
+      {
+        "posicao": "fontes[0]",
+        "entidade": "fonte",
+        "id": "senado-dadosabertos-votacao-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-dadosabertos-votacao-5894-2026-10-11\" já existe em content/drafts/fontes.json. O registro existente foi preservado."
+        ]
+      },
+      {
+        "posicao": "coberturaPolitica[0]",
+        "entidade": "cobertura-politica",
+        "id": "senado-cobertura-5894-2026-10-11",
+        "motivos": [
+          "Conflito de id: \"senado-cobertura-5894-2026-10-11\" já existe em content/drafts/coberturaPolitica.json. O registro existente foi preservado."
+        ]
+      }
+    ],
+    "existentes": []
+  }
+]

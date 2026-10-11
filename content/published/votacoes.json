@@ -1,0 +1,266 @@
+[
+  {
+    "id": "senado-votacao-6714",
+    "proposicaoId": "senado-plp-93-2023",
+    "instituicao": "senado-federal",
+    "orgao": {
+      "tipo": "plenario"
+    },
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "6714"
+    },
+    "data": {
+      "valor": "2023-06-21",
+      "precisao": "dia"
+    },
+    "etapa": "Turno não informado pelo acervo",
+    "objeto": {
+      "tipo": "texto-principal",
+      "identificacao": null,
+      "descricao": "Votação nominal do Projeto de Lei Complementar nº 39, de 2023,e das emendas, nos termos do parecer, ressalvados os destaques.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": {
+      "estado": "aprovado",
+      "valorOriginal": "A"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2023-06-21",
+        "localizacao": "item com codigoSessaoVotacao=6714",
+        "evidencia": "descricaoVotacao: Votação nominal do Projeto de Lei Complementar nº 39, de 2023,e das emendas, nos termos do parecer, ressalvados os destaques.; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC). Objeto votado e etapa conferidos pela descricaoVotacao do acervo e corrigidos onde a inferência automática errou. A descricaoVotacao do acervo escreve \"Projeto de Lei Complementar nº 39, de 2023\"; a matéria identificada no mesmo item é o PLP 93/2023 (codigoMateria 157826), e o objeto é o texto do projeto com as emendas acolhidas no parecer, ressalvados os destaques. Resultado \"A\" lido como aprovado. A ata da sessão não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-votacao-6777",
+    "proposicaoId": "senado-pec-45-2019",
+    "instituicao": "senado-federal",
+    "orgao": {
+      "tipo": "plenario"
+    },
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "6777"
+    },
+    "data": {
+      "valor": "2023-11-08",
+      "precisao": "dia"
+    },
+    "etapa": "2º turno",
+    "objeto": {
+      "tipo": "texto-principal",
+      "identificacao": null,
+      "descricao": "Votação nominal da Proposta de Emenda à Constituição nº 45, de 2019, nos termos do Parecer, em segundo turno.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": {
+      "estado": "aprovado",
+      "valorOriginal": "A"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2023-11-08",
+        "localizacao": "item com codigoSessaoVotacao=6777",
+        "evidencia": "descricaoVotacao: Votação nominal da Proposta de Emenda à Constituição nº 45, de 2019, nos termos do Parecer, em segundo turno.; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC). Objeto votado e etapa conferidos pela descricaoVotacao do acervo e corrigidos onde a inferência automática errou. Votação em segundo turno da PEC 45/2019, nos termos do parecer; o objeto é o texto da proposta. Resultado \"A\" lido como aprovado. A ata da sessão não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-votacao-6818",
+    "proposicaoId": "senado-pl-2253-2022",
+    "instituicao": "senado-federal",
+    "orgao": {
+      "tipo": "plenario"
+    },
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "6818"
+    },
+    "data": {
+      "valor": "2024-02-20",
+      "precisao": "dia"
+    },
+    "etapa": "Turno não informado pelo acervo",
+    "objeto": {
+      "tipo": "texto-principal",
+      "identificacao": null,
+      "descricao": "Votação nominal do Projeto de Lei nº 2.253, de 2022, nos termos do parecer, ressalvados os destaques.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": {
+      "estado": "aprovado",
+      "valorOriginal": "A"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-02-20",
+        "localizacao": "item com codigoSessaoVotacao=6818",
+        "evidencia": "descricaoVotacao: Votação nominal do Projeto de Lei nº 2.253, de 2022, nos termos do parecer, ressalvados os destaques.; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC). Objeto votado e etapa conferidos pela descricaoVotacao do acervo e corrigidos onde a inferência automática errou. Votação do texto do PL 2.253/2022 nos termos do parecer, ressalvados os destaques; o objeto é o texto principal, e não um destaque. Resultado \"A\" lido como aprovado. A ata da sessão não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-votacao-6825",
+    "proposicaoId": "senado-pec-45-2023",
+    "instituicao": "senado-federal",
+    "orgao": {
+      "tipo": "plenario"
+    },
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "6825"
+    },
+    "data": {
+      "valor": "2024-04-16",
+      "precisao": "dia"
+    },
+    "etapa": "2º turno",
+    "objeto": {
+      "tipo": "texto-principal",
+      "identificacao": null,
+      "descricao": "Votação nominal da Proposta de Emenda à Constituição nº 45, de 2023, nos termos do parecer (2º Turno).",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": {
+      "estado": "aprovado",
+      "valorOriginal": "A"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-04-16",
+        "localizacao": "item com codigoSessaoVotacao=6825",
+        "evidencia": "descricaoVotacao: Votação nominal da Proposta de Emenda à Constituição nº 45, de 2023, nos termos do parecer (2º Turno).; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC). Objeto votado e etapa conferidos pela descricaoVotacao do acervo e corrigidos onde a inferência automática errou. Votação em segundo turno da PEC 45/2023, nos termos do parecer; o objeto é o texto da proposta. Resultado \"A\" lido como aprovado. A ata da sessão não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-votacao-6899",
+    "proposicaoId": "senado-plp-68-2024",
+    "instituicao": "senado-federal",
+    "orgao": {
+      "tipo": "plenario"
+    },
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "6899"
+    },
+    "data": {
+      "valor": "2024-12-12",
+      "precisao": "dia"
+    },
+    "etapa": "Turno não informado pelo acervo",
+    "objeto": {
+      "tipo": "substitutivo",
+      "identificacao": "Emenda nº 2.171 (Substitutivo)",
+      "descricao": "Votação nominal da Emenda nº 2.171(Substitutivo) ao PLP 68/24 com Emendas e supressão, nos termos dos pareceres, ressalvados os destaques.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": {
+      "estado": "aprovado",
+      "valorOriginal": "A"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2024-12-12",
+        "localizacao": "item com codigoSessaoVotacao=6899",
+        "evidencia": "descricaoVotacao: Votação nominal da Emenda nº 2.171(Substitutivo) ao PLP 68/24 com Emendas e supressão, nos termos dos pareceres, ressalvados os destaques.; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC). Objeto votado e etapa conferidos pela descricaoVotacao do acervo e corrigidos onde a inferência automática errou. Votação da Emenda nº 2.171, substitutivo ao PLP 68/2024, com emendas e supressão, ressalvados os destaques. Resultado \"A\" lido como aprovado. A ata da sessão não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senado-votacao-7037",
+    "proposicaoId": "senado-pl-5582-2025",
+    "instituicao": "senado-federal",
+    "orgao": {
+      "tipo": "plenario"
+    },
+    "identidadeExterna": {
+      "provedor": "senado",
+      "id": "7037"
+    },
+    "data": {
+      "valor": "2025-12-10",
+      "precisao": "dia"
+    },
+    "etapa": "Turno não informado pelo acervo",
+    "objeto": {
+      "tipo": "substitutivo",
+      "identificacao": "Emenda nº 117 (Substitutivo)",
+      "descricao": "Votação nominal da Emenda nº 117 (Substitutivo) ao Projeto de Lei nº 5.582, de 2025, nos termos do parecer.",
+      "textoReferencia": null
+    },
+    "modalidade": "nominal",
+    "resultadoOficial": {
+      "estado": "aprovado",
+      "valorOriginal": "A"
+    },
+    "fontes": [
+      {
+        "fonteId": "senado-dadosabertos-votacao-5894-2025-12-10",
+        "localizacao": "item com codigoSessaoVotacao=7037",
+        "evidencia": "descricaoVotacao: Votação nominal da Emenda nº 117 (Substitutivo) ao Projeto de Lei nº 5.582, de 2025, nos termos do parecer.; resultadoVotacao: A; totais Sim/Não/Abstenção: ?/?/?"
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-10",
+        "observacoes": "Importado do webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC). Objeto votado e etapa conferidos pela descricaoVotacao do acervo e corrigidos onde a inferência automática errou. Votação da Emenda nº 117, substitutivo ao PL 5.582/2025, nos termos do parecer. Resultado \"A\" lido como aprovado. A ata da sessão não foi aberta: conferência limitada ao acervo de dados abertos. Revisão humana pendente."
+      }
+    }
+  }
+]

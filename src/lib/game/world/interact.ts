@@ -1,22 +1,23 @@
 // O que está ao alcance do personagem: o registro, o guia ou a saída mais
 // próximos, dentro de uma distância curta. Regras puras.
 
+import { recordIds } from "../mission";
 import type { ChapterSpec, Interactable, PlayerState, SceneSpec } from "../types";
 
 /** Distância máxima, em células, entre o centro do personagem e o objeto. */
 export const REACH = 1.15;
 
-/** Os objetos com que se interage na cena de um capítulo. */
+/** Os objetos com que se interage na cena de um capítulo: os registros (acontecimentos e decisões), o guia e a saída. */
 export function listInteractables(
   scene: SceneSpec,
   chapter: ChapterSpec,
   recolhidos: readonly string[],
 ): Interactable[] {
   const itens: Interactable[] = [];
-  chapter.eventIds.forEach((eventId, indice) => {
+  recordIds(chapter).forEach((id, indice) => {
     const posicao = scene.registros[indice];
-    if (posicao === undefined || recolhidos.includes(eventId)) return;
-    itens.push({ tipo: "registro", id: eventId, x: posicao.x + 0.5, y: posicao.y + 0.5 });
+    if (posicao === undefined || recolhidos.includes(id)) return;
+    itens.push({ tipo: "registro", id, x: posicao.x + 0.5, y: posicao.y + 0.5 });
   });
   itens.push({ tipo: "guia", id: "guia", x: scene.guia.x + 0.5, y: scene.guia.y + 0.5 });
   itens.push({ tipo: "saida", id: "saida", x: scene.saida.x + 0.5, y: scene.saida.y + 0.5 });

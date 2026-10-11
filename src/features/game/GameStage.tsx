@@ -9,6 +9,7 @@
 
 import { useEffect, useImperativeHandle, useRef, type RefObject } from "react";
 
+import { recordIds } from "@/lib/game/mission";
 import type { ChapterSpec, Interactable, PersonagemSlug, PlayerState, SceneSpec } from "@/lib/game/types";
 import { clampCenter, followCamera, zoomFor, type Camera } from "@/lib/game/world/camera";
 import { listInteractables, nearestInteractable } from "@/lib/game/world/interact";
@@ -117,13 +118,13 @@ export function GameStage(props: GameStageProps) {
     const novos = props.recolhidos.filter((id) => !vistos.has(id));
     if (novos.length === 0) return;
     for (const id of novos) {
-      const indice = props.chapter.eventIds.indexOf(id);
+      const indice = recordIds(props.chapter).indexOf(id);
       const posicao = props.scene.registros[indice];
       if (posicao !== undefined && props.movimento) efeitosRef.current.push({ x: posicao.x + 0.5, y: posicao.y + 0.5, t: 0 });
     }
     recolhidosVistosRef.current = new Set(props.recolhidos);
     sujoRef.current = true;
-  }, [props.recolhidos, props.chapter.eventIds, props.scene.registros, props.movimento]);
+  }, [props.recolhidos, props.chapter, props.scene.registros, props.movimento]);
 
   // Pausa: congela a simulação e solta as teclas, para o personagem não
   // continuar andando ao voltar.

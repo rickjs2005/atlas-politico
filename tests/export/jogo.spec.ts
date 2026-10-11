@@ -115,10 +115,10 @@ test.describe("páginas do jogo", () => {
     expect(visto.externos, "pedidos a outro domínio").toEqual([]);
   });
 
-  for (const personagem of ["lula", "flavio-bolsonaro"]) {
-    test(`/jogo/${personagem}/ pede o palco, não pede o mapa e não vai a outro domínio`, async ({ page }) => {
+  for (const rota of ["/jogo/lula/", "/jogo/flavio-bolsonaro/", "/jogo/lula/economia/", "/jogo/flavio-bolsonaro/seguranca-publica/"]) {
+    test(`${rota} pede o palco, não pede o mapa e não vai a outro domínio`, async ({ page }) => {
       const visto = watch(page);
-      await page.goto(`/jogo/${personagem}/`);
+      await page.goto(rota);
       await expect(page.locator('[data-palco="pronto"]')).toBeVisible({ timeout: 30_000 });
       await settle(page);
       expect(visto.doPalco().length, "pacote do palco").toBeGreaterThan(0);
@@ -140,6 +140,17 @@ test.describe("páginas do jogo", () => {
     expect(html).toContain("Escolher outro personagem");
     expect(html).toContain("O cenário é uma representação");
     expect(html).toContain("Revisão humana pendente");
+    expect(html).not.toContain("Arquivista");
+  });
+
+  test("a página de uma sala temática existe na saída estática, com a sala e o aviso de amostra no HTML", async ({ request }) => {
+    const resposta = await request.get("/jogo/lula/economia/");
+    expect(resposta.status()).toBe(200);
+    const html = await resposta.text();
+    expect(html).toContain("Sala Economia");
+    expect(html).toContain("amostra documentada");
+    expect(html).toContain("Capítulos e tarefas");
+    expect(html).not.toContain("<canvas");
   });
 
   test("sem JavaScript, o aviso fica dentro do palco, na primeira tela, com o caminho para o atlas", async ({ browser }) => {

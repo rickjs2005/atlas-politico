@@ -10,7 +10,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { chaptersOf } from "@/lib/game/chapters";
-import { requiredRecords, taskSignature } from "@/lib/game/mission";
+import { recordIds, requiredRecords, taskSignature } from "@/lib/game/mission";
+import { chaptersInRoom } from "@/lib/game/rooms";
 import { getScene } from "@/lib/game/scenes";
 import { storageKey } from "@/lib/game/storage";
 import { PROGRESS_VERSION, type ChapterSpec, type PersonagemSlug } from "@/lib/game/types";
@@ -53,15 +54,24 @@ async function openFresh(page: Page, rota: string) {
   await ready(page);
 }
 
-/** Um progresso salvo com os capítulos anteriores ao de número `numero` concluídos e ele disponível. */
+/** Os capítulos da trajetória (a sala Histórico) de um personagem. */
+const trajetoriaDe = (slug: PersonagemSlug) => chaptersInRoom(chaptersOf(slug), "historico");
+
+/** Um progresso salvo com os capítulos da trajetória anteriores ao de número `numero` concluídos e ele disponível. */
 function progressoAte(slug: PersonagemSlug, numero: number) {
   const entradas: Record<string, unknown> = {};
-  chaptersOf(slug).forEach((capitulo, indice) => {
+  trajetoriaDe(slug).forEach((capitulo, indice) => {
     const comResposta = capitulo.tarefa.tipo !== "registro";
     if (indice < numero - 1) {
       entradas[capitulo.id] = {
         status: "concluido",
-        tarefa: { recolhidos: [...capitulo.eventIds], confirmada: comResposta, tentativas: comResposta ? 1 : 0, ...(comResposta ? { assinatura: taskSignature(capitulo.tarefa) } : {}) },
+        tarefa: {
+          recolhidos: recordIds(capitulo),
+          confirmada: comResposta,
+          tentativas: comResposta ? 1 : 0,
+          ...(comResposta ? { assinatura: taskSignature(capitulo.tarefa) } : {}),
+          ...(capitulo.tarefa.tipo === "decisao" ? { evidencia: true } : {}),
+        },
       };
     }
     else entradas[capitulo.id] = { status: indice === numero - 1 ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
@@ -69,18 +79,35 @@ function progressoAte(slug: PersonagemSlug, numero: number) {
   return { versao: PROGRESS_VERSION, personagem: slug, capitulos: entradas };
 }
 
-/** Abre o jogo no capítulo de número `numero`, com os anteriores concluídos. */
+/** Abre o jogo no capítulo de número `numero` da trajetória, com os anteriores concluídos. */
 async function openAtChapter(page: Page, slug: PersonagemSlug, numero: number) {
   await page.goto(`/jogo/${slug}/`);
   await page.evaluate(({ chave, salvo }) => window.localStorage.setItem(chave, JSON.stringify(salvo)), { chave: storageKey(slug), salvo: progressoAte(slug, numero) });
   await page.reload();
   await ready(page);
-  await expect(jogo(page)).toHaveAttribute("data-capitulo", chaptersOf(slug)[numero - 1]!.id);
+  await expect(jogo(page)).toHaveAttribute("data-capitulo", trajetoriaDe(slug)[numero - 1]!.id);
 }
 
-const posicaoDe = (capitulo: ChapterSpec, eventId: string) => getScene(capitulo.cena).registros[capitulo.eventIds.indexOf(eventId)]!;
+const posicaoDe = (capitulo: ChapterSpec, id: string) => getScene(capitulo.cena).registros[recordIds(capitulo).indexOf(id)]!;
 const exigidos = (capitulo: ChapterSpec) => [...requiredRecords(capitulo.tarefa)];
-const foraDaTarefa = (capitulo: ChapterSpec) => capitulo.eventIds.filter((id) => !exigidos(capitulo).includes(id));
+const foraDaTarefa = (capitulo: ChapterSpec) => recordIds(capitulo).filter((id) => !exigidos(capitulo).includes(id));
+
+/** Responde as duas etapas da decisão que está aberta: tenta as opções até acertar cada uma. */
+async function answerDecision(page: Page) {
+  const janela = dialogo(page, "decisao");
+  await expect(janela).toBeVisible();
+  for (const etapa of ["evidencia", "interpretacao"] as const) {
+    if ((await jogo(page).getAttribute("data-etapa")) !== etapa) continue;
+    const ids = await janela.locator("[data-escolher]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")!));
+    for (const id of ids) {
+      await clicar(page, janela.locator(`[data-escolher="${id}"]`));
+      await clicar(page, janela.locator(`[data-confirmar-decisao="${etapa}"]`));
+      if ((await janela.locator("[data-decisao-resultado]").getAttribute("data-decisao-resultado")) === "certo") break;
+      await clicar(page, janela.locator("[data-tentar-de-novo]"));
+    }
+    await clicar(page, janela.locator(etapa === "evidencia" ? "[data-evidencia-concluida]" : "[data-decisao-concluida]"));
+  }
+}
 
 /** Responde a pergunta de ordem que está aberta: tenta uma opção e, se errar, troca. */
 async function answerOrder(page: Page, capitulo: ChapterSpec) {
@@ -117,10 +144,11 @@ async function collectByPanel(page: Page, capitulo: ChapterSpec, id: string) {
   await abrirPainel(page);
   await clicar(page, page.locator(`[data-recolher="${id}"]`));
   await clicar(page, guardar(page));
-  await expect(jogo(page)).toHaveAttribute("data-modo", /^(jogando|ordem|escolha)$/);
+  await expect(jogo(page)).toHaveAttribute("data-modo", /^(jogando|ordem|escolha|decisao)$/);
   const modo = await jogo(page).getAttribute("data-modo");
   if (modo === "ordem") await answerOrder(page, capitulo);
   else if (modo === "escolha") await answerChoice(page);
+  else if (modo === "decisao") await answerDecision(page);
 }
 
 /**
@@ -130,7 +158,7 @@ async function collectByPanel(page: Page, capitulo: ChapterSpec, id: string) {
  */
 async function openExitByPanel(page: Page, capitulo: ChapterSpec) {
   await abrirPainel(page);
-  await expect(page.locator("[data-registro]")).toHaveCount(capitulo.eventIds.length);
+  await expect(page.locator("[data-registro]")).toHaveCount(recordIds(capitulo).length);
   const recolhidos = await page.locator('[data-registro][data-recolhido="sim"]').evaluateAll((nos) => nos.map((no) => no.getAttribute("data-registro")));
   await page.keyboard.press("Escape");
   await expect(dialogo(page, "painel")).toHaveCount(0);
@@ -166,7 +194,7 @@ test.describe("entrada", () => {
 });
 
 for (const personagem of PERSONAGENS) {
-  const capitulos = chaptersOf(personagem);
+  const capitulos = trajetoriaDe(personagem);
   const [primeiro, segundo, terceiro] = capitulos as [ChapterSpec, ChapterSpec, ChapterSpec];
   const cena1 = getScene(primeiro.cena);
   const cena2 = getScene(segundo.cena);
@@ -373,7 +401,7 @@ test("celular deitado: o palco inteiro na janela, com o direcional e o botão de
 
 test("guia, registro com a ordem não documentada, saída fechada, porta aberta de perto e rodapé da página", async ({ page }) => {
   await page.setViewportSize(COMPUTADOR);
-  const [primeiro] = chaptersOf("lula") as [ChapterSpec];
+  const [primeiro] = trajetoriaDe("lula") as [ChapterSpec];
   const cena = getScene(primeiro.cena);
   await openFresh(page, "/jogo/lula/");
 
@@ -415,7 +443,7 @@ test("guia, registro com a ordem não documentada, saída fechada, porta aberta 
 
 test("da ficha do registro à página do acontecimento, com a volta ao jogo", async ({ page }) => {
   await page.setViewportSize(COMPUTADOR);
-  const [primeiro] = chaptersOf("lula") as [ChapterSpec];
+  const [primeiro] = trajetoriaDe("lula") as [ChapterSpec];
   await openFresh(page, "/jogo/lula/");
   await abrirPainel(page);
   await clicar(page, page.locator(`[data-recolher="${exigidos(primeiro)[0]}"]`));

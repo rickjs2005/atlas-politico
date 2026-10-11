@@ -74,11 +74,19 @@ const NAO_VOTOU = new Set(["P-NRV", "NR", "PR", "PS", "EP", "EPR", "NH"]);
 /** Posições de voto, pelo valor literal do acervo. */
 const POSICOES: Record<string, PosicaoDeVoto> = { Sim: "FAVOR", Não: "CONTRA", Nao: "CONTRA", Abstenção: "ABSTENCAO", Abstencao: "ABSTENCAO", OB: "OBSTRUCAO", "P-OD": "OBSTRUCAO" };
 
-/** O objeto votado, pelas palavras do acervo. É uma primeira leitura; a revisão confere contra a ata. */
+/**
+ * O objeto votado, pelas palavras do acervo. É uma primeira leitura; a revisão
+ * confere contra a ata. O que abre a descrição manda: "Votação nominal do
+ * Projeto..., ressalvados os destaques" é o texto principal, e não um
+ * destaque; "da Proposta de Emenda à Constituição" é o texto da proposta, e
+ * não uma emenda; um substitutivo é substitutivo mesmo quando chamado de
+ * emenda (a edição 0.2.0 corrigiu à mão quatro leituras da versão anterior).
+ */
 export function inferObjeto(descricao: string): ObjetoVotado {
   const texto = descricao.toLowerCase();
-  if (/\bemenda/.test(texto)) return "emenda";
   if (/substitutivo/.test(texto)) return "substitutivo";
+  if (/^(votação( nominal)? )?(d[oa] (projeto|proposta|plv|pec|pl[pcsv]?|mpv|medida provis[óo]ria|parecer|texto)\b|pec\b|pl[pcsv]?\b|mpv\b)/.test(texto)) return "texto-principal";
+  if (/\bemenda/.test(texto)) return "emenda";
   if (/destaque/.test(texto)) return "destaque";
   if (/requerimento|urg[êe]ncia|calend[áa]rio especial/.test(texto)) return "requerimento";
   if (/projeto|proposta|medida provis[óo]ria|\bpec\b|\bpl[pcsv]?\b|\bmpv\b|texto|parecer/.test(texto)) return "texto-principal";

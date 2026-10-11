@@ -1,5 +1,5 @@
 {
-  "versao": "0.1.1",
+  "versao": "0.2.0",
   "dataDeCorte": "2026-10-08",
   "revisao": {
     "tipo": "assistida-por-ia",
@@ -20,7 +20,7 @@
           "tipo": "em-curso"
         }
       },
-      "observacao": "Acontecimentos de 1975 a 2026. Não há acontecimentos com data em 1981-1985, 1990-1993, 1995-2001 e 2007-2015: são lacunas de pesquisa desta edição, e não ausência de atividade."
+      "observacao": "Acontecimentos de 1975 a 2026. Não há acontecimentos com data em 1981-1985, 1990-1993, 1995-2001 e 2007-2015: são lacunas de pesquisa desta edição, e não ausência de atividade. Decisões políticas: amostra de seis atos do Executivo nos temas Economia e Segurança pública, de 2023 à data de corte, escolhida por abrangência, efeito institucional e qualidade da evidência; não é o histórico completo de decisões."
     },
     {
       "pessoaId": "flavio-bolsonaro",
@@ -34,7 +34,7 @@
           "tipo": "em-curso"
         }
       },
-      "observacao": "Acontecimentos de 2002 a 2026. O período na Assembleia Legislativa do Rio de Janeiro, de 2003 a 2018, está coberto apenas pelas eleições: propostas, votações e comissões da Alerj não foram pesquisadas nesta edição."
+      "observacao": "Acontecimentos de 2002 a 2026. O período na Assembleia Legislativa do Rio de Janeiro, de 2003 a 2018, está coberto apenas pelas eleições: propostas, votações e comissões da Alerj não foram pesquisadas nesta edição. Decisões políticas: amostra de seis votos no Plenário do Senado nos temas Economia e Segurança pública, de 2023 à data de corte, escolhida por abrangência, efeito institucional e qualidade da evidência; não é o histórico completo de decisões."
     }
   ],
   "alteracoes": [
@@ -174,6 +174,252 @@
         {
           "entidade": "mandato",
           "id": "lula-presidente-do-pt-1990-1994"
+        }
+      ]
+    },
+    {
+      "data": "2026-10-10",
+      "descricao": "Edição 0.2.0: primeira amostra de decisões políticas, nos temas Economia e Segurança pública, de 2023 à data de corte. Seis votos nominais do senador no Plenário do Senado (sete proposições e seis votações, importados do webservice de dados abertos, com as capturas brutas em research/capturas) e seis atos do presidente da República lidos no Portal da Legislação (um decreto, uma sanção sem veto e quatro sanções com veto parcial, com as mensagens de veto e os dispositivos). Fontes novas para cada acervo. Cobertura da pesquisa declarada por pessoa e tema, como amostra parcial, com as lacunas; identidade institucional do senador no Senado (código 5894); casa declarada nos doze mandatos de casas e órgãos. A seleção, os excluídos e as lacunas estão em research/selecao-decisoes-2026-10.md. Tudo conferido com assistência de IA; revisão humana pendente. A data de corte não mudou.",
+      "itens": [
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-votacao-5894-2023-06-21"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-votacao-5894-2023-11-08"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-votacao-5894-2024-02-20"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-votacao-5894-2024-04-16"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-votacao-5894-2024-12-12"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-votacao-5894-2025-12-10"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-materia-pl-1087-2025"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-decreto-11377-2023"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-decreto-legislativo-1-2023"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-14843-2024"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mensagem-144-2024"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-15358-2026"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mensagem-216-2026"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-complementar-200-2023"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mensagem-431-2023"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-complementar-214-2025"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mensagem-88-2025"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-15270-2025"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "senado-plp-93-2023"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "senado-pec-45-2019"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "senado-pl-2253-2022"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "senado-pec-45-2023"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "senado-plp-68-2024"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "senado-pl-5582-2025"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "senado-pl-1087-2025"
+        },
+        {
+          "entidade": "votacao",
+          "id": "senado-votacao-6714"
+        },
+        {
+          "entidade": "votacao",
+          "id": "senado-votacao-6777"
+        },
+        {
+          "entidade": "votacao",
+          "id": "senado-votacao-6818"
+        },
+        {
+          "entidade": "votacao",
+          "id": "senado-votacao-6825"
+        },
+        {
+          "entidade": "votacao",
+          "id": "senado-votacao-6899"
+        },
+        {
+          "entidade": "votacao",
+          "id": "senado-votacao-7037"
+        },
+        {
+          "entidade": "voto",
+          "id": "senado-voto-6714-5894"
+        },
+        {
+          "entidade": "voto",
+          "id": "senado-voto-6777-5894"
+        },
+        {
+          "entidade": "voto",
+          "id": "senado-voto-6818-5894"
+        },
+        {
+          "entidade": "voto",
+          "id": "senado-voto-6825-5894"
+        },
+        {
+          "entidade": "voto",
+          "id": "senado-voto-6899-5894"
+        },
+        {
+          "entidade": "voto",
+          "id": "senado-voto-7037-5894"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-decreto-11377-2023-intervencao-df"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-14843-2024-saidas-temporarias"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-15358-2026-crime-organizado"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-complementar-214-2025-ibs-cbs"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-15270-2025-imposto-de-renda"
+        },
+        {
+          "entidade": "cobertura-politica",
+          "id": "cobertura-flavio-bolsonaro-economia-2023-2026"
+        },
+        {
+          "entidade": "cobertura-politica",
+          "id": "cobertura-flavio-bolsonaro-seguranca-publica-2023-2026"
+        },
+        {
+          "entidade": "cobertura-politica",
+          "id": "cobertura-lula-economia-2023-2026"
+        },
+        {
+          "entidade": "cobertura-politica",
+          "id": "cobertura-lula-seguranca-publica-2023-2026"
+        },
+        {
+          "entidade": "identidade-institucional",
+          "id": "identidade-flavio-bolsonaro-senado-5894"
+        },
+        {
+          "entidade": "mandato",
+          "id": "lula-deputado-federal-1987-1991"
+        },
+        {
+          "entidade": "mandato",
+          "id": "lula-presidente-da-republica-2003-2007"
+        },
+        {
+          "entidade": "mandato",
+          "id": "lula-presidente-da-republica-2007-2011"
+        },
+        {
+          "entidade": "mandato",
+          "id": "lula-presidente-da-republica-2023"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-deputado-estadual-2003-2019"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-senador-2019"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-terceiro-secretario-do-senado"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-vice-lider-do-governo-no-congresso"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-lider-do-patriota-no-senado"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-lider-do-pl-no-senado"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-lider-da-minoria-no-congresso"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-presidente-da-comissao-de-seguranca-publica"
         }
       ]
     }

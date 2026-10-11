@@ -10,7 +10,7 @@ import { describe, expect, it } from "vitest";
 import { readSources, resolvePaths } from "@/lib/content/sources";
 import { PROFILES } from "@/lib/domain/profiles";
 import { CHAPTERS } from "@/lib/game/chapters";
-import { EXCLUSIONS, coverageOf, renderCoverage, uncovered } from "@/lib/game/coverage";
+import { DECISION_EXCLUSIONS, EXCLUSIONS, coverageOf, decisionCoverageOf, renderCoverage, uncovered, uncoveredDecisions } from "@/lib/game/coverage";
 import { buildAtlasData } from "@/lib/publication/build";
 
 const data = buildAtlasData(readSources(resolvePaths())).data!;
@@ -18,6 +18,19 @@ const data = buildAtlasData(readSources(resolvePaths())).data!;
 describe("matriz de cobertura", () => {
   it("nenhum acontecimento de um personagem fica sem capítulo e sem justificativa", () => {
     for (const perfil of PROFILES) expect(uncovered(data, perfil.slug), perfil.slug).toEqual([]);
+  });
+
+  it("nenhuma decisão de um personagem, em tema com sala, fica fora da sala do tema sem justificativa", () => {
+    for (const perfil of PROFILES) {
+      expect(uncoveredDecisions(data, perfil.slug), perfil.slug).toEqual([]);
+      const linhas = decisionCoverageOf(data, perfil.slug);
+      expect(linhas.length, perfil.slug).toBeGreaterThan(0);
+      for (const linha of linhas) expect(linha.capitulos.length, linha.decisaoId).toBeGreaterThan(0);
+    }
+    for (const [id, motivo] of Object.entries(DECISION_EXCLUSIONS)) {
+      expect(motivo.trim().length, id).toBeGreaterThan(0);
+      expect(CHAPTERS.some((capitulo) => (capitulo.decisaoIds ?? []).includes(id)), `${id} está em capítulo e em DECISION_EXCLUSIONS`).toBe(false);
+    }
   });
 
   it("uma exclusão só pode citar um acontecimento que existe e que não está em capítulo", () => {
