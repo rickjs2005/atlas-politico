@@ -18,8 +18,6 @@ export interface DecisionColumn {
 export const SAMPLE_NOTICE =
   "As decisões aqui são uma amostra documentada da edição, escolhida por abrangência, efeito institucional e qualidade da evidência, e não o histórico completo de nenhuma das pessoas. Um voto no Senado e um ato da Presidência são coisas diferentes: a tela mostra o cargo, a instituição e o objeto de cada decisão, e não os equipara.";
 
-const temasPresentes = (colunas: readonly DecisionColumn[]): Tema[] => TEMAS.filter((tema) => colunas.some((coluna) => groupDecisionsByTheme(coluna.decisoes)[tema].length > 0));
-
 /** As proposições com decisão de mais de uma pessoa, pelo `id` da proposição. */
 export function sharedProposicoes(colunas: readonly DecisionColumn[]): Set<string> {
   const porProposicao = new Map<string, Set<string>>();
@@ -45,10 +43,14 @@ interface DecisionsByThemeProps {
 }
 
 export function DecisionsByTheme({ colunas, headingLevel = 2, hrefOf, anchorOf }: DecisionsByThemeProps) {
-  const temas = temasPresentes(colunas);
+  // O agrupamento por tema, uma vez por coluna.
+  const porColuna = colunas.map((coluna) => groupDecisionsByTheme(coluna.decisoes));
+  const temas: Tema[] = TEMAS.filter((tema) => porColuna.some((grupos) => grupos[tema].length > 0));
   const compartilhadas = sharedProposicoes(colunas);
   const Title = headingLevel === 2 ? "h2" : "h3";
   const Sub = headingLevel === 2 ? "h3" : "h4";
+  // O título do cartão fica um nível abaixo do último título acima dele: o do tema, ou o da pessoa quando há mais de uma coluna.
+  const nivelDoCartao = (headingLevel + (colunas.length > 1 ? 2 : 1)) as 3 | 4 | 5;
   if (temas.length === 0) {
     return (
       <p className="text-sm text-ink-soft" data-decisoes="nenhuma">
@@ -64,8 +66,8 @@ export function DecisionsByTheme({ colunas, headingLevel = 2, hrefOf, anchorOf }
             {TEMA_LABELS[tema]}
           </Title>
           <div className={`grid gap-6 ${colunas.length > 1 ? "lg:grid-cols-2" : ""}`}>
-            {colunas.map((coluna) => {
-              const doTema = groupDecisionsByTheme(coluna.decisoes)[tema];
+            {colunas.map((coluna, indice) => {
+              const doTema = porColuna[indice]![tema];
               return (
                 <div key={coluna.pessoa.id} className="space-y-4" data-coluna-decisoes={coluna.pessoa.slug}>
                   {colunas.length > 1 && (
@@ -91,7 +93,7 @@ export function DecisionsByTheme({ colunas, headingLevel = 2, hrefOf, anchorOf }
                             <DecisionCard
                               decisao={decisao}
                               detalhe="completo"
-                              headingLevel={headingLevel === 2 ? 4 : 4}
+                              headingLevel={nivelDoCartao}
                               anchorId={anchorOf?.(decisao.id)}
                               link={hrefOf === undefined ? undefined : { href: hrefOf(coluna.pessoa.slug, decisao.id), rotulo: `Ver na trajetória de ${coluna.pessoa.nome}` }}
                             />

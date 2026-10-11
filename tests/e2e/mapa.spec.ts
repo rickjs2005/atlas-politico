@@ -138,6 +138,29 @@ const posicao = async (alvo: Locator) => {
   return { x: Math.round(caixa.x), y: Math.round(caixa.y) };
 };
 
+/**
+ * A posição de um marcador depois que a câmera parou: duas leituras iguais,
+ * separadas por um intervalo. O arraste termina com um salto de inércia, e o
+ * marcador só o acompanha no desenho seguinte; uma leitura feita logo depois
+ * de soltar o mouse pode vir antes dele (foi o que falhou no runner, por 5 px).
+ */
+async function posicaoEstavel(alvo: Locator) {
+  // A afirmação de tipo evita que o compilador fixe `null`: a atribuição acontece dentro da função da espera.
+  let anterior = null as { x: number; y: number } | null;
+  await expect
+    .poll(
+      async () => {
+        const atual = await posicao(alvo);
+        const parou = anterior !== null && atual.x === anterior.x && atual.y === anterior.y;
+        anterior = atual;
+        return parou;
+      },
+      { intervals: [300, 300, 500, 1000] },
+    )
+    .toBe(true);
+  return anterior!;
+}
+
 async function arrastarMapa(page: Page, dx: number, dy: number) {
   const caixa = (await canvas(page).boundingBox())!;
   // Um ponto do mar, longe dos marcadores e dos controles.
@@ -466,7 +489,8 @@ test.describe("câmera", () => {
   test("depois que a pessoa move o mapa, mudar o recorte não o recentra; Enquadrar devolve", async ({ page }) => {
     await arrastarMapa(page, -90, 40);
     const referencia = marcadorDoLugar(page, cheio.id);
-    const movido = await posicao(referencia);
+    // A referência é lida com a câmera parada: no runner, a inércia do arraste ainda corria quando o recorte mudava.
+    const movido = await posicaoEstavel(referencia);
 
     await page.getByLabel("De", { exact: true }).selectOption("2016");
     await expect.poll(() => eventosNoMapa(page)).toEqual(

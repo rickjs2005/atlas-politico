@@ -8,9 +8,11 @@
 // Em janela baixa (celular deitado), o cabeçalho encolhe para a cena e os
 // controles de toque caberem juntos.
 
-import type { FalaDita } from "@/lib/game/escrivao";
+import { falasVisiveis, type FalaDita } from "@/lib/game/escrivao";
 import type { RoomSpec } from "@/lib/game/rooms";
 import { EPOCA_LABEL, type ChapterSpec, type Interactable } from "@/lib/game/types";
+
+import { useGamePreferences } from "../hooks";
 
 import { quietButton, secondaryButton } from "./Dialog";
 import { EscrivaoSays } from "./EscrivaoSays";
@@ -72,6 +74,9 @@ export function Hud({
 }: HudProps) {
   const dica = reachLabel(alcance, saidaAberta);
   const recolhidos = total - faltam;
+  // A caixa do Escrivão só existe se sobrar fala com a preferência de humor atual.
+  const { preferencias } = useGamePreferences();
+  const haFalas = falas !== null && falasVisiveis(falas.falas, preferencias.humor).length > 0;
   // A linha do objetivo diz o próximo passo: a tarefa, a resposta a dar, os registros que faltam, a passagem.
   const objetivo = saidaAberta
     ? ultimo
@@ -109,7 +114,7 @@ export function Hud({
             </p>
           </div>
           {/* O Escrivão sobre a cena: ao entrar no capítulo e quando a saída abre. Fecha pelo botão; some sozinho com uma janela aberta. */}
-          {falas !== null && falas.falas.length > 0 && (
+          {falas !== null && haFalas && (
             <div className="pointer-events-auto flex items-start gap-2 border border-ink/15 bg-paper/90 px-3 py-2 backdrop-blur-[2px] janela-baixa:hidden" data-escrivao-caixa={falas.evento}>
               <EscrivaoSays falas={falas.falas} evento={falas.evento} className="flex-1" />
               <button type="button" className={`${quietButton} shrink-0`} onClick={onDismissFalas} aria-label="Fechar a fala do Escrivão" data-fechar-escrivao>

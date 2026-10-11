@@ -50,11 +50,27 @@ O recorte foi decidido pelo responsável pelo projeto em 10 de outubro de 2026: 
 - [x] `casa` nos doze mandatos de casas e órgãos; temas classificados pela ementa, com a justificativa em cada registro; a Constituinte continua instituição própria, não declarada no mandato de deputado federal (ambiguidade anotada).
 - [x] Cartões tipados de voto e ato (`DecisionCard`) e comparação por tema (`DecisionsByTheme`) na página da pessoa (`/politicos/<slug>/#decisoes`) e na comparação, com cargo, instituição, data, objeto, manifestação ou tipo do ato, fontes e revisão, e o aviso de amostra.
 - [x] Tarefa de decisão em duas etapas, a evidência e a interpretação (D-126), integrada à coleta e à saída; na trajetória, a decisão ligada a um acontecimento (o decreto da intervenção, o voto nas saídas temporárias); nas salas temáticas, as decisões do tema.
-- [x] Progresso preservado: formato 4, com a etapa de evidência; a assinatura reabre só as tarefas que mudaram (Lula 5 e Flávio 4 viraram decisão; Flávio 5 virou lugar).
+- [x] Progresso preservado: formato 4, com a etapa de evidência; a assinatura reabre só as tarefas que mudaram (Lula 5 e Flávio 4 viraram decisão; Flávio 5 virou lugar). Desde 11 de outubro de 2026, formato 5: a assinatura cobre também os dados que decidem a resposta, e reabrir um capítulo não apaga os seguintes (D-130).
 - [x] `RoomId` separado de `SceneId` (D-125): Histórico, Economia e Segurança pública, com progressão própria e rotas próprias.
 - [x] Escrivão (D-127): nome visível em toda a interface, catálogo validado por teste, seletor puro com controle de repetição, reserva por evento, preferência de humor guardada no navegador, falas de entrada, ajuda, descoberta, fonte, erro e conclusão nas três salas.
 - [x] Fluxo completo na exportação estática: testes de exportação e jornadas sobre o build (`tests/export/jogo.spec.ts`, `tests/e2e/jogo.spec.ts`, seção "Escrivão e salas temáticas").
 - [ ] Celular real: pendente. O roteiro curto para a validação está em [USER-VALIDATION.md](USER-VALIDATION.md), seção Salas e decisões.
+
+### Auditoria de QA de 11 de outubro de 2026: o que mudou na P1
+
+A auditoria externa de prontidão para produção, sobre o commit da P1, pediu correções de código e de testes. Feitas em 11 de outubro de 2026; os resultados estão em [STATUS.md](STATUS.md), e as decisões, em [DECISIONS.md](DECISIONS.md), D-129 a D-132.
+
+- [x] Catálogo de fontes e contagem de citações da metodologia com todas as coleções factuais, pela lista do domínio (as 18 fontes das decisões tinham ficado de fora).
+- [x] As três jornadas que reprovaram na verificação contínua: a do catálogo, por esse defeito; a da comparação e a da página da pessoa, que mediam a página inteira e passaram a conferir o texto que a tela escreve e a área de trabalho, com a seção de decisões alcançada pela âncora, pela rolagem e pelo teclado.
+- [x] Desligar o humor tira na hora a camada de humor das falas que já estavam na tela, em todas as telas.
+- [x] As falas guardadas pertencem ao registro ou ao capítulo de que foram ditas: a releitura não traz fala, e a transição de um capítulo revisto não mostra a conclusão de outro.
+- [x] Contexto sensível sem humor, por registro e por capítulo, com a mesma regra para os dois (D-129).
+- [x] Progresso no formato 5: a resposta pertence aos dados que a decidem, e uma correção reabre só a resposta afetada (D-130).
+- [x] Capturas com o corpo original e conferência que reprova o que foi alterado e o que não pode ser conferido (D-131).
+- [x] Cartão de decisão: a divergência da votação 6714 à vista, o texto de referência declarado como não ligado, a lista longa de dispositivos dobrada, a hierarquia dos títulos (D-132).
+- [x] Passagem de acessibilidade com as salas e os passos da missão; histórico de falas com limite.
+- [ ] Revisão humana, texto de referência das votações, atas, aprovação do tom do Escrivão, celular real, leitor de tela, domínio, canal de correção e licença: de uma pessoa, pendentes ([GAME-RELEASE.md](GAME-RELEASE.md), seção Pendências humanas).
+- [ ] Planos de governo registrados no TSE: fora desta entrega. O atlas não tem esse módulo, e nenhuma tela o anuncia; se for requisito do lançamento, é conteúdo novo, separado das proposições legislativas, com decisão do responsável pelo projeto.
 
 ### P2, ampliação: depois de validar a experiência
 

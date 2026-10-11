@@ -27,7 +27,9 @@ import {
   submitOrder,
   submitPlace,
   submitSource,
+  legacyTaskSignature,
   taskSignature,
+  type TaskContent,
 } from "@/lib/game/mission";
 import type { ChapterSpec, GameLocation, GameRecord, GameSource, TaskSpec, TaskState } from "@/lib/game/types";
 
@@ -83,6 +85,9 @@ const REGISTROS: Record<string, GameRecord> = {
 const TAREFA_REGISTRO: TaskSpec = { tipo: "registro", eventId: "fundacao" };
 // A tarefa cita os dois fora da ordem cronológica de propósito: a ordem certa
 // vem das datas, e não da posição na tarefa.
+/** O conteúdo de que as respostas precisam: os registros das fixtures, sem decisões. */
+const CONTEUDO: TaskContent = { registros: REGISTROS, decisoes: {} };
+
 const TAREFA_ORDEM: Extract<TaskSpec, { tipo: "ordem" }> = { tipo: "ordem", eventIds: ["constituinte", "fundacao"] };
 const TAREFA_FONTE: Extract<TaskSpec, { tipo: "fonte" }> = { tipo: "fonte", eventId: "fundacao" };
 const TAREFA_LUGAR: Extract<TaskSpec, { tipo: "lugar" }> = { tipo: "lugar", eventId: "fundacao" };
@@ -245,15 +250,15 @@ describe("saída do capítulo", () => {
   });
 
   it("a resposta confirmada não abre a saída enquanto falta o registro que a tarefa não pede", () => {
-    const confirmada = submitOrder(TAREFA_ORDEM, recolhidos("constituinte", "fundacao"), ["fundacao", "constituinte"], REGISTROS).estado;
+    const confirmada = submitOrder(TAREFA_ORDEM, recolhidos("constituinte", "fundacao"), ["fundacao", "constituinte"], CONTEUDO).estado;
     expect(isTaskDone(TAREFA_ORDEM, confirmada)).toBe(true);
     expect(isExitOpen(CAPITULO_ORDEM, confirmada)).toBe(false);
     // O último registro abre a saída, tenha a resposta sido confirmada antes ou depois dele.
     expect(isExitOpen(CAPITULO_ORDEM, collect(confirmada, "candidatura"))).toBe(true);
-    const depois = submitOrder(TAREFA_ORDEM, recolhidos("candidatura", "constituinte", "fundacao"), ["fundacao", "constituinte"], REGISTROS).estado;
+    const depois = submitOrder(TAREFA_ORDEM, recolhidos("candidatura", "constituinte", "fundacao"), ["fundacao", "constituinte"], CONTEUDO).estado;
     expect(isExitOpen(CAPITULO_ORDEM, depois)).toBe(true);
 
-    const documento = submitSource(TAREFA_FONTE, recolhidos("fundacao"), CAPITULO_FONTE, REGISTROS, "doc-fundacao").estado;
+    const documento = submitSource(TAREFA_FONTE, recolhidos("fundacao"), CAPITULO_FONTE, CONTEUDO, "doc-fundacao").estado;
     expect(isTaskDone(TAREFA_FONTE, documento)).toBe(true);
     expect(isExitOpen(CAPITULO_FONTE, documento)).toBe(false);
     expect(isExitOpen(CAPITULO_FONTE, collect(collect(documento, "constituinte"), "candidatura"))).toBe(true);
@@ -261,9 +266,9 @@ describe("saída do capítulo", () => {
 
   it("errar a resposta não abre a saída, mesmo com tudo recolhido", () => {
     const todos = recolhidos("constituinte", "fundacao", "candidatura");
-    expect(isExitOpen(CAPITULO_ORDEM, submitOrder(TAREFA_ORDEM, todos, ["constituinte", "fundacao"], REGISTROS).estado)).toBe(false);
-    expect(isExitOpen(CAPITULO_FONTE, submitSource(TAREFA_FONTE, todos, CAPITULO_FONTE, REGISTROS, "doc-constituinte").estado)).toBe(false);
-    expect(isExitOpen(CAPITULO_LUGAR, submitPlace(TAREFA_LUGAR, todos, [CAPITULO_LUGAR], REGISTROS, "Brasília").estado)).toBe(false);
+    expect(isExitOpen(CAPITULO_ORDEM, submitOrder(TAREFA_ORDEM, todos, ["constituinte", "fundacao"], CONTEUDO).estado)).toBe(false);
+    expect(isExitOpen(CAPITULO_FONTE, submitSource(TAREFA_FONTE, todos, CAPITULO_FONTE, CONTEUDO, "doc-constituinte").estado)).toBe(false);
+    expect(isExitOpen(CAPITULO_LUGAR, submitPlace(TAREFA_LUGAR, todos, [CAPITULO_LUGAR], CONTEUDO, "Brasília").estado)).toBe(false);
   });
 
   it("em capítulo cujos registros são só os da tarefa, cumprir a tarefa abre a saída", () => {
@@ -334,7 +339,7 @@ describe("responder a tarefa de ordem", () => {
   const pronta = recolhidos("constituinte", "fundacao");
 
   it("a ordem certa confirma a tarefa e explica com as duas datas", () => {
-    const resposta = submitOrder(TAREFA_ORDEM, pronta, ["fundacao", "constituinte"], REGISTROS);
+    const resposta = submitOrder(TAREFA_ORDEM, pronta, ["fundacao", "constituinte"], CONTEUDO);
     expect(resposta.certo).toBe(true);
     expect(resposta.estado.confirmada).toBe(true);
     expect(resposta.estado.tentativas).toBe(1);
@@ -345,7 +350,7 @@ describe("responder a tarefa de ordem", () => {
   });
 
   it("a ordem errada explica com as duas datas, diz qual veio antes e deixa tentar de novo", () => {
-    const resposta = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], REGISTROS);
+    const resposta = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], CONTEUDO);
     expect(resposta.certo).toBe(false);
     expect(resposta.estado.confirmada).toBe(false);
     expect(resposta.explicacao).toMatch(/^Ainda não\./);
@@ -364,31 +369,31 @@ describe("responder a tarefa de ordem", () => {
   });
 
   it("conta as tentativas, certas e erradas", () => {
-    const primeira = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], REGISTROS);
-    const segunda = submitOrder(TAREFA_ORDEM, primeira.estado, ["constituinte", "fundacao"], REGISTROS);
-    const terceira = submitOrder(TAREFA_ORDEM, segunda.estado, ["fundacao", "constituinte"], REGISTROS);
+    const primeira = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], CONTEUDO);
+    const segunda = submitOrder(TAREFA_ORDEM, primeira.estado, ["constituinte", "fundacao"], CONTEUDO);
+    const terceira = submitOrder(TAREFA_ORDEM, segunda.estado, ["fundacao", "constituinte"], CONTEUDO);
     expect([primeira.certo, segunda.certo, terceira.certo]).toEqual([false, false, true]);
     expect(terceira.estado.tentativas).toBe(3);
     expect(terceira.estado.confirmada).toBe(true);
   });
 
   it("não pune: errar não tira registros recolhidos nem desfaz uma resposta já confirmada", () => {
-    const errada = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], REGISTROS);
+    const errada = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], CONTEUDO);
     expect(errada.estado.recolhidos).toEqual(pronta.recolhidos);
     expect(errada.explicacao).toContain("não há penalidade");
 
-    const confirmada = submitOrder(TAREFA_ORDEM, pronta, ["fundacao", "constituinte"], REGISTROS).estado;
-    const depoisDeErrar = submitOrder(TAREFA_ORDEM, confirmada, ["constituinte", "fundacao"], REGISTROS);
+    const confirmada = submitOrder(TAREFA_ORDEM, pronta, ["fundacao", "constituinte"], CONTEUDO).estado;
+    const depoisDeErrar = submitOrder(TAREFA_ORDEM, confirmada, ["constituinte", "fundacao"], CONTEUDO);
     expect(depoisDeErrar.certo).toBe(false);
     expect(depoisDeErrar.estado.confirmada).toBe(true);
   });
 
   it("uma resposta que repete o mesmo registro não é aceita", () => {
-    expect(submitOrder(TAREFA_ORDEM, pronta, ["fundacao", "fundacao"], REGISTROS).certo).toBe(false);
+    expect(submitOrder(TAREFA_ORDEM, pronta, ["fundacao", "fundacao"], CONTEUDO).certo).toBe(false);
   });
 
   it("não altera o estado recebido", () => {
-    submitOrder(TAREFA_ORDEM, pronta, ["fundacao", "constituinte"], REGISTROS);
+    submitOrder(TAREFA_ORDEM, pronta, ["fundacao", "constituinte"], CONTEUDO);
     expect(pronta).toEqual({ recolhidos: ["constituinte", "fundacao"], confirmada: false, tentativas: 0 });
   });
 });
@@ -425,19 +430,19 @@ describe("responder a tarefa de documento", () => {
   const pronta = recolhidos("fundacao");
 
   it("qualquer documento citado pelo registro confirma a tarefa, e a explicação diz o que ele sustenta", () => {
-    const primeiro = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, REGISTROS, "doc-fundacao");
+    const primeiro = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, CONTEUDO, "doc-fundacao");
     expect(primeiro.certo).toBe(true);
     expect(primeiro.estado.confirmada).toBe(true);
     expect(primeiro.estado.tentativas).toBe(1);
     expect(primeiro.explicacao).toMatch(/^Certo\./);
     expect(primeiro.explicacao).toContain("Ata da fundação");
     expect(primeiro.explicacao).toContain("A data e o lugar da fundação.");
-    const segundo = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, REGISTROS, "doc-compartilhado");
+    const segundo = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, CONTEUDO, "doc-compartilhado");
     expect(segundo.certo).toBe(true);
   });
 
   it("o documento de outro registro explica de qual registro ele é, com a data, e deixa tentar de novo", () => {
-    const resposta = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, REGISTROS, "doc-constituinte");
+    const resposta = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, CONTEUDO, "doc-constituinte");
     expect(resposta.certo).toBe(false);
     expect(resposta.estado.confirmada).toBe(false);
     expect(resposta.explicacao).toMatch(/^Ainda não\./);
@@ -450,14 +455,14 @@ describe("responder a tarefa de documento", () => {
   });
 
   it("um documento que nenhum registro do capítulo cita também é explicado", () => {
-    const resposta = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, REGISTROS, "doc-outro");
+    const resposta = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, CONTEUDO, "doc-outro");
     expect(resposta.certo).toBe(false);
     expect(resposta.explicacao).toContain("não é citado por este registro");
   });
 
   it("não pune: errar não tira registros nem desfaz a confirmação, e as tentativas são contadas", () => {
-    const certa = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, REGISTROS, "doc-fundacao").estado;
-    const depois = submitSource(TAREFA_FONTE, certa, CAPITULO_FONTE, REGISTROS, "doc-candidatura");
+    const certa = submitSource(TAREFA_FONTE, pronta, CAPITULO_FONTE, CONTEUDO, "doc-fundacao").estado;
+    const depois = submitSource(TAREFA_FONTE, certa, CAPITULO_FONTE, CONTEUDO, "doc-candidatura");
     expect(depois.certo).toBe(false);
     expect(depois.estado.confirmada).toBe(true);
     expect(depois.estado.tentativas).toBe(2);
@@ -492,7 +497,7 @@ describe("responder a tarefa de lugar", () => {
   const capitulos = [CAPITULO_LUGAR, CAPITULO_OUTRO];
 
   it("o lugar documentado confirma a tarefa", () => {
-    const resposta = submitPlace(TAREFA_LUGAR, pronta, capitulos, REGISTROS, "São Bernardo do Campo");
+    const resposta = submitPlace(TAREFA_LUGAR, pronta, capitulos, CONTEUDO, "São Bernardo do Campo");
     expect(resposta.certo).toBe(true);
     expect(resposta.estado.confirmada).toBe(true);
     expect(resposta.explicacao).toMatch(/^Certo\./);
@@ -500,46 +505,64 @@ describe("responder a tarefa de lugar", () => {
   });
 
   it("o lugar de outro registro explica de qual registro ele é, com a data, e deixa tentar de novo", () => {
-    const resposta = submitPlace(TAREFA_LUGAR, pronta, capitulos, REGISTROS, "Curitiba");
+    const resposta = submitPlace(TAREFA_LUGAR, pronta, capitulos, CONTEUDO, "Curitiba");
     expect(resposta.certo).toBe(false);
     expect(resposta.estado.confirmada).toBe(false);
     expect(resposta.explicacao).toMatch(/^Ainda não\./);
     expect(resposta.explicacao).toContain("Pessoa é presa (1980)");
     expect(resposta.explicacao).toContain("não há penalidade");
     expect(isAnswerPending(TAREFA_LUGAR, resposta.estado)).toBe(true);
-    const estranho = submitPlace(TAREFA_LUGAR, pronta, capitulos, REGISTROS, "Lugar nenhum");
+    const estranho = submitPlace(TAREFA_LUGAR, pronta, capitulos, CONTEUDO, "Lugar nenhum");
     expect(estranho.certo).toBe(false);
     expect(estranho.explicacao).toContain("Esse lugar não é o deste registro.");
   });
 
   it("não altera o estado recebido e conta as tentativas", () => {
-    const errada = submitPlace(TAREFA_LUGAR, pronta, capitulos, REGISTROS, "Brasília");
-    const certa = submitPlace(TAREFA_LUGAR, errada.estado, capitulos, REGISTROS, "São Bernardo do Campo");
+    const errada = submitPlace(TAREFA_LUGAR, pronta, capitulos, CONTEUDO, "Brasília");
+    const certa = submitPlace(TAREFA_LUGAR, errada.estado, capitulos, CONTEUDO, "São Bernardo do Campo");
     expect(certa.estado.tentativas).toBe(2);
     expect(pronta).toEqual({ recolhidos: ["fundacao"], confirmada: false, tentativas: 0 });
   });
 });
 
 describe("assinatura da tarefa", () => {
-  it("é o tipo e os identificadores que a tarefa pede", () => {
-    expect(taskSignature({ tipo: "registro", eventId: "a" })).toBe("registro:a");
-    expect(taskSignature({ tipo: "ordem", eventIds: ["a", "b"] })).toBe("ordem:a+b");
-    expect(taskSignature({ tipo: "fonte", eventId: "a" })).toBe("fonte:a");
-    expect(taskSignature({ tipo: "lugar", eventId: "a" })).toBe("lugar:a");
+  const vazio: TaskContent = { registros: {}, decisoes: {} };
+
+  it("a forma antiga é o tipo e os identificadores que a tarefa pede; a atual acrescenta o resumo dos dados da resposta", () => {
+    expect(legacyTaskSignature({ tipo: "registro", eventId: "a" })).toBe("registro:a");
+    expect(legacyTaskSignature({ tipo: "ordem", eventIds: ["a", "b"] })).toBe("ordem:a+b");
+    expect(legacyTaskSignature({ tipo: "fonte", eventId: "a" })).toBe("fonte:a");
+    expect(legacyTaskSignature({ tipo: "lugar", eventId: "a" })).toBe("lugar:a");
+    expect(taskSignature({ tipo: "fonte", eventId: "a" }, vazio)).toMatch(/^fonte:a@[0-9a-f]{8}$/);
     // Trocar o tipo, ou o que a tarefa pede, muda a assinatura; a ordem dos identificadores também.
-    expect(taskSignature({ tipo: "fonte", eventId: "a" })).not.toBe(taskSignature({ tipo: "lugar", eventId: "a" }));
-    expect(taskSignature({ tipo: "ordem", eventIds: ["b", "a"] })).not.toBe(taskSignature({ tipo: "ordem", eventIds: ["a", "b"] }));
+    expect(taskSignature({ tipo: "fonte", eventId: "a" }, vazio)).not.toBe(taskSignature({ tipo: "lugar", eventId: "a" }, vazio));
+    expect(taskSignature({ tipo: "ordem", eventIds: ["b", "a"] }, vazio)).not.toBe(taskSignature({ tipo: "ordem", eventIds: ["a", "b"] }, vazio));
+    // Determinística: o mesmo conteúdo dá a mesma assinatura.
+    expect(taskSignature(TAREFA_ORDEM, CONTEUDO)).toBe(taskSignature(TAREFA_ORDEM, { registros: { ...REGISTROS }, decisoes: {} }));
+  });
+
+  it("os dados que decidem a resposta entram na assinatura: datas na ordem, documentos na fonte, lugar no lugar; o texto não (D-130)", () => {
+    const comOutraData: TaskContent = { registros: { ...REGISTROS, fundacao: { ...REGISTROS.fundacao!, data: { valor: "1991-02-10", precisao: "dia" } } }, decisoes: {} };
+    expect(taskSignature(TAREFA_ORDEM, comOutraData)).not.toBe(taskSignature(TAREFA_ORDEM, CONTEUDO));
+    const comOutroDocumento: TaskContent = { registros: { ...REGISTROS, fundacao: { ...REGISTROS.fundacao!, fontes: [DOC_CONSTITUINTE] } }, decisoes: {} };
+    expect(taskSignature(TAREFA_FONTE, comOutroDocumento)).not.toBe(taskSignature(TAREFA_FONTE, CONTEUDO));
+    const comOutroLugar: TaskContent = { registros: { ...REGISTROS, fundacao: { ...REGISTROS.fundacao!, localizacao: { tipo: "nacional" } } }, decisoes: {} };
+    expect(taskSignature(TAREFA_LUGAR, comOutroLugar)).not.toBe(taskSignature(TAREFA_LUGAR, CONTEUDO));
+    const comOutroTitulo: TaskContent = { registros: { ...REGISTROS, fundacao: { ...REGISTROS.fundacao!, titulo: "Outro título", resumo: "Outro resumo." } }, decisoes: {} };
+    for (const tarefa of [TAREFA_ORDEM, TAREFA_FONTE, TAREFA_LUGAR]) expect(taskSignature(tarefa, comOutroTitulo)).toBe(taskSignature(tarefa, CONTEUDO));
+    // A tarefa de registro não tem resposta: a assinatura dela só muda com o identificador.
+    expect(taskSignature({ tipo: "registro", eventId: "fundacao" }, comOutraData)).toBe(taskSignature({ tipo: "registro", eventId: "fundacao" }, CONTEUDO));
   });
 
   it("a resposta certa grava a assinatura da tarefa respondida; a errada não grava nada", () => {
     const pronta = recolhidos("fundacao", "constituinte");
-    const errada = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], REGISTROS);
+    const errada = submitOrder(TAREFA_ORDEM, pronta, ["constituinte", "fundacao"], CONTEUDO);
     expect(errada.estado.confirmada).toBe(false);
     expect("assinatura" in errada.estado).toBe(false);
-    const certa = submitOrder(TAREFA_ORDEM, errada.estado, ["fundacao", "constituinte"], REGISTROS);
+    const certa = submitOrder(TAREFA_ORDEM, errada.estado, ["fundacao", "constituinte"], CONTEUDO);
     expect(certa.estado.confirmada).toBe(true);
-    expect(certa.estado.assinatura).toBe(taskSignature(TAREFA_ORDEM));
+    expect(certa.estado.assinatura).toBe(taskSignature(TAREFA_ORDEM, CONTEUDO));
     // A assinatura segue a ordem em que a tarefa cita os registros, e não a cronológica.
-    expect(certa.estado.assinatura).toBe("ordem:constituinte+fundacao");
+    expect(certa.estado.assinatura).toMatch(/^ordem:constituinte\+fundacao@[0-9a-f]{8}$/);
   });
 });

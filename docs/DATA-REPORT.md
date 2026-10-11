@@ -1,6 +1,6 @@
 # Relatório de dados
 
-Edição 0.1.1 · data de corte 2026-10-08 · revisão assistida-por-ia em 2026-10-09
+Edição 0.2.1 · data de corte 2026-10-08 · revisão assistida-por-ia em 2026-10-09
 
 ## Situação
 
@@ -22,7 +22,7 @@ Sem erros: o conjunto pode ser gerado.
 | Pontos geográficos | 27 |
 | Acontecimentos com ao menos um ponto | 26 |
 | Lugares nos dados públicos | 9 |
-| Fontes nos dados públicos | 60 |
+| Fontes nos dados públicos | 78 |
 | Imagens nos dados públicos | 2 |
 
 ## Por pessoa
@@ -91,7 +91,40 @@ Um período sem acontecimentos é falta de registro no atlas, e não falta de at
 
 ## Trechos conferidos
 
-Das 163 citações de registros elegíveis, 163 têm trecho literal registrado em docs/evidencias e 0 não têm.
+Das 195 citações de registros elegíveis, 163 têm trecho literal registrado em docs/evidencias e 32 não têm.
+
+- `proposicao:senado-plp-93-2023`, fonte `senado-dadosabertos-votacao-5894-2023-06-21`
+- `proposicao:senado-pec-45-2019`, fonte `senado-dadosabertos-votacao-5894-2023-11-08`
+- `proposicao:senado-pl-2253-2022`, fonte `senado-dadosabertos-votacao-5894-2024-02-20`
+- `proposicao:senado-pec-45-2023`, fonte `senado-dadosabertos-votacao-5894-2024-04-16`
+- `proposicao:senado-plp-68-2024`, fonte `senado-dadosabertos-votacao-5894-2024-12-12`
+- `proposicao:senado-pl-5582-2025`, fonte `senado-dadosabertos-votacao-5894-2025-12-10`
+- `proposicao:senado-pl-1087-2025`, fonte `senado-dadosabertos-materia-pl-1087-2025`
+- `votacao:senado-votacao-6714`, fonte `senado-dadosabertos-votacao-5894-2023-06-21`
+- `votacao:senado-votacao-6777`, fonte `senado-dadosabertos-votacao-5894-2023-11-08`
+- `votacao:senado-votacao-6818`, fonte `senado-dadosabertos-votacao-5894-2024-02-20`
+- `votacao:senado-votacao-6825`, fonte `senado-dadosabertos-votacao-5894-2024-04-16`
+- `votacao:senado-votacao-6899`, fonte `senado-dadosabertos-votacao-5894-2024-12-12`
+- `votacao:senado-votacao-7037`, fonte `senado-dadosabertos-votacao-5894-2025-12-10`
+- `voto:senado-voto-6714-5894`, fonte `senado-dadosabertos-votacao-5894-2023-06-21`
+- `voto:senado-voto-6777-5894`, fonte `senado-dadosabertos-votacao-5894-2023-11-08`
+- `voto:senado-voto-6818-5894`, fonte `senado-dadosabertos-votacao-5894-2024-02-20`
+- `voto:senado-voto-6825-5894`, fonte `senado-dadosabertos-votacao-5894-2024-04-16`
+- `voto:senado-voto-6899-5894`, fonte `senado-dadosabertos-votacao-5894-2024-12-12`
+- `voto:senado-voto-7037-5894`, fonte `senado-dadosabertos-votacao-5894-2025-12-10`
+- `ato-executivo:planalto-decreto-11377-2023-intervencao-df`, fonte `planalto-decreto-11377-2023`
+- `ato-executivo:planalto-decreto-11377-2023-intervencao-df`, fonte `senado-dadosabertos-decreto-legislativo-1-2023`
+- `ato-executivo:planalto-lei-14843-2024-saidas-temporarias`, fonte `planalto-lei-14843-2024`
+- `ato-executivo:planalto-lei-14843-2024-saidas-temporarias`, fonte `planalto-mensagem-144-2024`
+- `ato-executivo:planalto-lei-15358-2026-crime-organizado`, fonte `planalto-lei-15358-2026`
+- `ato-executivo:planalto-lei-15358-2026-crime-organizado`, fonte `planalto-mensagem-216-2026`
+- `ato-executivo:planalto-lei-complementar-200-2023-regime-fiscal`, fonte `planalto-lei-complementar-200-2023`
+- `ato-executivo:planalto-lei-complementar-200-2023-regime-fiscal`, fonte `planalto-mensagem-431-2023`
+- `ato-executivo:planalto-lei-complementar-214-2025-ibs-cbs`, fonte `planalto-lei-complementar-214-2025`
+- `ato-executivo:planalto-lei-complementar-214-2025-ibs-cbs`, fonte `planalto-mensagem-88-2025`
+- `ato-executivo:planalto-lei-15270-2025-imposto-de-renda`, fonte `planalto-lei-15270-2025`
+- `ato-executivo:planalto-lei-15270-2025-imposto-de-renda`, fonte `senado-dadosabertos-materia-pl-1087-2025`
+- `identidade-institucional:identidade-flavio-bolsonaro-senado-5894`, fonte `senado-dados-abertos-flavio-mandatos`
 
 ## Erros
 

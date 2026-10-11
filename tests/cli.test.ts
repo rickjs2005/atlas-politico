@@ -28,7 +28,10 @@ function broken(): TestProject {
   return createProject({ published: base });
 }
 
-describe("comandos de dados", () => {
+// Cada teste abre um ou mais processos do Node. Com a suíte inteira rodando em
+// paralelo em uma máquina de 8 GB, o de consulta, que abre vários, passou dos
+// 5 segundos do limite padrão mais de uma vez; sozinho, leva perto de 2.
+describe("comandos de dados", { timeout: 20_000 }, () => {
   it("validate: código 0 e resumo quando o conteúdo é válido", () => {
     const { codigo, saida, erro } = run(createProject({ published: baseContent() }), "validate");
     expect(erro).toBe("");

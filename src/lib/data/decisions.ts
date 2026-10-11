@@ -50,7 +50,8 @@ export interface DecisionVotacao {
   etapa: string;
   /** "Plenário" ou o nome da comissão. */
   orgao: string;
-  objeto: { tipo: ObjetoVotado; identificacao: string | null; descricao: string };
+  /** O objeto votado; `divergencia` é a nota pública quando os documentos divergem sobre ele. */
+  objeto: { tipo: ObjetoVotado; identificacao: string | null; descricao: string; divergencia: string | null };
   modalidade: ModalidadeDeVotacao;
   resultado: { estado: ResultadoDeVotacao; valorOriginal: string };
   /** O documento que diz o que foi votado, quando é outro que o do resultado. */
@@ -63,8 +64,13 @@ export interface DecisionAto {
   identificador: string;
   /** O documento oficial do ato, quando a fonte está no conjunto. */
   oficial: { titulo: string; url: string } | null;
-  /** Os campos que distinguem o tipo (mensagem de veto, dispositivos, medida, decreto, evidência do procedimento), como o registro os traz. */
-  detalhes: readonly { rotulo: string; valor: string }[];
+  /**
+   * Os campos que distinguem o tipo (mensagem de veto, dispositivos, medida,
+   * decreto, evidência do procedimento), como o registro os traz. `itens` é a
+   * lista por extenso quando o campo é uma lista (os dispositivos vetados),
+   * para a tela poder dobrá-la; `valor` é a mesma lista em uma linha.
+   */
+  detalhes: readonly { rotulo: string; valor: string; itens?: readonly string[] }[];
 }
 
 interface DecisionBase {
@@ -168,7 +174,7 @@ export function viewOfVote(data: AtlasData, voto: Voto): DecisionView | null {
       id: votacao.id,
       etapa: votacao.etapa,
       orgao: votacao.orgao.tipo === "plenario" ? "Plenário" : votacao.orgao.nome,
-      objeto: { tipo: votacao.objeto.tipo, identificacao: votacao.objeto.identificacao, descricao: votacao.objeto.descricao },
+      objeto: { tipo: votacao.objeto.tipo, identificacao: votacao.objeto.identificacao, descricao: votacao.objeto.descricao, divergencia: votacao.objeto.divergenciaDocumentada },
       modalidade: votacao.modalidade,
       resultado: { estado: votacao.resultadoOficial.estado, valorOriginal: votacao.resultadoOficial.valorOriginal },
       textoReferencia:
@@ -186,7 +192,7 @@ function detalhesDoAto(ato: AtoExecutivo): DecisionAto["detalhes"] {
     case "veto-parcial":
       return [
         { rotulo: "Mensagem de veto", valor: ato.mensagem },
-        { rotulo: "Dispositivos vetados", valor: ato.dispositivosAlvo.join("; ") },
+        { rotulo: "Dispositivos vetados", valor: ato.dispositivosAlvo.join("; "), itens: ato.dispositivosAlvo },
       ];
     case "veto-total":
       return [{ rotulo: "Mensagem de veto", valor: ato.mensagem }];

@@ -1,10 +1,11 @@
 // As salas do jogo (D-125): a progressão corre dentro de cada sala, o
-// progresso salvo guarda todas, a leitura reaplica a regra por sala e migra a
-// versão 3 (sem a etapa de evidência) para a 4. As preferências do jogo são
+// progresso salvo guarda todas, a leitura reaplica a regra por sala e migra as
+// versões 3 e 4 para a atual. As preferências do jogo são
 // lidas com tolerância.
 
 import { describe, expect, it } from "vitest";
 
+import { taskSignature, type TaskContent } from "@/lib/game/mission";
 import { DEFAULT_PREFERENCES, PREFERENCES_KEY, parsePreferences, serializePreferences } from "@/lib/game/preferences";
 import { chapterStatus, completeChapter, currentChapter, hasStarted, initialProgress, isTrajectoryComplete, parseProgress, taskStateOf, withTaskState } from "@/lib/game/progress";
 import { DEFAULT_ROOM, ROOMS, ROOM_IDS, chaptersInRoom, groupByRoom, isRoomId, roomOf, roomsWithChapters } from "@/lib/game/rooms";
@@ -31,12 +32,14 @@ const H1 = capitulo("h1", "historico", 1, { tipo: "registro", eventId: "a" }, ["
 const H2 = capitulo("h2", "historico", 2, { tipo: "fonte", eventId: "c" }, ["c"]);
 const E1 = capitulo("e1", "economia", 1, { tipo: "decisao", decisaoId: "d1" }, [], ["d1", "d2"]);
 const CAPITULOS = [H1, H2, E1];
+/** Os capítulos de teste não têm registros no conteúdo: a assinatura resume dados ausentes. */
+const SEM_CONTEUDO: TaskContent = { registros: {}, decisoes: {} };
 
 const feita = (spec: ChapterSpec, extra: Partial<TaskState> = {}): TaskState => ({
   recolhidos: [...spec.eventIds, ...(spec.decisaoIds ?? [])],
   confirmada: spec.tarefa.tipo !== "registro",
   tentativas: spec.tarefa.tipo === "registro" ? 0 : 1,
-  ...(spec.tarefa.tipo === "registro" ? {} : { assinatura: `${spec.tarefa.tipo}:${spec.tarefa.tipo === "decisao" ? spec.tarefa.decisaoId : "c"}` }),
+  ...(spec.tarefa.tipo === "registro" ? {} : { assinatura: taskSignature(spec.tarefa, SEM_CONTEUDO) }),
   ...extra,
 });
 
@@ -109,26 +112,32 @@ describe("progressão por sala", () => {
         },
       }),
     );
-    const lido = parseProgress(salvo, "lula", CAPITULOS)!;
+    const lido = parseProgress(salvo, "lula", CAPITULOS, SEM_CONTEUDO)!;
     expect([H1, H2, E1].map((spec) => chapterStatus(lido, spec.id))).toEqual(["disponivel", "bloqueado", "concluido"]);
     expect(taskStateOf(lido, E1.id)).toEqual({ ...feita(E1), evidencia: true });
   });
 
   it("a etapa de evidência da tarefa de decisão vai e volta pelo JSON, e só vale com a decisão recolhida e a tarefa de decisão", () => {
     const inicial = initialProgress("lula", CAPITULOS);
-    const comEvidencia: TaskState = { recolhidos: ["d1"], confirmada: false, tentativas: 1, evidencia: true };
+    // A etapa confirmada leva a assinatura da tarefa (D-130): sem ela, a versão atual não aceita a evidência.
+    const comEvidencia: TaskState = { recolhidos: ["d1"], confirmada: false, tentativas: 1, evidencia: true, assinatura: taskSignature(E1.tarefa, SEM_CONTEUDO) };
     const progresso = withTaskState(inicial, E1.id, comEvidencia);
-    const relido = parseProgress(JSON.parse(JSON.stringify(progresso)), "lula", CAPITULOS)!;
+    const relido = parseProgress(JSON.parse(JSON.stringify(progresso)), "lula", CAPITULOS, SEM_CONTEUDO)!;
     expect(taskStateOf(relido, E1.id)).toEqual(comEvidencia);
-    // Sem a decisão recolhida, a evidência cai.
-    const semRecolher = JSON.parse(JSON.stringify({ ...progresso, capitulos: { ...progresso.capitulos, [E1.id]: { status: "disponivel", tarefa: { recolhidos: ["d2"], confirmada: false, tentativas: 1, evidencia: true } } } }));
-    expect(taskStateOf(parseProgress(semRecolher, "lula", CAPITULOS)!, E1.id)).toEqual({ recolhidos: ["d2"], confirmada: false, tentativas: 1 });
+    // Sem a decisão recolhida, a evidência cai, mesmo com a assinatura certa: é a guarda dos registros que decide.
+    const semRecolher = JSON.parse(JSON.stringify({ ...progresso, capitulos: { ...progresso.capitulos, [E1.id]: { status: "disponivel", tarefa: { ...comEvidencia, recolhidos: ["d2"] } } } }));
+    expect(taskStateOf(parseProgress(semRecolher, "lula", CAPITULOS, SEM_CONTEUDO)!, E1.id)).toEqual({ recolhidos: ["d2"], confirmada: false, tentativas: 1 });
     // Se a tarefa deixou de ser de decisão, a evidência cai também.
     const E1_FONTE = capitulo("e1", "economia", 1, { tipo: "fonte", eventId: "d1" }, ["d1"], []);
-    expect(taskStateOf(parseProgress(JSON.parse(JSON.stringify(progresso)), "lula", [H1, H2, E1_FONTE])!, E1.id)).toEqual({ recolhidos: ["d1"], confirmada: false, tentativas: 1 });
+    expect(taskStateOf(parseProgress(JSON.parse(JSON.stringify(progresso)), "lula", [H1, H2, E1_FONTE], SEM_CONTEUDO)!, E1.id)).toEqual({ recolhidos: ["d1"], confirmada: false, tentativas: 1 });
+    // Nos salvos da versão 4, que não assinavam a etapa, são as duas guardas (a decisão recolhida e a tarefa ainda de decisão) que decidem.
+    const v4 = (recolhidos: string[]) => ({ versao: 4, personagem: "lula", capitulos: { [E1.id]: { status: "disponivel", tarefa: { recolhidos, confirmada: false, tentativas: 1, evidencia: true } } } });
+    expect(taskStateOf(parseProgress(v4(["d1"]), "lula", CAPITULOS, SEM_CONTEUDO)!, E1.id)).toEqual(comEvidencia);
+    expect(taskStateOf(parseProgress(v4(["d2"]), "lula", CAPITULOS, SEM_CONTEUDO)!, E1.id)).toEqual({ recolhidos: ["d2"], confirmada: false, tentativas: 1 });
+    expect(taskStateOf(parseProgress(v4(["d1"]), "lula", [H1, H2, E1_FONTE], SEM_CONTEUDO)!, E1.id)).toEqual({ recolhidos: ["d1"], confirmada: false, tentativas: 1 });
     // Tipo errado recusa o salvo.
     const estranho = JSON.parse(JSON.stringify({ ...progresso, capitulos: { ...progresso.capitulos, [E1.id]: { status: "disponivel", tarefa: { ...comEvidencia, evidencia: "sim" } } } }));
-    expect(parseProgress(estranho, "lula", CAPITULOS)).toBeNull();
+    expect(parseProgress(estranho, "lula", CAPITULOS, SEM_CONTEUDO)).toBeNull();
   });
 
   it("um progresso da versão 3 é lido: a assinatura vale, e a evidência, que a 3 não tinha, é ignorada", () => {
@@ -141,10 +150,10 @@ describe("progressão por sala", () => {
         [E1.id]: { status: "disponivel", tarefa: { recolhidos: ["d1"], confirmada: false, tentativas: 0, evidencia: true } },
       },
     };
-    const lido = parseProgress(v3, "lula", CAPITULOS)!;
+    const lido = parseProgress(v3, "lula", CAPITULOS, SEM_CONTEUDO)!;
     expect(lido.versao).toBe(PROGRESS_VERSION);
     expect([H1, H2, E1].map((spec) => chapterStatus(lido, spec.id))).toEqual(["concluido", "disponivel", "disponivel"]);
-    expect(taskStateOf(lido, H2.id)).toEqual({ recolhidos: ["c"], confirmada: true, tentativas: 1, assinatura: "fonte:c" });
+    expect(taskStateOf(lido, H2.id)).toEqual({ recolhidos: ["c"], confirmada: true, tentativas: 1, assinatura: taskSignature(H2.tarefa, SEM_CONTEUDO) });
     expect(taskStateOf(lido, E1.id)).toEqual({ recolhidos: ["d1"], confirmada: false, tentativas: 0 });
   });
 
@@ -152,7 +161,7 @@ describe("progressão por sala", () => {
     // O capítulo 2 pedia o documento de `c`; agora pede a decisão `d9`. A confirmação antiga cai, o recolhido fica.
     const H2_DECISAO = capitulo("h2", "historico", 2, { tipo: "decisao", decisaoId: "d9" }, ["c"], ["d9"]);
     const v3 = { versao: 3, personagem: "lula", capitulos: { [H1.id]: { status: "concluido", tarefa: feita(H1) }, [H2.id]: { status: "concluido", tarefa: { recolhidos: ["c"], confirmada: true, tentativas: 1, assinatura: "fonte:c" } } } };
-    const lido = parseProgress(v3, "lula", [H1, H2_DECISAO, E1])!;
+    const lido = parseProgress(v3, "lula", [H1, H2_DECISAO, E1], SEM_CONTEUDO)!;
     expect(chapterStatus(lido, H2.id)).toBe("disponivel");
     expect(taskStateOf(lido, H2.id)).toEqual({ recolhidos: ["c"], confirmada: false, tentativas: 1 });
   });

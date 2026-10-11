@@ -11,7 +11,8 @@
       "tipo": "texto-principal",
       "identificacao": null,
       "descricao": "[SINTÉTICO] O texto principal da proposição fictícia, sem emendas.",
-      "textoReferencia": { "fonteId": "sintetico-fonte-01", "localizacao": "Objeto da votação", "capturaId": null }
+      "textoReferencia": { "fonteId": "sintetico-fonte-01", "localizacao": "Objeto da votação", "capturaId": null },
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": { "estado": "aprovado", "valorOriginal": "Aprovado" },
@@ -39,7 +40,8 @@
       "tipo": "requerimento",
       "identificacao": "REQ 7/2004 fictício",
       "descricao": "[SINTÉTICO] Pedido fictício de urgência, e não o mérito do projeto.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "simbolica",
     "resultadoOficial": { "estado": "aprovado", "valorOriginal": "Aprovado por votação simbólica" },
@@ -67,7 +69,8 @@
       "tipo": "emenda",
       "identificacao": "Emenda fictícia nº 3",
       "descricao": "[SINTÉTICO] Uma emenda fictícia ao texto, e não o projeto inteiro.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": { "estado": "rejeitado", "valorOriginal": "Rejeitada" },
@@ -95,7 +98,8 @@
       "tipo": "substitutivo",
       "identificacao": "Substitutivo fictício da comissão",
       "descricao": "[SINTÉTICO] O substitutivo, e não o texto original.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": { "estado": "aprovado", "valorOriginal": "Aprovado" },
@@ -123,7 +127,8 @@
       "tipo": "texto-principal",
       "identificacao": null,
       "descricao": "[SINTÉTICO] O texto principal em segundo turno.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": { "estado": "aprovado", "valorOriginal": "Aprovado" },
@@ -151,7 +156,8 @@
       "tipo": "destaque",
       "identificacao": "Destaque fictício nº 2",
       "descricao": "[SINTÉTICO] Um destaque para votação em separado de um dispositivo.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": { "estado": "prejudicado", "valorOriginal": "Prejudicado" },

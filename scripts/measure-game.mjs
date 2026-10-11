@@ -62,10 +62,14 @@ const PROFILES = {
     cpu: 4,
   },
 };
+// A entrada, a trajetória dos dois personagens e uma sala temática de cada um
+// (as cenas das salas são outras artes, com as decisões como registros).
 const ROUTES = [
   { id: "entrada-do-jogo", path: "/jogo/", cena: false },
   { id: "jogo-lula", path: "/jogo/lula/", cena: true },
   { id: "jogo-flavio-bolsonaro", path: "/jogo/flavio-bolsonaro/", cena: true },
+  { id: "jogo-lula-economia", path: "/jogo/lula/economia/", cena: true },
+  { id: "jogo-flavio-bolsonaro-seguranca-publica", path: "/jogo/flavio-bolsonaro/seguranca-publica/", cena: true },
 ];
 const profileNames = (args.get("--perfis") ?? Object.keys(PROFILES).join(",")).split(",");
 

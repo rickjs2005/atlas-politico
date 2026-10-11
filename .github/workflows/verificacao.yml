@@ -38,6 +38,8 @@ jobs:
         run: npm run audit:a11y
       - name: Matriz de cobertura e lista de revisão em dia
         run: npm run game:coverage -- --check && npm run review:human -- --check
+      - name: Integridade das capturas dos acervos
+        run: npm run capturas:verificar
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

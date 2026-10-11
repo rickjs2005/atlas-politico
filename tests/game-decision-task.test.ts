@@ -12,6 +12,7 @@ import {
   collect,
   correctInterpretation,
   describeDecision,
+  documentsFrom,
   hasAnswer,
   initialTaskState,
   interpretationOptions,
@@ -26,7 +27,9 @@ import {
   sourceOptions,
   submitEvidence,
   submitInterpretation,
+  legacyTaskSignature,
   taskSignature,
+  type TaskContent,
 } from "@/lib/game/mission";
 import type { ChapterSpec, GameDecision, GameRecord, GameSource, TaskSpec, TaskState } from "@/lib/game/types";
 
@@ -78,7 +81,7 @@ const VOTO: GameDecision = {
     id: "v1",
     etapa: "turno único",
     orgao: "Plenário",
-    objeto: { tipo: "texto-principal", identificacao: null, descricao: "Votação nominal do projeto." },
+    objeto: { tipo: "texto-principal", identificacao: null, descricao: "Votação nominal do projeto.", divergencia: null },
     modalidade: "nominal",
     resultado: { estado: "aprovado", valorOriginal: "A" },
     textoReferencia: null,
@@ -126,12 +129,16 @@ const CAPITULO: ChapterSpec = {
   cena: "sindicato",
   epoca: "atual",
 };
-const DOCUMENTOS = {
-  a: registro("a", "Acontecimento A", data("2023-01-02", "dia"), [DOC_A]),
-  b: registro("b", "Acontecimento B", data("2023-06-02", "dia"), [DOC_B]),
-  "voto-1": VOTO,
-  "ato-1": ATO,
+/** O conteúdo do capítulo: os acontecimentos e as decisões, como o jogo os recebe. */
+const CONTEUDO: TaskContent = {
+  registros: {
+    a: registro("a", "Acontecimento A", data("2023-01-02", "dia"), [DOC_A]),
+    b: registro("b", "Acontecimento B", data("2023-06-02", "dia"), [DOC_B]),
+  },
+  decisoes: { "voto-1": VOTO, "ato-1": ATO },
 };
+/** Os mesmos registros e decisões como um só mapa de documentos, para as opções. */
+const DOCUMENTOS = documentsFrom(CONTEUDO);
 
 const recolhidos = (...ids: string[]): TaskState => ids.reduce(collect, initialTaskState());
 
@@ -141,7 +148,7 @@ describe("registros do capítulo com decisões", () => {
     expect(recordIds({ eventIds: ["x"] })).toEqual(["x"]);
     expect(requiredRecords(TAREFA)).toEqual(["voto-1"]);
     expect(hasAnswer(TAREFA)).toBe(true);
-    expect(taskSignature(TAREFA)).toBe("decisao:voto-1");
+    expect(legacyTaskSignature(TAREFA)).toBe("decisao:voto-1");
     expect(isAnswerPending(TAREFA, recolhidos("voto-1"))).toBe(true);
     expect(isAnswerPending(TAREFA, recolhidos("ato-1"))).toBe(false);
     expect(isEvidenceDone(initialTaskState())).toBe(false);
@@ -168,18 +175,21 @@ describe("tarefa de decisão: a evidência", () => {
     expect(sourceOptions(soDecisoes, DOCUMENTOS, "voto-1").map((opcao) => opcao.id).sort()).toEqual(["doc-ato", "doc-votacao"]);
   });
 
-  it("o documento certo grava a etapa de evidência sem confirmar a tarefa; o errado explica e não grava", () => {
-    const certa = submitEvidence(TAREFA, pronta, CAPITULO, DOCUMENTOS, "doc-votacao");
+  it("o documento certo grava a etapa de evidência, com a assinatura, sem confirmar a tarefa; o errado explica e não grava", () => {
+    const certa = submitEvidence(TAREFA, pronta, CAPITULO, CONTEUDO, "doc-votacao");
     expect(certa.certo).toBe(true);
     expect(isEvidenceDone(certa.estado)).toBe(true);
     expect(certa.estado.confirmada).toBe(false);
+    // A etapa confirmada leva a assinatura da tarefa: uma correção nos dados que decidem a resposta reabre a etapa (D-130).
+    expect(certa.estado.assinatura).toBe(taskSignature(TAREFA, CONTEUDO));
     expect(certa.estado.tentativas).toBe(1);
     expect(certa.explicacao).toContain("Agora, a interpretação");
     expect(isAnswerPending(TAREFA, certa.estado)).toBe(true);
     expect(isTaskDone(TAREFA, certa.estado)).toBe(false);
-    const errada = submitEvidence(TAREFA, pronta, CAPITULO, DOCUMENTOS, "doc-a");
+    const errada = submitEvidence(TAREFA, pronta, CAPITULO, CONTEUDO, "doc-a");
     expect(errada.certo).toBe(false);
     expect(isEvidenceDone(errada.estado)).toBe(false);
+    expect("assinatura" in errada.estado).toBe(false);
     expect(errada.estado.tentativas).toBe(1);
     expect(errada.explicacao).toContain("outro registro do capítulo");
     expect(errada.explicacao).toContain("Acontecimento A");
@@ -188,11 +198,26 @@ describe("tarefa de decisão: a evidência", () => {
   });
 
   it("sem a decisão no conteúdo, a resposta é recusada com explicação", () => {
-    const { "voto-1": _voto, ...semVoto } = DOCUMENTOS;
-    expect(_voto).toBeDefined();
+    const semVoto: TaskContent = { ...CONTEUDO, decisoes: { "ato-1": ATO } };
     const resposta = submitEvidence(TAREFA, pronta, CAPITULO, semVoto, "doc-votacao");
     expect(resposta.certo).toBe(false);
     expect(resposta.explicacao).toContain("não está no conteúdo");
+  });
+
+  it("a assinatura da tarefa muda com os dados que decidem a resposta, e não com o texto do registro (D-130)", () => {
+    const original = taskSignature(TAREFA, CONTEUDO);
+    expect(original).toMatch(/^decisao:voto-1@[0-9a-f]{8}$/);
+    // Mudar a manifestação registrada, ou o documento que sustenta, muda a assinatura sob os mesmos identificadores.
+    const outraPosicao: TaskContent = { ...CONTEUDO, decisoes: { ...CONTEUDO.decisoes, "voto-1": { ...VOTO, registro: { tipo: "voto-individual", posicao: "FAVOR", valorOriginal: "Sim" } } } };
+    expect(taskSignature(TAREFA, outraPosicao)).not.toBe(original);
+    const outraFonte: TaskContent = { ...CONTEUDO, decisoes: { ...CONTEUDO.decisoes, "voto-1": { ...VOTO, fontes: [DOC_A] } } };
+    expect(taskSignature(TAREFA, outraFonte)).not.toBe(original);
+    // Mudar só o título, o resumo da proposição ou a explicação não muda nada.
+    const outroTexto: TaskContent = { ...CONTEUDO, decisoes: { ...CONTEUDO.decisoes, "voto-1": { ...VOTO, titulo: "Outro título", proposicoes: [{ ...VOTO.proposicoes[0]!, ementa: "Outra ementa." }] } } };
+    expect(taskSignature(TAREFA, outroTexto)).toBe(original);
+    // A forma antiga, só tipo e identificadores, continua disponível para a leitura dos progressos salvos nas versões 1 a 4.
+    expect(legacyTaskSignature(TAREFA)).toBe("decisao:voto-1");
+    expect(original.startsWith(`${legacyTaskSignature(TAREFA)}@`)).toBe(true);
   });
 });
 
@@ -228,14 +253,15 @@ describe("tarefa de decisão: a interpretação", () => {
   });
 
   it("a interpretação certa confirma a tarefa com a assinatura; a errada diz o que o registro documenta e deixa tentar de novo", () => {
-    const certa = submitInterpretation(TAREFA, comEvidencia, VOTO, "voto:CONTRA:texto-principal");
+    const certa = submitInterpretation(TAREFA, comEvidencia, CONTEUDO, "voto:CONTRA:texto-principal");
     expect(certa.certo).toBe(true);
     expect(certa.estado.confirmada).toBe(true);
-    expect(certa.estado.assinatura).toBe("decisao:voto-1");
+    expect(certa.estado.assinatura).toBe(taskSignature(TAREFA, CONTEUDO));
+    expect(certa.estado.assinatura).toMatch(/^decisao:voto-1@[0-9a-f]{8}$/);
     expect(certa.estado.evidencia).toBe(true);
     expect(certa.explicacao).toContain("Manifestação registrada: Contra (valor original: Não)");
     expect(isTaskDone(TAREFA, certa.estado)).toBe(true);
-    const errada = submitInterpretation(TAREFA, comEvidencia, VOTO, "voto:FAVOR:texto-principal");
+    const errada = submitInterpretation(TAREFA, comEvidencia, CONTEUDO, "voto:FAVOR:texto-principal");
     expect(errada.certo).toBe(false);
     expect(errada.estado.confirmada).toBe(false);
     expect(errada.estado.tentativas).toBe(2);
@@ -245,11 +271,12 @@ describe("tarefa de decisão: a interpretação", () => {
   });
 
   it("antes da evidência, a interpretação é recusada sem contar tentativa; a decisão errada também", () => {
-    const semEvidencia = submitInterpretation(TAREFA, recolhidos("voto-1"), VOTO, "voto:CONTRA:texto-principal");
+    const semEvidencia = submitInterpretation(TAREFA, recolhidos("voto-1"), CONTEUDO, "voto:CONTRA:texto-principal");
     expect(semEvidencia.certo).toBe(false);
     expect(semEvidencia.estado).toEqual(recolhidos("voto-1"));
     expect(semEvidencia.explicacao).toContain("indique o documento");
-    expect(submitInterpretation(TAREFA, comEvidencia, ATO, "ato:veto-parcial").certo).toBe(false);
-    expect(submitInterpretation(TAREFA, comEvidencia, undefined, "x").certo).toBe(false);
+    // Sem a decisão da tarefa no conteúdo (só a outra), a resposta é recusada.
+    expect(submitInterpretation(TAREFA, comEvidencia, { registros: {}, decisoes: { "ato-1": ATO } }, "ato:veto-parcial").certo).toBe(false);
+    expect(submitInterpretation(TAREFA, comEvidencia, { registros: {}, decisoes: {} }, "x").certo).toBe(false);
   });
 });

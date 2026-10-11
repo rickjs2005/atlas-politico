@@ -138,10 +138,13 @@ export type ChapterStatus = "bloqueado" | "disponivel" | "concluido";
  * da tarefa respondida (`taskSignature`), para uma resposta antiga não
  * concluir uma tarefa que mudou sob os mesmos identificadores; a 4 guarda a
  * etapa de evidência da tarefa de decisão (`evidencia`) e lê capítulos de
- * mais de uma sala. A leitura migra as versões 1, 2 e 3
+ * mais de uma sala; a 5 passa a assinar a tarefa também pelos dados que
+ * decidem a resposta (datas, documentos, lugar, manifestação, tipo do ato),
+ * para uma correção editorial sob os mesmos identificadores reabrir só a
+ * resposta afetada (D-130). A leitura migra as versões 1 a 4
  * (src/lib/game/progress.ts).
  */
-export const PROGRESS_VERSION = 4;
+export const PROGRESS_VERSION = 5;
 
 export interface TaskState {
   /** Registros recolhidos neste capítulo, na ordem em que foram recolhidos. */
@@ -151,9 +154,11 @@ export interface TaskState {
   /** Tarefa com resposta: quantas tentativas foram feitas (só informação; não pune). */
   tentativas: number;
   /**
-   * A tarefa que a confirmação respondeu, pela assinatura de `taskSignature`
-   * (tipo e identificadores). Só existe com `confirmada`. Se a tarefa do
-   * capítulo mudar, a confirmação deixa de valer na leitura do progresso.
+   * A tarefa que a resposta respondeu, pela assinatura de `taskSignature`
+   * (tipo, identificadores e um resumo dos dados que decidem a resposta). Só
+   * existe com `confirmada` ou com `evidencia`. Se a tarefa do capítulo mudar,
+   * ou os dados que decidem a resposta mudarem, a resposta deixa de valer na
+   * leitura do progresso; o que foi recolhido fica.
    */
   assinatura?: string;
   /**

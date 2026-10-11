@@ -406,6 +406,33 @@ Medidas por `npm run measure:game -- --rotulo lancamento-2026-10-10`, que sobe o
 
 Leitura: em computador, a cena fica no teto do monitor (60 quadros por segundo) parada e andando, sem quadro longo, e o palco está pronto antes de 0,8 s. No celular emulado, o carregamento fica na faixa das páginas do atlas (LCP perto de 1 s; palco pronto em 2,7 s), mas a cena cai a 19 a 24 quadros por segundo: é o custo de desenhar o canvas por software com a CPU 4 vezes mais lenta. O perfil não é um aparelho: um celular real tem placa de vídeo e outro processador, e pode ficar bem acima disso ou perto. É a primeira coisa a medir numa sessão com aparelho; se ficar perto dos 20, a saída conhecida é reduzir o trabalho por quadro (limitar a densidade de pixels do canvas da cena em telas pequenas). A entrada do jogo não tem "palco pronto" porque não tem cena jogável, só a prévia.
 
+## Páginas do jogo, com as salas temáticas (11 de outubro de 2026)
+
+Medidas por `npm run measure:game -- --rotulo qa-2026-10-11`, nas mesmas condições da medição de 10 de outubro (mediana de 3 execuções, cache vazio, Chromium sem interface com o canvas 2D por software, mesmos perfis de rede e de CPU, na mesma máquina de 8 GB), sobre a saída da edição 0.2.1. O medidor passou a abrir também uma sala temática de cada personagem. Arquivo: `desempenho/jogo-qa-2026-10-11.json`.
+
+| Perfil | Página | FCP | LCP | Carregamento | Palco pronto | Transferido | Cena parada | Cena andando |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Computador | `/jogo/` | 296 ms | 296 ms | 506 ms | | 382 KB | | |
+| Computador | `/jogo/lula/` | 276 ms | 464 ms | 555 ms | 831 ms | 407 KB | 55,8 fps | 54,6 fps, p95 de 33,3 ms, 0 quadros longos |
+| Computador | `/jogo/flavio-bolsonaro/` | 260 ms | 456 ms | 528 ms | 811 ms | 405 KB | 57,7 fps | 55,0 fps, p95 de 33,3 ms, 0 quadros longos |
+| Computador | `/jogo/lula/economia/` | 260 ms | 464 ms | 525 ms | 745 ms | 407 KB | 55,4 fps | 57,3 fps, p95 de 33,2 ms, 0 quadros longos |
+| Computador | `/jogo/flavio-bolsonaro/seguranca-publica/` | 260 ms | 460 ms | 530 ms | 821 ms | 405 KB | 59,3 fps | 57,0 fps, p95 de 33,3 ms, 0 quadros longos |
+| Celular emulado | `/jogo/` | 1.112 ms | 1.112 ms | 2.547 ms | | 385 KB | | |
+| Celular emulado | `/jogo/lula/` | 1.072 ms | 2.392 ms | 2.581 ms | 2.960 ms | 407 KB | 18,6 fps | 19,2 fps, p95 de 66,7 ms, 19 quadros longos |
+| Celular emulado | `/jogo/flavio-bolsonaro/` | 1.104 ms | 2.332 ms | 2.593 ms | 3.024 ms | 405 KB | 18,5 fps | 23,0 fps, p95 de 66,6 ms, 8 quadros longos |
+| Celular emulado | `/jogo/lula/economia/` | 1.068 ms | 2.356 ms | 2.133 ms | 3.191 ms | 407 KB | 17,6 fps | 19,0 fps, p95 de 66,7 ms, 22 quadros longos |
+| Celular emulado | `/jogo/flavio-bolsonaro/seguranca-publica/` | 1.140 ms | 2.272 ms | 2.559 ms | 2.591 ms | 405 KB | 17,6 fps | 19,8 fps, p95 de 66,7 ms, 21 quadros longos |
+
+Leitura, contra a medição de 10 de outubro:
+
+- **As salas temáticas custam o mesmo que a trajetória.** O carregamento, o peso e a cadência das duas salas medidas ficam na faixa das páginas da trajetória.
+- **O primeiro desenho não mudou** (FCP perto de 1,1 s no celular emulado e de 0,27 s em computador).
+- **O LCP das páginas com cena mudou, e a causa é a fala de entrada do Escrivão.** No celular emulado foi de 1,09 s para 2,3 a 2,4 s; em computador, de 0,24 a 0,28 s para 0,46 s. O maior bloco de texto da página passou a ser a instrução do Escrivão na caixa sobre a cena, que entrou na entrega de 10 e 11 de outubro e só aparece depois de o JavaScript carregar e o progresso salvo ser lido; antes, o maior bloco era o objetivo do capítulo, que vem no HTML. Conferido abrindo a página e lendo as entradas de LCP: a primeira é o objetivo, a segunda e última é a instrução do Escrivão. O número continua abaixo de 2,5 s, mas perto, em um perfil que é pessimista.
+- **O tempo de bloqueio no carregamento subiu no celular emulado,** de 0,42 s para 0,61 a 0,89 s: há mais código e mais conteúdo no começo (as decisões e o catálogo de falas). O peso transferido subiu 20 KB.
+- **A cadência caiu pouco em computador, com a caixa do Escrivão aberta sobre a cena:** de 58 para 55 a 57 quadros por segundo, com o p95 do quadro em 33 ms (era 16,8 ms). No celular emulado ficou onde estava, em 18 a 23. A medição roda com a caixa de entrada aberta, que é como a página abre; a caixa tem fundo com desfoque sobre um canvas que redesenha a cada quadro.
+
+Nada disso foi mexido nesta data: são medições de laboratório de um custo que entrou com o Escrivão, e as duas saídas abaixo mudam o primeiro desenho da página do jogo, o que pede uma passagem própria. Ficam nas pendências.
+
 ## Pendências
 
 1. **Aparelho móvel real.** Conferir a jornada e, principalmente, o tempo para abrir a vista do mapa. Fase 9.
@@ -414,7 +441,9 @@ Leitura: em computador, a cena fica no teto do monitor (60 quadros por segundo) 
 4. **Bloqueio de 0,5 a 0,9 segundo no carregamento, no perfil de celular.** Não mudou nesta fase. Reduzir pede menos código de cliente na abertura de cada tela, que é um trabalho de outra ordem.
 5. **Dados de campo e INP,** depois da publicação.
 6. **Hospedagem** (fase 10): compressão, cache longo para `/_next/static/`, `404.html` e tipo de conteúdo dos arquivos `.mjs`. Medir de novo no endereço público.
-7. **Cadência da cena do jogo em celular real.** No perfil emulado a cena fica em 19 a 24 quadros por segundo (seção Páginas do jogo). Medir em um aparelho de verdade e, se ficar perto disso, reduzir o trabalho por quadro.
+7. **LCP das páginas do jogo, que passou a seguir a fala de entrada do Escrivão** (seção Páginas do jogo, com as salas temáticas). A saída conhecida é a fala de entrada do capítulo que abre a página vir já no HTML do build, como o objetivo vem. O cuidado: sem JavaScript, a caixa cobriria o aviso de que o jogo precisa dele, em tela estreita; a mudança tem de tratar isso e passar pelos testes da página sem JavaScript.
+8. **Desfoque de fundo da caixa do Escrivão sobre a cena.** Medir a cadência com e sem o desfoque de 2 pixels da caixa, em computador e em aparelho real, e tirar o desfoque se a diferença se confirmar.
+9. **Cadência da cena do jogo em celular real.** No perfil emulado a cena fica em 19 a 24 quadros por segundo (seção Páginas do jogo). Medir em um aparelho de verdade e, se ficar perto disso, reduzir o trabalho por quadro.
 8. **Passos do ajuste da saída:** rever a cada atualização do Next ou do MapLibre. Se o defeito sumir, o passo sai.
 9. **Fontes.** A Newsreader, com 129 KB, é o maior arquivo das páginas de leitura, e em celular com rede lenta o texto só assume a forma final perto de 2 segundos. Um subconjunto menor pede uma ferramenta que o projeto não tem instalada.
 10. **Navegador sem WebP** não mostra o retrato. Não há versão em outro formato.

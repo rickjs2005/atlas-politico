@@ -1,6 +1,6 @@
 # Status
 
-Atualizado em 10 de outubro de 2026.
+Atualizado em 11 de outubro de 2026.
 
 | Fase do plano | Situação |
 | --- | --- |
@@ -17,9 +17,79 @@ Atualizado em 10 de outubro de 2026.
 | Jogo, etapa 1 (fora do plano de 10 fases) | Primeira versão jogável feita em 10/10/2026: dois capítulos de cada personagem, conferidos no build estático. Revisão humana e validação com pessoas continuam pendentes |
 | Jogo, versão de lançamento (candidata) | Feita em 10/10/2026: onze capítulos sobre os 39 acontecimentos, quatro tipos de tarefa, ficha judicial, cinco ambientes novos e três figuras de cada personagem, conferidos no build estático. **Revisão humana, validação com pessoas, domínio e deploy pendentes**, e são o que decide o lançamento |
 | Histórico de decisões e Escrivão, entrega P1 (investigação jogável) | Feita em 10 e 11/10/2026: salas Histórico, Economia e Segurança pública com progressão própria; tarefa de decisão em duas etapas (evidência e interpretação); o Escrivão com catálogo validado, três camadas e humor desligável; cartões de voto e ato e comparação por tema no atlas; edição 0.2.0 com a amostra de 12 decisões reais (6 votos do Senado, 6 atos do Planalto), `casa` nos mandatos e cobertura declarada. **Revisão humana e celular real pendentes** ([VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md), [HUMAN-REVIEW.md](HUMAN-REVIEW.md)) |
+| Auditoria de QA de produção de 11/10/2026 | Correções de código e de testes feitas e verificadas em 11/10/2026, ainda sem commit: catálogo de fontes completo, humor que sai na hora, contexto sensível, progresso no formato 5, capturas conferíveis, cartões com a divergência e o texto de referência declarados, edição 0.2.1. **O que a auditoria pede a uma pessoa continua pendente** e decide a publicação (seção abaixo) |
 | Histórico de decisões e Escrivão, entrega P0 (contratos e evidência) | Feita em 10/10/2026: seis coleções de decisões políticas no modelo e no pipeline, consulta comparativa discriminada, importador do Senado e da Câmara com capturas, tudo como rascunho ([VOTOS-E-ESCRIVAO.md](VOTOS-E-ESCRIVAO.md)) |
 
 O código e o conteúdo estão em repositório público no GitHub desde 10 de outubro de 2026: https://github.com/rickjs2005/atlas-politico. Tudo é versionado na `main`, sem ramos. O site não foi publicado: não há hospedagem nem deploy, que é o último passo e depende de autorização do responsável pelo projeto.
+
+## Auditoria de QA de produção de 11 de outubro de 2026
+
+Em 11 de outubro de 2026 o responsável pelo projeto trouxe uma auditoria externa de prontidão para produção, feita por outro agente de IA sobre o commit da entrega P1 (`c4120e6`). O diagnóstico dela: a etapa está implementada, mas não está pronta para produção. As correções de código e de testes que ela pede foram feitas no mesmo dia e estão descritas abaixo. O que ela pede a uma pessoa continua pendente, e é o que decide a publicação. As decisões de projeto estão em [DECISIONS.md](DECISIONS.md), D-129 a D-132.
+
+Depois das correções, uma revisão interna em paralelo (quatro revisores e quatro verificadores, só de leitura) olhou as mudanças: confirmou doze pontos, todos corrigidos, e refutou cinco.
+
+### O que a auditoria pediu e como ficou
+
+| Item da auditoria | Situação | O que foi feito |
+| --- | --- | --- |
+| B1. Catálogo da metodologia sem as fontes das decisões | Corrigido | O catálogo e a contagem de citações percorrem a lista de coleções factuais do domínio, e não mais uma lista da página: 78 fontes e 195 citações. A votação conta também o texto de referência, e o ato, a página oficial dele, sem contar o mesmo registro duas vezes |
+| B2. Três jornadas reprovadas na verificação contínua | Corrigido | A do catálogo, pelo B1. A da comparação confere o texto que a tela escreve, por subtração do conteúdo documental, e a ausência de medidor ou barra de progresso. A da página da pessoa confere que a área de trabalho ocupa a tela e que a seção de decisões chega pela rolagem, pelo teclado e pela âncora do endereço, em uma carga nova |
+| B3. Revisão humana, domínio e canal de correção | Pendente, de uma pessoa | `npm run verify:release` recusa, como deve: 94 registros factuais sem revisão humana nas dez coleções, domínio e canal sem valor; avisa da indexação desligada e da falta de licença. O comando novo `npm run release:check` junta a régua de publicação |
+| B4. Planos de governo registrados no TSE | Fora desta entrega, decisão do responsável | O atlas não tem esse módulo, e nenhuma tela, documento ou texto do código o anuncia (conferido por busca). As sete proposições publicadas são proposições legislativas |
+| A1. Releitura com a fala de outro registro | Não aparecia na tela; estado corrigido | No commit auditado a janela de releitura já não mostrava o Escrivão, e o defeito não chegava à tela. O estado, porém, não era amarrado ao registro: as falas guardadas passaram a pertencer ao registro ou ao capítulo de que foram ditas (`falasDe`), com teste de regra e jornadas para acontecimento e para decisão |
+| A2. Desligar o humor não tirava as falas já escolhidas | Corrigido | A camada de humor sai na hora, em toda tela, inclusive da caixa sobre a cena; religar devolve. A jornada nova falha sem a correção (conferido por mutação) |
+| A3. Captura JSON alterada passava como íntegra | Corrigido | A captura guarda o corpo original; `npm run capturas:verificar` reprova corpo, resumo, tamanho ou resposta alterados e captura sem o corpo, e roda na verificação contínua. As sete capturas da amostra receberam o corpo depois de cada consulta ser repetida e o resumo conferir (D-131) |
+| A4. Texto votado sem ligação com o registro; divergência PLP 39 e 93 | Parte de código feita; parte humana pendente | A divergência da votação 6714 virou campo público do registro e aparece no cartão. O cartão diz que o texto de referência não está ligado, nas seis votações. Ligar o texto e abrir a ata de cada sessão é da revisão humana |
+| A5. Resposta guardada vale depois de uma correção | Corrigido | Progresso no formato 5: a assinatura cobre os dados que decidem a resposta. Uma correção reabre só a resposta afetada, e os capítulos seguintes guardam o que tinham e voltam a concluídos quando ela é refeita (D-130) |
+| Escrivão: humor em contexto sensível | Regra aplicada; aprovação humana pendente | Sem humor nos dez episódios da ficha judicial, na prisão de 1980 e nos dois registros da intervenção de 8 de janeiro de 2023, e nos três capítulos em que isso domina. As salas temáticas mantêm o humor (D-129) |
+| Escrivão: anúncio a leitor de tela | Mudado, sem leitor de tela | Só a instrução é anunciada como estado; a informação do registro e o humor ficam como texto comum |
+| Cartões em tela estreita e hierarquia dos títulos | Corrigido | A lista de 22 dispositivos da Lei Complementar nº 214, de 2025, vem dobrada e abre por um controle com altura de toque; o título do cartão fica um nível abaixo do título acima dele |
+| Matriz de acessibilidade | Ampliada | De 10 para 20 telas: as salas temáticas, a cena dos dois personagens, a ajuda com o humor desligado, a decisão recolhida, as duas etapas da resposta, o erro, a conclusão e a transição |
+| Histórico de falas sem limite | Corrigido | O histórico guarda as últimas 240 falas |
+| Verificabilidade da seleção da amostra | Registrada, sem trocar nada | O registro da seleção diz o que comprova e o que não comprova: a amostra ficou com três decisões por pessoa e tema, e a exclusão do Decreto 11.615/2023 mostra que isso pesou ao menos nesse caso. Refazer a comparação é da revisão humana (`research/selecao-decisoes-2026-10.md`, seção A regra aplicada) |
+
+### O que a revisão interna achou, além disso
+
+- Uma correção de conteúdo em um capítulo do meio apagava o que tinha sido recolhido e respondido nos capítulos seguintes da sala. Era a regra antiga de reabertura, que ganhava um gatilho de rotina. Passou a guardar tudo.
+- A tela de transição de um capítulo revisto mostrava a fala de conclusão do último capítulo cumprido, com humor mesmo em capítulo de contexto sensível. A jornada escrita para isso passava por engano, porque a transição some sozinha em 2,6 segundos e a afirmação de ausência esperava por isso: a mutação mostrou, e a jornada passou a ler a transição enquanto ela está na tela.
+- O verificador de capturas só reprovava captura alterada; bastava apagar o corpo do arquivo para a alteração passar como "não verificável". Passou a reprovar.
+- O cartão dizia, de texto fixo, de onde vinha a descrição do objeto e que a conferência era pendência da revisão: duas afirmações que o registro não prova. Ficou só o que o campo vazio prova.
+- Quatro testes novos provavam menos do que diziam (a formatação da captura, as guardas da etapa de evidência, a âncora que não recarregava a página, o texto próprio da comparação com seletores de menos). Refeitos.
+- A citação dos atos tinha ficado com uma vírgula duplicada depois da troca de "nota" por "indicação", feita no commit anterior. Achada olhando a captura da página, e corrigida, com as aspas dos rótulos de volta.
+
+### Verificações feitas
+
+Todas sobre a árvore final, em 11 de outubro de 2026, um comando pesado de cada vez.
+
+| Verificação | Resultado |
+| --- | --- |
+| `npm run lint`, `npm run typecheck` | limpos |
+| `npm run test` (Vitest) | 42 arquivos, 879 testes verdes; eram 858 em 41 |
+| `npm run data:validate` | 0 erros, 5 pendências (os 5 rascunhos), 0 avisos; edição 0.2.1, formato gerado 3 |
+| `npm run build` e `npm run verify:export` | 54 páginas HTML, 322 arquivos conferidos |
+| `npm run test:export` | 35 de 35 |
+| Jornadas sobre a exportação (`npm run test:journeys`, em três partes) | 229 de 229: 39 do jogo e 190 do atlas; eram 220, com 3 reprovadas |
+| `npm run audit:a11y` | 80 telas (20 em 4 larguras) e 20 passagens de teclado sem problema; menor contraste 5,24:1 |
+| `npm run capturas:verificar` | 7 capturas íntegras; captura sem corpo e captura com a resposta trocada reprovam (conferido em uma pasta de teste) |
+| `npm run game:coverage -- --check`, `npm run review:human -- --check` | em dia |
+| `npm run verify:release` | recusa, como esperado: 12 condições e 2 avisos |
+| Mutação à mão | Sem o filtro de humor, a jornada do humor falha. Sem a fala amarrada ao capítulo, a jornada da transição falha (depois de corrigida) |
+| Capturas de `docs/capturas/jogo-salas/` | Refeitas e olhadas uma a uma |
+| `npm run measure:game -- --rotulo qa-2026-10-11` | Cinco páginas, com uma sala temática de cada personagem, em dois perfis. As salas custam o mesmo que a trajetória. O primeiro desenho não mudou; o LCP das páginas com cena passou a seguir a fala de entrada do Escrivão (celular emulado: de 1,09 s para 2,3 a 2,4 s), e a cadência em computador ficou em 55 a 57 quadros por segundo com a caixa do Escrivão aberta (era 58). Números e leitura em [PERFORMANCE.md](PERFORMANCE.md) |
+
+### Implementado e não verificado
+
+- **Verificação contínua.** As correções não foram commitadas nem enviadas: o commit depende de pedido. A última execução no GitHub é a do commit `0f5d6fc`: o trabalho da exportação passou inteiro, e o do servidor de desenvolvimento reprovou um teste do mapa por tempo do runner (a posição de um marcador lida antes do salto de inércia, 5 pixels de diferença). O teste passou a esperar a câmera parar, e está nesta árvore.
+- **`npm run test:e2e`, no servidor de desenvolvimento,** não foi rodado na máquina, que não comporta a suíte inteira com o servidor; as mesmas jornadas rodaram sobre a exportação, e a suíte roda no GitHub a cada push.
+- **Leitor de tela.** A mudança no que o Escrivão anuncia foi conferida pela estrutura, e não ouvindo.
+- **Aparelho real, Firefox e Safari.** Só Chromium sem interface, com celular emulado.
+
+### Pendências
+
+1. **De uma pessoa, antes de publicar:** a revisão humana dos 94 registros; a ata ou a lista nominal das seis votações e o texto que foi votado em cada uma; os alvos e o contexto dos quatro vetos; a regra de seleção da amostra, a começar pelo Decreto 11.615/2023; o tom do Escrivão e a lista de registros sem humor; o celular real, com o roteiro de [USER-VALIDATION.md](USER-VALIDATION.md), que ganhou três passos.
+2. **Decisões do responsável pelo projeto:** se o lançamento precisa de planos de governo registrados no TSE, que seriam conteúdo novo; domínio, canal de correção, indexação e licença.
+3. **Desempenho da página do jogo,** achado na medição desta data e não mexido: o LCP passou a seguir a fala de entrada do Escrivão, que entrou na entrega P1 e só aparece depois de o JavaScript carregar, e a caixa dele tem desfoque de fundo sobre a cena. As duas saídas estão nas pendências de [PERFORMANCE.md](PERFORMANCE.md) e mudam o primeiro desenho da página, inclusive o da página sem JavaScript.
+4. **Commit e push** destas correções, quando pedidos.
 
 ## Histórico de decisões e Escrivão, entrega P1 (investigação jogável)
 
@@ -28,8 +98,8 @@ Entregue em 10 e 11 de outubro de 2026, pelo recorte que o responsável pelo pro
 ### O que ficou pronto
 
 - **Salas (D-125).** `RoomId` com Histórico (a trajetória, investigação), Economia e Segurança pública (as decisões do tema), progressão própria em cada sala, rotas `/jogo/<personagem>/economia/` e `/jogo/<personagem>/seguranca-publica/`, entrada do jogo com as salas de cada personagem e a situação de cada uma, quatro cenas novas de sala de arquivo (artes do gabinete e da sala de comissão, paletas próprias).
-- **Missão documental (D-126).** Tarefa `decisao`: recolher a decisão, indicar o documento que a sustenta, interpretar o que ela documenta, abrir a passagem. Na trajetória, Lula 5 (o Decreto nº 11.377/2023) e Flávio Bolsonaro 4 (o voto no PL 2.253/2022); nas salas temáticas, uma missão por personagem e tema. Progresso no formato 4, com a etapa da evidência e a migração das versões 1 a 3.
-- **Escrivão (D-127).** Nome novo em toda a interface; catálogo em `src/lib/game/escrivao/` com 100 falas em três camadas (instrução, documental, humor), por sala e evento; seletor determinístico com controle de repetição; validação por teste (sem pessoa, partido, data escrita, juízo, travessão); humor desligável pelo painel e pelo diálogo do Escrivão, preferência em `localStorage` (`atlas-politico:jogo:preferencias`).
+- **Missão documental (D-126).** Tarefa `decisao`: recolher a decisão, indicar o documento que a sustenta, interpretar o que ela documenta, abrir a passagem. Na trajetória, Lula 5 (o Decreto nº 11.377/2023) e Flávio Bolsonaro 4 (o voto no PL 2.253/2022); nas salas temáticas, uma missão por personagem e tema. Progresso no formato 4, com a etapa da evidência e a migração das versões 1 a 3 (formato 5 desde a auditoria de QA de 11 de outubro, D-130).
+- **Escrivão (D-127).** Nome novo em toda a interface; catálogo em `src/lib/game/escrivao/` com 120 falas em três camadas (instrução, documental, humor), por sala e evento; seletor determinístico com controle de repetição; validação por teste (sem pessoa, partido, data escrita, juízo, travessão); humor desligável pelo painel e pelo diálogo do Escrivão, preferência em `localStorage` (`atlas-politico:jogo:preferencias`).
 - **Atlas.** Cartões de voto e ato (`DecisionCard`) na página da pessoa (`/politicos/<slug>/#decisoes`) e comparação por tema em `/comparar/`, com cargo, instituição, data, objeto, manifestação ou tipo do ato, fontes e revisão; aviso de amostra em toda tela; "mesma proposição" marcada quando os dois têm decisão.
 - **Conteúdo (edição 0.2.0).** 12 decisões: 6 votos nominais do senador no Plenário do Senado (importados do webservice em 11/10/2026, UTC, com as capturas em `research/capturas/`), 6 atos do presidente lidos no Portal da Legislação (1 decreto, 1 sanção sem veto, 4 sanções com veto parcial, com as mensagens e os dispositivos); 7 proposições; `casa` nos 12 mandatos de casas e órgãos; 4 declarações de cobertura (amostra, parcial, com as lacunas); 1 identidade institucional; 18 fontes novas. A seleção, os excluídos e as lacunas estão em `research/selecao-decisoes-2026-10.md`. Tudo conferido com assistência de IA; revisão humana pendente (`npm run review:human`, seção 6).
 
@@ -48,7 +118,7 @@ Entregue em 10 e 11 de outubro de 2026, pelo recorte que o responsável pelo pro
 
 - **Revisão humana** de tudo, inclusive da seção 6 de [HUMAN-REVIEW.md](HUMAN-REVIEW.md) (decisões, cobertura e identidades), antes de qualquer publicação; a barreira de release continua recusando a edição sem ela.
 - **Celular real**: só emulação. O roteiro curto para o responsável pelo projeto executar está em [USER-VALIDATION.md](USER-VALIDATION.md), seção "Salas e decisões em celular real".
-- **Leitor de tela** não foi usado; o Escrivão e os cartões saem como texto comum, com `role="status"` nas falas.
+- **Leitor de tela** não foi usado; o Escrivão e os cartões saem como texto comum, com `role="status"` só na instrução (D-129).
 - **Atas e painéis das sessões** não foram abertos: a conferência dos votos ficou no webservice de dados abertos.
 
 ## Histórico de decisões e Escrivão, entrega P0 (contratos e evidência)

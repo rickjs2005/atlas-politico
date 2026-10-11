@@ -19,7 +19,8 @@
       "tipo": "texto-principal",
       "identificacao": null,
       "descricao": "Votação nominal do Projeto de Lei Complementar nº 39, de 2023,e das emendas, nos termos do parecer, ressalvados os destaques.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": "A descrição da votação no acervo de dados abertos do Senado escreve \"Projeto de Lei Complementar nº 39, de 2023\"; a matéria identificada no mesmo registro (código 157826) é o PLP 93/2023. O atlas liga a votação ao PLP 93/2023 e mantém a descrição como o acervo a escreve. A ata da sessão não foi conferida nesta edição."
     },
     "modalidade": "nominal",
     "resultadoOficial": {
@@ -63,7 +64,8 @@
       "tipo": "texto-principal",
       "identificacao": null,
       "descricao": "Votação nominal da Proposta de Emenda à Constituição nº 45, de 2019, nos termos do Parecer, em segundo turno.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": {
@@ -107,7 +109,8 @@
       "tipo": "texto-principal",
       "identificacao": null,
       "descricao": "Votação nominal do Projeto de Lei nº 2.253, de 2022, nos termos do parecer, ressalvados os destaques.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": {
@@ -151,7 +154,8 @@
       "tipo": "texto-principal",
       "identificacao": null,
       "descricao": "Votação nominal da Proposta de Emenda à Constituição nº 45, de 2023, nos termos do parecer (2º Turno).",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": {
@@ -195,7 +199,8 @@
       "tipo": "substitutivo",
       "identificacao": "Emenda nº 2.171 (Substitutivo)",
       "descricao": "Votação nominal da Emenda nº 2.171(Substitutivo) ao PLP 68/24 com Emendas e supressão, nos termos dos pareceres, ressalvados os destaques.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": {
@@ -239,7 +244,8 @@
       "tipo": "substitutivo",
       "identificacao": "Emenda nº 117 (Substitutivo)",
       "descricao": "Votação nominal da Emenda nº 117 (Substitutivo) ao Projeto de Lei nº 5.582, de 2025, nos termos do parecer.",
-      "textoReferencia": null
+      "textoReferencia": null,
+      "divergenciaDocumentada": null
     },
     "modalidade": "nominal",
     "resultadoOficial": {

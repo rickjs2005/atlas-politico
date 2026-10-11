@@ -10,11 +10,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { chaptersOf } from "@/lib/game/chapters";
-import { recordIds, requiredRecords, taskSignature } from "@/lib/game/mission";
+import { legacyTaskSignature, recordIds, requiredRecords } from "@/lib/game/mission";
 import { chaptersInRoom } from "@/lib/game/rooms";
 import { getScene } from "@/lib/game/scenes";
 import { storageKey } from "@/lib/game/storage";
-import { PROGRESS_VERSION, type ChapterSpec, type PersonagemSlug } from "@/lib/game/types";
+import type { ChapterSpec, PersonagemSlug } from "@/lib/game/types";
 
 import { clearProgress, clicar, jogo, palco, walkTo } from "../e2e/jogo-caminho";
 
@@ -69,14 +69,14 @@ function progressoAte(slug: PersonagemSlug, numero: number) {
           recolhidos: recordIds(capitulo),
           confirmada: comResposta,
           tentativas: comResposta ? 1 : 0,
-          ...(comResposta ? { assinatura: taskSignature(capitulo.tarefa) } : {}),
+          ...(comResposta ? { assinatura: legacyTaskSignature(capitulo.tarefa) } : {}),
           ...(capitulo.tarefa.tipo === "decisao" ? { evidencia: true } : {}),
         },
       };
     }
     else entradas[capitulo.id] = { status: indice === numero - 1 ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
   });
-  return { versao: PROGRESS_VERSION, personagem: slug, capitulos: entradas };
+  return { versao: 4, personagem: slug, capitulos: entradas };
 }
 
 /** Abre o jogo no capítulo de número `numero` da trajetória, com os anteriores concluídos. */

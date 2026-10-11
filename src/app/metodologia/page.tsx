@@ -14,9 +14,11 @@ import { SourceCatalog } from "@/components/SourceList";
 import { getAtlasData } from "@/lib/content/published";
 import { MIN_GAP_YEARS, getCoverage } from "@/lib/data/coverage";
 import { findPersonBySlug, listSourcesOf, type SourceUse } from "@/lib/data/queries";
+import type { AtlasData } from "@/lib/data/types";
 import type { Categoria } from "@/lib/domain/categories";
 import { formatDate, formatPeriod } from "@/lib/domain/dates";
 import type { Citacao } from "@/lib/domain/schemas";
+import { COLECOES_FACTUAIS_DO_CONJUNTO } from "@/lib/domain/integrity";
 import { PROFILES } from "@/lib/domain/profiles";
 import { SITE } from "@/lib/site";
 
@@ -92,15 +94,15 @@ function groupByOrganization(fontes: readonly SourceUse[]): { nome: string; font
   return [...grupos].map(([nome, itens]) => ({ nome, fontes: itens }));
 }
 
+type ComCitacoes = { fontes: readonly Citacao[] };
+type ColecaoFactual = (typeof COLECOES_FACTUAIS_DO_CONJUNTO)[number];
+
 /**
  * Um registro de decisão com as referências diretas dele (o texto de referência
  * do objeto votado, a página oficial do ato) contadas como citações, para o
  * catálogo listar o documento e contar o registro que o usa.
  */
-function comReferencias(
-  registro: { fontes: readonly Citacao[] },
-  referencias: readonly { fonteId: string; localizacao: string }[],
-): { fontes: readonly Citacao[] } {
+function comReferencias(registro: ComCitacoes, referencias: readonly { fonteId: string; localizacao: string }[]): ComCitacoes {
   return {
     fontes: [
       ...registro.fontes,
@@ -113,55 +115,28 @@ function comReferencias(
   };
 }
 
+/** Os registros de uma coleção factual como o catálogo os conta: as votações e os atos, com as referências diretas deles. */
+function registrosDoCatalogo(conjunto: AtlasData["conjunto"], colecao: ColecaoFactual): readonly ComCitacoes[] {
+  if (colecao === "votacoes") {
+    return conjunto.votacoes.map((votacao) => comReferencias(votacao, votacao.objeto.textoReferencia === null ? [] : [votacao.objeto.textoReferencia]));
+  }
+  if (colecao === "atosExecutivos") {
+    return conjunto.atosExecutivos.map((ato) => comReferencias(ato, [{ fonteId: ato.atoOficial.fonteId, localizacao: ato.atoOficial.identificador }]));
+  }
+  return conjunto[colecao];
+}
+
 export default function MethodologyPage() {
   const data = getAtlasData();
-  const {
-    edicao,
-    imagens,
-    acontecimentos,
-    mandatos,
-    filiacoes,
-    pessoas,
-    fontes,
-    proposicoes,
-    votacoes,
-    votos,
-    atosExecutivos,
-    coberturaPolitica,
-    identidadesInstitucionais,
-  } = data.conjunto;
-  // Todos os registros da edição, inclusive os das decisões (docs/DATA-PIPELINE.md).
-  const registros = [
-    ...pessoas,
-    ...mandatos,
-    ...filiacoes,
-    ...acontecimentos,
-    ...proposicoes,
-    ...votacoes,
-    ...votos,
-    ...atosExecutivos,
-    ...coberturaPolitica,
-    ...identidadesInstitucionais,
-  ];
-  const citacoes = registros.reduce((total, registro) => total + registro.fontes.length, 0);
-  const catalogo = groupByOrganization(
-    listSourcesOf(data, [
-      ...pessoas,
-      ...mandatos,
-      ...filiacoes,
-      ...acontecimentos,
-      ...proposicoes,
-      ...votacoes.map((votacao) =>
-        comReferencias(votacao, votacao.objeto.textoReferencia === null ? [] : [votacao.objeto.textoReferencia]),
-      ),
-      ...votos,
-      ...atosExecutivos.map((ato) =>
-        comReferencias(ato, [{ fonteId: ato.atoOficial.fonteId, localizacao: ato.atoOficial.identificador }]),
-      ),
-      ...coberturaPolitica,
-      ...identidadesInstitucionais,
-    ]),
+  const { edicao, imagens, acontecimentos, mandatos, filiacoes, fontes } = data.conjunto;
+  // Todas as coleções factuais da edição, pela lista central do domínio (COLECOES_FACTUAIS_DO_CONJUNTO): uma coleção nova entra
+  // no catálogo e na contagem de citações sem esta página mudar. Foi por uma lista própria, só com as quatro coleções
+  // da primeira edição, que as fontes das decisões ficaram fora do catálogo.
+  const citacoes = COLECOES_FACTUAIS_DO_CONJUNTO.reduce(
+    (total, colecao) => total + (data.conjunto[colecao] as readonly ComCitacoes[]).reduce((soma, registro) => soma + registro.fontes.length, 0),
+    0,
   );
+  const catalogo = groupByOrganization(listSourcesOf(data, COLECOES_FACTUAIS_DO_CONJUNTO.flatMap((colecao) => registrosDoCatalogo(data.conjunto, colecao))));
   const nomes = PROFILES.map((perfil) => perfil.nome).join(" e de ");
   const corte = edicao === null ? null : formatDate({ valor: edicao.dataDeCorte, precisao: "dia" });
   const perfis = PROFILES.flatMap((perfil) => {

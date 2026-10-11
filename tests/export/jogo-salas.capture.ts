@@ -9,11 +9,11 @@ import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
 import { chaptersOf } from "@/lib/game/chapters";
-import { recordIds, requiredRecords, taskSignature } from "@/lib/game/mission";
+import { legacyTaskSignature, recordIds, requiredRecords } from "@/lib/game/mission";
 import { chaptersInRoom } from "@/lib/game/rooms";
 import { getScene } from "@/lib/game/scenes";
 import { storageKey } from "@/lib/game/storage";
-import { PROGRESS_VERSION, type ChapterSpec } from "@/lib/game/types";
+import type { ChapterSpec } from "@/lib/game/types";
 
 import { clearProgress, clicar, jogo, palco, walkTo } from "../e2e/jogo-caminho";
 
@@ -74,11 +74,11 @@ function progressoAteAMissao() {
       const comResposta = capitulo.tarefa.tipo !== "registro";
       entradas[capitulo.id] = {
         status: "concluido",
-        tarefa: { recolhidos: recordIds(capitulo), confirmada: comResposta, tentativas: comResposta ? 1 : 0, ...(comResposta ? { assinatura: taskSignature(capitulo.tarefa) } : {}) },
+        tarefa: { recolhidos: recordIds(capitulo), confirmada: comResposta, tentativas: comResposta ? 1 : 0, ...(comResposta ? { assinatura: legacyTaskSignature(capitulo.tarefa) } : {}) },
       };
     } else entradas[capitulo.id] = { status: capitulo.id === MISSAO.id ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
   });
-  return { versao: PROGRESS_VERSION, personagem: "lula", capitulos: entradas };
+  return { versao: 4, personagem: "lula", capitulos: entradas };
 }
 
 async function abrirNaMissao(page: Page) {

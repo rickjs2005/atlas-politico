@@ -24,6 +24,7 @@ const conjunto = JSON.parse(readFileSync("generated/dados/conjunto.json", "utf8"
   acontecimentos: EventRecord[];
   pessoas: { id: string; slug: string; nome: string }[];
   fontes: { id: string; titulo: string; url: string }[];
+  atosExecutivos: { id: string; atribuicao: { pessoaId: string }; dispositivosAlvo?: string[] }[];
 };
 
 const lula = conjunto.pessoas.find((pessoa) => pessoa.slug === "lula")!;
@@ -33,6 +34,10 @@ const eventosDe = (pessoaId: string) =>
 const deLula = eventosDe(lula.id);
 /** Acontecimento com ponto no mapa, para os testes de seleção. */
 const comPonto = deLula.find((item) => item.localizacao.tipo === "lugares")!;
+/** O ato de Lula com a lista mais longa de dispositivos vetados: o cartão que mais pesa em tela estreita. */
+const atoMaisLongo = conjunto.atosExecutivos
+  .filter((item) => item.atribuicao.pessoaId === lula.id)
+  .sort((a, b) => (b.dispositivosAlvo?.length ?? 0) - (a.dispositivosAlvo?.length ?? 0))[0]!;
 const semPonto = deLula.find((item) => item.localizacao.tipo !== "lugares")!;
 
 const PERFIL = "/politicos/lula/";
@@ -127,6 +132,49 @@ test.describe("exploração em tela larga", () => {
     expect(rolagem).toBe(0);
     expect(trabalho).toBeLessThanOrEqual(janela + 1);
     await expect(page.locator("#decisoes")).toHaveCount(1);
+    await expectNoOverflow(page);
+  });
+
+  test("as decisões documentadas ficam abaixo da área de trabalho: chegam pela âncora, pela rolagem e pelo teclado", async ({ page }) => {
+    const secao = page.locator("#decisoes");
+    const titulo = secao.getByRole("heading", { level: 2 });
+    // Ao abrir, a área de trabalho ocupa a tela, e a seção está abaixo dela.
+    await expect(titulo).not.toBeInViewport();
+
+    // Pela rolagem.
+    await titulo.scrollIntoViewIfNeeded();
+    await expect(titulo).toBeInViewport();
+    await expect(titulo).toContainText(`Votos e atos de ${lula.nome}, por tema`);
+
+    // Pelo teclado: o primeiro link da seção recebe o foco e fica à vista; um passo atrás, o foco está na área de
+    // trabalho, antes da seção. Ela entra na ordem do Tab logo depois dos controles da exploração.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const primeiro = secao.getByRole("link").first();
+    await primeiro.focus();
+    await expect(primeiro).toBeFocused();
+    await expect(primeiro).toBeInViewport();
+    await page.keyboard.press("Shift+Tab");
+    const anterior = await page.evaluate(() => {
+      const el = document.activeElement;
+      const decisoes = document.querySelector("#decisoes")!;
+      return {
+        noCorpo: el === document.body,
+        naSecao: el?.closest("#decisoes") != null,
+        noConteudo: el?.closest("main") != null,
+        antesDaSecao: el != null && (el.compareDocumentPosition(decisoes) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
+      };
+    });
+    expect(anterior).toEqual({ noCorpo: false, naSecao: false, noConteudo: true, antesDaSecao: true });
+
+    // Pela âncora do endereço, em uma carga nova: sair para uma página em branco garante que o documento é carregado
+    // de novo (ir só de um hash a outro seria navegação no mesmo documento). O mapa fica acima e pode nem ser montado.
+    await page.goto("about:blank");
+    await page.goto(`${PERFIL}#decisoes`);
+    await expect(titulo).toBeInViewport();
+    // A âncora de um cartão leva ao cartão.
+    await page.goto("about:blank");
+    await page.goto(`${PERFIL}#decisao-${atoMaisLongo.id}`);
+    await expect(page.locator(`[data-decisao-cartao="${atoMaisLongo.id}"]`)).toBeInViewport();
     await expectNoOverflow(page);
   });
 
@@ -370,6 +418,35 @@ test.describe("exploração em celular", () => {
     await filtros.click();
     expect(await heightOf(page.getByLabel("De", { exact: true }))).toBeGreaterThanOrEqual(44);
     expect(await heightOf(page.getByRole("button", { name: /^Eleições/ }))).toBeGreaterThanOrEqual(44);
+  });
+
+  test("as decisões documentadas cabem na largura do celular, e a lista longa de dispositivos abre a pedido", async ({ page }) => {
+    const secao = page.locator("#decisoes");
+    await secao.scrollIntoViewIfNeeded();
+    await expect(secao.getByRole("heading", { level: 2 })).toBeVisible();
+    await expectNoOverflow(page);
+
+    // O ato com mais dispositivos vetados: a lista vem dobrada, com a contagem à vista, e abre por um controle com altura de toque.
+    const quantos = atoMaisLongo.dispositivosAlvo?.length ?? 0;
+    expect(quantos, "a edição deveria ter um ato com lista longa de dispositivos").toBeGreaterThan(6);
+    const dobrada = secao.locator(`[data-decisao-cartao="${atoMaisLongo.id}"] [data-lista-dobrada]`);
+    await expect(dobrada).toHaveAttribute("data-lista-dobrada", String(quantos));
+    const abrir = dobrada.locator("summary");
+    await abrir.scrollIntoViewIfNeeded();
+    await expect(abrir).toContainText(`Ver os ${quantos} itens`);
+    expect(await heightOf(abrir)).toBeGreaterThanOrEqual(44);
+    await expect(dobrada.locator("li").first()).toBeHidden();
+    await abrir.click();
+    await expect(dobrada.locator("li")).toHaveCount(quantos);
+    await expect(dobrada.locator("li").last()).toBeVisible();
+    await expectNoOverflow(page);
+
+    // Nenhum cartão passa da largura da tela, com a lista aberta.
+    for (const cartao of await secao.locator("[data-decisao-cartao]").all()) {
+      const caixa = (await cartao.boundingBox())!;
+      expect(caixa.x, "margem esquerda do cartão").toBeGreaterThanOrEqual(0);
+      expect(caixa.x + caixa.width, "margem direita do cartão").toBeLessThanOrEqual(CELULAR.width + 1);
+    }
   });
 });
 

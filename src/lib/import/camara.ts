@@ -142,7 +142,7 @@ export function normalizeCamaraVotacao(detalhe: CamaraVotacaoDetalhe, votos: rea
     identidadeExterna: { provedor: "camara", id: detalhe.id },
     data: { valor: texto(detalhe.data, "").slice(0, 10), precisao: "dia" },
     etapa: inferEtapa(texto(detalhe.descUltimaAberturaVotacao, descricao)),
-    objeto: { tipo: inferObjeto(descricao), identificacao: null, descricao, textoReferencia: null },
+    objeto: { tipo: inferObjeto(descricao), identificacao: null, descricao, textoReferencia: null, divergenciaDocumentada: null },
     modalidade: nominal ? "nominal" : "simbolica",
     resultadoOficial: {
       estado: detalhe.aprovacao === 1 ? "aprovado" : detalhe.aprovacao === 0 ? "rejeitado" : "outro",

@@ -384,6 +384,13 @@ const objetoVotadoSchema = z.strictObject({
   descricao: texto,
   /** O documento que diz o que foi votado, quando é outro que o do resultado. */
   textoReferencia: referenciaDocumentalSchema.nullable(),
+  /**
+   * Uma divergência entre documentos sobre o objeto votado, escrita para quem
+   * lê o cartão: o que cada documento diz e o que o atlas adotou. Não corrige
+   * a fonte em silêncio nem expõe a observação interna da revisão. `null`
+   * quando os documentos concordam.
+   */
+  divergenciaDocumentada: texto.nullable(),
 });
 
 const resultadoOficialSchema = z.strictObject({

@@ -205,7 +205,7 @@ A ordem de `pessoas` é técnica. A ordem em que os perfis aparecem na interface
 
 ### `dados/indices.json`
 
-Desde o formato 2, os índices também cobrem as decisões políticas: `proposicoes` (por id, por tema, por instituição), `votacoes` (por id, por proposição, por instituição, por ano e por tema da proposição votada, em ordem cronológica), `votos` (por id, por votação, por pessoa, e `vigentePorVotacaoEPessoa`, que diz qual voto vale para cada par), `atosExecutivos` (por id, por pessoa, por tema, por ano, por proposição), `coberturaPolitica` e `identidadesInstitucionais` (por id e por pessoa). Todos os temas aparecem, mesmo vazios.
+Desde o formato 2, os índices também cobrem as decisões políticas: `proposicoes` (por id, por tema, por instituição), `votacoes` (por id, por proposição, por instituição, por ano e por tema da proposição votada, em ordem cronológica), `votos` (por id, por votação, por pessoa, e `vigentePorVotacaoEPessoa`, que diz qual voto vale para cada par), `atosExecutivos` (por id, por pessoa, por tema, por ano, por proposição), `coberturaPolitica` e `identidadesInstitucionais` (por id e por pessoa). Todos os temas aparecem, mesmo vazios. O formato 3 acrescenta ao objeto votado de uma votação o campo `divergenciaDocumentada`; os índices não mudaram.
 
 Listas de `id`, nunca cópias de registros. Toda lista de acontecimentos está em ordem cronológica.
 
@@ -361,6 +361,7 @@ As fronteiras são regras de lint (`eslint.config.mjs`). `src/lib/content/publis
 | `npm run data:report` | Relatório de cobertura, pendências e erros, em Markdown | Nada, ou o arquivo de `--out` |
 | `npm run data:import -- <arquivo.json>` | Importa um pacote para os rascunhos | `content/drafts/` |
 | `npm run importar:decisoes -- <senado\|camara> …` | Captura os acervos oficiais, normaliza e importa decisões como rascunho (seção Importação de decisões). Único comando que consulta a rede | `research/capturas/`, `research/pacotes/`, `content/drafts/` |
+| `npm run capturas:verificar` | Confere as capturas brutas dos acervos: resumo, tamanho e resposta contra o corpo original. Sai com código 1 se alguma estiver alterada ou sem o corpo | Nada |
 | `npm run data:query -- [filtros]` | Consulta os dados gerados | Nada |
 
 Código de saída: `0` quando deu certo; `1` quando o conteúdo tem erro; `2` quando o comando foi usado de forma errada, ou os dados gerados não existem ou são de outra versão do conteúdo.
@@ -457,7 +458,9 @@ npm run importar:decisoes -- senado --parlamentar 5894 --pessoa flavio-bolsonaro
 npm run importar:decisoes -- camara --deputado 139289 --pessoa lula --mandato lula-deputado-federal-1987-1991 --de 1987-02-01 --ate 1991-01-31 --limite 50
 ```
 
-Fluxo: **captura** (`research/capturas/<id>.json`: URL, instante, status, bytes, resumo SHA-256 e a resposta) → **normalização** (`src/lib/import/senado.ts`, `src/lib/import/camara.ts`, funções puras com testes sobre amostras reais em `tests/fixtures/apis/`) → **pacote** (`research/pacotes/`) → **importação** para `content/drafts/`, com a linha em `importacoes.json`. `--dry-run` não grava nada no projeto e mostra o relatório.
+Fluxo: **captura** (`research/capturas/<id>.json`: URL, instante, status, tamanho, resumo SHA-256, o corpo como chegou e a leitura dele como JSON) → **normalização** (`src/lib/import/senado.ts`, `src/lib/import/camara.ts`, funções puras com testes sobre amostras reais em `tests/fixtures/apis/`) → **pacote** (`research/pacotes/`) → **importação** para `content/drafts/`, com a linha em `importacoes.json`. `--dry-run` não grava nada no projeto e mostra o relatório.
+
+`npm run capturas:verificar` confere cada captura guardada: o resumo e o tamanho registrados têm de bater com o corpo original, e a leitura em JSON tem de corresponder a ele (`verificarCaptura`, em `src/lib/import/capturas.ts`). Corpo, resumo, tamanho ou resposta alterados reprovam, e captura sem o corpo também, porque não há o que conferir nela (D-131). A verificação contínua roda o comando a cada push. O resumo diz que o arquivo guardado é o que foi capturado; não prova a veracidade do documento.
 
 O que cada adaptador faz, pelo contrato observado em 10 de outubro de 2026:
 
@@ -486,7 +489,7 @@ Fora do alcance dos adaptadores, pelo que a pesquisa dos acervos mostrou: a **Al
 - quantas citações de registros elegíveis têm trecho literal registrado em `docs/evidencias/`;
 - a lista de erros, pendências e avisos.
 
-O relatório não tem horário e é reproduzível. Uma cópia da edição 0.1.1 está em [DATA-REPORT.md](DATA-REPORT.md).
+O relatório não tem horário e é reproduzível. Uma cópia da edição 0.2.1 está em [DATA-REPORT.md](DATA-REPORT.md).
 
 ## Procedimento de atualização
 

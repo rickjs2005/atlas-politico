@@ -18,7 +18,7 @@ import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useSta
 import { formatDate } from "@/lib/domain/dates";
 import { INSTITUICAO_LABELS, TIPO_DE_ATO_LABELS } from "@/lib/domain/decisions";
 import { documentsOf, playableChapters } from "@/lib/game/content";
-import { registrarDitas, selectLines, type DadosDoMomento, type EscrivaoEvent, type FalaDita } from "@/lib/game/escrivao";
+import { falasDe, registrarDitas, selectLines, type DadosDoMomento, type EscrivaoEvent, type FalaDita, type FalasGuardadas } from "@/lib/game/escrivao";
 import { relatedRecords } from "@/lib/game/judicial";
 import {
   collect,
@@ -31,6 +31,7 @@ import {
   missingRecords,
   placeOptions,
   recordIds,
+  requiredRecords,
   sourceOptions,
   submitEvidence,
   submitInterpretation,
@@ -42,6 +43,7 @@ import {
 import { chapterStatus, completeChapter, currentChapter, taskStateOf, withTaskState } from "@/lib/game/progress";
 import { chaptersInRoom, roomOf, roomsWithChapters } from "@/lib/game/rooms";
 import { getScene } from "@/lib/game/scenes";
+import { isSensitive, isSensitiveChapter } from "@/lib/game/sensitivity";
 import type { ChapterSpec, GameContent, GameDecision, Interactable, RoomId, TaskState } from "@/lib/game/types";
 
 import type { GameStageHandle } from "./GameStage";
@@ -158,7 +160,7 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
   const capitulos = useMemo(() => chaptersInRoom(todos, sala), [todos, sala]);
   const outrasSalas = useMemo(() => roomsWithChapters(todos).filter((outra) => outra.id !== sala), [todos, sala]);
   const documentos = useMemo(() => documentsOf(content), [content]);
-  const { carregado, progresso, duravel, update, reset } = useGameProgress(slug, todos);
+  const { carregado, progresso, duravel, update, reset } = useGameProgress(slug, todos, content);
   const { preferencias, setHumor } = useGamePreferences();
   const movimento = useMotion();
   const toque = useCoarsePointer();
@@ -209,17 +211,22 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
 
   // -------------------------------------------------------------------------
   // O Escrivão: as falas de cada momento, com o histórico do que já foi dito
-  // nesta visita (a repetição é controlada por ele, sem sorteio).
+  // nesta visita (a repetição é controlada por ele, sem sorteio). Em momento
+  // sobre um registro de contexto sensível (D-129), o humor fica de fora. A
+  // exibição aplica a preferência de humor por conta própria (EscrivaoSays):
+  // desligar tira o humor também das falas já escolhidas.
   // -------------------------------------------------------------------------
   const vistas = useRef<string[]>([]);
   const falar = useCallback(
-    (evento: EscrivaoEvent, dados?: DadosDoMomento): FalaDita[] => {
-      const ditas = selectLines({ sala, evento, humor: preferencias.humor, vistas: vistas.current, dados });
+    (evento: EscrivaoEvent, dados?: DadosDoMomento, sensivel = false): FalaDita[] => {
+      const ditas = selectLines({ sala, evento, humor: preferencias.humor, vistas: vistas.current, dados, sensivel });
       vistas.current = registrarDitas(vistas.current, ditas);
       return ditas;
     },
     [sala, preferencias.humor],
   );
+  // As falas do capítulo (entrada, ajuda e conclusão) seguem o contexto do capítulo; as de um registro, o do registro.
+  const capituloSensivel = isSensitiveChapter(capitulo);
   const dadosDoCapitulo = useCallback(
     (estado: TaskState): DadosDoMomento => ({
       capitulo: capitulo.titulo,
@@ -231,31 +238,39 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
   );
   // A fala sobre a cena: a entrada do capítulo, e depois a conclusão quando a saída abre.
   const [falasNaCena, setFalasNaCena] = useState<{ evento: string; falas: readonly FalaDita[] } | null>(null);
-  const [falasDoRegistro, setFalasDoRegistro] = useState<readonly FalaDita[]>([]);
+  // As falas da descoberta pertencem ao registro recolhido: outro registro aberto depois (uma releitura) não as herda.
+  const [falasDoRegistro, setFalasDoRegistro] = useState<FalasGuardadas | null>(null);
   const [falasDaAjuda, setFalasDaAjuda] = useState<readonly FalaDita[]>([]);
   const [falasDaFonte, setFalasDaFonte] = useState<readonly FalaDita[]>([]);
-  const [falasDaConclusao, setFalasDaConclusao] = useState<readonly FalaDita[]>([]);
+  // As falas da conclusão pertencem ao capítulo em que a saída abriu: a transição de outro capítulo (um já concluído, revisto) não as herda.
+  const [falasDaConclusao, setFalasDaConclusao] = useState<FalasGuardadas | null>(null);
   // A entrada: uma vez por capítulo aberto, depois que o progresso chegou.
   const entradaDita = useRef<string | null>(null);
   useEffect(() => {
     if (!carregado || entradaDita.current === capitulo.id) return;
     entradaDita.current = capitulo.id;
-    const ditas = falar("entrada", dadosDoCapitulo(tarefa));
+    const ditas = falar("entrada", dadosDoCapitulo(tarefa), capituloSensivel);
     setFalasNaCena({ evento: "entrada", falas: ditas });
-  }, [carregado, capitulo.id, falar, dadosDoCapitulo, tarefa]);
-  /** Depois de uma mudança no estado da tarefa: se a saída acabou de abrir, o Escrivão conclui. */
+  }, [carregado, capitulo.id, falar, dadosDoCapitulo, tarefa, capituloSensivel]);
+  /**
+   * Depois de uma mudança no estado da tarefa: se a saída acabou de abrir, o
+   * Escrivão conclui. `gatilhoSensivel` diz que a mudança veio de um registro
+   * de contexto sensível: a conclusão que aparece logo depois dele fica sem
+   * humor, mesmo em um capítulo que não é sensível.
+   */
   const aoMudarTarefa = useCallback(
-    (antes: TaskState, depois: TaskState) => {
+    (antes: TaskState, depois: TaskState, gatilhoSensivel = false) => {
       if (isExitOpen(capitulo, antes) || !isExitOpen(capitulo, depois)) return;
-      const ditas = falar("conclusao", dadosDoCapitulo(depois));
-      setFalasDaConclusao(ditas);
+      const ditas = falar("conclusao", dadosDoCapitulo(depois), capituloSensivel || gatilhoSensivel);
+      setFalasDaConclusao({ de: capitulo.id, falas: ditas });
       setFalasNaCena({ evento: "conclusao", falas: ditas });
     },
-    [capitulo, falar, dadosDoCapitulo],
+    [capitulo, falar, dadosDoCapitulo, capituloSensivel],
   );
+  // O erro de uma resposta é sobre os registros que a tarefa pede: o contexto sensível de qualquer um deles vale para a fala.
   const comFalas = useCallback(
-    (avaliacao: Attempt): AttemptWithLines => ({ ...avaliacao, falas: avaliacao.certo ? [] : falar("erro") }),
-    [falar],
+    (avaliacao: Attempt): AttemptWithLines => ({ ...avaliacao, falas: avaliacao.certo ? [] : falar("erro", undefined, requiredRecords(capitulo.tarefa).some(isSensitive)) }),
+    [falar, capitulo.tarefa],
   );
 
   // Com um diálogo aberto, a cena fica fora da tabulação (`inert`). O foco só
@@ -318,10 +333,16 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
       update((atual) => withTaskState(atual, capitulo.id, collect(taskStateOf(atual, capitulo.id), id)));
       const documento = documentos[id];
       const decisao = content.decisoes[id];
-      setFalasDoRegistro(
-        falar("descoberta", decisao !== undefined ? dadosDaDecisao(decisao) : documento === undefined ? undefined : { titulo: documento.titulo, data: formatDate(documento.data), fontes: plural(documento.fontes.length, "fonte", "fontes") }),
-      );
-      aoMudarTarefa(antes, depois);
+      setFalasDoRegistro({
+        de: id,
+        falas: falar(
+          "descoberta",
+          decisao !== undefined ? dadosDaDecisao(decisao) : documento === undefined ? undefined : { titulo: documento.titulo, data: formatDate(documento.data), fontes: plural(documento.fontes.length, "fonte", "fontes") },
+          isSensitive(id),
+        ),
+      });
+      // A conclusão que vem logo depois de um registro sensível também fica sem humor.
+      aoMudarTarefa(antes, depois, isSensitive(id));
       setRegistroAberto(id);
       setReleitura(false);
       setModo("registro");
@@ -329,8 +350,10 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
     [update, capitulo.id, progresso, documentos, content.decisoes, falar, aoMudarTarefa],
   );
 
-  // Ler de novo um registro já recolhido, pelo painel: o progresso não muda.
+  // Ler de novo um registro já recolhido, pelo painel: o progresso não muda, e
+  // a releitura não é uma descoberta: o Escrivão não fala nela.
   const lerDeNovo = useCallback((id: string) => {
+    setFalasDoRegistro(null);
     setRegistroAberto(id);
     setReleitura(true);
     setModo("registro");
@@ -340,7 +363,7 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
   const abrirResposta = useCallback(() => {
     if (capitulo.tarefa.tipo === "decisao" && !isEvidenceDone(taskStateOf(progresso, capitulo.id))) {
       const decisao = content.decisoes[capitulo.tarefa.decisaoId];
-      setFalasDaFonte(falar("fonte", decisao === undefined ? undefined : { titulo: decisao.titulo, fontes: plural(decisao.fontes.length, "fonte", "fontes") }));
+      setFalasDaFonte(falar("fonte", decisao === undefined ? undefined : { titulo: decisao.titulo, fontes: plural(decisao.fontes.length, "fonte", "fontes") }, isSensitive(capitulo.tarefa.decisaoId)));
     }
     setModo(modoDaResposta);
   }, [capitulo, progresso, content.decisoes, falar, modoDaResposta]);
@@ -365,9 +388,9 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
   }, []);
 
   const abrirGuia = useCallback(() => {
-    setFalasDaAjuda(falar("ajuda", dadosDoCapitulo(taskStateOf(progresso, capitulo.id))));
+    setFalasDaAjuda(falar("ajuda", dadosDoCapitulo(taskStateOf(progresso, capitulo.id)), capituloSensivel));
     setModo("guia");
-  }, [falar, dadosDoCapitulo, progresso, capitulo.id]);
+  }, [falar, dadosDoCapitulo, progresso, capitulo.id, capituloSensivel]);
 
   /** Aplica uma resposta ao progresso e devolve a avaliação com as falas do Escrivão. */
   const responder = useCallback(
@@ -388,9 +411,9 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
     (resposta: readonly [string, string]): AttemptWithLines => {
       const tarefaDeOrdem = capitulo.tarefa;
       if (tarefaDeOrdem.tipo !== "ordem") throw new Error("A tarefa deste capítulo não é de ordem.");
-      return responder((estado) => submitOrder(tarefaDeOrdem, estado, resposta, content.registros));
+      return responder((estado) => submitOrder(tarefaDeOrdem, estado, resposta, content));
     },
-    [capitulo, responder, content.registros],
+    [capitulo, responder, content],
   );
 
   // Responder a tarefa de documento ou de lugar com o `id` da opção escolhida.
@@ -399,10 +422,10 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
       const tarefaDeEscolha = capitulo.tarefa;
       if (tarefaDeEscolha.tipo !== "fonte" && tarefaDeEscolha.tipo !== "lugar") throw new Error("A tarefa deste capítulo não é de escolha.");
       return responder((estado) =>
-        tarefaDeEscolha.tipo === "fonte" ? submitSource(tarefaDeEscolha, estado, capitulo, content.registros, id) : submitPlace(tarefaDeEscolha, estado, capitulos, content.registros, id),
+        tarefaDeEscolha.tipo === "fonte" ? submitSource(tarefaDeEscolha, estado, capitulo, content, id) : submitPlace(tarefaDeEscolha, estado, capitulos, content, id),
       );
     },
-    [capitulo, capitulos, responder, content.registros],
+    [capitulo, capitulos, responder, content],
   );
 
   // As duas etapas da tarefa de decisão.
@@ -410,17 +433,17 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
     (fonteId: string): AttemptWithLines => {
       const tarefaDeDecisao = capitulo.tarefa;
       if (tarefaDeDecisao.tipo !== "decisao") throw new Error("A tarefa deste capítulo não é de decisão.");
-      return responder((estado) => submitEvidence(tarefaDeDecisao, estado, capitulo, documentos, fonteId));
+      return responder((estado) => submitEvidence(tarefaDeDecisao, estado, capitulo, content, fonteId));
     },
-    [capitulo, responder, documentos],
+    [capitulo, responder, content],
   );
   const responderInterpretacao = useCallback(
     (opcaoId: string): AttemptWithLines => {
       const tarefaDeDecisao = capitulo.tarefa;
       if (tarefaDeDecisao.tipo !== "decisao") throw new Error("A tarefa deste capítulo não é de decisão.");
-      return responder((estado) => submitInterpretation(tarefaDeDecisao, estado, content.decisoes[tarefaDeDecisao.decisaoId], opcaoId));
+      return responder((estado) => submitInterpretation(tarefaDeDecisao, estado, content, opcaoId));
     },
-    [capitulo, responder, content.decisoes],
+    [capitulo, responder, content],
   );
 
   const atravessar = useCallback(() => {
@@ -503,6 +526,8 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
 
   const registro = registroAberto === null ? null : (content.registros[registroAberto] ?? null);
   const decisaoAberta = registroAberto === null ? null : (content.decisoes[registroAberto] ?? null);
+  // As falas da descoberta só acompanham o registro de que foram ditas.
+  const falasDoRegistroAberto = falasDe(falasDoRegistro, registroAberto);
   const acao = reachLabel(alcance, saidaAberta);
   // O navegador não deu canvas 2D: a cena sai, o aviso entra e o painel segue valendo.
   const [semCanvas, setSemCanvas] = useState(false);
@@ -621,7 +646,7 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
           saida={saida}
           releitura={releitura}
           relacionados={relatedRecords(registro.id, content.registros)}
-          falas={falasDoRegistro}
+          falas={falasDoRegistroAberto}
           onOpenRecordPage={lembrarCapitulo}
           onClose={fecharRegistro}
         />
@@ -634,7 +659,7 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
           respostaPendente={respostaPendente}
           saida={saida}
           releitura={releitura}
-          falas={falasDoRegistro}
+          falas={falasDoRegistroAberto}
           onOpenRecordPage={lembrarCapitulo}
           onClose={fecharRegistro}
         />
@@ -715,7 +740,7 @@ export function GameShell({ content, sala }: { content: GameContent; sala: RoomI
       )}
       {modo === "reiniciar" && <ConfirmResetDialog nome={content.personagem.nome} onConfirm={reiniciar} onClose={desistirDoReinicio} />}
       {modo === "transicao" && transicao !== null && (
-        <ChapterTransition concluido={transicao.concluido} proximo={transicao.proximo} falas={falasDaConclusao} onContinue={continuarTransicao} />
+        <ChapterTransition concluido={transicao.concluido} proximo={transicao.proximo} falas={falasDe(falasDaConclusao, transicao.concluido.id)} onContinue={continuarTransicao} />
       )}
       {modo === "fim" && (
         <EndScreen

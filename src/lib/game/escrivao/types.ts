@@ -69,6 +69,13 @@ export interface Momento {
   /** Os identificadores das falas já ditas nesta visita, na ordem em que foram ditas. */
   vistas: readonly string[];
   dados?: DadosDoMomento;
+  /**
+   * O momento é sobre um registro de contexto sensível (processo judicial,
+   * prisão, acusação, violência: src/lib/game/sensitivity.ts, D-129). O humor
+   * fica de fora mesmo com a preferência ligada; a instrução e a camada
+   * documental não mudam.
+   */
+  sensivel?: boolean;
 }
 
 /** Uma fala escolhida, com o texto já preenchido. */

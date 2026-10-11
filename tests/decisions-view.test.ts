@@ -97,4 +97,26 @@ describe("cartão de decisão sobre a edição real", () => {
     const comuns = [...porPessoa[0]!].filter((id) => porPessoa[1]!.has(id)).sort();
     expect(comuns).toEqual(["senado-pl-2253-2022", "senado-pl-5582-2025", "senado-plp-68-2024", "senado-plp-93-2023"]);
   });
+
+  it("o cartão traz a divergência documentada da votação 6714, a falta do texto de referência e a lista de dispositivos da LC 214/2025 por extenso", () => {
+    const voto = findDecisionView(real, "senado-voto-6714-5894")!;
+    expect(voto.natureza).toBe("voto");
+    if (voto.natureza === "voto") {
+      expect(voto.votacao.objeto.divergencia).toContain("PLP 93/2023");
+      expect(voto.votacao.objeto.divergencia).toContain("nº 39, de 2023");
+      expect(voto.votacao.textoReferencia).toBeNull();
+    }
+    // Nas outras cinco votações os documentos concordam, e nenhuma tem o texto de referência ligado nesta edição.
+    for (const votacao of real.conjunto.votacoes) {
+      if (votacao.id !== "senado-votacao-6714") expect(votacao.objeto.divergenciaDocumentada, votacao.id).toBeNull();
+      expect(votacao.objeto.textoReferencia, votacao.id).toBeNull();
+    }
+    const ato = findDecisionView(real, "planalto-lei-complementar-214-2025-ibs-cbs")!;
+    expect(ato.natureza).toBe("ato");
+    if (ato.natureza === "ato") {
+      const dispositivos = ato.ato.detalhes.find((detalhe) => detalhe.rotulo === "Dispositivos vetados")!;
+      expect(dispositivos.itens).toHaveLength(22);
+      expect(dispositivos.valor).toBe(dispositivos.itens!.join("; "));
+    }
+  });
 });

@@ -7,6 +7,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useMemo } from "react";
 
 import { Portrait, PortraitCredit } from "@/components/Portrait";
 import type { Imagem } from "@/lib/domain/types";
@@ -30,6 +31,8 @@ export interface CharacterOption {
   retrato: Imagem | null;
   /** Todos os capítulos jogáveis do personagem, de todas as salas. */
   capitulos: readonly ChapterSpec[];
+  /** A assinatura atual da tarefa de cada capítulo (`signaturesOf`), para ler o progresso salvo sem carregar o conteúdo do personagem na entrada. */
+  assinaturas: Readonly<Record<string, string>>;
 }
 
 /** A situação de uma sala neste navegador: o que a chamada e a frase dizem. */
@@ -44,7 +47,8 @@ function roomStatus(carregado: boolean, progresso: PlayerProgress, capitulos: re
 }
 
 function CharacterChoice({ opcao }: { opcao: CharacterOption }) {
-  const { carregado, progresso } = useGameProgress(opcao.slug, opcao.capitulos);
+  const fonteDasAssinaturas = useMemo(() => ({ assinaturas: opcao.assinaturas }), [opcao.assinaturas]);
+  const { carregado, progresso } = useGameProgress(opcao.slug, opcao.capitulos, fonteDasAssinaturas);
   const salas = roomsWithChapters(opcao.capitulos);
   const historico = chaptersInRoom(opcao.capitulos, "historico");
   const tematicas: RoomSpec[] = salas.filter((sala) => sala.id !== "historico");

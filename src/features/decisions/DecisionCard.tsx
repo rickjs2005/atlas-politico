@@ -32,8 +32,8 @@ interface DecisionCardProps {
   decisao: DecisionView;
   /** `completo`: tudo, com fontes e revisão. `curto`: data, identificação, natureza e cargo. */
   detalhe: "completo" | "curto";
-  /** O nível do título dentro do cartão. */
-  headingLevel?: 3 | 4;
+  /** O nível do título dentro do cartão: um abaixo do último título acima dele. Os subtítulos ficam um nível abaixo. */
+  headingLevel?: 3 | 4 | 5;
   /** Um caminho para fora do cartão (a página da pessoa no atlas, a partir do jogo), com o rótulo. */
   link?: { href: string; rotulo: string; onFollow?: () => void };
   /** O `id` do elemento, para âncoras (`#decisao-<id>` na página da pessoa). */
@@ -47,9 +47,32 @@ export function manifestationText(registro: Extract<DecisionView, { natureza: "v
   return `${REGISTRO_INDIVIDUAL_LABELS[registro.tipo]} · valor original: ${registro.valorOriginal}${motivo}`;
 }
 
+/** Quantos itens uma lista do cartão mostra aberta; acima disso, a lista vem dobrada, com a contagem à vista e tudo alcançável. */
+export const ITENS_ABERTOS = 6;
+
+/** Uma lista de um campo do ato (os dispositivos vetados): aberta quando curta, dobrada quando longa. */
+function ItemList({ itens, rotulo }: { itens: readonly string[]; rotulo: string }) {
+  const lista = (
+    <ul className="list-disc space-y-0.5 pl-4" data-itens={itens.length}>
+      {itens.map((item, indice) => (
+        <li key={`${indice}-${item}`}>{item}</li>
+      ))}
+    </ul>
+  );
+  if (itens.length <= ITENS_ABERTOS) return lista;
+  return (
+    <details data-lista-dobrada={itens.length}>
+      <summary className="cursor-pointer py-3 font-medium underline decoration-line-strong hover:decoration-ink md:py-1">
+        Ver os {itens.length} itens<span className="sr-only"> de {rotulo}</span>
+      </summary>
+      {lista}
+    </details>
+  );
+}
+
 export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorId }: DecisionCardProps) {
-  const Title = headingLevel === 3 ? "h3" : "h4";
-  const Sub = headingLevel === 3 ? "h4" : "h5";
+  const Title = `h${headingLevel}` as "h3" | "h4" | "h5";
+  const Sub = `h${headingLevel + 1}` as "h4" | "h5" | "h6";
   const precisao = describePrecision(decisao.data);
   return (
     <article id={anchorId} className="space-y-3 scroll-mt-24" data-decisao-cartao={decisao.id} data-natureza={decisao.natureza}>
@@ -104,14 +127,24 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
               <p className="text-xs text-ink-soft" data-aviso-objeto>
                 {OBJETO_NOTICE}
               </p>
-              {decisao.votacao.textoReferencia !== null && (
-                <p className="text-xs text-ink-soft">
+              {decisao.votacao.objeto.divergencia !== null && (
+                <p className="border-l-2 border-accent pl-2 text-xs text-ink-soft" data-divergencia>
+                  <span className="font-medium text-ink">Divergência entre documentos: </span>
+                  {decisao.votacao.objeto.divergencia}
+                </p>
+              )}
+              {decisao.votacao.textoReferencia !== null ? (
+                <p className="text-xs text-ink-soft" data-texto-referencia="ligado">
                   Texto de referência:{" "}
                   <a href={decisao.votacao.textoReferencia.url} target="_blank" rel="noreferrer" className="underline decoration-line-strong hover:decoration-ink">
                     {decisao.votacao.textoReferencia.titulo}
                     <span className="sr-only"> (abre em nova aba)</span>
                   </a>{" "}
                   ({decisao.votacao.textoReferencia.localizacao})
+                </p>
+              ) : (
+                <p className="text-xs text-ink-soft" data-texto-referencia="nao-ligado">
+                  Texto de referência: o texto submetido à votação não está ligado a este registro nesta edição.
                 </p>
               )}
             </section>
@@ -125,7 +158,7 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
                 {decisao.ato.detalhes.map((detalhe) => (
                   <Fragment key={detalhe.rotulo}>
                     <dt className="text-ink-soft">{detalhe.rotulo}</dt>
-                    <dd>{detalhe.valor}</dd>
+                    <dd>{detalhe.itens === undefined ? detalhe.valor : <ItemList itens={detalhe.itens} rotulo={detalhe.rotulo} />}</dd>
                   </Fragment>
                 ))}
               </dl>

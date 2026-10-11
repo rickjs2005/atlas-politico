@@ -325,15 +325,49 @@ test.describe("contexto e limites da comparação", () => {
       await expect(secao(page, pessoa.slug, "cobertura")).toContainText(/^Cobertura desta edição\s*desde \d{4}/);
     }
 
-    const texto = (await page.locator("main").innerText()).toLowerCase();
+    // O texto que a tela escreve por conta própria: tudo o que está na página, menos o conteúdo documental, que a tela
+    // só mostra (títulos de acontecimentos, cargos e filiações, documentos e citações e, nos cartões de decisão, o
+    // título, os valores, a proposição e a divergência). O que sobra é a explicação de leitura, os avisos, os títulos,
+    // os rótulos, as notas de cobertura e as contagens: é ali que um ranking ou uma nota apareceria. Por subtração, um
+    // texto novo da tela entra na conferência sem ninguém lembrar de listá-lo.
+    const proprio = (
+      await page.locator("main").evaluate((main) => {
+        const copia = main.cloneNode(true) as HTMLElement;
+        const documental = [
+          "[data-acontecimento]",
+          "li[data-registro]",
+          "[data-fonte]",
+          "[data-decisao-cartao] > div:first-child > :is(h3, h4, h5)",
+          "[data-decisao-cartao] dd",
+          "[data-decisao-cartao] [data-cargo]",
+          "[data-proposicoes] li",
+          "[data-divergencia]",
+        ];
+        for (const no of copia.querySelectorAll(documental.join(", "))) no.remove();
+        return copia.textContent ?? "";
+      })
+    ).toLowerCase();
+    // A subtração tirou o conteúdo, e deixou o texto da tela.
+    expect(proprio).not.toContain(compartilhado.titulo.toLowerCase());
+    expect(proprio).toContain("texto de referência: o texto submetido à votação não está ligado");
+    expect(proprio).toContain("decisões");
+    expect(proprio).toContain("como ler esta comparação");
+    expect(proprio).toContain("votos e atos no mesmo tema");
     for (const palavra of ["ranking", "placar", "venc", "melhor", "pior", "produtiv", "pontua", "mais ativo"]) {
-      expect(texto, palavra).not.toContain(palavra);
+      expect(proprio, palavra).not.toContain(palavra);
     }
     // "nota" e "desempenho" só aparecem para dizer o que a tela não faz.
-    expect(texto.match(/\bnota\b/g)).toHaveLength(1);
-    expect(texto).toContain("não dá nota");
-    expect(texto.match(/desempenho/g)).toHaveLength(1);
-    expect(texto).toContain("acervo, e não desempenho");
+    expect(proprio.match(/\bnota\b/g)).toHaveLength(1);
+    expect(proprio).toContain("não dá nota");
+    expect(proprio.match(/desempenho/g)).toHaveLength(1);
+    expect(proprio).toContain("acervo, e não desempenho");
+    // O aviso da amostra de decisões diz o limite, antes dos cartões.
+    const avisoDaAmostra = page.locator("#decisoes [data-aviso-amostra]");
+    await expect(avisoDaAmostra).toContainText("não o histórico completo");
+    await expect(avisoDaAmostra).toContainText("não os equipara");
+    await expect(avisoDaAmostra).toContainText("não segue o recorte de anos");
+    // Nenhum mecanismo de pontuação na tela: sem medidor nem barra de progresso.
+    await expect(page.locator("main").locator('meter, progress, [role="meter"], [role="progressbar"]')).toHaveCount(0);
   });
 
   test("cada cargo e cada filiação abre as próprias fontes, e o recorte lista os documentos sem repetição", async ({ page }) => {

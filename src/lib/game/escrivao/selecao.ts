@@ -59,14 +59,48 @@ export function selectLines(momento: Momento, catalogo: readonly Fala[] = CATALO
   const documental = menosRecente(documentais, momento.vistas);
   if (documental !== null) ditas.push({ id: documental.id, camada: "documental", texto: preencher(documental.texto, dados)! });
 
-  if (momento.humor) {
+  // Sem humor em contexto sensível (D-129), ainda que a preferência esteja ligada.
+  if (momento.humor && momento.sensivel !== true) {
     const humor = menosRecente(candidatas(catalogo, momento.sala, momento.evento, "humor"), momento.vistas);
     if (humor !== null) ditas.push({ id: humor.id, camada: "humor", texto: humor.texto });
   }
   return ditas;
 }
 
-/** O histórico depois de dizer as falas: os identificadores entram no fim, na ordem. */
+/**
+ * Quantas falas o histórico guarda, no máximo: o dobro do catálogo basta para
+ * a rotação, e o histórico não cresce sem limite em uma visita longa. Uma fala
+ * que sai do histórico volta a contar como nunca dita.
+ */
+export const HISTORICO_MAXIMO = 240;
+
+/** O histórico depois de dizer as falas: os identificadores entram no fim, na ordem; o começo cai quando passa do limite. */
 export function registrarDitas(vistas: readonly string[], ditas: readonly FalaDita[]): string[] {
-  return [...vistas, ...ditas.map((fala) => fala.id)];
+  const todas = [...vistas, ...ditas.map((fala) => fala.id)];
+  return todas.length > HISTORICO_MAXIMO ? todas.slice(todas.length - HISTORICO_MAXIMO) : todas;
+}
+
+/** Falas guardadas junto com o que as motivou: o `id` de um registro ou de um capítulo. */
+export interface FalasGuardadas {
+  de: string;
+  falas: readonly FalaDita[];
+}
+
+/**
+ * As falas guardadas, só quando são do que está aberto agora. As da descoberta
+ * de um registro não aparecem em outro registro, e as da conclusão de um
+ * capítulo não aparecem na transição de outro: uma fala dita em um contexto
+ * (com ou sem humor, com os dados daquele registro) não vaza para o seguinte.
+ */
+export function falasDe(guardadas: FalasGuardadas | null, de: string | null): readonly FalaDita[] {
+  return guardadas !== null && de !== null && guardadas.de === de ? guardadas.falas : [];
+}
+
+/**
+ * As falas que a tela mostra com a preferência atual: sem humor, a camada de
+ * humor sai na hora, inclusive de falas já escolhidas. A instrução e a
+ * documental ficam. É o único filtro de exibição; toda tela passa por ele.
+ */
+export function falasVisiveis(falas: readonly FalaDita[], humor: boolean): FalaDita[] {
+  return humor ? [...falas] : falas.filter((fala) => fala.camada !== "humor");
 }

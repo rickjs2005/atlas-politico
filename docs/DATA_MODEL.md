@@ -159,7 +159,7 @@ A matéria votada ou referida: `instituicao`, `jurisdicao` (`federal` ou `estadu
 
 ### Votação (`votacoes.json`)
 
-Uma decisão sobre um objeto: `proposicaoId`, `instituicao`, `orgao` (`plenario`, ou `comissao` com o nome), `identidadeExterna`, `data`, `etapa` (como a casa a nomeia: "1º turno", "turno único"), `objeto` (`tipo`: `texto-principal`, `substitutivo`, `emenda`, `destaque`, `requerimento` ou `outro`; `identificacao`; `descricao`; `textoReferencia`, um documento apontado com `fonteId`, `localizacao` e `capturaId`), `modalidade` (`nominal`, `simbolica`, `secreta`), `resultadoOficial` (`estado` e o `valorOriginal` como o acervo escreve), `fontes` e `editorial`. "FAVOR" em uma votação é favorável a **este objeto**: um requerimento de urgência não é o mérito, e uma emenda não é o projeto inteiro.
+Uma decisão sobre um objeto: `proposicaoId`, `instituicao`, `orgao` (`plenario`, ou `comissao` com o nome), `identidadeExterna`, `data`, `etapa` (como a casa a nomeia: "1º turno", "turno único"), `objeto` (`tipo`: `texto-principal`, `substitutivo`, `emenda`, `destaque`, `requerimento` ou `outro`; `identificacao`; `descricao`; `textoReferencia`, um documento apontado com `fonteId`, `localizacao` e `capturaId`, ou `null` enquanto o texto submetido à votação não está ligado; `divergenciaDocumentada`, um texto para quem lê o cartão quando dois documentos divergem sobre o objeto, dizendo o que cada um diz e o que o atlas adotou, ou `null`), `modalidade` (`nominal`, `simbolica`, `secreta`), `resultadoOficial` (`estado` e o `valorOriginal` como o acervo escreve), `fontes` e `editorial`. "FAVOR" em uma votação é favorável a **este objeto**: um requerimento de urgência não é o mérito, e uma emenda não é o projeto inteiro.
 
 ### Voto (`votos.json`)
 

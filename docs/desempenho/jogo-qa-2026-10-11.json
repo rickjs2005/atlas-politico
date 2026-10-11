@@ -1,0 +1,1431 @@
+{
+  "rotulo": "qa-2026-10-11",
+  "medidoEm": "2026-10-11T13:06:36.642Z",
+  "condicoes": {
+    "tipo": "laboratório",
+    "pasta": "out",
+    "servidor": "scripts/preview.mjs, local, com gzip nos arquivos de texto",
+    "navegador": "Chromium 153.0.8010.12, sem interface, canvas 2D por software",
+    "cache": "vazio a cada execução",
+    "execucoes": 3,
+    "resultado": "mediana das execuções",
+    "perfis": {
+      "computador": "1440×900, rede a 10 Mbit/s com 40 ms de latência, CPU sem limite",
+      "celular": "390×844, toque, rede a 1,6 Mbit/s com 150 ms de latência, CPU 4 vezes mais lenta"
+    },
+    "maquina": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 8 núcleos, 8 GB, win32 10.0.26300, Node v24.15.0",
+    "aviso": "Emulação de celular não é um celular: a cadência e o carregamento em aparelho real continuam por medir."
+  },
+  "resultados": [
+    {
+      "perfil": "computador",
+      "rota": "entrada-do-jogo",
+      "caminho": "/jogo/",
+      "mediana": {
+        "ttfb": 4,
+        "fcp": 296,
+        "lcp": 296,
+        "load": 506,
+        "palcoCanvas": null,
+        "palcoPronto": null,
+        "tarefasLongas": 1,
+        "bloqueio": 28,
+        "transferido": 391320,
+        "pedidos": 16,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": null,
+        "cadenciaAndando": null,
+        "cadenciaComPainel": null
+      },
+      "execucoes": [
+        {
+          "ttfb": 7.5,
+          "domContentLoaded": 173,
+          "load": 499.69999998807907,
+          "fcp": 692,
+          "lcp": 692,
+          "palcoCanvas": null,
+          "palcoPronto": null,
+          "tarefasLongas": 1,
+          "bloqueio": 32,
+          "transferido": 391320,
+          "pedidos": 16,
+          "externos": [],
+          "erros": []
+        },
+        {
+          "ttfb": 3.099999964237213,
+          "domContentLoaded": 184.5999999642372,
+          "load": 521.8999999761581,
+          "fcp": 296,
+          "lcp": 296,
+          "palcoCanvas": null,
+          "palcoPronto": null,
+          "tarefasLongas": 1,
+          "bloqueio": 28,
+          "transferido": 391320,
+          "pedidos": 16,
+          "externos": [],
+          "erros": []
+        },
+        {
+          "ttfb": 3.600000023841858,
+          "domContentLoaded": 168.4000000357628,
+          "load": 505.80000001192093,
+          "fcp": 268,
+          "lcp": 268,
+          "palcoCanvas": null,
+          "palcoPronto": null,
+          "tarefasLongas": 1,
+          "bloqueio": 17,
+          "transferido": 391320,
+          "pedidos": 16,
+          "externos": [],
+          "erros": []
+        }
+      ]
+    },
+    {
+      "perfil": "computador",
+      "rota": "jogo-lula",
+      "caminho": "/jogo/lula/",
+      "mediana": {
+        "ttfb": 4,
+        "fcp": 276,
+        "lcp": 464,
+        "load": 555,
+        "palcoCanvas": 831,
+        "palcoPronto": 831,
+        "tarefasLongas": 2,
+        "bloqueio": 7,
+        "transferido": 416584,
+        "pedidos": 15,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": {
+          "fps": 55.8,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 33.3,
+          "intervaloMaximo": 33.4,
+          "quadrosLongos": 0
+        },
+        "cadenciaAndando": {
+          "fps": 54.6,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 33.3,
+          "intervaloMaximo": 33.4,
+          "quadrosLongos": 0
+        },
+        "cadenciaComPainel": {
+          "fps": 60.3,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.8,
+          "intervaloMaximo": 16.8,
+          "quadrosLongos": 0
+        }
+      },
+      "execucoes": [
+        {
+          "ttfb": 5.900000035762787,
+          "domContentLoaded": 186.5,
+          "load": 558.8000000119209,
+          "fcp": 292,
+          "lcp": 464,
+          "palcoCanvas": 830.9000000357628,
+          "palcoPronto": 830.9000000357628,
+          "tarefasLongas": 2,
+          "bloqueio": 7,
+          "transferido": 416584,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 168,
+            "fps": 55.8,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 49.9,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 162,
+            "fps": 53.9,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.4,
+            "intervaloMaximo": 50,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.2,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 4,
+          "domContentLoaded": 176,
+          "load": 523.1999999880791,
+          "fcp": 276,
+          "lcp": 464,
+          "palcoCanvas": 793.5,
+          "palcoPronto": 793.5,
+          "tarefasLongas": 0,
+          "bloqueio": 0,
+          "transferido": 416584,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 168,
+            "fps": 55.7,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 166,
+            "fps": 55.1,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.4,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.600000023841858,
+          "domContentLoaded": 193.60000002384186,
+          "load": 555.2000000476837,
+          "fcp": 276,
+          "lcp": 480,
+          "palcoCanvas": 838.3000000119209,
+          "palcoPronto": 838.3000000119209,
+          "tarefasLongas": 2,
+          "bloqueio": 18,
+          "transferido": 416584,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 172,
+            "fps": 57.3,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.2,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 164,
+            "fps": 54.6,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.3,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "computador",
+      "rota": "jogo-flavio-bolsonaro",
+      "caminho": "/jogo/flavio-bolsonaro/",
+      "mediana": {
+        "ttfb": 6,
+        "fcp": 260,
+        "lcp": 456,
+        "load": 528,
+        "palcoCanvas": 811,
+        "palcoPronto": 811,
+        "tarefasLongas": 1,
+        "bloqueio": 7,
+        "transferido": 414299,
+        "pedidos": 15,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": {
+          "fps": 57.7,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.8,
+          "intervaloMaximo": 50,
+          "quadrosLongos": 0
+        },
+        "cadenciaAndando": {
+          "fps": 55,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 33.3,
+          "intervaloMaximo": 50,
+          "quadrosLongos": 0
+        },
+        "cadenciaComPainel": {
+          "fps": 60.5,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.8,
+          "intervaloMaximo": 16.8,
+          "quadrosLongos": 0
+        }
+      },
+      "execucoes": [
+        {
+          "ttfb": 6.400000035762787,
+          "domContentLoaded": 244.30000001192093,
+          "load": 528.4000000357628,
+          "fcp": 304,
+          "lcp": 456,
+          "palcoCanvas": 812.9000000357628,
+          "palcoPronto": 812.9000000357628,
+          "tarefasLongas": 1,
+          "bloqueio": 7,
+          "transferido": 414299,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 174,
+            "fps": 57.7,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 164,
+            "fps": 54.5,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 50,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.5,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 4.199999988079071,
+          "domContentLoaded": 188.5,
+          "load": 507.69999998807907,
+          "fcp": 248,
+          "lcp": 452,
+          "palcoCanvas": 791.6999999880791,
+          "palcoPronto": 791.6999999880791,
+          "tarefasLongas": 1,
+          "bloqueio": 7,
+          "transferido": 414299,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 171,
+            "fps": 57,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.2,
+            "intervaloMaximo": 50,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 167,
+            "fps": 55.6,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 50,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.6,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 7.899999976158142,
+          "domContentLoaded": 205.69999998807907,
+          "load": 538.1000000238419,
+          "fcp": 260,
+          "lcp": 464,
+          "palcoCanvas": 810.6999999880791,
+          "palcoPronto": 810.6999999880791,
+          "tarefasLongas": 2,
+          "bloqueio": 14,
+          "transferido": 414299,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 174,
+            "fps": 58,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 50,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 165,
+            "fps": 55,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.1,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "computador",
+      "rota": "jogo-lula-economia",
+      "caminho": "/jogo/lula/economia/",
+      "mediana": {
+        "ttfb": 4,
+        "fcp": 260,
+        "lcp": 464,
+        "load": 525,
+        "palcoCanvas": 745,
+        "palcoPronto": 745,
+        "tarefasLongas": 2,
+        "bloqueio": 26,
+        "transferido": 416946,
+        "pedidos": 15,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": {
+          "fps": 55.4,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 33.3,
+          "intervaloMaximo": 50,
+          "quadrosLongos": 0
+        },
+        "cadenciaAndando": {
+          "fps": 57.3,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 33.2,
+          "intervaloMaximo": 33.4,
+          "quadrosLongos": 0
+        },
+        "cadenciaComPainel": {
+          "fps": 60.5,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.7,
+          "intervaloMaximo": 16.8,
+          "quadrosLongos": 0
+        }
+      },
+      "execucoes": [
+        {
+          "ttfb": 5.800000011920929,
+          "domContentLoaded": 198.69999998807907,
+          "load": 546.6999999880791,
+          "fcp": 260,
+          "lcp": 464,
+          "palcoCanvas": 745.1999999880791,
+          "palcoPronto": 745.1999999880791,
+          "tarefasLongas": 2,
+          "bloqueio": 31,
+          "transferido": 416946,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 162,
+            "fps": 53.7,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 50,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 173,
+            "fps": 57.6,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.6,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.300000011920929,
+          "domContentLoaded": 174.10000002384186,
+          "load": 437.19999998807907,
+          "fcp": 276,
+          "lcp": 468,
+          "palcoCanvas": 845.1999999880791,
+          "palcoPronto": 845.1999999880791,
+          "tarefasLongas": 2,
+          "bloqueio": 26,
+          "transferido": 416946,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 172,
+            "fps": 57,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.2,
+            "intervaloMaximo": 50,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 168,
+            "fps": 55.9,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.5,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.699999988079071,
+          "domContentLoaded": 190.89999997615814,
+          "load": 525,
+          "fcp": 244,
+          "lcp": 444,
+          "palcoCanvas": 734.5,
+          "palcoPronto": 734.5,
+          "tarefasLongas": 1,
+          "bloqueio": 24,
+          "transferido": 416946,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 167,
+            "fps": 55.4,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 172,
+            "fps": 57.3,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.2,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.1,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "computador",
+      "rota": "jogo-flavio-bolsonaro-seguranca-publica",
+      "caminho": "/jogo/flavio-bolsonaro/seguranca-publica/",
+      "mediana": {
+        "ttfb": 4,
+        "fcp": 260,
+        "lcp": 460,
+        "load": 530,
+        "palcoCanvas": 821,
+        "palcoPronto": 821,
+        "tarefasLongas": 2,
+        "bloqueio": 14,
+        "transferido": 414655,
+        "pedidos": 15,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": {
+          "fps": 59.3,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.8,
+          "intervaloMaximo": 33.4,
+          "quadrosLongos": 0
+        },
+        "cadenciaAndando": {
+          "fps": 57,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 33.3,
+          "intervaloMaximo": 50,
+          "quadrosLongos": 0
+        },
+        "cadenciaComPainel": {
+          "fps": 60.4,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.8,
+          "intervaloMaximo": 16.8,
+          "quadrosLongos": 0
+        }
+      },
+      "execucoes": [
+        {
+          "ttfb": 5.099999964237213,
+          "domContentLoaded": 186.5,
+          "load": 530.1999999880791,
+          "fcp": 244,
+          "lcp": 460,
+          "palcoCanvas": 727.6999999880791,
+          "palcoPronto": 727.6999999880791,
+          "tarefasLongas": 2,
+          "bloqueio": 12,
+          "transferido": 414655,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 177,
+            "fps": 58.9,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 49.9,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 172,
+            "fps": 57,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.3,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.6,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 4.100000023841858,
+          "domContentLoaded": 173.80000001192093,
+          "load": 530.6000000238419,
+          "fcp": 288,
+          "lcp": 456,
+          "palcoCanvas": 821.1999999880791,
+          "palcoPronto": 821.1999999880791,
+          "tarefasLongas": 1,
+          "bloqueio": 14,
+          "transferido": 414655,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 179,
+            "fps": 59.4,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 159,
+            "fps": 53,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 33.4,
+            "intervaloMaximo": 50,
+            "quadrosLongos": 0
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.4,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.800000011920929,
+          "domContentLoaded": 204.30000001192093,
+          "load": 441.9000000357628,
+          "fcp": 260,
+          "lcp": 496,
+          "palcoCanvas": 845.5,
+          "palcoPronto": 845.5,
+          "tarefasLongas": 2,
+          "bloqueio": 19,
+          "transferido": 414655,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 179,
+            "fps": 59.3,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 33.4,
+            "quadrosLongos": 0
+          },
+          "cadenciaAndando": {
+            "quadros": 172,
+            "fps": 57,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 50.1,
+            "quadrosLongos": 1
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.4,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "entrada-do-jogo",
+      "caminho": "/jogo/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 1112,
+        "lcp": 1112,
+        "load": 2547,
+        "palcoCanvas": null,
+        "palcoPronto": null,
+        "tarefasLongas": 5,
+        "bloqueio": 738,
+        "transferido": 394603,
+        "pedidos": 16,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": null,
+        "cadenciaAndando": null,
+        "cadenciaComPainel": null
+      },
+      "execucoes": [
+        {
+          "ttfb": 3.099999964237213,
+          "domContentLoaded": 620,
+          "load": 2427.899999976158,
+          "fcp": 1172,
+          "lcp": 1172,
+          "palcoCanvas": null,
+          "palcoPronto": null,
+          "tarefasLongas": 5,
+          "bloqueio": 792,
+          "transferido": 394603,
+          "pedidos": 16,
+          "externos": [],
+          "erros": []
+        },
+        {
+          "ttfb": 3.099999964237213,
+          "domContentLoaded": 654.5,
+          "load": 2584.399999976158,
+          "fcp": 1052,
+          "lcp": 1052,
+          "palcoCanvas": null,
+          "palcoPronto": null,
+          "tarefasLongas": 5,
+          "bloqueio": 624,
+          "transferido": 394603,
+          "pedidos": 16,
+          "externos": [],
+          "erros": []
+        },
+        {
+          "ttfb": 2.900000035762787,
+          "domContentLoaded": 633.4000000357628,
+          "load": 2547.300000011921,
+          "fcp": 1112,
+          "lcp": 1112,
+          "palcoCanvas": null,
+          "palcoPronto": null,
+          "tarefasLongas": 6,
+          "bloqueio": 738,
+          "transferido": 394603,
+          "pedidos": 16,
+          "externos": [],
+          "erros": []
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "jogo-lula",
+      "caminho": "/jogo/lula/",
+      "mediana": {
+        "ttfb": 4,
+        "fcp": 1072,
+        "lcp": 2392,
+        "load": 2581,
+        "palcoCanvas": 2960,
+        "palcoPronto": 2960,
+        "tarefasLongas": 31,
+        "bloqueio": 892,
+        "transferido": 416584,
+        "pedidos": 15,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": {
+          "fps": 18.6,
+          "intervaloMediano": 50,
+          "intervaloP95": 66.7,
+          "intervaloMaximo": 83.4,
+          "quadrosLongos": 24
+        },
+        "cadenciaAndando": {
+          "fps": 19.2,
+          "intervaloMediano": 50,
+          "intervaloP95": 66.7,
+          "intervaloMaximo": 83.3,
+          "quadrosLongos": 19
+        },
+        "cadenciaComPainel": {
+          "fps": 60.2,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.8,
+          "intervaloMaximo": 16.8,
+          "quadrosLongos": 0
+        }
+      },
+      "execucoes": [
+        {
+          "ttfb": 3.5,
+          "domContentLoaded": 684.1999999880791,
+          "load": 2137.399999976158,
+          "fcp": 1064,
+          "lcp": 2392,
+          "palcoCanvas": 3057.300000011921,
+          "palcoPronto": 3057.300000011921,
+          "tarefasLongas": 31,
+          "bloqueio": 892,
+          "transferido": 416584,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 58,
+            "fps": 19,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 83.4,
+            "quadrosLongos": 18
+          },
+          "cadenciaAndando": {
+            "quadros": 58,
+            "fps": 19.2,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 83.4,
+            "quadrosLongos": 18
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.2,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 4,
+          "domContentLoaded": 679.0999999642372,
+          "load": 2581.399999976158,
+          "fcp": 1080,
+          "lcp": 2420,
+          "palcoCanvas": 2959.599999964237,
+          "palcoPronto": 2959.599999964237,
+          "tarefasLongas": 31,
+          "bloqueio": 994,
+          "transferido": 416584,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 57,
+            "fps": 18.6,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 83.3,
+            "quadrosLongos": 24
+          },
+          "cadenciaAndando": {
+            "quadros": 58,
+            "fps": 19.2,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 83.3,
+            "quadrosLongos": 19
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.1,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.199999988079071,
+          "domContentLoaded": 687.6999999880791,
+          "load": 2613.899999976158,
+          "fcp": 1072,
+          "lcp": 2324,
+          "palcoCanvas": 2630.2999999523163,
+          "palcoPronto": 2895.599999964237,
+          "tarefasLongas": 37,
+          "bloqueio": 537,
+          "transferido": 416584,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 54,
+            "fps": 17.8,
+            "intervaloMediano": 50,
+            "intervaloP95": 83.3,
+            "intervaloMaximo": 100.1,
+            "quadrosLongos": 25
+          },
+          "cadenciaAndando": {
+            "quadros": 58,
+            "fps": 19.3,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 66.7,
+            "quadrosLongos": 20
+          },
+          "cadenciaComPainel": {
+            "quadros": 92,
+            "fps": 60.8,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "jogo-flavio-bolsonaro",
+      "caminho": "/jogo/flavio-bolsonaro/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 1104,
+        "lcp": 2332,
+        "load": 2593,
+        "palcoCanvas": 2705,
+        "palcoPronto": 3024,
+        "tarefasLongas": 35,
+        "bloqueio": 614,
+        "transferido": 414299,
+        "pedidos": 15,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": {
+          "fps": 18.5,
+          "intervaloMediano": 50,
+          "intervaloP95": 66.7,
+          "intervaloMaximo": 83.4,
+          "quadrosLongos": 23
+        },
+        "cadenciaAndando": {
+          "fps": 23,
+          "intervaloMediano": 50,
+          "intervaloP95": 66.6,
+          "intervaloMaximo": 83.3,
+          "quadrosLongos": 8
+        },
+        "cadenciaComPainel": {
+          "fps": 60.1,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.7,
+          "intervaloMaximo": 16.8,
+          "quadrosLongos": 0
+        }
+      },
+      "execucoes": [
+        {
+          "ttfb": 3,
+          "domContentLoaded": 701.1000000238419,
+          "load": 2593,
+          "fcp": 1104,
+          "lcp": 2332,
+          "palcoCanvas": 2602,
+          "palcoPronto": 3024.199999988079,
+          "tarefasLongas": 35,
+          "bloqueio": 614,
+          "transferido": 414299,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 52,
+            "fps": 17.1,
+            "intervaloMediano": 50.1,
+            "intervaloP95": 83.3,
+            "intervaloMaximo": 100,
+            "quadrosLongos": 30
+          },
+          "cadenciaAndando": {
+            "quadros": 72,
+            "fps": 23.7,
+            "intervaloMediano": 49.9,
+            "intervaloP95": 66.6,
+            "intervaloMaximo": 83.3,
+            "quadrosLongos": 8
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.1,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.600000023841858,
+          "domContentLoaded": 710.5,
+          "load": 2598.199999988079,
+          "fcp": 1124,
+          "lcp": 2324,
+          "palcoCanvas": 2952.400000035763,
+          "palcoPronto": 2952.400000035763,
+          "tarefasLongas": 37,
+          "bloqueio": 575,
+          "transferido": 414299,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 58,
+            "fps": 19.2,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 66.8,
+            "quadrosLongos": 19
+          },
+          "cadenciaAndando": {
+            "quadros": 69,
+            "fps": 23,
+            "intervaloMediano": 50,
+            "intervaloP95": 50.1,
+            "intervaloMaximo": 66.7,
+            "quadrosLongos": 8
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.1,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.299999952316284,
+          "domContentLoaded": 670.5999999642372,
+          "load": 2125.899999976158,
+          "fcp": 1104,
+          "lcp": 2472,
+          "palcoCanvas": 2705.099999964237,
+          "palcoPronto": 3120,
+          "tarefasLongas": 34,
+          "bloqueio": 810,
+          "transferido": 414299,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 56,
+            "fps": 18.5,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 83.4,
+            "quadrosLongos": 23
+          },
+          "cadenciaAndando": {
+            "quadros": 63,
+            "fps": 21,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 116.6,
+            "quadrosLongos": 19
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.1,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "jogo-lula-economia",
+      "caminho": "/jogo/lula/economia/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 1068,
+        "lcp": 2356,
+        "load": 2133,
+        "palcoCanvas": 2990,
+        "palcoPronto": 3191,
+        "tarefasLongas": 32,
+        "bloqueio": 861,
+        "transferido": 416946,
+        "pedidos": 15,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": {
+          "fps": 17.6,
+          "intervaloMediano": 50.1,
+          "intervaloP95": 66.7,
+          "intervaloMaximo": 116.6,
+          "quadrosLongos": 28
+        },
+        "cadenciaAndando": {
+          "fps": 19,
+          "intervaloMediano": 50,
+          "intervaloP95": 66.7,
+          "intervaloMaximo": 83.3,
+          "quadrosLongos": 22
+        },
+        "cadenciaComPainel": {
+          "fps": 60.6,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.8,
+          "intervaloMaximo": 16.8,
+          "quadrosLongos": 0
+        }
+      },
+      "execucoes": [
+        {
+          "ttfb": 3.900000035762787,
+          "domContentLoaded": 670.1000000238419,
+          "load": 2129.5,
+          "fcp": 1068,
+          "lcp": 2504,
+          "palcoCanvas": 2771.2000000476837,
+          "palcoPronto": 3394.400000035763,
+          "tarefasLongas": 31,
+          "bloqueio": 1030,
+          "transferido": 416946,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 51,
+            "fps": 16.8,
+            "intervaloMediano": 50.1,
+            "intervaloP95": 99.9,
+            "intervaloMaximo": 116.7,
+            "quadrosLongos": 29
+          },
+          "cadenciaAndando": {
+            "quadros": 57,
+            "fps": 18.8,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 83.3,
+            "quadrosLongos": 26
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.7,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.7,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 2.900000035762787,
+          "domContentLoaded": 661.1999999880791,
+          "load": 2133.400000035763,
+          "fcp": 1036,
+          "lcp": 2356,
+          "palcoCanvas": 3191.100000023842,
+          "palcoPronto": 3191.100000023842,
+          "tarefasLongas": 32,
+          "bloqueio": 861,
+          "transferido": 416946,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 53,
+            "fps": 17.6,
+            "intervaloMediano": 50.1,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 116.6,
+            "quadrosLongos": 28
+          },
+          "cadenciaAndando": {
+            "quadros": 57,
+            "fps": 19,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 83.3,
+            "quadrosLongos": 22
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.6,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.300000011920929,
+          "domContentLoaded": 702.3999999761581,
+          "load": 2540.300000011921,
+          "fcp": 1140,
+          "lcp": 2320,
+          "palcoCanvas": 2989.899999976158,
+          "palcoPronto": 2989.899999976158,
+          "tarefasLongas": 32,
+          "bloqueio": 786,
+          "transferido": 416946,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 55,
+            "fps": 18.1,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 66.7,
+            "quadrosLongos": 26
+          },
+          "cadenciaAndando": {
+            "quadros": 57,
+            "fps": 19,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 66.7,
+            "quadrosLongos": 22
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.2,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        }
+      ]
+    },
+    {
+      "perfil": "celular",
+      "rota": "jogo-flavio-bolsonaro-seguranca-publica",
+      "caminho": "/jogo/flavio-bolsonaro/seguranca-publica/",
+      "mediana": {
+        "ttfb": 3,
+        "fcp": 1140,
+        "lcp": 2272,
+        "load": 2559,
+        "palcoCanvas": 2591,
+        "palcoPronto": 2591,
+        "tarefasLongas": 31,
+        "bloqueio": 820,
+        "transferido": 414655,
+        "pedidos": 15,
+        "externos": 0,
+        "erros": [],
+        "cadenciaParada": {
+          "fps": 17.6,
+          "intervaloMediano": 50.1,
+          "intervaloP95": 66.7,
+          "intervaloMaximo": 100,
+          "quadrosLongos": 27
+        },
+        "cadenciaAndando": {
+          "fps": 19.8,
+          "intervaloMediano": 50,
+          "intervaloP95": 66.7,
+          "intervaloMaximo": 66.7,
+          "quadrosLongos": 21
+        },
+        "cadenciaComPainel": {
+          "fps": 60.7,
+          "intervaloMediano": 16.7,
+          "intervaloP95": 16.8,
+          "intervaloMaximo": 16.8,
+          "quadrosLongos": 0
+        }
+      },
+      "execucoes": [
+        {
+          "ttfb": 3.5,
+          "domContentLoaded": 657,
+          "load": 2559.2999999523163,
+          "fcp": 1092,
+          "lcp": 2372,
+          "palcoCanvas": 2588.5,
+          "palcoPronto": 2588.5,
+          "tarefasLongas": 35,
+          "bloqueio": 589,
+          "transferido": 414655,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 53,
+            "fps": 17.4,
+            "intervaloMediano": 50.1,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 100,
+            "quadrosLongos": 29
+          },
+          "cadenciaAndando": {
+            "quadros": 58,
+            "fps": 19.1,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 66.7,
+            "quadrosLongos": 21
+          },
+          "cadenciaComPainel": {
+            "quadros": 92,
+            "fps": 60.7,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3.299999952316284,
+          "domContentLoaded": 688.7999999523163,
+          "load": 2540.599999964237,
+          "fcp": 1140,
+          "lcp": 2256,
+          "palcoCanvas": 2590.5,
+          "palcoPronto": 2590.5,
+          "tarefasLongas": 31,
+          "bloqueio": 847,
+          "transferido": 414655,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 53,
+            "fps": 17.6,
+            "intervaloMediano": 50.1,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 83.3,
+            "quadrosLongos": 27
+          },
+          "cadenciaAndando": {
+            "quadros": 60,
+            "fps": 19.8,
+            "intervaloMediano": 50,
+            "intervaloP95": 66.7,
+            "intervaloMaximo": 66.7,
+            "quadrosLongos": 21
+          },
+          "cadenciaComPainel": {
+            "quadros": 91,
+            "fps": 60.6,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        },
+        {
+          "ttfb": 3,
+          "domContentLoaded": 706.6000000238419,
+          "load": 2633.5,
+          "fcp": 1168,
+          "lcp": 2272,
+          "palcoCanvas": 3155.199999988079,
+          "palcoPronto": 3155.199999988079,
+          "tarefasLongas": 19,
+          "bloqueio": 820,
+          "transferido": 414655,
+          "pedidos": 15,
+          "externos": [],
+          "erros": [],
+          "cadenciaParada": {
+            "quadros": 57,
+            "fps": 18.9,
+            "intervaloMediano": 50,
+            "intervaloP95": 83.4,
+            "intervaloMaximo": 116.7,
+            "quadrosLongos": 20
+          },
+          "cadenciaAndando": {
+            "quadros": 60,
+            "fps": 19.8,
+            "intervaloMediano": 50,
+            "intervaloP95": 83.3,
+            "intervaloMaximo": 83.3,
+            "quadrosLongos": 22
+          },
+          "cadenciaComPainel": {
+            "quadros": 92,
+            "fps": 60.7,
+            "intervaloMediano": 16.7,
+            "intervaloP95": 16.8,
+            "intervaloMaximo": 16.8,
+            "quadrosLongos": 0
+          }
+        }
+      ]
+    }
+  ]
+}

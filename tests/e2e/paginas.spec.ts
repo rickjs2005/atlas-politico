@@ -44,11 +44,11 @@ const conjunto = JSON.parse(readFileSync("generated/dados/conjunto.json", "utf8"
   lugares: { id: string; nome: string }[];
   fontes: { id: string; titulo: string; autoria: string; url: string }[];
   imagens: { id: string; credito: string; autoria: string; origem: string; condicoesDeUso: string }[];
-  // As coleções de decisões: aqui só interessam as citações delas.
+  // As coleções de decisões: as citações de todas e, das votações, dos votos e dos atos, o que o cartão mostra.
   proposicoes: { fontes: Citacao[] }[];
-  votacoes: { fontes: Citacao[] }[];
-  votos: { fontes: Citacao[] }[];
-  atosExecutivos: { fontes: Citacao[] }[];
+  votacoes: { id: string; objeto: { divergenciaDocumentada: string | null; textoReferencia: { fonteId: string } | null }; fontes: Citacao[] }[];
+  votos: { id: string; votacaoId: string; pessoaId: string; situacao: { tipo: string }; fontes: Citacao[] }[];
+  atosExecutivos: { id: string; atribuicao: { pessoaId: string }; dispositivosAlvo?: string[]; fontes: Citacao[] }[];
   coberturaPolitica: { fontes: Citacao[] }[];
   identidadesInstitucionais: { fontes: Citacao[] }[];
 };
@@ -680,5 +680,99 @@ test.describe("metodologia", () => {
     );
     expect(selecionado).toBe(true);
     await expect(correcao.getByRole("button", { name: "Modelo copiado" })).toHaveCount(0);
+  });
+});
+
+// As decisões de uma pessoa, como as telas as listam: os votos vigentes dela e os atos atribuídos a ela.
+const votosDe = (pessoaId: string) => conjunto.votos.filter((item) => item.pessoaId === pessoaId && item.situacao.tipo === "vigente");
+const atosDe = (pessoaId: string) => conjunto.atosExecutivos.filter((item) => item.atribuicao.pessoaId === pessoaId);
+const objetoDe = (votacaoId: string) => conjunto.votacoes.find((item) => item.id === votacaoId)!.objeto;
+/** Quantos itens uma lista do cartão mostra aberta: o mesmo limite do componente do cartão (`ITENS_ABERTOS`). */
+const ITENS_ABERTOS = 6;
+
+test.describe("decisões documentadas nas páginas do atlas", () => {
+  for (const pessoa of PESSOAS) {
+    test(`a página de ${pessoa.nome} lista as decisões por tema: texto de referência declarado, divergência à vista, dispositivos por extenso`, async ({ page }) => {
+      await page.goto(`/politicos/${pessoa.slug}/`);
+      const secao = page.locator('#decisoes[data-secao="decisoes"]');
+      const votos = votosDe(pessoa.id);
+      const atos = atosDe(pessoa.id);
+      const total = votos.length + atos.length;
+      expect(total, "a pessoa deveria ter decisões publicadas").toBeGreaterThan(0);
+      await expect(secao.getByRole("heading", { level: 2 })).toContainText(`Votos e atos de ${pessoa.nome}, por tema`);
+      await expect(secao).toHaveAttribute("data-quantas", String(total));
+      await expect(secao.locator("[data-decisao-cartao]")).toHaveCount(total);
+
+      // Hierarquia dos títulos, sem salto: a seção (h2), o tema (h3) e o cartão (h4).
+      const temas = await secao.locator("[data-tema]").count();
+      expect(temas).toBeGreaterThan(0);
+      await expect(secao.locator("[data-tema] > h3")).toHaveCount(temas);
+      await expect(secao.locator("[data-decisao-cartao] > div > h4")).toHaveCount(total);
+
+      for (const voto of votos) {
+        const cartao = secao.locator(`[data-decisao-cartao="${voto.id}"]`);
+        const objeto = objetoDe(voto.votacaoId);
+        // O texto submetido à votação: ligado, com o documento, ou a tela diz que não está ligado, em vez de calar.
+        if (objeto.textoReferencia === null) {
+          await expect(cartao.locator('[data-texto-referencia="nao-ligado"]')).toContainText("não está ligado a este registro nesta edição");
+        } else {
+          await expect(cartao.locator('[data-texto-referencia="ligado"] a')).toHaveAttribute("href", urlDa(objeto.textoReferencia.fonteId));
+        }
+        // A divergência entre documentos é pública, junto do objeto, e só onde existe.
+        if (objeto.divergenciaDocumentada === null) await expect(cartao.locator("[data-divergencia]")).toHaveCount(0);
+        else await expect(cartao.locator("[data-divergencia]")).toContainText(objeto.divergenciaDocumentada);
+      }
+
+      for (const ato of atos) {
+        const cartao = secao.locator(`[data-decisao-cartao="${ato.id}"]`);
+        const itens = ato.dispositivosAlvo ?? [];
+        if (itens.length === 0) {
+          await expect(cartao.locator("[data-itens]")).toHaveCount(0);
+          continue;
+        }
+        // Os dispositivos vetados, um por linha, como o registro os traz: a lista longa vem dobrada e abre a pedido.
+        const lista = cartao.locator(`[data-itens="${itens.length}"]`);
+        await expect(lista.locator("li")).toHaveText(itens);
+        if (itens.length > ITENS_ABERTOS) {
+          const dobrada = cartao.locator(`[data-lista-dobrada="${itens.length}"]`);
+          await expect(dobrada.locator("summary")).toContainText(`Ver os ${itens.length} itens`);
+          await expect(lista.locator("li").first()).toBeHidden();
+          await dobrada.locator("summary").click();
+          await expect(lista.locator("li").first()).toBeVisible();
+          await expect(lista.locator("li").last()).toBeVisible();
+        } else {
+          await expect(cartao.locator("[data-lista-dobrada]")).toHaveCount(0);
+          await expect(lista.locator("li").first()).toBeVisible();
+        }
+      }
+    });
+  }
+
+  test("a edição dá matéria a estes testes: há divergência documentada, votação sem texto ligado, lista curta e lista longa", () => {
+    const votos = PESSOAS.flatMap((pessoa) => votosDe(pessoa.id));
+    const atos = PESSOAS.flatMap((pessoa) => atosDe(pessoa.id));
+    expect(votos.filter((voto) => objetoDe(voto.votacaoId).divergenciaDocumentada !== null).length).toBeGreaterThan(0);
+    expect(votos.filter((voto) => objetoDe(voto.votacaoId).textoReferencia === null).length).toBeGreaterThan(0);
+    const tamanhos = atos.map((ato) => ato.dispositivosAlvo?.length ?? 0);
+    expect(tamanhos.some((n) => n > ITENS_ABERTOS)).toBe(true);
+    expect(tamanhos.some((n) => n > 0 && n <= ITENS_ABERTOS)).toBe(true);
+  });
+
+  test("na comparação, os cartões ficam um nível abaixo do título da pessoa, com as mesmas notas", async ({ page }) => {
+    await page.goto("/comparar/");
+    const secao = page.locator('#decisoes[data-secao="decisoes"]');
+    const votos = PESSOAS.flatMap((pessoa) => votosDe(pessoa.id));
+    const total = votos.length + PESSOAS.flatMap((pessoa) => atosDe(pessoa.id)).length;
+    await expect(secao).toHaveAttribute("data-quantas", String(total));
+    await expect(secao.locator("[data-decisao-cartao]")).toHaveCount(total);
+
+    // A seção (h2), o tema (h3), a pessoa (h4) e o cartão (h5).
+    const temas = await secao.locator("[data-tema]").count();
+    await expect(secao.locator("[data-tema] > h3")).toHaveCount(temas);
+    await expect(secao.locator("[data-coluna-decisoes] > h4")).toHaveCount(temas * PESSOAS.length);
+    await expect(secao.locator("[data-decisao-cartao] > div > h5")).toHaveCount(total);
+
+    await expect(secao.locator("[data-divergencia]")).toHaveCount(votos.filter((voto) => objetoDe(voto.votacaoId).divergenciaDocumentada !== null).length);
+    await expect(secao.locator('[data-texto-referencia="nao-ligado"]')).toHaveCount(votos.filter((voto) => objetoDe(voto.votacaoId).textoReferencia === null).length);
   });
 });

@@ -8,7 +8,7 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 
 import { DEFAULT_PREFERENCES, PREFERENCES_KEY, parsePreferences, serializePreferences, type GamePreferences } from "@/lib/game/preferences";
-import { initialProgress } from "@/lib/game/progress";
+import { initialProgress, type SignatureSource } from "@/lib/game/progress";
 import { createProgressStore, type ProgressStore } from "@/lib/game/storage";
 import type { ChapterSpec, PersonagemSlug, PlayerProgress } from "@/lib/game/types";
 
@@ -32,7 +32,7 @@ interface ProgressState {
   reset(): void;
 }
 
-function createProgressState(personagem: PersonagemSlug, capitulos: readonly ChapterSpec[]): ProgressState {
+function createProgressState(personagem: PersonagemSlug, capitulos: readonly ChapterSpec[], conteudo: SignatureSource): ProgressState {
   const listeners = new Set<() => void>();
   const inicial: ProgressSnapshot = { carregado: false, progresso: initialProgress(personagem, capitulos), duravel: false };
   let store: ProgressStore | null = null;
@@ -40,7 +40,7 @@ function createProgressState(personagem: PersonagemSlug, capitulos: readonly Cha
 
   const ensure = () => {
     if (store !== null) return;
-    store = createProgressStore(personagem, capitulos);
+    store = createProgressStore(personagem, capitulos, conteudo);
     const salvo = store.load();
     snapshot = { carregado: true, progresso: salvo ?? inicial.progresso, duravel: store.duravel };
   };
@@ -74,8 +74,9 @@ function createProgressState(personagem: PersonagemSlug, capitulos: readonly Cha
   };
 }
 
-export function useGameProgress(personagem: PersonagemSlug, capitulos: readonly ChapterSpec[]) {
-  const state = useMemo(() => createProgressState(personagem, capitulos), [personagem, capitulos]);
+/** O progresso do personagem, lido com o conteúdo dele ou com as assinaturas já calculadas (as assinaturas das tarefas dependem dos registros e das decisões). */
+export function useGameProgress(personagem: PersonagemSlug, capitulos: readonly ChapterSpec[], conteudo: SignatureSource) {
+  const state = useMemo(() => createProgressState(personagem, capitulos, conteudo), [personagem, capitulos, conteudo]);
   const snapshot = useSyncExternalStore(state.subscribe, state.get, state.getServer);
   const update = useCallback(
     (fn: (atual: PlayerProgress) => PlayerProgress) => {

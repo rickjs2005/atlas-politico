@@ -27,7 +27,7 @@ import { compareDates, formatDate, intervalsOverlap, calcInterval } from "@/lib/
 import { OBJETO_LABELS, POSICAO_LABELS, TIPO_DE_ATO_LABELS, type ObjetoVotado, type PosicaoDeVoto, type TipoDeAto } from "@/lib/domain/decisions";
 import type { DataHistorica } from "@/lib/domain/types";
 
-import type { ChapterSpec, GameDecision, GameDocument, GameRecord, GameSource, TaskSpec, TaskState } from "./types";
+import type { ChapterSpec, GameContent, GameDecision, GameDocument, GameRecord, GameSource, TaskSpec, TaskState } from "./types";
 
 export function initialTaskState(): TaskState {
   return { recolhidos: [], confirmada: false, tentativas: 0 };
@@ -51,14 +51,74 @@ export function hasAnswer(tarefa: TaskSpec): boolean {
 }
 
 /**
- * A assinatura de uma tarefa: o tipo e os identificadores que ela pede. Vai
- * para o progresso salvo junto com a confirmação, para a leitura saber a qual
- * tarefa a resposta pertence (src/lib/game/progress.ts): trocar o tipo da
- * tarefa, ou o que ela pede, sob os mesmos identificadores de capítulo, não
- * deixa uma resposta antiga concluir a nova.
+ * A assinatura de uma tarefa no formato das versões 1 a 4 do progresso: o
+ * tipo e os identificadores que ela pede. Serve à leitura dos progressos
+ * salvos nessas versões e às tabelas congeladas `LEGACY_SIGNATURES`
+ * (src/lib/game/progress.ts).
  */
-export function taskSignature(tarefa: TaskSpec): string {
+export function legacyTaskSignature(tarefa: TaskSpec): string {
   return `${tarefa.tipo}:${requiredRecords(tarefa).join("+")}`;
+}
+
+/** O conteúdo de que as regras de tarefa precisam: os registros e as decisões do personagem. */
+export type TaskContent = Pick<GameContent, "registros" | "decisoes">;
+
+/** Os registros e as decisões como um só mapa de documentos, para as regras que servem aos dois. */
+export function documentsFrom(conteudo: TaskContent): Record<string, GameDocument> {
+  return { ...conteudo.registros, ...conteudo.decisoes };
+}
+
+/**
+ * O que decide a resposta certa de uma tarefa, como o conteúdo o traz: as
+ * datas dos dois registros (ordem), os documentos citados (fonte), o lugar
+ * documentado (lugar), os documentos e a interpretação certa (decisão). O
+ * texto dos registros (título, resumo, explicações) não entra: mudar o
+ * estilo não reabre a resposta. Registro ausente entra como `null`.
+ */
+export function decisiveData(tarefa: TaskSpec, conteudo: TaskContent): unknown {
+  switch (tarefa.tipo) {
+    case "registro":
+      return null;
+    case "ordem":
+      return tarefa.eventIds.map((id) => conteudo.registros[id]?.data ?? null);
+    case "fonte":
+      return conteudo.registros[tarefa.eventId]?.fontes.map((fonte) => fonte.id).sort() ?? null;
+    case "lugar": {
+      const registro = conteudo.registros[tarefa.eventId];
+      return registro === undefined ? null : placeLabel(registro);
+    }
+    case "decisao": {
+      const decisao = conteudo.decisoes[tarefa.decisaoId];
+      return decisao === undefined ? null : { fontes: decisao.fontes.map((fonte) => fonte.id).sort(), interpretacao: correctInterpretation(decisao).id };
+    }
+  }
+}
+
+/**
+ * Um resumo curto e determinístico de um valor (FNV-1a de 32 bits sobre o
+ * JSON dele), em oito dígitos hexadecimais. Não é segurança: é detecção de
+ * mudança, igual no navegador e no Node.
+ */
+export function digestOf(valor: unknown): string {
+  const texto = JSON.stringify(valor) ?? "null";
+  let h = 0x811c9dc5;
+  for (let i = 0; i < texto.length; i += 1) {
+    h ^= texto.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(16).padStart(8, "0");
+}
+
+/**
+ * A assinatura de uma tarefa: o tipo, os identificadores que ela pede e o
+ * resumo dos dados que decidem a resposta (`decisiveData`). Vai para o
+ * progresso salvo junto com a resposta, para a leitura saber a qual tarefa
+ * ela pertence (src/lib/game/progress.ts): trocar o tipo da tarefa, o que ela
+ * pede, ou os dados que decidem a resposta, sob os mesmos identificadores de
+ * capítulo, não deixa uma resposta antiga valer para a nova (D-119, D-130).
+ */
+export function taskSignature(tarefa: TaskSpec, conteudo: TaskContent): string {
+  return `${legacyTaskSignature(tarefa)}@${digestOf(decisiveData(tarefa, conteudo))}`;
 }
 
 /** Recolher um registro. Recolher o mesmo duas vezes não muda nada. */
@@ -122,9 +182,9 @@ export interface Attempt {
  * Conta a tentativa e confirma a tarefa se a resposta estiver certa, gravando
  * a assinatura da tarefa respondida. Errar não desfaz nada.
  */
-function attempt(tarefa: TaskSpec, estado: TaskState, certo: boolean, explicacao: string): Attempt {
+function attempt(tarefa: TaskSpec, estado: TaskState, certo: boolean, explicacao: string, conteudo: TaskContent): Attempt {
   const proximo: TaskState = { ...estado, tentativas: estado.tentativas + 1, confirmada: certo || estado.confirmada };
-  if (certo) proximo.assinatura = taskSignature(tarefa);
+  if (certo) proximo.assinatura = taskSignature(tarefa, conteudo);
   return { estado: proximo, certo, explicacao };
 }
 
@@ -150,15 +210,16 @@ export function submitOrder(
   tarefa: Extract<TaskSpec, { tipo: "ordem" }>,
   estado: TaskState,
   resposta: readonly [string, string],
-  registros: Record<string, GameRecord>,
+  conteudo: TaskContent,
 ): Attempt {
+  const { registros } = conteudo;
   const [antes, depois] = correctOrder(tarefa, registros);
   const certo = resposta[0] === antes && resposta[1] === depois;
   const ra = registros[antes];
   const rb = registros[depois];
   // Os títulos do atlas são orações: a data vai entre parênteses, e não em uma frase montada com eles.
   const datas = ra && rb ? `Datas dos registros: ${ra.titulo} (${formatDate(ra.data)}); ${rb.titulo} (${formatDate(rb.data)}).` : "";
-  return attempt(tarefa, estado, certo, certo ? `Ordem certa. ${datas}` : `Ainda não. ${datas} A data mais antiga vem primeiro. Tente de novo: não há penalidade.`);
+  return attempt(tarefa, estado, certo, certo ? `Ordem certa. ${datas}` : `Ainda não. ${datas} A data mais antiga vem primeiro. Tente de novo: não há penalidade.`, conteudo);
 }
 
 // ---------------------------------------------------------------------------
@@ -248,13 +309,14 @@ export function submitSource(
   tarefa: Extract<TaskSpec, { tipo: "fonte" }>,
   estado: TaskState,
   capitulo: ChapterSpec,
-  registros: Record<string, GameRecord>,
+  conteudo: TaskContent,
   fonteId: string,
 ): Attempt {
+  const { registros } = conteudo;
   const alvo = registros[tarefa.eventId];
-  if (alvo === undefined) return attempt(tarefa, estado, false, "O registro desta tarefa não está no conteúdo.");
+  if (alvo === undefined) return attempt(tarefa, estado, false, "O registro desta tarefa não está no conteúdo.", conteudo);
   const { certo, explicacao } = explainSource(capitulo, registros, alvo, fonteId);
-  return attempt(tarefa, estado, certo, explicacao);
+  return attempt(tarefa, estado, certo, explicacao, conteudo);
 }
 
 /** O rótulo de um lugar documentado, ou da abrangência, como a ficha diz. */
@@ -298,13 +360,14 @@ export function submitPlace(
   tarefa: Extract<TaskSpec, { tipo: "lugar" }>,
   estado: TaskState,
   capitulos: readonly ChapterSpec[],
-  registros: Record<string, GameRecord>,
+  conteudo: TaskContent,
   lugar: string,
 ): Attempt {
+  const { registros } = conteudo;
   const alvo = registros[tarefa.eventId];
-  if (alvo === undefined) return attempt(tarefa, estado, false, "O registro desta tarefa não está no conteúdo.");
+  if (alvo === undefined) return attempt(tarefa, estado, false, "O registro desta tarefa não está no conteúdo.", conteudo);
   const certo = placeLabel(alvo);
-  if (lugar === certo) return attempt(tarefa, estado, true, `Certo. O atlas documenta este acontecimento em ${certo}, como diz a ficha dele.`);
+  if (lugar === certo) return attempt(tarefa, estado, true, `Certo. O atlas documenta este acontecimento em ${certo}, como diz a ficha dele.`, conteudo);
   let outro: GameRecord | undefined;
   for (const capitulo of capitulos) {
     for (const id of capitulo.eventIds) {
@@ -317,7 +380,7 @@ export function submitPlace(
     if (outro !== undefined) break;
   }
   const onde = outro === undefined ? "Esse lugar não é o deste registro." : `${lugar} é o lugar de outro registro: ${outro.titulo} (${formatDate(outro.data)}).`;
-  return attempt(tarefa, estado, false, `Ainda não. ${onde} O lugar documentado aparece no registro, ao recolhê-lo. Tente de novo: não há penalidade.`);
+  return attempt(tarefa, estado, false, `Ainda não. ${onde} O lugar documentado aparece no registro, ao recolhê-lo. Tente de novo: não há penalidade.`, conteudo);
 }
 
 // ---------------------------------------------------------------------------
@@ -335,14 +398,19 @@ export function submitEvidence(
   tarefa: Extract<TaskSpec, { tipo: "decisao" }>,
   estado: TaskState,
   capitulo: ChapterSpec,
-  documentos: Record<string, GameDocument>,
+  conteudo: TaskContent,
   fonteId: string,
 ): Attempt {
+  const documentos = documentsFrom(conteudo);
   const alvo = documentos[tarefa.decisaoId];
   if (alvo === undefined) return { estado: { ...estado, tentativas: estado.tentativas + 1 }, certo: false, explicacao: "O registro desta tarefa não está no conteúdo." };
   const { certo, explicacao } = explainSource(capitulo, documentos, alvo, fonteId);
   const proximo: TaskState = { ...estado, tentativas: estado.tentativas + 1 };
-  if (certo) proximo.evidencia = true;
+  if (certo) {
+    proximo.evidencia = true;
+    // A etapa confirmada leva a assinatura, como a interpretação: uma correção nos dados que decidem a resposta reabre as duas (D-130).
+    proximo.assinatura = taskSignature(tarefa, conteudo);
+  }
   return { estado: proximo, certo, explicacao: certo ? `${explicacao} Agora, a interpretação: o que o registro documenta.` : explicacao };
 }
 
@@ -443,8 +511,9 @@ export function describeDecision(decisao: GameDecision): string {
  * etapa só vale depois da evidência; antes dela, a resposta é recusada sem
  * contar tentativa.
  */
-export function submitInterpretation(tarefa: Extract<TaskSpec, { tipo: "decisao" }>, estado: TaskState, decisao: GameDecision | undefined, opcaoId: string): Attempt {
-  if (decisao === undefined || decisao.id !== tarefa.decisaoId) return { estado, certo: false, explicacao: "O registro desta tarefa não está no conteúdo." };
+export function submitInterpretation(tarefa: Extract<TaskSpec, { tipo: "decisao" }>, estado: TaskState, conteudo: TaskContent, opcaoId: string): Attempt {
+  const decisao = conteudo.decisoes[tarefa.decisaoId];
+  if (decisao === undefined) return { estado, certo: false, explicacao: "O registro desta tarefa não está no conteúdo." };
   if (!isEvidenceDone(estado)) return { estado, certo: false, explicacao: "Antes da interpretação, indique o documento que sustenta o registro." };
   const certa = correctInterpretation(decisao);
   const certo = opcaoId === certa.id;
@@ -456,5 +525,6 @@ export function submitInterpretation(tarefa: Extract<TaskSpec, { tipo: "decisao"
     certo
       ? `Certo. ${documenta}`
       : `Ainda não. ${documenta} A manifestação, o objeto votado e o tipo do ato estão escritos no registro recolhido. Tente de novo: não há penalidade.`,
+    conteudo,
   );
 }

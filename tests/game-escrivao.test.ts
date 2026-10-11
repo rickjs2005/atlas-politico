@@ -6,7 +6,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { CATALOGO, ESCRIVAO_EVENTS, ESCRIVAO_NOME, MINIMO_DE_HUMOR, candidatas, menosRecente, preencher, registrarDitas, selectLines, validateCatalog, type Fala, type Momento } from "@/lib/game/escrivao";
+import { CATALOGO, ESCRIVAO_EVENTS, ESCRIVAO_NOME, HISTORICO_MAXIMO, MINIMO_DE_HUMOR, candidatas, falasDe, falasVisiveis, menosRecente, preencher, registrarDitas, selectLines, validateCatalog, type Fala, type Momento } from "@/lib/game/escrivao";
 import { ROOM_IDS } from "@/lib/game/rooms";
 
 const momento = (mudancas: Partial<Momento> = {}): Momento => ({ sala: "historico", evento: "entrada", humor: true, vistas: [], ...mudancas });
@@ -108,5 +108,40 @@ describe("seleção das falas", () => {
     const documental = ditas.find((fala) => fala.camada === "documental")!;
     expect(documental.id).toBe("descoberta-economia-documental-2");
     expect(documental.texto).toContain("Decreto");
+  });
+});
+
+describe("histórico das falas e exibição com a preferência", () => {
+  it("o histórico não cresce sem limite: guarda as últimas falas, e as novas continuam entrando no fim", () => {
+    let vistas: string[] = [];
+    for (let rodada = 0; rodada < 200; rodada += 1) vistas = registrarDitas(vistas, selectLines(momento({ vistas })));
+    expect(vistas.length).toBe(HISTORICO_MAXIMO);
+    const proximas = selectLines(momento({ vistas }));
+    const depois = registrarDitas(vistas, proximas);
+    expect(depois.length).toBe(HISTORICO_MAXIMO);
+    expect(depois.slice(-proximas.length)).toEqual(proximas.map((fala) => fala.id));
+    // Abaixo do limite, nada é descartado.
+    expect(registrarDitas(["a", "b"], proximas)).toEqual(["a", "b", ...proximas.map((fala) => fala.id)]);
+  });
+
+  it("a exibição tira o humor de falas já escolhidas quando a preferência desliga, e mantém a instrução e a documental", () => {
+    const falas = selectLines(momento({ dados: { capitulo: "Teste", registros: "3 registros", periodo: "2000 a 2001" } }));
+    expect(falas.map((fala) => fala.camada)).toEqual(["instrucao", "documental", "humor"]);
+    expect(falasVisiveis(falas, false).map((fala) => fala.camada)).toEqual(["instrucao", "documental"]);
+    expect(falasVisiveis(falas, true)).toEqual(falas);
+    expect(falasVisiveis(falas, true)).not.toBe(falas);
+    expect(falasVisiveis([], false)).toEqual([]);
+  });
+});
+
+describe("falas guardadas", () => {
+  it("só aparecem para o registro ou o capítulo de que foram ditas", () => {
+    const falas = selectLines(momento({ evento: "descoberta", dados: { titulo: "Registro A", data: "1 de janeiro de 2000", fontes: "1 fonte" } }));
+    const guardadas = { de: "registro-a", falas };
+    expect(falasDe(guardadas, "registro-a")).toBe(falas);
+    // Outro registro aberto (uma releitura, por exemplo) não herda a fala, com o título e a data do primeiro.
+    expect(falasDe(guardadas, "registro-b")).toEqual([]);
+    expect(falasDe(guardadas, null)).toEqual([]);
+    expect(falasDe(null, "registro-a")).toEqual([]);
   });
 });

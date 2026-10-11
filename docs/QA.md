@@ -147,6 +147,16 @@ As medições de [PERFORMANCE.md](PERFORMANCE.md) não foram refeitas. As mudan�
 
 Uma observação de bancada: o teste de linha de comando "query: consulta os dados gerados e recusa dados de outra versão do conteúdo" leva 2 segundos sozinho e passou do limite de 5 segundos uma vez, quando foi rodado junto com a suíte de navegador. Sozinho e dentro de `npm run check`, passou. Rode os comandos um de cada vez.
 
+## Auditoria de QA de 11 de outubro de 2026
+
+O que está acima é o registro da fase 9, de 9 de outubro de 2026, e fica como foi. Em 11 de outubro uma auditoria externa de prontidão para produção pediu correções; o que foi feito, os resultados e as pendências estão em [STATUS.md](STATUS.md), seção Auditoria de QA de produção. O que mudou no modo de verificar:
+
+- **A passagem de acessibilidade** (`npm run audit:a11y`) cobre 20 telas em 4 larguras: as 8 do atlas e 12 do jogo, com as salas temáticas e os passos da missão de decisão (a ajuda com o humor desligado, a decisão recolhida, as duas etapas da resposta, o erro, a conclusão e a transição). O progresso e a preferência são semeados no navegador, e cada tela preparada declara o que tem de continuar na página até o fim da medição: se a tela mudar antes, a passagem falha em vez de medir a tela seguinte. Na passagem de teclado, uma janela aberta prende o foco, e a volta a um controle já visitado encerra a contagem.
+- **As capturas dos acervos** têm conferência própria (`npm run capturas:verificar`), que roda na verificação contínua.
+- **A régua de publicação** tem um comando: `npm run release:check`.
+- **Afirmação de ausência em tela que some sozinha.** A transição entre capítulos segue depois de 2,6 segundos. Uma afirmação com espera de que algo não está nela passa quando a própria transição sai. A jornada que confere a transição lê o conteúdo dela de uma vez, enquanto está na tela. Foi a mutação à mão que mostrou o engano.
+- **O teste de linha de comando que passava do tempo** quando a suíte inteira rodava em paralelo (a observação de bancada acima) ganhou limite de 20 segundos: ele abre vários processos do Node, e leva perto de 2 segundos sozinho.
+
 ## Como repetir
 
 ```
@@ -155,6 +165,8 @@ npm run test:journeys    # jornadas sobre a exportação estática
 npm run test:export      # carregamento sobre a exportação estática
 npm run test:e2e         # as mesmas jornadas e as telas de prova, no servidor de desenvolvimento
 npm run audit:a11y       # contraste, rolagem lateral, alvos e ordem de foco, com capturas
+npm run capturas:verificar   # as capturas brutas dos acervos contra o corpo original
+npm run verify:release   # a barreira de publicação: recusa sem revisão humana, domínio e canal
 ```
 
 `npm run test:journeys`, `npm run test:export` e `npm run audit:a11y` precisam de um build pronto (`npm run build`). Rode as jornadas sobre o build sempre que mexer em efeitos do React: o servidor de desenvolvimento repete os efeitos e pode esconder um defeito de ordem, como o da falha 1.

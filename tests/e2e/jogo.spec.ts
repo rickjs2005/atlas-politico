@@ -22,11 +22,12 @@ import { expect, test, type Page } from "@playwright/test";
 import { compareDates, formatDate, yearOf } from "@/lib/domain/dates";
 import { findUndeterminedOrder } from "@/lib/domain/order";
 import { chaptersOf } from "@/lib/game/chapters";
-import { recordIds, requiredRecords, taskSignature } from "@/lib/game/mission";
+import { legacyTaskSignature, recordIds, requiredRecords } from "@/lib/game/mission";
 import { chaptersInRoom } from "@/lib/game/rooms";
+import { isSensitive, isSensitiveChapter } from "@/lib/game/sensitivity";
 import { getScene } from "@/lib/game/scenes";
 import { storageKey } from "@/lib/game/storage";
-import { EPOCA_LABEL, PROGRESS_VERSION, type ChapterSpec } from "@/lib/game/types";
+import { EPOCA_LABEL, type ChapterSpec } from "@/lib/game/types";
 
 import { clearProgress, clicar, frame, holdKeys, jogo, palco, position, waitForStage, walkTo } from "./jogo-caminho";
 
@@ -123,7 +124,13 @@ function certasDe(capitulo: ChapterSpec): string[] {
 /** O rótulo do período de um capítulo, como a interface o escreve. */
 const periodoDe = (capitulo: ChapterSpec) => (capitulo.periodo.de === capitulo.periodo.ate ? `${capitulo.periodo.de}` : `${capitulo.periodo.de}–${capitulo.periodo.ate}`);
 
-/** Um progresso salvo, na versão atual, com os capítulos da trajetória anteriores ao de número `numero` concluídos e ele disponível. As salas temáticas ficam no início. */
+/**
+ * Um progresso salvo com os capítulos da trajetória anteriores ao de número
+ * `numero` concluídos e ele disponível. As salas temáticas ficam no início. É
+ * gravado no formato 4, com a assinatura antiga (só tipo e identificadores),
+ * que a leitura migra para a atual: os testes não montam o conteúdo do jogo,
+ * e a migração é exercitada em toda jornada que parte de um progresso.
+ */
 function progressoAte(slug: Slug, numero: number) {
   const entradas: Record<string, unknown> = {};
   chaptersInRoom(chaptersOf(slug), "historico").forEach((capitulo, indice) => {
@@ -135,14 +142,14 @@ function progressoAte(slug: Slug, numero: number) {
           recolhidos: recordIds(capitulo),
           confirmada: comResposta,
           tentativas: comResposta ? 1 : 0,
-          ...(comResposta ? { assinatura: taskSignature(capitulo.tarefa) } : {}),
+          ...(comResposta ? { assinatura: legacyTaskSignature(capitulo.tarefa) } : {}),
           ...(capitulo.tarefa.tipo === "decisao" ? { evidencia: true } : {}),
         },
       };
     }
     else entradas[capitulo.id] = { status: indice === numero - 1 ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
   });
-  return { versao: PROGRESS_VERSION, personagem: slug, capitulos: entradas };
+  return { versao: 4, personagem: slug, capitulos: entradas };
 }
 
 /** Abre o jogo de um personagem no capítulo de número `numero`, com os anteriores concluídos. */
@@ -1171,13 +1178,16 @@ test.describe("regra da saída", () => {
     await page.goto("/jogo/");
     await expect(page.locator('[data-escolha="lula"] [data-situacao-texto]')).toContainText(`capítulo 1: ${LULA.c1.titulo}`);
 
-    // Recolhido o que faltava, a saída abre, e o capítulo 2 começa do início.
+    // Recolhido o que faltava, a saída abre, e o capítulo 2 abre com o registro que já tinha: ele ficou fechado
+    // enquanto o capítulo 1 estava reaberto, mas o que foi recolhido nele não se perde (D-130, que reviu a D-109).
     await page.goto(LULA.rota);
     await waitForStage(page);
     await abrirASaidaPeloPainel(page, LULA.c1);
     await atravessarPeloPainel(page);
     await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
-    await expect(jogo(page)).toHaveAttribute("data-registros", `0/${LULA.c2.eventIds.length}`);
+    await expect(jogo(page)).toHaveAttribute("data-registros", `1/${LULA.c2.eventIds.length}`);
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await expect(page.locator(`[data-registro="${LULA.c2.eventIds[0]!}"]`)).toHaveAttribute("data-recolhido", "sim");
   });
 });
 
@@ -1688,6 +1698,10 @@ test.describe("Escrivão e salas temáticas", () => {
     await expect(cartao.locator("[data-fonte]").first()).toBeVisible();
     await expect(cartao.locator("[data-revisao]")).toContainText("Revisão humana pendente");
     await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="documental"]')).toContainText("Presidente da República");
+    // O decreto da intervenção federal é registro de contexto sensível (D-129): com o humor ligado, o Escrivão não faz piada nele.
+    expect(isSensitive(decisaoId)).toBe(true);
+    await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
+    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="humor"]')).toHaveCount(0);
     await clicar(page, ficha.getByRole("button", { name: "Guardar e responder" }));
 
     // Etapa 1, a evidência: errar explica de quem é o documento, com a fala de erro do Escrivão; acertar abre a interpretação.
@@ -1809,5 +1823,133 @@ test.describe("Escrivão e salas temáticas", () => {
     await expect(cartao.locator('[data-jogar-sala="lula:economia"]')).toContainText("Rever");
     await expect(cartao.locator('[data-sala-item="seguranca-publica"]')).toHaveAttribute("data-situacao", "inicio");
     await expect(page.locator('[data-escolha="flavio-bolsonaro"] [data-sala-item="economia"]')).toHaveAttribute("data-situacao", "inicio");
+  });
+
+  test("reler um registro ou uma decisão pelo painel não traz fala de descoberta nem muda o progresso, e desligar o humor tira as falas de humor na hora, em toda tela", async ({ page }) => {
+    await abrirLimpo(page, LULA.rota);
+    const caixa = page.locator('[data-escrivao-caixa="entrada"]');
+    await expect(caixa.locator('[data-camada="humor"]')).toHaveCount(1);
+
+    // Dois registros recolhidos pelo painel: cada descoberta fala do próprio registro.
+    const [primeiro, segundo] = recordIds(LULA.c1).filter((id) => id !== (LULA.c1.tarefa.tipo === "registro" ? LULA.c1.tarefa.eventId : "")) as [string, string];
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-recolher="${primeiro}"]`));
+    const ficha = dialogo(page, "registro");
+    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="documental"]')).toContainText(registro(primeiro).titulo);
+    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-recolher="${segundo}"]`));
+    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="documental"]')).toContainText(registro(segundo).titulo);
+    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
+
+    // Reler o primeiro: o cartão é o dele, o Escrivão não fala na releitura (nem com a descoberta do segundo) e o
+    // progresso não muda. A releitura sem fala já era assim; o que mudou é que a fala guardada passou a pertencer ao
+    // registro (`falasDe`, com teste de regra em tests/game-escrivao.test.ts).
+    const registrosAntes = await jogo(page).getAttribute("data-registros");
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-ler="${primeiro}"]`));
+    await expect(ficha).toBeVisible();
+    await expect(ficha).toContainText(registro(primeiro).titulo);
+    await expect(ficha).not.toContainText(registro(segundo).titulo);
+    await expect(ficha.locator("[data-escrivao]")).toHaveCount(0);
+    await expect(jogo(page)).toHaveAttribute("data-registros", registrosAntes!);
+    await page.keyboard.press("Escape");
+    await expect(dialogo(page, "painel")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
+
+    // Desligar o humor na ajuda: a fala de humor da própria ajuda sai na hora, a instrução fica, o foco não se perde.
+    await page.getByRole("button", { name: "Como jogar" }).click();
+    const guia = dialogo(page, "guia");
+    await expect(guia.locator('[data-escrivao="ajuda"] [data-camada="humor"]')).toHaveCount(1);
+    await clicar(page, guia.locator("[data-humor]"));
+    await expect(jogo(page)).toHaveAttribute("data-humor", "desligado");
+    await expect(guia.locator('[data-escrivao="ajuda"] [data-camada="humor"]')).toHaveCount(0);
+    await expect(guia.locator('[data-escrivao="ajuda"] [data-camada="instrucao"]')).toHaveCount(1);
+    await expect(guia.locator("[data-humor]")).toBeFocused();
+    await page.keyboard.press("Escape");
+    // A caixa da entrada, escolhida antes de desligar, também perde o humor sem recarregar.
+    await expect(caixa.locator('[data-camada="instrucao"]')).toHaveCount(1);
+    await expect(caixa.locator('[data-camada="humor"]')).toHaveCount(0);
+    // Religar devolve a fala já escolhida.
+    await page.getByRole("button", { name: "Como jogar" }).click();
+    await clicar(page, guia.locator("[data-humor]"));
+    await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
+    await page.keyboard.press("Escape");
+    await expect(caixa.locator('[data-camada="humor"]')).toHaveCount(1);
+
+    // O mesmo com decisões, em uma sala temática: duas recolhidas, a primeira relida.
+    await page.goto("/jogo/lula/economia/");
+    await waitForStage(page);
+    const sala = chaptersInRoom(chaptersOf("lula"), "economia")[0]!;
+    const [decisaoA, decisaoB] = foraDaTarefa(sala) as [string, string];
+    expect(await recolherPeloPainel(page, decisaoA)).toBe("jogando");
+    expect(await recolherPeloPainel(page, decisaoB)).toBe("jogando");
+    const decisoesAntes = await jogo(page).getAttribute("data-registros");
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-ler="${decisaoA}"]`));
+    await expect(ficha.locator(`[data-decisao-cartao="${decisaoA}"]`)).toBeVisible();
+    await expect(ficha.locator(`[data-decisao-cartao="${decisaoB}"]`)).toHaveCount(0);
+    await expect(ficha.locator("[data-escrivao]")).toHaveCount(0);
+    await expect(jogo(page)).toHaveAttribute("data-registros", decisoesAntes!);
+  });
+
+  test("a transição de um capítulo revisto não herda a conclusão de outro: em capítulo de contexto sensível, nenhuma fala de humor", async ({ page }) => {
+    test.slow();
+    const sensivel = FLAVIO.capitulos.find((item) => isSensitiveChapter(item))!;
+    const seguinte = FLAVIO.capitulos[sensivel.numero]!;
+    expect(isSensitiveChapter(seguinte)).toBe(false);
+    await abrirNoCapitulo(page, FLAVIO, seguinte.numero);
+
+    // O capítulo seguinte, que não é de contexto sensível, é cumprido: a conclusão dele vem com humor.
+    await abrirASaidaPeloPainel(page, seguinte);
+    await expect(page.locator('[data-escrivao-caixa="conclusao"] [data-camada="humor"]')).toHaveCount(1);
+
+    // Rever o capítulo sensível, já concluído, e atravessar a saída dele.
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-abrir-capitulo="${sensivel.id}"]`));
+    await expect(jogo(page)).toHaveAttribute("data-capitulo", sensivel.id);
+    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator("[data-atravessar-saida]"));
+    // A transição segue sozinha depois de um instante: o que ela mostra é lido de uma vez, enquanto está na tela.
+    // (Uma afirmação de ausência com espera passaria quando a própria transição saísse.)
+    const naTransicao = await page.locator("[data-transicao]").evaluate((no) => ({
+      texto: no.textContent ?? "",
+      falas: no.querySelectorAll("[data-escrivao]").length,
+      humor: no.querySelectorAll('[data-camada="humor"]').length,
+    }));
+    expect(naTransicao.texto).toContain(`Capítulo ${sensivel.numero} concluído`);
+    expect(naTransicao.texto).toContain(sensivel.titulo);
+    // A conclusão guardada é a do outro capítulo: nem a fala de humor nem a informação dele aparecem aqui.
+    expect(naTransicao.falas).toBe(0);
+    expect(naTransicao.humor).toBe(0);
+  });
+
+  test("em registro de contexto sensível o Escrivão não faz humor, mesmo com a preferência ligada; nos demais registros do capítulo, faz", async ({ page }) => {
+    const denuncia = "flavio-bolsonaro-2020-denuncia-do-ministerio-publico";
+    const capitulo = FLAVIO.capitulos.find((item) => item.eventIds.includes(denuncia))!;
+    expect(isSensitive(denuncia)).toBe(true);
+    expect(isSensitiveChapter(capitulo)).toBe(true);
+    await abrirNoCapitulo(page, FLAVIO, capitulo.numero);
+    await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
+    // O capítulo pede um registro de processo: a entrada dele vem só com a instrução e a informação do capítulo.
+    const entrada = page.locator('[data-escrivao-caixa="entrada"]');
+    await expect(entrada.locator('[data-camada="instrucao"]')).toHaveCount(1);
+    await expect(entrada.locator('[data-camada="humor"]')).toHaveCount(0);
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-recolher="${denuncia}"]`));
+    const ficha = dialogo(page, "registro");
+    await expect(ficha.locator("[data-ficha-judicial]")).toBeVisible();
+    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="instrucao"]')).toHaveCount(1);
+    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="documental"]')).toHaveCount(1);
+    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="humor"]')).toHaveCount(0);
+    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
+    // Um registro do mesmo capítulo que não é de contexto sensível: a descoberta dele tem humor.
+    const comum = capitulo.eventIds.find((id) => !isSensitive(id))!;
+    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    await clicar(page, page.locator(`[data-recolher="${comum}"]`));
+    await expect(ficha.locator("[data-ficha-judicial]")).toHaveCount(0);
+    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="humor"]')).toHaveCount(1);
   });
 });

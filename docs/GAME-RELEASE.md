@@ -51,6 +51,7 @@ As oito etapas foram feitas na ordem do plano, em uma sessão, com testes de reg
 3. Domínio público e hospedagem; canal de correção (`src/lib/site.ts`).
 4. Decisão sobre atualizar o primeiro turno com a totalização final, e sobre a licença do repositório.
 5. Autorização para o deploy, que é o último passo e não acontece sem ela.
+6. Da auditoria de QA de 11 de outubro de 2026 ([STATUS.md](STATUS.md)): abrir a ata ou a lista nominal das seis votações e ligar a cada uma o texto que foi votado; conferir os alvos e o contexto dos quatro vetos; refazer a comparação da seleção da amostra, a começar pelo Decreto 11.615/2023, e decidir se a divisão em três decisões por pessoa e tema fica (`research/selecao-decisoes-2026-10.md`, seção A regra aplicada); aprovar o tom do Escrivão e a lista de registros em que ele não faz humor (D-129); e decidir se o produto vai anunciar planos de governo, que o atlas não tem: as sete proposições publicadas são proposições legislativas.
 
 ## Roteiro de demonstração (20 a 30 segundos)
 

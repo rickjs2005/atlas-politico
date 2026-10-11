@@ -210,7 +210,7 @@ export function normalizeSenado(itens: readonly SenadoSessaoVotacao[], options: 
       identidadeExterna: { provedor: "senado", id: codigoVotacao },
       data: { valor: texto(item.dataSessao, "").slice(0, 10), precisao: "dia" },
       etapa: inferEtapa(descricao),
-      objeto: { tipo: inferObjeto(descricao), identificacao: null, descricao, textoReferencia: null },
+      objeto: { tipo: inferObjeto(descricao), identificacao: null, descricao, textoReferencia: null, divergenciaDocumentada: null },
       modalidade: secreta ? "secreta" : "nominal",
       resultadoOficial: { estado: RESULTADOS[resultado] ?? "outro", valorOriginal: resultado.length > 0 ? resultado : "(não informado)" },
       fontes: [

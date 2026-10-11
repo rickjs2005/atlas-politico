@@ -33,10 +33,11 @@ import { probeMedia } from "./media";
  * Versão do formato dos dados gerados. Muda quando o formato da saída muda.
  * 1: as sete coleções da edição 0.1; 2: as seis coleções de decisões políticas
  * (proposições, votações, votos, atos do Executivo, cobertura da pesquisa e
- * identidades institucionais) e os índices delas. Saída de outra versão é
- * recusada na leitura, sem tentar aproveitar.
+ * identidades institucionais) e os índices delas; 3: o objeto votado de uma
+ * votação traz `divergenciaDocumentada`. Saída de outra versão é recusada na
+ * leitura, sem tentar aproveitar.
  */
-export const FORMAT_VERSION = 2;
+export const FORMAT_VERSION = 3;
 
 export interface ProjectPaths {
   /** Raiz do projeto: os caminhos dos diagnósticos são escritos a partir dela. */

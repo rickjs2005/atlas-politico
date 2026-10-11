@@ -1,5 +1,5 @@
 {
-  "versao": "0.2.0",
+  "versao": "0.2.1",
   "dataDeCorte": "2026-10-08",
   "revisao": {
     "tipo": "assistida-por-ia",
@@ -425,7 +425,7 @@
     },
     {
       "data": "2026-10-11",
-      "descricao": "Ajuste de redação, sem mudança de fato: nas citações dos atos do Executivo, a palavra \"nota\" (a indicação de mensagem de veto no cabeçalho das páginas do Planalto) foi trocada por \"indicação\", porque as telas de comparação reservam \"nota\" para dizer o que o atlas não dá.",
+      "descricao": "Edição 0.2.1: dois ajustes de redação e de apresentação, sem mudança de fato e sem mudança na data de corte. Nas citações dos atos do Executivo, a palavra \"nota\" (a indicação de mensagem de veto no cabeçalho das páginas do Planalto) foi trocada por \"indicação\", porque as telas de comparação reservam \"nota\" para dizer o que o atlas não dá. O objeto votado de uma votação ganhou o campo de divergência documentada (divergenciaDocumentada), nulo onde os documentos concordam: na votação 6714 ele diz, para quem lê o cartão, que a descrição do acervo escreve \"Projeto de Lei Complementar nº 39, de 2023\" enquanto a matéria identificada no mesmo registro (código 157826) é o PLP 93/2023, e que o atlas liga a votação ao PLP 93/2023 mantendo a descrição como o acervo a escreve. A divergência já constava da observação interna da revisão e passa a ser pública. Nenhuma votação tem o texto de referência ligado nesta edição, e o cartão passa a dizer isso. Conferência assistida por IA; revisão humana pendente.",
       "itens": [
         {
           "entidade": "ato-executivo",
@@ -450,6 +450,10 @@
         {
           "entidade": "ato-executivo",
           "id": "planalto-lei-15270-2025-imposto-de-renda"
+        },
+        {
+          "entidade": "votacao",
+          "id": "senado-votacao-6714"
         }
       ]
     }

@@ -1,6 +1,6 @@
 # Jogo: matriz de cobertura
 
-Gerado por `npm run game:coverage` a partir dos dados publicados (edição 0.2.0, data de corte 2026-10-08) e de `src/lib/game/chapters.ts`. Não edite à mão: o teste `tests/game-coverage.test.ts` confere que este arquivo está em dia e que nenhum acontecimento ficou fora dos capítulos sem justificativa.
+Gerado por `npm run game:coverage` a partir dos dados publicados (edição 0.2.1, data de corte 2026-10-08) e de `src/lib/game/chapters.ts`. Não edite à mão: o teste `tests/game-coverage.test.ts` confere que este arquivo está em dia e que nenhum acontecimento ficou fora dos capítulos sem justificativa.
 
 Acontecimentos publicados: 39. Em capítulos: 39. O primeiro turno de 2026 pertence aos dois personagens e aparece uma vez na trajetória de cada um.
 

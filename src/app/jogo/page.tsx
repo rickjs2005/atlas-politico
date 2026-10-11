@@ -6,6 +6,7 @@ import { findPersonBySlug, getImage } from "@/lib/data/queries";
 import { formatDate } from "@/lib/domain/dates";
 import { PROFILES } from "@/lib/domain/profiles";
 import { buildGameContent, playableChapters } from "@/lib/game/content";
+import { signaturesOf } from "@/lib/game/progress";
 
 export const metadata: Metadata = {
   title: "Jogo",
@@ -22,7 +23,8 @@ export default function GameEntryPage() {
     if (content === null || pessoa === null) return [];
     const capitulos = playableChapters(content);
     if (capitulos.length === 0) return [];
-    return [{ slug: perfil.slug, nome: pessoa.nome, retrato: getImage(data, pessoa.retratoId), capitulos }];
+    // A entrada não carrega os registros: leva só a assinatura atual de cada tarefa, para ler o progresso salvo.
+    return [{ slug: perfil.slug, nome: pessoa.nome, retrato: getImage(data, pessoa.retratoId), capitulos, assinaturas: signaturesOf(capitulos, content) }];
   });
 
   if (opcoes.length === 0) {

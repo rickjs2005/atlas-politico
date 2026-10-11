@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { coberturaCamara, mergePacotes, normalizeCamaraVotacao, registroDoVotoCamara, type CamaraVotacaoDetalhe, type CamaraVoto } from "@/lib/import/camara";
-import { buildCaptura, kebab } from "@/lib/import/capturas";
+import { buildCaptura, capturaIntegra, kebab, verificarCaptura, type Captura } from "@/lib/import/capturas";
 import { fetchTexto } from "@/lib/import/http";
 import { inferEtapa, inferObjeto, normalizeSenado, registroDoVoto, tiposComparecimentoDe, type SenadoSessaoVotacao } from "@/lib/import/senado";
 import { atoExecutivoSchema, coberturaPoliticaSchema, fonteSchema, proposicaoSchema, votacaoSchema, votoSchema } from "@/lib/domain/schemas";
@@ -216,14 +216,57 @@ describe("Câmara: o detalhe e a lista de votos viram o pacote de uma votação"
 });
 
 describe("capturas e requisições", () => {
-  it("a captura guarda a URL, o instante, o status, os bytes e o resumo, com um identificador em kebab-case", () => {
+  it("a captura guarda a URL, o instante, o status, os bytes, o corpo original e o resumo dele, com um identificador em kebab-case", () => {
     const captura = buildCaptura("senado", "Votação 5894", "https://x/y", 200, '{"a":1}', new Date("2026-10-10T12:00:00Z"));
     expect(captura.id).toMatch(/^senado-votacao-5894-2026-10-10-[0-9a-f]{6}$/);
     expect(captura.resposta).toEqual({ a: 1 });
+    expect(captura.corpo).toBe('{"a":1}');
     expect(captura.bytes).toBe(7);
     expect(captura.sha256).toHaveLength(64);
     expect(buildCaptura("camara", "x", "https://x", 200, "não é json", new Date()).resposta).toBe("não é json");
     expect(kebab("Ação — Teste/1")).toBe("acao-teste-1");
+  });
+
+  it("a conferência de integridade reprova corpo, resumo, tamanho ou resposta alterados, e não aceita captura sem o corpo original", () => {
+    // O que o auditor reproduziu: trocar a resposta interpretada ("Sim" por "Não") mantendo o resumo passava.
+    const captura = buildCaptura("senado", "Votação 5894", "https://x/y", 200, '{"voto":"Sim","n":1}', new Date("2026-10-10T12:00:00Z"));
+    expect(verificarCaptura(captura)).toEqual({ estado: "integra" });
+    expect(capturaIntegra(captura)).toBe(true);
+    const respostaTrocada: Captura = { ...captura, resposta: { voto: "Não", n: 1 } };
+    expect(verificarCaptura(respostaTrocada).estado).toBe("adulterada");
+    expect(capturaIntegra(respostaTrocada)).toBe(false);
+    const corpoTrocado: Captura = { ...captura, corpo: '{"voto":"Não","n":1}' };
+    expect(verificarCaptura(corpoTrocado).estado).toBe("adulterada");
+    const resumoTrocado: Captura = { ...captura, sha256: "0".repeat(64) };
+    expect(verificarCaptura(resumoTrocado).estado).toBe("adulterada");
+    const tamanhoTrocado: Captura = { ...captura, bytes: captura.bytes + 1 };
+    expect(verificarCaptura(tamanhoTrocado).estado).toBe("adulterada");
+    const resumoInvalido: Captura = { ...captura, sha256: "não é um resumo" };
+    expect(verificarCaptura(resumoInvalido).estado).toBe("adulterada");
+    // Um corpo com espaços e quebras de linha é conferido pelos bytes como chegaram, e não por uma reserialização.
+    const comEspacos = '{ "voto" : "Sim",\n  "n" : 1 }';
+    const formatada = buildCaptura("senado", "Votação 5894", "https://x/y", 200, comEspacos, new Date("2026-10-10T12:00:00Z"));
+    expect(formatada.bytes).toBe(Buffer.byteLength(comEspacos, "utf8"));
+    expect(formatada.sha256).not.toBe(captura.sha256);
+    expect(verificarCaptura(formatada)).toEqual({ estado: "integra" });
+    // Trocar o corpo formatado pelo compacto (o mesmo JSON, outros bytes) reprova pelo resumo.
+    expect(verificarCaptura({ ...formatada, corpo: '{"voto":"Sim","n":1}' }).estado).toBe("adulterada");
+    // Um corpo que é um texto JSON (com as aspas) tem a resposta sem as aspas, e é íntegro; com a resposta trocada, não.
+    const textoJson = buildCaptura("senado", "aviso", "https://x/y", 200, '"em manutenção"', new Date("2026-10-10T12:00:00Z"));
+    expect(textoJson.resposta).toBe("em manutenção");
+    expect(verificarCaptura(textoJson)).toEqual({ estado: "integra" });
+    expect(verificarCaptura({ ...textoJson, resposta: "no ar" }).estado).toBe("adulterada");
+    // Sem o corpo original (formato anterior), a captura JSON não é verificável, e não conta como íntegra.
+    const { corpo: _corpo, ...legada } = captura;
+    expect(_corpo).toBeDefined();
+    expect(verificarCaptura(legada as Captura).estado).toBe("nao-verificavel");
+    expect(capturaIntegra(legada as Captura)).toBe(false);
+    // Uma captura antiga de texto puro ainda confere pelo próprio texto.
+    const texto = buildCaptura("camara", "x", "https://x", 200, "não é json", new Date("2026-10-10T12:00:00Z"));
+    const { corpo: _c, ...textoLegado } = texto;
+    expect(_c).toBe("não é json");
+    expect(verificarCaptura(textoLegado as Captura)).toEqual({ estado: "integra" });
+    expect(verificarCaptura({ ...textoLegado, resposta: "outro texto" } as Captura).estado).toBe("adulterada");
   });
 
   it("tenta de novo em 429 e 503, com a espera do Retry-After, e devolve o texto como chegou", async () => {
