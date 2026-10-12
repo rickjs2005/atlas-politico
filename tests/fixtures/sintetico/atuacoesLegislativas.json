@@ -1,0 +1,66 @@
+[
+  {
+    "id": "sintetico-atuacao-a1",
+    "pessoaId": "sintetico-pessoa-a",
+    "mandatoId": "sintetico-mandato-a1",
+    "tipo": "autoria",
+    "instituicao": "senado-federal",
+    "data": { "valor": "2004-05-10", "precisao": "dia" },
+    "titulo": "[SINTÉTICO] Autoria fictícia de uma lei de teste",
+    "materia": {
+      "identificador": "[SINTÉTICO] Projeto fictício nº 7/2003",
+      "ementa": "[SINTÉTICO] Ementa fictícia sobre saúde.",
+      "autoria": "[SINTÉTICO] Autor de teste"
+    },
+    "desfecho": {
+      "tipo": "lei-sancionada",
+      "norma": "[SINTÉTICO] Lei fictícia nº 9/2004",
+      "descricao": "[SINTÉTICO] O documento fictício traz a fórmula de sanção."
+    },
+    "divergenciaDocumentada": null,
+    "temas": ["saude"],
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Texto fictício da lei de teste",
+        "evidencia": "[SINTÉTICO] Trecho fictício com a ementa, a autoria e a sanção."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-atuacao-b1",
+    "pessoaId": "sintetico-pessoa-b",
+    "mandatoId": "sintetico-mandato-b2",
+    "tipo": "relatoria",
+    "instituicao": "congresso-nacional",
+    "data": { "valor": "2021", "precisao": "ano" },
+    "titulo": "[SINTÉTICO] Relatoria fictícia de uma matéria de teste",
+    "materia": {
+      "identificador": "[SINTÉTICO] Matéria fictícia nº 3/2020",
+      "ementa": "[SINTÉTICO] Ementa fictícia sem tema.",
+      "autoria": "[SINTÉTICO] Outro autor de teste"
+    },
+    "desfecho": {
+      "tipo": "nao-documentado",
+      "norma": null,
+      "descricao": "[SINTÉTICO] O documento fictício não diz o que aconteceu com a matéria."
+    },
+    "divergenciaDocumentada": "[SINTÉTICO] Dois documentos fictícios dão datas diferentes para a relatoria; o conjunto de teste adota só o ano.",
+    "temas": [],
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Lista fictícia de relatorias",
+        "evidencia": "[SINTÉTICO] Trecho fictício com a designação do relator."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

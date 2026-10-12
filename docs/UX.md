@@ -18,7 +18,7 @@ Endereço local: `http://localhost:3000/`. As quatro telas são as próprias rot
 | Acontecimento | `/acontecimentos/<slug>/`, por exemplo `/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/` |
 | Comparação | `/comparar/` |
 | Metodologia | `/metodologia/` |
-| Jogo | `/jogo/` (escolha do personagem) e `/jogo/flavio-bolsonaro/` e `/jogo/lula/` (os capítulos) |
+| Jogo | `/jogo/` (as duas trajetórias), `/jogo/flavio-bolsonaro/` e `/jogo/lula/` (as fases de cada uma) e `/jogo/<personagem>/economia/` e `/jogo/<personagem>/seguranca-publica/` (os aprofundamentos) |
 | Guia de estados (só em desenvolvimento) | `/dev/previa/` |
 | Galeria da arte do jogo (só em desenvolvimento) | `/dev/jogo-arte/` |
 
@@ -58,7 +58,7 @@ Responde quatro perguntas na primeira tela: o que é, para que serve, o que cobr
 - Recorte: data de corte da edição, quantidade de acontecimentos e de fontes, situação da revisão e o caminho para **Metodologia e fontes**.
 - Dois cartões de pessoa, lado a lado em qualquer largura, com retrato, nome, período coberto e quantidade de registros. O cartão inteiro leva à exploração. Os dois retratos têm o mesmo enquadramento: a linha dos olhos na mesma altura e o rosto do mesmo tamanho.
 - Em tela estreita a ordem é nome, frase, os dois cartões e só então os números da edição: os dois acessos cabem inteiros na primeira tela, em 390×844 e em 360×800. Em tela larga, o texto e os números ficam à esquerda, centrados na altura dos cartões.
-- Abaixo de cada cartão, o acesso **Jogar com** o personagem, com a quantidade de capítulos: o mesmo botão para os dois, do mesmo tamanho, na primeira tela nas quatro larguras. Uma linha explica o jogo e leva à entrada dele.
+- Abaixo de cada cartão, o acesso **Jogar com** o personagem, com a quantidade de fases curtas: o mesmo botão para os dois, do mesmo tamanho, na primeira tela nas quatro larguras. Uma linha explica o jogo (um marco, uma explicação e uma pergunta por fase, da origem à data de corte) e leva à entrada dele.
 - Crédito de cada retrato logo abaixo.
 - Faixa **As duas trajetórias na mesma escala**, com as marcas dos acontecimentos e os cargos, e o caminho para a comparação. Cada marca abre a página do acontecimento: é o acesso direto à exploração sem passar por um perfil.
 
@@ -107,16 +107,17 @@ A explicação pública do atlas, em uma página de leitura com índice: objetiv
 
 ### Jogo (`/jogo/` e `/jogo/<personagem>/`)
 
-Um segundo caminho pelo mesmo conteúdo: a trajetória em capítulos jogáveis. O detalhe está em [GAMEPLAY.md](GAMEPLAY.md).
+Um segundo caminho pelo mesmo conteúdo: a trajetória em fases curtas, com um ciclo só. O detalhe está em [GAMEPLAY.md](GAMEPLAY.md).
 
-- **Entrada do jogo.** No alto, o que o jogo é, o aviso de que os cenários são representações e de que o guia é fictício, e a situação da revisão do conteúdo, com o caminho para a metodologia. Depois, um cartão por personagem, iguais e em ordem alfabética: a prévia do cenário do primeiro capítulo, o retrato, os capítulos com os períodos, a situação neste navegador e o botão **Começar**, **Continuar** ou **Rever**. Abaixo, o crédito dos retratos, o aviso de que personagens e cenários são desenhos, com a mesma figura em todos os capítulos, e como se joga.
-- **Cena.** Ocupa a altura da janela abaixo do cabeçalho. Sobre ela, no alto à esquerda, o capítulo, o período, o nome do cenário, dito como cenário, o objetivo e a contagem dos registros recolhidos, com o que ainda segura a saída; à direita, **Como jogar** e **Capítulos e tarefas**; embaixo, a dica do que está ao alcance. Em tela de toque, o direcional à esquerda e o botão de ação à direita, que leva o nome da ação. Abaixo do palco, o rodapé repete que o cenário é uma representação e a situação da revisão.
-- **Objetos da cena.** Os registros são pastas de documentos que pairam sobre uma marca no chão; a que está ao alcance ganha contorno e um anel. A saída é uma porta no vão da parede da frente: fechada, tem uma tranca com cadeado; aberta, a folha gira para fora, a placa acende e o degrau mostra setas. Ela abre com todos os registros do capítulo recolhidos e a tarefa cumprida; fechada, diz o que falta.
-- **Registro recolhido.** Uma janela com a data na precisão documentada, os avisos de data parcial e de ordem não documentada quando valem, o título, a categoria, o resumo, as fontes com autoria, a situação da revisão e o caminho para a ficha completa. É o mesmo conteúdo da página do acontecimento, em resumo. No alto, o que o registro mudou: quantos já foram recolhidos e o que falta para a saída abrir.
-- **Tarefa de ordem.** Os dois registros lado a lado, com as datas, e a pergunta de qual veio primeiro. Errar mostra os dois com as datas, o mais antigo primeiro, e o botão de tentar de novo, que recebe o foco.
-- **Capítulos e tarefas.** O painel que faz tudo por botões, sem o cenário: situação de cada capítulo, objetivo, motivo do agrupamento, situação da tarefa e da saída, registros (recolher, ou ler de novo o que já foi recolhido), ordem, saída quando aberta, reinício e os caminhos para o atlas.
-- **Transição e fim.** Uma tela curta entre os capítulos, com o período e o cenário seguintes; depois do último capítulo disponível, a tela que leva à trajetória completa no atlas.
-- **Quando algo falha.** Sem JavaScript, o aviso fica dentro do palco, com o caminho para a trajetória no atlas. Se a cena não carrega, aparece um aviso com o botão de recarregar, e o painel continua cumprindo as tarefas.
+- **Entrada do jogo.** No alto, o que o jogo é, em uma frase, e a situação da revisão do conteúdo, com o caminho para a metodologia. Depois, um cartão por trajetória, iguais e em ordem alfabética. Em cada um, primeiro o retrato, o nome, quantas fases e de que ano a que ano, a situação neste navegador e os caminhos: **Começar do início**, com o ano, para quem nunca abriu; **Continuar de onde parei**, com a fase e o período, e **Ver desde o início**, com o ano, para quem já começou; **Rever desde o início**, para quem concluiu; e **Ler sem o cenário**. Depois, a prévia do cenário da primeira fase, a lista das fases e os aprofundamentos, sob "Aprofundamento por assunto", com os anos. Abaixo dos cartões, o crédito dos retratos, como funciona, em três passos, e os avisos: são marcos documentados e não a vida inteira, o jogo não dá nota nem recomenda voto, os cenários e os bonecos são desenhos, e o Escrivão é fictício.
+- **Cena.** Ocupa a altura da janela abaixo do cabeçalho. Sobre ela, o cartão da fase: a sala, "Fase X de Y", o período, o título e, em uma linha, o que fazer agora. Ao lado, três caminhos: **Ler sem o cenário**, **Fases** e **Como funciona**. Embaixo, um botão só: **Abrir o marco** ou, com a fase concluída, **Continuar**. Abaixo do palco, o rodapé repete que o cenário é uma representação, que são marcos documentados e a situação da revisão.
+- **Objetos da cena.** A pasta do marco tem o rótulo "Abrir" e um anel no chão; as dos registros opcionais, um sinal de mais. São botões da página. Tocar em uma faz o boneco andar até ela e abre o conteúdo. A porta abre quando a fase termina: é sinal, e não passagem.
+- **Fase aberta.** Uma janela com o objetivo, o marco com a data na precisão documentada, a explicação em dois a quatro blocos, os termos explicados, que abrem no lugar, e **Ver fontes**. Depois, a atividade: uma pergunta com três opções ou uma ordenação de três registros, com **Responder** e **Ver a explicação e continuar**. Errar mostra "Ainda não." e a explicação, com **Tentar de novo** e o botão de seguir. No fim, "Explorar este período · opcional" e "Ainda não pesquisado nesta edição".
+- **Registro aberto.** Uma janela por cima da fase, que fica como estava, com o registro do atlas: a data, o título, o resumo, o contexto, as fontes com o que cada uma sustenta, a situação da revisão e o caminho para a ficha completa. A decisão aparece com o cartão do atlas, e a proposta, com o aviso do que ela é.
+- **Fases.** A lista de todas as fases da sala, com a situação de cada uma e o botão que a abre. Nenhuma segura a seguinte. Traz também as preferências (ler sem o cenário, o humor do Escrivão), o aviso sobre o progresso, os caminhos para as outras salas e para o atlas e, como ação própria, apagar o progresso.
+- **Resumo.** Na última fase, o que cada fase mostrou, o que a edição não pesquisou e para onde ir. Sem troféu.
+- **Ler sem o cenário.** As mesmas fases na página, sem o palco, com os botões de fase anterior e seguinte.
+- **Quando algo falha.** Sem JavaScript, a casca do cenário sai, e as fases vão no HTML, em texto, com a explicação e a resposta de cada atividade. Se a cena não carrega, ou o navegador não dá o canvas, aparece um aviso com **Ler sem o cenário**, e nada se perde.
 - **O que não muda.** As fichas, as fontes, a comparação e a metodologia continuam nos mesmos endereços. Nada do atlas depende de jogar.
 
 ## Composição por largura
@@ -146,8 +147,9 @@ Em telas médias e largas, a área de trabalho tem altura mínima de 640 px. Em 
 | Acontecimento | Uma coluna: retorno, cabeçalho, texto, fontes, revisão e, depois, a ficha | O mesmo | Duas colunas (a partir de 1024 px): leitura com até 672 px e ficha de 352 px |
 | Comparação | Recorte escrito e preso ao topo, com os controles atrás do botão **Filtros**. Faixas com rolagem horizontal, começando pelos anos recentes ou no período escolhido. As duas colunas de pessoa, uma abaixo da outra, com atalho para cada uma | Recorte como na estreita. Faixas inteiras à vista; colunas uma abaixo da outra | Controles do recorte em linha, a partir de 1280 px. Duas colunas de pessoa lado a lado (a partir de 1024 px), com as seções na mesma altura |
 | Metodologia | Uma coluna: o índice e, depois, o texto. A tabela das categorias rola para o lado dentro da própria área | O mesmo, com o índice em duas colunas de links | Duas colunas (a partir de 1024 px): índice de 224 px, que acompanha a rolagem, e o texto |
-| Jogo, entrada | Uma coluna: texto, os dois cartões um abaixo do outro, créditos e instruções | Os dois cartões lado a lado | O mesmo |
-| Jogo, cena | A cena na altura da janela; o objetivo e os dois botões no alto; direcional e ação embaixo. A câmera acompanha o personagem, porque a sala não cabe inteira. Com o celular deitado, o palco cabe na janela e o cabeçalho da cena encolhe | A sala quase inteira à vista | A sala inteira à vista, ampliada até caber |
+| Jogo, entrada | Uma coluna: texto, os dois cartões um abaixo do outro, créditos e instruções. Em cada cartão, o nome e os caminhos vêm antes da prévia do cenário | Os dois cartões lado a lado, com os caminhos, a prévia e o resto nas mesmas linhas | O mesmo |
+| Jogo, cena | No alto, os três caminhos em uma linha e, abaixo deles, o cartão da fase, de um lado ao outro; embaixo, o botão principal. A sala inteira fica no espaço entre os dois, e a pasta do marco, sempre à vista. Com o celular deitado, a cena fica ao lado do cartão, e o que é enfeite some | O cartão da fase à esquerda, os caminhos à direita e a sala inteira entre eles | A sala inteira à vista, ampliada até caber |
+| Jogo, leitura sem o cenário | Uma coluna de texto: a fase, a atividade, os registros opcionais e as lacunas, com os botões de fase anterior e seguinte | O mesmo, com até 768 px de largura | O mesmo |
 | Cabeçalho | Nome do atlas e botão **Menu**, que abre o painel de destinos | Destinos em linha | Destinos em linha |
 
 ### Navegação no celular
@@ -197,18 +199,20 @@ Para a versão em celular (390×844): entrada, cartão, aba **Mapa**, toque em u
 
 ### Roteiro do jogo (cerca de 45 segundos)
 
-Em 1440×900, com `npm run build` e `npm run preview` abertos em `http://localhost:4311/`.
+Em 1440×900, com `npm run build` e `npm run preview` abertos em `http://localhost:4311/`, em uma janela sem progresso guardado.
 
 | Tempo | Ação | O que aparece |
 | --- | --- | --- |
-| 0 a 4 s | Abrir a entrada e clicar em **Jogar com Lula** | A cena do primeiro capítulo, com o objetivo no alto |
-| 4 a 10 s | Andar com as setas até a pasta pedida | A pasta em destaque, o anel no chão e a dica **Recolher o registro** |
-| 10 a 15 s | Tecla E | O registro: data, título, resumo, fontes e situação da revisão, e o aviso de que a tarefa está concluída e faltam três registros para a saída abrir |
-| 15 a 28 s | **Guardar e continuar** e recolher as outras três pastas | A contagem sobe a cada registro; no último, a tranca some e a porta abre |
-| 28 a 33 s | Andar até a saída | A transição com o capítulo seguinte |
-| 33 a 41 s | No capítulo 2, recolher os dois registros pedidos | A pergunta de ordem, com as duas datas |
-| 41 a 45 s | Responder e abrir **Capítulos e tarefas** | A tarefa concluída, o registro que ainda falta para a saída abrir e os caminhos para o atlas |
+| 0 a 5 s | Abrir `/jogo/` | As duas trajetórias com o mesmo cartão: nove fases cada, de que ano a que ano, e **Começar do início**, com o ano |
+| 5 a 10 s | Clicar em **Começar do início: 1945**, no cartão de Lula | A sala de arquivo, o cartão "Trajetória · Fase 1 de 9 · 1945 a 1956" e a pasta do marco em destaque |
+| 10 a 14 s | Clicar na pasta, ou em **Abrir o marco** | O boneco anda até a pasta, e a explicação abre |
+| 14 a 24 s | Ler a explicação e abrir **Ver fontes** | Os três blocos, a divergência entre os documentos sobre o nascimento e os registros do atlas com os documentos |
+| 24 a 32 s | Escolher uma opção errada e **Responder** | "Ainda não.", a explicação e **Tentar de novo** |
+| 32 a 38 s | **Tentar de novo**, escolher "De caminhão, em uma viagem de 13 dias." e **Responder** | "Certo." e **Continuar: fase 2** |
+| 38 a 45 s | **Continuar: fase 2** e abrir **Fases** | O salão do sindicato, e a lista com a fase 1 concluída e o botão **Abrir** em todas as outras |
+
+Para a versão em celular (390×844): a mesma sequência, com o cartão da fase de um lado ao outro, a sala entre ele e o botão **Abrir o marco**, e a janela da fase presa à base da tela. Para a versão sem o cenário: **Ler sem o cenário**, na entrada.
 
 ## Capturas
 
-As capturas reais ficam em [`docs/capturas/`](capturas/README.md): as da prévia, em `fase-4/`, as da navegação temporal, em `fase-5/`, as do mapa, em `fase-6/`, as da comparação, das páginas e da metodologia, em `fase-7/`, e as do acabamento, tiradas da saída estática, em `fase-8/`, com as de antes da fase em `fase-8/antes/`. As da conferência da fase 9 ficam em `fase-9/`, e as do jogo, em `jogo-etapa-1/`. O índice e os comandos que as refazem estão em [`docs/capturas/README.md`](capturas/README.md).
+As capturas reais ficam em [`docs/capturas/`](capturas/README.md): as da prévia, em `fase-4/`, as da navegação temporal, em `fase-5/`, as do mapa, em `fase-6/`, as da comparação, das páginas e da metodologia, em `fase-7/`, e as do acabamento, tiradas da saída estática, em `fase-8/`, com as de antes da fase em `fase-8/antes/`. As da conferência da fase 9 ficam em `fase-9/`. As do jogo em vigor, a trilha simples, ficam em `jogo-trilha/`; as do jogo anterior, que ficam como histórico, em `jogo-etapa-1/`. O índice e os comandos que as refazem estão em [`docs/capturas/README.md`](capturas/README.md).

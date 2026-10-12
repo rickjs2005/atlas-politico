@@ -1,8 +1,9 @@
 // O cartão de uma decisão política, o mesmo no atlas e no jogo: a data na
-// precisão documentada, a identificação, a natureza (voto parlamentar ou ato
-// do Executivo), o cargo e a instituição pelos quais a pessoa decidiu, o
-// objeto votado e a manifestação registrada com o valor original do acervo
-// (ou o tipo do ato e os campos que o distinguem), a proposição, as fontes
+// precisão documentada, a identificação, a natureza (voto parlamentar, ato
+// do Executivo ou atuação legislativa), o cargo e a instituição pelos quais a
+// pessoa agiu, o objeto votado e a manifestação registrada com o valor
+// original do acervo (ou o tipo do ato e os campos que o distinguem, ou a
+// matéria, a autoria dela e o destino documentado), a proposição, as fontes
 // com o que cada uma sustenta e a situação da revisão. Nada é escrito aqui:
 // os textos são os do conjunto, e os rótulos são os das taxonomias.
 
@@ -10,9 +11,11 @@ import Link from "next/link";
 import { Fragment } from "react";
 
 import { ReviewNote } from "@/components/ReviewNote";
+import { PATH_LINK, SOURCE_LINK } from "@/components/touch";
 import type { DecisionView } from "@/lib/data/decisions";
 import { describePrecision, formatDate } from "@/lib/domain/dates";
 import {
+  DESFECHO_DE_ATUACAO_LABELS,
   INSTITUICAO_LABELS,
   MODALIDADE_LABELS,
   OBJETO_LABELS,
@@ -21,12 +24,17 @@ import {
   RESULTADO_LABELS,
   TEMA_LABELS,
   TIPO_DE_ATO_LABELS,
+  TIPO_DE_ATUACAO_LABELS,
 } from "@/lib/domain/decisions";
 
-export const NATUREZA_LABEL: Record<DecisionView["natureza"], string> = { voto: "Voto parlamentar", ato: "Ato do Executivo" };
+export const NATUREZA_LABEL: Record<DecisionView["natureza"], string> = { voto: "Voto parlamentar", ato: "Ato do Executivo", atuacao: "Atuação legislativa" };
 
 /** O aviso que acompanha toda manifestação: a posição vale para o objeto votado. */
 export const OBJETO_NOTICE = "A posição registrada vale para o objeto votado, e não para o projeto inteiro nem para um tema.";
+
+/** O aviso que acompanha toda atuação legislativa: propor ou relatar não é votar, e o destino da matéria não mede o trabalho. */
+export const ATUACAO_NOTICE =
+  "O registro documenta que a pessoa propôs ou relatou a matéria e o que aconteceu com ela depois. Ele não diz como a pessoa votou, nem o que a norma produziu na prática.";
 
 interface DecisionCardProps {
   decisao: DecisionView;
@@ -62,7 +70,7 @@ function ItemList({ itens, rotulo }: { itens: readonly string[]; rotulo: string 
   if (itens.length <= ITENS_ABERTOS) return lista;
   return (
     <details data-lista-dobrada={itens.length}>
-      <summary className="cursor-pointer py-3 font-medium underline decoration-line-strong hover:decoration-ink md:py-1">
+      <summary className="cursor-pointer py-3 font-medium underline decoration-line-strong hover:decoration-ink md:pointer-fine:py-1">
         Ver os {itens.length} itens<span className="sr-only"> de {rotulo}</span>
       </summary>
       {lista}
@@ -100,7 +108,7 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
 
       {detalhe === "completo" && (
         <>
-          {decisao.natureza === "voto" ? (
+          {decisao.natureza === "voto" && (
             <section aria-label="O que foi votado e o que o registro documenta" className="space-y-2 border-t border-line pt-3 text-sm" data-votacao={decisao.votacao.id}>
               <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-3 gap-y-1">
                 <dt className="text-ink-soft">Objeto votado</dt>
@@ -136,7 +144,7 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
               {decisao.votacao.textoReferencia !== null ? (
                 <p className="text-xs text-ink-soft" data-texto-referencia="ligado">
                   Texto de referência:{" "}
-                  <a href={decisao.votacao.textoReferencia.url} target="_blank" rel="noreferrer" className="underline decoration-line-strong hover:decoration-ink">
+                  <a href={decisao.votacao.textoReferencia.url} target="_blank" rel="noreferrer" className={SOURCE_LINK}>
                     {decisao.votacao.textoReferencia.titulo}
                     <span className="sr-only"> (abre em nova aba)</span>
                   </a>{" "}
@@ -148,7 +156,8 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
                 </p>
               )}
             </section>
-          ) : (
+          )}
+          {decisao.natureza === "ato" && (
             <section aria-label="O ato e o que o registro documenta" className="space-y-2 border-t border-line pt-3 text-sm" data-ato={decisao.ato.tipo}>
               <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-3 gap-y-1">
                 <dt className="text-ink-soft">Tipo do ato</dt>
@@ -165,10 +174,42 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
               {decisao.ato.oficial !== null && (
                 <p className="text-xs text-ink-soft">
                   Documento oficial:{" "}
-                  <a href={decisao.ato.oficial.url} target="_blank" rel="noreferrer" className="underline decoration-line-strong hover:decoration-ink">
+                  <a href={decisao.ato.oficial.url} target="_blank" rel="noreferrer" className={SOURCE_LINK}>
                     {decisao.ato.oficial.titulo}
                     <span className="sr-only"> (abre em nova aba)</span>
                   </a>
+                </p>
+              )}
+            </section>
+          )}
+          {decisao.natureza === "atuacao" && (
+            <section aria-label="A matéria e o que o registro documenta" className="space-y-2 border-t border-line pt-3 text-sm" data-atuacao={decisao.atuacao.tipo}>
+              <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-3 gap-y-1">
+                <dt className="text-ink-soft">Tipo de atuação</dt>
+                <dd className="font-medium" data-tipo-de-atuacao={decisao.atuacao.tipo}>
+                  {TIPO_DE_ATUACAO_LABELS[decisao.atuacao.tipo]}
+                </dd>
+                <dt className="text-ink-soft">Matéria</dt>
+                <dd data-materia>
+                  <span className="font-medium">{decisao.atuacao.materia.identificador}</span>
+                  <span className="block text-ink-soft">{decisao.atuacao.materia.ementa}</span>
+                </dd>
+                <dt className="text-ink-soft">Autoria da matéria</dt>
+                <dd data-autoria-da-materia>{decisao.atuacao.materia.autoria}</dd>
+                <dt className="text-ink-soft">Destino da matéria</dt>
+                <dd data-desfecho={decisao.atuacao.desfecho.tipo}>
+                  <span className="font-medium">{DESFECHO_DE_ATUACAO_LABELS[decisao.atuacao.desfecho.tipo]}</span>
+                  {decisao.atuacao.desfecho.norma !== null && ` (${decisao.atuacao.desfecho.norma})`}
+                  <span className="block text-ink-soft">{decisao.atuacao.desfecho.descricao}</span>
+                </dd>
+              </dl>
+              <p className="text-xs text-ink-soft" data-aviso-atuacao>
+                {ATUACAO_NOTICE}
+              </p>
+              {decisao.atuacao.divergencia !== null && (
+                <p className="border-l-2 border-accent pl-2 text-xs text-ink-soft" data-divergencia>
+                  <span className="font-medium text-ink">Divergência entre documentos: </span>
+                  {decisao.atuacao.divergencia}
                 </p>
               )}
             </section>
@@ -194,7 +235,7 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
             <ol className="space-y-1.5 text-sm">
               {decisao.fontes.map((fonte) => (
                 <li key={`${fonte.id}:${fonte.localizacao}`} data-fonte={fonte.id}>
-                  <a href={fonte.url} target="_blank" rel="noreferrer" className="underline decoration-line-strong hover:decoration-ink">
+                  <a href={fonte.url} target="_blank" rel="noreferrer" className={SOURCE_LINK}>
                     {fonte.titulo}
                     <span className="sr-only"> (abre em nova aba)</span>
                   </a>
@@ -217,7 +258,7 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
           </div>
           {link !== undefined && (
             <p className="text-sm">
-              <Link href={link.href} prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink" data-ficha-decisao={decisao.id} onClick={link.onFollow}>
+              <Link href={link.href} prefetch={false} className={PATH_LINK} data-ficha-decisao={decisao.id} onClick={link.onFollow}>
                 {link.rotulo}
                 <span aria-hidden="true"> →</span>
               </Link>

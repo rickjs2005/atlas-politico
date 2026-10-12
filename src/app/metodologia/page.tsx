@@ -33,6 +33,7 @@ export const metadata: Metadata = {
 const SECTIONS = [
   { id: "objetivo", titulo: "Objetivo e escopo" },
   { id: "selecao", titulo: "Seleção dos acontecimentos" },
+  { id: "registros", titulo: "Decisões, propostas e conteúdo do jogo" },
   { id: "fontes", titulo: "Fontes" },
   { id: "revisao", titulo: "Revisão" },
   { id: "datas", titulo: "Datas" },
@@ -123,17 +124,23 @@ function registrosDoCatalogo(conjunto: AtlasData["conjunto"], colecao: ColecaoFa
   if (colecao === "atosExecutivos") {
     return conjunto.atosExecutivos.map((ato) => comReferencias(ato, [{ fonteId: ato.atoOficial.fonteId, localizacao: ato.atoOficial.identificador }]));
   }
+  // A fase do jogo não cita documento por conta própria: cada bloco aponta registros, e esses é que citam.
+  if (colecao === "fasesDoJogo") return [];
   return conjunto[colecao];
 }
 
 export default function MethodologyPage() {
   const data = getAtlasData();
   const { edicao, imagens, acontecimentos, mandatos, filiacoes, fontes } = data.conjunto;
+  const { votos, atosExecutivos, atuacoesLegislativas, propostasEleitorais, fatosBiograficos, conceitos, fasesDoJogo } = data.conjunto;
+  // As decisões que as telas mostram: os votos vigentes, os atos do Executivo e as atuações legislativas.
+  const decisoes = votos.filter((voto) => voto.situacao.tipo === "vigente").length + atosExecutivos.length + atuacoesLegislativas.length;
   // Todas as coleções factuais da edição, pela lista central do domínio (COLECOES_FACTUAIS_DO_CONJUNTO): uma coleção nova entra
   // no catálogo e na contagem de citações sem esta página mudar. Foi por uma lista própria, só com as quatro coleções
   // da primeira edição, que as fontes das decisões ficaram fora do catálogo.
   const citacoes = COLECOES_FACTUAIS_DO_CONJUNTO.reduce(
-    (total, colecao) => total + (data.conjunto[colecao] as readonly ComCitacoes[]).reduce((soma, registro) => soma + registro.fontes.length, 0),
+    // A fase do jogo não tem citações próprias: fica fora da soma, como fica fora do catálogo.
+    (total, colecao) => total + (colecao === "fasesDoJogo" ? 0 : (data.conjunto[colecao] as readonly ComCitacoes[]).reduce((soma, registro) => soma + registro.fontes.length, 0)),
     0,
   );
   const catalogo = groupByOrganization(listSourcesOf(data, COLECOES_FACTUAIS_DO_CONJUNTO.flatMap((colecao) => registrosDoCatalogo(data.conjunto, colecao))));
@@ -183,15 +190,26 @@ export default function MethodologyPage() {
               precisão conhecida, o lugar quando ele está documentado e as fontes que o sustentam.
             </p>
             <p className={prose}>
-              Não registra opinião, vida privada, pesquisa de intenção de voto nem declaração
-              isolada. Não diz se uma decisão foi justa, se um resultado foi bom ou se uma pessoa tem
-              razão.
+              Não registra opinião, pesquisa de intenção de voto nem declaração isolada. Da vida fora
+              dos cargos, só o que documentos oficiais trazem sobre origem, formação e trabalho. Não
+              diz se uma decisão foi justa, se um resultado foi bom ou se uma pessoa tem razão.
             </p>
             {edicao !== null && (
               <p className="numerals max-w-[42rem] text-sm text-ink-soft" data-numeros>
                 Esta edição tem {acontecimentos.length} acontecimentos, {mandatos.length} cargos e
                 funções, {filiacoes.length} filiações partidárias e {fontes.length} fontes, com
                 registros até {corte}.
+              </p>
+            )}
+            {edicao !== null && (
+              <p className="numerals max-w-[42rem] text-sm text-ink-soft" data-numeros-dos-registros>
+                Traz também {decisoes} decisões documentadas, {propostasEleitorais.length} propostas eleitorais,{" "}
+                {fatosBiograficos.length} fatos biográficos, {conceitos.length} termos explicados e {fasesDoJogo.length} fases
+                do jogo. O que cada um desses registros é está em{" "}
+                <a href="#registros" className={textLink}>
+                  Decisões, propostas e conteúdo do jogo
+                </a>
+                .
               </p>
             )}
           </section>
@@ -273,6 +291,59 @@ export default function MethodologyPage() {
             </ul>
           </section>
 
+          <section id="registros" aria-labelledby="titulo-registros">
+            <h2 id="titulo-registros" className={h2}>
+              Decisões, propostas e conteúdo do jogo
+            </h2>
+            <p className={prose}>
+              Além dos acontecimentos da linha do tempo, a edição tem outros tipos de registro. Cada
+              um diz uma coisa diferente, e as telas não os misturam.
+            </p>
+            <ul className={list} data-tipos-de-registro>
+              <li>
+                <strong className="font-semibold">Decisões documentadas.</strong> São de três tipos: o
+                voto nominal de um parlamentar, o ato do Executivo (sanção, veto, decreto, medida
+                provisória ou iniciativa de proposição) e a atuação legislativa (autoria ou relatoria de
+                uma matéria). Cada cartão traz o cargo, a instituição, a data e o objeto. São amostras, e
+                não o histórico completo de ninguém: a regra de escolha de cada parte está nesta página,
+                em O que esta edição cobre.
+              </li>
+              <li>
+                <strong className="font-semibold">Um voto vale para o objeto votado.</strong> Voto em
+                um requerimento ou em um substitutivo não é voto no projeto inteiro, e a falta de uma
+                linha no acervo não vira ausência.
+              </li>
+              <li>
+                <strong className="font-semibold">Propor ou relatar não é votar.</strong> A atuação
+                legislativa diz que a pessoa propôs ou relatou a matéria e o que aconteceu com ela
+                depois. Não diz como a pessoa votou nem o que a norma produziu na prática.
+              </li>
+              <li>
+                <strong className="font-semibold">Propostas eleitorais.</strong> São frases do documento
+                que cada candidatura registrou no TSE em 2026, três por área, com a página. Dizem o que o
+                documento propõe: não são ato, voto nem resultado. A escolha das frases é editorial, e as
+                duas candidaturas têm o mesmo número por área.
+              </li>
+              <li>
+                <strong className="font-semibold">Fatos biográficos.</strong> Nascimento, mudança de
+                cidade, formação e trabalho antes da vida pública entram só com documento oficial ou de
+                agência pública. Quando os documentos divergem, o atlas escreve a divergência: onde há
+                uma precisão em que todos concordam, fica com ela; onde adota uma das versões, o registro
+                diz qual. Material de campanha não é fonte.
+              </li>
+              <li>
+                <strong className="font-semibold">Termos explicados.</strong> A definição simples de
+                cada termo vem com o texto oficial que a sustenta e com o aviso do que ela deixa de fora.
+              </li>
+              <li>
+                <strong className="font-semibold">Fases do jogo.</strong> O texto de cada fase é uma
+                explicação escrita para o jogo. Cada bloco aponta os registros do atlas que o sustentam,
+                e a fase não cita documento por conta própria. A atividade pergunta só o que a explicação
+                acabou de dizer; nenhuma pergunta pede opinião nem juízo sobre as pessoas.
+              </li>
+            </ul>
+          </section>
+
           <section id="fontes" aria-labelledby="titulo-fontes">
             <h2 id="titulo-fontes" className={h2}>
               Fontes
@@ -284,7 +355,11 @@ export default function MethodologyPage() {
             </p>
             <h3 className={h3}>Ordem de preferência</h3>
             <ol className={ordered}>
-              <li>Dado oficial estruturado: Tribunal Superior Eleitoral, Senado Federal, Câmara dos Deputados.</li>
+              <li>
+                Dado oficial estruturado e texto oficial de lei ou de ato: Tribunal Superior Eleitoral, Senado
+                Federal, Câmara dos Deputados, Portal da Legislação da Presidência e Assembleia Legislativa do
+                Rio de Janeiro.
+              </li>
               <li>Nota ou notícia do próprio órgão que decidiu: tribunais e Ministério Público.</li>
               <li>Agências públicas de notícias: Agência Brasil, Agência Senado, Agência Câmara.</li>
               <li>Biografia institucional, que serve à cronologia e nem sempre traz dia e mês.</li>
@@ -307,7 +382,8 @@ export default function MethodologyPage() {
               </li>
               <li>
                 <strong className="font-semibold">Divergência não é descartada.</strong> Quando dois
-                documentos se contradizem, o atlas adota uma versão e registra a divergência na
+                documentos se contradizem, o atlas diz qual versão adotou, ou em que precisão ficou, e
+                registra a divergência: no próprio registro, quando ele tem esse campo, ou na
                 documentação do projeto.
               </li>
             </ul>
@@ -343,14 +419,18 @@ export default function MethodologyPage() {
                     <strong className="font-semibold">Nenhuma pessoa revisou este conjunto.</strong>
                   </li>
                   <li>
-                    Para cada citação foram anotados os trechos literais do documento que a
+                    Para as citações, foram anotados os trechos literais do documento que as
                     sustentam, e um verificador conferiu se cada trecho existe na cópia baixada do
-                    documento.
+                    documento. As citações dos registros de decisão que entraram na edição 0.2.0 (as
+                    votações, os votos e os atos de 2023 em diante) não têm essa lista: a evidência
+                    delas são as capturas dos acervos e as páginas do Portal da Legislação.
                   </li>
                   <li>Cada resumo e cada contexto foi relido contra esses trechos, à procura de afirmação sem apoio.</li>
                   <li>
-                    Na última conferência, todas as fontes foram abertas de novo, e os trechos foram
-                    procurados nos documentos do dia. O que mudou está no registro de alterações.
+                    Em 9 de outubro de 2026, todas as fontes da edição de então foram abertas de novo,
+                    e os trechos foram procurados nos documentos do dia. Os registros que entraram
+                    depois foram conferidos contra os documentos baixados no dia em que entraram, e
+                    os anteriores não foram relidos. O que mudou está no registro de alterações.
                   </li>
                   <li>
                     Essa conferência prova que o trecho existe no documento. Não prova que o texto do
@@ -619,13 +699,14 @@ export default function MethodologyPage() {
                 <li>
                   Personagens, cenários, objetos e efeitos: desenhados por código neste projeto, em cartum editorial, com
                   assistência de IA. Nenhuma imagem, modelo ou folha de sprites de terceiros. As figuras dos personagens
-                  mudam de cabelo, barba e roupa conforme a época do capítulo, de forma estilizada; não afirmam a aparência
+                  mudam de cabelo, barba e roupa conforme a época da fase, de forma estilizada; não afirmam a aparência
                   real em cada data.
                 </li>
                 <li>O Escrivão, que guia o jogo, é um personagem fictício e não retrata ninguém; as falas de humor dele são ficção sobre papelada e sobre ele mesmo, iguais para os dois personagens, e podem ser desligadas.</li>
                 <li>
-                  Os registros do jogo são os acontecimentos desta edição, com data, lugar e fontes; o jogo não tem conteúdo
-                  editorial próprio nem atribui falas às pessoas retratadas.
+                  O texto das fases (a explicação e a atividade) está no conteúdo publicado e passa pelas mesmas regras dos
+                  outros registros. Os fatos, as datas e as fontes são os dos registros que cada fase aponta, e o jogo não
+                  atribui falas às pessoas retratadas.
                 </li>
               </ul>
             </div>

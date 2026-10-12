@@ -1,0 +1,1808 @@
+[
+ {
+  "registro": "proposicao:camara-mpv-132-2003",
+  "fonteId": "camara-proposicao-mpv-132-2003",
+  "prova": [
+   "\"id\":138604,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/138604\",\"siglaTipo\":\"MPV\",\"codTipo\":291,\"numero\":132,\"ano\":2003,\"ementa\":\"Cria o programa Bolsa Família e dá outras providências.",
+   "Cria o programa Bolsa Família e dá outras providências."
+  ]
+ },
+ {
+  "registro": "proposicao:camara-pl-1555-2003",
+  "fonteId": "camara-proposicao-pl-1555-2003",
+  "prova": [
+   "\"id\":125878,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/125878\",\"siglaTipo\":\"PL\",\"codTipo\":139,\"numero\":1555,\"ano\":2003,\"ementa\":\"Dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional",
+   "Dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas - SINARM, define crimes e dá outras providências."
+  ]
+ },
+ {
+  "registro": "proposicao:camara-pec-40-2003",
+  "fonteId": "camara-proposicao-pec-40-2003",
+  "prova": [
+   "\"id\":113716,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/113716\",\"siglaTipo\":\"PEC\",\"codTipo\":136,\"numero\":40,\"ano\":2003,\"ementa\":\"Modifica os arts. 37, 40, 42, 48, 96, 142 e 149 da Constituição Federal, o art.",
+   "Modifica os arts. 37, 40, 42, 48, 96, 142 e 149 da Constituição Federal, o art. 8º da Emenda Constitucional nº 20, de 15 de dezembro de 1998, e dá outras providências."
+  ]
+ },
+ {
+  "registro": "proposicao:camara-mpv-213-2004",
+  "fonteId": "camara-proposicao-mpv-213-2004",
+  "prova": [
+   "\"id\":264231,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/264231\",\"siglaTipo\":\"MPV\",\"codTipo\":291,\"numero\":213,\"ano\":2004,\"ementa\":\"Institui o Programa Universidade para Todos - PROUNI, regula a atuação de entidades beneficentes de assistência",
+   "Institui o Programa Universidade para Todos - PROUNI, regula a atuação de entidades beneficentes de assistência social no ensino superior, e dá outras providências."
+  ]
+ },
+ {
+  "registro": "proposicao:camara-pl-4559-2004",
+  "fonteId": "camara-proposicao-pl-4559-2004",
+  "prova": [
+   "\"id\":272058,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/272058\",\"siglaTipo\":\"PL\",\"codTipo\":139,\"numero\":4559,\"ano\":2004,\"ementa\":\"Cria mecanismos para coibir a violência doméstica e familiar contra a mulher, nos termos do §",
+   "Cria mecanismos para coibir a violência doméstica e familiar contra a mulher, nos termos do § 8º do art. 226 da Constituição Federal, e dá outras providências."
+  ]
+ },
+ {
+  "registro": "proposicao:camara-pl-7431-2006",
+  "fonteId": "camara-proposicao-pl-7431-2006",
+  "prova": [
+   "\"id\":332750,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/332750\",\"siglaTipo\":\"PL\",\"codTipo\":139,\"numero\":7431,\"ano\":2006,\"ementa\":\"Autoriza o Poder Executivo a instituir o Piso Salarial Profissional dos Educadores Públicos, na forma prevista",
+   "Autoriza o Poder Executivo a instituir o Piso Salarial Profissional dos Educadores Públicos, na forma prevista no art. 206, V, e 212 da Constituição Federal, e dá outras providências."
+  ]
+ },
+ {
+  "registro": "proposicao:camara-pl-18-2007",
+  "fonteId": "camara-proposicao-pl-18-2007",
+  "prova": [
+   "\"id\":339977,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/339977\",\"siglaTipo\":\"PL\",\"codTipo\":139,\"numero\":18,\"ano\":2007,\"ementa\":\"Dispõe sobre a obrigatoriedade da adoção de medidas por parte do Poder Público, objetivando a redução",
+   "Dispõe sobre a obrigatoriedade da adoção de medidas por parte do Poder Público, objetivando a redução das emissões dos gases responsáveis pelo efeito estufa."
+  ]
+ },
+ {
+  "registro": "proposicao:camara-pl-5940-2009",
+  "fonteId": "camara-proposicao-pl-5940-2009",
+  "prova": [
+   "\"id\":447936,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/447936\",\"siglaTipo\":\"PL\",\"codTipo\":139,\"numero\":5940,\"ano\":2009,\"ementa\":\"Cria o Fundo Social - FS, e dá outras providências.",
+   "Cria o Fundo Social - FS, e dá outras providências."
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-mpv-132-2003-bolsa-familia",
+  "fonteId": "planalto-mpv-132-2003",
+  "prova": [
+   "MEDIDA PROVISÓRIA Nº 132, DE 20 DE OUTUBRO 2003.",
+   "Cria o Programa Bolsa Família e dá outras providências.",
+   "Brasília, 20 de outubro de 2003; 182º da Independência e 115º da República. LUIZ INÁCIO LULA DA SILVA",
+   "Convertida na Lei nº 10.836, de 2004"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-10836-2004-bolsa-familia",
+  "fonteId": "planalto-lei-10836-2004",
+  "prova": [
+   "LEI Nº 10.836, DE 9 DE JANEIRO DE 2004",
+   "Cria o Programa Bolsa Família e dá outras providências.",
+   "Conversão da MPv nº 132, de 2003",
+   "O PRESIDENTE DA REPÚBLICA, Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei",
+   "Brasília, 9 de janeiro de 2004; 183º da Independência e 116º da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-10836-2004-bolsa-familia",
+  "fonteId": "camara-norma-lei-10836-2004",
+  "prova": [
+   "Proposição Originária: PLV 28/2003 => MPV 132/2003",
+   "EMENTA: Cria o Programa Bolsa Família, altera a Lei nº 10.689, de 13 de junho de 2003, e dá outras providências."
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-10826-2003-armas-de-fogo",
+  "fonteId": "planalto-lei-10826-2003",
+  "prova": [
+   "LEI N o 10.826, DE 22 DE DEZEMBRO DE 2003.",
+   "Dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas",
+   "O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei",
+   "Brasília, 22 de dezembro de 2003; 182 o da Independência e 115 o da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-10826-2003-armas-de-fogo",
+  "fonteId": "camara-proposicao-pl-1555-2003-situacao",
+  "prova": [
+   "Transformado na Lei 10.826/2003."
+  ]
+ },
+ {
+  "registro": "ato-executivo:camara-pec-40-2003-iniciativa",
+  "fonteId": "camara-proposicao-pec-40-2003",
+  "prova": [
+   "\"id\":113716,\"uri\":\"https://dadosabertos.camara.leg.br/api/v2/proposicoes/113716\",\"siglaTipo\":\"PEC\",\"codTipo\":136,\"numero\":40,\"ano\":2003,\"ementa\":\"Modifica os arts. 37, 40, 42, 48, 96, 142 e 149 da Constituição Federal, o art.",
+   "\"dataApresentacao\":\"2003-04-30T19:12\""
+  ]
+ },
+ {
+  "registro": "ato-executivo:camara-pec-40-2003-iniciativa",
+  "fonteId": "camara-proposicao-pec-40-2003-autores",
+  "prova": [
+   "\"nome\":\"Poder Executivo\",\"codTipo\":30000,\"tipo\":\"Órgão do Poder Executivo\""
+  ]
+ },
+ {
+  "registro": "ato-executivo:camara-pec-40-2003-iniciativa",
+  "fonteId": "camara-norma-emenda-constitucional-41-2003",
+  "prova": [
+   "Proposição Originária: PEC 40/2003"
+  ]
+ },
+ {
+  "registro": "ato-executivo:camara-pec-40-2003-iniciativa",
+  "fonteId": "planalto-emenda-constitucional-41-2003",
+  "prova": [
+   "As MESAS da CÂMARA DOS DEPUTADOS e do SENADO FEDERAL , nos termos do § 3 do art. 60 da Constituição Federal, promulgam a seguinte Emenda ao texto constitucional"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-decreto-5090-2004-farmacia-popular",
+  "fonteId": "planalto-decreto-5090-2004",
+  "prova": [
+   "DECRETO Nº 5.090, DE 20 DE MAIO DE 2004.",
+   "Regulamenta a Lei n o 10.858, de 13 de abril de 2004, e institui o programa \"Farmácia Popular do Brasil\", e dá outras providências.",
+   "Brasília, 20 de maio de 2004; 183 o da Independência e 116 o da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11096-2005-prouni",
+  "fonteId": "planalto-lei-11096-2005",
+  "prova": [
+   "LEI Nº 11.096, DE 13 DE JANEIRO DE 2005.",
+   "Institui o Programa Universidade para Todos - PROUNI, regula a atuação de entidades beneficentes de assistência social no ensino superior; altera a Lei nº 10.891, de 9 de julho de 2004, e dá outras providências.",
+   "Conversão da MPv nº 213, de 2004",
+   "O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei",
+   "Brasília, 13 de janeiro de 2005; 184º da Independência e 117º da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11096-2005-prouni",
+  "fonteId": "planalto-mensagem-14-2005",
+  "prova": [
+   "decidi vetar parcialmente, por contrariedade ao interesse público, o Projeto de Lei de Conversão n o 59, de 2004 (MP n o 213/04)",
+   "manifestou-se pelo veto ao seguinte dispositivo: Art. 17"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11096-2005-prouni",
+  "fonteId": "camara-norma-lei-11096-2005",
+  "prova": [
+   "Proposição Originária: PLV 59/2004 => MPV 213/2004"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11340-2006-violencia-contra-a-mulher",
+  "fonteId": "planalto-lei-11340-2006",
+  "prova": [
+   "LEI Nº 11.340, DE 7 DE AGOSTO DE 2006",
+   "Cria mecanismos para coibir a violência doméstica e familiar contra a mulher, nos termos do § 8º do art. 226 da Constituição Federal, da Convenção sobre a Eliminação de Todas as Formas de Discriminação contra as Mulheres e da Convenção Interamericana para Prevenir, Punir e Erradicar a Violência contra a Mulher; dispõe sobre a criação dos Juizados de Violência Doméstica e Familiar contra a Mulher; altera o Código de Processo Penal, o Código Penal e a Lei de Execução Penal; e dá outras providências.",
+   "O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei",
+   "Brasília, 7 de agosto de 2006; 185º da Independência e 118º da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11340-2006-violencia-contra-a-mulher",
+  "fonteId": "camara-norma-lei-11340-2006",
+  "prova": [
+   "Proposição Originária: PL 4559/2004"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-decreto-6025-2007-pac",
+  "fonteId": "planalto-decreto-6025-2007",
+  "prova": [
+   "DECRETO Nº 6.025, DE 22 DE JANEIRO DE 2007.",
+   "Institui o Programa de Aceleração do Crescimento - PAC, o seu Comitê Gestor, e dá outras providências.",
+   "Brasília, 22 de janeiro de 2007; 186 o da Independência e 119 o da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11738-2008-piso-do-magisterio",
+  "fonteId": "planalto-lei-11738-2008",
+  "prova": [
+   "LEI Nº 11.738, DE 16 DE JULHO DE 2008.",
+   "Regulamenta a alínea “e” do inciso III do caput do art. 60 do Ato das Disposições Constitucionais Transitórias, para instituir o piso salarial profissional nacional para os profissionais do magistério público da educação básica.",
+   "O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei",
+   "Brasília, 16 de julho de 2008; 187 o da Independência e 120 o da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11738-2008-piso-do-magisterio",
+  "fonteId": "planalto-mensagem-508-2008",
+  "prova": [
+   "decidi vetar parcialmente, por contrariedade ao interesse público, o Projeto de Lei n o 59, de 2004 (n o 7.431/06 na Câmara Deputados)",
+   "manifestou-se pelo veto ao seguinte dispositivo: Inciso I do art. 3º",
+   "manifestaram-se pelo veto ao seguinte dispositivo: Art. 7 o"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11738-2008-piso-do-magisterio",
+  "fonteId": "camara-norma-lei-11738-2008",
+  "prova": [
+   "Proposição Originária: PL 7431/2006"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-11738-2008-piso-do-magisterio",
+  "fonteId": "camara-proposicao-pl-7431-2006-autores",
+  "prova": [
+   "\"nome\":\"Senado Federal - Cristovam Buarque\",\"codTipo\":40000,\"tipo\":\"Órgão do Poder Legislativo\""
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-12187-2009-mudanca-do-clima",
+  "fonteId": "planalto-lei-12187-2009",
+  "prova": [
+   "LEI Nº 12.187, DE 29 DE DEZEMBRO DE 2009.",
+   "Institui a Política Nacional sobre Mudança do Clima - PNMC e dá outras providências.",
+   "O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei",
+   "Brasília, 29 de dezembro de 2009; 188 o da Independência e 121 o da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-12187-2009-mudanca-do-clima",
+  "fonteId": "planalto-mensagem-1123-2009",
+  "prova": [
+   "decidi vetar parcialmente, por contrariedade ao interesse público e inconstitucionalidade, o Projeto de Lei n o 18, de 2007 (n o 283/09 no Senado Federal)",
+   "manifestaram-se pelo veto ao seguinte dispositivo: Inciso VI do art. 3 o",
+   "manifestou-se pelo veto aos seguintes dispositivos: Inciso III do art. 4 o",
+   "Art. 10 “Art. 10. A substituição gradativa dos combustíveis fósseis"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-12187-2009-mudanca-do-clima",
+  "fonteId": "camara-norma-lei-12187-2009",
+  "prova": [
+   "Proposição Originária: PL 18/2007"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-12351-2010-partilha-do-pre-sal",
+  "fonteId": "planalto-lei-12351-2010",
+  "prova": [
+   "LEI Nº 12.351, DE 22 DE DEZEMBRO DE 2010.",
+   "Dispõe sobre a exploração e a produção de petróleo, de gás natural e de outros hidrocarbonetos fluidos, sob o regime de partilha de produção, em áreas do pré-sal e em áreas estratégicas;",
+   "O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei",
+   "Brasília, 22 de dezembro de 2010; 189 o da Independência e 122 o da República. LUIZ INÁCIO LULA DA SILVA"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-12351-2010-partilha-do-pre-sal",
+  "fonteId": "planalto-mensagem-707-2010",
+  "prova": [
+   "decidi vetar parcialmente, por contrariedade ao interesse público, o Projeto de Lei n o 5.940, de 2009 (n o 7/10 no Senado Federal)",
+   "manifestaram-se pelo veto ao seguinte dispositivo: § 2 º do art. 47",
+   "pelo veto ao dispositivo a seguir transcrito: Art. 64"
+  ]
+ },
+ {
+  "registro": "ato-executivo:planalto-lei-12351-2010-partilha-do-pre-sal",
+  "fonteId": "camara-norma-lei-12351-2010",
+  "prova": [
+   "Proposição Originária: PL 5940/2009"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:alerj-lei-4250-2003-autoria",
+  "fonteId": "alerj-lei-4250-2003",
+  "prova": [
+   "LEI Nº 4250, DE 29 DE DEZEMBRO DE 2003. DISPÕE SOBRE A NÃO EXIGÊNCIA DE CERTIDÃO NEGATIVA EMITIDA POR ENTIDADES DE PROTEÇÃO AO CRÉDITO PARA INGRESSO NO SERVIÇO PÚBLICO ESTADUAL.",
+   "Faço saber que a Assembléia Legislativa do Estado do Rio de Janeiro decreta e eu sanciono a seguinte Lei:",
+   "Projeto de Lei nº 492/2003 Mensagem nº Autoria FLÁVIO BOLSONARO",
+   "A Governadora do Estado do Rio de Janeiro",
+   "ROSINHA GAROTINHO Governadora",
+   "Em Vigor"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:alerj-lei-4916-2006-autoria",
+  "fonteId": "alerj-lei-4916-2006",
+  "prova": [
+   "LEI Nº 4.916, DE 08 DE DEZEMBRO DE 2006. DISPÕE SOBRE A LAQUEADURA E VASECTOMIA GRATUITA NOS ESTABELECIMENTOS DE SAÚDE VINCULADOS AO ESTADO.",
+   "Faço saber que a Assembléia Legislativa do Estado do Rio de Janeiro decreta e eu sanciono a seguinte Lei:",
+   "Projeto de Lei nº 1700/2004 Mensagem nº Autoria FLÁVIO BOLSONARO",
+   "A Governadora do Estado do Rio de Janeiro",
+   "ROSINHA GAROTINHO Governadora",
+   "Em Vigor"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:alerj-lei-5019-2007-autoria",
+  "fonteId": "alerj-lei-5019-2007",
+  "prova": [
+   "LEI Nº 5.019 DE 19 DE ABRIL DE 2007. DÁ NOVA REDAÇÃO AO ARTIGO 1º DA LEI Nº 4043, DE 30 DE DEZEMBRO DE 2002.",
+   "Faço saber que a Assembléia Legislativa do Estado do Rio de Janeiro decreta e eu sanciono a seguinte Lei:",
+   "Projeto de Lei nº 2786-B/2005 Mensagem nº Autoria FLÁVIO BOLSONARO",
+   "O Governador do Estado do Rio de Janeiro",
+   "SÉRGIO CABRAL Governador",
+   "Os Policiais Militares e Bombeiros Militares do Estado do Rio de Janeiro lotados na Coordenadoria Militar e da Brigada de Incêndio da Presidência da Assembléia Legislativa do Estado do Rio de Janeiro.",
+   "Os oficiais superiores da Policia Militar e do Corpo de Bombeiros Militares do Estado do Rio de Janeiro em exercício na Coordenadoria Militar do Tribunal de Justiça.",
+   "Aprovado o Substitutivo da Comissão de Constituição e Justiça",
+   "Em Vigor"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:alerj-lei-5646-2010-autoria",
+  "fonteId": "alerj-lei-5646-2010",
+  "prova": [
+   "LEI Nº 5646, DE 15 DE JANEIRO DE 2010. INSTITUI NO CALENDÁRIO OFICIAL DO ESTADO DO RIO DE JANEIRO O ANO DE 2010 COMO O ANO DO PLANEJAMENTO FAMILIAR NO ESTADO DO RIO DE JANEIRO.",
+   "Faço saber que a Assembléia Legislativa do Estado do Rio de Janeiro decreta e eu sanciono a seguinte Lei:",
+   "Projeto de Lei nº 2760/2009 Mensagem nº Autoria FLAVIO BOLSONARO",
+   "O GOVERNADOR DO ESTADO DO RIO DE JANEIRO",
+   "SERGIO CABRAL Governador",
+   "Em Vigor"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:alerj-lei-5938-2011-autoria",
+  "fonteId": "alerj-lei-5938-2011",
+  "prova": [
+   "LEI Nº 5938, DE 4 DE ABRIL DE 2011. DISPÕE SOBRE O ACESSO DO CANDIDATO AOS MOTIVOS DE SUA REPROVAÇÃO EM EXAME PSICOLÓGICO PARA CARGO OU EMPREGO NA ADMINISTRAÇÃO PÚBLICA ESTADUAL E DÁ OUTRAS PROVIDÊNCIAS.",
+   "O Presidente da Assembleia Legislativa do Estado do Rio de Janeiro, em conformidade com o que dispõe o §5º, combinado com o §7º, do artigo 115 da Constituição Estadual, promulga a Lei nº 5938, de 4 de abril de 2011, oriunda do Projeto de Lei nº 2727, de 2009.",
+   "Projeto de Lei nº 2727/2009 Mensagem nº Autoria FLAVIO BOLSONARO",
+   "Deputado PAULO MELO Presidente",
+   "Norma submetida a ação de inconstitucionalidade.",
+   "Em Vigor"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:alerj-lei-6785-2014-autoria",
+  "fonteId": "alerj-lei-6785-2014",
+  "prova": [
+   "LEI Nº 6785 DE 22 DE MAIO DE 2014. DISPÕE SOBRE A IMPOSSIBILIDADE DE INVESTIDURA EM CARGO PÚBLICO DA ADMINISTRAÇÃO PÚBLICA DIRETA, INDIRETA, AUTARQUIAS E FUNDAÇÕES, NO ÂMBITO DO ESTADO DO RIO DE JANEIRO, ANTE A EXISTÊNCIA DE CONDENAÇÃO, COM TRÂNSITO EM JULGADO, PELA PRÁTICA DE QUALQUER MODALIDADE DE ABUSO SEXUAL CONTRA MENOR (PEDOFILIA).",
+   "Faço saber que a Assembléia Legislativa do Estado do Rio de Janeiro decreta e eu sanciono a seguinte Lei:",
+   "Projeto de Lei nº 1876-A/2012 Mensagem nº Autoria FLAVIO BOLSONARO",
+   "O GOVERNADOR DO ESTADO DO RIO DE JANEIRO",
+   "LUIZ FERNANDO DE SOUZA Governador",
+   "Em Vigor"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:alerj-lei-7008-2015-autoria",
+  "fonteId": "alerj-lei-7008-2015",
+  "prova": [
+   "LEI Nº 7008, DE 19 DE MAIO DE 2015. DISPÕE SOBRE O ENVIO DE MENSAGENS DE TEXTO, DO TIPO SMS, DE UTILIDADE PÚBLICA, POR PRESTADORAS DE SERVIÇOS DE TELECOMUNICAÇÕES, SEM ÔNUS PARA O PODER PÚBLICO OU USUÁRIOS, ATRAVÉS DE CONVÊNIO CELEBRADO ENTRE AS PARTES.",
+   "O Presidente da Assembleia Legislativa do Estado do Rio de Janeiro, em conformidade com o que dispõe o §5º combinado com o §7º do artigo 115 da Constituição Estadual, promulga a Lei nº 7008, de 19 de maio de 2015, oriunda do Projeto de Lei nº 2305-A, de 2013.",
+   "Projeto de Lei nº 2305-A/2013 Mensagem nº Autoria FLAVIO BOLSONARO",
+   "DEPUTADO JORGE PICCIANI Presidente",
+   "Em Vigor"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:alerj-lei-7877-2018-autoria",
+  "fonteId": "alerj-lei-7877-2018",
+  "prova": [
+   "LEI Nº 7877 DE 02 DE MARÇO DE 2018. AUTORIZA O PODER PÚBLICO A CRIAR O PROGRAMA ESTADUAL DE CRIAÇÃO DE RECIFES ARTIFICIAIS – PROGRAMA “COSTA VIVA” E DÁ OUTRAS PROVIDÊNCIAS.",
+   "O Presidente da Assembleia Legislativa do Estado do Rio de Janeiro, em conformidade com o que dispõe o §5º combinado com o § 7º do artigo 115 da Constituição Estadual, promulga a Lei nº 7.877, de 02 de março de 2018, oriunda do Projeto de Lei nº 1126-A, de 2015.",
+   "Projeto de Lei nº 1126/2015 Mensagem nº Autoria FLÁVIO BOLSONARO",
+   "DEPUTADO ANDRÉ CECILIANO 2º Vice-Presidente no exercíco da Presidência",
+   "Em Vigor"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:congresso-mpv-866-2018-relatoria",
+  "fonteId": "senado-dados-abertos-flavio-cargos",
+  "prova": [
+   "{\"IdentificacaoComissao\":{\"CodigoComissao\":\"2235\",\"SiglaComissao\":\"CMMPV 866/2018\",\"NomeComissao\":\"Comissão Mista da Medida Provisória nº 866, de 2018.\",\"SiglaCasaComissao\":\"CN\"},\"CodigoCargo\":\"21\",\"DescricaoCargo\":\"RELATOR\",\"DataInicio\":\"2019-03-27\"}"
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:congresso-mpv-866-2018-relatoria",
+  "fonteId": "senado-dadosabertos-relatorias-flavio",
+  "prova": [
+   "\"CodigoTipoRelator\":\"1\",\"DescricaoTipoRelator\":\"Relator\",\"DataDesignacao\":\"2019-04-04\",\"DataDestituicao\":\"2023-01-10\",\"Materia\":{\"Codigo\":\"135031\",\"IdentificacaoProcesso\":\"7708078\",\"DescricaoIdentificacao\":\"MPV 866/2018\""
+  ]
+ },
+ {
+  "registro": "atuacao-legislativa:congresso-mpv-866-2018-relatoria",
+  "fonteId": "senado-dadosabertos-processo-mpv-866-2018",
+  "prova": [
+   "\"ementa\":\"Autoriza a criação da empresa pública NAV Brasil Serviços de Navegação Aérea S.A.\"",
+   "\"situacaoAtual\":\"TRANSFORMADA EM NORMA JURÍDICA\",\"siglaSituacaoAtual\":\"TNJR\",\"dataSituacaoAtual\":\"2019-11-20\"",
+   "\"normaGerada\":{\"codigo\":31750339,\"siglaTipo\":\"LEI-n\",\"tipo\":\"Lei Numerada\",\"numero\":13903,\"anoAssinatura\":\"2019\",\"dataAssinatura\":\"2019-11-19\",\"descricao\":\"Lei nº 13.903 de 19/11/2019\",\"dataPublicacao\":\"2019-11-20\",\"siglaVeiculoPublicacao\":\"DOU\",\"veiculoPublicacao\":\"[Diário Oficial da União de 20/11/2019] (p. 1, col. 1)\"}",
+   "Presidência da República"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-economia-1",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "vamos criar as condições para uma redução sustentada das taxas de juros, com inflação controlada e assegurando uma política fiscal responsável. Para isso, manteremos o novo arcabouço fiscal"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-economia-1",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-economia-2",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "vamos elevar a taxa de investimento da economia. Ampliar os investimentos em infraestrutura logística, para dar mais competitividade à produção nacional, e em infraestrutura social"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-economia-2",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-economia-3",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "No próximo ciclo governamental, nosso objetivo central será aprimorar e fortalecer a neoindustrialização"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-economia-3",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-seguranca-publica-1",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Uma vez aprovada a PEC da Segurança Pública proposta pelo Executivo, criaremos o Ministério da Segurança Pública"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-seguranca-publica-1",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-seguranca-publica-2",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "manteremos uma política de controle de armas e munições, fundamental para reduzir a violência e fortalecer uma política democrática de segurança pública"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-seguranca-publica-2",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-seguranca-publica-3",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Fortaleceremos o Programa Brasil Contra o Crime Organizado, lançado em maio de 2026. Em cooperação com estados e municípios, vamos avançar no enfrentamento ao tráfico de armas, munições, acessórios e explosivos",
+   "asfixia financeira do crime organizado e das milícias; qualificação da investigação de homicídios; retomada de territórios; e fortalecimento da segurança no sistema prisional"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-seguranca-publica-3",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-saude-1",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "As ações do Agora Tem Especialistas serão ainda mais impulsionadas. A expansão do terceiro turno nos serviços de saúde, o reforço das Carretas da Saúde e dos mutirões de atendimento seguirão como estratégias centrais"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-saude-1",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-saude-2",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "O programa será mantido, 100% gratuito, assegurando contínua revisão dos medicamentos ofertados e a continuidade da distribuição de fraldas geriátricas.",
+   "Retomamos o Farmácia Popular, ampliando para 41 o número de medicamentos gratuitos distribuídos."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-saude-2",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-saude-3",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Vamos acelerar os esforços na consolidação do prontuário único do cidadão, que já avança por meio da Rede Nacional de Dados em Saúde (RNDS)."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-saude-3",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-educacao-1",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "O fomento à expansão da educação em tempo integral terá absoluta prioridade no novo mandato."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-educacao-1",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-educacao-2",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Seguiremos com as ações e políticas já pactuadas com os estados e municípios brasileiros para chegarmos à meta de 80% das nossas crianças alfabetizadas na idade certa."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-educacao-2",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-educacao-3",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Vamos dar continuidade e fortalecer o Pé-de-Meia. Nenhum jovem em situação de pobreza ou vulnerabilidade social no Brasil deve deixar a escola por falta de renda."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-educacao-3",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-reforma-do-estado-1",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "a retomada da política de valorização e diálogo com servidores. Vamos aprofundar este processo, a partir da Mesa Nacional de Negociação Permanente"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-reforma-do-estado-1",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-reforma-do-estado-2",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Vamos continuar investindo na universalização dos serviços públicos digitais de qualidade, e na construção de infraestruturas públicas digitais que deem suporte à personalização dos serviços."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-reforma-do-estado-2",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-reforma-do-estado-3",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Vamos dar sequência às medidas de controle e integridade da administração pública e ao combate à corrupção."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-reforma-do-estado-3",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-meio-ambiente-1",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "No próximo mandato, continuaremos trabalhando para alcançar o desmatamento líquido zero até 2030, meta que reafirmamos."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-meio-ambiente-1",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-meio-ambiente-2",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Articularemos as políticas e mobilizaremos todos os atores governamentais, privados e da sociedade civil para que cumpramos a nossa nova NDC.",
+   "meta de redução de 59% a 67% das emissões líquidas de gases de efeito estufa até 2035, em relação a 2005"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-meio-ambiente-2",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-meio-ambiente-3",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Vamos avançar na destinação das terras públicas para unidades de conservação, territórios indígenas e quilombolas ou assentamentos, e reforçar a regularização fundiária."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-meio-ambiente-3",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-direitos-das-mulheres-1",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Vamos dar sequência ao Pacto, ampliando a rede de proteção às mulheres – concluiremos as 30 Casas da Mulher Brasileira e os 15 Centros de Referência da Mulher Brasileira.",
+   "O Pacto de Enfrentamento ao Feminicídio permanecerá como guia central de nossa estratégia de enfrentamento à violência contra mulheres."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-direitos-das-mulheres-1",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-direitos-das-mulheres-2",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Vamos avançar na efetiva equivalência remuneratória entre mulheres e homens, fortalecendo a implementação da Lei de Igualdade Salarial"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-direitos-das-mulheres-2",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-direitos-das-mulheres-3",
+  "fonteId": "tse-proposta-de-governo-lula-2026",
+  "prova": [
+   "Fortaleceremos o planejamento reprodutivo ampliando o acesso a métodos contraceptivos modernos e de longa duração, a serem distribuídos gratuitamente no SUS"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-lula-2026-direitos-das-mulheres-3",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "{\"idArquivo\":280017016005,\"nome\":\"0806JOB838PTlivroplanodegovernocompressed.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/15761/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-economia-1",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Vamos promover a revisão e o redimensionamento da reforma tributária em curso e da majoração de impostos efetuada pelo atual governo, com o objetivo de reduzir efetivamente a carga sobre a produção e o consumo."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-economia-1",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-economia-2",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Apresentaremos uma reformulação nas atuais regras fiscais, com regras claras focadas na estabilização e na redução da dívida pública conforme determina a Constituição."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-economia-2",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-economia-3",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Nossa meta é dobrar esse ritmo e alcançar um crescimento sustentado de 4% ao ano ao longo da próxima década"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-economia-3",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-seguranca-publica-1",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "PCC, CV, milícias e todas as outras facções serão declaradas como organizações narcoterroristas."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-seguranca-publica-1",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-seguranca-publica-2",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "O novo governo do Brasil vai apoiar e sancionar a redução da maioridade penal de 18 para 16 anos."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-seguranca-publica-2",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-seguranca-publica-3",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "O Brasil terá 5 novos presídios de segurança máxima no modelo adotado por El Salvador."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-seguranca-publica-3",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-saude-1",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Vamos garantir as condições para que seja possível a correção efetiva da tabela SUS."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-saude-1",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-saude-2",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Vamos implantar o prontuário eletrônico único, vinculado ao CPF e integrado ao Gov.br, interoperável entre as redes pública e privada",
+   "sempre observados o consentimento do paciente, a LGPD, o sigilo médico e os protocolos de segurança"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-saude-2",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-saude-3",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "vamos contratar serviços e exames na rede privada nos horários ociosos"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-saude-3",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-educacao-1",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "O começo de tudo é alfabetizar direito. Vamos priorizar o método fônico"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-educacao-1",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-educacao-2",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Vamos ampliar as Escolas Cívico-Militares",
+   "e garantir atendimento ao aluno com altas habilidades",
+   "a política nacional que trata do tema é lei mas segue sem implementação, e nós vamos tirá-la do papel"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-educacao-2",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-educacao-3",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "onde faltar vaga na rede pública, a família receberá um voucher educacional para matricular o filho em outra escola"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-educacao-3",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-reforma-do-estado-1",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Daremos continuidade à reforma administrativa que já colocamos em discussão, para modernizar o funcionamento do Estado e a carreira do servidor."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-reforma-do-estado-1",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-reforma-do-estado-2",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Isso inclui o corte de no mínimo 10 ministérios, a redução de cargos comissionados e de despesas administrativas e o combate aos penduricalhos e supersalários"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-reforma-do-estado-2",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-reforma-do-estado-3",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "E vamos retomar o Programa Nacional de Desestatização com critério, avaliando caso a caso onde a presença do Estado deixou de fazer sentido."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-reforma-do-estado-3",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-meio-ambiente-1",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Teremos a meta de zerar o desmatamento ilegal até 2029",
+   "e combateremos as queimadas ilegais, fortalecendo a prevenção, o monitoramento, a fiscalização e o combate aos crimes ambientais"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-meio-ambiente-1",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-meio-ambiente-2",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "E vamos consolidar o mercado regulado de carbono com segurança jurídica, posicionando o Brasil como fornecedor global de ativos ambientais",
+   "com segurança jurídica, posicionando o Brasil como fornecedor global de ativos ambientais, e impulsionar a bioeconomia"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-meio-ambiente-2",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-meio-ambiente-3",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Vamos criar mecanismos de incentivo econômico à preservação, ampliando o pagamento por serviços ambientais"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-meio-ambiente-3",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-direitos-das-mulheres-1",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Os agressores das mais de meio milhão de mulheres com medida protetiva no Brasil serão monitorados pelas autoridades com o uso de tornozeleiras eletrônicas.",
+   "vamos monitorar por tornozeleira eletrônica os agressores sob medida protetiva de maior risco"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-direitos-das-mulheres-1",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-direitos-das-mulheres-2",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "A Central da Mulher será um espaço físico onde a mulher resolve a vida sem perder tempo nem percorrer a cidade inteira."
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-direitos-das-mulheres-2",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-direitos-das-mulheres-3",
+  "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+  "prova": [
+   "Onde não houver vaga na rede pública, a família receberá um voucher-creche para acesso à rede privada credenciada até a vaga pública surgir"
+  ]
+ },
+ {
+  "registro": "proposta-eleitoral:proposta-flavio-bolsonaro-2026-direitos-das-mulheres-3",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "{\"idArquivo\":280017104726,\"nome\":\"DiretrizesPlanodeGovernoFlavioBolsonaro20272030versaofinal.pdf\",\"url\":\"candidaturas/oficial/2026/BR/BR/6257/candidatos/21616/\",\"tipo\":\"pdf\",\"codTipo\":\"5\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-nascimento",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Luiz Inácio Lula da Silva nasceu em 27 de outubro de 1945 na cidade de Garanhuns, interior de Pernambuco.",
+   "é o sétimo dos oito filhos de Aristides Inácio da Silva e Eurídice Ferreira de Mello"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-nascimento",
+  "fonteId": "arquivo-nacional-biografia-lula",
+  "prova": [
+   "Luiz Inácio Lula da Silva nasceu em 27 de outubro de 1945, em Garanhuns, Pernambuco"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-nascimento",
+  "fonteId": "camara-dados-abertos-lula",
+  "prova": [
+   "\"dataNascimento\":\"1945-10-06\",\"dataFalecimento\":null,\"ufNascimento\":\"PE\",\"municipioNascimento\":\"Garanhuns\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-nascimento",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "\"dataDeNascimento\":\"1945-10-06\"",
+   "\"descricaoNaturalidade\":\"PE-GARANHUNS\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-nascimento",
+  "fonteId": "agencia-senado-2002-trajetoria-lula",
+  "prova": [
+   "nasceu há 57 anos, em Vargem Grande, localizada no atual município de Caetés (PE), numa família de pequenos lavradores"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-nascimento",
+  "fonteId": "ibge-biblioteca-caetes",
+  "prova": [
+   "Em divisão territorial datada de 1-VII-1950, o distrito de Caetés figura no município de Garanhuns.",
+   "Elevado à categoria de município com a denominação de Caetés, pela Lei Estadual n.º 4.987, de 20-12-1963, desmembrado do município de Garanhuns."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-mudanca-para-o-litoral-paulista",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em dezembro de 1952, a família de Lula migrou para o litoral paulista, viajando 13 dias num caminhão",
+   "Foi morar em Vicente de Carvalho, bairro pobre do Guarujá."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-mudanca-para-o-litoral-paulista",
+  "fonteId": "planalto-biografia-do-presidente",
+  "prova": [
+   "Em dezembro de 1952, dona Lindu e os oito filhos migraram para São Paulo, fugindo da seca e da fome.",
+   "De início, a família morou na periferia de Guarujá, cidade a 60 quilômetros da capital do estado."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-mudanca-para-o-litoral-paulista",
+  "fonteId": "arquivo-nacional-biografia-lula",
+  "prova": [
+   "migrou ainda criança com a família para o estado de São Paulo, estabelecendo-se inicialmente em Santos e depois na capital"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-mudanca-para-o-litoral-paulista",
+  "fonteId": "agencia-senado-2022-lula-eleito",
+  "prova": [
+   "Lula nasceu em Garanhuns (PE) em 27 de outubro de 1945. Aos sete anos, migrou com a família para Santos (SP)."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-mudanca-para-a-cidade-de-sao-paulo",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 1956, a família mudou-se para São Paulo, passando a morar num único cômodo, nos fundos de um bar, no bairro de Ipiranga."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-mudanca-para-a-cidade-de-sao-paulo",
+  "fonteId": "agencia-senado-2002-trajetoria-lula",
+  "prova": [
+   "morou com toda a família num minúsculo quarto nos fundos de um bar, na Vila Carioca"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-escola",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Foi alfabetizado no Grupo Escolar Marcílio Dias."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-escola",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "Escolaridade: Primário"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-escola",
+  "fonteId": "tse-divulgacand-2026-lula",
+  "prova": [
+   "\"grauInstrucao\":\"Ensino Fundamental completo\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-escola",
+  "fonteId": "agencia-senado-2002-trajetoria-lula",
+  "prova": [
+   "Estudou até à 5ª série do ensino fundamental e obteve, numa escola do Serviço Nacional de Aprendizagem Industrial (Senai), o diploma de torneiro mecânico."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-primeiros-trabalhos",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Aos 12 anos de idade, Lula conseguiu seu primeiro emprego numa tinturaria. Também foi engraxate e office-boy.",
+   "Com 14 anos, começou a trabalhar nos Armazéns Gerais Columbia, onde teve a Carteira de Trabalho assinada pela primeira vez.",
+   "Lula transferiu-se depois para a Fábrica de Parafusos Marte"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-primeiros-trabalhos",
+  "fonteId": "arquivo-nacional-biografia-lula",
+  "prova": [
+   "ingressou, aos 14 anos, na Fábrica de Parafusos Marte"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-curso-no-senai",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "obteve uma vaga no curso de torneiro mecânico do Senai - Serviço Nacional de Aprendizagem Industrial. O curso durou 3 anos e Lula tornou-se metalúrgico."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-curso-no-senai",
+  "fonteId": "planalto-biografia-do-presidente",
+  "prova": [
+   "O diploma de torneiro mecânico foi o primeiro de sua vida."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-curso-no-senai",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "Curso de Formação de Torneiro Mecânico, Serviço Nacional de Aprendizagem Industrial (SENAI)"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-trabalho-na-villares",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "passando por várias fábricas, até ingressar nas Indústrias Villares, uma das principais metalúrgicas do país, localizada em São Bernardo do Campo",
+   "Trabalhando na Villares, Lula começou a ter contato com o movimento sindical, através de seu irmão José Ferreira da Silva, mais conhecido por Frei Chico."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-trabalho-na-villares",
+  "fonteId": "arquivo-nacional-biografia-lula",
+  "prova": [
+   "passando por empresas como a Metalúrgica Independência e, posteriormente, a Metalúrgica Villares, em São Bernardo do Campo"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-entrada-na-diretoria-do-sindicato",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 1969, o Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema fez eleição para escolher uma nova diretoria e Lula foi eleito suplente.",
+   "Na eleição seguinte, em 1972, tornou-se primeiro-secretário."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-entrada-na-diretoria-do-sindicato",
+  "fonteId": "camara-biografia-lula",
+  "prova": [
+   "Diretor, Sindicato dos Trabalhadores da Indústria Metalúrgica, Mecânica e de Material Elétrico, São Bernardo do Campo e Diadema, São Bernardo do Campo, SP, 1969",
+   "Primeiro-Secretário, Sindicato dos Trabalhadores da Indústria Metalúrgica, Mecânica e de Material Elétrico, São Bernardo do Campo e Diadema, São Bernardo do Campo, SP, 1972"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-entrada-na-diretoria-do-sindicato",
+  "fonteId": "agencia-senado-2002-trajetoria-lula",
+  "prova": [
+   "em 1969, concorreu ao primeiro cargo no Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema, ficando com suplente",
+   "Três anos depois, foi eleito secretário-geral da entidade"
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-reeleicao-no-sindicato",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 78, Lula foi reeleito presidente do sindicato e, após 10 anos sem greves operárias, ocorreram no país as primeiras paralisações."
+  ]
+ },
+ {
+  "registro": "fato-biografico:lula-reeleicao-no-sindicato",
+  "fonteId": "planalto-biografia-do-presidente",
+  "prova": [
+   "Em 1978, foi reeleito presidente do sindicato."
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-nascimento",
+  "fonteId": "senado-dados-abertos-flavio",
+  "prova": [
+   "\"NomeCompletoParlamentar\":\"Flávio Nantes Bolsonaro\"",
+   "\"DataNascimento\":\"1981-04-30\",\"Naturalidade\":\"Resende\",\"UfNaturalidade\":\"RJ\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-nascimento",
+  "fonteId": "tse-candidatos-2002",
+  "prova": [
+   "\"RJ\";-3;\"RESENDE\";\"30/04/1981\";\"21\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-nascimento",
+  "fonteId": "tse-divulgacand-2026-flavio",
+  "prova": [
+   "\"sgUfNascimento\":\"RJ\",\"nomeMunicipioNascimento\":\"RESENDE\"",
+   "\"nomeCompleto\":\"FLAVIO NANTES BOLSONARO\",\"descricaoSexo\":\"MASC.\",\"dataDeNascimento\":\"1981-04-30\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-nascimento",
+  "fonteId": "tse-divulgacand-2014-flavio",
+  "prova": [
+   "\"sgUfNascimento\":\"RJ\",\"nomeMunicipioNascimento\":\"RIO DE JANEIRO\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-nascimento",
+  "fonteId": "tse-divulgacand-2016-flavio",
+  "prova": [
+   "\"sgUfNascimento\":\"RJ\",\"nomeMunicipioNascimento\":\"RIO DE JANEIRO\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-nascimento",
+  "fonteId": "tse-divulgacand-2018-flavio",
+  "prova": [
+   "\"sgUfNascimento\":\"RJ\",\"nomeMunicipioNascimento\":\"RIO DE JANEIRO\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-nascimento",
+  "fonteId": "agencia-brasil-2026-perfil-flavio",
+  "prova": [
+   "É o filho mais velho do ex-presidente Jair Bolsonaro."
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-nascimento",
+  "fonteId": "agencia-brasil-2026-flavio-e-lula-votam",
+  "prova": [
+   "A mãe do candidato, Rogéria Bolsonaro, candidata a deputada federal, também acompanhou o voto do filho."
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-formacao",
+  "fonteId": "agencia-senado-2019-perfil-flavio",
+  "prova": [
+   "é bacharel em direito pela Universidade Cândido Mendes",
+   "Possui especializações em políticas públicas pelo Instituto Universitário de Pesquisas do Rio de Janeiro (Iuperj) e em empreendedorismo pela Fundação Getulio Vargas (FGV)."
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-formacao",
+  "fonteId": "agencia-brasil-2026-perfil-flavio",
+  "prova": [
+   "Formado em direito pela Universidade Cândido Mendes, tem especialização nas áreas de políticas públicas e empreendedorismo."
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-formacao",
+  "fonteId": "alerj-perfil-flavio",
+  "prova": [
+   "Curso Técnico em Eletrônica pela Escola Técnica Rezende Rammel, Rio de Janeiro, RJ.",
+   "Bacharel em Direito pela Universidade Cândido Mendes, Rio de Janeiro, RJ."
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-estagios",
+  "fonteId": "alerj-perfil-flavio",
+  "prova": [
+   "Estagiário no Instituto Militar de Engenharia - IME Mar 1998 / Dez 1998",
+   "Defensoria Pública Geral do Estado do Rio de Janeiro - DPGE Ago 2000 / Out 2001"
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-registro-da-primeira-candidatura",
+  "fonteId": "tse-candidatos-2002",
+  "prova": [
+   "7;\"DEPUTADO ESTADUAL\";851;11120;\"FLAVIO NANTES BOLSONARO\";\"BOLSONARO\"",
+   "\"DEFERIDO\";\"PARTIDO ISOLADO\";11;\"PPB\";\"PARTIDO PROGRESSISTA BRASILEIRO\"",
+   "931;\"ESTUDANTE,BOLSISTA, ESTAGIARIO E ASSEMELHADOS\"",
+   "7;\"SUPERIOR INCOMPLETO\"",
+   "\"RESENDE\";\"30/04/1981\";\"21\"",
+   "6;\"DEPUTADO FEDERAL\";1406;1120;\"JAIR MESSIAS BOLSONARO\";\"JAIR BOLSONARO\""
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-registro-da-primeira-candidatura",
+  "fonteId": "agencia-brasil-2026-perfil-flavio",
+  "prova": [
+   "É o filho mais velho do ex-presidente Jair Bolsonaro."
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-partido-muda-de-nome",
+  "fonteId": "tse-partido-progressistas",
+  "prova": [
+   "aprovado em 29.5.2003 (Resolução/TSE nº 21.401, DJ de 4.7.2003) - mudança nomenclatura e sigla de Partido Progressista Brasileiro – PPB para Partido Progressista – PP"
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-partido-muda-de-nome",
+  "fonteId": "alerj-8a-legislatura",
+  "prova": [
+   "32. Deputado Flávio Bolsonaro (PP);"
+  ]
+ },
+ {
+  "registro": "fato-biografico:flavio-bolsonaro-partido-muda-de-nome",
+  "fonteId": "tse-candidatos-2002",
+  "prova": [
+   "\"DEFERIDO\";\"PARTIDO ISOLADO\";11;\"PPB\";\"PARTIDO PROGRESSISTA BRASILEIRO\""
+  ]
+ },
+ {
+  "registro": "conceito:sindicato",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "ao sindicato cabe a defesa dos direitos e interesses coletivos ou individuais da categoria, inclusive em questões judiciais ou administrativas"
+  ]
+ },
+ {
+  "registro": "conceito:sindicato",
+  "fonteId": "planalto-clt",
+  "prova": [
+   "É lícita a associação para fins de estudo, defesa e coordenação dos seus interesses econômicos ou profissionais de todos os que, como empregadores, empregados,"
+  ]
+ },
+ {
+  "registro": "conceito:greve",
+  "fonteId": "planalto-lei-7783-1989",
+  "prova": [
+   "considera-se legítimo exercício do direito de greve a suspensão coletiva, temporária e pacífica, total ou parcial, de prestação pessoal de serviços a empregador"
+  ]
+ },
+ {
+  "registro": "conceito:greve",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "É assegurado o direito de greve, competindo aos trabalhadores decidir sobre a oportunidade de exercê-lo e sobre os interesses que devam por meio dele defender."
+  ]
+ },
+ {
+  "registro": "conceito:partido-politico",
+  "fonteId": "tse-glossario-eleitoral-p",
+  "prova": [
+   "destinado à arregimentação coletiva, em torno de idéias e de interesses, para levar seus membros a compartilharem do poder decisório nas instâncias governativas"
+  ]
+ },
+ {
+  "registro": "conceito:partido-politico",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "Os partidos políticos, após adquirirem personalidade jurídica, na forma da lei civil, registrarão seus estatutos no Tribunal Superior Eleitoral."
+  ]
+ },
+ {
+  "registro": "conceito:partido-politico",
+  "fonteId": "planalto-lei-9096-1995",
+  "prova": [
+   "O partido político, pessoa jurídica de direito privado, destina-se a assegurar, no interesse do regime democrático, a autenticidade do sistema representativo"
+  ]
+ },
+ {
+  "registro": "conceito:deputado-federal",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Parlamentar representante do povo eleito em cada unidade da Federação pelo sistema proporcional para a Câmara dos Deputados.",
+   "sendo no mínimo de oito e no máximo de setenta, e o mandato tem a duração de uma legislatura, ou seja, quatro anos"
+  ]
+ },
+ {
+  "registro": "conceito:assembleia-constituinte",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Assembleia convocada especial ou extraordinariamente para elaborar a Constituição de um Estado."
+  ]
+ },
+ {
+  "registro": "conceito:assembleia-constituinte",
+  "fonteId": "planalto-emenda-constitucional-26-1985",
+  "prova": [
+   "reunir-se-ão, unicameralmente, em Assembléia Nacional Constituinte, livre e soberana, no dia 1º de fevereiro de 1987, na sede do Congresso Nacional"
+  ]
+ },
+ {
+  "registro": "conceito:assembleia-constituinte",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "Nós, representantes do povo brasileiro, reunidos em Assembléia Nacional Constituinte para instituir um Estado Democrático",
+   "Brasília, 5 de outubro de 1988."
+  ]
+ },
+ {
+  "registro": "conceito:turnos-da-eleicao",
+  "fonteId": "tse-glossario-eleitoral-t",
+  "prova": [
+   "No primeiro turno, tem-se uma votação para a qual concorrem todos os candidatos e, no segundo, apenas os dois primeiros colocados do turno anterior"
+  ]
+ },
+ {
+  "registro": "conceito:turnos-da-eleicao",
+  "fonteId": "planalto-lei-9504-1997",
+  "prova": [
+   "Se nenhum candidato alcançar maioria absoluta na primeira votação, far-se-á nova eleição no último domingo de outubro, concorrendo os dois candidatos mais votados"
+  ]
+ },
+ {
+  "registro": "conceito:turnos-da-eleicao",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "Será considerado eleito Presidente o candidato que, registrado por partido político, obtiver a maioria absoluta de votos, não computados os em branco e os nulos."
+  ]
+ },
+ {
+  "registro": "conceito:presidente-da-republica",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "O Poder Executivo é exercido pelo Presidente da República, auxiliado pelos Ministros de Estado.",
+   "IV - sancionar, promulgar e fazer publicar as leis, bem como expedir decretos e regulamentos para sua fiel execução; V - vetar projetos de lei, total ou parcialmente;"
+  ]
+ },
+ {
+  "registro": "conceito:medida-provisoria",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "Em caso de relevância e urgência, o Presidente da República poderá adotar medidas provisórias, com força de lei, devendo submetê-las de imediato ao Congresso Nacional.",
+   "perderão eficácia, desde a edição, se não forem convertidas em lei no prazo de sessenta dias, prorrogável, nos termos do § 7º, uma vez por igual período"
+  ]
+ },
+ {
+  "registro": "conceito:sancao",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "aquiescência, expressa ou tácita, do Chefe do Poder Executivo com o projeto aprovado pelo Poder Legislativo, encerrando a fase constitutiva da lei"
+  ]
+ },
+ {
+  "registro": "conceito:sancao",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "Decorrido o prazo de quinze dias, o silêncio do Presidente da República importará sanção."
+  ]
+ },
+ {
+  "registro": "conceito:veto",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Instrumento usado pelo Presidente da República para recusar a sanção de projeto de lei, no todo ou em parte"
+  ]
+ },
+ {
+  "registro": "conceito:veto",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "inconstitucional ou contrário ao interesse público, vetá-lo-á total ou parcialmente, no prazo de quinze dias úteis, contados da data do recebimento",
+   "O veto parcial somente abrangerá texto integral de artigo, de parágrafo, de inciso ou de alínea.",
+   "O veto será apreciado em sessão conjunta, dentro de trinta dias a contar de seu recebimento, só podendo ser rejeitado pelo voto da maioria absoluta dos Deputados e Senadores."
+  ]
+ },
+ {
+  "registro": "conceito:veto",
+  "fonteId": "camara-entenda-o-processo-legislativo",
+  "prova": [
+   "Se forem derrubados, os trechos antes vetados passam a integrar a lei."
+  ]
+ },
+ {
+  "registro": "conceito:decreto",
+  "fonteId": "senado-glossario-legislativo",
+  "prova": [
+   "Pode ser singular, quando trata de assuntos como nomeação, desapropriação e indulto, ou regulamentar, para executar norma instituída por lei ordinária."
+  ]
+ },
+ {
+  "registro": "conceito:decreto",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "expedir decretos e regulamentos para sua fiel execução"
+  ]
+ },
+ {
+  "registro": "conceito:pec",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Proposição legislativa destinada a alterar a Constituição Federal."
+  ]
+ },
+ {
+  "registro": "conceito:pec",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "A proposta será discutida e votada em cada Casa do Congresso Nacional, em dois turnos, considerando-se aprovada se obtiver, em ambos, três quintos dos votos dos respectivos membros."
+  ]
+ },
+ {
+  "registro": "conceito:pec",
+  "fonteId": "planalto-emenda-constitucional-41-2003",
+  "prova": [
+   "As MESAS da CÂMARA DOS DEPUTADOS e do SENADO FEDERAL , nos termos do § 3 do art. 60 da Constituição Federal, promulgam a seguinte Emenda ao texto constitucional"
+  ]
+ },
+ {
+  "registro": "conceito:projeto-de-lei",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Proposição destinada a dispor sobre matéria de competência normativa da União e pertinente às atribuições do Congresso Nacional. Sujeita-se, após aprovado, à sanção ou ao veto presidencial."
+  ]
+ },
+ {
+  "registro": "conceito:projeto-de-lei",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "O projeto de lei aprovado por uma Casa será revisto pela outra, em um só turno de discussão e votação"
+  ]
+ },
+ {
+  "registro": "conceito:projeto-de-lei",
+  "fonteId": "alerj-lei-4250-2003",
+  "prova": [
+   "Faço saber que a Assembléia Legislativa do Estado do Rio de Janeiro decreta e eu sanciono a seguinte Lei:"
+  ]
+ },
+ {
+  "registro": "conceito:lei-complementar",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Norma jurídica de natureza infraconstitucional aprovada pela maioria absoluta dos membros de cada Casa do Poder Legislativo. A Constituição determina quais matérias são reservadas à lei complementar.",
+   "É apreciada por processo ordinário e depende, para ser aprovada, de maioria simples de votos."
+  ]
+ },
+ {
+  "registro": "conceito:deputado-estadual",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Órgão do Poder Legislativo de cada estado da Federação cujos membros são eleitos pelo povo e ao qual cabe elaborar, discutir e aprovar as normas jurídicas"
+  ]
+ },
+ {
+  "registro": "conceito:deputado-estadual",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "Será de quatro anos o mandato dos Deputados Estaduais"
+  ]
+ },
+ {
+  "registro": "conceito:senador",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Parlamentar representante dos Estados ou do Distrito Federal eleito pelo sistema majoritário para o Senado Federal.",
+   "Cada unidade da Federação é representada por três Senadores, cujo mandato tem a duração de duas legislaturas, ou seja, oito anos."
+  ]
+ },
+ {
+  "registro": "conceito:comissao",
+  "fonteId": "senado-glossario-legislativo",
+  "prova": [
+   "Comissão é um órgão parlamentar formado por membros da Casa Legislativa que desempenha funções essenciais no processo legislativo e nas atividades de fiscalização e controle da administração pública.",
+   "Entre suas atribuições, estão a emissão de pareceres sobre proposições, a discussão e votação de projetos de lei ordinária, a realização de audiências públicas"
+  ]
+ },
+ {
+  "registro": "conceito:comissao",
+  "fonteId": "senado-regimento-interno",
+  "prova": [
+   "cada comissão reunir-se-á para instalar seus trabalhos e eleger, em escrutínio secreto, seu Presidente e Vice-Presidente",
+   "Ao Presidente de comissão compete: I – ordenar e dirigir os trabalhos da comissão;",
+   "III – designar, na comissão, relatores para as matérias;"
+  ]
+ },
+ {
+  "registro": "conceito:comissao",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "terão comissões permanentes e temporárias, constituídas na forma e com as atribuições previstas no respectivo regimento ou no ato de que resultar sua criação"
+  ]
+ },
+ {
+  "registro": "conceito:relator",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "para elaborar relatório (SF) ou parecer (CD) sobre esses aspectos, no qual recomenda sua aprovação ou rejeição"
+  ]
+ },
+ {
+  "registro": "conceito:relator",
+  "fonteId": "senado-regimento-interno",
+  "prova": [
+   "III – designar, na comissão, relatores para as matérias;"
+  ]
+ },
+ {
+  "registro": "conceito:lider-e-minoria",
+  "fonteId": "congresso-glossario-de-termos-legislativos",
+  "prova": [
+   "Parlamentar escolhido para representar sua bancada partidária ou bloco parlamentar que integre.",
+   "Maior partido ou bloco parlamentar que se posiciona contrariamente à Maioria parlamentar.",
+   "Conjunto de partidos e blocos parlamentares que se opõem politicamente ao Governo, alinhando-se, em geral, com as posições da Minoria."
+  ]
+ },
+ {
+  "registro": "conceito:denuncia",
+  "fonteId": "stf-glossario-juridico",
+  "prova": [
+   "pela qual o membro do Ministério Público (promotor de justiça ou procurador da República) formaliza a acusação perante o tribunal, dando início à ação penal pública"
+  ]
+ },
+ {
+  "registro": "conceito:denuncia",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "ninguém será considerado culpado até o trânsito em julgado de sentença penal condenatória"
+  ]
+ },
+ {
+  "registro": "conceito:denuncia",
+  "fonteId": "planalto-codigo-de-processo-penal",
+  "prova": [
+   "o juiz, se não a rejeitar liminarmente, recebê-la-á e ordenará a citação do acusado para responder à acusação"
+  ]
+ },
+ {
+  "registro": "conceito:rejeicao-da-denuncia",
+  "fonteId": "planalto-codigo-de-processo-penal",
+  "prova": [
+   "A denúncia ou queixa será rejeitada quando:",
+   "III - faltar justa causa para o exercício da ação penal.",
+   "o juiz, se não a rejeitar liminarmente, recebê-la-á e ordenará a citação do acusado para responder à acusação"
+  ]
+ },
+ {
+  "registro": "conceito:condenacao-e-recurso",
+  "fonteId": "stf-glossario-juridico",
+  "prova": [
+   "Aquele sobre quem recai a condenação, sendo imposta uma pena correspondente à infração da qual foi considerado culpado.",
+   "As ações, em geral, se iniciam na primeira instância. A segunda instância dedica-se ao julgamento de recursos."
+  ]
+ },
+ {
+  "registro": "conceito:condenacao-e-recurso",
+  "fonteId": "cnmp-glossario-recurso",
+  "prova": [
+   "Instrumento para pedir a mudança de uma decisão, na mesma instância ou em instância superior."
+  ]
+ },
+ {
+  "registro": "conceito:condenacao-e-recurso",
+  "fonteId": "cnmp-glossario-instancia",
+  "prova": [
+   "A primeira instância, onde em geral começam as ações, é composta pelo juiz de direito de cada comarca, pelo juiz federal, eleitoral e do trabalho."
+  ]
+ },
+ {
+  "registro": "conceito:condenacao-e-recurso",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "ninguém será considerado culpado até o trânsito em julgado de sentença penal condenatória"
+  ]
+ },
+ {
+  "registro": "conceito:anulacao",
+  "fonteId": "cnmp-glossario-anulacao",
+  "prova": [
+   "reconhecendo a existência de vício ou defeito em ato ou negócio jurídico, diante da solicitação de quem tenha interesse na sua ineficácia jurídica, vem declará-lo inválido ou desfeito"
+  ]
+ },
+ {
+  "registro": "conceito:anulacao",
+  "fonteId": "planalto-codigo-de-processo-penal",
+  "prova": [
+   "A incompetência do juízo anula somente os atos decisórios, devendo o processo, quando for declarada a nulidade, ser remetido ao juiz competente."
+  ]
+ },
+ {
+  "registro": "conceito:intervencao-federal",
+  "fonteId": "stf-glossario-juridico",
+  "prova": [
+   "Medida excepcional de interferência da União nos Estados-membros ou no Distrito Federal, suprimindo, temporariamente, a autonomia dos referidos entes"
+  ]
+ },
+ {
+  "registro": "conceito:intervencao-federal",
+  "fonteId": "planalto-constituicao-1988",
+  "prova": [
+   "A União não intervirá nos Estados nem no Distrito Federal, exceto para:",
+   "O decreto de intervenção, que especificará a amplitude, o prazo e as condições de execução e que, se couber, nomeará o interventor, será submetido à apreciação do Congresso Nacional"
+  ]
+ },
+ {
+  "registro": "conceito:convencao-e-registro-de-candidatura",
+  "fonteId": "tse-glossario-eleitoral-c",
+  "prova": [
+   "É a reunião dos filiados a um partido para deliberação de assuntos de interesse da agremiação.",
+   "as convenções para escolha de candidatos e formação de coligações se realizam no período de 20 de julho a 5 de agosto do ano da eleição",
+   "Aquele que, satisfeitas as condições de elegibilidade e não incorrendo em qualquer situação de inelegibilidade, tem seu registro deferido pela Justiça Eleitoral"
+  ]
+ },
+ {
+  "registro": "conceito:convencao-e-registro-de-candidatura",
+  "fonteId": "tse-glossario-eleitoral-r",
+  "prova": [
+   "Inscrição na Justiça Eleitoral das pessoas escolhidas em convenção partidária para concorrerem a cargos eletivos numa eleição."
+  ]
+ },
+ {
+  "registro": "conceito:proposta-de-governo",
+  "fonteId": "planalto-lei-9504-1997",
+  "prova": [
+   "O pedido de registro deve ser instruído com os seguintes documentos",
+   "IX - propostas defendidas pelo candidato a Prefeito, a Governador de Estado e a Presidente da República."
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1982-candidatura-ao-governo-de-sao-paulo",
+  "fonteId": "tse-resultados-1982",
+  "prova": [
+   "\"LUIZ INÁCIO LULA DA SILVA\";\"#NE#\";\"GOVERNADOR\";\"-1\";\"#NULO#\";\"2\";\"DEFERIDO\";\"4\";\"NÃO ELEITO\";\"3\";\"PT\";\"PARTIDO DOS TRABALHADORES\";\"-3\";\"#NE#\";\"#NE#\";\"1144648\"",
+   "\"ANDRÉ FRANCO MONTORO\";\"#NE#\";\"GOVERNADOR\";\"-1\";\"#NULO#\";\"2\";\"DEFERIDO\";\"1\";\"ELEITO\";\"5\";\"PMDB\";\"PARTIDO DO MOVIMENTO DEMOCRÁTICO BRASILEIRO\";\"-3\";\"#NE#\";\"#NE#\";\"5209952\"",
+   "\"REYNALDO EMYGDIO DE BARROS\";\"#NE#\";\"GOVERNADOR\";\"-1\";\"#NULO#\";\"2\";\"DEFERIDO\";\"4\";\"NÃO ELEITO\";\"1\";\"PDS\";\"PARTIDO DEMOCRATICO SOCIAL\";\"-3\";\"#NE#\";\"#NE#\";\"2728732\"",
+   "\"JÂNIO DA SILVA QUADROS\";\"#NE#\";\"GOVERNADOR\";\"-1\";\"#NULO#\";\"2\";\"DEFERIDO\";\"4\";\"NÃO ELEITO\";\"4\";\"PTB\";\"PARTIDO TRABALHISTA BRASILEIRO\";\"-3\";\"#NE#\";\"#NE#\";\"1447328\"",
+   "\"JOSÉ ANTÔNIO DE AFFONSECA ROGÊ FERREIRA\";\"#NE#\";\"GOVERNADOR\";\"-1\";\"#NULO#\";\"2\";\"DEFERIDO\";\"4\";\"NÃO ELEITO\";\"2\";\"PDT\";\"PARTIDO DEMOCRATICO TRABALHISTA\";\"-3\";\"#NE#\";\"#NE#\";\"94395\"",
+   "Quantidade de votos nominais totalizados para aquele candidato"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1982-candidatura-ao-governo-de-sao-paulo",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Lula liderou a organização do partido e disputou naquele ano o Governo de São Paulo."
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1982-candidatura-ao-governo-de-sao-paulo",
+  "fonteId": "arquivo-nacional-biografia-lula",
+  "prova": [
+   "Em 1982, Lula concorreu ao governo de São Paulo, ficando em quarto lugar"
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1982-candidatura-ao-governo-de-sao-paulo",
+  "fonteId": "agencia-senado-2002-trajetoria-lula",
+  "prova": [
+   "Em 1982, Lula concorreu ao governo de São Paulo, ficando como quarto colocado."
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1998-derrota-na-eleicao-presidencial",
+  "fonteId": "tse-candidatos-1998",
+  "prova": [
+   "1;\"PRESIDENTE\";280002801000131;13;\"LUIZ INÁCIO LULA DA SILVA\";\"LULA\"",
+   "\"COLIGAÇÃO\";13;\"PT\";\"PARTIDO DOS TRABALHADORES\";-3;\"UNIÃO DO POVO MUDA BRASIL\";\"PDT / PT\"",
+   "1998;2;\"ELEIÇÃO ORDINÁRIA\";1;1998001;\"Eleições Ordinárias - 1998\";\"04/10/1998\"",
+   "\"TRABALHADOR METALÚRGICO E SIDERÚRGICO\";\"-3\";4;\"NÃO ELEITO\"",
+   "\"PROFESSOR DE ENSINO SUPERIOR\";\"-3\";1;\"ELEITO\"",
+   "2;\"VICE-PRESIDENTE\";280002802001211;121;\"LEONEL DE MOURA BRIZOLA\""
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1998-derrota-na-eleicao-presidencial",
+  "fonteId": "planalto-biografia-lula",
+  "prova": [
+   "Em 1994 e 1998, Lula voltou a se candidatar a presidente da República e foi derrotado por Fernando Henrique Cardoso."
+  ]
+ },
+ {
+  "registro": "acontecimento:lula-1998-derrota-na-eleicao-presidencial",
+  "fonteId": "agencia-senado-2002-trajetoria-lula",
+  "prova": [
+   "sendo derrotado no primeiro turno por Fernando Henrique Cardoso, o que se repetiu em 1998"
+  ]
+ },
+ {
+  "registro": "mandato:flavio-bolsonaro-deputado-estadual-2003-2019",
+  "fonteId": "alerj-8a-legislatura",
+  "prova": [
+   "Eleições: 06 de outubro de 2002 | Posse: 01 de fevereiro de 2003 | Término:31 de janeiro de 2007",
+   "32. Deputado Flávio Bolsonaro (PP);"
+  ]
+ }
+]

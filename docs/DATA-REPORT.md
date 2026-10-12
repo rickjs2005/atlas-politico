@@ -1,6 +1,6 @@
 # Relatório de dados
 
-Edição 0.2.1 · data de corte 2026-10-08 · revisão assistida-por-ia em 2026-10-09
+Edição 0.3.0 · data de corte 2026-10-08 · revisão assistida-por-ia em 2026-10-11
 
 ## Situação
 
@@ -8,7 +8,7 @@ Sem erros: o conjunto pode ser gerado.
 
 | Erros | Pendências | Avisos |
 | --- | --- | --- |
-| 0 | 5 | 0 |
+| 0 | 6 | 0 |
 
 ## Totais
 
@@ -16,13 +16,13 @@ Sem erros: o conjunto pode ser gerado.
 | --- | --- |
 | Acontecimentos elegíveis | 39 |
 | Acontecimentos ligados a mais de uma pessoa | 1 |
-| Acontecimentos fora da publicação (rascunhos) | 5 |
+| Acontecimentos fora da publicação (rascunhos) | 6 |
 | Mandatos e funções elegíveis | 15 |
 | Filiações elegíveis | 8 |
 | Pontos geográficos | 27 |
 | Acontecimentos com ao menos um ponto | 26 |
 | Lugares nos dados públicos | 9 |
-| Fontes nos dados públicos | 78 |
+| Fontes nos dados públicos | 152 |
 | Imagens nos dados públicos | 2 |
 
 ## Por pessoa
@@ -30,7 +30,7 @@ Sem erros: o conjunto pode ser gerado.
 | Pessoa | Elegíveis | Rascunhos | Mandatos e funções | Filiações | Pontos no mapa | Primeiro ano | Último ano |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Flávio Bolsonaro | 20 | 2 | 8 | 7 | 14 | 2002 | 2026 |
-| Lula | 20 | 3 | 7 | 1 | 13 | 1975 | 2026 |
+| Lula | 20 | 4 | 7 | 1 | 13 | 1975 | 2026 |
 
 Um acontecimento ligado a duas pessoas conta para as duas. Por isso a soma das linhas (40) passa do total de acontecimentos (39).
 
@@ -85,13 +85,15 @@ Um período sem acontecimentos é falta de registro no atlas, e não falta de at
 
 - acontecimento `flavio-bolsonaro-2018-relatorio-do-coaf` (content/drafts/acontecimentos.json): em pesquisa. Pendências: Localizar documento oficial sobre o relatório (Coaf, Ministério Público Federal ou Ministério Público do Rio). Confirmar a data em que o relatório se tornou público.
 - acontecimento `flavio-bolsonaro-2020-filiacao-ao-republicanos` (content/drafts/acontecimentos.json): em pesquisa. Pendências: Localizar a data de filiação ao Republicanos em registro da Justiça Eleitoral ou em notícia do Senado. Esclarecer por que os dados abertos do Senado registram 'S/Partido' no período.
-- acontecimento `lula-1982-candidatura-ao-governo-de-sao-paulo` (content/drafts/acontecimentos.json): em pesquisa. Pendências: Localizar o resultado oficial da eleição de 1982 no TSE ou no TRE-SP. Confirmar a data da votação.
+- acontecimento `lula-1982-candidatura-ao-governo-de-sao-paulo` (content/drafts/acontecimentos.json): em pesquisa. Pendências: O limite editorial de vinte acontecimentos por pessoa já foi atingido (docs/EDITORIAL.md, regra 2): publicar este registro exige decisão editorial, por ampliar o limite ou por trocar um acontecimento por outro. Confirmar a data da votação de 1982 em documento oficial: o arquivo de resultados do TSE não a traz. Texto escrito com assistência de IA em 11 de outubro de 2026, com cada frase conferida contra o trecho literal do documento citado; os arquivos do TSE trazem dados pessoais (CPF e título de eleitor), que não foram copiados. Revisão humana pendente.
 - acontecimento `lula-1984-campanha-das-diretas-ja` (content/drafts/acontecimentos.json): em pesquisa. Pendências: Localizar fonte complementar com atos, datas e lugares da campanha. Avaliar se a fundação da CUT, em agosto de 1983, deve ser um acontecimento próprio.
+- acontecimento `lula-1998-derrota-na-eleicao-presidencial` (content/drafts/acontecimentos.json): em pesquisa. Pendências: O limite editorial de vinte acontecimentos por pessoa já foi atingido (docs/EDITORIAL.md, regra 2): publicar este registro exige decisão editorial, por ampliar o limite ou por trocar um acontecimento por outro. Localizar documento oficial com o total de votos da eleição de 1998. A eleição de 1998 já aparece no contexto do acontecimento de 1994: decidir se ela ganha registro próprio. Texto escrito com assistência de IA em 11 de outubro de 2026, com cada frase conferida contra o trecho literal do documento citado; os arquivos do TSE trazem dados pessoais (CPF e título de eleitor), que não foram copiados. Revisão humana pendente.
 - acontecimento `lula-2019-condenacao-no-caso-do-sitio-de-atibaia` (content/drafts/acontecimentos.json): em pesquisa. Pendências: Ler os documentos da sentença e do julgamento no TRF4 e confirmar datas e penas. Decidir se o caso entra como acontecimento próprio ou no contexto da anulação de 2021.
+- fonte `tse-resultados-1982` (content/drafts/fontes.json): na pasta de rascunhos.
 
 ## Trechos conferidos
 
-Das 195 citações de registros elegíveis, 163 têm trecho literal registrado em docs/evidencias e 32 não têm.
+Das 428 citações de registros elegíveis, 396 têm trecho literal registrado em docs/evidencias e 32 não têm.
 
 - `proposicao:senado-plp-93-2023`, fonte `senado-dadosabertos-votacao-5894-2023-06-21`
 - `proposicao:senado-pec-45-2019`, fonte `senado-dadosabertos-votacao-5894-2023-11-08`

@@ -14,14 +14,20 @@ import {
   calcInterval,
   calcPeriodBounds,
   formatDate,
+  intervalsOverlap,
+  yearOf,
   type Periodo,
 } from "@/lib/domain/dates";
 import { SYNTHETIC_PREFIX, competenceOf } from "@/lib/domain/integrity";
 import {
   acontecimentoSchema,
   atoExecutivoSchema,
+  atuacaoLegislativaSchema,
   coberturaPoliticaSchema,
+  conceitoSchema,
   edicaoSchema,
+  faseDoJogoSchema,
+  fatoBiograficoSchema,
   filiacaoSchema,
   fonteSchema,
   identidadeInstitucionalSchema,
@@ -30,14 +36,19 @@ import {
   mandatoSchema,
   pessoaSchema,
   proposicaoSchema,
+  propostaEleitoralSchema,
   votacaoSchema,
   votoSchema,
   type Acontecimento,
   type AtoExecutivo,
+  type AtuacaoLegislativa,
   type Citacao,
   type CoberturaPolitica,
+  type Conceito,
   type Edicao,
   type Editorial,
+  type FaseDoJogo,
+  type FatoBiografico,
   type Filiacao,
   type Fonte,
   type IdentidadeInstitucional,
@@ -46,6 +57,8 @@ import {
   type Mandato,
   type Pessoa,
   type Proposicao,
+  type PropostaEleitoral,
+  type ReferenciaDeFase,
   type Votacao,
   type Voto,
 } from "@/lib/domain/schemas";
@@ -85,8 +98,13 @@ export interface RecordByCollection {
   votacoes: Votacao;
   votos: Voto;
   atosExecutivos: AtoExecutivo;
+  atuacoesLegislativas: AtuacaoLegislativa;
   coberturaPolitica: CoberturaPolitica;
   identidadesInstitucionais: IdentidadeInstitucional;
+  propostasEleitorais: PropostaEleitoral;
+  fatosBiograficos: FatoBiografico;
+  conceitos: Conceito;
+  fasesDoJogo: FaseDoJogo;
   lugares: Lugar;
   fontes: Fonte;
   imagens: Imagem;
@@ -129,8 +147,13 @@ const SCHEMAS: { [K in Colecao]: z.ZodType<RecordByCollection[K]> } = {
   votacoes: votacaoSchema,
   votos: votoSchema,
   atosExecutivos: atoExecutivoSchema,
+  atuacoesLegislativas: atuacaoLegislativaSchema,
   coberturaPolitica: coberturaPoliticaSchema,
   identidadesInstitucionais: identidadeInstitucionalSchema,
+  propostasEleitorais: propostaEleitoralSchema,
+  fatosBiograficos: fatoBiograficoSchema,
+  conceitos: conceitoSchema,
+  fasesDoJogo: faseDoJogoSchema,
   lugares: lugarSchema,
   fontes: fonteSchema,
   imagens: imagemSchema,
@@ -183,8 +206,13 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
     votacoes: [],
     votos: [],
     atosExecutivos: [],
+    atuacoesLegislativas: [],
     coberturaPolitica: [],
     identidadesInstitucionais: [],
+    propostasEleitorais: [],
+    fatosBiograficos: [],
+    conceitos: [],
+    fasesDoJogo: [],
     lugares: [],
     fontes: [],
     imagens: [],
@@ -426,8 +454,13 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
     votacoes: indexById(registros.votacoes),
     votos: indexById(registros.votos),
     atosExecutivos: indexById(registros.atosExecutivos),
+    atuacoesLegislativas: indexById(registros.atuacoesLegislativas),
     coberturaPolitica: indexById(registros.coberturaPolitica),
     identidadesInstitucionais: indexById(registros.identidadesInstitucionais),
+    propostasEleitorais: indexById(registros.propostasEleitorais),
+    fatosBiograficos: indexById(registros.fatosBiograficos),
+    conceitos: indexById(registros.conceitos),
+    fasesDoJogo: indexById(registros.fasesDoJogo),
     lugares: indexById(registros.lugares),
     fontes: indexById(registros.fontes),
     imagens: indexById(registros.imagens),
@@ -692,6 +725,16 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
     checkDateAgainstCut(ctx, dados.data, "data");
   }
 
+  for (const { dados, arquivo } of registros.atuacoesLegislativas) {
+    const ctx = contexto("atuacoesLegislativas", dados, arquivo);
+    checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
+    checkReference(ctx, "mandatos", dados.mandatoId, "mandatoId");
+    // Em uma comissão mista do Congresso, a pessoa atua pelo mandato da casa dela: a casa só é conferida fora do Congresso Nacional.
+    checkMandate(ctx, dados.pessoaId, dados.mandatoId, dados.data, "mandatoId", dados.instituicao === "congresso-nacional" ? undefined : dados.instituicao);
+    checkCitations(ctx, dados.fontes);
+    checkDateAgainstCut(ctx, dados.data, "data");
+  }
+
   for (const { dados, arquivo } of registros.coberturaPolitica) {
     const ctx = contexto("coberturaPolitica", dados, arquivo);
     checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
@@ -704,6 +747,134 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
     checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
     checkCitations(ctx, dados.fontes);
     if (dados.validade !== null) checkPeriodAgainstCut(ctx, dados.validade, "validade");
+  }
+
+  // -------------------------------------------------------------------------
+  // 4c. Propostas eleitorais: o que o documento registrado propõe
+  // -------------------------------------------------------------------------
+
+  const anoDeCorte = edicao === null ? null : Number(edicao.dataDeCorte.slice(0, 4));
+  for (const { dados, arquivo } of registros.propostasEleitorais) {
+    const ctx = contexto("propostasEleitorais", dados, arquivo);
+    checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
+    checkCitations(ctx, dados.fontes);
+    if (edicao !== null && anoDeCorte !== null && dados.eleicao > anoDeCorte) {
+      relate(ctx, "data-apos-corte", "eleicao", `Eleição de ${dados.eleicao}, posterior à data de corte da edição (${edicao.dataDeCorte}).`);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // 4d. Conteúdo educativo do jogo: fatos biográficos, conceitos e fases
+  // -------------------------------------------------------------------------
+
+  for (const { dados, arquivo } of registros.fatosBiograficos) {
+    const ctx = contexto("fatosBiograficos", dados, arquivo);
+    checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
+    checkCitations(ctx, dados.fontes);
+    if (dados.data.tipo === "data") checkDateAgainstCut(ctx, dados.data, "data");
+  }
+
+  for (const { dados, arquivo } of registros.conceitos) {
+    checkCitations(contexto("conceitos", dados, arquivo), dados.fontes);
+  }
+
+  /** A coleção em que a referência de uma fase se resolve; uma decisão é um voto, um ato do Executivo ou uma atuação legislativa. */
+  const colecaoDaReferencia = (referencia: ReferenciaDeFase): Colecao => {
+    if (referencia.tipo === "acontecimento") return "acontecimentos";
+    if (referencia.tipo === "decisao") return porId.atosExecutivos.has(referencia.id) ? "atosExecutivos" : porId.atuacoesLegislativas.has(referencia.id) ? "atuacoesLegislativas" : "votos";
+    if (referencia.tipo === "fato") return "fatosBiograficos";
+    if (referencia.tipo === "mandato") return "mandatos";
+    if (referencia.tipo === "filiacao") return "filiacoes";
+    if (referencia.tipo === "proposta") return "propostasEleitorais";
+    return "conceitos";
+  };
+  /** De quem é o registro apontado e, quando há, a data dele. Registro ausente devolve `null`. */
+  const alvoDaReferencia = (referencia: ReferenciaDeFase): { pessoaIds: readonly string[] | null; data: DataHistorica | null } | null => {
+    const { tipo, id } = referencia;
+    if (tipo === "acontecimento") {
+      const alvo = porId.acontecimentos.get(id)?.dados;
+      return alvo === undefined ? null : { pessoaIds: alvo.pessoaIds, data: alvo.data };
+    }
+    if (tipo === "decisao") {
+      const ato = porId.atosExecutivos.get(id)?.dados;
+      if (ato !== undefined) return { pessoaIds: [ato.atribuicao.pessoaId], data: ato.data };
+      const atuacao = porId.atuacoesLegislativas.get(id)?.dados;
+      if (atuacao !== undefined) return { pessoaIds: [atuacao.pessoaId], data: atuacao.data };
+      const voto = porId.votos.get(id)?.dados;
+      return voto === undefined ? null : { pessoaIds: [voto.pessoaId], data: porId.votacoes.get(voto.votacaoId)?.dados.data ?? null };
+    }
+    if (tipo === "fato") {
+      const alvo = porId.fatosBiograficos.get(id)?.dados;
+      return alvo === undefined ? null : { pessoaIds: [alvo.pessoaId], data: alvo.data.tipo === "data" ? { valor: alvo.data.valor, precisao: alvo.data.precisao } : null };
+    }
+    if (tipo === "mandato") {
+      const alvo = porId.mandatos.get(id)?.dados;
+      return alvo === undefined ? null : { pessoaIds: [alvo.pessoaId], data: null };
+    }
+    if (tipo === "filiacao") {
+      const alvo = porId.filiacoes.get(id)?.dados;
+      return alvo === undefined ? null : { pessoaIds: [alvo.pessoaId], data: null };
+    }
+    if (tipo === "proposta") {
+      const alvo = porId.propostasEleitorais.get(id)?.dados;
+      return alvo === undefined ? null : { pessoaIds: [alvo.pessoaId], data: null };
+    }
+    return porId.conceitos.has(id) ? { pessoaIds: null, data: null } : null;
+  };
+
+  // Uma fase por posição em cada sala de cada pessoa. Com uma das duas fora da publicação, é só pendência.
+  const posicoes = new Map<string, { id: string; strict: boolean }>();
+  for (const { dados, arquivo } of registros.fasesDoJogo) {
+    const ctx = contexto("fasesDoJogo", dados, arquivo);
+    checkReference(ctx, "pessoas", dados.pessoaId, "pessoaId");
+
+    const checkPhaseReference = (referencia: ReferenciaDeFase, campo: string) => {
+      checkReference(ctx, colecaoDaReferencia(referencia), referencia.id, campo);
+      const alvo = alvoDaReferencia(referencia);
+      if (alvo !== null && alvo.pessoaIds !== null && !alvo.pessoaIds.includes(dados.pessoaId)) {
+        relate(ctx, "referencia-de-outra-pessoa", campo, `O registro "${referencia.id}" é de outra pessoa: uma fase só aponta registros da pessoa dela.`);
+      }
+    };
+    checkPhaseReference(dados.marco, "marco");
+    dados.explicacao.forEach((bloco, indice) => bloco.referencias.forEach((referencia, posicao) => checkPhaseReference(referencia, `explicacao[${indice}].referencias[${posicao}]`)));
+    dados.explorar.forEach((referencia, indice) => checkPhaseReference(referencia, `explorar[${indice}]`));
+    for (const id of dados.conceitos) checkReference(ctx, "conceitos", id, "conceitos");
+
+    const marco = alvoDaReferencia(dados.marco);
+    if (marco !== null && marco.data !== null) {
+      const ano = yearOf(marco.data);
+      if (ano < dados.periodo.de || ano > dados.periodo.ate) {
+        relate(ctx, "marco-fora-do-periodo", "periodo", `O marco é de ${ano}, fora do período da fase (${dados.periodo.de} a ${dados.periodo.ate}).`);
+      }
+    }
+
+    const { atividade } = dados;
+    if (atividade.tipo === "pergunta") {
+      atividade.referencias.forEach((referencia, indice) => checkPhaseReference(referencia, `atividade.referencias[${indice}]`));
+    } else {
+      atividade.itens.forEach((referencia, indice) => checkPhaseReference(referencia, `atividade.itens[${indice}]`));
+      // A ordenação só é pedida quando as datas decidem a ordem, sem ambiguidade.
+      const datas = atividade.itens.map((referencia) => alvoDaReferencia(referencia)?.data ?? null);
+      datas.forEach((data, indice) => {
+        const item = atividade.itens[indice]!;
+        if (data === null) {
+          if (alvoDaReferencia(item) !== null) relate(ctx, "ordem-indeterminada", `atividade.itens[${indice}]`, `O registro "${item.id}" não tem data documentada e não entra em uma ordenação.`);
+          return;
+        }
+        for (let outro = indice + 1; outro < datas.length; outro += 1) {
+          const outra = datas[outro];
+          if (outra === null || outra === undefined) continue;
+          if (intervalsOverlap(calcInterval(data), calcInterval(outra))) {
+            relate(ctx, "ordem-indeterminada", "atividade.itens", `As datas de "${item.id}" (${formatDate(data)}) e de "${atividade.itens[outro]!.id}" (${formatDate(outra)}) não decidem a ordem.`);
+          }
+        }
+      });
+    }
+
+    const chave = `${dados.pessoaId}:${dados.sala}:${dados.ordem}`;
+    const outra = posicoes.get(chave);
+    if (outra === undefined) posicoes.set(chave, { id: dados.id, strict: ctx.strict });
+    else relate({ ...ctx, strict: ctx.strict && outra.strict }, "posicao-repetida", "ordem", `A posição ${dados.ordem} da sala "${dados.sala}" já é da fase "${outra.id}".`);
   }
 
   // -------------------------------------------------------------------------

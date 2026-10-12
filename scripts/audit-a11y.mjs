@@ -16,12 +16,14 @@
 // Sai com código 1 quando encontra texto abaixo do contraste mínimo, rolagem
 // lateral, resposta inesperada ou parada de foco que não dá para ver.
 //
-// As telas do jogo cobrem os dois personagens, as três salas e os estados da
-// missão (a ajuda com o humor desligado, a decisão recolhida, as duas etapas
-// da resposta, o erro, a conclusão e a transição): o progresso e a preferência
-// são semeados no navegador, como nas jornadas, e os diálogos são abertos
-// pela interface. Roda com o gancho de módulos do projeto (package.json), que
-// resolve os módulos do jogo em TypeScript.
+// As telas do jogo cobrem os dois personagens, a trajetória e os
+// aprofundamentos, e os estados de uma fase: a cena, a ajuda com o humor
+// desligado, a fase aberta, a resposta errada e a certa, a ordenação, a fase de
+// processos, um registro, uma decisão, a lista de fases, o resumo, a leitura
+// sem o cenário e a retomada. As janelas são abertas pela interface, e a
+// preferência é semeada no navegador, no formato que o jogo grava. Roda com o
+// gancho de módulos do projeto (package.json), que resolve os módulos do jogo
+// em TypeScript.
 //
 // O que a passagem não vê: uma camada posta por cima do texto, como uma
 // hachura, não entra na conta do contraste. As capturas existem para isso, e
@@ -33,11 +35,7 @@ import path from "node:path";
 
 import { chromium } from "@playwright/test";
 
-import { chaptersOf } from "@/lib/game/chapters";
-import { legacyTaskSignature, recordIds, requiredRecords } from "@/lib/game/mission";
-import { PREFERENCES_KEY, serializePreferences } from "@/lib/game/preferences";
-import { chaptersInRoom } from "@/lib/game/rooms";
-import { storageKey } from "@/lib/game/storage";
+import { DEFAULT_PREFERENCES, PREFERENCES_KEY, serializePreferences } from "@/lib/game/preferences";
 
 const args = new Map();
 for (let i = 2; i < process.argv.length; i += 2) args.set(process.argv[i], process.argv[i + 1]);
@@ -71,82 +69,41 @@ if (!alvo) {
   process.exit(1);
 }
 
-// A missão documental da trajetória de Lula: o capítulo com a tarefa de
-// decisão, a decisão dela, o documento que a sustenta (a resposta certa da
-// evidência) e um registro do capítulo que a tarefa não pede.
-const TRAJETORIA = chaptersInRoom(chaptersOf("lula"), "historico");
-const MISSAO = TRAJETORIA.find((capitulo) => capitulo.tarefa.tipo === "decisao");
-if (!MISSAO) {
-  console.error("A trajetória de Lula não tem capítulo com tarefa de decisão.");
+// As fases do jogo que as telas abrem saem do conteúdo: a origem de Lula (uma
+// pergunta, com a opção certa e uma errada), a primeira ordenação dele, a fase
+// de processos de Flávio Bolsonaro (contexto sensível, com a ficha judicial),
+// a fase em que o marco é uma atuação legislativa e a última, que leva ao
+// resumo. O número da fase no endereço é a posição dela na trajetória.
+const trajetoriaDe = (pessoaId) => conjunto.fasesDoJogo.filter((fase) => fase.pessoaId === pessoaId && fase.sala === "historico").sort((a, b) => a.ordem - b.ordem);
+const TRAJETORIA = trajetoriaDe("lula");
+const ORIGEM = TRAJETORIA[0];
+const ORDENACAO = TRAJETORIA.find((fase) => fase.atividade.tipo === "ordem");
+const ULTIMA = TRAJETORIA.at(-1);
+const PROCESSOS = trajetoriaDe("flavio-bolsonaro").find((fase) => fase.id.endsWith("-processos"));
+const COM_DECISAO = trajetoriaDe("flavio-bolsonaro").find((fase) => fase.marco.tipo === "decisao");
+if (!ORIGEM || ORIGEM.atividade.tipo !== "pergunta" || !ORDENACAO || !ULTIMA || !PROCESSOS || !COM_DECISAO) {
+  console.error("O conteúdo não tem as fases que a passagem abre: a origem de Lula com pergunta, uma ordenação, a fase de processos e uma fase com decisão no marco.");
   process.exit(1);
 }
-const DECISAO_ID = MISSAO.tarefa.decisaoId;
-const decisao = conjunto.atosExecutivos.find((item) => item.id === DECISAO_ID) ?? conjunto.votos.find((item) => item.id === DECISAO_ID);
-if (!decisao) {
-  console.error(`A decisão ${DECISAO_ID} do capítulo ${MISSAO.id} não está no conteúdo gerado.`);
-  process.exit(1);
-}
-const EVIDENCIA_CERTA = decisao.fontes[0].fonteId;
-const ULTIMO_REGISTRO = recordIds(MISSAO).filter((id) => !requiredRecords(MISSAO.tarefa).includes(id)).at(-1);
+const CERTA = ORIGEM.atividade.correta;
+const ERRADA = ORIGEM.atividade.opcoes.find((opcao) => opcao.id !== CERTA).id;
 
-/**
- * Um progresso salvo no formato 4 (a assinatura só por tipo e identificadores,
- * que a leitura migra), com a trajetória concluída até antes da missão e ela
- * no estado pedido: `inicio` (nada recolhido), `interpretacao` (a decisão
- * recolhida e a evidência confirmada) ou `quase` (tudo recolhido menos o
- * último registro, e a tarefa cumprida).
- */
-function progressoNaMissao(estado) {
-  const entradas = {};
-  for (const capitulo of TRAJETORIA) {
-    if (capitulo.numero < MISSAO.numero) {
-      const comResposta = capitulo.tarefa.tipo !== "registro";
-      entradas[capitulo.id] = {
-        status: "concluido",
-        tarefa: {
-          recolhidos: recordIds(capitulo),
-          confirmada: comResposta,
-          tentativas: comResposta ? 1 : 0,
-          ...(comResposta ? { assinatura: legacyTaskSignature(capitulo.tarefa) } : {}),
-          ...(capitulo.tarefa.tipo === "decisao" ? { evidencia: true } : {}),
-        },
-      };
-    } else if (capitulo.id === MISSAO.id) {
-      const assinatura = legacyTaskSignature(MISSAO.tarefa);
-      entradas[capitulo.id] =
-        estado === "interpretacao"
-          ? { status: "disponivel", tarefa: { recolhidos: [DECISAO_ID], confirmada: false, tentativas: 1, evidencia: true, assinatura } }
-          : estado === "quase"
-            ? { status: "disponivel", tarefa: { recolhidos: recordIds(MISSAO).filter((id) => id !== ULTIMO_REGISTRO), confirmada: true, tentativas: 2, evidencia: true, assinatura } }
-            : { status: "disponivel", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
-    } else entradas[capitulo.id] = { status: "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
-  }
-  return { versao: 4, personagem: "lula", capitulos: entradas };
-}
-
-// As janelas do jogo ignoram ponteiro por 350 ms ao abrir (D-107): os passos esperam antes de clicar dentro delas.
+// As janelas do jogo ignoram ponteiro por 350 ms ao abrir (D-107): os passos esperam a janela aceitar o clique.
 const GUARDA = 450;
-async function abrirPainel(page) {
-  await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-  await page.waitForSelector('[data-dialogo="painel"]');
-  await page.waitForTimeout(GUARDA);
+const janela = (page, nome) => page.waitForSelector(`[data-dialogo="${nome}"] [role="dialog"][data-aceita-ponteiro="sim"]`);
+async function abrirFase(page) {
+  await page.locator("[data-abrir-marco]").click();
+  await janela(page, "fase");
 }
-async function recolher(page, id) {
-  await abrirPainel(page);
-  await page.locator(`[data-recolher="${id}"]`).click();
-  await page.waitForSelector('[data-dialogo="registro"]');
-  await page.waitForTimeout(GUARDA);
+async function responder(page, opcao) {
+  await abrirFase(page);
+  await page.locator(`[data-dialogo="fase"] [data-opcao="${opcao}"]`).click();
+  await page.locator('[data-dialogo="fase"] [data-responder]').click();
 }
-async function abrirEvidencia(page) {
-  await recolher(page, DECISAO_ID);
-  await page.getByRole("button", { name: "Guardar e responder" }).click();
-  await page.waitForSelector('[data-dialogo="decisao"]');
-  await page.waitForTimeout(GUARDA);
-}
-async function abrirConclusao(page) {
-  await recolher(page, ULTIMO_REGISTRO);
-  await page.getByRole("button", { name: /Guardar e/ }).click();
-  await page.waitForSelector('[data-escrivao-caixa="conclusao"]');
+async function lerESeguir(page) {
+  await abrirFase(page);
+  await page.locator('[data-dialogo="fase"] [data-ver-explicacao]').click();
+  await page.locator('[data-dialogo="fase"] [data-continuar]').click();
 }
 
 const SCREENS = [
@@ -159,63 +116,81 @@ const SCREENS = [
   { nome: "07-metodologia", url: "/metodologia/" },
   { nome: "08-pagina-nao-encontrada", url: "/endereco-que-nao-existe/", status: 404 },
   { nome: "09-jogo-entrada", url: "/jogo/" },
-  { nome: "10-jogo-cena", url: "/jogo/lula/", jogo: true },
-  { nome: "11-jogo-cena-flavio-bolsonaro", url: "/jogo/flavio-bolsonaro/", jogo: true },
-  { nome: "12-jogo-sala-economia", url: "/jogo/lula/economia/", jogo: true },
-  { nome: "13-jogo-sala-seguranca-publica", url: "/jogo/flavio-bolsonaro/seguranca-publica/", jogo: true },
+  { nome: "10-jogo-cena", url: "/jogo/lula/?fase=1", jogo: true },
+  { nome: "11-jogo-cena-flavio-bolsonaro", url: "/jogo/flavio-bolsonaro/?fase=1", jogo: true },
+  { nome: "12-jogo-aprofundamento-economia", url: "/jogo/lula/economia/", jogo: true },
+  { nome: "13-jogo-aprofundamento-seguranca", url: "/jogo/flavio-bolsonaro/seguranca-publica/", jogo: true },
   {
     nome: "14-jogo-ajuda-sem-humor",
-    url: "/jogo/lula/",
+    url: "/jogo/lula/?fase=1",
     jogo: true,
-    preferencias: { humor: false },
-    presente: '[data-dialogo="guia"]',
+    preferencias: { ...DEFAULT_PREFERENCES, humor: false },
+    presente: '[data-dialogo="ajuda"]',
     preparar: async (page) => {
-      await page.getByRole("button", { name: "Como jogar" }).click();
-      await page.waitForSelector('[data-dialogo="guia"]');
+      await page.locator("[data-abrir-ajuda]").click();
+      await janela(page, "ajuda");
     },
   },
-  { nome: "15-jogo-decisao-recolhida", url: "/jogo/lula/", jogo: true, progresso: () => progressoNaMissao("inicio"), presente: '[data-dialogo="registro"]', preparar: (page) => recolher(page, DECISAO_ID) },
-  { nome: "16-jogo-decisao-evidencia", url: "/jogo/lula/", jogo: true, progresso: () => progressoNaMissao("inicio"), presente: '[data-dialogo="decisao"]', preparar: abrirEvidencia },
+  { nome: "15-jogo-fase-aberta", url: "/jogo/lula/?fase=1", jogo: true, presente: '[data-dialogo="fase"]', preparar: abrirFase },
+  { nome: "16-jogo-resposta-errada", url: "/jogo/lula/?fase=1", jogo: true, presente: '[data-resultado="errado"]', preparar: (page) => responder(page, ERRADA) },
+  { nome: "17-jogo-resposta-certa", url: "/jogo/lula/?fase=1", jogo: true, presente: '[data-resultado="certo"]', preparar: (page) => responder(page, CERTA) },
+  { nome: "18-jogo-ordenacao", url: `/jogo/lula/?fase=${ORDENACAO.ordem}`, jogo: true, presente: '[data-atividade="ordem"]', preparar: abrirFase },
+  { nome: "19-jogo-fase-de-processos", url: `/jogo/flavio-bolsonaro/?fase=${PROCESSOS.ordem}`, jogo: true, presente: "[data-ficha-judicial]", preparar: abrirFase },
   {
-    nome: "17-jogo-decisao-erro",
-    url: "/jogo/lula/",
+    nome: "20-jogo-registro",
+    url: "/jogo/lula/?fase=1",
     jogo: true,
-    progresso: () => progressoNaMissao("inicio"),
-    presente: '[data-decisao-resultado="errado"]',
+    presente: '[data-dialogo="registro"]',
     preparar: async (page) => {
-      await abrirEvidencia(page);
-      const opcoes = await page.locator('[data-dialogo="decisao"] [data-escolher]').evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")));
-      const errada = opcoes.find((id) => id !== EVIDENCIA_CERTA);
-      await page.locator(`[data-escolher="${errada}"]`).click();
-      await page.locator('[data-confirmar-decisao="evidencia"]').click();
-      await page.waitForSelector('[data-decisao-resultado="errado"]');
+      await abrirFase(page);
+      await page.locator('[data-dialogo="fase"] [data-explorar] [data-abrir-registro]').first().click();
+      await janela(page, "registro");
     },
   },
   {
-    nome: "18-jogo-decisao-interpretacao",
-    url: "/jogo/lula/",
+    nome: "21-jogo-decisao",
+    url: `/jogo/flavio-bolsonaro/?fase=${COM_DECISAO.ordem}`,
     jogo: true,
-    progresso: () => progressoNaMissao("interpretacao"),
-    presente: '[data-dialogo="decisao"]',
+    presente: "[data-decisao-cartao]",
     preparar: async (page) => {
-      await abrirPainel(page);
-      await page.locator('[data-responder-tarefa="decisao"]').click();
-      await page.waitForSelector('[data-dialogo="decisao"]');
+      await abrirFase(page);
+      await page.locator('[data-dialogo="fase"] [data-fontes-da-fase] summary').click();
+      await page.locator(`[data-dialogo="fase"] [data-apoio="${COM_DECISAO.marco.tipo}:${COM_DECISAO.marco.id}"] [data-abrir-registro]`).click();
+      await janela(page, "registro");
     },
   },
-  { nome: "19-jogo-conclusao", url: "/jogo/lula/", jogo: true, progresso: () => progressoNaMissao("quase"), presente: '[data-escrivao-caixa="conclusao"]', preparar: abrirConclusao },
   {
-    nome: "20-jogo-transicao",
-    url: "/jogo/lula/",
+    nome: "22-jogo-lista-de-fases",
+    url: "/jogo/lula/?fase=1",
     jogo: true,
-    progresso: () => progressoNaMissao("quase"),
-    // A transição segue sozinha depois de 2,6 segundos: a medição tem de terminar antes.
-    presente: "[data-transicao]",
+    presente: '[data-dialogo="fases"]',
     preparar: async (page) => {
-      await abrirConclusao(page);
-      await abrirPainel(page);
-      await page.locator("[data-atravessar-saida]").click();
-      await page.waitForSelector("[data-transicao]");
+      await page.locator("[data-abrir-fases]").click();
+      await janela(page, "fases");
+    },
+  },
+  {
+    nome: "23-jogo-resumo",
+    url: `/jogo/lula/?fase=${ULTIMA.ordem}`,
+    jogo: true,
+    presente: '[data-dialogo="resumo"]',
+    preparar: async (page) => {
+      await lerESeguir(page);
+      await janela(page, "resumo");
+    },
+  },
+  { nome: "24-jogo-leitura-sem-cenario", url: "/jogo/lula/?fase=1&leitura=1", jogo: "leitura", presente: "[data-leitura-da-fase]" },
+  {
+    nome: "25-jogo-retomada",
+    url: "/jogo/lula/?fase=1",
+    jogo: true,
+    presente: "[data-aviso-retomada]",
+    // Duas fases concluídas pela leitura, e a trajetória aberta de novo sem pedido de fase: a tela diz onde a pessoa parou.
+    preparar: async (page) => {
+      await lerESeguir(page);
+      await lerESeguir(page);
+      await page.goto(`${BASE}/jogo/lula/`);
+      await settle(page, { jogo: true });
     },
   },
 ];
@@ -396,23 +371,20 @@ async function waitForServer() {
 
 /**
  * Abre uma tela: nas do jogo, limpa o que ficou no navegador da tela anterior
- * e semeia o progresso e a preferência pedidos antes de recarregar, como as
- * jornadas fazem. Depois espera o mapa ou a cena e roda o passo da tela.
+ * (o progresso e as preferências) e semeia a preferência pedida antes de
+ * recarregar. Depois espera o mapa ou a cena e roda o passo da tela.
  */
 async function open(page, screen) {
   let resposta = await page.goto(BASE + screen.url);
   if (screen.jogo) {
     await page.evaluate(
-      ({ prefixo, chaveDasPreferencias, progresso, chaveDoProgresso, preferencias }) => {
+      ({ prefixo, chaveDasPreferencias, preferencias }) => {
         for (const chave of Object.keys(window.localStorage)) if (chave.startsWith(prefixo)) window.localStorage.removeItem(chave);
-        if (progresso) window.localStorage.setItem(chaveDoProgresso, JSON.stringify(progresso));
         if (preferencias) window.localStorage.setItem(chaveDasPreferencias, preferencias);
       },
       {
         prefixo: "atlas-politico:jogo",
         chaveDasPreferencias: PREFERENCES_KEY,
-        progresso: screen.progresso ? screen.progresso() : null,
-        chaveDoProgresso: storageKey("lula"),
         // A preferência vai no formato que o jogo grava.
         preferencias: screen.preferencias ? serializePreferences(screen.preferencias) : null,
       },
@@ -435,8 +407,8 @@ async function settle(page, screen) {
     await page.waitForTimeout(600);
   }
   if (screen.jogo) {
-    // A cena do jogo é carregada só no navegador; o progresso salvo entra depois da hidratação.
-    await page.waitForSelector('[data-palco="pronto"]', { timeout: 15_000 }).catch(() => {});
+    // A cena do jogo é carregada só no navegador; o progresso salvo entra depois da hidratação. Na leitura sem o cenário não há cena a esperar.
+    if (screen.jogo !== "leitura") await page.waitForSelector('[data-palco="pronto"]', { timeout: 15_000 }).catch(() => {});
     await page.waitForSelector('[data-carregado="sim"]', { timeout: 15_000 }).catch(() => {});
     await page.waitForTimeout(400);
   }
@@ -457,7 +429,7 @@ const report = {
   navegador: `Chromium ${browser.version()}, sem interface, movimento reduzido`,
   pasta: path.relative(process.cwd(), OUT_DIR) || ".",
   acontecimento: alvo.slug,
-  missao: { capitulo: MISSAO.id, decisao: DECISAO_ID },
+  jogo: { pergunta: ORIGEM.id, ordenacao: ORDENACAO.id, processos: PROCESSOS.id, decisao: COM_DECISAO.marco.id, ultima: ULTIMA.id },
   telas: [],
   teclado: [],
 };

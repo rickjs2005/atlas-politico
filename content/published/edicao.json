@@ -1,11 +1,11 @@
 {
-  "versao": "0.2.1",
+  "versao": "0.3.0",
   "dataDeCorte": "2026-10-08",
   "revisao": {
     "tipo": "assistida-por-ia",
     "revisadoPor": "Claude, modelo de IA da Anthropic",
-    "revisadoEm": "2026-10-09",
-    "observacoes": "Revisão editorial de 9 de outubro de 2026: as 60 fontes foram abertas de novo e cada registro foi relido contra os documentos, com assistência de IA. A data de corte não mudou. Revisão humana pendente."
+    "revisadoEm": "2026-10-11",
+    "observacoes": "Edição 0.3.0, de 11 de outubro de 2026: os registros novos (fatos biográficos, conceitos, fases do jogo, propostas eleitorais, atuações legislativas e atos de 2003 a 2010) foram escritos e conferidos, com assistência de IA, contra os documentos baixados nesse dia; os registros das edições anteriores não foram relidos nesta passagem. A data de corte não mudou. Revisão humana pendente."
   },
   "cobertura": [
     {
@@ -20,7 +20,7 @@
           "tipo": "em-curso"
         }
       },
-      "observacao": "Acontecimentos de 1975 a 2026. Não há acontecimentos com data em 1981-1985, 1990-1993, 1995-2001 e 2007-2015: são lacunas de pesquisa desta edição, e não ausência de atividade. Decisões políticas: amostra de seis atos do Executivo nos temas Economia e Segurança pública, de 2023 à data de corte, escolhida por abrangência, efeito institucional e qualidade da evidência; não é o histórico completo de decisões."
+      "observacao": "Acontecimentos de 1975 a 2026. Não há acontecimentos com data em 1981-1985, 1990-1993, 1995-2001 e 2007-2015: são lacunas de pesquisa desta edição, e não ausência de atividade. O atlas traz também fatos biográficos, de 1945 a 1978 (nascimento, mudanças de cidade, formação, trabalho e a entrada e a reeleição no sindicato), que não entram na linha do tempo. Decisões políticas: amostra de dezessete atos do Executivo, e não o histórico completo de decisões. Os seis de 2023 à data de corte são só de Economia e Segurança pública, escolhidos por abrangência, efeito institucional e qualidade da evidência. Os onze de 2003 a 2010 foram escolhidos, entre os trinta atos conferidos, para que cada uma das sete áreas da comparação tivesse ao menos um ato de alcance nacional, com tipos de ato diferentes. Propostas de 2026: três frases por área do documento registrado no TSE, e não o documento inteiro."
     },
     {
       "pessoaId": "flavio-bolsonaro",
@@ -34,7 +34,7 @@
           "tipo": "em-curso"
         }
       },
-      "observacao": "Acontecimentos de 2002 a 2026. O período na Assembleia Legislativa do Rio de Janeiro, de 2003 a 2018, está coberto apenas pelas eleições: propostas, votações e comissões da Alerj não foram pesquisadas nesta edição. Decisões políticas: amostra de seis votos no Plenário do Senado nos temas Economia e Segurança pública, de 2023 à data de corte, escolhida por abrangência, efeito institucional e qualidade da evidência; não é o histórico completo de decisões."
+      "observacao": "Acontecimentos de 2002 a 2026. O período na Assembleia Legislativa do Rio de Janeiro, de 2003 a 2018, está coberto pelas eleições e, nas decisões, por uma amostra de oito leis de autoria individual; os votos dele, as comissões e os projetos que não viraram lei não foram pesquisados nesta edição. O atlas traz também fatos biográficos, de 1981 a 2003 (nascimento, formação, estágios, a primeira candidatura e a mudança de nome do partido), que não entram na linha do tempo. Decisões políticas: amostra, e não o histórico completo de decisões. Seis votos no Plenário do Senado, de 2023 à data de corte, só em Economia e Segurança pública, escolhidos por abrangência, efeito institucional e qualidade da evidência. Oito leis estaduais de autoria individual, de 2003 a 2018, duas por legislatura, por uma regra fixa que não olha o assunto da lei. Uma relatoria no Congresso, em 2019: a de designação mais antiga, entre as seis conferidas, cuja matéria gerou norma. Propostas de 2026: três frases por área do documento registrado no TSE, e não o documento inteiro."
     }
   ],
   "alteracoes": [
@@ -454,6 +454,852 @@
         {
           "entidade": "votacao",
           "id": "senado-votacao-6714"
+        }
+      ]
+    },
+    {
+      "data": "2026-10-11",
+      "descricao": "Edição 0.3.0: o conteúdo da trilha simples do jogo, sem mudança na data de corte. 22 fases (nove de trajetória e dois aprofundamentos para cada pessoa), 14 fatos biográficos (origem, família, mudanças de cidade, formação, trabalho e entrada no sindicato, com as divergências entre documentos registradas) e 26 conceitos (a definição simples de cada termo, com o texto oficial que a sustenta). Nenhum acontecimento novo: cada pessoa segue com vinte, o limite da política editorial. 9 atuações legislativas de Flávio Bolsonaro, registro novo ao lado dos votos e dos atos: a autoria de oito leis estaduais, duas por legislatura, por regra fixa, e a relatoria da Medida Provisória nº 866, de 2018. 11 atos de Lula na Presidência, de 2003 a 2010, com 8 proposições, e 3 declarações de cobertura da pesquisa. 42 propostas eleitorais: três frases por área do documento que cada candidatura registrou no TSE em 2026. O mandato de deputado estadual de Flávio Bolsonaro passa a trazer a data de início, 1º de fevereiro de 2003, que é a da posse da legislatura informada pela Alerj. 74 fontes novas. Duas candidaturas de Lula, a de 1982 ao governo de São Paulo e a de 1998 à Presidência, foram pesquisadas e ficaram na pasta de rascunhos: publicá-las passaria do limite de vinte acontecimentos por pessoa, o que é decisão editorial. Os critérios de cada amostra, o que foi conferido e ficou de fora e as divergências estão em research/trilha-2026-10.md; os trechos literais, em docs/evidencias/provas-2026-10-11.json. Conferência assistida por IA; revisão humana pendente.",
+      "itens": [
+        {
+          "entidade": "proposicao",
+          "id": "camara-mpv-132-2003"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "camara-pl-1555-2003"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "camara-pec-40-2003"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "camara-mpv-213-2004"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "camara-pl-4559-2004"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "camara-pl-7431-2006"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "camara-pl-18-2007"
+        },
+        {
+          "entidade": "proposicao",
+          "id": "camara-pl-5940-2009"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-mpv-132-2003-bolsa-familia"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-10836-2004-bolsa-familia"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-10826-2003-armas-de-fogo"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "camara-pec-40-2003-iniciativa"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-decreto-5090-2004-farmacia-popular"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-11096-2005-prouni"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-11340-2006-violencia-contra-a-mulher"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-decreto-6025-2007-pac"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-11738-2008-piso-do-magisterio"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-12187-2009-mudanca-do-clima"
+        },
+        {
+          "entidade": "ato-executivo",
+          "id": "planalto-lei-12351-2010-partilha-do-pre-sal"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "alerj-lei-4250-2003-autoria"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "alerj-lei-4916-2006-autoria"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "alerj-lei-5019-2007-autoria"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "alerj-lei-5646-2010-autoria"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "alerj-lei-5938-2011-autoria"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "alerj-lei-6785-2014-autoria"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "alerj-lei-7008-2015-autoria"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "alerj-lei-7877-2018-autoria"
+        },
+        {
+          "entidade": "atuacao-legislativa",
+          "id": "congresso-mpv-866-2018-relatoria"
+        },
+        {
+          "entidade": "cobertura-politica",
+          "id": "cobertura-lula-geral-2003-2010"
+        },
+        {
+          "entidade": "cobertura-politica",
+          "id": "cobertura-flavio-bolsonaro-geral-2003-2018"
+        },
+        {
+          "entidade": "cobertura-politica",
+          "id": "cobertura-flavio-bolsonaro-geral-2019-2026"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-economia-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-economia-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-economia-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-seguranca-publica-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-seguranca-publica-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-seguranca-publica-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-saude-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-saude-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-saude-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-educacao-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-educacao-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-educacao-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-reforma-do-estado-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-reforma-do-estado-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-reforma-do-estado-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-meio-ambiente-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-meio-ambiente-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-meio-ambiente-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-direitos-das-mulheres-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-direitos-das-mulheres-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-lula-2026-direitos-das-mulheres-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-economia-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-economia-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-economia-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-saude-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-saude-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-saude-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-educacao-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-educacao-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-educacao-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-reforma-do-estado-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-reforma-do-estado-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-reforma-do-estado-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-meio-ambiente-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-meio-ambiente-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-meio-ambiente-3"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-direitos-das-mulheres-1"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-direitos-das-mulheres-2"
+        },
+        {
+          "entidade": "proposta-eleitoral",
+          "id": "proposta-flavio-bolsonaro-2026-direitos-das-mulheres-3"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-nascimento"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-mudanca-para-o-litoral-paulista"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-mudanca-para-a-cidade-de-sao-paulo"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-escola"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-primeiros-trabalhos"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-curso-no-senai"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-trabalho-na-villares"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-entrada-na-diretoria-do-sindicato"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "lula-reeleicao-no-sindicato"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "flavio-bolsonaro-nascimento"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "flavio-bolsonaro-formacao"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "flavio-bolsonaro-estagios"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "flavio-bolsonaro-registro-da-primeira-candidatura"
+        },
+        {
+          "entidade": "fato-biografico",
+          "id": "flavio-bolsonaro-partido-muda-de-nome"
+        },
+        {
+          "entidade": "conceito",
+          "id": "sindicato"
+        },
+        {
+          "entidade": "conceito",
+          "id": "greve"
+        },
+        {
+          "entidade": "conceito",
+          "id": "partido-politico"
+        },
+        {
+          "entidade": "conceito",
+          "id": "deputado-federal"
+        },
+        {
+          "entidade": "conceito",
+          "id": "assembleia-constituinte"
+        },
+        {
+          "entidade": "conceito",
+          "id": "turnos-da-eleicao"
+        },
+        {
+          "entidade": "conceito",
+          "id": "presidente-da-republica"
+        },
+        {
+          "entidade": "conceito",
+          "id": "medida-provisoria"
+        },
+        {
+          "entidade": "conceito",
+          "id": "sancao"
+        },
+        {
+          "entidade": "conceito",
+          "id": "veto"
+        },
+        {
+          "entidade": "conceito",
+          "id": "decreto"
+        },
+        {
+          "entidade": "conceito",
+          "id": "pec"
+        },
+        {
+          "entidade": "conceito",
+          "id": "projeto-de-lei"
+        },
+        {
+          "entidade": "conceito",
+          "id": "lei-complementar"
+        },
+        {
+          "entidade": "conceito",
+          "id": "deputado-estadual"
+        },
+        {
+          "entidade": "conceito",
+          "id": "senador"
+        },
+        {
+          "entidade": "conceito",
+          "id": "comissao"
+        },
+        {
+          "entidade": "conceito",
+          "id": "relator"
+        },
+        {
+          "entidade": "conceito",
+          "id": "lider-e-minoria"
+        },
+        {
+          "entidade": "conceito",
+          "id": "denuncia"
+        },
+        {
+          "entidade": "conceito",
+          "id": "rejeicao-da-denuncia"
+        },
+        {
+          "entidade": "conceito",
+          "id": "condenacao-e-recurso"
+        },
+        {
+          "entidade": "conceito",
+          "id": "anulacao"
+        },
+        {
+          "entidade": "conceito",
+          "id": "intervencao-federal"
+        },
+        {
+          "entidade": "conceito",
+          "id": "convencao-e-registro-de-candidatura"
+        },
+        {
+          "entidade": "conceito",
+          "id": "proposta-de-governo"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-origem"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-sindicato"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-partido-e-constituinte"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-disputas-pela-presidencia"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-primeiro-governo"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-segundo-governo"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-processos"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-retorno"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-eleicao-2026"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-economia"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-seguranca-publica"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-origem"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-primeira-eleicao"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-alerj-primeiros-mandatos"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-alerj-ultimos-mandatos"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-senado"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-processos"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-funcoes-no-senado"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-decisoes-no-senado"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-eleicao-2026"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-economia"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-seguranca-publica"
+        },
+        {
+          "entidade": "mandato",
+          "id": "flavio-bolsonaro-deputado-estadual-2003-2019"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-biografia-do-presidente"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-dados-abertos-lula"
+        },
+        {
+          "entidade": "fonte",
+          "id": "arquivo-nacional-biografia-lula"
+        },
+        {
+          "entidade": "fonte",
+          "id": "agencia-senado-2002-trajetoria-lula"
+        },
+        {
+          "entidade": "fonte",
+          "id": "agencia-senado-2022-lula-eleito"
+        },
+        {
+          "entidade": "fonte",
+          "id": "ibge-biblioteca-caetes"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-perfil-flavio"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-8a-legislatura"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-partido-progressistas"
+        },
+        {
+          "entidade": "fonte",
+          "id": "agencia-brasil-2026-flavio-e-lula-votam"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-lei-4250-2003"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-lei-4916-2006"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-lei-5019-2007"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-lei-5646-2010"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-lei-5938-2011"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-lei-6785-2014"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-lei-7008-2015"
+        },
+        {
+          "entidade": "fonte",
+          "id": "alerj-lei-7877-2018"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-relatorias-flavio"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-dadosabertos-processo-mpv-866-2018"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mpv-132-2003"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-10836-2004"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-10826-2003"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-emenda-constitucional-41-2003"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-decreto-5090-2004"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-11096-2005"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mensagem-14-2005"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-11340-2006"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-decreto-6025-2007"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-11738-2008"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mensagem-508-2008"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-12187-2009"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mensagem-1123-2009"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-12351-2010"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-mensagem-707-2010"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-mpv-132-2003"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pl-1555-2003"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pl-1555-2003-situacao"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pec-40-2003"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pec-40-2003-autores"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-mpv-213-2004"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pl-4559-2004"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pl-7431-2006"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pl-7431-2006-autores"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pl-18-2007"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-proposicao-pl-5940-2009"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-norma-emenda-constitucional-41-2003"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-norma-lei-10836-2004"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-norma-lei-11096-2005"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-norma-lei-11340-2006"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-norma-lei-11738-2008"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-norma-lei-12187-2009"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-norma-lei-12351-2010"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-constituicao-1988"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-emenda-constitucional-26-1985"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-9096-1995"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-9504-1997"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-clt"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-lei-7783-1989"
+        },
+        {
+          "entidade": "fonte",
+          "id": "planalto-codigo-de-processo-penal"
+        },
+        {
+          "entidade": "fonte",
+          "id": "congresso-glossario-de-termos-legislativos"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-glossario-legislativo"
+        },
+        {
+          "entidade": "fonte",
+          "id": "senado-regimento-interno"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-glossario-eleitoral-c"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-glossario-eleitoral-p"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-glossario-eleitoral-r"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-glossario-eleitoral-t"
+        },
+        {
+          "entidade": "fonte",
+          "id": "stf-glossario-juridico"
+        },
+        {
+          "entidade": "fonte",
+          "id": "cnmp-glossario-anulacao"
+        },
+        {
+          "entidade": "fonte",
+          "id": "cnmp-glossario-recurso"
+        },
+        {
+          "entidade": "fonte",
+          "id": "cnmp-glossario-instancia"
+        },
+        {
+          "entidade": "fonte",
+          "id": "camara-entenda-o-processo-legislativo"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-proposta-de-governo-lula-2026"
+        },
+        {
+          "entidade": "fonte",
+          "id": "tse-proposta-de-governo-flavio-bolsonaro-2026"
         }
       ]
     }

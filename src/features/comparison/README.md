@@ -5,8 +5,9 @@ As trajetórias no mesmo período e na mesma escala de tempo. A base é da fase 
 | Arquivo | Responsabilidade |
 | --- | --- |
 | `TrajectoryLanes.tsx` | Uma faixa por pessoa sobre o mesmo eixo de anos: marcas dos acontecimentos, cargos e, no modo completo, partidos. Recebe o recorte em vigor, para apagar o que ficou fora dele, e a função que dá o endereço de cada acontecimento (`hrefOf`). Usada na comparação e, em resumo, na entrada |
+| `Overview.tsx` | A comparação curta, para quem está começando: os cargos públicos de cada pessoa e o tipo de registro que o atlas tem de cada cargo e de cada área, com os caminhos para as decisões por tema e para as propostas por área. Diz o tipo, e não a quantidade (`src/lib/data/overview.ts`) |
 
-A tela de comparação em si fica em `src/app/comparar/` (`page.tsx` e `Comparison.tsx`): o recorte (período e categorias), os avisos de leitura, as faixas e uma coluna por pessoa. O estado é o do endereço: `AtlasUrlStateProvider`, com `pessoa={null}` e `comparar`, e o seletor `selectComparison`, em `src/lib/state/selectors.ts`.
+A tela de comparação em si fica em `src/app/comparar/` (`page.tsx` e `Comparison.tsx`): o recorte (período e categorias), as faixas, os avisos de leitura, o resumo, uma coluna por pessoa e, depois delas, as decisões por tema (`src/features/decisions/`) e as propostas por área (`src/features/proposals/`), que não seguem o recorte de anos. O estado é o do endereço: `AtlasUrlStateProvider`, com `pessoa={null}` e `comparar`, e o seletor `selectComparison`, em `src/lib/state/selectors.ts`.
 
 O que a faixa não pode sugerir:
 

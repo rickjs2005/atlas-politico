@@ -4,7 +4,13 @@
 
 import { readFileSync } from "node:fs";
 
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
+
+import { GAP_NOTICE, NO_DECISION, OFFICE_NOTICE, buildOverview } from "@/lib/data/overview";
+import { PROPOSAL_NOTICE, PROPOSAL_PENDING, listProposals } from "@/lib/data/proposals";
+import { TEMAS, TEMA_LABELS } from "@/lib/domain/decisions";
+
+import { data } from "./jogo-apoio";
 
 interface Periodo {
   inicio: { tipo: string; valor?: string };
@@ -342,6 +348,8 @@ test.describe("contexto e limites da comparação", () => {
           "[data-decisao-cartao] [data-cargo]",
           "[data-proposicoes] li",
           "[data-divergencia]",
+          // As frases dos documentos registrados no TSE, com a ressalva e as fontes de cada uma.
+          "[data-proposta]",
         ];
         for (const no of copia.querySelectorAll(documental.join(", "))) no.remove();
         return copia.textContent ?? "";
@@ -352,7 +360,11 @@ test.describe("contexto e limites da comparação", () => {
     expect(proprio).toContain("texto de referência: o texto submetido à votação não está ligado");
     expect(proprio).toContain("decisões");
     expect(proprio).toContain("como ler esta comparação");
-    expect(proprio).toContain("votos e atos no mesmo tema");
+    expect(proprio).toContain("votos, atos e atuação legislativa no mesmo tema");
+    // A comparação curta e a seção das propostas são texto da tela: entram na conferência.
+    expect(proprio).toContain("resumo: os cargos de cada um e o que o atlas registra");
+    expect(proprio).toContain("e não uma quantidade");
+    expect(proprio).toContain("o que cada documento propõe");
     for (const palavra of ["ranking", "placar", "venc", "melhor", "pior", "produtiv", "pontua", "mais ativo"]) {
       expect(proprio, palavra).not.toContain(palavra);
     }
@@ -576,5 +588,134 @@ test.describe("em celular", () => {
       nos.map((no) => Math.round(no.getBoundingClientRect().left)),
     );
     expect(faixas[0]).toBe(faixas[1]);
+  });
+});
+
+// A comparação curta (os cargos de cada pessoa e o tipo de registro por cargo
+// e por área) e as propostas registradas no TSE, por área. O esperado sai das
+// mesmas funções que a tela usa, sobre o conteúdo publicado.
+test.describe("a comparação curta e as propostas por área", () => {
+  const resumoDe = (pessoaId: string) => buildOverview(data, pessoaId);
+  const topo = async (alvo: Locator) => (await alvo.boundingBox())!.y;
+  /** A barra do recorte, presa ao topo: o que chega por âncora tem de ficar abaixo dela. */
+  const fimDaBarra = async (page: Page) => {
+    const barra = (await recorte(page).boundingBox())!;
+    return barra.y + barra.height;
+  };
+
+  test("o resumo vem depois das faixas e das notas, com atalho no cabeçalho, e diz o tipo de registro por cargo e por área, sem quantidade", async ({ page }) => {
+    await page.goto(COMPARAR);
+    const resumo = page.locator('#resumo[data-secao="resumo"]');
+    await expect(resumo.getByRole("heading", { level: 2 })).toHaveText("Resumo: os cargos de cada um e o que o atlas registra");
+    await expect(resumo.locator("[data-aviso-de-cargo]")).toHaveText(OFFICE_NOTICE);
+
+    // A ordem da página: as faixas, as notas de leitura, o resumo e só então as colunas (D-82).
+    const notas = await topo(page.getByRole("region", { name: "Como ler esta comparação" }));
+    expect(await topo(page.getByRole("region", { name: "Linha do tempo das trajetórias" }))).toBeLessThan(notas);
+    expect(notas).toBeLessThan(await topo(resumo));
+    expect(await topo(resumo)).toBeLessThan(await topo(page.locator("[data-trajetoria]").first()));
+
+    // O atalho do cabeçalho leva ao resumo, e o título dele fica abaixo da barra do recorte.
+    const atalho = page.locator("[data-ir-para-o-resumo]");
+    await expect(atalho).toHaveText("Para começar: resumo por cargo e por área");
+    await atalho.click();
+    const titulo = resumo.getByRole("heading", { level: 2 });
+    await expect(titulo).toBeInViewport();
+    await expect.poll(async () => (await topo(titulo)) >= (await fimDaBarra(page)), { message: "o título do resumo fica abaixo da barra" }).toBe(true);
+
+    for (const pessoa of PESSOAS) {
+      const esperado = resumoDe(pessoa.id);
+      const cargos = resumo.locator(`[data-resumo-cargos="${pessoa.slug}"]`);
+      await expect(cargos.getByRole("heading", { level: 4 })).toHaveText(pessoa.nome);
+      await expect(cargos.locator("[data-cargo]")).toHaveCount(esperado.cargos.length);
+      for (const cargo of esperado.cargos) {
+        const linha = cargos.locator(`[data-cargo="${cargo.mandatoId}"]`);
+        await expect(linha).toContainText(cargo.cargo);
+        await expect(linha).toContainText(cargo.instituicao);
+        await expect(linha).toContainText(cargo.periodo);
+        await expect(linha.locator("[data-decisoes]")).toHaveAttribute("data-decisoes", cargo.naturezas.length === 0 ? "nenhuma" : cargo.naturezas.join(" "));
+        // O cargo sem decisão aparece, com a frase da lacuna: não some do resumo.
+        if (cargo.naturezas.length === 0) await expect(linha).toContainText(NO_DECISION);
+      }
+    }
+
+    // As mesmas sete áreas para as duas pessoas, na ordem da taxonomia, e o grupo dos outros assuntos por último.
+    const haSemArea = PESSOAS.some((pessoa) => resumoDe(pessoa.id).semArea.length > 0);
+    const areas = await resumo.locator("[data-resumo-areas] > li").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-area")));
+    expect(areas).toEqual([...TEMAS, ...(haSemArea ? ["outros-assuntos"] : [])]);
+    for (const tema of TEMAS) {
+      await expect(resumo.locator(`[data-area="${tema}"]`).getByRole("heading", { level: 4 })).toHaveText(TEMA_LABELS[tema]);
+      for (const pessoa of PESSOAS) {
+        const area = resumoDe(pessoa.id).areas.find((item) => item.tema === tema)!;
+        const linha = resumo.locator(`[data-area="${tema}"] [data-area-de="${pessoa.slug}"]`);
+        await expect(linha).toContainText(`${pessoa.nome}: `);
+        await expect(linha.locator("[data-decisoes]")).toHaveAttribute("data-decisoes", area.naturezas.length === 0 ? "nenhuma" : area.naturezas.join(" "));
+        if (area.naturezas.length === 0) await expect(linha).toContainText(NO_DECISION);
+        else await expect(linha.locator("a[data-decisoes]")).toHaveAttribute("href", `#tema-${tema}`);
+        await expect(linha.locator("[data-propostas]")).toHaveAttribute("data-propostas", area.propostas ? "registradas" : "pendente");
+        if (area.propostas) await expect(linha.locator('a[data-propostas="registradas"]')).toHaveAttribute("href", `#propostas-${tema}`);
+      }
+    }
+    await expect(resumo.locator("[data-aviso-de-lacuna]")).toContainText(GAP_NOTICE);
+
+    // Nenhuma quantidade: os únicos números do resumo são anos (os dos cargos e o das propostas).
+    const numeros = (((await resumo.textContent()) ?? "").match(/\d+/g) ?? []).filter((numero) => !/^(19|20)\d{2}$/.test(numero));
+    expect(numeros, "números que não são anos").toEqual([]);
+
+    // Os links do resumo chegam ao tema das decisões e à área das propostas, com o título abaixo da barra.
+    await resumo.locator(`[data-area="economia"] [data-area-de="${lula.slug}"] a[data-decisoes]`).click();
+    await expect(page.locator("#tema-economia")).toBeInViewport();
+    await expect.poll(async () => (await topo(page.locator("#tema-economia"))) >= (await fimDaBarra(page)), { message: "o título do tema fica abaixo da barra" }).toBe(true);
+    await page.goto(`${COMPARAR}#propostas-economia`);
+    await expect(page.locator("#propostas-economia")).toBeInViewport();
+    await expect.poll(async () => (await topo(page.locator("#propostas-economia"))) >= (await fimDaBarra(page)), { message: "o título da área fica abaixo da barra" }).toBe(true);
+  });
+
+  test("as propostas por área: as mesmas sete áreas para as duas candidaturas, com a frase, a ressalva, a página do documento e nenhuma contagem", async ({ page }) => {
+    await page.goto(`${COMPARAR}#propostas`);
+    const propostas = page.locator('#propostas[data-secao="propostas"]');
+    await expect(propostas.getByRole("heading", { level: 2 })).toHaveText("O que cada documento propõe");
+    await expect.poll(async () => (await topo(propostas.getByRole("heading", { level: 2 }))) >= (await fimDaBarra(page)), { message: "o título da seção fica abaixo da barra" }).toBe(true);
+    const aviso = propostas.locator("[data-aviso-de-proposta]");
+    await expect(aviso).toContainText(PROPOSAL_NOTICE);
+    await expect(aviso).toContainText("Não é o documento inteiro");
+    await expect(aviso).toContainText("não segue o recorte de anos");
+
+    const temas = await propostas.locator("[data-tema]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-tema")));
+    expect(temas).toEqual([...TEMAS]);
+    for (const pessoa of PESSOAS) {
+      const dela = listProposals(data, pessoa.id);
+      expect(dela.length, `propostas de ${pessoa.nome}`).toBeGreaterThan(0);
+      for (const tema of TEMAS) {
+        const colunaDoTema = propostas.locator(`[data-tema="${tema}"] [data-coluna-propostas="${pessoa.slug}"]`);
+        const doTema = dela.filter((proposta) => proposta.tema === tema);
+        // O título da coluna é só o nome: nenhuma contagem ao lado.
+        await expect(colunaDoTema.getByRole("heading", { level: 4 })).toHaveText(pessoa.nome);
+        await expect(colunaDoTema.locator("[data-proposta]")).toHaveCount(doTema.length);
+        if (doTema.length === 0) await expect(colunaDoTema.locator('[data-propostas="pendente"]')).toHaveText(PROPOSAL_PENDING);
+        for (const proposta of doTema) {
+          const item = colunaDoTema.locator(`[data-proposta="${proposta.id}"]`);
+          await expect(item).toContainText(proposta.texto);
+          if (proposta.ressalva === null) await expect(item.locator("[data-ressalva]")).toHaveCount(0);
+          else await expect(item.locator("[data-ressalva]")).toHaveText(proposta.ressalva);
+        }
+      }
+    }
+    // As duas candidaturas têm o mesmo número de frases em cada área: nenhuma coluna fica maior do que a outra.
+    for (const tema of TEMAS) {
+      const [a, b] = PESSOAS.map((pessoa) => listProposals(data, pessoa.id).filter((proposta) => proposta.tema === tema).length);
+      expect(a, tema).toBe(b);
+    }
+
+    // A fonte de uma proposta abre no próprio cartão: o documento registrado no TSE, com a página.
+    const exemplo = listProposals(data, lula.id)[0]!;
+    const cartao = propostas.locator(`[data-proposta="${exemplo.id}"]`);
+    await cartao.locator("summary").click();
+    await expect(cartao.locator("[data-fonte] a").first()).toHaveAttribute("href", exemplo.fontes[0]!.fonte.url);
+    await expect(cartao.locator("[data-fonte]").first()).toContainText(exemplo.fontes[0]!.citacao.localizacao);
+    expect(exemplo.fontes[0]!.fonte.url).toMatch(/^https:\/\/[a-z.]*tse\.jus\.br\//);
+    // A situação da revisão vem uma vez, no fim da seção, e é a que foi feita.
+    await expect(propostas.locator("[data-revisao]")).toHaveCount(1);
+    await expect(propostas.locator("[data-revisao]")).toContainText("Revisão humana pendente");
   });
 });

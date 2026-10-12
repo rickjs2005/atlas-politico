@@ -9,7 +9,7 @@ import { getCoveredSpan, getSharedSpan, listGaps } from "@/lib/data/coverage";
 import { filterEvents, findPersonBySlug, getImage } from "@/lib/data/queries";
 import { formatDate } from "@/lib/domain/dates";
 import { PROFILES } from "@/lib/domain/profiles";
-import { countPlayableChapters } from "@/lib/game/content";
+import { countTrailPhases } from "@/lib/game/content";
 import { gameHref } from "@/lib/state/links";
 
 export default function HomePage() {
@@ -27,12 +27,12 @@ export default function HomePage() {
         retrato: getImage(data, pessoa.retratoId),
         coberto: getCoveredSpan(data, pessoa.id),
         acontecimentos: filterEvents(data, { pessoaIds: [pessoa.id] }),
-        // Capítulos do jogo que os registros publicados já permitem jogar.
-        capitulos: countPlayableChapters(data, perfil.slug),
+        // As fases da trajetória no jogo, pelo conteúdo publicado.
+        fases: countTrailPhases(data, perfil.slug),
       },
     ];
   });
-  const temJogo = perfis.some((perfil) => perfil.capitulos > 0);
+  const temJogo = perfis.some((perfil) => perfil.fases > 0);
   const escala = getSharedSpan(data);
 
   return (
@@ -116,8 +116,8 @@ export default function HomePage() {
           {/* O jogo: o mesmo acesso para os dois, logo abaixo de cada cartão. */}
           {temJogo && (
             <div className="grid grid-cols-2 gap-3 md:gap-5" data-secao="jogo">
-              {perfis.map(({ pessoa, capitulos }) =>
-                capitulos === 0 ? (
+              {perfis.map(({ pessoa, fases }) =>
+                fases === 0 ? (
                   <span key={pessoa.id} />
                 ) : (
                   <IntentLink
@@ -128,7 +128,7 @@ export default function HomePage() {
                   >
                     <span>Jogar com {pessoa.nome}</span>
                     <span className="numerals text-xs font-normal text-paper/80">
-                      {capitulos} {capitulos === 1 ? "capítulo" : "capítulos"}
+                      {fases} {fases === 1 ? "fase curta" : "fases curtas"}
                     </span>
                   </IntentLink>
                 ),
@@ -137,7 +137,7 @@ export default function HomePage() {
           )}
           {temJogo && (
             <p className="text-sm text-ink-soft">
-              No jogo, você percorre cada trajetória em capítulos e recolhe os registros do atlas.{" "}
+              No jogo, você segue cada trajetória em fases curtas, da origem à data de corte: um marco, uma explicação e uma pergunta por fase.{" "}
               <Link
                 href={gameHref()}
                 prefetch={false}

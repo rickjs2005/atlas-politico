@@ -1,5 +1,7 @@
 # Jogo: plano até a versão de lançamento
 
+> **Documento histórico.** Este plano é de 10 de outubro de 2026 e descreve o jogo de exploração com capítulos, tarefas e saída, que foi substituído em 11 de outubro pela trilha simples ([GAME-TRAIL.md](GAME-TRAIL.md)). As regras em vigor estão em [GAMEPLAY.md](GAMEPLAY.md), e a situação atual, em [STATUS.md](STATUS.md). O texto abaixo fica como foi escrito: capítulos, tarefas e salas temáticas, quando aparecem aqui, são os do jogo anterior. As pendências humanas que ele lista (revisão humana, validação com pessoas, domínio e canal de correção) continuam valendo. O que mudou nelas: o site passou a responder em um endereço provisório da Vercel, sem indexação, por decisão do responsável pelo projeto (D-147).
+
 Plano curto, escrito em 10 de outubro de 2026 a partir da `main` em `28fddd4`, para levar o jogo da etapa 1 (quatro capítulos, 15 dos 39 acontecimentos) a uma versão candidata a lançamento antes do segundo turno. A meta pedida é **22 de outubro de 2026**, com margem até o dia 24; o segundo turno é em **25 de outubro de 2026** ([Resolução TSE 23.751/2026](https://www.tse.jus.br/legislacao/compilada/res/2026/resolucao-no-23-751-de-26-de-fevereiro-de-2026)). O que já está feito e verificado fica em [STATUS.md](STATUS.md); o desenho do jogo, em [GAMEPLAY.md](GAMEPLAY.md).
 
 ## O que a data permite, e o que não

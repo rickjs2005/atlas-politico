@@ -1,109 +1,107 @@
-// Progresso do jogador: um por personagem, com os capítulos em três estados
-// (`bloqueado`, `disponivel`, `concluido`) e transições previsíveis, dentro
-// de cada sala (D-125):
+// Progresso do jogador na trilha: um por personagem, com o que aconteceu em
+// cada fase e a fase em que a pessoa parou em cada sala (D-135).
 //
-//   início                em cada sala, todo capítulo bloqueado, menos o primeiro
-//   concluir capítulo n   n vira `concluido`; o seguinte da mesma sala vira `disponivel`
-//   reiniciar             volta ao início
-//
-// Um capítulo só é concluído com a saída aberta: a tarefa cumprida e todos
-// os registros do capítulo recolhidos (`isExitOpen`).
+// Não há fase bloqueada: o progresso não decide o que pode ser aberto, só o
+// que já foi lido e respondido, e por isso serve para duas coisas: sugerir
+// onde continuar e contar o que falta.
 //
 // O formato salvo tem versão. `parseProgress` aceita a versão atual e migra
-// as anteriores; devolve `null` para qualquer outra coisa: dado inválido vira
-// começo, e não erro na tela.
+// as anteriores (src/lib/game/legacy.ts); devolve `null` para qualquer outra
+// coisa: dado inválido vira começo, e não erro na tela.
 
-import { hasAnswer, hasRequired, isExitOpen, legacyTaskSignature, recordIds, taskSignature, type TaskContent } from "./mission";
-import { groupByRoom } from "./rooms";
-import { PROGRESS_VERSION, type ChapterProgress, type ChapterSpec, type ChapterStatus, type PersonagemSlug, type PlayerProgress, type TaskState } from "./types";
+import { phasesOfLegacy, readLegacy } from "./legacy";
+import { initialPhaseProgress, isPhaseDone, markSeen } from "./trail";
+import { PROGRESS_VERSION, type ActivityOutcome, type PersonagemSlug, type PhaseProgress, type PhaseSpec, type PlayerProgress, type RoomId } from "./types";
 
-const STATUSES: readonly ChapterStatus[] = ["bloqueado", "disponivel", "concluido"];
+/** O que a leitura do progresso precisa saber de uma fase. */
+export type PhaseKey = Pick<PhaseSpec, "id" | "sala">;
 
-export function initialProgress(personagem: PersonagemSlug, capitulos: readonly ChapterSpec[]): PlayerProgress {
-  const entradas: Record<string, ChapterProgress> = {};
-  for (const [, daSala] of groupByRoom(capitulos)) {
-    daSala.forEach((capitulo, indice) => {
-      entradas[capitulo.id] = {
-        status: indice === 0 ? "disponivel" : "bloqueado",
-        tarefa: { recolhidos: [], confirmada: false, tentativas: 0 },
-      };
-    });
-  }
-  return { versao: PROGRESS_VERSION, personagem, capitulos: entradas };
+export function initialProgress(personagem: PersonagemSlug): PlayerProgress {
+  return { versao: PROGRESS_VERSION, personagem, fases: {}, posicao: {} };
 }
 
-export function chapterStatus(progresso: PlayerProgress, capituloId: string): ChapterStatus {
-  return progresso.capitulos[capituloId]?.status ?? "bloqueado";
+export function phaseProgressOf(progresso: PlayerProgress, faseId: string): PhaseProgress {
+  return progresso.fases[faseId] ?? initialPhaseProgress();
 }
 
-export function taskStateOf(progresso: PlayerProgress, capituloId: string): TaskState {
-  return progresso.capitulos[capituloId]?.tarefa ?? { recolhidos: [], confirmada: false, tentativas: 0 };
+/** Troca o estado de uma fase. */
+export function withPhase(progresso: PlayerProgress, faseId: string, estado: PhaseProgress): PlayerProgress {
+  if (progresso.fases[faseId] === estado) return progresso;
+  return { ...progresso, fases: { ...progresso.fases, [faseId]: estado } };
 }
 
-/** Troca o estado da tarefa de um capítulo. Capítulo bloqueado não muda. */
-export function withTaskState(progresso: PlayerProgress, capituloId: string, tarefa: TaskState): PlayerProgress {
-  const atual = progresso.capitulos[capituloId];
-  if (atual === undefined || atual.status === "bloqueado") return progresso;
-  if (atual.tarefa === tarefa) return progresso;
-  return { ...progresso, capitulos: { ...progresso.capitulos, [capituloId]: { ...atual, tarefa } } };
+/** A pessoa está nesta fase: é onde ela continua na próxima visita. Não muda o que foi lido ou respondido. */
+export function withPosition(progresso: PlayerProgress, fase: PhaseKey): PlayerProgress {
+  if (progresso.posicao[fase.sala] === fase.id) return progresso;
+  return { ...progresso, posicao: { ...progresso.posicao, [fase.sala]: fase.id } };
+}
+
+/** Abrir a explicação de uma fase: ela fica vista, e a posição da sala vai para ela. */
+export function openPhase(progresso: PlayerProgress, fase: PhaseKey): PlayerProgress {
+  return withPosition(withPhase(progresso, fase.id, markSeen(phaseProgressOf(progresso, fase.id))), fase);
+}
+
+/** A fase seguinte da mesma lista, ou `null` na última. */
+export function nextPhase<T extends PhaseKey>(fases: readonly T[], faseId: string): T | null {
+  const indice = fases.findIndex((fase) => fase.id === faseId);
+  return indice < 0 ? null : (fases[indice + 1] ?? null);
+}
+
+/** Quantas fases dadas foram concluídas. */
+export function countDone(progresso: PlayerProgress, fases: readonly PhaseKey[]): number {
+  return fases.filter((fase) => isPhaseDone(progresso.fases[fase.id])).length;
+}
+
+/** Todas as fases dadas foram concluídas? */
+export function isTrailComplete(progresso: PlayerProgress, fases: readonly PhaseKey[]): boolean {
+  return fases.length > 0 && countDone(progresso, fases) === fases.length;
+}
+
+/** Já há algo feito nas fases dadas: uma aberta, uma concluída, uma tentativa ou a marca de um formato anterior. */
+export function hasStarted(progresso: PlayerProgress, fases: readonly PhaseKey[]): boolean {
+  return fases.some((fase) => {
+    const estado = progresso.fases[fase.id];
+    return estado !== undefined && (estado.vista || estado.concluida !== undefined || estado.tentativas > 0 || estado.anterior === true);
+  });
 }
 
 /**
- * Concluir um capítulo: só um capítulo disponível com a saída aberta, isto
- * é, com a tarefa cumprida e todos os registros recolhidos. O seguinte da
- * mesma sala, se houver, fica disponível. Repetir em capítulo concluído não
- * muda nada.
- *
- * Quando um capítulo anterior reabriu (a tarefa dele mudou, ou uma correção
- * mudou os dados que decidem a resposta, D-130), os seguintes voltaram a
- * bloqueados guardando o que tinham. Ao concluir de novo o capítulo que
- * reabriu, os seguintes que já estavam completos voltam a concluídos, em
- * sequência, e o primeiro que não está completo fica disponível: refazer uma
- * resposta devolve o progresso como estava, sem refazer o resto.
+ * A fase em que se continua, entre as dadas (as de uma sala, na ordem):
+ *   1. a fase em que a pessoa parou, se ela ainda não foi concluída;
+ *   2. a primeira não concluída depois dela;
+ *   3. sem posição guardada, mas com capítulos concluídos em um formato
+ *      anterior: a primeira não concluída depois da última fase que eles
+ *      cobriam. As fases de origem, que não existiam, ficam para trás, e a
+ *      entrada as oferece em "Ver desde o início";
+ *   4. sem nada disso, a primeira fase.
+ * Com tudo concluído, a última: é de onde se chega ao resumo.
  */
-export function completeChapter(progresso: PlayerProgress, capitulos: readonly ChapterSpec[], capituloId: string): PlayerProgress {
-  const capitulo = capitulos.find((item) => item.id === capituloId);
-  const atual = progresso.capitulos[capituloId];
-  if (capitulo === undefined || atual === undefined) return progresso;
-  if (atual.status !== "disponivel" || !isExitOpen(capitulo, atual.tarefa)) return progresso;
-
-  const proximos: Record<string, ChapterProgress> = { ...progresso.capitulos, [capituloId]: { ...atual, status: "concluido" } };
-  const daSala = capitulos.filter((item) => item.sala === capitulo.sala);
-  for (const seguinte of daSala.slice(daSala.findIndex((item) => item.id === capituloId) + 1)) {
-    const entrada = proximos[seguinte.id];
-    if (entrada === undefined || entrada.status !== "bloqueado") break;
-    if (!isExitOpen(seguinte, entrada.tarefa)) {
-      proximos[seguinte.id] = { ...entrada, status: "disponivel" };
-      break;
-    }
-    proximos[seguinte.id] = { ...entrada, status: "concluido" };
-  }
-  return { ...progresso, capitulos: proximos };
+export function resumePhase<T extends PhaseKey>(progresso: PlayerProgress, fases: readonly T[]): T | null {
+  if (fases.length === 0) return null;
+  const depoisDe = (indice: number): T => fases.slice(indice).find((fase) => !isPhaseDone(progresso.fases[fase.id])) ?? fases.at(-1)!;
+  const sala = fases[0]!.sala;
+  const guardada = fases.findIndex((fase) => fase.id === progresso.posicao[sala]);
+  if (guardada >= 0) return depoisDe(guardada);
+  const ultimaAnterior = fases.reduce((ultima, fase, indice) => (progresso.fases[fase.id]?.anterior === true ? indice : ultima), -1);
+  if (ultimaAnterior >= 0) return depoisDe(Math.min(ultimaAnterior + 1, fases.length - 1));
+  return fases[0]!;
 }
 
-/** O capítulo em que se continua, entre os dados: o primeiro disponível, ou o último se todos estão concluídos. */
-export function currentChapter(progresso: PlayerProgress, capitulos: readonly ChapterSpec[]): ChapterSpec | null {
-  const disponivel = capitulos.find((item) => chapterStatus(progresso, item.id) === "disponivel");
-  if (disponivel !== undefined) return disponivel;
-  const concluidos = capitulos.filter((item) => chapterStatus(progresso, item.id) === "concluido");
-  return concluidos.at(-1) ?? capitulos[0] ?? null;
+/**
+ * O salvo veio de um formato anterior do jogo, e a trajetória de hoje tem
+ * fases que ele não conhecia (as de origem, antes de tudo): é o que a tela
+ * diz a quem volta, para a pessoa não achar que o jogo começa onde ela parou.
+ */
+export function hasNewStart(progresso: PlayerProgress, fases: readonly PhaseKey[]): boolean {
+  return progresso.legado !== undefined && fases.some((fase) => progresso.fases[fase.id] === undefined);
 }
 
-/** Todos os capítulos dados foram concluídos? */
-export function isTrajectoryComplete(progresso: PlayerProgress, capitulos: readonly ChapterSpec[]): boolean {
-  return capitulos.length > 0 && capitulos.every((item) => chapterStatus(progresso, item.id) === "concluido");
-}
-
-export function countCompleted(progresso: PlayerProgress, capitulos: readonly ChapterSpec[]): number {
-  return capitulos.filter((item) => chapterStatus(progresso, item.id) === "concluido").length;
-}
-
-/** Já há algo feito nos capítulos dados: um concluído, um registro recolhido ou uma tentativa de resposta. */
-export function hasStarted(progresso: PlayerProgress, capitulos: readonly ChapterSpec[]): boolean {
-  return capitulos.some((capitulo) => {
-    const tarefa = taskStateOf(progresso, capitulo.id);
-    return chapterStatus(progresso, capitulo.id) === "concluido" || tarefa.recolhidos.length > 0 || tarefa.tentativas > 0;
-  });
+/** A primeira fase que a pessoa ainda não abriu nem concluiu, ou `null` se já passou por todas. */
+export function firstUnseen<T extends PhaseKey>(progresso: PlayerProgress, fases: readonly T[]): T | null {
+  return fases.find((fase) => {
+    const estado = progresso.fases[fase.id];
+    return estado === undefined || (!estado.vista && estado.concluida === undefined);
+  }) ?? null;
 }
 
 // ---------------------------------------------------------------------------
@@ -114,192 +112,86 @@ function isRecord(valor: unknown): valor is Record<string, unknown> {
   return typeof valor === "object" && valor !== null && !Array.isArray(valor);
 }
 
-/** As versões do formato que a leitura entende: a atual e as que ela migra. */
-export type ReadableVersion = 1 | 2 | 3 | 4 | 5;
-export const READABLE_VERSIONS: readonly ReadableVersion[] = [1, 2, 3, 4, PROGRESS_VERSION];
-
-/** A partir de que versão o salvo guarda a assinatura da tarefa respondida. */
-const COM_ASSINATURA = 3;
-/** A partir de que versão o salvo guarda a etapa de evidência da tarefa de decisão. */
-const COM_EVIDENCIA = 4;
-/** A partir de que versão a assinatura traz também o resumo dos dados que decidem a resposta (D-130). */
-const COM_DADOS_DA_RESPOSTA = 5;
+const OUTCOMES: readonly ActivityOutcome[] = ["resposta", "explicacao"];
 
 /**
- * Lê o estado de uma tarefa. A versão 1 chamava a confirmação de
- * `ordemConfirmada`; as seguintes chamam de `confirmada`. Só um dos dois
- * nomes é aceito, o da versão lida. A assinatura da tarefa respondida só
- * existe a partir da versão 3; a etapa de evidência, a partir da 4. Nas
- * versões anteriores, os dois campos são ignorados.
+ * Lê o estado de uma fase. A conclusão só vale com a assinatura da atividade
+ * de hoje: se uma correção no conteúdo mudou o que decide a resposta, a fase
+ * volta a pendente, marcada como reaberta, e o que a pessoa leu e tentou
+ * fica (D-130).
  */
-function parseTask(valor: unknown, versao: ReadableVersion): TaskState | null {
+function parsePhase(valor: unknown, assinaturaAtual: string | undefined): PhaseProgress | null {
   if (!isRecord(valor)) return null;
-  const { recolhidos, tentativas, assinatura, evidencia } = valor;
-  const confirmada = versao === 1 ? valor.ordemConfirmada : valor.confirmada;
-  if (!Array.isArray(recolhidos) || !recolhidos.every((item) => typeof item === "string")) return null;
-  if (typeof confirmada !== "boolean") return null;
+  const { vista, concluida, assinatura, tentativas, anterior, reaberta } = valor;
+  if (typeof vista !== "boolean") return null;
   if (typeof tentativas !== "number" || !Number.isInteger(tentativas) || tentativas < 0) return null;
+  if (concluida !== undefined && !OUTCOMES.includes(concluida as ActivityOutcome)) return null;
   if (assinatura !== undefined && typeof assinatura !== "string") return null;
-  if (evidencia !== undefined && typeof evidencia !== "boolean") return null;
-  const lida: TaskState = { recolhidos: [...new Set(recolhidos as string[])], confirmada, tentativas };
-  if (versao >= COM_ASSINATURA && typeof assinatura === "string") lida.assinatura = assinatura;
-  if (versao >= COM_EVIDENCIA && evidencia === true) lida.evidencia = true;
+  if (anterior !== undefined && typeof anterior !== "boolean") return null;
+  if (reaberta !== undefined && typeof reaberta !== "boolean") return null;
+  const lida: PhaseProgress = { vista, tentativas };
+  if (anterior === true) lida.anterior = true;
+  if (concluida !== undefined) {
+    if (assinaturaAtual !== undefined && assinatura === assinaturaAtual) {
+      lida.concluida = concluida as ActivityOutcome;
+      lida.assinatura = assinaturaAtual;
+    } else {
+      lida.reaberta = true;
+    }
+  } else if (reaberta === true) {
+    lida.reaberta = true;
+  }
   return lida;
 }
 
 /**
- * De onde a leitura tira a assinatura atual de cada tarefa: o conteúdo do
- * personagem (os registros e as decisões), ou as assinaturas já calculadas por
- * capítulo, para a tela que não carrega o conteúdo (a entrada do jogo, que só
- * mostra a situação de cada sala).
- */
-export type SignatureSource = TaskContent | { assinaturas: Readonly<Record<string, string>> };
-
-/** A assinatura atual da tarefa de um capítulo, pela fonte dada. Capítulo sem assinatura calculada não casa com resposta nenhuma. */
-export function signatureOf(capitulo: ChapterSpec, fonte: SignatureSource): string {
-  if ("assinaturas" in fonte) return fonte.assinaturas[capitulo.id] ?? `${legacyTaskSignature(capitulo.tarefa)}@sem-assinatura`;
-  return taskSignature(capitulo.tarefa, fonte);
-}
-
-/** As assinaturas atuais de todos os capítulos dados, por `id`, para a entrada do jogo. */
-export function signaturesOf(capitulos: readonly ChapterSpec[], conteudo: TaskContent): Record<string, string> {
-  return Object.fromEntries(capitulos.map((capitulo) => [capitulo.id, taskSignature(capitulo.tarefa, conteudo)]));
-}
-
-/** As assinaturas das tarefas de cada capítulo quando uma versão antiga do formato era a atual. */
-export type LegacySignatures = Readonly<Record<1 | 2, Readonly<Record<string, string>>>>;
-
-/** As tarefas da etapa 1 (versão 1 do formato): dois capítulos de cada personagem. */
-const TAREFAS_NA_VERSAO_1: Readonly<Record<string, string>> = {
-  "lula-1-sindicato": "registro:lula-1975-eleito-presidente-do-sindicato",
-  "lula-2-constituinte": "ordem:lula-1986-eleito-deputado-federal-constituinte+lula-1989-primeira-candidatura-a-presidencia",
-  "flavio-bolsonaro-1-alerj": "registro:flavio-bolsonaro-2002-eleito-deputado-estadual",
-  "flavio-bolsonaro-2-senado": "ordem:flavio-bolsonaro-2018-eleito-senador+flavio-bolsonaro-2019-terceiro-secretario-do-senado",
-};
-
-/** As tarefas da versão de lançamento (versão 2 do formato): os onze capítulos. */
-const TAREFAS_NA_VERSAO_2: Readonly<Record<string, string>> = {
-  ...TAREFAS_NA_VERSAO_1,
-  "lula-3-presidencia": "fonte:lula-2002-eleito-presidente",
-  "lula-4-processos": "ordem:lula-2017-condenacao-em-primeira-instancia+lula-2018-tribunal-confirma-condenacao",
-  "lula-5-anulacao": "lugar:lula-2021-stf-anula-condenacoes",
-  "lula-6-eleicao-2026": "fonte:eleicao-2026-primeiro-turno",
-  "flavio-bolsonaro-3-denuncia": "fonte:flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao",
-  "flavio-bolsonaro-4-minoria": "lugar:flavio-bolsonaro-2024-relatoria-das-saidas-temporarias",
-  "flavio-bolsonaro-5-eleicao-2026": "ordem:flavio-bolsonaro-2026-convencao-do-pl+eleicao-2026-primeiro-turno",
-};
-
-/**
- * O que cada capítulo pedia quando as versões 1 e 2 do formato eram as
- * atuais, pela assinatura de `taskSignature`. Essas versões não guardavam a
- * assinatura da tarefa respondida; uma confirmação delas só migra se a tarefa
- * do capítulo continua a mesma de então. A tabela é congelada de propósito:
- * não acompanha mudanças futuras dos capítulos, e é isso que a torna útil. A
- * partir da versão 3 o salvo traz a própria assinatura, e a tabela não cresce.
- */
-export const LEGACY_SIGNATURES: LegacySignatures = { 1: TAREFAS_NA_VERSAO_1, 2: TAREFAS_NA_VERSAO_2 };
-
-/**
- * Lê um progresso salvo. Devolve `null` quando a versão, o personagem ou a
- * forma não conferem. As versões 1 a 4 são migradas ao ler: a 1 muda o
- * nome do campo da confirmação; a 1 e a 2 ganham a assinatura da tarefa
- * respondida, conferida pela tabela do que o capítulo pedia na época
- * (`legado`); a 3 já traz a assinatura e não tem a etapa de evidência; a 4
- * traz as duas, com a assinatura só por tipo e identificadores, que a leitura
- * confere nessa forma e regrava na forma atual, com o resumo dos dados que
- * decidem a resposta (`conteudo`, D-130).
- * Capítulos que a edição não tem mais são descartados; capítulos novos
- * entram bloqueados (ou disponíveis, se forem o primeiro aberto da sala), e a
- * regra de progressão é reaplicada em cada sala para não haver dois
- * capítulos disponíveis nem um disponível depois de um bloqueado. Quem
- * terminou os capítulos de uma edição anterior recebe o primeiro capítulo
- * novo da sala como disponível.
+ * Lê um progresso salvo. Devolve `null` quando o personagem ou a forma não
+ * conferem. `assinaturas` traz a assinatura atual da atividade de cada fase
+ * (`signaturesOf`, em trail.ts).
  *
- * Um capítulo pode mudar entre uma edição e outra. Os registros que ele não
- * cita mais saem dos recolhidos, e uma confirmação só vale se a tarefa ainda
- * pede resposta, os registros dela estão recolhidos e ela é a mesma tarefa
- * que foi respondida: pela assinatura guardada, ou pela tabela nas versões 1
- * e 2. Trocar o tipo da tarefa, o que ela pede ou, a partir da versão 5, os
- * dados que decidem a resposta, sob os mesmos identificadores, reabre a
- * pergunta, sem apagar o que foi recolhido nem as tentativas. A etapa de
- * evidência da tarefa de decisão só vale se a tarefa continua de decisão
- * sobre o mesmo registro, ele está recolhido e, na versão 5, a assinatura é a
- * da tarefa atual.
+ * Na versão atual: fases que a edição não tem mais são descartadas; a posição
+ * de uma sala só fica se a fase ainda é dela; o salvo anterior guardado na
+ * migração continua guardado.
  *
- * A regra de saída também vale para o que foi salvo: um capítulo marcado
- * como concluído sem todos os registros recolhidos (guardado quando a saída
- * abria só com a tarefa, ou antes de o capítulo ganhar um registro) volta a
- * disponível, com o que já foi recolhido, e os seguintes voltam a bloqueado.
- *
- * A situação de cada capítulo vem da ordem; o estado da tarefa é do capítulo.
- * Um capítulo que volta a bloqueado, porque um anterior reabriu, guarda o que
- * foi recolhido e respondido nele (já conferido acima contra os capítulos e as
- * assinaturas de hoje): nada do que a pessoa fez se perde por causa de uma
- * correção em outro capítulo, e `completeChapter` devolve a situação quando o
- * capítulo que reabriu é concluído de novo (D-130).
+ * Nas versões 1 a 5 (capítulos, registros recolhidos, saída): as fases que
+ * cobrem os registros de um capítulo concluído ganham a marca `anterior`. A
+ * atividade nova não é dada como respondida nem a explicação como lida: a
+ * marca só diz que a pessoa já passou por aquele período. O salvo antigo
+ * entra inteiro em `legado`.
  */
-export function parseProgress(
-  valor: unknown,
-  personagem: PersonagemSlug,
-  capitulos: readonly ChapterSpec[],
-  conteudo: SignatureSource,
-  legado: LegacySignatures = LEGACY_SIGNATURES,
-): PlayerProgress | null {
+export function parseProgress(valor: unknown, personagem: PersonagemSlug, fases: readonly PhaseKey[], assinaturas: Readonly<Record<string, string>>): PlayerProgress | null {
   if (!isRecord(valor)) return null;
-  if (!READABLE_VERSIONS.includes(valor.versao as ReadableVersion)) return null;
-  const versao = valor.versao as ReadableVersion;
+  const conhecidas = new Map(fases.map((fase) => [fase.id, fase] as const));
+
+  if (valor.versao !== PROGRESS_VERSION) {
+    const antigo = readLegacy(valor, personagem);
+    if (antigo === null) return null;
+    const migrado = initialProgress(personagem);
+    for (const id of phasesOfLegacy(antigo.concluidos)) {
+      if (conhecidas.has(id)) migrado.fases[id] = { ...initialPhaseProgress(), anterior: true };
+    }
+    migrado.legado = { versao: antigo.versao, capitulos: antigo.capitulos };
+    return migrado;
+  }
+
   if (valor.personagem !== personagem) return null;
-  if (!isRecord(valor.capitulos)) return null;
+  if (!isRecord(valor.fases) || !isRecord(valor.posicao)) return null;
 
-  const base = initialProgress(personagem, capitulos);
-  const lidos: Record<string, ChapterProgress> = {};
-  for (const capitulo of capitulos) {
-    const entrada = valor.capitulos[capitulo.id];
-    if (entrada === undefined) continue;
-    if (!isRecord(entrada)) return null;
-    const lida = parseTask(entrada.tarefa, versao);
-    if (lida === null || !STATUSES.includes(entrada.status as ChapterStatus)) return null;
-    const doCapitulo = recordIds(capitulo);
-    const recolhidos = lida.recolhidos.filter((id) => doCapitulo.includes(id));
-    // A resposta pertence à tarefa atual? Pela assinatura guardada (com os
-    // dados da resposta a partir da versão 5; só tipo e identificadores nas
-    // versões 3 e 4), ou pelo que o capítulo pedia na versão lida, quando ela
-    // não guardava assinatura.
-    const atual = signatureOf(capitulo, conteudo);
-    const antiga = legacyTaskSignature(capitulo.tarefa);
-    const respondida =
-      versao >= COM_DADOS_DA_RESPOSTA ? lida.assinatura === atual : versao >= COM_ASSINATURA ? lida.assinatura === antiga : legado[versao as 1 | 2][capitulo.id] === antiga;
-    const tarefa: TaskState = { recolhidos, confirmada: false, tentativas: lida.tentativas };
-    if (lida.confirmada && hasAnswer(capitulo.tarefa) && hasRequired(capitulo.tarefa, tarefa) && respondida) {
-      tarefa.confirmada = true;
-      tarefa.assinatura = atual;
-    }
-    // A evidência confirmada só vale para a tarefa de decisão sobre o registro
-    // recolhido e, a partir da versão 5, com a assinatura da tarefa atual; as
-    // versões anteriores não assinavam a etapa, e a leitura passa a assinar.
-    if (lida.evidencia === true && capitulo.tarefa.tipo === "decisao" && hasRequired(capitulo.tarefa, tarefa) && (versao < COM_DADOS_DA_RESPOSTA || respondida)) {
-      tarefa.evidencia = true;
-      tarefa.assinatura = atual;
-    }
-    lidos[capitulo.id] = { status: entrada.status as ChapterStatus, tarefa };
+  const lido = initialProgress(personagem);
+  for (const [id, entrada] of Object.entries(valor.fases)) {
+    if (!conhecidas.has(id)) continue;
+    const estado = parsePhase(entrada, assinaturas[id]);
+    if (estado === null) return null;
+    lido.fases[id] = estado;
   }
-
-  // Reaplica a progressão em cada sala: concluídos em sequência a partir do
-  // primeiro; o seguinte disponível; o resto bloqueado. O estado da tarefa é
-  // mantido em todos, inclusive nos que voltam a bloqueado.
-  const capitulosLidos: Record<string, ChapterProgress> = {};
-  for (const [, daSala] of groupByRoom(capitulos)) {
-    let aberto = false;
-    for (const capitulo of daSala) {
-      const lido = lidos[capitulo.id] ?? base.capitulos[capitulo.id]!;
-      let status: ChapterStatus;
-      if (!aberto && lido.status === "concluido" && isExitOpen(capitulo, lido.tarefa)) status = "concluido";
-      else if (!aberto) {
-        status = "disponivel";
-        aberto = true;
-      } else status = "bloqueado";
-      capitulosLidos[capitulo.id] = { status, tarefa: lido.tarefa };
-    }
+  for (const [sala, faseId] of Object.entries(valor.posicao)) {
+    if (typeof faseId !== "string") return null;
+    const fase = conhecidas.get(faseId);
+    if (fase !== undefined && fase.sala === sala) lido.posicao[sala as RoomId] = faseId;
   }
-  return { versao: PROGRESS_VERSION, personagem, capitulos: capitulosLidos };
+  if (valor.legado !== undefined) {
+    if (!isRecord(valor.legado) || typeof valor.legado.versao !== "number" || !isRecord(valor.legado.capitulos)) return null;
+    lido.legado = { versao: valor.legado.versao, capitulos: valor.legado.capitulos };
+  }
+  return lido;
 }

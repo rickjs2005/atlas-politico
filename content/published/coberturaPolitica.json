@@ -173,5 +173,162 @@
         "observacoes": "Declaração da pesquisa feita para a amostra de decisões da edição 0.2.0, com assistência de IA. Revisão humana pendente."
       }
     }
+  },
+  {
+    "id": "cobertura-lula-geral-2003-2010",
+    "pessoaId": "lula",
+    "tema": "geral",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2003-01-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2011-01-01",
+        "precisao": "dia"
+      }
+    },
+    "acervos": [
+      {
+        "nome": "Portal da Legislação (Planalto): páginas dos atos e das mensagens de veto",
+        "url": "https://www.planalto.gov.br/ccivil_03/",
+        "consultadoEm": "2026-10-11",
+        "recorte": "30 atos abertos e conferidos (20 leis, 7 medidas provisórias, 2 decretos e 1 emenda constitucional), a partir de uma lista de pistas por tema; não é varredura dos atos do período",
+        "completa": false
+      },
+      {
+        "nome": "Dados Abertos da Câmara dos Deputados: proposições e autores; fichas da norma (Legislação Informatizada)",
+        "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes",
+        "consultadoEm": "2026-10-11",
+        "recorte": "Proposição de origem e autor registrado de cada ato conferido",
+        "completa": false
+      }
+    ],
+    "criterios": "Amostra, e não histórico completo: onze atos dos dois primeiros mandatos, escolhidos entre os trinta conferidos para que cada um dos sete temas da comparação tenha ao menos um ato de alcance nacional quando a pesquisa encontrou um, com tipos de ato diferentes (medida provisória, sanção, sanção com veto parcial, decreto e iniciativa de emenda à Constituição), sem olhar se o ato favorece ou prejudica alguém. A lista dos conferidos e dos que ficaram de fora está em research/trilha-2026-10.md; a escolha entre atos do mesmo tema não ficou escrita quando foi feita.",
+    "estado": "parcial",
+    "lacunas": [
+      "Os atos do período não foram varridos: a pesquisa partiu de uma lista de pistas, e atos fora dela não foram procurados.",
+      "Em Saúde, a amostra tem só o decreto que institui o programa Farmácia Popular do Brasil; a lei que ele regulamenta (Lei nº 10.858, de 2004) e a medida provisória que deu origem a ela (nº 154, de 2003) foram lidas na pesquisa e não têm registro próprio nem trecho guardado nas evidências.",
+      "O resultado da apreciação dos vetos pelo Congresso não foi pesquisado.",
+      "As razões dos vetos não foram transcritas.",
+      "Os votos e as proposições de Lula como deputado federal constituinte, de 1987 a 1991, não foram pesquisados."
+    ],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Declaração da pesquisa feita para a amostra de atos de 2003 a 2010 da edição 0.3.0, com assistência de IA. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "cobertura-flavio-bolsonaro-geral-2003-2018",
+    "pessoaId": "flavio-bolsonaro",
+    "tema": "geral",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2003",
+        "precisao": "ano"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2018",
+        "precisao": "ano"
+      }
+    },
+    "acervos": [
+      {
+        "nome": "Portal da Alerj, Processo Legislativo: leis estaduais (base CONTLEI), busca por texto e visão por autor",
+        "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53",
+        "consultadoEm": "2026-10-11",
+        "recorte": "Busca por \"bolsonaro\" nas leis ordinárias e complementares; 25 páginas de lei abertas e conferidas (texto, ato e autoria); 27 leis vistas só na lista da busca, sem abrir a página",
+        "completa": false
+      },
+      {
+        "nome": "Portal da Alerj: cadastro de proposições por legislatura e ficha do deputado",
+        "url": "https://www.alerj.rj.gov.br/Deputados/PerfilDeputado/275",
+        "consultadoEm": "2026-10-11",
+        "recorte": "Listas de proposições do deputado nas legislaturas de 2003 a 2019 e ficha do deputado; a base respondeu devagar e com falhas nas visões paginadas",
+        "completa": false
+      }
+    ],
+    "criterios": "Amostra, e não histórico completo: oito leis estaduais de autoria individual, duas por legislatura, pela regra fixa \"entre as leis conferidas, a de menor número do primeiro e do último ano de cada legislatura com lei conferida\", sem olhar o assunto da lei. A lista das conferidas, as que ficaram de fora e o motivo estão em research/trilha-2026-10.md.",
+    "estado": "parcial",
+    "lacunas": [
+      "As leis de que ele é coautor não entraram na amostra.",
+      "Vinte e sete leis da lista da busca não tiveram a página aberta.",
+      "Os projetos que não viraram lei não foram contados nem registrados.",
+      "Os votos dele no Plenário e nas comissões da Alerj não foram pesquisados.",
+      "A composição das comissões da Alerj e as datas em que ele as integrou ou presidiu não foram localizadas em ato oficial.",
+      "A tramitação dos projetos que viraram lei (pareceres, votações e vetos) não foi pesquisada: quando a lei foi promulgada pela Assembleia, a página cita os parágrafos 5º e 7º do artigo 115 da Constituição do Estado, que esta edição não leu."
+    ],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Declaração da pesquisa feita para a amostra de leis estaduais da edição 0.3.0, com assistência de IA. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "cobertura-flavio-bolsonaro-geral-2019-2026",
+    "pessoaId": "flavio-bolsonaro",
+    "tema": "geral",
+    "periodo": {
+      "inicio": {
+        "tipo": "data",
+        "valor": "2019-02-01",
+        "precisao": "dia"
+      },
+      "fim": {
+        "tipo": "data",
+        "valor": "2026-10-08",
+        "precisao": "dia"
+      }
+    },
+    "acervos": [
+      {
+        "nome": "Dados Abertos do Senado Federal: matérias de relatoria por parlamentar",
+        "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/relatorias",
+        "consultadoEm": "2026-10-11",
+        "recorte": "codigoParlamentar=5894: 166 designações na resposta; seis conferidas com a matéria e o destino dela, em comissões e anos diferentes",
+        "completa": false
+      },
+      {
+        "nome": "Dados Abertos do Senado Federal: cargos por parlamentar",
+        "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/cargos",
+        "consultadoEm": "2026-10-11",
+        "recorte": "codigoParlamentar=5894: cargos lidos; os de direção já eram mandatos publicados, e os demais não foram registrados um a um",
+        "completa": false
+      }
+    ],
+    "criterios": "Amostra, e não histórico completo: uma relatoria, a de designação mais antiga entre as seis conferidas cuja matéria gerou norma, sem olhar o assunto da matéria. A relatoria do Projeto de Lei nº 2.253, de 2022, já estava no atlas como acontecimento. A lista das conferidas e o motivo estão em research/trilha-2026-10.md.",
+    "estado": "parcial",
+    "lacunas": [
+      "As demais relatorias dele no Senado e no Congresso não foram registradas: o serviço lista 166 designações.",
+      "O resultado do parecer do relator não está nos serviços consultados: os pareceres e as atas das comissões não foram baixados.",
+      "As matérias de que ele é autor ou coautor no Senado não foram registradas nesta edição.",
+      "As comissões de que ele participou no Senado foram lidas e não têm registro próprio.",
+      "Os votos dele de 2019 a 2022 não foram pesquisados; os de 2023 à data de corte têm declaração própria, por tema."
+    ],
+    "fontes": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Declaração da pesquisa feita para a amostra de atuação legislativa no Senado da edição 0.3.0, com assistência de IA. Revisão humana pendente."
+      }
+    }
   }
 ]

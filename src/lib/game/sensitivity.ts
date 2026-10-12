@@ -1,27 +1,29 @@
 // Contexto sensível (D-129): registros sobre processo judicial, prisão,
 // acusação ou violência. Nesses momentos o Escrivão não faz humor, mesmo com
-// a preferência ligada; a instrução e a informação documental não mudam.
+// a preferência ligada; a instrução não muda.
 //
 // A regra é uma sinalização editorial por registro, a mesma para os dois
 // personagens: os episódios da ficha judicial (judicial.ts) e uma lista curta
 // de outros registros, acontecimentos ou decisões. Nenhum texto é avaliado: a
 // regra olha identificadores, para ser conferível por teste. Um tema inteiro
 // não é sensível: uma lei sobre segurança pública é uma decisão como as
-// outras, e a sala dela mantém o humor sobre papelada.
+// outras. Um aprofundamento só perde o humor quando a explicação dele aponta
+// um registro da lista: é o caso do de Segurança pública de Lula, pelo decreto
+// da intervenção de 8 de janeiro de 2023, e não o de Flávio Bolsonaro.
 //
 // O código só aplica a regra. A aprovação do tom e da lista é de uma pessoa
 // (docs/GAMEPLAY.md, seção Regras editoriais do jogo).
 
 import { judicialOf } from "./judicial";
-import { recordIds, requiredRecords } from "./mission";
-import type { ChapterSpec } from "./types";
+import { phaseRefs } from "./trail";
+import type { PhaseSpec } from "./types";
 
 /**
  * Registros fora da ficha judicial que são de contexto sensível, pelo `id` do
  * conjunto publicado: a prisão de 1980 e os dois registros da intervenção
  * federal de 8 de janeiro de 2023 (o acontecimento e o decreto), que tratam
  * de um episódio de violência. Um teste confere que todo identificador
- * existe em um capítulo.
+ * existe em uma fase.
  */
 export const REGISTROS_SENSIVEIS: readonly string[] = [
   "lula-1980-prisao-pela-lei-de-seguranca-nacional",
@@ -35,14 +37,14 @@ export function isSensitive(id: string): boolean {
 }
 
 /**
- * O capítulo pede contexto sensível nas falas que são dele, e não de um
- * registro (a entrada, a ajuda e a conclusão): quando a tarefa pede um
- * registro sensível, ou quando mais da metade dos registros do capítulo é
- * sensível. Os registros que não são sensíveis continuam com a própria
- * descoberta, com humor.
+ * A fase pede contexto sensível nas falas que são dela (a entrada, o erro e a
+ * conclusão) quando o marco, a explicação ou a atividade apontam um registro
+ * sensível: é o que a pessoa acabou de ler e de responder. Um registro
+ * sensível que só está em "Explorar este período" não muda a fase: ele leva
+ * a própria marca quando é aberto, e os outros registros opcionais continuam
+ * com a fala deles.
  */
-export function isSensitiveChapter(capitulo: Pick<ChapterSpec, "eventIds" | "decisaoIds" | "tarefa">): boolean {
-  if (requiredRecords(capitulo.tarefa).some(isSensitive)) return true;
-  const ids = recordIds(capitulo);
-  return ids.filter(isSensitive).length * 2 > ids.length;
+export function isSensitivePhase(fase: Pick<PhaseSpec, "marco" | "explicacao" | "atividade" | "explorar">): boolean {
+  const doTexto = phaseRefs({ ...fase, explorar: [] });
+  return doTexto.some((referencia) => (referencia.tipo === "acontecimento" || referencia.tipo === "decisao") && isSensitive(referencia.id));
 }

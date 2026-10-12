@@ -5,11 +5,11 @@
 // conteúdo; os rótulos são texto de interface.
 //
 // Três naturezas que o modelo não confunde:
-//   voto parlamentar   manifestação individual em uma votação identificada;
-//   ato do Executivo   sanção, veto, medida provisória, decreto, iniciativa;
-//   participação       autoria e relatoria, que não são votos (fora do modelo
-//                      nesta entrega; entram como entidade própria se a
-//                      experiência exigir).
+//   voto parlamentar      manifestação individual em uma votação identificada;
+//   ato do Executivo      sanção, veto, medida provisória, decreto, iniciativa;
+//   atuação legislativa   autoria e relatoria de uma matéria, que não são
+//                         votos: o que o parlamentar propôs ou relatou, com o
+//                         destino documentado da matéria.
 
 /** Os temas da comparação por assunto. Classificar é decisão editorial, a justificar no registro. */
 export const TEMAS = [
@@ -148,6 +148,29 @@ export const TIPO_DE_ATO_LABELS: Record<TipoDeAto, string> = {
   "medida-provisoria": "Edição de medida provisória",
   decreto: "Decreto",
   iniciativa: "Iniciativa de proposição",
+};
+
+/** O que o parlamentar fez com a matéria. Autoria e relatoria não são voto: não dizem como ele votou. */
+export const TIPOS_DE_ATUACAO = ["autoria", "relatoria"] as const;
+export type TipoDeAtuacao = (typeof TIPOS_DE_ATUACAO)[number];
+
+export const TIPO_DE_ATUACAO_LABELS: Record<TipoDeAtuacao, string> = {
+  autoria: "Autoria de proposição",
+  relatoria: "Relatoria de proposição",
+};
+
+/**
+ * O destino documentado da matéria. Diz o que aconteceu com ela, e não se o
+ * trabalho do parlamentar foi bom nem se o parecer dele foi aprovado.
+ */
+export const DESFECHOS_DE_ATUACAO = ["lei-sancionada", "lei-promulgada-pelo-legislativo", "norma-gerada", "nao-documentado"] as const;
+export type DesfechoDeAtuacao = (typeof DESFECHOS_DE_ATUACAO)[number];
+
+export const DESFECHO_DE_ATUACAO_LABELS: Record<DesfechoDeAtuacao, string> = {
+  "lei-sancionada": "Virou lei, sancionada pelo chefe do Executivo",
+  "lei-promulgada-pelo-legislativo": "Virou lei, promulgada pelo Legislativo",
+  "norma-gerada": "A matéria gerou uma norma",
+  "nao-documentado": "Desfecho não documentado nesta edição",
 };
 
 export const ESTADOS_DE_COBERTURA = ["completa", "parcial", "pendente"] as const;

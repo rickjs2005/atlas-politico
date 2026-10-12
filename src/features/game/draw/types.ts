@@ -57,7 +57,7 @@ export interface CellInfo {
 }
 
 export interface RecordArt {
-  /** O registro recolhível: uma pasta de documentos. `destaque` quando ao alcance. */
+  /** A pasta de um registro da fase. `destaque` na pasta do marco. */
   draw(d: DrawContext, sx: number, sy: number, destaque: boolean): void;
 }
 
@@ -72,10 +72,8 @@ export interface SceneArt {
   drawExit(d: DrawContext, paleta: ScenePalette, sx: number, sy: number, lado: WallSide, abertura: number, info: CellInfo): void;
   /** Elemento de cenário, pelo tipo. */
   drawProp(d: DrawContext, paleta: ScenePalette, tipo: PropKind, sx: number, sy: number, variante: number, espelhado: boolean, info: CellInfo): void;
-  /** Anel discreto no chão sob o objeto ao alcance. */
+  /** Anel no chão sob a pasta do marco. */
   drawReachRing(d: DrawContext, paleta: ScenePalette, sx: number, sy: number): void;
-  /** Efeito de recolher, de `t` 0 a 1. */
-  drawCollectEffect(d: DrawContext, paleta: ScenePalette, sx: number, sy: number, t: number): void;
 }
 
 /** A função que desenha um elemento de cenário (draw/props.ts). */

@@ -18,14 +18,18 @@ import { CopyLink } from "@/components/CopyLink";
 import { AffiliationList, MandateList } from "@/components/PeriodRecords";
 import { Portrait } from "@/components/Portrait";
 import { SourceCatalog } from "@/components/SourceList";
+import { ComparisonOverview } from "@/features/comparison/Overview";
 import { TrajectoryLanes } from "@/features/comparison/TrajectoryLanes";
 import { DecisionsByTheme, SAMPLE_NOTICE } from "@/features/decisions/DecisionsByTheme";
 import { EventLinkList } from "@/features/events/EventLinkList";
+import { ProposalsByTheme } from "@/features/proposals/ProposalsByTheme";
 import { clipGaps } from "@/features/events/chronology";
 import { CategoryFilter } from "@/features/timeline/CategoryFilter";
 import { PeriodControl } from "@/features/timeline/PeriodControl";
 import { getCoveredSpan, getSharedSpan, listGaps, type YearSpan } from "@/lib/data/coverage";
 import { listDecisionViews } from "@/lib/data/decisions";
+import { buildOverview } from "@/lib/data/overview";
+import { PROPOSAL_NOTICE, PROPOSAL_SAMPLE_NOTICE, listProposals } from "@/lib/data/proposals";
 import { filterEvents, getImage, getSources, listSourcesOf, type Trajectory } from "@/lib/data/queries";
 import type { AtlasData } from "@/lib/data/types";
 import { CATEGORIAS, CATEGORY_LABELS, type Categoria } from "@/lib/domain/categories";
@@ -165,6 +169,17 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
     [data, trajetorias],
   );
   const totalDeDecisoes = colunasDeDecisoes.reduce((soma, coluna) => soma + coluna.decisoes.length, 0);
+  // As propostas do documento que cada candidatura registrou no TSE, por área. Também não seguem o recorte de anos.
+  const colunasDePropostas = useMemo(
+    () => trajetorias.map(({ pessoa }) => ({ pessoa: { id: pessoa.id, slug: pessoa.slug, nome: pessoa.nome }, propostas: listProposals(data, pessoa.id) })),
+    [data, trajetorias],
+  );
+  const haPropostas = colunasDePropostas.some((coluna) => coluna.propostas.length > 0);
+  // A comparação curta: os cargos de cada pessoa e o tipo de registro por cargo e por área. Também não segue o recorte de anos.
+  const colunasDoResumo = useMemo(
+    () => trajetorias.map(({ pessoa }) => ({ pessoa: { id: pessoa.id, slug: pessoa.slug, nome: pessoa.nome }, resumo: buildOverview(data, pessoa.id) })),
+    [data, trajetorias],
+  );
   // Quem tem a cobertura começando depois do início do período consultado.
   const semCobertura = cobertos.filter(({ coberto }) => coberto !== null && coberto.de > anos.de);
 
@@ -178,6 +193,12 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
         <p className="reading max-w-2xl max-md:text-base max-md:leading-relaxed">
           As duas trajetórias lado a lado, no mesmo intervalo de anos. A tela mostra o que o atlas
           registra para cada pessoa: acontecimentos, cargos, partidos e as fontes de cada registro.
+        </p>
+        {/* Para quem está começando: o atalho para a comparação curta, que fica depois das faixas e das notas (D-82). */}
+        <p className="text-sm">
+          <a href="#resumo" className="inline-flex min-h-11 items-center font-medium underline decoration-line-strong hover:decoration-ink md:min-h-0" data-ir-para-o-resumo>
+            Para começar: resumo por cargo e por área
+          </a>
         </p>
       </header>
 
@@ -333,6 +354,9 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
           </ul>
         </section>
 
+        {/* A comparação curta: os cargos de cada pessoa e o tipo de registro por cargo e por área. Vem depois das notas de leitura e antes das listas. */}
+        <ComparisonOverview colunas={colunasDoResumo} />
+
         {/* Em tela estreita as colunas ficam uma abaixo da outra: o atalho leva a cada uma. */}
         <nav aria-label="Trajetórias nesta página" className="lg:hidden">
           <ul className="flex flex-wrap gap-1.5">
@@ -370,11 +394,11 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
         </div>
 
         {/* As decisões por tema: o mesmo tema, lado a lado, com a instituição e o cargo de cada decisão à vista. Não entra no recorte de anos. */}
-        <section id="decisoes" aria-labelledby="titulo-decisoes" className="space-y-5 border-t border-ink pt-8" data-secao="decisoes" data-quantas={totalDeDecisoes}>
+        <section id="decisoes" aria-labelledby="titulo-decisoes" className="scroll-mt-24 space-y-5 border-t border-ink pt-8" data-secao="decisoes" data-quantas={totalDeDecisoes}>
           <div className="max-w-3xl space-y-2">
             <p className="eyebrow text-ink-soft">Decisões documentadas, por tema</p>
             <h2 id="titulo-decisoes" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
-              Votos e atos no mesmo tema
+              Votos, atos e atuação legislativa no mesmo tema
             </h2>
             <p className="text-sm text-ink-soft" data-aviso-amostra>
               {SAMPLE_NOTICE} Esta seção não segue o recorte de anos acima: mostra a amostra inteira da edição.
@@ -382,6 +406,22 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
           </div>
           <DecisionsByTheme colunas={colunasDeDecisoes} headingLevel={3} hrefOf={decisionHref} />
         </section>
+
+        {/* As propostas por área: o que o documento de cada candidatura diz que pretende fazer. Não é decisão, e fica em seção própria. */}
+        {haPropostas && (
+          <section id="propostas" aria-labelledby="titulo-propostas" className="scroll-mt-24 space-y-5 border-t border-ink pt-8" data-secao="propostas">
+            <div className="max-w-3xl space-y-2">
+              <p className="eyebrow text-ink-soft">Propostas registradas no TSE, por área</p>
+              <h2 id="titulo-propostas" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
+                O que cada documento propõe
+              </h2>
+              <p className="text-sm text-ink-soft" data-aviso-de-proposta>
+                {PROPOSAL_NOTICE} {PROPOSAL_SAMPLE_NOTICE} Esta seção não segue o recorte de anos acima.
+              </p>
+            </div>
+            <ProposalsByTheme colunas={colunasDePropostas} headingLevel={3} />
+          </section>
+        )}
       </div>
       </div>
     </>

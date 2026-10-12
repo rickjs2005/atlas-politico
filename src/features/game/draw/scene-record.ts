@@ -1,4 +1,4 @@
-// O registro recolhível, o anel de alcance e o efeito de recolher.
+// A pasta de uma fase e o anel no chão sob a pasta do marco.
 //
 // O registro é uma pasta de documentos que paira sobre uma marca no chão. É o
 // único objeto da cena com a cor de papel pardo e a marca em acento, para não
@@ -25,7 +25,7 @@ function drawFolder(ctx: CanvasRenderingContext2D, cx: number, cy: number, escal
   ctx.lineCap = "round";
 
   if (destaque) {
-    // Halo claro, para a pasta ao alcance saltar do cenário.
+    // Halo claro, para a pasta do marco saltar do cenário.
     ctx.beginPath();
     ctx.ellipse(0, 0, 19, 16, 0, 0, TAU);
     ctx.fillStyle = ACCENT_SOFT;
@@ -142,7 +142,7 @@ export const RECORD_ART: RecordArt = {
   },
 };
 
-/** Anel sob o que está ao alcance: tracejado em acento sobre um fio claro, para ler em qualquer piso. */
+/** Anel sob a pasta do marco: tracejado em acento sobre um fio claro, para ler em qualquer piso. */
 export function drawReachRing(d: DrawContext, _paleta: ScenePalette, sx: number, sy: number): void {
   const { ctx } = d;
   ctx.beginPath();
@@ -160,37 +160,4 @@ export function drawReachRing(d: DrawContext, _paleta: ScenePalette, sx: number,
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.lineDashOffset = 0;
-}
-
-/** Recolher: a pasta sobe e some, e um anel se abre na marca. `t` de 0 a 1. */
-export function drawCollectEffect(d: DrawContext, _paleta: ScenePalette, sx: number, sy: number, t: number): void {
-  const { ctx } = d;
-  const k = Math.min(1, Math.max(0, t));
-  const saida = 1 - (1 - k) * (1 - k);
-  const antes = ctx.globalAlpha;
-
-  ctx.globalAlpha = antes * (1 - k);
-  ctx.beginPath();
-  ctx.ellipse(sx, sy, 14 + saida * 20, 7 + saida * 10, 0, 0, TAU);
-  ctx.strokeStyle = ACCENT;
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  const cy = sy - HOVER - saida * 34;
-  // Riscos curtos em volta da pasta.
-  ctx.beginPath();
-  for (let i = 0; i < 6; i += 1) {
-    const a = (i / 6) * TAU + 0.3;
-    const r0 = 17 + saida * 6;
-    const r1 = r0 + 5;
-    ctx.moveTo(sx + Math.cos(a) * r0, cy + Math.sin(a) * r0 * 0.8);
-    ctx.lineTo(sx + Math.cos(a) * r1, cy + Math.sin(a) * r1 * 0.8);
-  }
-  ctx.lineWidth = 1.6;
-  ctx.lineCap = "round";
-  ctx.stroke();
-
-  ctx.globalAlpha = antes * (1 - k * k);
-  drawFolder(ctx, sx, cy, 1 + saida * 0.12, false);
-  ctx.globalAlpha = antes;
 }

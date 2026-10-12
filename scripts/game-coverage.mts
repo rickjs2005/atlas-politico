@@ -1,18 +1,21 @@
-// Gera docs/GAME-COVERAGE.md, a matriz acontecimento → personagem → capítulo
-// do jogo, a partir dos dados publicados e de src/lib/game/chapters.ts.
+// Gera docs/GAME-COVERAGE.md, a matriz de cobertura do jogo: as fases de cada
+// pessoa e, para cada acontecimento, decisão, fato biográfico e proposta
+// publicados, em que fase aparece. Parte dos dados publicados (as fases vêm de
+// content/published/fasesDoJogo.json) e de src/lib/game/presentation.ts.
 //
 //   npm run game:coverage            escreve o arquivo
 //   npm run game:coverage -- --check confere se está em dia; não escreve
 //
 // Código de saída: 0 quando deu certo, 1 quando o arquivo está desatualizado
-// (com --check) ou quando há acontecimento sem capítulo e sem justificativa.
+// (com --check) ou quando há acontecimento ou decisão sem fase e sem
+// justificativa, ou área com proposta publicada e nenhuma em fase.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { readSources, resolvePaths } from "@/lib/content/sources";
 import { PROFILES } from "@/lib/domain/profiles";
-import { renderCoverage, uncovered } from "@/lib/game/coverage";
+import { renderCoverage, uncovered, uncoveredDecisions, uncoveredProposalAreas } from "@/lib/game/coverage";
 import { buildAtlasData } from "@/lib/publication/build";
 
 const SAIDA = path.resolve("docs/GAME-COVERAGE.md");
@@ -29,7 +32,15 @@ let faltas = 0;
 for (const perfil of PROFILES) {
   for (const linha of uncovered(data, perfil.slug)) {
     faltas += 1;
-    console.error(`${perfil.slug}: ${linha.eventId} (${linha.data}) não está em capítulo nem em EXCLUSIONS.`);
+    console.error(`${perfil.slug}: ${linha.eventId} (${linha.data}) não está em fase nenhuma nem em EXCLUSIONS.`);
+  }
+  for (const linha of uncoveredDecisions(data, perfil.slug)) {
+    faltas += 1;
+    console.error(`${perfil.slug}: a decisão ${linha.decisaoId} (${linha.data}) não está em fase nenhuma nem em DECISION_EXCLUSIONS.`);
+  }
+  for (const area of uncoveredProposalAreas(data, perfil.slug)) {
+    faltas += 1;
+    console.error(`${perfil.slug}: a área ${area} tem proposta publicada e nenhuma em fase.`);
   }
 }
 

@@ -1,20 +1,35 @@
-// Contexto sensível (D-129): o humor do Escrivão fica de fora nos momentos
-// sobre registros de processo judicial, prisão, acusação ou violência. A regra
-// é uma sinalização por registro (a ficha judicial e uma lista curta), a mesma
-// para os dois personagens; um tema inteiro não é sensível.
+// Contexto sensível (src/lib/game/sensitivity.ts, D-129): o humor do Escrivão
+// fica de fora nos momentos sobre registros de processo judicial, prisão,
+// acusação ou violência. A regra é uma sinalização por registro (a ficha
+// judicial e uma lista curta), a mesma para os dois personagens; um tema
+// inteiro não é sensível.
 
 import { describe, expect, it } from "vitest";
 
-import { chaptersOf } from "@/lib/game/chapters";
-import { selectLines } from "@/lib/game/escrivao";
+import { readSources, resolvePaths } from "@/lib/content/sources";
+import { PROFILES } from "@/lib/domain/profiles";
+import { buildGameContent } from "@/lib/game/content";
 import { JUDICIAL } from "@/lib/game/judicial";
-import { recordIds } from "@/lib/game/mission";
-import { REGISTROS_SENSIVEIS, isSensitive, isSensitiveChapter } from "@/lib/game/sensitivity";
-import type { ChapterSpec, TaskSpec } from "@/lib/game/types";
+import { ROOM_IDS } from "@/lib/game/rooms";
+import { REGISTROS_SENSIVEIS, isSensitive, isSensitivePhase } from "@/lib/game/sensitivity";
+import { phaseRefs } from "@/lib/game/trail";
+import type { PhaseRef, PhaseSpec } from "@/lib/game/types";
+import { buildAtlasData } from "@/lib/publication/build";
 
-const TODOS = [...chaptersOf("lula"), ...chaptersOf("flavio-bolsonaro")];
+const data = buildAtlasData(readSources(resolvePaths())).data!;
+const FASES = PROFILES.flatMap((perfil) => ROOM_IDS.flatMap((sala) => buildGameContent(data, perfil.slug, sala)!.fases));
 
-const capitulo = (tarefa: TaskSpec, eventIds: string[], decisaoIds: string[] = []): Pick<ChapterSpec, "eventIds" | "decisaoIds" | "tarefa"> => ({ tarefa, eventIds, decisaoIds });
+const A = (id: string): PhaseRef => ({ tipo: "acontecimento", id });
+const D = (id: string): PhaseRef => ({ tipo: "decisao", id });
+const [JUDICIAL_ID] = Object.keys(JUDICIAL) as [string];
+
+/** Uma fase de teste: o marco, o que a explicação aponta, o que a atividade aponta e o que fica em Explorar. */
+const fase = (marco: PhaseRef, explicacao: PhaseRef[], atividade: PhaseRef[], explorar: PhaseRef[] = []): Pick<PhaseSpec, "marco" | "explicacao" | "atividade" | "explorar"> => ({
+  marco,
+  explicacao: [{ texto: "Bloco de teste.", referencias: explicacao }],
+  atividade: { tipo: "pergunta", enunciado: "Pergunta de teste?", opcoes: [{ id: "a", texto: "A" }, { id: "b", texto: "B" }], correta: "a", explicacao: "Explicação de teste.", referencias: atividade },
+  explorar,
+});
 
 describe("registro de contexto sensível", () => {
   it("todo episódio da ficha judicial é sensível; os outros acontecimentos, não", () => {
@@ -24,11 +39,11 @@ describe("registro de contexto sensível", () => {
     expect(isSensitive("registro-que-nao-existe")).toBe(false);
   });
 
-  it("a lista de registros sensíveis fora da ficha existe nos capítulos, e cada um é sensível", () => {
-    const nosCapitulos = new Set(TODOS.flatMap((item) => recordIds(item)));
+  it("a lista de registros sensíveis fora da ficha existe nas fases, e cada um é sensível", () => {
+    const nasFases = new Set(FASES.flatMap((item) => phaseRefs(item)).map((referencia) => referencia.id));
     expect(REGISTROS_SENSIVEIS.length).toBeGreaterThan(0);
     for (const id of REGISTROS_SENSIVEIS) {
-      expect(nosCapitulos.has(id), id).toBe(true);
+      expect(nasFases.has(id), id).toBe(true);
       expect(isSensitive(id), id).toBe(true);
       // A lista é do que a ficha judicial não cobre: sem repetição entre as duas.
       expect(JUDICIAL[id], id).toBeUndefined();
@@ -36,50 +51,42 @@ describe("registro de contexto sensível", () => {
     expect(new Set(REGISTROS_SENSIVEIS).size).toBe(REGISTROS_SENSIVEIS.length);
   });
 
-  it("um tema não é sensível: as leis e os votos de Segurança pública só entram quando listados", () => {
-    const daSala = TODOS.filter((item) => item.sala === "seguranca-publica").flatMap((item) => recordIds(item));
-    expect(daSala.length).toBeGreaterThan(0);
-    const sensiveis = daSala.filter(isSensitive);
-    // Só o decreto da intervenção federal, que está na lista; as demais decisões da sala mantêm o humor.
+  it("um tema não é sensível: as leis e os votos de Economia e de Segurança pública só entram quando listados", () => {
+    const daSala = (sala: string) => FASES.filter((item) => item.sala === sala).flatMap((item) => phaseRefs(item)).filter((referencia) => referencia.tipo === "decisao" || referencia.tipo === "acontecimento");
+    const sensiveis = daSala("seguranca-publica").filter((referencia) => isSensitive(referencia.id)).map((referencia) => referencia.id);
+    // Só o decreto da intervenção federal, que está na lista; as demais decisões da sala não são sensíveis.
     expect([...new Set(sensiveis)]).toEqual(["planalto-decreto-11377-2023-intervencao-df"]);
-    for (const item of TODOS.filter((outro) => outro.sala === "economia")) expect(recordIds(item).some(isSensitive), item.id).toBe(false);
+    expect(daSala("economia").some((referencia) => isSensitive(referencia.id))).toBe(false);
+    // As atuações legislativas de Flávio Bolsonaro são decisões como as outras.
+    for (const atuacao of data.conjunto.atuacoesLegislativas) expect(isSensitive(atuacao.id), atuacao.id).toBe(false);
   });
 });
 
-describe("capítulo de contexto sensível", () => {
-  it("é sensível quando a tarefa pede um registro sensível, ou quando mais da metade dos registros é sensível", () => {
-    const [judicial] = Object.keys(JUDICIAL) as [string];
-    expect(isSensitiveChapter(capitulo({ tipo: "fonte", eventId: judicial }, [judicial, "a", "b", "c"]))).toBe(true);
-    expect(isSensitiveChapter(capitulo({ tipo: "ordem", eventIds: ["a", judicial] }, ["a", judicial, "b", "c"]))).toBe(true);
-    expect(isSensitiveChapter(capitulo({ tipo: "registro", eventId: "a" }, ["a", judicial, "b", "c"]))).toBe(false);
-    // Metade não basta; mais da metade, sim.
-    expect(isSensitiveChapter(capitulo({ tipo: "registro", eventId: "a" }, ["a", judicial]))).toBe(false);
-    expect(isSensitiveChapter(capitulo({ tipo: "registro", eventId: "a" }, ["a", judicial], ["planalto-decreto-11377-2023-intervencao-df"]))).toBe(true);
-    expect(isSensitiveChapter(capitulo({ tipo: "registro", eventId: "a" }, ["a"]))).toBe(false);
+describe("fase de contexto sensível", () => {
+  it("é sensível quando o marco, a explicação ou a atividade apontam um registro sensível", () => {
+    expect(isSensitivePhase(fase(A(JUDICIAL_ID), [A(JUDICIAL_ID)], [A("a")]))).toBe(true);
+    expect(isSensitivePhase(fase(A("a"), [A("a"), A(JUDICIAL_ID)], [A("a")]))).toBe(true);
+    expect(isSensitivePhase(fase(A("a"), [A("a")], [D("planalto-decreto-11377-2023-intervencao-df")]))).toBe(true);
+    expect(isSensitivePhase(fase(A("a"), [A("a"), D("b")], [A("a")]))).toBe(false);
   });
 
-  it("na edição, os capítulos sensíveis são os de processos e o da intervenção, com a mesma regra para os dois personagens", () => {
-    const sensiveis = TODOS.filter((item) => isSensitiveChapter(item)).map((item) => item.id).sort();
-    expect(sensiveis).toEqual(["flavio-bolsonaro-3-denuncia", "lula-4-processos", "lula-5-anulacao"]);
-    // Nenhuma sala temática é sensível como capítulo: o humor da sala fica.
-    for (const item of TODOS.filter((outro) => outro.sala !== "historico")) expect(isSensitiveChapter(item), item.id).toBe(false);
+  it("um registro sensível que só está em Explorar não muda a fase: ele leva a própria marca quando é aberto", () => {
+    expect(isSensitivePhase(fase(A("a"), [A("a")], [A("a")], [A(JUDICIAL_ID)]))).toBe(false);
   });
-});
 
-describe("seleção das falas em contexto sensível", () => {
-  it("o seletor não escolhe humor, mesmo com a preferência ligada; a instrução e a documental ficam as mesmas", () => {
-    const dados = { titulo: "Registro", data: "2 de janeiro de 2024", fontes: "1 fonte" };
-    const comHumor = selectLines({ sala: "historico", evento: "descoberta", humor: true, vistas: [], dados });
-    expect(comHumor.map((fala) => fala.camada)).toEqual(["instrucao", "documental", "humor"]);
-    const sensivel = selectLines({ sala: "historico", evento: "descoberta", humor: true, vistas: [], dados, sensivel: true });
-    expect(sensivel.map((fala) => fala.camada)).toEqual(["instrucao", "documental"]);
-    expect(sensivel).toEqual(comHumor.slice(0, 2));
-    // O mesmo vale para as salas temáticas e para os outros eventos.
-    for (const sala of ["economia", "seguranca-publica"] as const) {
-      for (const evento of ["entrada", "ajuda", "fonte", "erro", "conclusao"] as const) {
-        expect(selectLines({ sala, evento, humor: true, vistas: [], sensivel: true }).some((fala) => fala.camada === "humor"), `${sala} ${evento}`).toBe(false);
-        expect(selectLines({ sala, evento, humor: true, vistas: [], sensivel: true }).some((fala) => fala.camada === "instrucao"), `${sala} ${evento}`).toBe(true);
-      }
-    }
+  it("só acontecimento e decisão contam: um fato, um cargo ou um conceito com o mesmo identificador não tornam a fase sensível", () => {
+    expect(isSensitivePhase(fase({ tipo: "fato", id: JUDICIAL_ID }, [{ tipo: "conceito", id: JUDICIAL_ID }], [{ tipo: "mandato", id: JUDICIAL_ID }]))).toBe(false);
+  });
+
+  it("na edição, a marca da fase é a da regra, e as fases de processos dos dois personagens são sensíveis", () => {
+    for (const item of FASES) expect(item.sensivel, item.id).toBe(isSensitivePhase(item));
+    const sensiveis = FASES.filter((item) => item.sensivel).map((item) => item.id);
+    expect(sensiveis).toContain("lula-processos");
+    expect(sensiveis).toContain("flavio-bolsonaro-processos");
+    // A fase que conta a prisão de 1980 e a que conta o 8 de janeiro de 2023 também.
+    expect(sensiveis).toContain("lula-partido-e-constituinte");
+    expect(sensiveis).toContain("lula-retorno");
+    // As fases de origem, de eleição e de leis estaduais não são.
+    for (const id of ["lula-origem", "flavio-bolsonaro-origem", "lula-eleicao-2026", "flavio-bolsonaro-eleicao-2026", "flavio-bolsonaro-alerj-primeiros-mandatos", "flavio-bolsonaro-economia"]) expect(sensiveis, id).not.toContain(id);
   });
 });

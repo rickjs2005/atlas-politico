@@ -1,5 +1,7 @@
 # Histórico de decisões e o Escrivão: plano e situação
 
+> **Documento histórico, no que diz do jogo.** O domínio de decisões que este plano criou (votos, atos do Executivo, cobertura da pesquisa, a consulta comparativa e a importação) continua em vigor, e ganhou na edição 0.3.0 a atuação legislativa, que aqui aparece como "entidade futura" (D-136). Já as salas, a missão de decisão em duas etapas e as três camadas do Escrivão são do jogo anterior, substituído em 11 de outubro de 2026 pela trilha simples: as salas temáticas viraram aprofundamentos de uma fase, a missão saiu, e o Escrivão fala em duas camadas, a instrução e o humor ([GAME-TRAIL.md](GAME-TRAIL.md), [GAMEPLAY.md](GAMEPLAY.md), D-133). O texto abaixo fica como foi escrito.
+
 Plano do projeto a partir do relatório de arquitetura e narrativa de 10 de outubro de 2026, feito por um agente de IA sobre o commit `b7cd0ee` e trazido pelo responsável pelo projeto. O relatório pede um domínio de decisões políticas (votos parlamentares e atos do Executivo) comparável entre os dois perfis, por votação e por tema, e um guia narrativo, o Escrivão, com diálogos declarativos por sala. Este documento é a versão do projeto para esse plano: o que foi decidido, o que foi feito e o que falta, em entregas pequenas. As decisões estão em [DECISIONS.md](DECISIONS.md), D-122 a D-124; o modelo, em [DATA_MODEL.md](DATA_MODEL.md), seção Decisões políticas; a política, em [EDITORIAL.md](EDITORIAL.md), seção Decisões políticas.
 
 ## O que o relatório pediu, e como ficou

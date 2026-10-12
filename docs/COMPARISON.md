@@ -28,11 +28,14 @@ Nesta ordem, de cima para baixo:
 
 | Parte | O que traz |
 | --- | --- |
-| Abertura | O que a tela é: as duas trajetórias no mesmo intervalo, com o que o atlas registra para cada pessoa |
+| Abertura | O que a tela é: as duas trajetórias no mesmo intervalo, com o que o atlas registra para cada pessoa, e o atalho **Para começar: resumo por cargo e por área** |
 | Recorte | Período (campos **De** e **Até**), categorias, **Limpar filtros** e **Copiar link**. Fica preso ao topo da página |
-| Como ler esta comparação | Quatro avisos, escritos com os dados do recorte: mesmo recorte, cargos diferentes, cobertura diferente, acervo e não desempenho |
 | Linha do tempo das trajetórias | Uma faixa por pessoa sobre o mesmo eixo: marcas dos acontecimentos, cargos e partidos, com o período em claro e o resto hachurado |
+| Como ler esta comparação | Quatro avisos, escritos com os dados do recorte: mesmo recorte, cargos diferentes, cobertura diferente, acervo e não desempenho |
+| Resumo para começar | Os cargos públicos de cada pessoa e o tipo de registro que o atlas tem de cada cargo e de cada área (abaixo). Não segue o recorte de anos |
 | Uma coluna por pessoa | Seis seções, na mesma ordem para as duas (abaixo) |
+| Decisões documentadas, por tema | Votos, atos do Executivo e atuação legislativa das duas pessoas, no mesmo tema, lado a lado. Mostra a amostra inteira da edição, e não o recorte de anos |
+| Propostas registradas no TSE, por área | As frases do documento de cada candidatura, três por área, lado a lado. Não segue o recorte de anos |
 
 Seções de cada coluna:
 
@@ -46,6 +49,32 @@ Seções de cada coluna:
 | Fontes deste recorte | Os documentos que sustentam o que a coluna mostra, sem repetição |
 
 As pessoas aparecem em ordem alfabética, como no resto do atlas (D-38).
+
+## Resumo para começar
+
+A comparação detalhada é longa. Para quem está começando, a seção **Resumo: os cargos de cada um e o que o atlas registra** (`#resumo`) diz, em uma tela, o que há para comparar (D-141). Ela fica depois das faixas e das notas de leitura, porque as faixas são a primeira coisa da tela e as notas vêm antes de qualquer lista (D-82); o atalho no cabeçalho leva até ela.
+
+| Parte | O que diz |
+| --- | --- |
+| Por cargo | Os cargos públicos de cada pessoa, com a instituição e os anos, e o tipo de registro que a edição tem de cada um: votos nominais, atos do Executivo, autoria ou relatoria de matérias. Cargo sem decisão publicada aparece como "Nenhuma decisão publicada nesta edição" |
+| Por área | As sete áreas, na mesma ordem para as duas pessoas. Em cada uma, os tipos de decisão de cada pessoa, com o caminho para a seção do tema, e se há proposta de 2026 registrada no TSE, com o caminho para a seção da área. As decisões sem tema ficam na linha "Outros assuntos" |
+| Avisos | "O cargo diz o que a pessoa podia fazer. Quem preside o país sanciona, veta e decreta; quem é deputado ou senador propõe, relata e vota." e "Área ou cargo sem decisão é lacuna da pesquisa desta edição, e não uma conclusão sobre a pessoa." |
+
+Regras, em `src/lib/data/overview.ts`:
+
+- **O resumo diz o tipo, nunca a quantidade.** Nenhum campo dele traz número de registros, e um teste confere. Um resumo com números lado a lado viraria placar.
+- **Só os cargos públicos entram no resumo por cargo:** os mandatos com casa declarada que não foram exercidos dentro de outro mandato da mesma pessoa. A liderança de um partido no Senado ou a presidência de uma comissão são funções de quem já é senador, e ficam na lista completa de cargos e funções, na coluna da pessoa, com os cargos de sindicato e de partido.
+- **A área vazia não some.** Todas as áreas aparecem para as duas pessoas, com a frase da lacuna onde não há decisão e "Propostas: ainda não pesquisado nesta edição" onde não há proposta.
+- **A ordem dos tipos é fixa:** votos nominais, atos do Executivo, autoria ou relatoria de matérias.
+
+Na edição 0.3.0, o resumo de Lula tem atos do Executivo nas sete áreas, e o de Flávio Bolsonaro tem votos ou atuação legislativa em cinco, com Educação e Direitos das mulheres sem decisão publicada. As duas pessoas têm proposta registrada nas sete. A diferença é da pesquisa, e a tela diz.
+
+## Decisões por tema e propostas por área
+
+As duas seções ficam depois das colunas e não seguem o recorte de anos: mostram a edição inteira.
+
+- **Decisões documentadas, por tema** (`#decisoes`, `src/features/decisions/DecisionsByTheme.tsx`). Um grupo por tema que tenha alguma decisão, na ordem das taxonomias, e por último "Outros assuntos", com as decisões cujo assunto não cabe com clareza em nenhum tema. Em cada grupo, as decisões de cada pessoa em uma coluna, como cartões: cargo e instituição, data, objeto votado e manifestação, ou tipo do ato, ou a matéria e o desfecho, com as fontes. Quando as duas pessoas têm decisão sobre a mesma proposição, a tela diz, com a diferença de instituição e de natureza à vista. O aviso fixo diz que é amostra, que cada parte da amostra tem a própria regra de escolha, escrita na metodologia, e que um voto no Senado, um ato da Presidência e a autoria de uma lei estadual são coisas diferentes (D-143).
+- **Propostas registradas no TSE, por área** (`#propostas`, `src/features/proposals/ProposalsByTheme.tsx`). As sete áreas, com as três frases de cada documento lado a lado: o texto, a ressalva, a página do documento e a situação da revisão. O aviso fixo diz que a frase é do documento registrado, que não é ato, voto nem resultado, e que três frases por área não são o documento inteiro (D-138). A tela não conta as propostas de cada lado nem as põe em ordem.
 
 ## Estado e endereço
 
@@ -178,6 +207,9 @@ Em tela estreita as referências de tempo continuam à vista: o período fica es
 | Rota | `src/app/comparar/page.tsx` |
 | Tela | `src/app/comparar/Comparison.tsx` |
 | Faixas | `src/features/comparison/TrajectoryLanes.tsx` |
+| Resumo para começar | `src/features/comparison/Overview.tsx`, sobre `buildOverview`, em `src/lib/data/overview.ts` |
+| Decisões por tema | `src/features/decisions/DecisionsByTheme.tsx` e `DecisionCard.tsx`, sobre `src/lib/data/decisions.ts` |
+| Propostas por área | `src/features/proposals/ProposalsByTheme.tsx`, sobre `src/lib/data/proposals.ts` |
 | Seletor | `selectComparison`, em `src/lib/state/selectors.ts` |
 | Consulta | `compareTrajectories` e `listSourcesOf`, em `src/lib/data/queries.ts` |
 | Contexto do endereço | `UrlContext`, `stateFromSearch` e `stateAfter`, em `src/lib/state/url-state.ts` |
@@ -191,7 +223,9 @@ Em tela estreita as referências de tempo continuam à vista: o período fica es
 | --- | --- |
 | `tests/comparison.test.ts` | Estado a partir do endereço, ações, mesma consulta para as duas pessoas, acontecimento compartilhado, recorte vazio, interseção de intervalos e fontes de um conjunto |
 | `tests/links.test.ts` | Endereços entre telas e o retorno |
-| `tests/e2e/comparacao.spec.ts` | A tela no navegador, com os dados reais: recorte, endereço, histórico, cargos e partidos, recorte vazio, linguagem, fontes, cópia do link, celular |
+| `tests/overview.test.ts` | O resumo: os tipos por extenso, os cargos principais, as sete áreas para as duas pessoas, a área vazia que não some e nenhum número em campo nenhum |
+| `tests/decisions-view.test.ts`, `tests/proposals.test.ts` | O cartão de decisão das três naturezas e as propostas da edição: três por área para cada pessoa, o texto que começa por quem propõe, a página do documento e os avisos fixos |
+| `tests/e2e/comparacao.spec.ts` | A tela no navegador, com os dados reais: recorte, endereço, histórico, cargos e partidos, recorte vazio, linguagem, fontes, cópia do link, celular, o resumo depois das faixas e das notas com o atalho no cabeçalho, as decisões por tema e as propostas por área |
 | `npm run capture:pages` | Capturas de `docs/capturas/fase-7/` |
 
 ### Conferência manual

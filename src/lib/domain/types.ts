@@ -4,12 +4,17 @@
 
 export type {
   Acontecimento,
+  AtividadeDeFase,
   AtoExecutivo,
+  AtuacaoLegislativa,
   Citacao,
   CoberturaPolitica,
+  Conceito,
   Conjunto,
   Edicao,
   Editorial,
+  FaseDoJogo,
+  FatoBiografico,
   Filiacao,
   Fonte,
   IdentidadeInstitucional,
@@ -19,7 +24,9 @@ export type {
   Mandato,
   ObjetoVotadoRegistro,
   Pessoa,
+  PropostaEleitoral,
   Proposicao,
+  ReferenciaDeFase,
   RegistroIndividual,
   Votacao,
   Voto,
@@ -27,6 +34,7 @@ export type {
 
 export type { Categoria } from "./categories";
 export type {
+  DesfechoDeAtuacao,
   EstadoDeCobertura,
   Instituicao,
   Jurisdicao,
@@ -38,8 +46,10 @@ export type {
   Tema,
   TemaDeCobertura,
   TipoDeAto,
+  TipoDeAtuacao,
   TipoDeParticipacao,
   TipoDeRegistroIndividual,
 } from "./decisions";
 export type { DataHistorica, Periodo, Precisao } from "./dates";
+export type { SalaDoJogo, TipoDeFatoBiografico, TipoDeReferenciaDeFase } from "./game";
 export type { Coordenadas, Position, PrecisaoGeografica } from "./geo";

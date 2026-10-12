@@ -4,10 +4,7 @@
 //   tela: sx = (x - y) · TILE_W/2
 //         sy = (x + y) · TILE_H/2
 //
-// Os controles são relativos à tela (seta para cima leva para cima na tela),
-// e por isso a intenção é convertida para os eixos do mundo aqui.
-
-import type { Facing, InputState } from "../types";
+import type { Facing } from "../types";
 
 export const TILE_W = 64;
 export const TILE_H = 32;
@@ -30,23 +27,6 @@ export function toWorld(sx: number, sy: number): { x: number; y: number } {
   const a = sx / (TILE_W / 2);
   const b = sy / (TILE_H / 2);
   return { x: (a + b) / 2, y: (b - a) / 2 };
-}
-
-const INV_SQRT2 = Math.SQRT1_2;
-
-/**
- * Intenção em eixos de tela (dx para a direita, dy para baixo) convertida em
- * um vetor unitário nos eixos do mundo. Tela para cima é (-1, -1) no mundo;
- * tela para a direita é (+1, -1).
- */
-export function inputToWorld(input: InputState): { x: number; y: number } {
-  const { dx, dy } = input;
-  if (dx === 0 && dy === 0) return { x: 0, y: 0 };
-  // Base: direita = (1, -1)/√2, baixo = (1, 1)/√2.
-  const x = (dx + dy) * INV_SQRT2;
-  const y = (dy - dx) * INV_SQRT2;
-  const comprimento = Math.hypot(x, y);
-  return { x: x / comprimento, y: y / comprimento };
 }
 
 /** Para onde o personagem olha, dado o vetor de movimento no mundo. */

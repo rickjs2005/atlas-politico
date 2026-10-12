@@ -1,25 +1,27 @@
-// A visão de leitura de uma decisão política (um voto parlamentar ou um ato do
-// Executivo), com o que o cartão do atlas e o jogo mostram já resolvido: o
-// cargo e a instituição do mandato pelo qual a pessoa decidiu, a proposição,
-// o objeto votado e a manifestação registrada (ou o tipo do ato e os campos
-// que o distinguem), as fontes com o que cada uma sustenta e a situação da
-// revisão (docs/DATA_MODEL.md, seção Decisões). Funções puras sobre
-// `AtlasData`: nada aqui escreve fato; os textos são os do conjunto, e os
-// conectores são fixos.
+// A visão de leitura de uma decisão política (um voto parlamentar, um ato do
+// Executivo ou uma atuação legislativa), com o que o cartão do atlas e o jogo
+// mostram já resolvido: o cargo e a instituição do mandato pelo qual a pessoa
+// agiu, a proposição, o objeto votado e a manifestação registrada (ou o tipo
+// do ato e os campos que o distinguem, ou a matéria e o destino dela), as
+// fontes com o que cada uma sustenta e a situação da revisão
+// (docs/DATA_MODEL.md, seção Decisões). Funções puras sobre `AtlasData`: nada
+// aqui escreve fato; os textos são os do conjunto, e os conectores são fixos.
 
 import { compareDates } from "@/lib/domain/dates";
 import {
   INSTITUICAO_LABELS,
   OBJETO_LABELS,
   TEMAS,
+  type DesfechoDeAtuacao,
   type Instituicao,
   type ModalidadeDeVotacao,
   type ObjetoVotado,
   type ResultadoDeVotacao,
   type Tema,
   type TipoDeAto,
+  type TipoDeAtuacao,
 } from "@/lib/domain/decisions";
-import type { AtoExecutivo, Citacao, DataHistorica, Editorial, Fonte, Mandato, Proposicao, RegistroIndividual, Votacao, Voto } from "@/lib/domain/types";
+import type { AtoExecutivo, AtuacaoLegislativa, Citacao, DataHistorica, Editorial, Fonte, Mandato, Proposicao, RegistroIndividual, Votacao, Voto } from "@/lib/domain/types";
 
 import { lookup, lookupList } from "./lookup";
 import type { AtlasData } from "./types";
@@ -73,10 +75,21 @@ export interface DecisionAto {
   detalhes: readonly { rotulo: string; valor: string; itens?: readonly string[] }[];
 }
 
+/** A autoria ou a relatoria de uma matéria, com o destino documentado dela. */
+export interface DecisionAtuacao {
+  tipo: TipoDeAtuacao;
+  /** A matéria, como o acervo a identifica, e de quem ela é. */
+  materia: { identificador: string; ementa: string; autoria: string };
+  /** O destino da matéria: o tipo, a norma (quando houve) e o que o documento diz e não diz. */
+  desfecho: { tipo: DesfechoDeAtuacao; norma: string | null; descricao: string };
+  /** A nota pública quando os documentos divergem; `null` quando concordam. */
+  divergencia: string | null;
+}
+
 interface DecisionBase {
   id: string;
   pessoaId: string;
-  /** Identificação curta, montada de campos do registro com conectores fixos: "Votação: PL 2253/2022, texto principal" ou o identificador do ato. */
+  /** Identificação curta: montada de campos do registro com conectores fixos ("Votação: PL 2253/2022, texto principal"), o identificador do ato, ou o título da atuação legislativa. */
   titulo: string;
   data: DataHistorica;
   temas: readonly Tema[];
@@ -91,7 +104,8 @@ interface DecisionBase {
 
 export type DecisionView =
   | (DecisionBase & { natureza: "voto"; votacao: DecisionVotacao; registro: RegistroIndividual })
-  | (DecisionBase & { natureza: "ato"; ato: DecisionAto });
+  | (DecisionBase & { natureza: "ato"; ato: DecisionAto })
+  | (DecisionBase & { natureza: "atuacao"; atuacao: DecisionAtuacao });
 
 /** A situação da revisão sem as observações internas, que o cartão não mostra. */
 export function reviewOf(editorial: Editorial): Editorial {
@@ -238,14 +252,40 @@ export function viewOfAct(data: AtlasData, ato: AtoExecutivo): DecisionView {
   };
 }
 
-/** A visão de uma decisão pelo `id` de um voto ou de um ato. `null` quando não está no conjunto. */
+/** A visão de uma atuação legislativa: a autoria ou a relatoria de uma matéria. Não cita proposição do conjunto: a matéria vem no próprio registro. */
+export function viewOfLegislativeWork(data: AtlasData, atuacao: AtuacaoLegislativa): DecisionView {
+  return {
+    natureza: "atuacao",
+    id: atuacao.id,
+    pessoaId: atuacao.pessoaId,
+    titulo: atuacao.titulo,
+    data: atuacao.data,
+    temas: atuacao.temas,
+    instituicao: atuacao.instituicao,
+    cargo: cargoDe(mandatoDe(data, atuacao.mandatoId)),
+    proposicoes: [],
+    atuacao: {
+      tipo: atuacao.tipo,
+      materia: atuacao.materia,
+      desfecho: atuacao.desfecho,
+      divergencia: atuacao.divergenciaDocumentada,
+    },
+    fontes: sourcesOf(data, atuacao.fontes),
+    editorial: reviewOf(atuacao.editorial),
+  };
+}
+
+/** A visão de uma decisão pelo `id` de um voto, de um ato ou de uma atuação legislativa. `null` quando não está no conjunto. */
 export function findDecisionView(data: AtlasData, id: string): DecisionView | null {
   const posicaoDoVoto = lookup(data.indices.votos.porId, id);
   const voto = posicaoDoVoto === undefined ? undefined : data.conjunto.votos[posicaoDoVoto];
   if (voto !== undefined) return viewOfVote(data, voto);
   const posicaoDoAto = lookup(data.indices.atosExecutivos.porId, id);
   const ato = posicaoDoAto === undefined ? undefined : data.conjunto.atosExecutivos[posicaoDoAto];
-  return ato === undefined ? null : viewOfAct(data, ato);
+  if (ato !== undefined) return viewOfAct(data, ato);
+  const posicaoDaAtuacao = lookup(data.indices.atuacoesLegislativas.porId, id);
+  const atuacao = posicaoDaAtuacao === undefined ? undefined : data.conjunto.atuacoesLegislativas[posicaoDaAtuacao];
+  return atuacao === undefined ? null : viewOfLegislativeWork(data, atuacao);
 }
 
 /** Ordem cronológica, com o `id` como desempate. */
@@ -254,9 +294,10 @@ export function compareDecisions(a: DecisionView, b: DecisionView): number {
 }
 
 /**
- * As decisões publicadas de uma pessoa: os votos vigentes (um por votação) e
- * os atos atribuídos a ela, em ordem cronológica. Um voto retificado não
- * aparece: o cartão mostra o que vale; a retificação fica no conjunto.
+ * As decisões publicadas de uma pessoa: os votos vigentes (um por votação),
+ * os atos atribuídos a ela e as atuações legislativas dela, em ordem
+ * cronológica. Um voto retificado não aparece: o cartão mostra o que vale; a
+ * retificação fica no conjunto.
  */
 export function listDecisionViews(data: AtlasData, pessoaId: string): DecisionView[] {
   const votos = lookupList(data.indices.votos.porPessoa, pessoaId).flatMap((id) => {
@@ -271,7 +312,12 @@ export function listDecisionViews(data: AtlasData, pessoaId: string): DecisionVi
     const ato = posicao === undefined ? undefined : data.conjunto.atosExecutivos[posicao];
     return ato === undefined ? [] : [viewOfAct(data, ato)];
   });
-  return [...votos, ...atos].sort(compareDecisions);
+  const atuacoes = lookupList(data.indices.atuacoesLegislativas.porPessoa, pessoaId).flatMap((id) => {
+    const posicao = lookup(data.indices.atuacoesLegislativas.porId, id);
+    const atuacao = posicao === undefined ? undefined : data.conjunto.atuacoesLegislativas[posicao];
+    return atuacao === undefined ? [] : [viewOfLegislativeWork(data, atuacao)];
+  });
+  return [...votos, ...atos, ...atuacoes].sort(compareDecisions);
 }
 
 /** As decisões por tema, na ordem das taxonomias; uma decisão com dois temas aparece nos dois. Todos os temas aparecem, mesmo vazios. */
@@ -279,6 +325,11 @@ export function groupDecisionsByTheme(decisoes: readonly DecisionView[]): Record
   const grupos = Object.fromEntries(TEMAS.map((tema) => [tema, [] as DecisionView[]])) as Record<Tema, DecisionView[]>;
   for (const decisao of decisoes) for (const tema of decisao.temas) grupos[tema].push(decisao);
   return grupos;
+}
+
+/** As decisões sem tema: o assunto delas não cabe com clareza em nenhum dos temas da comparação. Não somem da tela por isso. */
+export function decisionsWithoutTheme(decisoes: readonly DecisionView[]): DecisionView[] {
+  return decisoes.filter((decisao) => decisao.temas.length === 0);
 }
 
 /** Os temas em que uma pessoa tem decisão publicada, na ordem das taxonomias. */

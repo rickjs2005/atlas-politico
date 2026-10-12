@@ -269,8 +269,8 @@ html[data-consulta] [data-consulta-aviso] {
 }
 
 /*
-  Celular deitado: o palco cabe na janela, sem o mínimo, para o direcional e o
-  botão de ação, que ficam na base dele, estarem sempre à vista.
+  Celular deitado: o palco cabe na janela, sem o mínimo, para o botão do
+  marco, que fica na base dele, estar sempre à vista.
 */
 @media (pointer: coarse) and (max-height: 30rem) {
   .jogo-palco {
@@ -278,8 +278,100 @@ html[data-consulta] [data-consulta-aviso] {
   }
 }
 
+/*
+  Pastas da fase sobre a cena (docs/GAMEPLAY.md, D-137): botões da página, que
+  o palco põe em cima do desenho de cada pasta, pela posição da câmera. A do
+  marco traz o rótulo "Abrir" e um anel que pulsa; as de explorar, um sinal de
+  mais. Com movimento reduzido, o anel fica parado. A área de toque tem 52
+  pixels de lado, acima do mínimo de 44.
+*/
+.jogo-marcador {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: -1.625rem 0 0 -1.625rem;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+/* Onde duas áreas de toque se encontram, a do marco fica por cima: é a que leva a fase adiante. */
+.jogo-marcador-marco {
+  z-index: 1;
+}
+
+.jogo-marcador[hidden] {
+  display: none;
+}
+
+.jogo-marcador:focus-visible {
+  outline: 3px solid var(--atlas-ink);
+  outline-offset: 1px;
+}
+
+.jogo-marcador-rotulo {
+  position: absolute;
+  bottom: calc(100% - 0.625rem);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid var(--atlas-ink);
+  background-color: var(--atlas-paper-raised);
+  color: var(--atlas-ink);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.3125rem 0.5rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.jogo-marcador-explorar .jogo-marcador-rotulo {
+  border-radius: 9999px;
+  padding: 0.1875rem 0.4375rem;
+  background-color: var(--atlas-paper);
+  color: var(--atlas-ink-soft);
+}
+
+.jogo-marcador-marco::before {
+  content: "";
+  position: absolute;
+  inset: 0.25rem;
+  border: 2px solid var(--atlas-accent);
+  border-radius: 9999px;
+  animation: jogo-pulso 1.6s var(--atlas-ease) infinite;
+  pointer-events: none;
+}
+
+.jogo-marcador:hover .jogo-marcador-rotulo,
+.jogo-marcador:focus-visible .jogo-marcador-rotulo {
+  background-color: var(--atlas-ink);
+  color: var(--atlas-paper);
+}
+
+@keyframes jogo-pulso {
+  0% {
+    transform: scale(0.82);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jogo-marcador-marco::before {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
 /* Janela baixa (celular deitado): o que fica sobre a cena encolhe. */
 @custom-variant janela-baixa (@media (max-height: 30rem));
+/* Janela curta (celular pequeno em pé): o que é enfeite sai de cima da cena. */
+@custom-variant janela-curta (@media (max-height: 44rem));
 
 /* Rótulo pequeno em caixa alta: nome de seção, legenda de campo. */
 @utility eyebrow {

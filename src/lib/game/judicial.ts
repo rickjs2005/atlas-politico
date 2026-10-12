@@ -3,7 +3,7 @@
 // pessoas: a natureza é a que o próprio registro descreve, e cada relação
 // repete o que o contexto do registro já diz, com a data do outro registro
 // vindo dos dados. Um teste confere que todo identificador existe na edição e
-// nos capítulos do mesmo personagem.
+// em uma fase do mesmo personagem.
 //
 // Denúncia, condenação, anulação, rejeição e absolvição são coisas
 // diferentes, e o jogo não as equipara nem pede que o jogador decida culpa:

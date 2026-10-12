@@ -1,13 +1,12 @@
 "use client";
 
 // As falas do Escrivão em uma tela do jogo, com a camada de cada uma à vista:
-// a instrução, o que vem do registro e, quando ligado, o humor, marcado como
-// ficção. A preferência de humor é aplicada aqui, na exibição, lida do mesmo
+// a instrução e, quando ligado, uma fala de humor, marcada como ficção. A
+// preferência de humor é aplicada aqui, na exibição, lida do mesmo
 // armazenamento que o botão de desligar escreve: desligar tira o humor de
 // toda fala já escolhida, na hora, em todas as telas (D-127). Só a instrução
-// é anunciada como estado para quem ouve a página; a informação documental e o
-// humor ficam como texto comum, para o leitor de tela não repetir tudo a cada
-// atualização.
+// é anunciada como estado para quem ouve a página; o humor fica como texto
+// comum, para o leitor de tela não repetir tudo a cada atualização.
 
 import { CAMADA_LABELS, ESCRIVAO_NOME, falasVisiveis, type FalaDita } from "@/lib/game/escrivao";
 
@@ -23,7 +22,7 @@ export function EscrivaoSays({ falas, evento, className = "" }: { falas: readonl
       {visiveis.map((fala) => (
         <p
           key={fala.id}
-          className={`text-sm ${fala.camada === "humor" ? "italic text-ink-soft" : fala.camada === "documental" ? "text-ink" : "font-medium"}`}
+          className={`text-sm ${fala.camada === "humor" ? "italic text-ink-soft" : "font-medium"}`}
           role={fala.camada === "instrucao" ? "status" : undefined}
           data-fala={fala.id}
           data-camada={fala.camada}

@@ -112,8 +112,13 @@ describe("elegibilidade", () => {
       fixtures.votacoes.length +
       fixtures.votos.length +
       fixtures.atosExecutivos.length +
+      fixtures.atuacoesLegislativas.length +
       fixtures.coberturaPolitica.length +
       fixtures.identidadesInstitucionais.length +
+      fixtures.propostasEleitorais.length +
+      fixtures.fatosBiograficos.length +
+      fixtures.conceitos.length +
+      fixtures.fasesDoJogo.length +
       fixtures.lugares.length +
       fixtures.fontes.length;
     const sinteticos = withCode(projeto, "dado-sintetico");
@@ -148,16 +153,21 @@ describe("elegibilidade", () => {
     const dependentes = withCode(projeto, "referencia-fora-da-publicacao");
 
     expect(ok).toBe(false);
-    // Dois mandatos, quatro acontecimentos, um voto, uma cobertura de pesquisa e a cobertura da edição dependem da pessoa B.
-    expect(dependentes.map((item) => item.id).sort()).toEqual([
+    // Dois mandatos, quatro acontecimentos, um voto, uma atuação legislativa, uma cobertura de pesquisa, uma proposta eleitoral, um fato biográfico, uma fase do jogo e a cobertura da edição dependem da pessoa B.
+    // As fases da pessoa A, que apontam o acontecimento compartilhado, não entram na lista: o registro de que elas dependem já foi acusado.
+    expect([...new Set(dependentes.map((item) => item.id))].sort()).toEqual([
       "0.0.1",
+      "teste-atuacao-b1",
       "teste-cobertura-01",
       "teste-evento-03",
       "teste-evento-04",
       "teste-evento-05",
       "teste-evento-06",
+      "teste-fase-b1",
+      "teste-fato-b1",
       "teste-mandato-b1",
       "teste-mandato-b2",
+      "teste-proposta-b-economia-1",
       "teste-voto-03",
     ]);
     expect(formatDiagnostic(dependentes.find((item) => item.id === "teste-evento-04")!)).toBe(

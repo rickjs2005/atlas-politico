@@ -35,7 +35,7 @@ export const SITE: {
   correctionChannel: CorrectionChannel | null;
 } = {
   nome: "Atlas Político",
-  descricao: "Trajetórias públicas em linha do tempo, mapa, acontecimentos com fontes e um jogo por capítulos.",
+  descricao: "Trajetórias públicas em linha do tempo, mapa, acontecimentos com fontes e um jogo em fases curtas.",
   publicUrl: null,
   indexar: false,
   correctionChannel: null,

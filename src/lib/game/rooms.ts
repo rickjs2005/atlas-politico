@@ -1,20 +1,20 @@
-// As salas do jogo (D-125): a sala de investigação, com a trajetória em
-// capítulos, e as salas temáticas, com as decisões políticas de cada tema. A
-// sala é o que o jogador escolhe na entrada e o que agrupa a progressão; não é
-// a cena (`SceneId`) nem uma categoria do atlas. Só constantes e funções
-// puras.
+// As salas do jogo: a trajetória, que é a trilha da vida, e os
+// aprofundamentos sobre decisões documentadas, um por tema (D-125, revista pela
+// D-133). A sala é o que agrupa as fases; não é a cena (`SceneId`) nem uma
+// categoria do atlas. Só constantes e funções puras.
 
 import { TEMA_LABELS, type Tema } from "@/lib/domain/decisions";
+import { SALAS_DO_JOGO } from "@/lib/domain/game";
 
-import type { ChapterSpec, RoomId } from "./types";
+import type { RoomId } from "./types";
 
 export interface RoomSpec {
   id: RoomId;
   /** O nome visível. */
   nome: string;
-  /** `investigacao`: a trajetória em capítulos; `tema`: as decisões de um tema. */
-  natureza: "investigacao" | "tema";
-  /** O tema das decisões, nas salas temáticas. */
+  /** `trajetoria`: a trilha da vida, da origem à data de corte; `aprofundamento`: decisões documentadas de um tema, com os anos ditos. */
+  natureza: "trajetoria" | "aprofundamento";
+  /** O tema das decisões, nos aprofundamentos. */
   tema: Tema | null;
   /** O que a sala reúne, para a entrada do jogo. Não afirma fato sobre as pessoas. */
   descricao: string;
@@ -23,30 +23,30 @@ export interface RoomSpec {
 export const ROOMS: readonly RoomSpec[] = [
   {
     id: "historico",
-    nome: "Histórico",
-    natureza: "investigacao",
+    nome: "Trajetória",
+    natureza: "trajetoria",
     tema: null,
-    descricao: "A trajetória pública em capítulos, por período: os acontecimentos publicados no atlas, com data e fontes.",
+    descricao: "Da origem à data de corte, em fases curtas: de onde a pessoa veio, que cargos ocupou e o que está documentado do que fez neles.",
   },
   {
     id: "economia",
     nome: TEMA_LABELS.economia,
-    natureza: "tema",
+    natureza: "aprofundamento",
     tema: "economia",
-    descricao: "As decisões documentadas no tema Economia: votos registrados e atos do Executivo, com a instituição e o cargo de cada uma.",
+    descricao: "Decisões documentadas no tema Economia: votos registrados e atos do Executivo, com o cargo e a instituição de cada uma.",
   },
   {
     id: "seguranca-publica",
     nome: TEMA_LABELS["seguranca-publica"],
-    natureza: "tema",
+    natureza: "aprofundamento",
     tema: "seguranca-publica",
-    descricao: "As decisões documentadas no tema Segurança pública: votos registrados e atos do Executivo, com a instituição e o cargo de cada uma.",
+    descricao: "Decisões documentadas no tema Segurança pública: votos registrados e atos do Executivo, com o cargo e a instituição de cada uma.",
   },
 ];
 
 export const DEFAULT_ROOM: RoomId = "historico";
 
-export const ROOM_IDS: readonly RoomId[] = ROOMS.map((sala) => sala.id);
+export const ROOM_IDS: readonly RoomId[] = SALAS_DO_JOGO;
 
 export function isRoomId(valor: string): valor is RoomId {
   return (ROOM_IDS as readonly string[]).includes(valor);
@@ -56,17 +56,17 @@ export function roomOf(id: RoomId): RoomSpec {
   return ROOMS.find((sala) => sala.id === id) ?? ROOMS[0]!;
 }
 
-/** As salas em que há capítulos, na ordem de `ROOMS`. */
-export function roomsWithChapters(capitulos: readonly ChapterSpec[]): RoomSpec[] {
-  return ROOMS.filter((sala) => capitulos.some((capitulo) => capitulo.sala === sala.id));
+/** As fases de uma sala, na ordem em que vêm. */
+export function phasesInRoom<T extends { sala: RoomId }>(fases: readonly T[], sala: RoomId): T[] {
+  return fases.filter((fase) => fase.sala === sala);
 }
 
-/** Os capítulos de uma sala, na ordem em que vêm. */
-export function chaptersInRoom(capitulos: readonly ChapterSpec[], sala: RoomId): ChapterSpec[] {
-  return capitulos.filter((capitulo) => capitulo.sala === sala);
+/** Como a sala se apresenta em uma frase curta: "Trajetória" ou "Aprofundamento: Economia". */
+export function roomLabel(sala: RoomSpec): string {
+  return sala.natureza === "trajetoria" ? sala.nome : `Aprofundamento: ${sala.nome}`;
 }
 
-/** Os capítulos agrupados por sala, na ordem de `ROOMS`; só as salas com capítulo. */
-export function groupByRoom(capitulos: readonly ChapterSpec[]): [RoomId, ChapterSpec[]][] {
-  return roomsWithChapters(capitulos).map((sala) => [sala.id, chaptersInRoom(capitulos, sala.id)]);
+/** O período de uma sala, por extenso: "1945 a 2026", ou o ano só. */
+export function periodLabel(periodo: { de: number; ate: number }): string {
+  return periodo.de === periodo.ate ? `${periodo.de}` : `${periodo.de} a ${periodo.ate}`;
 }

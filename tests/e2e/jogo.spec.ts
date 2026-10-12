@@ -1,1955 +1,1734 @@
-// Jogo (docs/GAMEPLAY.md): a entrada com a escolha de personagem, a cena que
-// domina a tela, o movimento com colisão, a interação, a saída bloqueada até
-// a tarefa estar cumprida e todos os registros do capítulo estarem
-// recolhidos, a conclusão e o avanço, as tarefas com resposta (ordem,
-// documento, lugar) com nova tentativa, a trajetória inteira dos dois
-// personagens até o fim, a ficha judicial, a figura por época, o progresso
-// separado por personagem e recuperado ao recarregar (inclusive o da versão 1
-// do formato), o caminho pelo painel sem o cenário, o toque em celular, em pé
-// e deitado, e a ida à ficha com volta ao capítulo. Também os avisos
-// editoriais: o cenário como representação, a ordem não documentada e a
-// situação da revisão.
+// Jogo (docs/GAMEPLAY.md e docs/GAME-TRAIL.md): a trilha simples. Um ciclo só:
+// tocar no marco, ler uma explicação curta, responder uma atividade ou ler a
+// explicação dela, continuar. Os testes cobrem o que o roteiro do jogo pede:
+// o visitante novo começa na origem das duas pessoas; continuar e rever desde
+// o início são caminhos diferentes, e nenhum apaga nada; uma resposta ou a
+// leitura da explicação basta para avançar, e os registros opcionais não
+// seguram a fase; o erro não tira acesso e vem com explicação; o progresso
+// antigo migra sem virar aprendizado; o humor respeita o contexto e a
+// preferência; e a leitura sem o cenário funciona pelo teclado e quando o
+// canvas falha.
 //
-// Os valores esperados saem dos dados gerados e das cenas. As duas jornadas
-// pelo cenário rodam para os dois personagens. Além dos atributos do
-// documento, que dizem o que a regra decidiu, os testes leem o canvas, que é
-// o que a pessoa vê, e nenhum deles aceita erro não tratado na página.
+// Os valores esperados saem do conteúdo publicado (tests/e2e/jogo-apoio.ts).
+// As jornadas rodam para as duas pessoas, e nenhuma aceita erro não tratado
+// na página. Rodam contra o servidor de desenvolvimento (`npm run test:e2e`)
+// e contra a saída estática (`npm run test:journeys`).
 
-import { readFileSync } from "node:fs";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
-import { expect, test, type Page } from "@playwright/test";
+import { PROPOSAL_NOTICE } from "@/lib/data/proposals";
+import { formatDate } from "@/lib/domain/dates";
+import { TEMA_LABELS } from "@/lib/domain/decisions";
+import { JUDICIAL_NOTICE } from "@/lib/game/judicial";
+import { LEGACY_CHAPTER_PHASES } from "@/lib/game/legacy";
+import { PREFERENCES_KEY } from "@/lib/game/preferences";
+import { PROGRESS_VERSION } from "@/lib/game/types";
 
-import { compareDates, formatDate, yearOf } from "@/lib/domain/dates";
-import { findUndeterminedOrder } from "@/lib/domain/order";
-import { chaptersOf } from "@/lib/game/chapters";
-import { legacyTaskSignature, recordIds, requiredRecords } from "@/lib/game/mission";
-import { chaptersInRoom } from "@/lib/game/rooms";
-import { isSensitive, isSensitiveChapter } from "@/lib/game/sensitivity";
-import { getScene } from "@/lib/game/scenes";
-import { storageKey } from "@/lib/game/storage";
-import { EPOCA_LABEL, type ChapterSpec } from "@/lib/game/types";
+import {
+  PERSONAGENS,
+  abrir,
+  abrirMarco,
+  alvosPequenos,
+  conteudoDe,
+  dialogo,
+  fasesDe,
+  focoDentroDe,
+  instrucaoDe,
+  janela,
+  jogo,
+  lerESeguir,
+  nomeDe,
+  opcoesDe,
+  ordemDe,
+  posicaoDe,
+  progressoSalvo,
+  pronto,
+  refKey,
+  responder,
+  rota,
+  sobraHorizontal,
+  storageKey,
+  tabAte,
+  vigiar,
+  type Slug,
+} from "./jogo-apoio";
 
-import { clearProgress, clicar, frame, holdKeys, jogo, palco, position, waitForStage, walkTo } from "./jogo-caminho";
-
-interface EventRecord {
-  id: string;
-  slug: string;
-  titulo: string;
-  data: { valor: string; precisao: "ano" | "mes" | "dia" };
-  fontes: { fonteId: string; localizacao: string }[];
-  localizacao: { tipo: "lugares"; lugarIds: string[] } | { tipo: "nacional" } | { tipo: "desconhecida" };
-}
-
-interface VoteRecord {
-  id: string;
-  votacaoId: string;
-  registro: { tipo: string; posicao?: string };
-  fontes: { fonteId: string }[];
-}
-
-const conjunto = JSON.parse(readFileSync("generated/dados/conjunto.json", "utf8")) as {
-  acontecimentos: EventRecord[];
-  pessoas: { id: string; slug: string; nome: string }[];
-  fontes: { id: string; url: string }[];
-  lugares: { id: string; nome: string }[];
-  votos: VoteRecord[];
-  votacoes: { id: string; objeto: { tipo: string } }[];
-  atosExecutivos: { id: string; tipo: string; fontes: { fonteId: string }[] }[];
-};
-const registro = (id: string) => conjunto.acontecimentos.find((item) => item.id === id)!;
-
-/** O documento que sustenta uma decisão (o primeiro citado) e a interpretação certa, pelo que o conjunto registra. */
-function decisaoDe(id: string): { evidencia: string; interpretacao: string } {
-  const voto = conjunto.votos.find((item) => item.id === id);
-  if (voto !== undefined) {
-    const votacao = conjunto.votacoes.find((item) => item.id === voto.votacaoId)!;
-    const interpretacao = voto.registro.tipo === "voto-individual" ? `voto:${voto.registro.posicao}:${votacao.objeto.tipo}` : `registro:${voto.registro.tipo}`;
-    return { evidencia: voto.fontes[0]!.fonteId, interpretacao };
-  }
-  const ato = conjunto.atosExecutivos.find((item) => item.id === id)!;
-  return { evidencia: ato.fontes[0]!.fonteId, interpretacao: `ato:${ato.tipo}` };
-}
-const urlsDasFontes = (id: string) => registro(id).fontes.map((citacao) => conjunto.fontes.find((fonte) => fonte.id === citacao.fonteId)!.url);
-/** O rótulo do lugar documentado, como o jogo o escreve. */
-const lugarDe = (id: string) => {
-  const { localizacao } = registro(id);
-  return localizacao.tipo === "lugares" ? localizacao.lugarIds.map((lugar) => conjunto.lugares.find((item) => item.id === lugar)!.nome).join(" e ") : "";
-};
-
-const PERSONAGENS = ["flavio-bolsonaro", "lula"] as const;
-type Slug = (typeof PERSONAGENS)[number];
-
-/** Os capítulos da trajetória de um personagem (a sala Histórico), com as cenas dos três primeiros e o registro que a primeira tarefa pede. */
-function trajetoria(slug: Slug) {
-  const capitulos = chaptersInRoom(chaptersOf(slug), "historico");
-  const [c1, c2, c3] = capitulos as [ChapterSpec, ChapterSpec, ChapterSpec];
-  return {
-    slug,
-    rota: `/jogo/${slug}/`,
-    nome: conjunto.pessoas.find((pessoa) => pessoa.slug === slug)!.nome,
-    capitulos,
-    c1,
-    c2,
-    c3,
-    cena1: getScene(c1.cena),
-    cena2: getScene(c2.cena),
-    cena3: getScene(c3.cena),
-    exigido1: c1.tarefa.tipo === "registro" ? c1.tarefa.eventId : "",
-  };
-}
-
-/** O que responde certo a tarefa de escolha: o primeiro documento do registro pedido, ou o lugar documentado; na decisão, o documento da evidência. */
-function respostaCerta(capitulo: ChapterSpec): string {
-  if (capitulo.tarefa.tipo === "fonte") return registro(capitulo.tarefa.eventId).fontes[0]!.fonteId;
-  if (capitulo.tarefa.tipo === "lugar") return lugarDe(capitulo.tarefa.eventId);
-  if (capitulo.tarefa.tipo === "decisao") return decisaoDe(capitulo.tarefa.decisaoId).evidencia;
-  throw new Error(`${capitulo.id} não tem tarefa de escolha`);
-}
-
-/** Uma opção errada da tarefa de escolha (ou da etapa aberta da decisão), entre as oferecidas na janela. */
-async function opcaoErrada(page: Page, capitulo: ChapterSpec, certas: readonly string[] = certasDe(capitulo)): Promise<string> {
-  const janela = capitulo.tarefa.tipo === "decisao" ? "decisao" : "escolha";
-  const ids = await dialogo(page, janela).locator("[data-escolher]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")!));
-  const errada = ids.find((id) => !certas.includes(id));
-  if (errada === undefined) throw new Error(`${capitulo.id}: sem opção errada entre ${ids.join(", ")}`);
-  return errada;
-}
-
-/** As opções que contam como certas na pergunta da tarefa: qualquer documento citado, o lugar, ou a evidência da decisão. */
-function certasDe(capitulo: ChapterSpec): string[] {
-  if (capitulo.tarefa.tipo === "fonte") return registro(capitulo.tarefa.eventId).fontes.map((citacao) => citacao.fonteId);
-  return [respostaCerta(capitulo)];
-}
-
-/** O rótulo do período de um capítulo, como a interface o escreve. */
-const periodoDe = (capitulo: ChapterSpec) => (capitulo.periodo.de === capitulo.periodo.ate ? `${capitulo.periodo.de}` : `${capitulo.periodo.de}–${capitulo.periodo.ate}`);
-
-/**
- * Um progresso salvo com os capítulos da trajetória anteriores ao de número
- * `numero` concluídos e ele disponível. As salas temáticas ficam no início. É
- * gravado no formato 4, com a assinatura antiga (só tipo e identificadores),
- * que a leitura migra para a atual: os testes não montam o conteúdo do jogo,
- * e a migração é exercitada em toda jornada que parte de um progresso.
- */
-function progressoAte(slug: Slug, numero: number) {
-  const entradas: Record<string, unknown> = {};
-  chaptersInRoom(chaptersOf(slug), "historico").forEach((capitulo, indice) => {
-    const comResposta = capitulo.tarefa.tipo !== "registro";
-    if (indice < numero - 1) {
-      entradas[capitulo.id] = {
-        status: "concluido",
-        tarefa: {
-          recolhidos: recordIds(capitulo),
-          confirmada: comResposta,
-          tentativas: comResposta ? 1 : 0,
-          ...(comResposta ? { assinatura: legacyTaskSignature(capitulo.tarefa) } : {}),
-          ...(capitulo.tarefa.tipo === "decisao" ? { evidencia: true } : {}),
-        },
-      };
-    }
-    else entradas[capitulo.id] = { status: indice === numero - 1 ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
-  });
-  return { versao: 4, personagem: slug, capitulos: entradas };
-}
-
-/** Abre o jogo de um personagem no capítulo de número `numero`, com os anteriores concluídos. */
-async function abrirNoCapitulo(page: Page, t: ReturnType<typeof trajetoria>, numero: number) {
-  await page.goto(t.rota);
-  await page.evaluate(({ chave, salvo }) => window.localStorage.setItem(chave, JSON.stringify(salvo)), { chave: storageKey(t.slug), salvo: progressoAte(t.slug, numero) });
-  await page.reload();
-  await waitForStage(page);
-  await expect(jogo(page)).toHaveAttribute("data-capitulo", t.capitulos[numero - 1]!.id);
-}
-
-const LULA = trajetoria("lula");
-const FLAVIO = trajetoria("flavio-bolsonaro");
-const CELULAR = { width: 390, height: 844 };
-const CELULAR_DEITADO = { width: 844, height: 390 };
-
-const posicaoDe = (capitulo: ChapterSpec, id: string) => getScene(capitulo.cena).registros[recordIds(capitulo).indexOf(id)]!;
-const inicioDe = (capitulo: ChapterSpec) => {
-  const cena = getScene(capitulo.cena);
-  return { x: cena.spawn.x + 0.5, y: cena.spawn.y + 0.5 };
-};
-/** Os dois registros de uma tarefa de ordem, o mais antigo primeiro. */
-const emOrdem = (capitulo: ChapterSpec): [string, string] => {
-  if (capitulo.tarefa.tipo !== "ordem") throw new Error(`${capitulo.id} não tem tarefa de ordem`);
-  const [a, b] = capitulo.tarefa.eventIds;
-  return compareDates(registro(a).data, registro(b).data) <= 0 ? [a, b] : [b, a];
-};
-
-const dialogo = (page: Page, nome: string) => page.locator(`[data-dialogo="${nome}"]`);
-
-// Nenhum teste aceita erro não tratado: um desenho que lança exceção não para
-// a simulação, e os atributos continuariam certos com o canvas quebrado.
-const erros = new WeakMap<Page, string[]>();
+let erros: string[] = [];
 test.beforeEach(({ page }) => {
-  const lista: string[] = [];
-  erros.set(page, lista);
-  page.on("pageerror", (erro) => lista.push(erro.message));
+  erros = vigiar(page);
 });
-test.afterEach(({ page }) => {
-  expect(erros.get(page) ?? [], "erros não tratados na página").toEqual([]);
+test.afterEach(() => {
+  expect(erros, "erros não tratados na página").toEqual([]);
 });
 
-async function abrirLimpo(page: Page, rota: string) {
-  await page.goto(rota);
-  await clearProgress(page);
-  await page.reload();
-  await waitForStage(page);
-}
-
-/** Os registros que a tarefa do capítulo pede, e os que ela não pede (acontecimentos e decisões): a saída exige todos. */
-const pedidosPor = (capitulo: ChapterSpec) => [...requiredRecords(capitulo.tarefa)];
-const foraDaTarefa = (capitulo: ChapterSpec) => recordIds(capitulo).filter((id) => !pedidosPor(capitulo).includes(id));
-
-/**
- * Recolhe um registro pelo painel e guarda. Devolve o modo em que o jogo
- * ficou: `ordem`, `escolha` ou `decisao`, se a pergunta da tarefa abriu em
- * seguida, ou `jogando`.
- */
-async function recolherPeloPainel(page: Page, id: string) {
-  await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-  await clicar(page, page.locator(`[data-recolher="${id}"]`));
-  await expect(dialogo(page, "registro")).toBeVisible();
-  await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
-  await expect(jogo(page)).toHaveAttribute("data-modo", /^(jogando|ordem|escolha|decisao)$/);
-  return (await jogo(page).getAttribute("data-modo"))!;
-}
-
-/** Responde certo às duas etapas da tarefa de decisão que está aberta (a evidência e a interpretação) e fecha a janela. */
-async function responderADecisaoCerta(page: Page, capitulo: ChapterSpec) {
-  if (capitulo.tarefa.tipo !== "decisao") throw new Error(`${capitulo.id} não tem tarefa de decisão`);
-  const { evidencia, interpretacao } = decisaoDe(capitulo.tarefa.decisaoId);
-  const janela = dialogo(page, "decisao");
-  await expect(janela).toBeVisible();
-  const etapa = await jogo(page).getAttribute("data-etapa");
-  if (etapa === "evidencia") {
-    await clicar(page, janela.locator(`[data-escolher="${evidencia}"]`));
-    await clicar(page, janela.locator('[data-confirmar-decisao="evidencia"]'));
-    await expect(janela.locator("[data-decisao-resultado]")).toHaveAttribute("data-decisao-resultado", "certo");
-    await clicar(page, janela.locator("[data-evidencia-concluida]"));
-  }
-  await clicar(page, janela.locator(`[data-escolher="${interpretacao}"]`));
-  await clicar(page, janela.locator('[data-confirmar-decisao="interpretacao"]'));
-  await expect(janela.locator("[data-decisao-resultado]")).toHaveAttribute("data-decisao-resultado", "certo");
-  await clicar(page, janela.locator("[data-decisao-concluida]"));
-  await expect(janela).toHaveCount(0);
-}
-
-/** Responde certo à pergunta de ordem que está aberta e fecha a janela. */
-async function responderAOrdemCerta(page: Page, capitulo: ChapterSpec) {
-  const ordem = dialogo(page, "ordem");
-  await expect(ordem).toBeVisible();
-  await clicar(page, ordem.locator(`[data-escolher-primeiro="${emOrdem(capitulo)[0]}"]`));
-  await clicar(page, ordem.locator("[data-confirmar-ordem]"));
-  await clicar(page, ordem.locator("[data-ordem-concluida]"));
-  await expect(ordem).toHaveCount(0);
-}
-
-/** Responde certo à pergunta de documento ou de lugar que está aberta e fecha a janela. */
-async function responderAEscolhaCerta(page: Page, capitulo: ChapterSpec) {
-  const escolha = dialogo(page, "escolha");
-  await expect(escolha).toBeVisible();
-  await clicar(page, escolha.locator(`[data-escolher="${respostaCerta(capitulo)}"]`));
-  await clicar(page, escolha.locator("[data-confirmar-escolha]"));
-  await expect(escolha.locator("[data-escolha-resultado]")).toHaveAttribute("data-escolha-resultado", "certo");
-  await clicar(page, escolha.locator("[data-escolha-concluida]"));
-  await expect(escolha).toHaveCount(0);
-}
-
-/** Responde certo a pergunta que abriu, conforme o modo em que o jogo ficou. */
-async function responderCerto(page: Page, capitulo: ChapterSpec, modo: string) {
-  if (modo === "ordem") await responderAOrdemCerta(page, capitulo);
-  else if (modo === "escolha") await responderAEscolhaCerta(page, capitulo);
-  else if (modo === "decisao") await responderADecisaoCerta(page, capitulo);
-}
-
-/** Cumpre só a tarefa do capítulo aberto, pelo painel. A saída continua fechada se o capítulo tem outros registros. */
-async function cumprirATarefaPeloPainel(page: Page, capitulo: ChapterSpec) {
-  for (const id of pedidosPor(capitulo)) await responderCerto(page, capitulo, await recolherPeloPainel(page, id));
-  await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-}
-
-/**
- * Abre a saída do capítulo aberto pelo painel, sem o cenário: recolhe o que
- * ainda falta (primeiro o que a tarefa pede) e responde a ordem quando ela é
- * pedida. O que o teste já recolheu antes fica como está.
- */
-async function abrirASaidaPeloPainel(page: Page, capitulo: ChapterSpec) {
-  await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-  const total = recordIds(capitulo).length;
-  await expect(dialogo(page, "painel").locator("[data-registro]")).toHaveCount(total);
-  const jaRecolhidos = await page.locator('[data-registro][data-recolhido="sim"]').evaluateAll((nos) => nos.map((no) => no.getAttribute("data-registro")));
-  await page.keyboard.press("Escape");
-  await expect(dialogo(page, "painel")).toHaveCount(0);
-  for (const id of [...pedidosPor(capitulo), ...foraDaTarefa(capitulo)]) {
-    if (jaRecolhidos.includes(id)) continue;
-    await responderCerto(page, capitulo, await recolherPeloPainel(page, id));
-  }
-  await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-  await expect(jogo(page)).toHaveAttribute("data-registros", `${total}/${total}`);
-  await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-}
-
-/** Atravessa a saída aberta pelo painel e segue para o que vier: o capítulo seguinte ou o fim. */
-async function atravessarPeloPainel(page: Page) {
-  await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-  await clicar(page, page.locator("[data-atravessar-saida]"));
-  await expect(page.locator("[data-transicao]")).toBeVisible();
-  await clicar(page, page.getByRole("button", { name: "Continuar" }));
-}
-
-/** Conclui o capítulo 1 pelo painel e chega ao capítulo 2. */
-async function concluirCapitulo1PeloPainel(page: Page, t: ReturnType<typeof trajetoria>) {
-  await abrirASaidaPeloPainel(page, t.c1);
-  await atravessarPeloPainel(page);
-  await expect(jogo(page)).toHaveAttribute("data-capitulo", t.c2.id);
-}
+const cartaoDaFase = (page: Page) => page.locator("[data-fase-cartao]");
+const marcoDe = (slug: Slug, numero: number) => {
+  const content = conteudoDe(slug);
+  const fase = content.fases[numero - 1]!;
+  const { tipo, id } = fase.marco;
+  const titulo = tipo === "fato" ? content.fatos[id]!.titulo : tipo === "decisao" ? content.decisoes[id]!.titulo : content.registros[id]!.titulo;
+  return { fase, titulo };
+};
 
 test.describe("entrada do jogo", () => {
-  test("escolha clara entre os dois personagens, com prévia do mundo e os capítulos de cada um", async ({ page }) => {
+  test("uma frase simples e duas escolhas com os mesmos campos e o mesmo destaque", async ({ page }) => {
     await page.goto("/jogo/");
-    await clearProgress(page);
-    await page.reload();
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Percorra a trajetória em capítulos");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Conheça as duas trajetórias");
+    await expect(page.locator("[data-proposta]")).toContainText("um marco, uma explicação e uma pergunta por fase");
+    await expect(page.locator("[data-escolha]")).toHaveCount(2);
 
-    const escolhas = page.locator("[data-escolha]");
-    await expect(escolhas).toHaveCount(2);
-    // Ordem alfabética, como no resto do atlas, e o mesmo cartão para os dois.
-    await expect(escolhas.nth(0)).toHaveAttribute("data-escolha", "flavio-bolsonaro");
-    await expect(escolhas.nth(1)).toHaveAttribute("data-escolha", "lula");
     for (const slug of PERSONAGENS) {
+      const fases = fasesDe(slug);
       const cartao = page.locator(`[data-escolha="${slug}"]`);
-      const capitulos = chaptersInRoom(chaptersOf(slug), "historico");
-      expect(capitulos.length).toBeGreaterThanOrEqual(2);
-      for (const capitulo of capitulos) await expect(cartao).toContainText(capitulo.titulo);
-      await expect(cartao.locator("[data-previa-mundo]")).toBeVisible();
-      await expect(cartao.locator(`[data-jogar="${slug}"]`)).toHaveAttribute("href", `/jogo/${slug}/`);
-      await expect(cartao.locator(`[data-jogar="${slug}"]`)).toContainText("Começar");
       await expect(cartao).toHaveAttribute("data-situacao", "inicio");
-      // As salas temáticas, com o mesmo cartão para os dois: cada uma com a quantidade de decisões e o próprio caminho.
-      await expect(cartao.locator("[data-sala-item]")).toHaveCount(2);
-      await expect(cartao.locator(`[data-jogar-sala="${slug}:economia"]`)).toHaveAttribute("href", `/jogo/${slug}/economia/`);
-      await expect(cartao.locator(`[data-jogar-sala="${slug}:seguranca-publica"]`)).toHaveAttribute("href", `/jogo/${slug}/seguranca-publica/`);
-      await expect(cartao.locator('[data-sala-item="economia"]')).toContainText("decisões documentadas");
-      await expect(cartao.locator('[data-sala-item="economia"]')).toHaveAttribute("data-situacao", "inicio");
+      await expect(cartao.getByRole("heading", { level: 3 })).toHaveText(nomeDe(slug));
+      await expect(cartao.locator("[data-trilha-resumo]")).toHaveText(`${fases.length} fases · ${fases[0]!.periodo.de} a ${fases.at(-1)!.periodo.ate}`);
+      await expect(cartao.locator("[data-situacao-texto]")).toHaveText("Ainda não aberta neste navegador.");
+      // Quem nunca jogou só tem um começo: a origem, com o ano escrito.
+      const comecar = cartao.locator(`[data-comecar="${slug}"]`);
+      await expect(comecar).toContainText(`Começar do início: ${fases[0]!.periodo.de}`);
+      await expect(comecar).toHaveAttribute("href", `/jogo/${slug}/?fase=1`);
+      await expect(cartao.locator("[data-continuar], [data-ver-desde-o-inicio]")).toHaveCount(0);
+      await expect(cartao.locator(`[data-ler-sem-cenario="${slug}"]`)).toHaveAttribute("href", `/jogo/${slug}/?fase=1&leitura=1`);
+      // Os aprofundamentos ficam abaixo, pelo assunto e pelos anos, e dizem que não são o começo.
+      const aprofundamentos = cartao.locator(`[data-aprofundamentos="${slug}"]`);
+      await expect(aprofundamentos).toContainText("Não é o começo da vida de ninguém.");
+      for (const sala of ["economia", "seguranca-publica"] as const) {
+        const [fase] = fasesDe(slug, sala);
+        const item = aprofundamentos.locator("li", { has: page.locator(`[data-abrir-sala="${slug}:${sala}"]`) });
+        await expect(item.getByRole("link")).toHaveAttribute("href", rota(slug, sala));
+        await expect(item).toContainText(`${fase!.periodo.de} a ${fase!.periodo.ate}`);
+      }
+      // A lista das fases está à mão, fechada, com o título e o período de cada uma.
+      await cartao.locator("[data-fases-da-trilha] summary").click();
+      await expect(cartao.locator("[data-fases-da-trilha] li")).toHaveCount(fases.length);
+      await expect(cartao.locator("[data-fases-da-trilha] li").first()).toContainText(fases[0]!.titulo);
+      await cartao.locator("[data-fases-da-trilha] summary").click();
     }
-    const caixas = await Promise.all([escolhas.nth(0).boundingBox(), escolhas.nth(1).boundingBox()]);
+
+    // O mesmo tamanho, na mesma linha: nenhuma das duas escolhas tem mais destaque.
+    const caixas = await Promise.all(PERSONAGENS.map(async (slug) => (await page.locator(`[data-escolha="${slug}"]`).boundingBox())!));
     expect(Math.round(caixas[0]!.width)).toBe(Math.round(caixas[1]!.width));
+    expect(Math.round(caixas[0]!.y)).toBe(Math.round(caixas[1]!.y));
+    expect(Math.round(caixas[0]!.height)).toBe(Math.round(caixas[1]!.height));
+    const botoes = await Promise.all(PERSONAGENS.map(async (slug) => (await page.locator(`[data-comecar="${slug}"]`).boundingBox())!));
+    expect(Math.round(botoes[0]!.height)).toBe(Math.round(botoes[1]!.height));
 
-    // O menu leva ao jogo, e o guia, o Escrivão, é apresentado como fictício, com o humor desligável.
-    await expect(page.getByRole("navigation", { name: "Principal" }).getByRole("link", { name: "Jogo" })).toHaveAttribute("aria-current", "page");
-    await expect(page.locator("main")).toContainText("O guia do jogo, o Escrivão, é um personagem fictício");
-    await expect(page.locator("main")).toContainText("podem ser desligadas");
-    await expect(page.locator("main")).not.toContainText("Arquivista");
-    // A regra da saída é dita na abertura e na lista de como jogar: os registros de cada capítulo e a tarefa.
-    await expect(page.locator("main")).toContainText("em cada capítulo, recolha todos os registros e cumpra a tarefa para abrir a passagem ao seguinte");
-    await expect(page.locator("main")).toContainText("A saída de cada capítulo abre com todos os registros recolhidos e a tarefa cumprida.");
-    // O cenário é dito como representação, a figura por época é dita como estilizada, as quatro tarefas são explicadas, e a situação da revisão é a da entrada do atlas.
-    await expect(page.locator("main")).toContainText("Os cenários são representações");
-    await expect(page.locator("main")).toContainText("três figuras, uma por época dos capítulos");
-    await expect(page.locator("main")).toContainText("sem afirmar a aparência real da pessoa em cada data");
-    await expect(page.locator("main")).toContainText("indicar o documento que sustenta um registro ou o lugar em que o atlas o documenta");
-    await expect(page.locator("main [data-revisao]")).toContainText("Revisão humana pendente");
-    await expect(page.locator("main [data-revisao]").getByRole("link", { name: "Metodologia e fontes" })).toHaveAttribute("href", "/metodologia/");
+    // O que o jogo não é está escrito na entrada.
+    await expect(page.locator("[data-avisos-do-jogo]")).toContainText("não dá nota, não aponta vencedor e não recomenda voto");
+    await expect(page.locator("[data-avisos-do-jogo]")).toContainText("São marcos documentados de cada trajetória, e não a vida inteira");
+    await expect(page.locator("[data-revisao]").first()).toContainText("Revisão humana pendente");
   });
 
-  test("a entrada do atlas oferece o jogo para os dois, com o mesmo destaque", async ({ page }) => {
-    await page.goto("/");
-    const acessos = page.locator("[data-jogar-entrada]");
-    await expect(acessos).toHaveCount(2);
-    await expect(acessos.nth(0)).toHaveAttribute("href", "/jogo/flavio-bolsonaro/");
-    await expect(acessos.nth(1)).toHaveAttribute("href", "/jogo/lula/");
-    const caixas = await acessos.evaluateAll((nos) =>
-      nos.map((no) => {
-        const caixa = no.getBoundingClientRect();
-        return { largura: Math.round(caixa.width), altura: Math.round(caixa.height) };
-      }),
-    );
-    expect(caixas[0]).toEqual(caixas[1]);
-    expect(caixas[0]!.altura).toBeGreaterThanOrEqual(44);
-    // A exploração do atlas continua a um clique, nos mesmos cartões.
-    await expect(page.locator('main a[href="/politicos/lula/"]').first()).toBeVisible();
-
-    await acessos.nth(1).click();
-    await expect(page).toHaveURL(/\/jogo\/lula\/$/);
-    await waitForStage(page);
-  });
-
-  test("quem já jogou vê onde parou, também no meio do primeiro capítulo", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    // Um registro recolhido, sem capítulo concluído: já não é "ainda não jogado".
-    const outro = LULA.c1.eventIds.find((id) => id !== LULA.exigido1)!;
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await page.locator(`[data-recolher="${outro}"]`).click();
-    await page.getByRole("button", { name: /Guardar e/ }).click();
-    await page.goto("/jogo/");
-    const cartao = page.locator('[data-escolha="lula"]');
-    await expect(cartao).toHaveAttribute("data-situacao", "em-andamento");
-    await expect(cartao.locator("[data-situacao-texto]")).toContainText(`capítulo 1: ${LULA.c1.titulo}`);
-    await expect(cartao.locator('[data-jogar="lula"]')).toContainText("Continuar");
-    await expect(page.locator('[data-escolha="flavio-bolsonaro"]')).toHaveAttribute("data-situacao", "inicio");
-
-    // Com o capítulo 1 concluído, o cartão aponta o 2.
-    await page.goto(LULA.rota);
-    await waitForStage(page);
-    await concluirCapitulo1PeloPainel(page, LULA);
-    await page.goto("/jogo/");
-    await expect(cartao).toHaveAttribute("data-situacao", "em-andamento");
-    await expect(cartao.locator("[data-situacao-texto]")).toContainText(`capítulo 2: ${LULA.c2.titulo}`);
-    await expect(cartao.locator('[data-jogar="lula"]')).toContainText("Continuar");
-    await expect(page.locator('[data-escolha="flavio-bolsonaro"]')).toHaveAttribute("data-situacao", "inicio");
-  });
-});
-
-test.describe("cena e movimento", () => {
-  test("a cena domina a tela ao iniciar, em computador e em celular, sem rolagem lateral, e está desenhada", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    const caixa = (await jogo(page).boundingBox())!;
-    expect(caixa.height / 900, "altura do palco em computador").toBeGreaterThan(0.75);
-    await expect(palco(page).locator("canvas")).toBeVisible();
-    expect((await frame(page)).cores, "cores no canvas, em computador").toBeGreaterThan(60);
-    // A página não rola nem um pixel para mostrar o palco inteiro.
-    expect(Math.round(caixa.y + caixa.height)).toBeLessThanOrEqual(900);
-
-    await page.setViewportSize(CELULAR);
-    await page.reload();
-    await waitForStage(page);
-    const estreita = (await jogo(page).boundingBox())!;
-    expect(estreita.height / CELULAR.height, "altura do palco em celular").toBeGreaterThan(0.75);
-    const { conteudo, janela } = await page.evaluate(() => ({ conteudo: document.documentElement.scrollWidth, janela: window.innerWidth }));
-    expect(conteudo).toBeLessThanOrEqual(janela);
-    expect((await frame(page)).cores, "cores no canvas, em celular").toBeGreaterThan(60);
-  });
-
-  test("o cenário é apresentado como representação: na cena, no guia e no rodapé da página", async ({ page }) => {
-    await abrirLimpo(page, FLAVIO.rota);
-    // O nome do lugar vem com o rótulo de cenário, e não solto ao lado do período.
-    await expect(page.locator("[data-cenario]")).toContainText(`cenário: ${FLAVIO.cena1.nome}`);
-    const aviso = "O cenário é uma representação: não afirma que a pessoa esteve neste lugar nem que os fatos aconteceram nele.";
-    await expect(page.locator("[data-rodape-do-jogo] [data-aviso-cenario]")).toContainText(aviso);
-    await expect(page.locator("[data-rodape-do-jogo] [data-revisao]")).toContainText("Revisão humana pendente");
-    await page.getByRole("button", { name: "Como jogar" }).click();
-    await expect(dialogo(page, "guia").locator("[data-aviso-cenario]")).toContainText(aviso);
-    await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(dialogo(page, "painel")).toContainText(`cenário: ${FLAVIO.cena1.nome}`);
-  });
-
-  test("as setas movem o personagem; a parede e os móveis o seguram", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    const inicio = await position(page);
-    expect(inicio).toEqual(inicioDe(LULA.c1));
-
-    // Para a esquerda da tela (-x no mundo) até a parede: a célula x=0 bloqueia.
-    for (const tecla of ["ArrowLeft", "ArrowUp"]) await page.keyboard.down(tecla);
-    await page.waitForTimeout(900);
-    // Encostado na parede, com as teclas ainda apertadas, o personagem não está andando.
-    await expect(palco(page)).toHaveAttribute("data-andando", "nao");
-    for (const tecla of ["ArrowLeft", "ArrowUp"]) await page.keyboard.up(tecla);
-    const naParede = await position(page);
-    expect(naParede.x).toBeGreaterThan(1.2);
-    expect(naParede.x).toBeLessThan(1.45);
-    // As duas teclas não descem nem sobem no mesmo instante: a linha é a mesma, com folga para essa deriva.
-    expect(Math.abs(naParede.y - inicio.y)).toBeLessThan(0.3);
-
-    // De volta, e o movimento para quando a tecla solta.
-    await holdKeys(page, ["ArrowRight", "ArrowDown"], 300);
-    const depois = await position(page);
-    expect(depois.x).toBeGreaterThan(naParede.x + 0.5);
-    await page.waitForTimeout(150);
-    expect(await position(page)).toEqual(depois);
-  });
-
-  test("teclas fora da área do jogo e durante um diálogo não movem o personagem", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    const inicio = await position(page);
-
-    await page.getByRole("button", { name: "Como jogar" }).focus();
-    await holdKeys(page, ["ArrowRight", "ArrowDown"], 300);
-    expect(await position(page), "com o foco fora do palco").toEqual(inicio);
-
-    await page.getByRole("button", { name: "Como jogar" }).click();
-    await expect(dialogo(page, "guia")).toBeVisible();
-    await expect(dialogo(page, "guia")).toContainText("personagem fictício");
-    await expect(jogo(page)).toHaveAttribute("data-modo", "guia");
-    await holdKeys(page, ["ArrowRight", "ArrowDown"], 300);
-    expect(await position(page), "com um diálogo aberto").toEqual(inicio);
-
-    // Esc fecha e devolve o foco à cena.
-    await page.keyboard.press("Escape");
-    await expect(dialogo(page, "guia")).toHaveCount(0);
-    await expect(palco(page)).toBeFocused();
-  });
-
-  test("com o foco na cena pelo teclado, o contorno de foco aparece por cima do desenho", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    // A caixa do Escrivão sobre a cena tem o próprio botão de fechar; fechada, a cena vem antes dos botões na ordem de tabulação: Shift+Tab a partir do primeiro botão chega nela.
-    await clicar(page, page.locator('[data-escrivao-caixa="entrada"] [data-fechar-escrivao]'));
-    await expect(page.locator("[data-escrivao-caixa]")).toHaveCount(0);
-    await page.getByRole("button", { name: "Como jogar" }).focus();
-    await page.keyboard.press("Shift+Tab");
-    await expect(palco(page)).toBeFocused();
-    const contorno = await palco(page).evaluate((no) => {
-      const estilo = getComputedStyle(no);
-      return { estilo: estilo.outlineStyle, largura: parseFloat(estilo.outlineWidth), recuo: parseFloat(estilo.outlineOffset), sombra: estilo.boxShadow };
-    });
-    // Um contorno é pintado por cima do canvas; uma sombra interna ficaria atrás dele.
-    expect(contorno.estilo).toBe("solid");
-    expect(contorno.largura).toBeGreaterThanOrEqual(2);
-    expect(contorno.recuo, "o contorno fica para dentro do palco, que corta o que passa da borda").toBeLessThan(0);
-  });
-
-  test("uma tecla segurada não age na janela que acabou de abrir nem rola a página", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    const alvo = posicaoDe(LULA.c1, LULA.exigido1);
-    await walkTo(page, LULA.cena1, alvo);
-    await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance-id", LULA.exigido1);
-
-    // Enter abre o registro. A repetição do teclado, com a tecla ainda apertada, cairia no botão que o fecha.
-    await page.keyboard.down("Enter");
-    const ficha = dialogo(page, "registro");
-    await expect(ficha).toBeVisible();
-    await expect(ficha.getByRole("button", { name: "Guardar e continuar" })).toBeFocused();
-    for (let i = 0; i < 3; i += 1) await page.keyboard.down("Enter");
-    await page.waitForTimeout(150);
-    await expect(ficha, "a janela continua aberta com Enter segurado").toBeVisible();
-    await page.keyboard.up("Enter");
-    // Solta a tecla, um Enter novo age normalmente.
-    await page.keyboard.press("Enter");
-    await expect(ficha).toHaveCount(0);
-
-    // A seta com que se entra na saída continua apertada durante a transição: a página não rola.
-    await abrirASaidaPeloPainel(page, LULA.c1);
-    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-    await walkTo(page, LULA.cena1, { x: LULA.cena1.saida.x - 1, y: LULA.cena1.saida.y }, true);
-    expect(await page.evaluate(() => document.documentElement.scrollHeight > window.innerHeight), "a página tem para onde rolar").toBe(true);
-    expect(await page.evaluate(() => window.scrollY), "a página está no alto antes de atravessar").toBe(0);
-    for (const tecla of ["ArrowRight", "ArrowDown"]) await page.keyboard.down(tecla);
-    await expect(page.locator("[data-transicao]")).toBeVisible();
-    for (let i = 0; i < 4; i += 1) await page.keyboard.down("ArrowDown");
-    await page.waitForTimeout(150);
-    expect(await page.evaluate(() => window.scrollY), "rolagem da página durante a transição").toBe(0);
-    for (const tecla of ["ArrowRight", "ArrowDown"]) await page.keyboard.up(tecla);
-  });
-});
-
-for (const slug of PERSONAGENS) {
-  const t = trajetoria(slug);
-
-  test.describe(`tarefa, saída e avanço: ${t.nome}`, () => {
-    test("a saída fica fechada até a tarefa e todos os registros; o último registro abre a passagem; atravessar avança o capítulo", async ({ page }) => {
-      // A jornada inteira pelo cenário, registro a registro: leva mais que o tempo padrão de um teste.
-      test.slow();
-      expect(t.c1.tarefa.tipo).toBe("registro");
-      const total = t.c1.eventIds.length;
-      const outros = foraDaTarefa(t.c1);
-      expect(outros.length, "registros que a tarefa não pede").toBeGreaterThan(0);
-      const contagem = page.locator("[data-objetivo-caixa] [data-registros]");
-      const fechada = dialogo(page, "saida-fechada");
-
-      await abrirLimpo(page, t.rota);
-      await expect(jogo(page)).toHaveAttribute("data-capitulo", t.c1.id);
-      await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-      await expect(page.locator("[data-objetivo]")).toHaveText(t.c1.objetivo);
-      // A regra fica à vista desde o começo: quantos registros há e o que segura a porta.
-      await expect(contagem).toHaveText(`Registros: 0 de ${total} · a saída abre com todos`);
-      // Quem não vê a cena ouve a mesma regra nas instruções dela.
-      const instrucoes = (await palco(page).getAttribute("aria-describedby"))!;
-      await expect(page.locator(`[id="${instrucoes}"]`)).toContainText("A saída abre com todos os registros do capítulo recolhidos e a tarefa cumprida.");
-      // O palco desenha a porta fechada.
-      await expect(palco(page)).toHaveAttribute("data-porta", "fechada");
-
-      // Ao lado da saída, a passagem não deixa entrar e explica o que falta.
-      const antesDaSaida = t.cena1.saida.lado === "leste" ? { x: t.cena1.saida.x - 1, y: t.cena1.saida.y } : { x: t.cena1.saida.x, y: t.cena1.saida.y - 1 };
-      const paraASaida = t.cena1.saida.lado === "leste" ? ["ArrowRight", "ArrowDown"] : ["ArrowDown", "ArrowLeft"];
-      const barradoNaSaida = async () => {
-        await walkTo(page, t.cena1, antesDaSaida);
-        await holdKeys(page, paraASaida, 600);
-        const barrado = await position(page);
-        expect({ x: Math.floor(barrado.x), y: Math.floor(barrado.y) }).toEqual(antesDaSaida);
-        await expect(jogo(page)).toHaveAttribute("data-capitulo", t.c1.id);
-        await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance", "saida");
-        await expect(page.locator("[data-alcance]")).toContainText("Saída fechada");
-        await page.keyboard.press("e");
-        await expect(fechada).toBeVisible();
-      };
-      await barradoNaSaida();
-      await expect(fechada.locator("[data-regra-da-saida]")).toHaveText("A saída abre com todos os registros do capítulo recolhidos e a tarefa cumprida.");
-      await expect(fechada.locator("[data-falta-registros]")).toHaveAttribute("data-falta-registros", String(total));
-      await expect(fechada.locator("[data-falta-tarefa]")).toHaveAttribute("data-falta-tarefa", "sim");
-      await expect(fechada).toContainText(t.c1.objetivo);
-      await page.getByRole("button", { name: "Entendi" }).click();
-
-      // O registro pedido: perto dele, a dica aparece e o desenho muda; E recolhe e mostra a ficha curta.
-      const alvo = posicaoDe(t.c1, t.exigido1);
-      const esperado = registro(t.exigido1);
-      await walkTo(page, t.cena1, alvo);
-      await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance-id", t.exigido1);
-      await expect(page.locator("[data-alcance]")).toContainText("Recolher o registro");
-      const aoAlcance = await frame(page);
-      expect(aoAlcance.cores, "cores no canvas, com o registro ao alcance").toBeGreaterThan(60);
-      await page.keyboard.press("e");
-      const ficha = dialogo(page, "registro");
-      await expect(ficha).toBeVisible();
-      // Com a ficha aberta, a dica do que estava ao alcance não fica escrita atrás dela.
-      await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance", "");
-      await expect(page.locator("[data-alcance]")).toHaveText("");
-      await expect(ficha).toContainText(esperado.titulo);
-      await expect(ficha.locator("time")).toHaveAttribute("datetime", esperado.data.valor);
-      await expect(ficha).toContainText(formatDate(esperado.data));
-      if (esperado.data.precisao === "ano") await expect(ficha).toContainText("Só o ano está documentado");
-      // As fontes são as do registro, uma a uma e na ordem: qual documento sustenta o quê.
-      const links = await ficha.locator("ol > li a").evaluateAll((nos) => nos.map((no) => no.getAttribute("href")));
-      expect(links).toEqual(urlsDasFontes(t.exigido1));
-      await expect(ficha.locator(`[data-ficha="${esperado.slug}"]`)).toHaveAttribute("href", `/acontecimentos/${esperado.slug}/?origem=jogo&personagem=${slug}`);
-      // O retorno é dito na hora: este era o registro pedido. A saída, porém, espera os outros registros.
-      await expect(ficha.locator("[data-tarefa-concluida]")).toHaveText("Tarefa concluída: este era o registro pedido.");
-      const situacao = ficha.locator("[data-saida-situacao]");
-      await expect(situacao).toHaveAttribute("data-saida-situacao", "fechada");
-      await expect(situacao).toHaveText(`Registros recolhidos: 1 de ${total}. ${outros.length === 1 ? "Falta 1 registro" : `Faltam ${outros.length} registros`} para a saída abrir.`);
-      // A situação da revisão aparece como em qualquer leitura do registro no atlas.
-      await expect(ficha.locator("[data-revisao]")).toContainText("com assistência de IA");
-      await expect(ficha.locator("[data-revisao]")).toContainText("Revisão humana pendente");
-      await page.getByRole("button", { name: "Guardar e continuar" }).click();
-      await expect(ficha).toHaveCount(0);
-      await expect(palco(page)).toBeFocused();
-
-      // A tarefa consta como concluída, mas a saída continua fechada: faltam os registros que a tarefa não pede.
-      await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-      await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-      await expect(jogo(page)).toHaveAttribute("data-registros", `1/${total}`);
-      await expect(page.locator("[data-objetivo]")).toHaveText(`Tarefa concluída. ${outros.length === 1 ? "Falta 1 registro" : `Faltam ${outros.length} registros`} para a saída abrir.`);
-      await expect(contagem).toHaveText(`Registros: 1 de ${total} · a saída abre com todos`);
-      const comATarefa = await frame(page);
-      expect(comATarefa.assinatura, "a pasta saiu da cena").not.toBe(aoAlcance.assinatura);
-      // Com a tarefa cumprida, o palco continua desenhando a porta fechada, e ela segura o personagem do mesmo jeito.
-      await expect(palco(page)).toHaveAttribute("data-porta", "fechada");
-      await barradoNaSaida();
-      await expect(fechada.locator("[data-falta-registros]")).toHaveAttribute("data-falta-registros", String(outros.length));
-      await expect(fechada.locator("[data-falta-tarefa]")).toHaveAttribute("data-falta-tarefa", "nao");
-      await page.getByRole("button", { name: "Entendi" }).click();
-      // O guia diz o mesmo.
-      await page.getByRole("button", { name: "Como jogar" }).click();
-      await expect(dialogo(page, "guia")).toContainText("A tarefa está cumprida.");
-      await expect(dialogo(page, "guia").locator("[data-regra-da-saida]")).toContainText(`Registros recolhidos: 1 de ${total}.`);
-      await page.keyboard.press("Escape");
-
-      // Os outros registros, um a um, pelo cenário. A saída só abre no último.
-      for (const [indice, id] of outros.entries()) {
-        const ultimoRegistro = indice === outros.length - 1;
-        await walkTo(page, t.cena1, posicaoDe(t.c1, id));
-        await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance-id", id);
-        await page.keyboard.press("e");
-        await expect(ficha).toContainText(registro(id).titulo);
-        // Não era o registro pedido: a tarefa não é anunciada de novo.
-        await expect(ficha.locator("[data-tarefa-concluida]")).toHaveCount(0);
-        await expect(situacao).toHaveAttribute("data-saida-situacao", ultimoRegistro ? "aberta" : "fechada");
-        await expect(situacao).toHaveAttribute("data-registros", `${indice + 2}/${total}`);
-        if (ultimoRegistro) await expect(situacao).toHaveText(`Registros recolhidos: ${total} de ${total}. A saída do capítulo está aberta.`);
-        await page.getByRole("button", { name: "Guardar e continuar" }).click();
-        await expect(ficha).toHaveCount(0);
-        await expect(jogo(page)).toHaveAttribute("data-saida", ultimoRegistro ? "aberta" : "fechada");
-        // A porta desenhada acompanha: fechada até o último registro, aberta com ele.
-        await expect(palco(page)).toHaveAttribute("data-porta", ultimoRegistro ? "aberta" : "fechada");
+  test("os caminhos de cada trajetória ficam na primeira tela, antes da prévia do cenário, em computador e em celular", async ({ browser, baseURL }) => {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 1280, height: 720 },
+      { width: 390, height: 844 },
+      { width: 360, height: 640 },
+    ]) {
+      const tela = `${viewport.width}×${viewport.height}`;
+      const context = await browser.newContext({ baseURL, viewport, reducedMotion: "reduce" });
+      const page = await context.newPage();
+      await page.goto("/jogo/");
+      await expect(page.locator('[data-escolha="lula"]')).toHaveAttribute("data-situacao", "inicio");
+      await expect(page.locator("[data-previa-mundo]")).toHaveCount(2);
+      // Em tela larga, os dois começos estão à vista sem rolar; em celular, o da primeira trajetória (a outra vem logo abaixo).
+      for (const slug of viewport.width >= 768 ? PERSONAGENS : PERSONAGENS.slice(0, 1)) {
+        await expect(page.locator(`[data-comecar="${slug}"]`), tela).toBeInViewport({ ratio: 1 });
       }
-
-      // Retorno claro: com o último registro, a saída abre e o objetivo muda.
-      await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-      await expect(jogo(page)).toHaveAttribute("data-registros", `${total}/${total}`);
-      await expect(page.locator("[data-objetivo]")).toContainText("Tarefa concluída e registros recolhidos. A saída abriu");
-      await expect(contagem).toHaveText(`Registros: ${total} de ${total} · saída aberta`);
-      const depoisDeRecolher = await frame(page);
-      expect(depoisDeRecolher.cores, "cores no canvas, depois de recolher").toBeGreaterThan(60);
-      // O quadro inteiro mudou (o personagem andou e as pastas saíram): a porta em si é conferida acima, por `data-porta`.
-      expect(depoisDeRecolher.assinatura, "a cena é outra depois de todos os registros").not.toBe(comATarefa.assinatura);
-      // Há capítulo seguinte: o guia fala dele.
-      await page.getByRole("button", { name: "Como jogar" }).click();
-      await expect(dialogo(page, "guia")).toContainText("seguir ao próximo capítulo");
-      await page.keyboard.press("Escape");
-
-      // Ao lado da saída aberta, a dica oferece atravessar, e a tecla atravessa.
-      await walkTo(page, t.cena1, antesDaSaida, true);
-      await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance", "saida");
-      await expect(page.locator("[data-alcance]")).toContainText("Atravessar a saída");
-      await page.keyboard.press("e");
-      const transicao = page.locator("[data-transicao]");
-      await expect(transicao).toBeVisible();
-      await expect(page.locator("[data-alcance]")).toHaveText("");
-      await expect(transicao).toContainText(`Capítulo ${t.c1.numero} concluído`);
-      await expect(transicao).toContainText(t.c2.titulo);
-      await expect(transicao).toContainText(`${t.c2.periodo.de}–${t.c2.periodo.ate}`);
-      await expect(transicao).toContainText(`cenário: ${t.cena2.nome}`);
-      await expect(transicao.getByRole("button", { name: "Continuar" })).toBeFocused();
-      await page.getByRole("button", { name: "Continuar" }).click();
-      await expect(jogo(page)).toHaveAttribute("data-capitulo", t.c2.id);
-      await expect(jogo(page)).toHaveAttribute("data-cena", t.cena2.id);
-      await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-      await expect(page.locator("[data-objetivo]")).toHaveText(t.c2.objetivo);
-      await expect.poll(() => position(page)).toEqual(inicioDe(t.c2));
-      // Outro cenário, desenhado.
-      const segundo = await frame(page);
-      expect(segundo.cores, "cores no canvas, no capítulo 2").toBeGreaterThan(60);
-      expect(segundo.assinatura).not.toBe(depoisDeRecolher.assinatura);
-
-      // Recarregar devolve o mesmo capítulo, no início da cena.
-      await page.reload();
-      await waitForStage(page);
-      await expect(jogo(page)).toHaveAttribute("data-capitulo", t.c2.id);
-      await expect.poll(() => position(page)).toEqual(inicioDe(t.c2));
-    });
-
-    test("tarefa de ordem: errar explica e deixa tentar de novo; com todos os registros, acertar abre a saída e leva ao capítulo seguinte", async ({ page }) => {
-      test.slow();
-      expect(t.c2.tarefa.tipo).toBe("ordem");
-      await abrirLimpo(page, t.rota);
-      await concluirCapitulo1PeloPainel(page, t);
-      const [antes, depois] = emOrdem(t.c2);
-      const total = t.c2.eventIds.length;
-      const terceiros = foraDaTarefa(t.c2);
-      expect(terceiros.length, "registros que a tarefa de ordem não pede").toBeGreaterThan(0);
-      const contagem = page.locator("[data-objetivo-caixa] [data-registros]");
-
-      // Os dois registros da tarefa, pelo cenário.
-      for (const id of [depois, antes]) {
-        await walkTo(page, t.cena2, posicaoDe(t.c2, id));
-        await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance-id", id);
-        await page.keyboard.press("e");
-        await expect(dialogo(page, "registro")).toBeVisible();
-        await page.getByRole("button", { name: /Guardar e/ }).click();
+      for (const slug of PERSONAGENS) {
+        const caminhos = (await page.locator(`[data-escolha="${slug}"] [data-caminhos]`).boundingBox())!;
+        const previa = (await page.locator(`[data-escolha="${slug}"] [data-previa-mundo]`).boundingBox())!;
+        expect(caminhos.y + caminhos.height, `${tela}: a prévia vem depois dos caminhos`).toBeLessThanOrEqual(previa.y + 1);
       }
-      // Com os dois recolhidos, a ordem é pedida.
-      const ordem = dialogo(page, "ordem");
-      await expect(ordem).toBeVisible();
-      await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-      await expect(ordem.locator("[data-ordem-item]")).toHaveCount(2);
-      const focoNaJanela = () => page.evaluate(() => document.activeElement?.closest('[data-dialogo="ordem"]') !== null);
-
-      // A ordem errada, pelo teclado: explicação com os dois registros e as datas, sem punição, nova tentativa.
-      await ordem.locator(`[data-escolher-primeiro="${depois}"]`).click();
-      await expect(ordem.locator(`[data-ordem-item="${depois}"] [data-ordem-posicao="1"]`)).toBeVisible();
-      await ordem.locator("[data-confirmar-ordem]").focus();
-      await page.keyboard.press("Enter");
-      const resultado = ordem.locator("[data-ordem-resultado]");
-      await expect(resultado).toHaveAttribute("data-ordem-resultado", "errado");
-      await expect(resultado).toContainText(`${registro(antes).titulo} (${formatDate(registro(antes).data)})`);
-      await expect(resultado).toContainText(`${registro(depois).titulo} (${formatDate(registro(depois).data)})`);
-      await expect(resultado).toContainText("não há penalidade");
-      await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-      // O botão que tinha o foco saiu do rodapé: o foco vai para o que entrou no lugar.
-      await expect(ordem.locator("[data-tentar-de-novo]")).toBeFocused();
-      await page.keyboard.press("Enter");
-      await expect(ordem.locator("[data-ordem-resultado]")).toHaveCount(0);
-      expect(await focoNaJanela(), "foco dentro da janela depois de tentar de novo").toBe(true);
-      // A tentativa errada ficou contada, e só isso: nada foi perdido.
-      await expect(ordem).toContainText("Tentativas até agora: 1.");
-
-      // Dá para fechar a pergunta e responder depois. A cena diz onde: no guia ou no painel.
-      await page.keyboard.press("Escape");
-      await expect(ordem).toHaveCount(0);
-      const ondeOrdenar = "Os dois registros da tarefa estão com você. Para colocá-los em ordem, abra Como jogar ou Capítulos e tarefas.";
-      await expect(page.locator("[data-objetivo]")).toHaveText(ondeOrdenar);
-      // Recolher todos não basta neste capítulo: a contagem diz as duas coisas.
-      await expect(contagem).toHaveText(`Registros: ${total - terceiros.length} de ${total} · a saída abre com todos e a ordem certa`);
-
-      // Antes de responder, os registros que a tarefa não pede.
-      for (const [indice, id] of terceiros.entries()) {
-        await walkTo(page, t.cena2, posicaoDe(t.c2, id));
-        await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance-id", id);
-        await page.keyboard.press("e");
-        const ficha = dialogo(page, "registro");
-        await expect(ficha).toContainText(registro(id).titulo);
-        // A ficha diz que a ordem está pronta para responder e, no último registro, que só falta a tarefa.
-        await expect(ficha.locator('[data-resposta-pronta="ordem"]')).toHaveText("Os dois registros da tarefa estão com você. Falta colocá-los em ordem.");
-        if (indice === terceiros.length - 1) {
-          await expect(ficha.locator("[data-saida-situacao]")).toHaveAttribute("data-saida-situacao", "fechada");
-          await expect(ficha.locator("[data-saida-situacao]")).toHaveText(`Registros recolhidos: ${total} de ${total}. Falta a tarefa para a saída abrir.`);
-        }
-        // Com a ordem por responder, guardar o registro leva de volta à pergunta.
-        await page.getByRole("button", { name: "Guardar e responder" }).click();
-        await expect(ordem).toBeVisible();
-        await page.keyboard.press("Escape");
-        await expect(ordem).toHaveCount(0);
-      }
-      // Todos os registros recolhidos, e a saída continua fechada: falta a tarefa.
-      await expect(jogo(page)).toHaveAttribute("data-registros", `${total}/${total}`);
-      await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-      await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-      await expect(palco(page)).toHaveAttribute("data-porta", "fechada");
-      await expect(page.locator("[data-objetivo]")).toHaveText(ondeOrdenar);
-      await expect(contagem).toHaveText(`Registros: ${total} de ${total} · falta a tarefa`);
-      // O painel não oferece a saída e oferece a pergunta.
-      await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-      const painelDaOrdem = dialogo(page, "painel");
-      await expect(painelDaOrdem.locator("[data-tarefa-situacao]")).toHaveAttribute("data-tarefa-situacao", "pendente");
-      await expect(painelDaOrdem.locator("[data-tarefa-situacao]")).toHaveAttribute("data-saida-situacao", "fechada");
-      await expect(painelDaOrdem.locator("[data-atravessar-saida]")).toHaveCount(0);
-      await expect(painelDaOrdem.locator('[data-responder-tarefa="ordem"]')).toHaveText("Ordenar os registros");
-      await page.keyboard.press("Escape");
-      // A porta segura o personagem, diz que não falta registro e leva à pergunta.
-      const antesDaSaida2 = t.cena2.saida.lado === "sul" ? { x: t.cena2.saida.x, y: t.cena2.saida.y - 1 } : { x: t.cena2.saida.x - 1, y: t.cena2.saida.y };
-      await walkTo(page, t.cena2, antesDaSaida2);
-      await holdKeys(page, t.cena2.saida.lado === "sul" ? ["ArrowDown", "ArrowLeft"] : ["ArrowRight", "ArrowDown"], 600);
-      const barrado = await position(page);
-      expect({ x: Math.floor(barrado.x), y: Math.floor(barrado.y) }, "a porta fechada segura o personagem").toEqual(antesDaSaida2);
-      await expect(page.locator("[data-alcance]")).toContainText("Saída fechada");
-      await page.keyboard.press("e");
-      const fechada = dialogo(page, "saida-fechada");
-      await expect(fechada.locator("[data-falta-registros]")).toHaveAttribute("data-falta-registros", "0");
-      await expect(fechada.locator("[data-falta-registros]")).toContainText("Não falta nenhum.");
-      await expect(fechada.locator("[data-falta-tarefa]")).toHaveAttribute("data-falta-tarefa", "sim");
-      await expect(fechada.locator("[data-falta-tarefa]")).toHaveText("Tarefa pendente: Os dois registros da tarefa estão com você. Falta colocá-los em ordem.");
-      await fechada.getByRole("button", { name: "Ordenar os registros" }).click();
-      await expect(ordem).toBeVisible();
-      await page.keyboard.press("Escape");
-      await expect(ordem).toHaveCount(0);
-      // A pergunta volta também pelo guia, que diz o que falta.
-      await page.getByRole("button", { name: "Como jogar" }).click();
-      await expect(dialogo(page, "guia")).toContainText("Falta colocá-los em ordem.");
-      await expect(dialogo(page, "guia").locator("[data-regra-da-saida]")).toContainText(`Registros recolhidos: ${total} de ${total}.`);
-      await dialogo(page, "guia").getByRole("button", { name: "Ordenar os registros" }).click();
-      await expect(ordem).toBeVisible();
-
-      // A ordem certa conclui, e Esc continua valendo na janela.
-      await ordem.locator(`[data-escolher-primeiro="${antes}"]`).click();
-      await ordem.locator("[data-confirmar-ordem]").focus();
-      await page.keyboard.press("Enter");
-      await expect(resultado).toHaveAttribute("data-ordem-resultado", "certo");
-      await expect(ordem).toContainText("Tarefa concluída. A saída do capítulo está aberta.");
-      await expect(ordem.locator("[data-ordem-concluida]")).toBeFocused();
-      await page.keyboard.press("Escape");
-      await expect(ordem).toHaveCount(0);
-      await expect(palco(page)).toBeFocused();
-      await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-      await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-      await expect(palco(page)).toHaveAttribute("data-porta", "aberta");
-      // Não é o último capítulo: o objetivo e o guia falam em seguir, e não em encerrar.
-      await expect(page.locator("[data-objetivo]")).toContainText("atravesse a passagem para seguir");
-      await page.getByRole("button", { name: "Como jogar" }).click();
-      await expect(dialogo(page, "guia")).toContainText("seguir ao próximo capítulo");
-      await expect(dialogo(page, "guia")).not.toContainText("encerrar");
-      await page.keyboard.press("Escape");
-
-      // O painel registra o estado.
-      await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-      await expect(page.locator("[data-tarefa-situacao]")).toHaveAttribute("data-tarefa-situacao", "concluida");
-      await expect(page.locator("[data-tarefa-situacao]")).toHaveAttribute("data-saida-situacao", "aberta");
-      for (const id of t.c2.eventIds) await expect(page.locator(`[data-registro="${id}"]`)).toHaveAttribute("data-recolhido", "sim");
-      await expect(page.locator("[data-atravessar-saida]")).toBeVisible();
-      await page.keyboard.press("Escape");
-
-      // Atravessar leva ao capítulo 3, com a transição dizendo o que vem: título, período, cenário, época e contexto.
-      await walkTo(page, t.cena2, { x: t.cena2.saida.x, y: t.cena2.saida.y }, true);
-      const transicao = page.locator("[data-transicao]");
-      await expect(transicao).toHaveAttribute("data-transicao", t.c3.id);
-      await expect(transicao).toContainText(t.c3.titulo);
-      await expect(transicao).toContainText(periodoDe(t.c3));
-      await expect(transicao).toContainText(t.cena3.nome);
-      await expect(transicao.locator("[data-contexto-do-capitulo]")).toHaveText(t.c3.motivo);
-      await page.getByRole("button", { name: "Continuar" }).click();
-      await expect(jogo(page)).toHaveAttribute("data-capitulo", t.c3.id);
-      await expect(jogo(page)).toHaveAttribute("data-epoca", t.c3.epoca);
-      await expect(jogo(page)).toHaveAttribute("data-registros", `0/${t.c3.eventIds.length}`);
-      await expect.poll(() => position(page)).toEqual(inicioDe(t.c3));
-    });
-  });
-}
-
-test.describe("avisos do registro", () => {
-  test("o registro cuja data não decide a ordem leva o aviso do atlas, no painel e na ficha", async ({ page }) => {
-    // A mesma regra da lista do atlas, sobre os registros do capítulo.
-    const emAberto = [...findUndeterminedOrder(LULA.c1.eventIds.map((id) => registro(id)))];
-    expect(emAberto.length, "registros do capítulo 1 de Lula com a ordem em aberto").toBeGreaterThan(0);
-    const id = emAberto[0]!;
-    const aviso = `ordem dentro de ${yearOf(registro(id).data)} não documentada`;
-
-    await abrirLimpo(page, LULA.rota);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    const painel = dialogo(page, "painel");
-    await expect(painel.locator("[data-ordem-em-aberto]")).toHaveCount(emAberto.length);
-    await expect(painel.locator(`[data-registro="${id}"] [data-ordem-em-aberto]`)).toHaveText(aviso);
-    // O motivo do capítulo explica por que os dois registros ficam juntos.
-    await expect(painel).toContainText("o atlas não registra se ela veio antes ou depois");
-
-    await painel.locator(`[data-recolher="${id}"]`).click();
-    const ficha = dialogo(page, "registro");
-    await expect(ficha.locator("[data-ordem-em-aberto]")).toHaveText(aviso);
-    await expect(ficha).toContainText("Só o ano está documentado");
-    // Um registro com a data completa não leva o aviso.
-    await page.getByRole("button", { name: /Guardar e/ }).click();
-    const comDia = LULA.c1.eventIds.find((item) => registro(item).data.precisao === "dia" && !emAberto.includes(item))!;
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await painel.locator(`[data-recolher="${comDia}"]`).click();
-    await expect(ficha).toContainText(registro(comDia).titulo);
-    await expect(ficha.locator("[data-ordem-em-aberto]")).toHaveCount(0);
-  });
-});
-
-test.describe("painel, progresso e armazenamento", () => {
-  test("o painel cumpre a tarefa sem o cenário, com foco visível e áreas de toque", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    const painel = dialogo(page, "painel");
-    // O foco entra na janela, no botão que a fecha.
-    await expect(painel.getByRole("button", { name: "Voltar ao jogo" })).toBeFocused();
-    await expect(painel).toContainText(LULA.c1.motivo);
-    await expect(painel.locator("[data-capitulo-item]")).toHaveCount(LULA.capitulos.length);
-    await expect(painel.locator(`[data-capitulo-item="${LULA.c1.id}"]`)).toHaveAttribute("data-status", "disponivel");
-    await expect(painel.locator(`[data-capitulo-item="${LULA.c2.id}"]`)).toHaveAttribute("data-status", "bloqueado");
-    await expect(painel.locator("[data-registro]")).toHaveCount(LULA.c1.eventIds.length);
-    for (const botao of await painel.getByRole("button").all()) {
-      expect((await botao.boundingBox())!.height, await botao.innerText()).toBeGreaterThanOrEqual(44);
+      expect(await sobraHorizontal(page), tela).toBeLessThanOrEqual(0);
+      await context.close();
     }
-
-    // Tab percorre só o painel enquanto ele está aberto.
-    await page.keyboard.press("Tab");
-    expect(await page.evaluate(() => document.activeElement?.closest('[data-dialogo="painel"]') !== null)).toBe(true);
-    // Esc fecha o painel e devolve o foco à cena.
-    await page.keyboard.press("Escape");
-    await expect(painel).toHaveCount(0);
-    await expect(palco(page)).toBeFocused();
-
-    // Pelo painel vale a mesma regra: com a tarefa cumprida e registros por recolher, a saída não é oferecida.
-    const total = LULA.c1.eventIds.length;
-    await cumprirATarefaPeloPainel(page, LULA.c1);
-    await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    const situacao = painel.locator("[data-tarefa-situacao]");
-    await expect(situacao).toHaveAttribute("data-tarefa-situacao", "concluida");
-    await expect(situacao).toHaveAttribute("data-saida-situacao", "fechada");
-    await expect(situacao).toHaveText(`Tarefa concluída. Faltam ${total - 1} registros para a saída abrir.`);
-    await expect(painel.locator("[data-regra-da-saida]")).toHaveText(
-      `Registros recolhidos: 1 de ${total}. A saída abre com todos os registros do capítulo recolhidos e a tarefa cumprida.`,
-    );
-    await expect(painel.locator("[data-atravessar-saida]")).toHaveCount(0);
-    // O registro recolhido pode ser lido de novo, sem mudar o progresso, e a volta é para o painel.
-    expect((await painel.locator(`[data-ler="${LULA.exigido1}"]`).boundingBox())!.height, "Ler de novo").toBeGreaterThanOrEqual(44);
-    await painel.locator(`[data-ler="${LULA.exigido1}"]`).click();
-    const releitura = dialogo(page, "registro");
-    await expect(releitura).toContainText("Registro já recolhido");
-    await expect(releitura).toContainText(registro(LULA.exigido1).titulo);
-    await expect(releitura.locator("[data-tarefa-concluida]")).toHaveCount(0);
-    await expect(releitura.locator("[data-saida-situacao]")).toHaveCount(0);
-    await expect(releitura.getByRole("button", { name: "Voltar ao painel" })).toBeFocused();
-    await releitura.getByRole("button", { name: "Voltar ao painel" }).click();
-    await expect(painel).toBeVisible();
-    // O foco volta ao botão do registro lido, que diz no nome qual registro é.
-    await expect(painel.locator(`[data-ler="${LULA.exigido1}"]`)).toBeFocused();
-    await expect(painel.getByRole("button", { name: `Ler de novo: ${registro(LULA.exigido1).titulo}` })).toBeFocused();
-    await expect(jogo(page)).toHaveAttribute("data-registros", `1/${total}`);
-    await page.keyboard.press("Escape");
-    // Aberto de novo pelo botão da cena, o painel começa com o foco no rodapé, como sempre.
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(painel.getByRole("button", { name: "Voltar ao jogo" })).toBeFocused();
-    await page.keyboard.press("Escape");
-
-    await concluirCapitulo1PeloPainel(page, LULA);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(painel.locator(`[data-capitulo-item="${LULA.c1.id}"]`)).toHaveAttribute("data-status", "concluido");
-    await expect(painel.locator(`[data-capitulo-item="${LULA.c2.id}"]`)).toHaveAttribute("data-status", "disponivel");
-    // Rever um capítulo concluído não muda o progresso.
-    await painel.locator(`[data-abrir-capitulo="${LULA.c1.id}"]`).click();
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c1.id);
-    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-    await page.reload();
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
   });
 
-  test("cada personagem tem o próprio progresso; reiniciar pede confirmação e vale só para ele", async ({ page }) => {
-    // Três capítulos inteiros pelo painel: leva mais que o tempo padrão no servidor de desenvolvimento.
-    test.slow();
-    // Os dois com progresso guardado ao mesmo tempo.
-    await abrirLimpo(page, LULA.rota);
-    await concluirCapitulo1PeloPainel(page, LULA);
-    await page.goto(FLAVIO.rota);
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", FLAVIO.c1.id);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-    await concluirCapitulo1PeloPainel(page, FLAVIO);
-
-    await page.goto(LULA.rota);
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await page.locator("[data-reiniciar]").click();
-    await expect(dialogo(page, "reiniciar")).toBeVisible();
-    await page.getByRole("button", { name: "Cancelar" }).click();
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await page.locator("[data-reiniciar]").click();
-    await page.locator("[data-confirmar-reinicio]").click();
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c1.id);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-    await page.reload();
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c1.id);
-
-    // Reiniciar sem trocar de capítulo: o personagem volta ao início e a saída fecha.
-    const inicio = inicioDe(LULA.c1);
-    await holdKeys(page, ["ArrowRight", "ArrowDown"], 400);
-    expect((await position(page)).x).toBeGreaterThan(inicio.x + 0.5);
-    await abrirASaidaPeloPainel(page, LULA.c1);
-    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await page.locator("[data-reiniciar]").click();
-    await page.locator("[data-confirmar-reinicio]").click();
-    await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-    await expect(jogo(page)).toHaveAttribute("data-registros", `0/${LULA.c1.eventIds.length}`);
-    await expect(palco(page)).toBeFocused();
-    await expect.poll(() => position(page)).toEqual(inicio);
-
-    // O outro personagem continua onde estava, também depois de recarregar.
-    await page.goto(FLAVIO.rota);
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", FLAVIO.c2.id);
+  test("com progresso em uma trajetória só, os dois cartões continuam alinhados, e continuar e ver desde o início ficam na primeira tela", async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ baseURL, viewport: { width: 1280, height: 720 }, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await abrir(page, "lula", 1);
+    await lerESeguir(page);
     await page.goto("/jogo/");
-    await expect(page.locator('[data-escolha="flavio-bolsonaro"]')).toHaveAttribute("data-situacao", "em-andamento");
-    await expect(page.locator('[data-escolha="lula"]')).toHaveAttribute("data-situacao", "inicio");
-  });
-
-  test("sem armazenamento, o jogo continua e avisa que o progresso vale só enquanto a página estiver aberta", async ({ page }) => {
-    await page.addInitScript(() => {
-      Object.defineProperty(window, "localStorage", {
-        get() {
-          throw new Error("Armazenamento bloqueado");
-        },
-      });
-    });
-    await page.goto(LULA.rota);
-    await waitForStage(page);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(page.locator("[data-progresso-duravel]")).toHaveAttribute("data-progresso-duravel", "nao");
-    await expect(page.locator("[data-progresso-duravel]")).toContainText("indisponível");
-    await expect(page.locator("[data-progresso-duravel]")).toContainText("enquanto esta página estiver aberta");
-    await page.locator(`[data-recolher="${LULA.exigido1}"]`).click();
-    await expect(dialogo(page, "registro")).toBeVisible();
-    await page.getByRole("button", { name: "Guardar e continuar" }).click();
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-
-    // Ir à ficha de um registro e voltar, pela navegação do site, não perde o progresso da visita.
-    const outro = LULA.c1.eventIds.find((id) => id !== LULA.exigido1)!;
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await page.locator(`[data-recolher="${outro}"]`).click();
-    await dialogo(page, "registro").locator(`[data-ficha="${registro(outro).slug}"]`).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(registro(outro).titulo);
-    await page.locator('[data-retorno="jogo"]').click();
-    await expect(page).toHaveURL(/\/jogo\/lula\/$/);
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(page.locator(`[data-registro="${outro}"]`)).toHaveAttribute("data-recolhido", "sim");
-    // A entrada do jogo, na mesma visita, também sabe onde a pessoa está.
-    await page.locator('[data-dialogo="painel"]').getByRole("link", { name: "Escolher outro personagem" }).click();
     await expect(page.locator('[data-escolha="lula"]')).toHaveAttribute("data-situacao", "em-andamento");
-    await expect(page.locator('[data-escolha="lula"] [data-jogar="lula"]')).toContainText("Continuar");
-    await expect(page.locator('[data-escolha="flavio-bolsonaro"]')).toHaveAttribute("data-situacao", "inicio");
+    await expect(page.locator("[data-previa-mundo]")).toHaveCount(2);
+    for (const caminho of ['[data-continuar="lula"]', '[data-ver-desde-o-inicio="lula"]', '[data-comecar="flavio-bolsonaro"]']) {
+      await expect(page.locator(caminho), caminho).toBeInViewport({ ratio: 1 });
+    }
+    // Um cartão tem dois botões e o outro, um: as prévias e o fim dos cartões ficam na mesma altura.
+    const previas = await Promise.all(PERSONAGENS.map(async (slug) => (await page.locator(`[data-escolha="${slug}"] [data-previa-mundo]`).boundingBox())!));
+    expect(Math.round(previas[0]!.y)).toBe(Math.round(previas[1]!.y));
+    const cartoes = await Promise.all(PERSONAGENS.map(async (slug) => (await page.locator(`[data-escolha="${slug}"]`).boundingBox())!));
+    expect(Math.round(cartoes[0]!.y + cartoes[0]!.height)).toBe(Math.round(cartoes[1]!.y + cartoes[1]!.height));
+    await context.close();
   });
 
-  test("da ficha de um registro, a página do acontecimento oferece a volta ao capítulo, com o progresso intacto", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await page.locator(`[data-recolher="${LULA.exigido1}"]`).click();
-    const esperado = registro(LULA.exigido1);
-    await dialogo(page, "registro").locator(`[data-ficha="${esperado.slug}"]`).click();
-    await expect(page).toHaveURL(/\/acontecimentos\/.+\?origem=jogo&personagem=lula$/);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(esperado.titulo);
+  for (const slug of PERSONAGENS) {
+    test(`${slug}: o visitante novo começa na origem, e a tela diz a pessoa, a fase, o período e o próximo passo`, async ({ page }) => {
+      const fases = fasesDe(slug);
+      const { fase: primeira, titulo } = marcoDe(slug, 1);
+      await page.goto("/jogo/");
+      await page.locator(`[data-comecar="${slug}"]`).click();
+      await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
+      await pronto(page);
+
+      expect(primeira.id).toBe(`${slug}-origem`);
+      await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira.id);
+      await expect(jogo(page)).toHaveAttribute("data-sala", "historico");
+      await expect(jogo(page)).toHaveAttribute("data-modo", "cenario");
+      await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "nova");
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(`Jogo · ${nomeDe(slug)} · Trajetória`);
+      // Sem abrir painel nenhum: a posição, o período e o título estão sobre a cena.
+      await expect(cartaoDaFase(page).locator("[data-fase-posicao]")).toHaveText(posicaoDe(primeira, fases.length));
+      await expect(cartaoDaFase(page).locator("[data-fase-titulo]")).toHaveText(primeira.titulo);
+      await expect(cartaoDaFase(page).locator("[data-proximo-passo]")).toContainText("Toque na pasta em destaque, ou no botão Abrir o marco");
+      // A pasta em destaque e o botão principal abrem a mesma coisa, e dizem o quê.
+      await expect(page.locator('[data-marcador="marco"]')).toHaveAttribute("aria-label", `Abrir o marco: ${titulo}`);
+      await expect(page.locator("[data-abrir-marco]")).toHaveAttribute("aria-label", `Abrir o marco: ${titulo}`);
+      await expect(page.locator("[data-rodape-do-jogo] [data-aviso-cenario]")).toContainText("O cenário é uma representação");
+
+      // Sem pedido no endereço, a trajetória também abre na origem, e visitar não grava nada.
+      await page.goto(rota(slug));
+      await pronto(page);
+      await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira.id);
+      await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
+      expect(await progressoSalvo(page, slug)).toBeNull();
+    });
+  }
+});
+
+test.describe("o ciclo de uma fase", () => {
+  for (const slug of PERSONAGENS) {
+    test(`${slug}: abrir o marco, ler, errar sem perder nada, tentar de novo, acertar e continuar`, async ({ page }) => {
+      const fases = fasesDe(slug);
+      const { fase: primeira, titulo } = marcoDe(slug, 1);
+      const segunda = fases[1]!;
+      const { certa, errada } = opcoesDe(primeira);
+      await abrir(page, slug, 1);
+
+      const fase = await abrirMarco(page);
+      await expect(jogo(page)).toHaveAttribute("data-vista", "fase");
+      await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "vista");
+      await expect(fase.locator("[data-fase-posicao]")).toHaveText(posicaoDe(primeira, fases.length));
+      await expect(fase.locator("[data-fase-titulo]")).toHaveText(primeira.titulo);
+      await expect(fase.locator("[data-fase-objetivo]")).toHaveText(`Nesta fase: ${primeira.objetivo}`);
+      await expect(fase.locator("[data-marco]")).toContainText(titulo);
+      await expect(fase.locator("[data-bloco]")).toHaveText(primeira.explicacao.map((bloco) => bloco.texto));
+      await expect(fase.locator("[data-enunciado]")).toHaveText(primeira.atividade.enunciado);
+      await expect(fase.locator("[data-opcao]")).toHaveCount(3);
+      // Antes de responder, a explicação da resposta não aparece, e não há o que continuar.
+      await expect(fase.locator("[data-resultado], [data-continuar]")).toHaveCount(0);
+      await expect(fase.locator("[data-responder]")).toBeDisabled();
+
+      // O erro: a explicação aparece, a fase continua aberta e os dois caminhos ficam à mão.
+      await responder(fase, errada);
+      await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+      await expect(fase.locator("[data-veredito]")).toHaveText("Ainda não.");
+      await expect(fase.locator("[data-explicacao-da-resposta]")).toHaveText(primeira.atividade.explicacao);
+      // A opção escolhida fica marcada como a escolha; nenhuma aparece como a certa antes da nova tentativa.
+      await expect(fase.locator(`[data-opcao="${errada}"]`)).toHaveAttribute("aria-pressed", "true");
+      await expect(fase.locator("[data-opcao][data-certa]")).toHaveCount(0);
+      await expect(fase.getByText("resposta certa")).toHaveCount(0);
+      // A instrução do primeiro erro, como está no catálogo do Escrivão: diz o que fazer, e não tira nada.
+      await expect(fase.locator('[data-escrivao="erro"] [data-camada="instrucao"]')).toContainText(instrucaoDe("erro", 0));
+      await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "vista");
+      await expect(fase.locator("[data-seguir-sem-responder]")).toHaveText(`Continuar: fase ${segunda.numero}`);
+      expect((await progressoSalvo(page, slug))!.fases[primeira.id]).toEqual({ vista: true, tentativas: 1 });
+
+      await fase.locator("[data-tentar-de-novo]").click();
+      await expect(fase.locator("[data-resultado]")).toHaveCount(0);
+      await responder(fase, certa);
+      await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+      await expect(fase.locator("[data-veredito]")).toHaveText("Certo.");
+      await expect(fase.locator(`[data-opcao="${certa}"]`)).toHaveAttribute("data-certa", "sim");
+      await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
+      await expect(fase.locator('[data-atividade]')).toHaveAttribute("data-atividade-situacao", "concluida");
+
+      // Continuar leva à fase seguinte, com o foco na pasta dela.
+      await fase.locator(`[data-continuar="${segunda.id}"]`).click();
+      await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+      await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda.id);
+      await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=2$`));
+      await expect(cartaoDaFase(page).locator("[data-fase-posicao]")).toHaveText(posicaoDe(segunda, fases.length));
+      await expect(page.locator('[data-marcador="marco"]')).toBeFocused();
+      const salvo = (await progressoSalvo(page, slug))!;
+      expect(salvo.versao).toBe(PROGRESS_VERSION);
+      expect(salvo.fases[primeira.id]).toMatchObject({ vista: true, concluida: "resposta", tentativas: 2 });
+      expect(Object.keys(salvo.fases)).toEqual([primeira.id]);
+    });
+  }
+
+  test("ler a explicação no lugar de responder libera a fase seguinte, e nenhum registro opcional segura a fase", async ({ page }) => {
+    const slug = "lula";
+    const [primeira, segunda, terceira] = fasesDe(slug);
+    expect(primeira!.explorar.length, "a fase tem registro opcional").toBeGreaterThan(0);
+    await abrir(page, slug, 1);
+
+    const fase = await abrirMarco(page);
+    await expect(fase.locator("[data-explorar]")).toContainText("Nenhum é necessário para continuar.");
+    await fase.locator("[data-ver-explicacao]").click();
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "explicacao");
+    await expect(fase.locator("[data-veredito]")).toHaveText("A explicação:");
+    await expect(fase.locator("[data-explicacao-da-resposta]")).toHaveText(primeira!.atividade.explicacao);
+    // Quem leu a explicação vê qual era a resposta.
+    await expect(fase.locator(`[data-opcao="${opcoesDe(primeira!).certa}"]`)).toHaveAttribute("data-certa", "sim");
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
+    await fase.locator("[data-continuar]").click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+
+    // Na fase seguinte, errar e seguir adiante também conclui pela leitura: a explicação já estava à vista.
+    const ordem = ordemDe(segunda!, conteudoDe(slug));
+    const outra = await abrirMarco(page);
+    for (const chave of [...ordem].reverse()) await outra.locator(`[data-ordem-item="${chave}"]`).click();
+    await outra.locator("[data-responder]").click();
+    await expect(outra.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+    await outra.locator("[data-seguir-sem-responder]").click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+
+    const salvo = (await progressoSalvo(page, slug))!;
+    expect(salvo.fases[primeira!.id]).toMatchObject({ concluida: "explicacao", tentativas: 0 });
+    expect(salvo.fases[segunda!.id]).toMatchObject({ concluida: "explicacao", tentativas: 1 });
+    // Nenhum registro opcional foi aberto, e as duas fases estão concluídas.
+    const lista = await (async () => {
+      await page.locator("[data-abrir-fases]").click();
+      return janela(page, "fases");
+    })();
+    await expect(lista.locator(`[data-fase-item="${primeira!.id}"]`)).toHaveAttribute("data-situacao", "concluida");
+    await expect(lista.locator(`[data-fase-item="${segunda!.id}"]`)).toHaveAttribute("data-situacao", "concluida");
+    await expect(lista.locator(`[data-fase-item="${terceira!.id}"]`)).toHaveAttribute("data-situacao", "nova");
+  });
+
+  test("a ordenação: tocar nos registros na ordem das datas, com a ordem certa mostrada depois", async ({ page }) => {
+    const slug = "lula";
+    const content = conteudoDe(slug);
+    const segunda = content.fases[1]!;
+    const ordem = ordemDe(segunda, content);
+    await abrir(page, slug, 2);
+    const fase = await abrirMarco(page);
+    await expect(fase.locator("[data-atividade]")).toHaveAttribute("data-atividade", "ordem");
+    await expect(fase.locator("[data-ordem-item]")).toHaveCount(3);
+    await expect(fase.locator("[data-responder]")).toHaveText("Confirmar a ordem");
+    await expect(fase.locator("[data-responder]")).toBeDisabled();
+
+    // Tocar de novo em um registro o tira da ordem: dá para corrigir antes de confirmar.
+    await fase.locator(`[data-ordem-item="${ordem[1]}"]`).click();
+    await expect(fase.locator(`[data-ordem-item="${ordem[1]}"]`)).toHaveAttribute("data-ordem-posicao", "1");
+    await fase.locator(`[data-ordem-item="${ordem[1]}"]`).click();
+    await expect(fase.locator("[data-ordem-posicao]")).toHaveCount(0);
+
+    for (const [indice, chave] of ordem.entries()) {
+      await fase.locator(`[data-ordem-item="${chave}"]`).click();
+      await expect(fase.locator(`[data-ordem-item="${chave}"]`)).toHaveAttribute("data-ordem-posicao", String(indice + 1));
+    }
+    await fase.locator("[data-responder]").click();
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+    // A explicação traz as datas dos registros, na ordem certa.
+    const linhas = fase.locator("[data-ordem-certa] li");
+    await expect(linhas).toHaveCount(3);
+    for (const [indice, chave] of ordem.entries()) {
+      const [tipo, id] = chave.split(":") as [string, string];
+      const dataDoRegistro = tipo === "fato" ? content.fatos[id]!.data! : content.registros[id]!.data;
+      await expect(linhas.nth(indice)).toContainText(formatDate(dataDoRegistro));
+    }
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
+  });
+});
+
+test.describe("registros opcionais e fontes", () => {
+  test("o registro de Explorar abre por cima da fase, que fica como estava: a escolha feita, o lugar na lista e o foco no botão que abriu; a pasta do cenário abre o mesmo registro", async ({ page }) => {
+    const slug = "lula";
+    const content = conteudoDe(slug);
+    const primeira = content.fases[0]!;
+    const opcional = primeira.explorar[0]!;
+    await abrir(page, slug, 1);
+    const fase = await abrirMarco(page);
+
+    // A pessoa marca uma opção e, antes de responder, abre um registro opcional, no fim da janela.
+    const { certa } = opcoesDe(primeira);
+    await fase.locator(`[data-opcao="${certa}"]`).click();
+    const abridor = fase.locator(`[data-explorar] [data-abrir-registro="${refKey(opcional)}"]`);
+    await abridor.click();
+    const registro = await janela(page, "registro");
+    // A fase continua embaixo, fora do teclado e da leitura.
+    await expect(fase).toHaveAttribute("data-encoberta", "sim");
+    await expect(fase).toHaveJSProperty("inert", true);
+    await expect(registro.getByRole("dialog")).toContainText("Registro do atlas · leitura opcional");
+    await expect(registro.locator(`[data-fato-cartao="${opcional.id}"]`)).toContainText(content.fatos[opcional.id]!.texto);
+    await expect(registro.locator('[data-escrivao="explorar"] [data-camada="instrucao"]')).toContainText("opcional");
+    await expect(registro.locator("[data-fonte]").first().getByRole("link")).toHaveAttribute("href", /^https:\/\//);
+    await expect(registro.locator("[data-revisao]")).toContainText("Revisão humana pendente");
+    // O botão de volta diz para onde, e é ele que recebe o foco.
+    await expect(registro.locator("[data-fechar-registro]")).toHaveText("Voltar à fase");
+    await expect(registro.locator("[data-fechar-registro]")).toBeFocused();
+    await registro.locator("[data-fechar-registro]").click();
+    await expect(dialogo(page, "registro")).toHaveCount(0);
+    await expect(dialogo(page, "fase")).toBeVisible();
+    await expect(fase).not.toHaveAttribute("data-encoberta");
+    // A fase volta como estava: a opção marcada, o botão que abriu o registro com o foco, e a lista à vista.
+    await expect(fase.locator(`[data-opcao="${certa}"]`)).toHaveAttribute("aria-pressed", "true");
+    await expect(abridor).toBeFocused();
+    await expect(abridor).toBeInViewport();
+    // Abrir o registro não concluiu nem mudou a fase.
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "vista");
+
+    // Esc fecha a janela da fase, e o foco volta ao botão que a abriu.
+    await page.keyboard.press("Escape");
+    await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+    await expect(page.locator("[data-abrir-marco]")).toBeFocused();
+
+    // A pasta com o sinal de mais, no cenário, abre o mesmo registro, e fechar volta ao cenário.
+    const pasta = page.locator(`[data-marcador="${refKey(opcional)}"]`);
+    await expect(pasta).toHaveAttribute("aria-label", `Explorar: ${content.fatos[opcional.id]!.titulo}`);
+    await pasta.click();
+    const doCenario = await janela(page, "registro");
+    await expect(doCenario.locator(`[data-fato-cartao="${opcional.id}"]`)).toBeVisible();
+    await expect(doCenario.locator("[data-fechar-registro]")).toHaveText("Voltar ao cenário");
+    await page.keyboard.press("Escape");
+    await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+    // O foco volta à pasta que abriu o registro.
+    await expect(pasta).toBeFocused();
+  });
+
+  test("na lista de Explorar, uma decisão vem com a área e a ementa da proposição, tiradas do registro; a atuação legislativa já diz o assunto no título", async ({ page }) => {
+    // Uma lei sancionada, entre os registros opcionais de uma fase de governo: tem área e proposição.
+    const lula = conteudoDe("lula");
+    const reconhecivel = (id: string) => lula.decisoes[id]!.natureza !== "atuacao" && lula.decisoes[id]!.temas.length > 0 && lula.decisoes[id]!.proposicoes.length > 0;
+    const fase = lula.fases.find((item) => item.explorar.some((ref) => ref.tipo === "decisao" && reconhecivel(ref.id)))!;
+    const opcional = fase.explorar.find((ref) => ref.tipo === "decisao" && reconhecivel(ref.id))!;
+    const decisao = lula.decisoes[opcional.id]!;
+    await abrir(page, "lula", fase.numero);
+    let aberta = await abrirMarco(page);
+    let linha = aberta.locator("[data-explorar] li").filter({ has: page.locator(`[data-abrir-registro="${refKey(opcional)}"]`) });
+    await expect(linha).toContainText(decisao.titulo);
+    await expect(linha.locator("[data-areas]")).toContainText(decisao.temas.map((tema) => TEMA_LABELS[tema]).join(", "));
+    await expect(linha.locator("[data-assunto]")).toHaveText(`${decisao.proposicoes[0]!.identificacao}: ${decisao.proposicoes[0]!.ementa}`);
+
+    // Uma lei estadual de autoria: o título do registro já diz do que ela trata.
+    const flavio = conteudoDe("flavio-bolsonaro");
+    const comAtuacao = flavio.fases.find((item) => item.explorar.some((ref) => ref.tipo === "decisao" && flavio.decisoes[ref.id]!.natureza === "atuacao"))!;
+    const atuacao = comAtuacao.explorar.find((ref) => ref.tipo === "decisao" && flavio.decisoes[ref.id]!.natureza === "atuacao")!;
+    await abrir(page, "flavio-bolsonaro", comAtuacao.numero);
+    aberta = await abrirMarco(page);
+    linha = aberta.locator("[data-explorar] li").filter({ has: page.locator(`[data-abrir-registro="${refKey(atuacao)}"]`) });
+    await expect(linha).toContainText(flavio.decisoes[atuacao.id]!.titulo);
+    await expect(linha.locator("[data-assunto]")).toHaveCount(0);
+  });
+
+  test("só com o teclado: abrir o marco, errar, tentar de novo, acertar e continuar, sem o foco sair da janela", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const [primeira, segunda, terceira] = fasesDe(slug);
+    const { certa, errada } = opcoesDe(primeira!);
+    const naJanela = () => focoDentroDe(page, '[data-dialogo="fase"] [role="dialog"]');
+    await abrir(page, slug, 1);
+    const fase = dialogo(page, "fase");
+
+    // Enter na pasta do marco abre a fase, com o foco na janela.
+    await page.locator('[data-marcador="marco"]').focus();
+    await page.keyboard.press("Enter");
+    await janela(page, "fase");
+    expect(await naJanela()).toBe(true);
+
+    // Marcar a opção errada e responder: o foco vai para Tentar de novo, com a explicação à vista.
+    await tabAte(page, `[data-opcao="${errada}"]`);
+    await page.keyboard.press("Space");
+    await expect(fase.locator(`[data-opcao="${errada}"]`)).toHaveAttribute("aria-pressed", "true");
+    await tabAte(page, "[data-responder]");
+    await page.keyboard.press("Enter");
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+    await expect(fase.locator("[data-tentar-de-novo]")).toBeFocused();
+    await expect(fase.locator("[data-veredito]")).toBeInViewport();
+    expect(await naJanela()).toBe(true);
+
+    // Tentar de novo: o foco vai para a primeira opção, e a resposta certa conclui a fase com o foco em Continuar.
+    await page.keyboard.press("Enter");
+    await expect(fase.locator("[data-opcao]").first()).toBeFocused();
+    await tabAte(page, `[data-opcao="${certa}"]`);
+    await page.keyboard.press("Enter");
+    await tabAte(page, "[data-responder]");
+    await page.keyboard.press("Enter");
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+    await expect(fase.locator(`[data-continuar="${segunda!.id}"]`)).toBeFocused();
+    await expect(fase.locator("[data-veredito]")).toBeInViewport();
+    expect(await naJanela()).toBe(true);
+
+    // Enter em Continuar leva à fase seguinte, com o foco na pasta do marco dela.
+    await page.keyboard.press("Enter");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await expect(page.locator('[data-marcador="marco"]')).toBeFocused();
+
+    // Na fase seguinte, pedir a explicação também deixa o foco em Continuar; Esc fecha a janela e devolve o foco à pasta.
+    await page.keyboard.press("Enter");
+    await janela(page, "fase");
+    await tabAte(page, "[data-ver-explicacao]");
+    await page.keyboard.press("Enter");
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "explicacao");
+    await expect(fase.locator(`[data-continuar="${terceira!.id}"]`)).toBeFocused();
+    expect(await naJanela()).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await expect(page.locator('[data-marcador="marco"]')).toBeFocused();
+    // O Tab não sai da janela enquanto ela está aberta: do último controle volta ao primeiro, e Shift+Tab faz o caminho contrário.
+    await page.keyboard.press("Enter");
+    await janela(page, "fase");
+    await page.keyboard.press("Shift+Tab");
+    await expect(fase.locator("[data-fechar-fase]")).toBeFocused();
+    const visitados = new Set<string>();
+    for (let passo = 0; passo < 40; passo += 1) {
+      await page.keyboard.press("Tab");
+      expect(await naJanela(), `o foco saiu da janela no passo ${passo + 1}`).toBe(true);
+      visitados.add(await page.evaluate(() => document.activeElement!.outerHTML.slice(0, 160)));
+    }
+    // Deu a volta: passou por vários controles, e não ficou parado no último.
+    expect(visitados.size, "controles visitados com o Tab").toBeGreaterThan(4);
+    await tabAte(page, "[data-fechar-fase]");
+    await page.keyboard.press("Tab");
+    expect(await naJanela()).toBe(true);
+    await expect(fase.locator("[data-fechar-fase]")).not.toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(fase.locator("[data-fechar-fase]")).toBeFocused();
+    // Os blocos de abrir e fechar (as fontes, os termos) entram no caminho do Tab e abrem pelo teclado.
+    await tabAte(page, "[data-fontes-da-fase] summary");
+    await page.keyboard.press("Enter");
+    await expect(fase.locator("[data-fontes-da-fase] [data-apoio]").first()).toBeVisible();
+    await tabAte(page, "[data-fontes-da-fase] [data-abrir-registro]");
+    expect(await naJanela()).toBe(true);
+  });
+
+  test("fechar uma janela devolve o foco ao botão que a abriu, e a confirmação de apagar fica por cima da lista", async ({ page }) => {
+    await abrir(page, "lula", 2);
+    for (const [botao, nome] of [
+      ["[data-abrir-fases]", "fases"],
+      ["[data-abrir-ajuda]", "ajuda"],
+    ] as const) {
+      await page.locator(botao).click();
+      await janela(page, nome);
+      await page.keyboard.press("Escape");
+      await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+      await expect(page.locator(botao)).toBeFocused();
+    }
+    // A confirmação abre por cima da lista; cancelar devolve o foco ao botão de apagar, e a lista continua onde estava.
+    await page.locator("[data-abrir-fases]").click();
+    const lista = await janela(page, "fases");
+    await lista.locator("[data-apagar-progresso]").click();
+    await janela(page, "apagar");
+    await expect(lista).toHaveAttribute("data-encoberta", "sim");
+    await page.keyboard.press("Escape");
+    await expect(dialogo(page, "apagar")).toHaveCount(0);
+    await expect(lista).not.toHaveAttribute("data-encoberta");
+    await expect(lista.locator("[data-apagar-progresso]")).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("[data-abrir-fases]")).toBeFocused();
+  });
+
+  test("na leitura sem o cenário, fechar um registro devolve o foco ao botão que o abriu, sem levar a leitura de volta ao começo", async ({ page }) => {
+    const slug = "lula";
+    await page.goto(`${rota(slug)}?fase=1&leitura=1`);
+    await pronto(page, false);
+    const abridor = page.locator("[data-leitura-da-fase] [data-explorar] [data-abrir-registro]").first();
+    await abridor.scrollIntoViewIfNeeded();
+    await abridor.click();
+    const registro = await janela(page, "registro");
+    await expect(registro.locator("[data-fechar-registro]")).toHaveText("Voltar à leitura");
+    const antes = await page.evaluate(() => Math.round(window.scrollY));
+    expect(antes, "a lista de registros fica abaixo da primeira tela").toBeGreaterThan(200);
+    await registro.locator("[data-fechar-registro]").click();
+    await expect(dialogo(page, "registro")).toHaveCount(0);
+    await expect(abridor).toBeFocused();
+    await expect(abridor).toBeInViewport();
+    expect(Math.abs((await page.evaluate(() => Math.round(window.scrollY))) - antes), "a página não rolou").toBeLessThanOrEqual(2);
+
+    // O mesmo com a lista de fases e com Como funciona.
+    for (const [botao, nome] of [
+      ["[data-abrir-fases]", "fases"],
+      ["[data-abrir-ajuda]", "ajuda"],
+    ] as const) {
+      await page.locator(botao).click();
+      await janela(page, nome);
+      await page.keyboard.press("Escape");
+      await expect(page.locator(botao)).toBeFocused();
+    }
+    // Só com o teclado, na página: responder deixa o foco em Continuar, e o Tab não recomeça do topo.
+    const leitura = page.locator("[data-leitura-da-fase]");
+    const [primeira, segunda] = fasesDe(slug);
+    await tabAte(page, `[data-opcao="${opcoesDe(primeira!).certa}"]`, 80);
+    await page.keyboard.press("Enter");
+    await tabAte(page, "[data-responder]");
+    await page.keyboard.press("Enter");
+    await expect(leitura.locator(`[data-continuar="${segunda!.id}"]`)).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await expect(leitura.locator("[data-fase-titulo]")).toBeFocused();
+  });
+
+  test("as fontes de cada bloco abrem na própria fase, e a ficha completa no atlas devolve a pessoa à trajetória, na fase da retomada", async ({ page }) => {
+    const slug = "lula";
+    const content = conteudoDe(slug);
+    const segunda = content.fases[1]!;
+    const evento = "lula-1975-eleito-presidente-do-sindicato";
+    await abrir(page, slug, 2);
+    const fase = await abrirMarco(page);
+
+    // "Ver fontes" lista os registros que sustentam a explicação e a atividade, com os documentos de cada um.
+    const fontes = fase.locator("[data-fontes-da-fase]");
+    await fontes.locator("summary").click();
+    const apoio = fontes.locator("[data-apoio]");
+    await expect(apoio).not.toHaveCount(0);
+    for (const item of await apoio.all()) {
+      await expect(item.locator("[data-fonte]").first()).toBeVisible();
+      await expect(item.locator("[data-onde]").first()).toContainText("Onde:");
+      await expect(item.locator("[data-evidencia]").first()).toContainText("Sustenta:");
+    }
+    await expect(fontes.locator("[data-revisao]")).toContainText("Revisão humana pendente");
+
+    await fontes.locator(`[data-apoio="acontecimento:${evento}"] [data-abrir-registro]`).click();
+    const registro = await janela(page, "registro");
+    await expect(registro.locator(`[data-registro-cartao="${evento}"]`)).toContainText(content.registros[evento]!.resumo);
+    await registro.locator(`[data-ficha="${content.registros[evento]!.slug}"]`).click();
+    await expect(page).toHaveURL(new RegExp(`/acontecimentos/${evento}/\\?origem=jogo&personagem=${slug}$`));
     const volta = page.locator('[data-retorno="jogo"]');
     await expect(volta).toContainText("Voltar ao jogo");
-    await expect(volta).toContainText("trajetória de Lula");
+    await expect(volta).toContainText(`trajetória de ${nomeDe(slug)}`);
     await volta.click();
-    await expect(page).toHaveURL(/\/jogo\/lula\/$/);
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c1.id);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/(\\?fase=2)?$`));
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda.id);
+  });
 
-    // Um link direto para o jogo de outro personagem não mexe em nada.
-    await page.goto(FLAVIO.rota);
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-    await page.goto(LULA.rota);
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
+  test("a atuação legislativa abre com o cartão do atlas e leva à decisão na página da pessoa", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const content = conteudoDe(slug);
+    const terceira = content.fases[2]!;
+    expect(terceira.marco).toEqual({ tipo: "decisao", id: "alerj-lei-4250-2003-autoria" });
+    const decisao = content.decisoes[terceira.marco.id]!;
+    await abrir(page, slug, 3);
+    const fase = await abrirMarco(page);
+    await expect(fase.locator("[data-marco]")).toContainText(decisao.titulo);
+    await expect(fase.locator("[data-marco]")).toContainText("decisão documentada");
+    await fase.locator("[data-fontes-da-fase] summary").click();
+    await fase.locator(`[data-apoio="decisao:${decisao.id}"] [data-abrir-registro]`).click();
 
-    // Quem estava revendo um capítulo concluído volta da ficha ao capítulo que revia, e não ao corrente.
-    await abrirASaidaPeloPainel(page, LULA.c1);
-    await atravessarPeloPainel(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await page.locator(`[data-abrir-capitulo="${LULA.c1.id}"]`).click();
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c1.id);
-    // No capítulo concluído tudo já foi recolhido: a ficha se abre relendo um registro pelo painel.
-    const outro = LULA.c1.eventIds.find((id) => id !== LULA.exigido1)!;
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(page.locator("[data-recolher]")).toHaveCount(0);
-    await page.locator(`[data-ler="${outro}"]`).click();
-    await dialogo(page, "registro").locator(`[data-ficha="${registro(outro).slug}"]`).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(registro(outro).titulo);
-    await page.locator('[data-retorno="jogo"]').click();
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c1.id);
-    // A lembrança vale para essa volta: recarregar abre o capítulo corrente, e o progresso não mudou.
-    await page.reload();
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
+    const registro = await janela(page, "registro");
+    const cartao = registro.locator(`[data-decisao-cartao="${decisao.id}"]`);
+    await expect(cartao).toHaveAttribute("data-natureza", "atuacao");
+    await expect(cartao.locator("[data-natureza-rotulo]")).toContainText("Atuação legislativa · Assembleia Legislativa do Estado do Rio de Janeiro");
+    await expect(cartao.locator('[data-tipo-de-atuacao="autoria"]')).toHaveText("Autoria de proposição");
+    await expect(cartao.locator('[data-desfecho="lei-sancionada"]')).toContainText("Virou lei, sancionada pelo chefe do Executivo");
+    // O cartão diz o que a autoria não diz: não é voto nem resultado.
+    await expect(cartao.locator("[data-aviso-atuacao]")).toContainText("Ele não diz como a pessoa votou, nem o que a norma produziu na prática.");
+    await expect(cartao.locator("[data-fonte] a").first()).toHaveAttribute("href", /^https:\/\/www3\.alerj\.rj\.gov\.br\//);
+
+    const link = cartao.locator(`[data-ficha-decisao="${decisao.id}"]`);
+    await expect(link).toHaveAttribute("href", `/politicos/${slug}/#decisao-${decisao.id}`);
+    await link.click();
+    await expect(page).toHaveURL(new RegExp(`/politicos/${slug}/#decisao-${decisao.id}$`));
+    await expect(page.locator(`#decisao-${decisao.id}`)).toHaveAttribute("data-natureza", "atuacao");
   });
 });
 
-test.describe("regra da saída", () => {
-  test("no capítulo de ordem, a ordem certa não abre a saída enquanto falta um registro", async ({ page }) => {
-    // Um capítulo inteiro pelo painel antes de começar: no servidor de desenvolvimento passa de metade do tempo padrão.
-    test.slow();
-    await abrirLimpo(page, LULA.rota);
-    await concluirCapitulo1PeloPainel(page, LULA);
-    const total = LULA.c2.eventIds.length;
-    const terceiros = foraDaTarefa(LULA.c2);
-    expect(terceiros.length, "registros que a tarefa de ordem não pede").toBeGreaterThan(0);
+test.describe("fases, retomada e progresso", () => {
+  test("a lista de fases abre qualquer fase, sem apagar nem concluir nada", async ({ page }) => {
+    const slug = "lula";
+    const fases = fasesDe(slug);
+    const [primeira] = fases;
+    const setima = fases[6]!;
+    await abrir(page, slug, 1);
+    await lerESeguir(page);
 
-    // Os dois registros da tarefa, pelo painel, e a ordem certa.
-    const [primeiro, segundo] = pedidosPor(LULA.c2) as [string, string];
-    expect(await recolherPeloPainel(page, primeiro)).toBe("jogando");
-    expect(await recolherPeloPainel(page, segundo)).toBe("ordem");
-    const ordem = dialogo(page, "ordem");
-    await ordem.locator(`[data-escolher-primeiro="${emOrdem(LULA.c2)[0]}"]`).click();
-    await ordem.locator("[data-confirmar-ordem]").click();
-    await expect(ordem.locator("[data-ordem-resultado]")).toHaveAttribute("data-ordem-resultado", "certo");
-    // A tarefa está cumprida, e a janela diz o que ainda segura a porta.
-    const faltam = terceiros.length === 1 ? "Falta 1 registro" : `Faltam ${terceiros.length} registros`;
-    await expect(ordem.locator("[data-saida-situacao]")).toHaveAttribute("data-saida-situacao", "fechada");
-    await expect(ordem.locator("[data-saida-situacao]")).toHaveText(`Tarefa concluída. ${faltam} para a saída abrir.`);
-    await ordem.locator("[data-ordem-concluida]").click();
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-    await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-    await expect(page.locator("[data-objetivo]")).toHaveText(`Tarefa concluída. ${faltam} para a saída abrir.`);
+    await page.locator("[data-abrir-fases]").click();
+    const lista = await janela(page, "fases");
+    await expect(lista.getByRole("heading", { level: 3 }).first()).toHaveText(`As ${fases.length} fases · nenhuma segura a seguinte`);
+    await expect(lista.locator("[data-fase-item]")).toHaveCount(fases.length);
+    await expect(lista.locator(`[data-fase-item="${primeira!.id}"] [data-situacao-texto]`)).toHaveText("concluída");
+    await expect(lista.locator(`[data-fase-item="${fases[1]!.id}"]`)).toHaveAttribute("aria-current", "step");
+    await expect(lista.locator(`[data-fase-item="${fases[1]!.id}"] [data-situacao-texto]`)).toHaveText("ainda não aberta · você está aqui");
+    await expect(lista.locator("[data-progresso-duravel]")).toHaveAttribute("data-progresso-duravel", "sim");
+    // Nenhuma fase está trancada: todas têm o botão de abrir.
+    await expect(lista.locator("[data-abrir-fase]")).toHaveCount(fases.length);
 
-    // O painel não oferece a saída, e a porta segura o personagem.
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(page.locator("[data-atravessar-saida]")).toHaveCount(0);
-    await page.keyboard.press("Escape");
-    const antesDaSaida = LULA.cena2.saida.lado === "sul" ? { x: LULA.cena2.saida.x, y: LULA.cena2.saida.y - 1 } : { x: LULA.cena2.saida.x - 1, y: LULA.cena2.saida.y };
-    await walkTo(page, LULA.cena2, antesDaSaida);
-    await holdKeys(page, LULA.cena2.saida.lado === "sul" ? ["ArrowDown", "ArrowLeft"] : ["ArrowRight", "ArrowDown"], 600);
-    const barrado = await position(page);
-    expect({ x: Math.floor(barrado.x), y: Math.floor(barrado.y) }, "a porta fechada segura o personagem").toEqual(antesDaSaida);
-    await expect(palco(page)).toHaveAttribute("data-porta", "fechada");
-    await expect(page.locator("[data-alcance]")).toContainText("Saída fechada");
-
-    // Com o último registro, abre.
-    for (const id of terceiros) expect(await recolherPeloPainel(page, id)).toBe("jogando");
-    await expect(jogo(page)).toHaveAttribute("data-registros", `${total}/${total}`);
-    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-    await expect(palco(page)).toHaveAttribute("data-porta", "aberta");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(page.locator("[data-atravessar-saida]")).toBeVisible();
+    await lista.locator(`[data-abrir-fase="${setima.id}"]`).click();
+    await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", setima.id);
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "nova");
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=7$`));
+    await expect(cartaoDaFase(page).locator("[data-fase-posicao]")).toHaveText(posicaoDe(setima, fases.length));
+    // Ir a uma fase é navegação: o que está salvo é o que já estava.
+    const salvo = (await progressoSalvo(page, slug))!;
+    expect(Object.keys(salvo.fases)).toEqual([primeira!.id]);
+    expect(salvo.fases[primeira!.id]!.concluida).toBe("explicacao");
   });
 
-  test("um progresso da versão 1, guardado quando a saída abria só com a tarefa, é migrado e reabre o capítulo que ficou sem registros", async ({ page }) => {
-    await page.goto(LULA.rota);
-    // O formato da versão 1: `ordemConfirmada` no lugar de `confirmada`, e só os dois capítulos da etapa 1.
-    await page.evaluate(
-      ({ chave, salvo }) => window.localStorage.setItem(chave, JSON.stringify(salvo)),
-      {
-        chave: storageKey("lula"),
-        salvo: {
-          versao: 1,
-          personagem: "lula",
-          capitulos: {
-            [LULA.c1.id]: { status: "concluido", tarefa: { recolhidos: [LULA.exigido1], ordemConfirmada: false, tentativas: 0 } },
-            [LULA.c2.id]: { status: "disponivel", tarefa: { recolhidos: [LULA.c2.eventIds[0]!], ordemConfirmada: false, tentativas: 0 } },
-          },
-        },
-      },
-    );
-    await page.reload();
-    await waitForStage(page);
-    // O capítulo 1 reabre com o que já tinha: a tarefa cumprida, um registro, a saída fechada.
-    const total = LULA.c1.eventIds.length;
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c1.id);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-    await expect(jogo(page)).toHaveAttribute("data-registros", `1/${total}`);
-    await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    const painel = dialogo(page, "painel");
-    await expect(painel.locator(`[data-capitulo-item="${LULA.c1.id}"]`)).toHaveAttribute("data-status", "disponivel");
-    await expect(painel.locator(`[data-capitulo-item="${LULA.c2.id}"]`)).toHaveAttribute("data-status", "bloqueado");
+  test("continuar de onde parei e ver desde o início são caminhos diferentes, com a fase e o ano, e rever o início não apaga o progresso", async ({ page }) => {
+    const slug = "lula";
+    const outro = "flavio-bolsonaro";
+    const fases = fasesDe(slug);
+    const [primeira, segunda, terceira] = fases;
+    await abrir(page, slug, 1);
+    await lerESeguir(page);
+    await lerESeguir(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+    // A pessoa abre a terceira fase e sai sem responder.
+    await abrirMarco(page);
     await page.keyboard.press("Escape");
-    // A entrada do jogo aponta o capítulo 1 de novo.
-    await page.goto("/jogo/");
-    await expect(page.locator('[data-escolha="lula"] [data-situacao-texto]')).toContainText(`capítulo 1: ${LULA.c1.titulo}`);
 
-    // Recolhido o que faltava, a saída abre, e o capítulo 2 abre com o registro que já tinha: ele ficou fechado
-    // enquanto o capítulo 1 estava reaberto, mas o que foi recolhido nele não se perde (D-130, que reviu a D-109).
-    await page.goto(LULA.rota);
-    await waitForStage(page);
-    await abrirASaidaPeloPainel(page, LULA.c1);
-    await atravessarPeloPainel(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
-    await expect(jogo(page)).toHaveAttribute("data-registros", `1/${LULA.c2.eventIds.length}`);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(page.locator(`[data-registro="${LULA.c2.eventIds[0]!}"]`)).toHaveAttribute("data-recolhido", "sim");
+    await page.goto("/jogo/");
+    const cartao = page.locator(`[data-escolha="${slug}"]`);
+    await expect(cartao).toHaveAttribute("data-situacao", "em-andamento");
+    await expect(cartao.locator("[data-situacao-texto]")).toHaveText(`2 fases concluídas de ${fases.length}.`);
+    const continuar = cartao.locator(`[data-continuar="${slug}"]`);
+    await expect(continuar).toContainText(`Continuar de onde parei: fase 3, ${terceira!.periodo.de} a ${terceira!.periodo.ate}`);
+    await expect(continuar).toHaveAttribute("data-destino", terceira!.id);
+    await expect(continuar).toHaveAttribute("href", `/jogo/${slug}/?fase=3`);
+    const inicio = cartao.locator(`[data-ver-desde-o-inicio="${slug}"]`);
+    await expect(inicio).toContainText(`Ver desde o início: ${primeira!.periodo.de}`);
+    await expect(inicio).toHaveAttribute("href", `/jogo/${slug}/?fase=1`);
+    await expect(cartao.locator("[data-comecar]")).toHaveCount(0);
+    await expect(cartao.locator(`[data-ler-sem-cenario="${slug}"]`)).toHaveAttribute("href", `/jogo/${slug}/?fase=3&leitura=1`);
+    // O progresso é de cada personagem: a outra trajetória continua por começar.
+    await expect(page.locator(`[data-escolha="${outro}"]`)).toHaveAttribute("data-situacao", "inicio");
+    await expect(page.locator(`[data-escolha="${outro}"] [data-comecar]`)).toBeVisible();
+
+    // Ver desde o início abre a origem, já concluída, e não mexe no que está salvo.
+    const antes = await progressoSalvo(page, slug);
+    await inicio.click();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
+    await expect(cartaoDaFase(page)).toHaveAttribute("data-fase-cartao", "concluida");
+    await expect(cartaoDaFase(page).locator("[data-proximo-passo]")).toHaveText(`Fase concluída. Use o botão para seguir à fase ${segunda!.numero}.`);
+    await expect(page.locator("[data-abrir-marco]")).toHaveText("Reabrir o marco");
+    expect(await progressoSalvo(page, slug)).toEqual(antes);
+
+    // Reler a origem também não desfaz nada: a entrada continua oferecendo a terceira fase.
+    const fase = await abrirMarco(page);
+    await expect(fase.locator("[data-veredito]")).toHaveText("Você já concluiu esta fase. A explicação:");
+    await page.keyboard.press("Escape");
+    const depois = (await progressoSalvo(page, slug))!;
+    expect(depois.fases).toEqual(antes!.fases);
+    await page.goto("/jogo/");
+    await expect(page.locator(`[data-continuar="${slug}"]`)).toHaveAttribute("data-destino", terceira!.id);
+  });
+
+  test("quem chega sem pedir fase e cai onde parou vê isso escrito, com o caminho para o início e o ano", async ({ page }) => {
+    const slug = "lula";
+    const fases = fasesDe(slug);
+    const [primeira, , terceira] = fases;
+    const aviso = cartaoDaFase(page).locator("[data-aviso-retomada]");
+    // Sem progresso, a trajetória abre na origem: não há retomada a avisar.
+    await page.goto(rota(slug));
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(aviso).toHaveCount(0);
+
+    await lerESeguir(page);
+    await lerESeguir(page);
+    const antes = await progressoSalvo(page, slug);
+
+    // Pela entrada do atlas, o acesso direto ao jogo cai onde a pessoa parou, e a tela diz isso.
+    await page.goto("/");
+    await page.locator(`[data-jogar-entrada="${slug}"]`).click();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+    await expect(cartaoDaFase(page).locator("[data-fase-posicao]")).toHaveText(posicaoDe(terceira!, fases.length));
+    await expect(aviso).toHaveAttribute("data-aviso-retomada", "retomada");
+    await expect(aviso).toContainText("Você continua de onde parou.");
+    const inicio = aviso.locator("[data-ver-desde-o-inicio]");
+    await expect(inicio).toHaveText(`Ver desde o início: ${primeira!.periodo.de}`);
+    // O aviso fica no lugar do humor: o cartão tem a instrução e o aviso, e não mais uma fala.
+    await expect(cartaoDaFase(page).locator('[data-camada="humor"]')).toHaveCount(0);
+    await expect(cartaoDaFase(page).locator("[data-proximo-passo]")).toHaveCount(1);
+
+    // O caminho para o início é navegação: abre a origem, o aviso sai, e nada do que foi feito muda.
+    await inicio.click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
+    await expect(page.locator('[data-marcador="marco"]')).toBeFocused();
+    await expect(aviso).toHaveCount(0);
+    expect(await progressoSalvo(page, slug)).toEqual(antes);
+
+    // Quem pede a fase pelo endereço escolheu: não há o que avisar.
+    await abrir(page, slug, 3);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+    await expect(aviso).toHaveCount(0);
+    // Na leitura sem o cenário, o mesmo aviso, com o mesmo caminho.
+    await page.locator("[data-ler-sem-cenario]").click();
+    await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
+    await page.goto(rota(slug));
+    await pronto(page, false);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+    const naLeitura = page.locator("[data-aviso-retomada]");
+    await expect(naLeitura).toContainText("Você continua de onde parou.");
+    await naLeitura.locator("[data-ver-desde-o-inicio]").press("Enter");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(page.locator("[data-leitura-da-fase] [data-fase-titulo]")).toBeFocused();
+    await expect(naLeitura).toHaveCount(0);
+  });
+
+  test("com a trajetória concluída, a entrada diz isso e oferece rever desde o início, que abre a origem e não apaga nada", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const fases = fasesDe(slug);
+    const primeira = fases[0]!;
+    const ultima = fases.at(-1)!;
+    await abrir(page, slug, 1);
+    for (let vez = 0; vez < fases.length; vez += 1) await lerESeguir(page);
+    const resumo = await janela(page, "resumo");
+    await expect(resumo.locator("[data-resumo-contagem]")).toContainText(`Você concluiu ${fases.length} de ${fases.length}.`);
+    await expect(resumo.locator('[data-resumo-fase][data-situacao="concluida"]')).toHaveCount(fases.length);
+    const antes = await progressoSalvo(page, slug);
+
+    await page.goto("/jogo/");
+    const cartao = page.locator(`[data-escolha="${slug}"]`);
+    await expect(cartao).toHaveAttribute("data-situacao", "completa");
+    await expect(cartao.locator("[data-situacao-texto]")).toHaveText(`Você concluiu as ${fases.length} fases neste navegador.`);
+    await expect(cartao.locator("[data-continuar], [data-ver-desde-o-inicio]")).toHaveCount(0);
+    const rever = cartao.locator(`[data-comecar="${slug}"]`);
+    await expect(rever).toContainText(`Rever desde o início: ${primeira.periodo.de}`);
+    await rever.click();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira.id);
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
+    expect(await progressoSalvo(page, slug)).toEqual(antes);
+
+    // Sem pedido, a trajetória concluída abre na última fase, de onde se chega ao resumo, e a tela oferece o início.
+    await page.goto(rota(slug));
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", ultima.id);
+    await expect(cartaoDaFase(page).locator("[data-aviso-retomada] [data-ver-desde-o-inicio]")).toHaveText(`Ver desde o início: ${primeira.periodo.de}`);
+    await expect(page.locator('[data-continuar="resumo"]')).toHaveText(/Ver o resumo/);
+    expect(await progressoSalvo(page, slug)).toEqual(antes);
+  });
+
+  test("Voltar do navegador sai do jogo sem deixar pedido no endereço da entrada, e Avançar reabre a fase em que a pessoa estava", async ({ page }) => {
+    const slug = "lula";
+    const [primeira, segunda] = fasesDe(slug);
+    await abrir(page, slug, 1);
+    await lerESeguir(page);
+    await lerESeguir(page);
+    await page.goto("/jogo/");
+    await page.locator(`[data-ver-desde-o-inicio="${slug}"]`).click();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
+    // Dentro do jogo, mudar de fase troca o endereço sem criar entrada no histórico.
+    await page.locator(`[data-continuar="${segunda!.id}"]`).click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=2$`));
+    const antes = await progressoSalvo(page, slug);
+
+    // Voltar sai do jogo de uma vez, e a entrada fica com o endereço dela, sem pedido de fase.
+    await page.goBack();
+    await expect(page).toHaveURL(/\/jogo\/$/);
+    await expect(page.locator(`[data-escolha="${slug}"]`)).toHaveAttribute("data-situacao", "em-andamento");
+    expect(await progressoSalvo(page, slug)).toEqual(antes);
+
+    await page.goForward();
+    await pronto(page);
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=2$`));
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    expect(await progressoSalvo(page, slug)).toEqual(antes);
+  });
+
+  test("pela entrada, ler sem o cenário abre a leitura, e ver desde o início não marca a fase da retomada como lida", async ({ page }) => {
+    const slug = "lula";
+    const outro = "flavio-bolsonaro";
+    const [primeira, , terceira] = fasesDe(slug);
+    await abrir(page, slug, 1);
+    await lerESeguir(page);
+    await lerESeguir(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+    const antes = (await progressoSalvo(page, slug))!;
+    expect(antes.fases[terceira!.id]).toBeUndefined();
+
+    // A leitura sem o cenário, escolhida na entrada para a outra pessoa, abre sem a cena e vira a preferência.
+    await page.goto("/jogo/");
+    await page.locator(`[data-ler-sem-cenario="${outro}"]`).click();
+    await pronto(page, false);
+    await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", `${outro}-origem`);
+    await expect(page.locator("canvas, [data-palco]")).toHaveCount(0);
+    await expect(page).toHaveURL(new RegExp(`/jogo/${outro}/\\?fase=1$`));
+
+    // De volta à entrada, por dentro do site: ver desde o início abre a origem, ainda na leitura.
+    await page.locator("[data-rodape-do-jogo]").getByRole("link", { name: "Escolher a outra trajetória" }).click();
+    await expect(page).toHaveURL(/\/jogo\/$/);
+    await page.locator(`[data-ver-desde-o-inicio="${slug}"]`).click();
+    await pronto(page, false);
+    await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(page.locator("[data-leitura-da-fase] [data-fase-titulo]")).toHaveText(primeira!.titulo);
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
+    // A fase em que a pessoa continuaria não foi aberta: nada nela foi marcado como lido.
+    const depois = (await progressoSalvo(page, slug))!;
+    expect(depois.fases).toEqual(antes.fases);
+    expect(depois.fases[terceira!.id]).toBeUndefined();
+  });
+
+  test("o progresso de um formato anterior migra sem ser apagado e sem virar aprendizado: a origem é oferecida, e nada aparece como lido ou respondido", async ({ page }) => {
+    const slug = "lula";
+    const fases = fasesDe(slug);
+    const antigo = {
+      versao: 5,
+      personagem: slug,
+      capitulos: {
+        "lula-1-sindicato": { status: "concluido", coletados: ["lula-1975-eleito-presidente-do-sindicato"], tarefa: { concluida: true, tentativas: 1 } },
+        "lula-2-constituinte": { status: "concluido", coletados: [], tarefa: { concluida: true, tentativas: 3 } },
+        "lula-3-presidencia": { status: "em-andamento", coletados: ["lula-2002-eleito-presidente"] },
+      },
+    };
+    const cobertas = [...new Set(["lula-1-sindicato", "lula-2-constituinte"].flatMap((id) => LEGACY_CHAPTER_PHASES[id]!))];
+    // Depois da última fase que os capítulos concluídos cobriam.
+    const ultimaCoberta = Math.max(...cobertas.map((id) => fases.findIndex((fase) => fase.id === id)));
+    const destino = fases[ultimaCoberta + 1]!;
+    // O salvo antigo entra antes de a página ler o armazenamento, e só uma vez: depois, quem escreve é o jogo.
+    await page.addInitScript(
+      ([chave, valor]) => {
+        if (window.localStorage.getItem(chave!) === null && window.sessionStorage.getItem("semeado") === null) {
+          window.localStorage.setItem(chave!, valor!);
+          window.sessionStorage.setItem("semeado", "1");
+        }
+      },
+      [storageKey(slug), JSON.stringify(antigo)],
+    );
+
+    await page.goto("/jogo/");
+    const cartao = page.locator(`[data-escolha="${slug}"]`);
+    await expect(cartao).toHaveAttribute("data-situacao", "em-andamento");
+    await expect(cartao.locator("[data-situacao-texto]")).toHaveText(`Nenhuma fase concluída ainda de ${fases.length}. O jogo mudou desde a sua última visita: a trajetória agora começa pela origem.`);
+    await expect(cartao.locator(`[data-continuar="${slug}"]`)).toContainText(`Continuar de onde parei: fase ${destino.numero}, ${destino.periodo.de} a ${destino.periodo.ate}`);
+    await expect(cartao.locator(`[data-continuar="${slug}"]`)).toHaveAttribute("data-destino", destino.id);
+    await expect(cartao.locator(`[data-ver-desde-o-inicio="${slug}"]`)).toContainText(`Ver desde o início: ${fases[0]!.periodo.de}`);
+    // Ler não grava: o que estava salvo continua como estava.
+    expect(await page.evaluate((chave) => JSON.parse(window.localStorage.getItem(chave)!), storageKey(slug))).toEqual(antigo);
+
+    await cartao.locator(`[data-ver-desde-o-inicio="${slug}"]`).click();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fases[0]!.id);
+    await page.locator("[data-abrir-fases]").click();
+    const lista = await janela(page, "fases");
+    // A origem não existia: é nova. As fases dos capítulos concluídos dizem que o período já foi visto, e nenhuma está concluída.
+    await expect(lista.locator(`[data-fase-item="${fases[0]!.id}"] [data-situacao-texto]`)).toHaveText("ainda não aberta · você está aqui");
+    for (const id of cobertas) {
+      await expect(lista.locator(`[data-fase-item="${id}"]`)).toHaveAttribute("data-situacao", "nova");
+      await expect(lista.locator(`[data-fase-item="${id}"] [data-situacao-texto]`)).toHaveText("período visto na versão anterior");
+    }
+    await expect(lista.locator('[data-fase-item][data-situacao="concluida"]')).toHaveCount(0);
+
+    // Quem chega direto ao jogo, sem passar pela entrada dele, cai na mesma fase da retomada, e a tela diz que o jogo mudou e oferece a origem.
+    await page.keyboard.press("Escape");
+    await page.goto(rota(slug));
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", destino.id);
+    const avisoDeMudanca = cartaoDaFase(page).locator("[data-aviso-retomada]");
+    await expect(avisoDeMudanca).toHaveAttribute("data-aviso-retomada", "mudou");
+    await expect(avisoDeMudanca).toContainText("O jogo mudou desde a sua última visita: a trajetória agora começa pela origem.");
+    await expect(avisoDeMudanca.locator("[data-ver-desde-o-inicio]")).toHaveText(`Ver desde o início: ${fases[0]!.periodo.de}`);
+    await avisoDeMudanca.locator("[data-ver-desde-o-inicio]").click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fases[0]!.id);
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "nova");
+    await page.locator("[data-abrir-fases]").click();
+    await janela(page, "fases");
+
+    // A fase diz que o período já foi visto, e a atividade, que é nova, está por responder.
+    await lista.locator(`[data-abrir-fase="${cobertas[0]}"]`).click();
+    const fase = await abrirMarco(page);
+    await expect(fase.locator("p[data-fase-anterior]")).toHaveText("Você já passou por este período em uma versão anterior do jogo. A explicação e a atividade desta fase são novas.");
+    await expect(fase.locator("[data-atividade]")).toHaveAttribute("data-atividade-situacao", "pendente");
+    await expect(fase.locator("[data-resultado]")).toHaveCount(0);
+
+    // Agora o jogo gravou no formato novo, com o salvo antigo inteiro dentro e nenhuma conclusão.
+    const salvo = (await progressoSalvo(page, slug))!;
+    expect(salvo.versao).toBe(PROGRESS_VERSION);
+    expect(salvo.legado).toEqual({ versao: 5, capitulos: antigo.capitulos });
+    expect(salvo.fases[cobertas[0]!]).toEqual({ vista: true, tentativas: 0, anterior: true });
+    expect(Object.values(salvo.fases).some((estado) => estado.concluida !== undefined)).toBe(false);
+    // O armazenamento da outra pessoa e as preferências não foram tocados.
+    expect(await progressoSalvo(page, "flavio-bolsonaro")).toBeNull();
+  });
+
+  test("o progresso volta ao recarregar, fica separado por personagem, e apagar é uma ação própria, com confirmação, que só apaga o do personagem", async ({ page }) => {
+    const fasesDaLula = fasesDe("lula");
+    const fasesDoFlavio = fasesDe("flavio-bolsonaro");
+    await abrir(page, "flavio-bolsonaro", 1);
+    await lerESeguir(page);
+    await abrir(page, "lula", 1);
+    await lerESeguir(page);
+
+    await page.reload();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fasesDaLula[1]!.id);
+    await page.locator("[data-abrir-fases]").click();
+    const lista = await janela(page, "fases");
+    await expect(lista.locator(`[data-fase-item="${fasesDaLula[0]!.id}"]`)).toHaveAttribute("data-situacao", "concluida");
+
+    // Apagar pede confirmação, com o foco em Cancelar; Esc volta à lista sem apagar.
+    await lista.locator("[data-apagar-progresso]").click();
+    const apagar = await janela(page, "apagar");
+    await expect(apagar.getByRole("heading", { level: 2 })).toHaveText(`Apagar o progresso de ${nomeDe("lula")}?`);
+    await expect(apagar.getByRole("dialog")).toContainText("Para rever as fases desde o começo não é preciso apagar nada");
+    await expect(apagar.getByRole("button", { name: "Cancelar" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await janela(page, "fases");
+    expect((await progressoSalvo(page, "lula"))!.fases[fasesDaLula[0]!.id]!.concluida).toBe("explicacao");
+
+    await dialogo(page, "fases").locator("[data-apagar-progresso]").click();
+    await (await janela(page, "apagar")).locator("[data-confirmar-apagar]").click();
+    await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fasesDaLula[0]!.id);
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "nova");
+    expect(await progressoSalvo(page, "lula")).toBeNull();
+    // O da outra pessoa e as preferências continuam lá.
+    expect((await progressoSalvo(page, "flavio-bolsonaro"))!.fases[fasesDoFlavio[0]!.id]!.concluida).toBe("explicacao");
+  });
+
+  test("o endereço abre uma fase sem concluir nem apagar, e pedido que não é fase cai na retomada", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const fases = fasesDe(slug);
+    await abrir(page, slug, 5);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fases[4]!.id);
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "nova");
+    expect(await progressoSalvo(page, slug)).toBeNull();
+
+    for (const pedido of ["99", "abc", "0"]) {
+      await page.goto(`${rota(slug)}?fase=${pedido}`);
+      await pronto(page);
+      await expect(jogo(page), `?fase=${pedido}`).toHaveAttribute("data-fase-aberta", fases[0]!.id);
+      await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
+    }
+  });
+});
+
+test.describe("aprofundamentos", () => {
+  for (const slug of PERSONAGENS) {
+    for (const sala of ["economia", "seguranca-publica"] as const) {
+      test(`${slug}, ${sala}: entrar direto explica o recorte e leva ao início da vida`, async ({ page }) => {
+        const [fase] = fasesDe(slug, sala);
+        await page.goto(rota(slug, sala));
+        await pronto(page);
+        await expect(jogo(page)).toHaveAttribute("data-sala", sala);
+        await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fase!.id);
+        // O cabeçalho diz que é aprofundamento, o assunto e os anos.
+        await expect(cartaoDaFase(page).locator("[data-fase-posicao]")).toHaveText(posicaoDe(fase!, 1));
+        await expect(cartaoDaFase(page).locator("[data-fase-posicao]")).toContainText(/^Aprofundamento: (Economia|Segurança pública) · Fase 1 de 1 · \d{4} a \d{4}$/);
+        const aviso = cartaoDaFase(page).locator("[data-aviso-aprofundamento]");
+        await expect(aviso).toContainText("Aprofundamento sobre um assunto, e não o começo da trajetória.");
+        await expect(page.locator("[data-rodape-do-jogo] [data-aviso-amostra]")).toContainText("amostra documentada da edição");
+
+        // "Como funciona" repete o aviso, e a lista de fases leva à trajetória.
+        await page.locator("[data-abrir-ajuda]").click();
+        const ajuda = await janela(page, "ajuda");
+        await expect(ajuda.locator("[data-aviso-aprofundamento]")).toContainText("não o começo da trajetória");
+        await page.keyboard.press("Escape");
+        await page.locator("[data-abrir-fases]").click();
+        const lista = await janela(page, "fases");
+        await expect(lista.locator('[data-ir-para-sala="historico"]')).toHaveAttribute("href", rota(slug));
+        await page.keyboard.press("Escape");
+
+        // O caminho para o início da vida está no próprio cabeçalho.
+        const inicio = aviso.locator("[data-ir-para-o-inicio]");
+        await expect(inicio).toHaveText("Ir para o início da vida");
+        await expect(inicio).toHaveAttribute("href", `/jogo/${slug}/?fase=1`);
+        await inicio.click();
+        await pronto(page);
+        await expect(jogo(page)).toHaveAttribute("data-sala", "historico");
+        await expect(jogo(page)).toHaveAttribute("data-fase-aberta", `${slug}-origem`);
+      });
+    }
+  }
+
+  test("com progresso na trajetória, o caminho do aprofundamento para o início da vida abre a origem, e não a fase da retomada", async ({ page }) => {
+    const slug = "lula";
+    const [primeira, , terceira] = fasesDe(slug);
+    await abrir(page, slug, 1);
+    await lerESeguir(page);
+    await lerESeguir(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+
+    await page.goto(rota(slug, "economia"));
+    await pronto(page);
+    await cartaoDaFase(page).locator("[data-ir-para-o-inicio]").click();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-sala", "historico");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
+    // A trajetória sem pedido continua abrindo onde a pessoa parou.
+    await page.goto(rota(slug));
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+  });
+
+  test("o aprofundamento termina no resumo dele, com o caminho para a trajetória desde a origem", async ({ page }) => {
+    const slug = "lula";
+    await page.goto(rota(slug, "economia"));
+    await pronto(page);
+    await lerESeguir(page);
+    const resumo = await janela(page, "resumo");
+    await expect(resumo.getByRole("heading", { level: 2 })).toHaveText("Resumo do aprofundamento");
+    await expect(resumo.locator("[data-resumo-contagem]")).toContainText("Você concluiu 1 de 1.");
+    await expect(resumo.locator('[data-ir-para-sala="historico"]')).toHaveText(`A trajetória de ${nomeDe(slug)}, desde a origem`);
+    await expect(resumo.locator('[data-ir-para-sala="historico"]')).toHaveAttribute("href", rota(slug));
+    // O progresso do aprofundamento não conta como fase da trajetória.
+    const salvo = (await progressoSalvo(page, slug))!;
+    expect(Object.keys(salvo.fases)).toEqual(["lula-economia"]);
+    expect(salvo.posicao).toEqual({ economia: "lula-economia" });
+  });
+});
+
+test.describe("ler sem o cenário", () => {
+  test("as mesmas fases, pelo teclado: abrir, responder, continuar, com o foco no título da fase seguinte", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const fases = fasesDe(slug);
+    const [primeira, segunda] = fases;
+    await page.goto(`${rota(slug)}?fase=1&leitura=1`);
+    await pronto(page, false);
+    await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
+    await expect(page.locator("[data-palco]")).toHaveCount(0);
+    await expect(page.locator("canvas")).toHaveCount(0);
+    await expect(page.locator("[data-aviso-leitura]")).toContainText("Você está lendo sem o cenário: as mesmas fases, com a explicação, a atividade e as fontes.");
+
+    // A fase está na página, com o mesmo conteúdo da janela; abrir a página já é ler a explicação.
+    const leitura = page.locator("[data-leitura-da-fase]");
+    await expect(leitura.locator("[data-fase-posicao]")).toHaveText(posicaoDe(primeira!, fases.length));
+    await expect(leitura.locator("[data-fase-titulo]")).toHaveText(primeira!.titulo);
+    await expect(leitura.locator("[data-bloco]")).toHaveText(primeira!.explicacao.map((bloco) => bloco.texto));
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "vista");
+
+    // Só com o teclado: escolher a opção, responder e continuar.
+    await leitura.locator(`[data-opcao="${opcoesDe(primeira!).certa}"]`).press("Enter");
+    await expect(leitura.locator(`[data-opcao="${opcoesDe(primeira!).certa}"]`)).toHaveAttribute("aria-pressed", "true");
+    await leitura.locator("[data-responder]").press("Enter");
+    await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+    await leitura.locator(`[data-continuar="${segunda!.id}"]`).press("Enter");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await expect(leitura.locator("[data-fase-posicao]")).toHaveText(posicaoDe(segunda!, fases.length));
+    await expect(leitura.locator("[data-fase-titulo]")).toBeFocused();
+    await expect(leitura.locator("[data-bloco]")).toHaveText(segunda!.explicacao.map((bloco) => bloco.texto));
+
+    // Fase anterior e fase seguinte ficam no fim da página, e as janelas (fases, como funciona) continuam à mão.
+    await page.locator(`button[data-fase-anterior="${primeira!.id}"]`).press("Enter");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(leitura.locator("[data-veredito]")).toHaveText("Você já concluiu esta fase. A explicação:");
+    await page.locator("[data-abrir-fases]").press("Enter");
+    const lista = await janela(page, "fases");
+    await expect(lista.locator("[data-alternar-leitura]")).toHaveAttribute("data-alternar-leitura", "leitura");
+    await page.keyboard.press("Escape");
+
+    // A escolha fica guardada como preferência, e o pedido sai do endereço; voltar ao cenário desfaz.
+    await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
+    expect(await page.evaluate((chave) => JSON.parse(window.localStorage.getItem(chave)!), PREFERENCES_KEY)).toMatchObject({ cenario: false });
+    await page.locator("[data-voltar-ao-cenario]").click();
+    await expect(jogo(page)).toHaveAttribute("data-modo", "cenario");
+    await pronto(page);
+  });
+
+  test("apagar o progresso com a fase aberta na leitura sem o cenário devolve a atividade: dá para responder de novo", async ({ page }) => {
+    const slug = "lula";
+    const [primeira] = fasesDe(slug);
+    const { certa, errada } = opcoesDe(primeira!);
+    await page.goto(`${rota(slug)}?fase=1&leitura=1`);
+    await pronto(page, false);
+    const leitura = page.locator("[data-leitura-da-fase]");
+    await responder(leitura, certa);
+    await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+    await expect(leitura.locator("[data-responder]")).toHaveCount(0);
+    expect((await progressoSalvo(page, slug))!.fases[primeira!.id]!.concluida).toBe("resposta");
+
+    // A fase fica montada sob as janelas: apagar com ela aberta não pode deixar a resposta antiga na tela.
+    await page.locator("[data-abrir-fases]").click();
+    await (await janela(page, "fases")).locator("[data-apagar-progresso]").click();
+    await (await janela(page, "apagar")).locator("[data-confirmar-apagar]").click();
+    await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(leitura.locator("[data-resultado]")).toHaveCount(0);
+    await expect(leitura.locator("[data-responder]")).toBeDisabled();
+    await expect(leitura.locator(`[data-opcao="${certa}"]`)).toHaveAttribute("aria-pressed", "false");
+    // A página continua aberta na explicação: a fase volta a constar como lida, e não como concluída.
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "vista");
+    await expect.poll(async () => (await progressoSalvo(page, slug))?.fases[primeira!.id]).toEqual({ vista: true, tentativas: 0 });
+
+    // A atividade responde de novo, do zero: um erro conta como a primeira tentativa.
+    await responder(leitura, errada);
+    await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+    expect((await progressoSalvo(page, slug))!.fases[primeira!.id]).toMatchObject({ vista: true, tentativas: 1 });
+    await leitura.locator("[data-tentar-de-novo]").click();
+    await responder(leitura, certa);
+    await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+    expect((await progressoSalvo(page, slug))!.fases[primeira!.id]!.concluida).toBe("resposta");
+  });
+
+  test("na última fase, errar e ver o resumo deixa a fase com a explicação, e não com o aviso do erro; e a ajuda não fala em pasta", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const [fase] = fasesDe(slug, "economia");
+    await page.goto(`${rota(slug, "economia")}?leitura=1`);
+    await pronto(page, false);
+    await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
+
+    // "Como funciona", sem o cenário: não há pasta em destaque nem botão de abrir o marco.
+    await page.locator("[data-abrir-ajuda]").click();
+    const ajuda = await janela(page, "ajuda");
+    await expect(ajuda.locator("[data-passo-de-abrir]")).toHaveText("Sem o cenário, a fase já está aberta na página.");
+    await expect(ajuda.locator("[data-passo-de-continuar]")).toHaveText("Use Continuar para ir à próxima fase. Os outros registros são opcionais.");
+    await page.keyboard.press("Escape");
+
+    // O aprofundamento tem uma fase só: depois do erro, seguir abre o resumo, e a fase continua na página.
+    const leitura = page.locator("[data-leitura-da-fase]");
+    await responder(leitura, opcoesDe(fase!).errada);
+    await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+    await expect(leitura.locator("[data-seguir-sem-responder]")).toHaveText("Ver o resumo");
+    await leitura.locator("[data-seguir-sem-responder]").click();
+    const resumo = await janela(page, "resumo");
+    await resumo.locator("[data-fechar-resumo]").click();
+    await expect(dialogo(page, "resumo")).toHaveCount(0);
+
+    // A fase foi concluída pela leitura: o veredito é o da explicação, sem a fala de tentar de novo.
+    await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
+    await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "explicacao");
+    await expect(leitura.locator("[data-veredito]")).toHaveText("A explicação:");
+    await expect(leitura.locator("[data-tentar-de-novo]")).toHaveCount(0);
+    await expect(leitura.locator('[data-continuar="resumo"]')).toBeVisible();
+    // O botão que abriu o resumo saiu da tela: o foco vai para o de continuar, e não se perde no corpo da página.
+    await expect(leitura.locator('[data-continuar="resumo"]')).toBeFocused();
+    await expect(leitura.locator(`[data-opcao="${opcoesDe(fase!).certa}"]`)).toHaveAttribute("data-certa", "sim");
+    expect((await progressoSalvo(page, slug))!.fases[fase!.id]).toMatchObject({ concluida: "explicacao", tentativas: 1 });
+  });
+
+  test("quando o navegador não dá o canvas, a cena sai e a leitura sem o cenário continua inteira", async ({ page }) => {
+    const slug = "lula";
+    const [primeira, segunda] = fasesDe(slug);
+    await page.addInitScript(() => {
+      HTMLCanvasElement.prototype.getContext = (() => null) as typeof HTMLCanvasElement.prototype.getContext;
+    });
+    await page.goto(`${rota(slug)}?fase=1`);
+    await pronto(page, false);
+    const aviso = page.locator('[data-palco="sem-canvas"]');
+    await expect(aviso).toContainText("O navegador não conseguiu desenhar a cena");
+    await expect(aviso).toContainText("Nada se perde");
+    // O cabeçalho da fase e o botão principal continuam lá, e o botão abre a explicação sem a cena.
+    await expect(cartaoDaFase(page).locator("[data-fase-titulo]")).toHaveText(primeira!.titulo);
+
+    await aviso.locator("[data-ler-sem-cenario-do-aviso]").click();
+    await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
+    await expect(page.locator("[data-aviso-leitura]")).toContainText("O navegador não conseguiu desenhar a cena.");
+    await expect(page.locator("[data-voltar-ao-cenario]")).toHaveCount(0);
+    const leitura = page.locator("[data-leitura-da-fase]");
+    await expect(leitura.locator("[data-bloco]")).toHaveText(primeira!.explicacao.map((bloco) => bloco.texto));
+    await responder(leitura, opcoesDe(primeira!).certa);
+    await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+    await leitura.locator("[data-continuar]").click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    // A preferência guardada não muda por causa de uma falha: é só desta visita.
+    expect(await page.evaluate((chave) => window.localStorage.getItem(chave), PREFERENCES_KEY)).toBeNull();
+  });
+
+  test("sem JavaScript, as fases estão no HTML, em texto, com a explicação e a resposta", async ({ request }) => {
+    for (const slug of PERSONAGENS) {
+      const fases = fasesDe(slug);
+      const html = (await (await request.get(rota(slug))).text()).replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&amp;/g, "&");
+      const semScript = html.slice(html.indexOf("<noscript>"), html.lastIndexOf("</noscript>"));
+      expect(semScript, slug).toContain("O cenário do jogo precisa de JavaScript");
+      expect(semScript, slug).toContain(`/politicos/${slug}/`);
+      for (const fase of fases) {
+        expect(semScript, fase.id).toContain(fase.titulo);
+        expect(semScript, fase.id).toContain(fase.explicacao[0]!.texto);
+        expect(semScript, fase.id).toContain(fase.atividade.enunciado);
+        expect(semScript, fase.id).toContain(fase.atividade.explicacao);
+      }
+      // O que explica a página já vem no documento, antes de qualquer script: a primeira fase e os avisos.
+      expect(html, slug).toContain(fases[0]!.titulo);
+      expect(html, slug).toContain("O cenário é uma representação");
+      expect(html, slug).toContain("Revisão humana pendente");
+    }
+  });
+});
+
+test.describe("Escrivão", () => {
+  test("uma instrução e, no máximo, uma fala de humor; desligar tira o humor na hora e mantém a instrução", async ({ page }) => {
+    const slug = "lula";
+    const [primeira] = fasesDe(slug);
+    await abrir(page, slug, 1);
+    await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
+    await expect(cartaoDaFase(page).locator("[data-proximo-passo]")).toHaveCount(1);
+    await expect(cartaoDaFase(page).locator('[data-camada="humor"]')).toHaveCount(1);
+    await expect(cartaoDaFase(page).locator('[data-camada="humor"]')).toContainText("Humor do Escrivão, ficção:");
+
+    // Como funciona: o guia é fictício, e o humor se desliga ali mesmo.
+    await page.locator("[data-abrir-ajuda]").click();
+    const ajuda = await janela(page, "ajuda");
+    await expect(ajuda.getByRole("dialog")).toContainText("Escrivão · personagem fictício");
+    await expect(ajuda.locator('[data-escrivao="ajuda"] [data-camada]')).toHaveCount(2);
+    await ajuda.locator("[data-humor]").click();
+    await expect(ajuda.locator("[data-humor]")).toHaveText("Ligar o humor");
+    await expect(ajuda.locator("[data-humor]")).toHaveAttribute("aria-pressed", "false");
+    // Na hora: a fala de humor some da janela aberta, e a instrução fica.
+    await expect(ajuda.locator('[data-escrivao="ajuda"] [data-camada]')).toHaveCount(1);
+    await expect(ajuda.locator('[data-escrivao="ajuda"] [data-camada="instrucao"]')).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(jogo(page)).toHaveAttribute("data-humor", "desligado");
+    await expect(cartaoDaFase(page).locator('[data-camada="humor"]')).toHaveCount(0);
+    await expect(cartaoDaFase(page).locator("[data-proximo-passo]")).toContainText("Toque na pasta em destaque");
+
+    // O erro continua com a explicação e a instrução, sem humor; a preferência vale depois de recarregar.
+    const fase = await abrirMarco(page);
+    await responder(fase, opcoesDe(primeira!).errada);
+    await expect(fase.locator('[data-escrivao="erro"] [data-camada]')).toHaveCount(1);
+    await expect(fase.locator("[data-explicacao-da-resposta]")).toHaveText(primeira!.atividade.explicacao);
+    await page.reload();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-humor", "desligado");
+    await expect(cartaoDaFase(page).locator('[data-camada="humor"]')).toHaveCount(0);
+  });
+
+  for (const slug of PERSONAGENS) {
+    test(`${slug}: na fase de processos não há humor, mesmo com a preferência ligada`, async ({ page }) => {
+      const content = conteudoDe(slug);
+      const fase = content.fases.find((item) => item.id === `${slug}-processos`)!;
+      expect(fase.sensivel).toBe(true);
+      await abrir(page, slug, fase.numero);
+      await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
+      await expect(cartaoDaFase(page).locator("[data-proximo-passo]")).toContainText("Toque na pasta em destaque");
+      await expect(cartaoDaFase(page).locator('[data-camada="humor"]')).toHaveCount(0);
+
+      const aberta = await abrirMarco(page);
+      const ordem = ordemDe(fase, content);
+      for (const chave of [...ordem].reverse()) await aberta.locator(`[data-ordem-item="${chave}"]`).click();
+      await aberta.locator("[data-responder]").click();
+      await expect(aberta.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+      await expect(aberta.locator('[data-escrivao="erro"] [data-camada]')).toHaveCount(1);
+      await expect(aberta.locator('[data-escrivao="erro"] [data-camada="instrucao"]')).toBeVisible();
+      // A leitura inicial traz a ficha judicial, com o aviso do que o jogo não pede.
+      await expect(aberta.locator("[data-ficha-judicial] [data-aviso-judicial]")).toHaveText(JUDICIAL_NOTICE);
+      // Concluir também não traz humor.
+      await aberta.locator("[data-tentar-de-novo]").click();
+      for (const chave of ordem) await aberta.locator(`[data-ordem-item="${chave}"]`).click();
+      await aberta.locator("[data-responder]").click();
+      await expect(aberta.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+      await expect(aberta.locator('[data-escrivao="conclusao"] [data-camada="humor"]')).toHaveCount(0);
+      await expect(aberta.locator('[data-escrivao="conclusao"] [data-camada="instrucao"]')).toBeVisible();
+    });
+  }
+});
+
+test.describe("o que cada fase ensina", () => {
+  for (const slug of PERSONAGENS) {
+    test(`${slug}: a fase de processos traz a acusação, a defesa, a decisão e o desfecho, com os termos e os registros relacionados`, async ({ page }) => {
+      const content = conteudoDe(slug);
+      const fase = content.fases.find((item) => item.id === `${slug}-processos`)!;
+      await abrir(page, slug, fase.numero);
+      const aberta = await abrirMarco(page);
+      await expect(aberta.locator("[data-bloco]")).toHaveText(fase.explicacao.map((bloco) => bloco.texto));
+      await expect(aberta.getByRole("dialog")).toContainText(/A defesa (pediu|disse)/);
+
+      // Os termos da fase abrem no próprio texto, com a definição, o que ela simplifica e o texto oficial.
+      await expect(aberta.locator("[data-conceito]")).toHaveCount(fase.conceitos.length);
+      const anulacao = aberta.locator('[data-conceito="anulacao"]');
+      await anulacao.locator("summary").click();
+      await expect(anulacao.locator("[data-definicao]")).toHaveText(content.conceitos.anulacao!.definicao);
+      await expect(anulacao.locator("[data-simplificacao]")).toContainText(content.conceitos.anulacao!.simplificacao!);
+      await expect(anulacao.locator("[data-fonte] a").first()).toHaveAttribute("href", /^https:\/\//);
+
+      // O marco é um episódio judicial: o registro traz a natureza, os registros relacionados e o aviso.
+      await aberta.locator("[data-fontes-da-fase] summary").click();
+      await aberta.locator(`[data-apoio="${refKey(fase.marco)}"] [data-abrir-registro]`).click();
+      const registro = await janela(page, "registro");
+      await expect(registro.locator("[data-ficha-judicial] [data-natureza]")).toContainText(/Não é absolvição nem condenação/);
+      await expect(registro.locator("[data-relacionado]")).not.toHaveCount(0);
+      await expect(registro.locator("[data-aviso-judicial]")).toHaveText(JUDICIAL_NOTICE);
+      await expect(registro.locator("[data-contexto]")).toContainText(content.registros[fase.marco.id]!.contexto.slice(0, 60));
+      // Registro de contexto sensível: o Escrivão dá a instrução, sem humor.
+      await expect(registro.locator('[data-escrivao="explorar"] [data-camada]')).toHaveCount(1);
+    });
+
+    test(`${slug}: a fase da eleição de 2026 mostra propostas como propostas, leva a todas e termina no resumo, sem troféu nem juízo`, async ({ page }) => {
+      const content = conteudoDe(slug);
+      const fases = content.fases;
+      const ultima = fases.at(-1)!;
+      const outro = PERSONAGENS.find((item) => item !== slug)!;
+      await abrir(page, slug, ultima.numero);
+      const fase = await abrirMarco(page);
+
+      const propostas = fase.locator('[data-explorar] [data-abrir-registro^="proposta:"]');
+      await expect(propostas).toHaveCount(7);
+      await expect(fase.locator("[data-explorar] [data-aviso-de-proposta]")).toContainText("dizem o que o documento propõe, e não o que foi feito");
+      await expect(fase.locator("[data-todas-as-propostas]")).toHaveAttribute("href", "/comparar/#propostas");
+      const primeira = `proposta-${slug}-2026-economia-1`;
+      await fase.locator(`[data-explorar] [data-abrir-registro="proposta:${primeira}"]`).click();
+      const registro = await janela(page, "registro");
+      await expect(registro.getByRole("heading", { level: 2 })).toHaveText("O que o documento registrado propõe");
+      await expect(registro.locator("[data-proposta-texto]")).toHaveText(content.propostas[primeira]!.texto);
+      await expect(registro.locator("[data-aviso-de-proposta]")).toHaveText(PROPOSAL_NOTICE);
+      await expect(registro.locator("[data-fonte] a").first()).toHaveAttribute("href", /tse\.jus\.br/);
+      // A proposta traz o próprio aviso: o Escrivão não comenta.
+      await expect(registro.locator("[data-escrivao]")).toHaveCount(0);
+      await registro.locator("[data-fechar-registro]").click();
+      await expect(dialogo(page, "registro")).toHaveCount(0);
+
+      await fase.locator("[data-ver-explicacao]").click();
+      await expect(fase.locator("[data-explicacao-da-resposta]")).toContainText("Não é lei, voto nem resultado");
+      await expect(fase.locator('[data-continuar="resumo"]')).toHaveText(/Ver o resumo/);
+      await fase.locator('[data-continuar="resumo"]').click();
+
+      const resumo = await janela(page, "resumo");
+      await expect(resumo.getByRole("heading", { level: 2 })).toHaveText("Resumo da trajetória");
+      await expect(resumo.locator("[data-resumo-contagem]")).toContainText(`tem ${fases.length} fases nesta edição, com marcos documentados de ${fases[0]!.periodo.de} a ${ultima.periodo.ate}. Você concluiu 1 de ${fases.length}.`);
+      await expect(resumo.locator("[data-resumo-contagem]")).toContainText("São marcos documentados, e não a vida inteira nem tudo o que a pessoa fez.");
+      await expect(resumo.locator("[data-resumo-fase]")).toHaveCount(fases.length);
+      await expect(resumo.locator(`[data-resumo-fase="${fases[0]!.id}"]`)).toContainText(`Para ${fases[0]!.objetivo}`);
+      // As lacunas, com o nome que a tela usa em todo lugar.
+      const lacunas = fases.flatMap((item) => item.lacunas);
+      await expect(resumo.locator("[data-resumo-lacunas]").getByRole("heading", { level: 3 })).toHaveText("Ainda não pesquisado nesta edição");
+      await expect(resumo.locator("[data-resumo-lacunas] li")).toHaveCount(lacunas.length);
+      // Os caminhos: a outra trajetória, a comparação, as propostas por área e os aprofundamentos.
+      await expect(resumo.locator(`[data-outra-trajetoria="${outro}"]`)).toHaveAttribute("href", rota(outro));
+      await expect(resumo.locator("[data-ir-para-comparar]")).toHaveAttribute("href", "/comparar/");
+      await expect(resumo.locator("[data-ir-para-propostas]")).toHaveAttribute("href", "/comparar/#propostas");
+      await expect(resumo.locator('[data-ir-para-sala="economia"]')).toHaveAttribute("href", rota(slug, "economia"));
+      await expect(resumo.locator('[data-ir-para-sala="seguranca-publica"]')).toHaveAttribute("href", rota(slug, "seguranca-publica"));
+      // Uma lista, e não um prêmio: nada de troféu, nota, pontos ou vencedor.
+      const texto = ((await resumo.getByRole("dialog").textContent()) ?? "").toLowerCase();
+      for (const palavra of ["parabéns", "troféu", "medalha", "pontos", "pontuação", "ranking", "vencedor", "venceu o jogo", "nota final", "melhor candidato"]) expect(texto, palavra).not.toContain(palavra);
+
+      // Rever uma fase pelo resumo é navegação.
+      await resumo.locator(`[data-resumo-fase="${fases[0]!.id}"] [data-abrir-fase]`).click();
+      await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fases[0]!.id);
+      expect((await progressoSalvo(page, slug))!.fases[ultima.id]!.concluida).toBe("explicacao");
+    });
+  }
+
+  test("as fases de voto separam o voto da pessoa do resultado da votação, e o cartão do voto diz que ele vale para o objeto votado", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const content = conteudoDe(slug);
+    const fase = content.fases.find((item) => item.id === "flavio-bolsonaro-decisoes-no-senado")!;
+    await abrir(page, slug, fase.numero);
+    const aberta = await abrirMarco(page);
+    await expect(aberta.locator("[data-bloco]").first()).toContainText("votou não; a proposta foi aprovada");
+    const voto = fase.explorar[0]!;
+    await aberta.locator(`[data-explorar] [data-abrir-registro="${refKey(voto)}"]`).click();
+    const registro = await janela(page, "registro");
+    const cartao = registro.locator(`[data-decisao-cartao="${voto.id}"]`);
+    await expect(cartao).toHaveAttribute("data-natureza", "voto");
+    await expect(cartao.locator("[data-aviso-objeto]")).toContainText("vale para o objeto votado, e não para o projeto inteiro nem para um tema");
+    await expect(cartao.locator("[data-manifestacao]")).toBeVisible();
+    await expect(cartao.locator("[data-resultado]")).toBeVisible();
   });
 });
 
 test.describe("celular", () => {
-  test.use({ viewport: CELULAR, hasTouch: true, isMobile: true });
+  for (const viewport of [
+    { width: 360, height: 640 },
+    { width: 390, height: 844 },
+  ]) {
+    test(`${viewport.width} por ${viewport.height}: nada passa da largura, os alvos de toque têm 44 pixels e a instrução não cobre o botão principal`, async ({ browser, baseURL }) => {
+      const context = await browser.newContext({ baseURL, viewport, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+      const page = await context.newPage();
+      const errosDoCelular = vigiar(page);
+      const slug = "flavio-bolsonaro";
+      const terceira = fasesDe(slug)[2]!;
 
-  test("os controles de toque movem o personagem e interagem, e o registro continua aberto depois do toque", async ({ page }) => {
-    await abrirLimpo(page, FLAVIO.rota);
-    const controles = page.locator("[data-toque]");
-    await expect(controles).toBeVisible();
-    // Cada direção e o botão de ação têm área de toque confortável.
-    for (const alvo of [...(await controles.locator("[data-direcao]").all()), controles.locator("[data-acao-toque]")]) {
-      const caixa = (await alvo.boundingBox())!;
-      expect(Math.min(caixa.width, caixa.height), "área de toque").toBeGreaterThanOrEqual(44);
-    }
-
-    // O direcional é uma área só: a posição do dedo escolhe a direção.
-    const direcional = controles.locator("[data-direcional]");
-    const area = (await direcional.boundingBox())!;
-    const toque = (fx: number, fy: number) => ({
-      pointerId: 1,
-      pointerType: "touch",
-      isPrimary: true,
-      bubbles: true,
-      clientX: area.x + area.width * fx,
-      clientY: area.y + area.height * fy,
-    });
-    const segurar = async (fx: number, fy: number, ms: number) => {
-      await direcional.dispatchEvent("pointerdown", toque(fx, fy));
-      await page.waitForTimeout(ms);
-      await direcional.dispatchEvent("pointerup", toque(fx, fy));
-    };
-
-    // Para baixo e para a direita na tela: o corredor que corre no eixo x da cena.
-    const inicio = await position(page);
-    await segurar(0.85, 0.85, 350);
-    const depois = await position(page);
-    expect(depois.x).toBeGreaterThan(inicio.x + 0.3);
-    expect(Math.abs(depois.y - inicio.y)).toBeLessThan(0.05);
-    // Soltou, parou.
-    await page.waitForTimeout(150);
-    expect(await position(page)).toEqual(depois);
-    // No centro do direcional nada se move.
-    await segurar(0.5, 0.5, 250);
-    expect(await position(page)).toEqual(depois);
-
-    // O botão de ação recolhe o registro ao alcance, com um toque de verdade: o
-    // clique que o navegador gera ao levantar o dedo não pode cair no botão que
-    // aparece embaixo dele e fechar a janela.
-    await walkTo(page, FLAVIO.cena1, posicaoDe(FLAVIO.c1, FLAVIO.exigido1));
-    const acao = controles.locator("[data-acao-toque]");
-    await expect(acao).toHaveAttribute("aria-label", "Recolher o registro");
-    const ondeTocou = (await acao.boundingBox())!;
-    await acao.tap();
-    const ficha = dialogo(page, "registro");
-    await expect(ficha).toBeVisible();
-    await expect(ficha).toContainText(registro(FLAVIO.exigido1).titulo);
-    // O botão que fecha a janela fica exatamente onde o dedo estava.
-    const fechar = (await ficha.getByRole("button", { name: "Guardar e continuar" }).boundingBox())!;
-    const cx = ondeTocou.x + ondeTocou.width / 2;
-    const cy = ondeTocou.y + ondeTocou.height / 2;
-    expect(cx > fechar.x && cx < fechar.x + fechar.width && cy > fechar.y && cy < fechar.y + fechar.height, "o toque caiu sobre o botão da janela").toBe(true);
-    await page.waitForTimeout(500);
-    await expect(ficha, "a janela do registro continua aberta depois do toque").toBeVisible();
-    // Um toque novo, agora no botão da janela, fecha.
-    await ficha.getByRole("button", { name: "Guardar e continuar" }).tap();
-    await expect(ficha).toHaveCount(0);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-  });
-
-  test("no painel, a volta de uma releitura deixa à vista e em foco o registro lido", async ({ page }) => {
-    await abrirLimpo(page, FLAVIO.rota);
-    await abrirASaidaPeloPainel(page, FLAVIO.c1);
-    // O último registro da lista fica abaixo da dobra do painel em celular.
-    const ultimo = FLAVIO.c1.eventIds.at(-1)!;
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    const painel = dialogo(page, "painel");
-    const botao = painel.locator(`[data-ler="${ultimo}"]`);
-    await clicar(page, botao);
-    const releitura = dialogo(page, "registro");
-    await expect(releitura).toContainText(registro(ultimo).titulo);
-    await clicar(page, releitura.getByRole("button", { name: "Voltar ao painel" }));
-    await expect(botao).toBeFocused();
-    // O botão está dentro da área visível do painel: a pessoa não volta ao topo da lista.
-    const { topo, base, alvo } = await botao.evaluate((no) => {
-      const area = no.closest("[data-janela-corpo]")!.getBoundingClientRect();
-      const caixa = no.getBoundingClientRect();
-      return { topo: area.top, base: area.bottom, alvo: { topo: caixa.top, base: caixa.bottom } };
-    });
-    expect(alvo.topo, "topo do botão dentro da área do painel").toBeGreaterThanOrEqual(topo);
-    expect(alvo.base, "base do botão dentro da área do painel").toBeLessThanOrEqual(base);
-    // Nada disso rola a página.
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  });
-
-  test("o menu do site abre por cima das janelas do jogo", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(dialogo(page, "painel")).toBeVisible();
-    await page.getByRole("button", { name: "Menu" }).click();
-    const destino = page.getByRole("navigation", { name: "Principal" }).getByRole("link", { name: "Metodologia" });
-    await expect(destino).toBeVisible();
-    // O que está sob o dedo, no meio do link, é o link, e não a janela do jogo.
-    const noTopo = await destino.evaluate((no) => {
-      const caixa = no.getBoundingClientRect();
-      const alvo = document.elementFromPoint(caixa.left + caixa.width / 2, caixa.top + caixa.height / 2);
-      return alvo !== null && (alvo === no || no.contains(alvo));
-    });
-    expect(noTopo, "o link do menu recebe o toque").toBe(true);
-    await destino.click();
-    await expect(page).toHaveURL(/\/metodologia\/$/);
-  });
-});
-
-test.describe("celular deitado", () => {
-  test.use({ viewport: CELULAR_DEITADO, hasTouch: true, isMobile: true });
-
-  test("o palco cabe na janela, com o direcional, o botão de ação e os botões do topo à vista", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    const caixaDoPalco = (await jogo(page).boundingBox())!;
-    expect(Math.round(caixaDoPalco.y + caixaDoPalco.height), "base do palco").toBeLessThanOrEqual(CELULAR_DEITADO.height);
-    const naJanela = async (seletor: string) => {
-      const caixa = (await page.locator(seletor).boundingBox())!;
-      expect(caixa.y, `${seletor}: topo`).toBeGreaterThanOrEqual(0);
-      expect(Math.round(caixa.y + caixa.height), `${seletor}: base`).toBeLessThanOrEqual(CELULAR_DEITADO.height);
-      expect(Math.round(caixa.x + caixa.width), `${seletor}: lado`).toBeLessThanOrEqual(CELULAR_DEITADO.width);
-      return caixa;
-    };
-    const direcional = await naJanela("[data-direcional]");
-    const acao = await naJanela("[data-acao-toque]");
-    const objetivo = await naJanela("[data-objetivo-caixa]");
-    await naJanela("[data-abrir-painel]");
-    await naJanela("[data-abrir-guia]");
-    expect(Math.min(acao.width, acao.height), "botão de ação").toBeGreaterThanOrEqual(44);
-    // O objetivo, no alto, não cobre o direcional, embaixo.
-    expect(objetivo.y + objetivo.height, "o objetivo acaba antes do direcional").toBeLessThanOrEqual(direcional.y);
-    // Nada pede rolagem para jogar.
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
-
-    // O direcional move o personagem como em pé.
-    const inicio = await position(page);
-    const ponto = { pointerId: 1, pointerType: "touch", isPrimary: true, bubbles: true, clientX: direcional.x + direcional.width * 0.85, clientY: direcional.y + direcional.height * 0.85 };
-    await page.locator("[data-direcional]").dispatchEvent("pointerdown", ponto);
-    await page.waitForTimeout(350);
-    await page.locator("[data-direcional]").dispatchEvent("pointerup", ponto);
-    expect((await position(page)).x).toBeGreaterThan(inicio.x + 0.3);
-  });
-
-  test("a tela de fim não corta o começo: o que não cabe rola inteiro", async ({ page }) => {
-    // Os capítulos anteriores já concluídos; o último inteiro pelo painel.
-    test.slow();
-    const ultimo = LULA.capitulos.at(-1)!;
-    await abrirNoCapitulo(page, LULA, LULA.capitulos.length);
-    await abrirASaidaPeloPainel(page, ultimo);
-    await atravessarPeloPainel(page);
-    const fim = page.locator('[data-fim="sim"]');
-    await expect(fim).toBeVisible();
-    // No alto da rolagem, a primeira linha da tela de fim está dentro dela, e não acima.
-    const medida = await fim.evaluate((no) => {
-      no.scrollTop = 0;
-      const primeiro = no.querySelector("p")!.getBoundingClientRect();
-      const caixa = no.getBoundingClientRect();
-      return { topoDoTexto: primeiro.top, topoDaTela: caixa.top };
-    });
-    expect(medida.topoDoTexto, "o rótulo Fim da trajetória começa dentro da tela de fim").toBeGreaterThanOrEqual(medida.topoDaTela);
-    await expect(fim.locator("p").first()).toHaveText("Fim da trajetória");
-  });
-});
-
-test.describe("com movimento ligado", () => {
-  test.use({ contextOptions: { reducedMotion: "no-preference" } });
-
-  test("a jornada pelo cenário funciona igual: recolher, a porta abrir, atravessar andando e chegar ao capítulo seguinte", async ({ page }) => {
-    test.slow();
-    await abrirLimpo(page, LULA.rota);
-    await expect(jogo(page)).toHaveAttribute("data-movimento", "ligado");
-    // Com movimento, a câmera segue com atraso, o registro balança e a porta abre aos poucos.
-    await walkTo(page, LULA.cena1, posicaoDe(LULA.c1, LULA.exigido1));
-    await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance-id", LULA.exigido1);
-    const antes = await frame(page);
-    await page.keyboard.press("e");
-    await expect(dialogo(page, "registro")).toBeVisible();
-    await page.getByRole("button", { name: "Guardar e continuar" }).click();
-    // A tarefa está cumprida, e a porta espera os outros registros.
-    await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-    await abrirASaidaPeloPainel(page, LULA.c1);
-    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-    // A cena se mexe sozinha: dois quadros separados no tempo não são iguais.
-    const um = await frame(page);
-    await page.waitForTimeout(400);
-    const dois = await frame(page);
-    expect(um.cores).toBeGreaterThan(60);
-    expect(dois.assinatura, "a cena anima").not.toBe(um.assinatura);
-    expect(um.assinatura).not.toBe(antes.assinatura);
-
-    // Andando para dentro da porta aberta, sem tecla de interação.
-    await walkTo(page, LULA.cena1, { x: LULA.cena1.saida.x, y: LULA.cena1.saida.y }, true);
-    const transicao = page.locator("[data-transicao]");
-    await expect(transicao).toBeVisible();
-    await expect(transicao).toContainText(LULA.c2.titulo);
-    // A transição segue sozinha depois de um instante.
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id, { timeout: 6000 });
-    await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
-    await expect.poll(() => position(page)).toEqual(inicioDe(LULA.c2));
-    expect((await frame(page)).cores).toBeGreaterThan(60);
-  });
-});
-
-test.describe("todos os capítulos", () => {
-  for (const t of [LULA, FLAVIO]) {
-    test(`a trajetória inteira de ${t.nome} pelo painel: as tarefas de todos os tipos, as transições com contexto e o fim`, async ({ page }) => {
-      test.setTimeout(300_000);
-      await abrirLimpo(page, t.rota);
-      const tipos = new Set<string>();
-      for (const [indice, capitulo] of t.capitulos.entries()) {
-        await expect(jogo(page)).toHaveAttribute("data-capitulo", capitulo.id);
-        await expect(jogo(page)).toHaveAttribute("data-epoca", capitulo.epoca);
-        await expect(jogo(page)).toHaveAttribute("data-tipo-da-tarefa", capitulo.tarefa.tipo);
-        await expect(page.locator("[data-cenario]")).toContainText(EPOCA_LABEL[capitulo.epoca]);
-        await expect(page.locator("[data-cenario]")).toContainText(getScene(capitulo.cena).nome);
-        tipos.add(capitulo.tarefa.tipo);
-        await abrirASaidaPeloPainel(page, capitulo);
-        await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-        await clicar(page, page.locator("[data-atravessar-saida]"));
-        const transicao = page.locator("[data-transicao]");
-        const proximo = t.capitulos[indice + 1];
-        if (proximo !== undefined) {
-          // A transição diz o que vem: título, período, cenário, época e o contexto do capítulo.
-          await expect(transicao).toHaveAttribute("data-transicao", proximo.id);
-          await expect(transicao).toContainText(proximo.titulo);
-          await expect(transicao).toContainText(periodoDe(proximo));
-          await expect(transicao).toContainText(getScene(proximo.cena).nome);
-          await expect(transicao).toContainText(EPOCA_LABEL[proximo.epoca]);
-          await expect(transicao.locator("[data-contexto-do-capitulo]")).toHaveText(proximo.motivo);
-          await clicar(page, page.getByRole("button", { name: "Continuar" }));
-          await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
-        } else {
-          await expect(transicao).toHaveAttribute("data-transicao", "fim");
-          await expect(transicao).toContainText("último capítulo desta sala");
-          await clicar(page, page.getByRole("button", { name: "Continuar" }));
-        }
+      await page.goto("/jogo/");
+      await expect(page.locator(`[data-escolha="${slug}"]`)).toHaveAttribute("data-situacao", "inicio");
+      expect(await sobraHorizontal(page), "entrada").toBeLessThanOrEqual(0);
+      for (const alvo of await page.locator("[data-comecar], [data-ler-sem-cenario], [data-fases-da-trilha] summary, [data-abrir-sala]").all()) {
+        expect((await alvo.boundingBox())!.height, await alvo.textContent() ?? "").toBeGreaterThanOrEqual(44);
       }
-      expect(tipos.size, "tipos de tarefa na trajetória").toBeGreaterThanOrEqual(3);
 
-      const fim = page.locator('[data-fim="sim"]');
-      await expect(fim).toBeVisible();
-      await expect(fim.locator("p").first()).toHaveText("Fim da trajetória");
-      await expect(fim).toContainText(`${t.capitulos.length} capítulos de ${t.nome}`);
-      const registros = t.capitulos.reduce((soma, capitulo) => soma + capitulo.eventIds.length, 0);
-      await expect(fim).toContainText(`${registros} acontecimentos`);
-      await expect(fim.getByRole("link", { name: /Trajetória completa/ })).toHaveAttribute("href", `/politicos/${t.slug}/`);
-      await expect(fim.getByRole("button", { name: "Rever os capítulos" })).toBeFocused();
-      // Pedir o reinício e desistir volta à tela de fim, e não à cena.
-      await fim.getByRole("button", { name: "Reiniciar o progresso" }).click();
-      await expect(dialogo(page, "reiniciar")).toBeVisible();
-      await page.getByRole("button", { name: "Cancelar" }).click();
-      await expect(fim).toBeVisible();
-      // Recarregar: tudo continua concluído, e o jogo reabre no último capítulo.
-      await page.reload();
-      await waitForStage(page);
-      await expect(jogo(page)).toHaveAttribute("data-capitulo", t.capitulos.at(-1)!.id);
-      await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-      for (const capitulo of t.capitulos) await expect(page.locator(`[data-capitulo-item="${capitulo.id}"]`)).toHaveAttribute("data-status", "concluido");
+      await page.goto(`${rota(slug)}?fase=3`);
+      await pronto(page);
+      expect(await sobraHorizontal(page), "fase, com o cenário").toBeLessThanOrEqual(0);
+      const cartao = (await page.locator("[data-fase-cartao]").boundingBox())!;
+      const principal = (await page.locator("[data-abrir-marco]").boundingBox())!;
+      expect(principal.height).toBeGreaterThanOrEqual(44);
+      expect(principal.width).toBeGreaterThanOrEqual(44);
+      // O cartão da fase fica em cima, e o botão principal, embaixo: um não cobre o outro.
+      expect(cartao.y + cartao.height).toBeLessThanOrEqual(principal.y);
+      await expect(page.locator("[data-abrir-marco]")).toBeInViewport({ ratio: 1 });
+      for (const alvo of await page.locator("[data-ler-sem-cenario], [data-abrir-fases], [data-abrir-ajuda], [data-marcador]").all()) {
+        const caixa = (await alvo.boundingBox())!;
+        expect(Math.min(caixa.width, caixa.height)).toBeGreaterThanOrEqual(44);
+      }
+      // Os três caminhos ficam em uma linha, acima do cartão da fase: nenhum botão solto sobre a cena.
+      const caminhos = (await page.locator("[data-caminhos-do-jogo]").boundingBox())!;
+      expect(caminhos.y + caminhos.height).toBeLessThanOrEqual(cartao.y);
+      for (const botao of await page.locator("[data-caminhos-do-jogo] button").all()) {
+        const caixa = (await botao.boundingBox())!;
+        expect(Math.abs(caixa.y - caminhos.y), "os três na mesma linha").toBeLessThanOrEqual(1);
+      }
+      // A cena inteira fica no espaço livre: toda pasta está dentro da tela, entre o cartão e o botão principal,
+      // e no ponto de cada uma o que recebe o toque é ela, e não um pedaço da interface.
+      const pastas = page.locator("[data-marcador]:visible");
+      await expect(page.locator('[data-marcador="marco"]')).toBeVisible();
+      const centros: { x: number; y: number }[] = [];
+      for (const pasta of await pastas.all()) {
+        const nome = await pasta.getAttribute("data-marcador");
+        const caixa = (await pasta.boundingBox())!;
+        const centro = { x: caixa.x + caixa.width / 2, y: caixa.y + caixa.height / 2 };
+        expect(centro.x, `${nome}: dentro da largura`).toBeGreaterThan(0);
+        expect(centro.x, `${nome}: dentro da largura`).toBeLessThan(viewport.width);
+        expect(centro.y, `${nome}: abaixo do cartão`).toBeGreaterThan(cartao.y + cartao.height);
+        expect(centro.y, `${nome}: acima do botão principal`).toBeLessThan(principal.y);
+        expect(await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.closest("[data-marcador]")?.getAttribute("data-marcador") ?? null, centro), `${nome}: recebe o toque`).toBe(nome);
+        // Nenhuma pasta com botão fica tão perto de outra que as áreas de toque se confundam.
+        for (const outro of centros) expect(Math.hypot(outro.x - centro.x, outro.y - centro.y), `${nome}: longe das outras`).toBeGreaterThanOrEqual(44);
+        centros.push(centro);
+      }
+      // A pasta do marco, a que importa, fica inteira na faixa livre, com a área de toque toda.
+      const marco = (await page.locator('[data-marcador="marco"]').boundingBox())!;
+      expect(marco.y).toBeGreaterThanOrEqual(cartao.y + cartao.height - 1);
+      expect(marco.y + marco.height).toBeLessThanOrEqual(principal.y + 1);
+      expect(marco.x).toBeGreaterThanOrEqual(-1);
+      expect(marco.x + marco.width).toBeLessThanOrEqual(viewport.width + 1);
+
+      // O toque abre a explicação, e a janela cabe na tela, com o texto e os botões dentro dela.
+      await page.locator("[data-abrir-marco]").tap();
+      const fase = await janela(page, "fase");
+      const caixa = (await fase.getByRole("dialog").boundingBox())!;
+      expect(caixa.x).toBeGreaterThanOrEqual(0);
+      expect(caixa.x + caixa.width).toBeLessThanOrEqual(viewport.width);
+      expect(caixa.y + caixa.height).toBeLessThanOrEqual(viewport.height);
+      expect(await sobraHorizontal(page), "janela da fase").toBeLessThanOrEqual(0);
+      await expect(fase.locator("[data-fase-titulo]")).toHaveText(terceira.titulo);
+      for (const alvo of await fase.locator("[data-opcao], [data-responder], [data-ver-explicacao], [data-conceito] summary, [data-fontes-da-fase] summary, [data-fechar-fase]").all()) {
+        expect((await alvo.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      }
+      await fase.locator(`[data-opcao="${opcoesDe(terceira).certa}"]`).tap();
+      await fase.locator("[data-responder]").tap();
+      await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+      expect((await fase.locator("[data-continuar]").boundingBox())!.height).toBeGreaterThanOrEqual(44);
+
+      // Sem o cenário, a página de leitura também não passa da largura.
+      await page.goto(`${rota(slug)}?fase=3&leitura=1`);
+      await pronto(page, false);
+      expect(await sobraHorizontal(page), "leitura sem o cenário").toBeLessThanOrEqual(0);
+      expect(errosDoCelular, "erros não tratados na página").toEqual([]);
+      await context.close();
     });
   }
 
-  test("a entrada do atlas diz quantos capítulos cada personagem tem", async ({ page }) => {
-    await page.goto("/");
-    for (const t of [LULA, FLAVIO]) await expect(page.locator(`[data-jogar-entrada="${t.slug}"]`)).toContainText(`${t.capitulos.length} capítulos`);
-  });
-});
+  for (const viewport of [
+    { width: 360, height: 640 },
+    { width: 390, height: 844 },
+  ]) {
+    test(`${viewport.width} por ${viewport.height}: todo controle das telas do jogo tem 44 pixels, inclusive os links das fontes e os caminhos do resumo`, async ({ browser, baseURL }) => {
+      test.slow();
+      const context = await browser.newContext({ baseURL, viewport, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+      const page = await context.newPage();
+      const errosDoCelular = vigiar(page);
+      const slug = "lula";
+      const fases = fasesDe(slug);
+      // Uma fase com pergunta e uma decisão entre os registros opcionais, a de processos e a última, que traz as propostas.
+      const comDecisao = fases.find((fase) => fase.atividade.tipo === "pergunta" && fase.explorar.some((item) => item.tipo === "decisao"))!;
+      const deProcessos = fases.find((fase) => fase.sensivel && fase.atividade.tipo === "ordem")!;
+      const ultima = fases.at(-1)!;
+      expect(ultima.explorar.some((item) => item.tipo === "proposta"), "a última fase traz propostas").toBe(true);
 
-test.describe("tarefas de documento e de lugar", () => {
-  test("tarefa de documento: a opção errada explica de qual registro é o documento, a certa confirma, e a saída exige os outros registros", async ({ page }) => {
-    test.slow();
-    const capitulo = LULA.capitulos.find((item) => item.tarefa.tipo === "fonte")!;
-    const pedido = capitulo.tarefa.tipo === "fonte" ? capitulo.tarefa.eventId : "";
-    await abrirNoCapitulo(page, LULA, capitulo.numero);
-    expect(await recolherPeloPainel(page, pedido)).toBe("escolha");
-    const escolha = dialogo(page, "escolha");
-    await expect(escolha).toContainText("Qual documento sustenta este registro?");
-    await expect(escolha.locator(`[data-escolha-registro="${pedido}"]`)).toContainText(registro(pedido).titulo);
-    await expect(escolha.locator("[data-escolher]")).toHaveCount(3);
-    // Todas as opções são documentos de registros do capítulo: nada é inventado.
-    const ids = await escolha.locator("[data-escolher]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")!));
-    const doCapitulo = new Set(capitulo.eventIds.flatMap((id) => registro(id).fontes.map((citacao) => citacao.fonteId)));
-    for (const id of ids) expect(doCapitulo.has(id), id).toBe(true);
+      const conferir = async (raiz: Locator, onde: string) => expect(await alvosPequenos(raiz), onde).toEqual([]);
+      // Abre os blocos fechados, um de cada vez: a lista muda a cada toque, e por isso é lida de novo.
+      const abrirTudo = async (raiz: Locator) => {
+        const fechados = raiz.locator("details:not([open]) > summary");
+        for (let restam = await fechados.count(); restam > 0; restam = await fechados.count()) await fechados.first().tap();
+      };
+      const fecharRegistro = async () => {
+        await dialogo(page, "registro").locator("[data-fechar-registro]").tap();
+        await expect(dialogo(page, "registro")).toHaveCount(0);
+      };
 
-    // Errar: a explicação diz de qual registro do capítulo é o documento, com a data, e deixa tentar de novo.
-    const errada = await opcaoErrada(page, capitulo);
-    await clicar(page, escolha.locator(`[data-escolher="${errada}"]`));
-    await expect(escolha.locator(`[data-escolher="${errada}"]`)).toHaveAttribute("aria-pressed", "true");
-    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
-    const resultado = escolha.locator("[data-escolha-resultado]");
-    await expect(resultado).toHaveAttribute("data-escolha-resultado", "errado");
-    await expect(resultado).toContainText("Ainda não.");
-    await expect(resultado).toContainText("não há penalidade");
-    const dono = capitulo.eventIds.find((id) => id !== pedido && registro(id).fontes.some((citacao) => citacao.fonteId === errada))!;
-    await expect(resultado).toContainText(`${registro(dono).titulo} (${formatDate(registro(dono).data)})`);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-    await expect(escolha.locator("[data-tentar-de-novo]")).toBeFocused();
-    await clicar(page, escolha.locator("[data-tentar-de-novo]"));
-    await expect(escolha.locator("[data-escolha-resultado]")).toHaveCount(0);
-    await expect(escolha).toContainText("Tentativas até agora: 1.");
+      // A entrada: os cartões das duas trajetórias, com as fases abertas, e o caminho para a metodologia.
+      await page.goto("/jogo/");
+      await expect(page.locator(`[data-escolha="${slug}"]`)).toHaveAttribute("data-situacao", "inicio");
+      for (const cartao of await page.locator("[data-escolha]").all()) {
+        await abrirTudo(cartao);
+        await conferir(cartao, "entrada, cartão da trajetória");
+      }
+      await conferir(page.locator("[data-revisao]").first(), "entrada, caminho para a metodologia");
 
-    // Dá para fechar e responder depois: a cena e o painel dizem o que falta e levam à pergunta.
-    await page.keyboard.press("Escape");
-    await expect(escolha).toHaveCount(0);
-    await expect(page.locator("[data-objetivo]")).toHaveText("O registro da tarefa está com você. Para indicar o documento que o sustenta, abra Como jogar ou Capítulos e tarefas.");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(page.locator("[data-tarefa-situacao]")).toHaveText("O registro da tarefa está com você. Falta indicar o documento que o sustenta.");
-    await clicar(page, page.locator('[data-responder-tarefa="fonte"]'));
-    await expect(escolha).toBeVisible();
+      // A cena, com o cartão da fase, os três caminhos, as pastas e o botão principal.
+      await abrir(page, slug, comDecisao.numero);
+      await conferir(page.locator("[data-cena-e-hud]"), "cena");
 
-    // Acertar confirma a tarefa; a saída continua fechada enquanto falta o outro registro.
-    await clicar(page, escolha.locator(`[data-escolher="${respostaCerta(capitulo)}"]`));
-    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
-    await expect(resultado).toHaveAttribute("data-escolha-resultado", "certo");
-    await expect(resultado).toContainText("Certo.");
-    await expect(resultado).toContainText("Tarefa concluída.");
-    await expect(resultado.locator("[data-saida-situacao]")).toHaveAttribute("data-saida-situacao", "fechada");
-    await clicar(page, escolha.locator("[data-escolha-concluida]"));
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-    await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-    for (const id of foraDaTarefa(capitulo)) expect(await recolherPeloPainel(page, id)).toBe("jogando");
-    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-  });
+      // A fase aberta, com os termos e as fontes à vista.
+      await page.locator("[data-abrir-marco]").tap();
+      let fase = await janela(page, "fase");
+      await abrirTudo(fase);
+      await conferir(fase, "fase aberta, com termos e fontes");
 
-  test("tarefa de lugar: a opção errada explica de qual registro é o lugar, e a certa confirma", async ({ page }) => {
-    const capitulo = FLAVIO.capitulos.find((item) => item.tarefa.tipo === "lugar")!;
-    const pedido = capitulo.tarefa.tipo === "lugar" ? capitulo.tarefa.eventId : "";
-    await abrirNoCapitulo(page, FLAVIO, capitulo.numero);
-    expect(await recolherPeloPainel(page, pedido)).toBe("escolha");
-    const escolha = dialogo(page, "escolha");
-    await expect(escolha).toContainText("Em que lugar o atlas documenta este acontecimento?");
-    await expect(escolha.locator("[data-escolher]")).toHaveCount(3);
-    await expect(escolha.locator(`[data-escolher="${lugarDe(pedido)}"]`)).toHaveCount(1);
+      // Uma decisão aberta por cima da fase.
+      await fase.locator('[data-explorar] [data-abrir-registro^="decisao:"]').first().tap();
+      await conferir(await janela(page, "registro"), "registro: decisão");
+      await fecharRegistro();
 
-    const errada = await opcaoErrada(page, capitulo);
-    await clicar(page, escolha.locator(`[data-escolher="${errada}"]`));
-    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
-    const resultado = escolha.locator("[data-escolha-resultado]");
-    await expect(resultado).toHaveAttribute("data-escolha-resultado", "errado");
-    await expect(resultado).toContainText("Ainda não.");
-    await expect(resultado).toContainText(errada);
-    await expect(resultado).toContainText("não há penalidade");
-    await clicar(page, escolha.locator("[data-tentar-de-novo]"));
+      // A resposta errada e a certa.
+      fase = await janela(page, "fase");
+      const { certa, errada } = opcoesDe(comDecisao);
+      await fase.locator(`[data-opcao="${errada}"]`).tap();
+      await fase.locator("[data-responder]").tap();
+      await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+      await conferir(fase, "fase, resposta errada");
+      await fase.locator("[data-tentar-de-novo]").tap();
+      await fase.locator(`[data-opcao="${certa}"]`).tap();
+      await fase.locator("[data-responder]").tap();
+      await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+      await conferir(fase, "fase, resposta certa");
+      await fase.locator("[data-fechar-fase]").tap();
+      await expect(dialogo(page, "fase")).toHaveCount(0);
 
-    await clicar(page, escolha.locator(`[data-escolher="${lugarDe(pedido)}"]`));
-    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
-    await expect(resultado).toHaveAttribute("data-escolha-resultado", "certo");
-    await expect(resultado).toContainText(lugarDe(pedido));
-    await clicar(page, escolha.locator("[data-escolha-concluida]"));
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-  });
-});
+      // A lista de fases, a confirmação de apagar e a ajuda.
+      await page.locator("[data-abrir-fases]").tap();
+      await conferir(await janela(page, "fases"), "lista de fases");
+      await dialogo(page, "fases").locator("[data-apagar-progresso]").tap();
+      const apagar = await janela(page, "apagar");
+      await conferir(apagar, "confirmação de apagar");
+      await apagar.getByRole("button", { name: "Cancelar" }).tap();
+      await expect(dialogo(page, "apagar")).toHaveCount(0);
+      await (await janela(page, "fases")).getByRole("button", { name: "Fechar" }).tap();
+      await expect(dialogo(page, "fases")).toHaveCount(0);
+      await page.locator("[data-abrir-ajuda]").tap();
+      const ajuda = await janela(page, "ajuda");
+      await conferir(ajuda, "como funciona");
+      await ajuda.getByRole("button", { name: "Entendi" }).tap();
+      await expect(dialogo(page, "ajuda")).toHaveCount(0);
 
-test.describe("sem o desenho em canvas", () => {
-  test("a cena avisa, aponta o painel, e o capítulo continua jogável por ele", async ({ page }) => {
-    // O navegador não oferece o contexto 2D (política do navegador, falta de memória, extensão): a cena não existe.
-    await page.addInitScript(() => {
-      const original = HTMLCanvasElement.prototype.getContext;
-      HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, tipo: string, ...resto: unknown[]) {
-        return tipo === "2d" ? null : (original as (...args: unknown[]) => unknown).call(this, tipo, ...resto);
-      } as typeof HTMLCanvasElement.prototype.getContext;
+      // O registro de um episódio de processo, com a ficha judicial e as fontes.
+      await abrir(page, slug, deProcessos.numero);
+      await page.locator("[data-abrir-marco]").tap();
+      fase = await janela(page, "fase");
+      await abrirTudo(fase);
+      await conferir(fase, "fase de processos, com termos e fontes");
+      await fase.locator('[data-fontes-da-fase] [data-abrir-registro^="acontecimento:"]').first().tap();
+      await conferir(await janela(page, "registro"), "registro: acontecimento de processo");
+      await fecharRegistro();
+
+      // A fase de 2026: uma proposta aberta e, pela leitura da explicação, o resumo.
+      await abrir(page, slug, ultima.numero);
+      await page.locator("[data-abrir-marco]").tap();
+      fase = await janela(page, "fase");
+      await abrirTudo(fase);
+      await conferir(fase, "fase de 2026, com as propostas");
+      await fase.locator('[data-explorar] [data-abrir-registro^="proposta:"]').first().tap();
+      await conferir(await janela(page, "registro"), "registro: proposta");
+      await fecharRegistro();
+      fase = await janela(page, "fase");
+      await fase.locator("[data-ver-explicacao]").tap();
+      await fase.locator('[data-continuar="resumo"]').tap();
+      await conferir(await janela(page, "resumo"), "resumo da trajetória");
+
+      // O aprofundamento, com o caminho para o início da vida, na cena e na leitura sem o cenário.
+      await page.goto(rota(slug, "economia"));
+      await pronto(page);
+      await conferir(page.locator("[data-cena-e-hud]"), "cena do aprofundamento");
+      await page.goto(`${rota(slug, "economia")}?leitura=1`);
+      await pronto(page, false);
+      await expect(page.locator("[data-leitura-da-fase]")).toBeVisible();
+      await abrirTudo(jogo(page));
+      await conferir(jogo(page), "leitura sem o cenário, aprofundamento");
+      const inicio = (await page.locator("[data-aviso-aprofundamento] [data-ir-para-o-inicio]").boundingBox())!;
+      expect(inicio.height, "Ir para o início da vida, na leitura").toBeGreaterThanOrEqual(44);
+
+      // A leitura sem o cenário de uma fase de processos, e o rodapé da página.
+      await page.goto(`${rota(slug)}?fase=${deProcessos.numero}&leitura=1`);
+      await pronto(page, false);
+      await expect(page.locator("[data-leitura-da-fase]")).toBeVisible();
+      await abrirTudo(jogo(page));
+      await conferir(jogo(page), "leitura sem o cenário, fase de processos");
+      await conferir(page.locator("[data-rodape-do-jogo]"), "rodapé da página do jogo");
+
+      expect(errosDoCelular, "erros não tratados na página").toEqual([]);
+      await context.close();
     });
-    await page.goto(LULA.rota);
-    await clearProgress(page);
-    await page.reload();
-    const aviso = page.locator('[data-palco="sem-canvas"]');
-    await expect(aviso).toBeVisible({ timeout: 30_000 });
-    await expect(aviso).toContainText("não conseguiu desenhar a cena");
-    await expect(aviso).toContainText("Capítulos e tarefas");
-    await expect(aviso.getByRole("link", { name: `trajetória de ${LULA.nome} no atlas` })).toHaveAttribute("href", `/politicos/${LULA.slug}/`);
-    // O botão do aviso abre o painel; Esc fecha e o aviso continua lá.
-    await aviso.locator("[data-abrir-painel-sem-cena]").click();
-    await expect(dialogo(page, "painel")).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(dialogo(page, "painel")).toHaveCount(0);
-    await expect(aviso).toBeVisible();
-    // O capítulo inteiro pelo painel, como sem o cenário: recolher, responder e atravessar.
-    await concluirCapitulo1PeloPainel(page, LULA);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c2.id);
-    await expect(aviso).toBeVisible();
-  });
-});
+  }
 
-test.describe("ficha judicial", () => {
-  test("a ficha diz a natureza do registro, lista as decisões relacionadas com a própria data e avisa que o jogo não decide culpa", async ({ page }) => {
-    const condenacao = "lula-2017-condenacao-em-primeira-instancia";
-    const confirmacao = "lula-2018-tribunal-confirma-condenacao";
-    const anulacao = "lula-2021-stf-anula-condenacoes";
-    const capitulo = LULA.capitulos.find((item) => item.eventIds.includes(condenacao))!;
-    await abrirNoCapitulo(page, LULA, capitulo.numero);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-recolher="${condenacao}"]`));
-    const ficha = dialogo(page, "registro");
-    await expect(ficha.locator('[data-ficha-judicial="condenacao"]')).toBeVisible();
-    await expect(ficha.locator("[data-natureza]")).toHaveText("Condenação em primeira instância.");
-    // A decisão posterior que alterou o quadro, mesmo estando em outro capítulo, com a própria data.
-    await expect(ficha.locator(`[data-relacionado="${confirmacao}"]`)).toContainText(formatDate(registro(confirmacao).data));
-    await expect(ficha.locator(`[data-relacionado="${confirmacao}"]`)).toContainText(registro(confirmacao).titulo);
-    await expect(ficha.locator(`[data-relacionado="${anulacao}"]`)).toContainText("8 de março de 2021");
-    await expect(ficha.locator("[data-aviso-judicial]")).toContainText("não pede que você decida culpa");
-    // O contexto da ficha, o lugar documentado e o que cada fonte sustenta.
-    await expect(ficha.locator("[data-contexto]")).toContainText("Contexto, como a ficha do atlas o traz");
-    await expect(ficha.locator('[data-lugar-documentado="lugares"]')).toContainText("Curitiba");
-    await expect(ficha.locator("[data-evidencia]")).toHaveCount(registro(condenacao).fontes.length);
-    // Onde está o trecho em cada documento, e de quando ele é e quando foi lido: o que a lista de fontes do atlas mostra.
-    await expect(ficha.locator("[data-onde]")).toHaveCount(registro(condenacao).fontes.length);
-    for (const [indice, citacao] of registro(condenacao).fontes.entries()) {
-      await expect(ficha.locator("[data-onde]").nth(indice)).toHaveText(`Onde: ${citacao.localizacao}`);
-      await expect(ficha.locator("[data-documento]").nth(indice)).toContainText("acesso em");
+  test("360 por 640, na retomada: o aviso cabe no cartão sem cobrir o botão principal, e o caminho para o início tem 44 pixels", async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ baseURL, viewport: { width: 360, height: 640 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    const slug = "flavio-bolsonaro";
+    const [primeira, , terceira] = fasesDe(slug);
+    await page.goto(`${rota(slug)}?fase=1`);
+    await pronto(page);
+    for (let vez = 0; vez < 2; vez += 1) {
+      await page.locator("[data-abrir-marco]").tap();
+      const fase = await janela(page, "fase");
+      await fase.locator("[data-ver-explicacao]").tap();
+      await fase.locator("[data-continuar]").tap();
     }
-    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
-    await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
+    await page.goto(rota(slug));
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
+    const aviso = page.locator("[data-fase-cartao] [data-aviso-retomada]");
+    await expect(aviso).toBeVisible();
+    expect(await sobraHorizontal(page)).toBeLessThanOrEqual(0);
+    const cartao = (await page.locator("[data-fase-cartao]").boundingBox())!;
+    const principal = (await page.locator("[data-abrir-marco]").boundingBox())!;
+    expect(cartao.y + cartao.height).toBeLessThanOrEqual(principal.y);
+    await expect(page.locator("[data-abrir-marco]")).toBeInViewport({ ratio: 1 });
+    const inicio = (await aviso.locator("[data-ver-desde-o-inicio]").boundingBox())!;
+    expect(inicio.height).toBeGreaterThanOrEqual(44);
+    expect(inicio.width).toBeGreaterThanOrEqual(44);
+    await aviso.locator("[data-ver-desde-o-inicio]").tap();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await context.close();
+  });
 
-    // Um registro que não é episódio judicial não tem a ficha.
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator('[data-recolher="lula-2018-registro-de-candidatura-indeferido"]'));
-    await expect(ficha.locator("[data-ficha-judicial]")).toHaveAttribute("data-ficha-judicial", "decisao-eleitoral");
-    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
-
-    // Flávio Bolsonaro: a denúncia é dita como acusação, não como condenação, e a rejeição aparece com a data.
-    const denuncia = "flavio-bolsonaro-2020-denuncia-do-ministerio-publico";
-    const rejeicao = "flavio-bolsonaro-2022-tribunal-rejeita-denuncia";
-    await abrirNoCapitulo(page, FLAVIO, FLAVIO.capitulos.find((item) => item.eventIds.includes(denuncia))!.numero);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-recolher="${denuncia}"]`));
-    await expect(ficha.locator("[data-natureza]")).toContainText("Não é condenação");
-    await expect(ficha.locator(`[data-relacionado="${rejeicao}"]`)).toContainText(formatDate(registro(rejeicao).data));
-    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator('[data-recolher="flavio-bolsonaro-2021-filiacao-ao-patriota"]'));
-    await expect(ficha.locator("[data-ficha-judicial]")).toHaveCount(0);
-    await expect(ficha.locator('[data-lugar-documentado="desconhecida"]')).toContainText("Lugar não documentado");
+  test("deitado, a tela baixa esconde o que é enfeite e mantém o cabeçalho da fase e o botão principal", async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ baseURL, viewport: { width: 640, height: 360 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    const slug = "lula";
+    await page.goto(`${rota(slug)}?fase=1`);
+    await pronto(page);
+    expect(await sobraHorizontal(page)).toBeLessThanOrEqual(0);
+    await expect(page.locator("[data-fase-cartao] [data-fase-posicao]")).toBeVisible();
+    await expect(page.locator("[data-fase-cartao] [data-proximo-passo]")).toBeVisible();
+    await expect(page.locator('[data-fase-cartao] [data-camada="humor"]')).toBeHidden();
+    await expect(page.locator("[data-abrir-marco]")).toBeInViewport({ ratio: 1 });
+    const cartao = (await page.locator("[data-fase-cartao]").boundingBox())!;
+    const principal = (await page.locator("[data-abrir-marco]").boundingBox())!;
+    expect(cartao.y + cartao.height).toBeLessThanOrEqual(principal.y);
+    await page.locator("[data-abrir-marco]").tap();
+    const fase = await janela(page, "fase");
+    const caixa = (await fase.getByRole("dialog").boundingBox())!;
+    expect(caixa.y + caixa.height).toBeLessThanOrEqual(360);
+    await context.close();
   });
 });
 
-test.describe("Escrivão e salas temáticas", () => {
-  test("o Escrivão fala na entrada do capítulo e na ajuda, em camadas separadas; o humor desliga, e a preferência fica", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    // Entrada: a caixa sobre a cena, com a instrução e o humor marcados como camadas diferentes.
-    const caixa = page.locator('[data-escrivao-caixa="entrada"]');
-    await expect(caixa).toBeVisible();
-    await expect(caixa.locator('[data-camada="instrucao"]')).toHaveCount(1);
-    await expect(caixa.locator('[data-camada="humor"]')).toHaveCount(1);
-    await expect(caixa).toContainText("Escrivão · personagem fictício");
-    await expect(caixa).not.toContainText("Arquivista");
-    await clicar(page, caixa.locator("[data-fechar-escrivao]"));
-    await expect(caixa).toHaveCount(0);
+test.describe("o boneco", () => {
+  test("com movimento, tocar na pasta faz o boneco andar até ela, e então a explicação abre; a caminhada não é necessária", async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ baseURL, viewport: { width: 1280, height: 800 }, reducedMotion: "no-preference" });
+    const page = await context.newPage();
+    const errosComMovimento = vigiar(page);
+    const slug = "lula";
+    const fase = fasesDe(slug).find((item) => item.id === "lula-processos")!;
+    await page.goto(`${rota(slug)}?fase=${fase.numero}`);
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-movimento", "ligado");
+    const palco = page.locator("[data-palco]");
+    await expect(palco).toHaveAttribute("data-andando", "nao");
 
-    // Ajuda: o diálogo do Escrivão, com as falas e o botão que desliga o humor.
-    await page.getByRole("button", { name: "Como jogar" }).click();
-    const guia = dialogo(page, "guia");
-    await expect(guia).toContainText("Escrivão · personagem fictício");
-    await expect(guia.locator('[data-escrivao="ajuda"] [data-camada="instrucao"]')).toHaveCount(1);
-    await expect(guia.locator('[data-escrivao="ajuda"] [data-camada="humor"]')).toHaveCount(1);
-    await expect(page.locator("[data-alcance]")).toHaveCount(1);
-    await clicar(page, guia.locator("[data-humor]"));
-    await expect(jogo(page)).toHaveAttribute("data-humor", "desligado");
-    await expect(guia.locator("[data-humor]")).toHaveAttribute("data-humor", "desligado");
+    await page.locator('[data-marcador="marco"]').click();
+    // Ele anda, e a janela só abre quando chega.
+    await expect(palco).toHaveAttribute("data-andando", "sim");
+    await expect(dialogo(page, "fase")).toHaveCount(0);
+    const aberta = await janela(page, "fase");
+    await expect(palco).toHaveAttribute("data-andando", "nao");
+    await expect(aberta.locator("[data-fase-titulo]")).toHaveText(fase.titulo);
+    // Com a janela aberta, a animação da cena para.
+    await expect(palco).toHaveAttribute("data-pausado", "sim");
     await page.keyboard.press("Escape");
+    await expect(palco).toHaveAttribute("data-pausado", "nao");
 
-    // A preferência sobrevive ao recarregar: a entrada vem sem humor, e o painel mostra o estado.
-    await page.reload();
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-humor", "desligado");
-    await expect(page.locator('[data-escrivao-caixa="entrada"] [data-camada="instrucao"]')).toHaveCount(1);
-    await expect(page.locator('[data-escrivao-caixa="entrada"] [data-camada="humor"]')).toHaveCount(0);
-    await page.getByRole("button", { name: "Como jogar" }).click();
-    await expect(dialogo(page, "guia").locator('[data-camada="humor"]')).toHaveCount(0);
-    await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    const painel = dialogo(page, "painel");
-    await expect(painel.locator("[data-humor]")).toHaveAttribute("data-humor", "desligado");
-    await clicar(page, painel.locator("[data-humor]"));
-    await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
-    // O nome do guia na dica de alcance também é o novo.
-    await page.keyboard.press("Escape");
-    const cena = getScene(LULA.c1.cena);
-    await walkTo(page, cena, { x: cena.guia.x + 1, y: cena.guia.y });
-    await expect(page.locator("[data-alcance]")).toContainText("Falar com o Escrivão");
+    // O teclado abre a mesma pasta, com Enter.
+    await page.locator('[data-marcador="marco"]').press("Enter");
+    await janela(page, "fase");
+    expect(errosComMovimento, "erros não tratados na página").toEqual([]);
+    await context.close();
   });
 
-  test("missão da sala Histórico: recolher a decisão, conferir a evidência, interpretar e abrir a passagem, com o Escrivão no erro e na conclusão", async ({ page }) => {
-    test.slow();
-    const capitulo = LULA.capitulos.find((item) => item.tarefa.tipo === "decisao")!;
-    const decisaoId = capitulo.tarefa.tipo === "decisao" ? capitulo.tarefa.decisaoId : "";
-    await abrirNoCapitulo(page, LULA, capitulo.numero);
-    await expect(jogo(page)).toHaveAttribute("data-tipo-da-tarefa", "decisao");
-    await expect(jogo(page)).toHaveAttribute("data-etapa", "evidencia");
-    await expect(page.locator("[data-objetivo]")).toHaveText(capitulo.objetivo);
-
-    // Recolher a decisão pelo cenário: a pasta dela está na posição da cena, como qualquer registro.
-    await clicar(page, page.locator('[data-escrivao-caixa="entrada"] [data-fechar-escrivao]'));
-    await walkTo(page, getScene(capitulo.cena), posicaoDe(capitulo, decisaoId));
-    await expect(page.locator("[data-alcance]")).toHaveAttribute("data-alcance-id", decisaoId);
-    await page.keyboard.press("Enter");
-    const ficha = dialogo(page, "registro");
-    await expect(ficha).toBeVisible();
-    await expect(ficha).toContainText("Decisão recolhida");
-    const cartao = ficha.locator(`[data-decisao-cartao="${decisaoId}"]`);
-    await expect(cartao).toBeVisible();
-    await expect(cartao.locator("[data-cargo]")).toContainText("Presidente da República");
-    await expect(cartao.locator("[data-tipo-do-ato]")).toContainText("Decreto");
-    await expect(cartao.locator("[data-natureza-rotulo]")).toContainText("Ato do Executivo");
-    await expect(cartao.locator("[data-fonte]").first()).toBeVisible();
-    await expect(cartao.locator("[data-revisao]")).toContainText("Revisão humana pendente");
-    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="documental"]')).toContainText("Presidente da República");
-    // O decreto da intervenção federal é registro de contexto sensível (D-129): com o humor ligado, o Escrivão não faz piada nele.
-    expect(isSensitive(decisaoId)).toBe(true);
-    await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
-    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="humor"]')).toHaveCount(0);
-    await clicar(page, ficha.getByRole("button", { name: "Guardar e responder" }));
-
-    // Etapa 1, a evidência: errar explica de quem é o documento, com a fala de erro do Escrivão; acertar abre a interpretação.
-    const janela = dialogo(page, "decisao");
-    await expect(janela).toBeVisible();
-    await expect(janela).toContainText("etapa 1 de 2");
-    await expect(janela).toContainText("Qual documento sustenta este registro?");
-    await expect(janela.locator('[data-escrivao="fonte"]')).toBeVisible();
-    await expect(janela.locator("[data-escolher]")).toHaveCount(3);
-    const { evidencia, interpretacao } = decisaoDe(decisaoId);
-    const erradaDaEvidencia = await opcaoErrada(page, capitulo, [evidencia]);
-    await clicar(page, janela.locator(`[data-escolher="${erradaDaEvidencia}"]`));
-    await clicar(page, janela.locator('[data-confirmar-decisao="evidencia"]'));
-    const resultado = janela.locator("[data-decisao-resultado]");
-    await expect(resultado).toHaveAttribute("data-decisao-resultado", "errado");
-    await expect(resultado).toContainText("Ainda não.");
-    await expect(resultado).toContainText("não há penalidade");
-    await expect(resultado.locator('[data-escrivao="erro"] [data-camada="instrucao"]')).toHaveCount(1);
-    await expect(janela.locator("[data-tentar-de-novo]")).toBeFocused();
-    await clicar(page, janela.locator("[data-tentar-de-novo]"));
-    await clicar(page, janela.locator(`[data-escolher="${evidencia}"]`));
-    await clicar(page, janela.locator('[data-confirmar-decisao="evidencia"]'));
-    await expect(resultado).toHaveAttribute("data-decisao-resultado", "certo");
-    await expect(resultado).toContainText("Agora, a interpretação");
-    await expect(jogo(page)).toHaveAttribute("data-etapa", "interpretacao");
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-    await clicar(page, janela.locator("[data-evidencia-concluida]"));
-
-    // Etapa 2, a interpretação: as três opções trocam uma coisa só; errar diz o que o registro documenta.
-    await expect(janela).toContainText("etapa 2 de 2");
-    await expect(janela).toContainText("O que este registro documenta?");
-    await expect(janela.locator("[data-escolher]")).toHaveCount(3);
-    const erradaDaInterpretacao = await opcaoErrada(page, capitulo, [interpretacao]);
-    await clicar(page, janela.locator(`[data-escolher="${erradaDaInterpretacao}"]`));
-    await clicar(page, janela.locator('[data-confirmar-decisao="interpretacao"]'));
-    await expect(resultado).toHaveAttribute("data-decisao-resultado", "errado");
-    await expect(resultado).toContainText("Ainda não.");
-    await expect(resultado).toContainText("Tente de novo");
-    await clicar(page, janela.locator("[data-tentar-de-novo]"));
-
-    // Fechar no meio e recarregar: a etapa da evidência fica guardada, e o jogo volta à interpretação.
-    await page.keyboard.press("Escape");
-    await expect(janela).toHaveCount(0);
-    await expect(page.locator("[data-objetivo]")).toContainText("Para conferir a evidência e interpretar a decisão");
-    await page.reload();
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-etapa", "interpretacao");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await expect(page.locator("[data-tarefa-situacao]")).toContainText("Falta indicar o documento que a sustenta e interpretar o que ela documenta.");
-    await clicar(page, page.locator('[data-responder-tarefa="decisao"]'));
-    await expect(janela).toContainText("etapa 2 de 2");
-    await clicar(page, janela.locator(`[data-escolher="${interpretacao}"]`));
-    await clicar(page, janela.locator('[data-confirmar-decisao="interpretacao"]'));
-    await expect(resultado).toHaveAttribute("data-decisao-resultado", "certo");
-    await expect(resultado).toContainText("Certo.");
-    await expect(resultado).toContainText("Tarefa concluída.");
-    await expect(resultado.locator("[data-saida-situacao]")).toHaveAttribute("data-saida-situacao", "fechada");
-    await clicar(page, janela.locator("[data-decisao-concluida]"));
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-    await expect(jogo(page)).toHaveAttribute("data-etapa", "concluida");
-    await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-
-    // Os outros registros abrem a passagem; o Escrivão conclui sobre a cena; atravessar leva ao capítulo seguinte.
-    for (const id of foraDaTarefa(capitulo)) expect(await recolherPeloPainel(page, id)).toBe("jogando");
-    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-    const conclusao = page.locator('[data-escrivao-caixa="conclusao"]');
-    await expect(conclusao).toBeVisible();
-    await expect(conclusao.locator('[data-camada="instrucao"]')).toContainText("A saída está aberta");
-    await atravessarPeloPainel(page);
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.capitulos[capitulo.numero]!.id);
-  });
-
-  test("sala temática: as decisões como registros, a tarefa de decisão, o fim da sala e o progresso separado da trajetória", async ({ page }) => {
-    test.slow();
-    await abrirLimpo(page, "/jogo/lula/economia/");
-    const capitulo = chaptersInRoom(chaptersOf("lula"), "economia")[0]!;
-    await expect(jogo(page)).toHaveAttribute("data-sala", "economia");
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", capitulo.id);
-    await expect(jogo(page)).toHaveAttribute("data-tipo-da-tarefa", "decisao");
-    await expect(page.locator("[data-cenario]")).toContainText("Sala Economia");
-    await expect(page.locator("[data-cenario]")).toContainText(getScene(capitulo.cena).nome);
-    await expect(page.locator("[data-rodape-do-jogo] [data-aviso-amostra]")).toContainText("amostra");
-    await expect(page.locator('[data-escrivao-caixa="entrada"] [data-camada="instrucao"]')).toContainText("tema Economia");
-
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    const painel = dialogo(page, "painel");
-    await expect(painel).toContainText("Sala Economia");
-    await expect(painel.locator('[data-registro][data-natureza="decisao"]')).toHaveCount(recordIds(capitulo).length);
-    await expect(painel.locator("[data-registro]")).toContainText(["ato do Executivo"]);
-    await expect(painel.locator('[data-ir-para-sala="seguranca-publica"]')).toHaveAttribute("href", "/jogo/lula/seguranca-publica/");
-    await expect(painel.locator('[data-ir-para-sala="historico"]')).toHaveAttribute("href", "/jogo/lula/");
-    await page.keyboard.press("Escape");
-
-    // A sala inteira pelo painel: a decisão da tarefa em duas etapas, as outras recolhidas, a saída aberta.
-    await abrirASaidaPeloPainel(page, capitulo);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator("[data-atravessar-saida]"));
-    const transicao = page.locator("[data-transicao]");
-    await expect(transicao).toHaveAttribute("data-transicao", "fim");
-    await expect(transicao).toContainText("último capítulo desta sala");
-    await clicar(page, page.getByRole("button", { name: "Continuar" }));
-    const fim = page.locator('[data-fim="sim"]');
-    await expect(fim).toHaveAttribute("data-fim-sala", "economia");
-    await expect(fim).toContainText("Fim da sala Economia");
-    await expect(fim).toContainText("uma amostra da edição, e não o histórico completo");
-    await expect(fim.locator('[data-ir-para-sala="seguranca-publica"]')).toHaveAttribute("href", "/jogo/lula/seguranca-publica/");
-    await expect(fim.getByRole("link", { name: /Decisões documentadas/ })).toHaveAttribute("href", "/politicos/lula/#decisao-");
-
-    // A trajetória não mudou: o capítulo 1 continua pendente, e a entrada mostra as duas situações.
-    await page.goto(LULA.rota);
-    await waitForStage(page);
-    await expect(jogo(page)).toHaveAttribute("data-sala", "historico");
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", LULA.c1.id);
-    await expect(jogo(page)).toHaveAttribute("data-tarefa", "pendente");
-    await page.goto("/jogo/");
-    const cartao = page.locator('[data-escolha="lula"]');
-    await expect(cartao).toHaveAttribute("data-situacao", "inicio");
-    await expect(cartao.locator('[data-sala-item="economia"]')).toHaveAttribute("data-situacao", "completa");
-    await expect(cartao.locator('[data-jogar-sala="lula:economia"]')).toContainText("Rever");
-    await expect(cartao.locator('[data-sala-item="seguranca-publica"]')).toHaveAttribute("data-situacao", "inicio");
-    await expect(page.locator('[data-escolha="flavio-bolsonaro"] [data-sala-item="economia"]')).toHaveAttribute("data-situacao", "inicio");
-  });
-
-  test("reler um registro ou uma decisão pelo painel não traz fala de descoberta nem muda o progresso, e desligar o humor tira as falas de humor na hora, em toda tela", async ({ page }) => {
-    await abrirLimpo(page, LULA.rota);
-    const caixa = page.locator('[data-escrivao-caixa="entrada"]');
-    await expect(caixa.locator('[data-camada="humor"]')).toHaveCount(1);
-
-    // Dois registros recolhidos pelo painel: cada descoberta fala do próprio registro.
-    const [primeiro, segundo] = recordIds(LULA.c1).filter((id) => id !== (LULA.c1.tarefa.tipo === "registro" ? LULA.c1.tarefa.eventId : "")) as [string, string];
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-recolher="${primeiro}"]`));
-    const ficha = dialogo(page, "registro");
-    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="documental"]')).toContainText(registro(primeiro).titulo);
-    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-recolher="${segundo}"]`));
-    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="documental"]')).toContainText(registro(segundo).titulo);
-    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
-
-    // Reler o primeiro: o cartão é o dele, o Escrivão não fala na releitura (nem com a descoberta do segundo) e o
-    // progresso não muda. A releitura sem fala já era assim; o que mudou é que a fala guardada passou a pertencer ao
-    // registro (`falasDe`, com teste de regra em tests/game-escrivao.test.ts).
-    const registrosAntes = await jogo(page).getAttribute("data-registros");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-ler="${primeiro}"]`));
-    await expect(ficha).toBeVisible();
-    await expect(ficha).toContainText(registro(primeiro).titulo);
-    await expect(ficha).not.toContainText(registro(segundo).titulo);
-    await expect(ficha.locator("[data-escrivao]")).toHaveCount(0);
-    await expect(jogo(page)).toHaveAttribute("data-registros", registrosAntes!);
-    await page.keyboard.press("Escape");
-    await expect(dialogo(page, "painel")).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(jogo(page)).toHaveAttribute("data-modo", "jogando");
-
-    // Desligar o humor na ajuda: a fala de humor da própria ajuda sai na hora, a instrução fica, o foco não se perde.
-    await page.getByRole("button", { name: "Como jogar" }).click();
-    const guia = dialogo(page, "guia");
-    await expect(guia.locator('[data-escrivao="ajuda"] [data-camada="humor"]')).toHaveCount(1);
-    await clicar(page, guia.locator("[data-humor]"));
-    await expect(jogo(page)).toHaveAttribute("data-humor", "desligado");
-    await expect(guia.locator('[data-escrivao="ajuda"] [data-camada="humor"]')).toHaveCount(0);
-    await expect(guia.locator('[data-escrivao="ajuda"] [data-camada="instrucao"]')).toHaveCount(1);
-    await expect(guia.locator("[data-humor]")).toBeFocused();
-    await page.keyboard.press("Escape");
-    // A caixa da entrada, escolhida antes de desligar, também perde o humor sem recarregar.
-    await expect(caixa.locator('[data-camada="instrucao"]')).toHaveCount(1);
-    await expect(caixa.locator('[data-camada="humor"]')).toHaveCount(0);
-    // Religar devolve a fala já escolhida.
-    await page.getByRole("button", { name: "Como jogar" }).click();
-    await clicar(page, guia.locator("[data-humor]"));
-    await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
-    await page.keyboard.press("Escape");
-    await expect(caixa.locator('[data-camada="humor"]')).toHaveCount(1);
-
-    // O mesmo com decisões, em uma sala temática: duas recolhidas, a primeira relida.
-    await page.goto("/jogo/lula/economia/");
-    await waitForStage(page);
-    const sala = chaptersInRoom(chaptersOf("lula"), "economia")[0]!;
-    const [decisaoA, decisaoB] = foraDaTarefa(sala) as [string, string];
-    expect(await recolherPeloPainel(page, decisaoA)).toBe("jogando");
-    expect(await recolherPeloPainel(page, decisaoB)).toBe("jogando");
-    const decisoesAntes = await jogo(page).getAttribute("data-registros");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-ler="${decisaoA}"]`));
-    await expect(ficha.locator(`[data-decisao-cartao="${decisaoA}"]`)).toBeVisible();
-    await expect(ficha.locator(`[data-decisao-cartao="${decisaoB}"]`)).toHaveCount(0);
-    await expect(ficha.locator("[data-escrivao]")).toHaveCount(0);
-    await expect(jogo(page)).toHaveAttribute("data-registros", decisoesAntes!);
-  });
-
-  test("a transição de um capítulo revisto não herda a conclusão de outro: em capítulo de contexto sensível, nenhuma fala de humor", async ({ page }) => {
-    test.slow();
-    const sensivel = FLAVIO.capitulos.find((item) => isSensitiveChapter(item))!;
-    const seguinte = FLAVIO.capitulos[sensivel.numero]!;
-    expect(isSensitiveChapter(seguinte)).toBe(false);
-    await abrirNoCapitulo(page, FLAVIO, seguinte.numero);
-
-    // O capítulo seguinte, que não é de contexto sensível, é cumprido: a conclusão dele vem com humor.
-    await abrirASaidaPeloPainel(page, seguinte);
-    await expect(page.locator('[data-escrivao-caixa="conclusao"] [data-camada="humor"]')).toHaveCount(1);
-
-    // Rever o capítulo sensível, já concluído, e atravessar a saída dele.
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-abrir-capitulo="${sensivel.id}"]`));
-    await expect(jogo(page)).toHaveAttribute("data-capitulo", sensivel.id);
-    await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator("[data-atravessar-saida]"));
-    // A transição segue sozinha depois de um instante: o que ela mostra é lido de uma vez, enquanto está na tela.
-    // (Uma afirmação de ausência com espera passaria quando a própria transição saísse.)
-    const naTransicao = await page.locator("[data-transicao]").evaluate((no) => ({
-      texto: no.textContent ?? "",
-      falas: no.querySelectorAll("[data-escrivao]").length,
-      humor: no.querySelectorAll('[data-camada="humor"]').length,
-    }));
-    expect(naTransicao.texto).toContain(`Capítulo ${sensivel.numero} concluído`);
-    expect(naTransicao.texto).toContain(sensivel.titulo);
-    // A conclusão guardada é a do outro capítulo: nem a fala de humor nem a informação dele aparecem aqui.
-    expect(naTransicao.falas).toBe(0);
-    expect(naTransicao.humor).toBe(0);
-  });
-
-  test("em registro de contexto sensível o Escrivão não faz humor, mesmo com a preferência ligada; nos demais registros do capítulo, faz", async ({ page }) => {
-    const denuncia = "flavio-bolsonaro-2020-denuncia-do-ministerio-publico";
-    const capitulo = FLAVIO.capitulos.find((item) => item.eventIds.includes(denuncia))!;
-    expect(isSensitive(denuncia)).toBe(true);
-    expect(isSensitiveChapter(capitulo)).toBe(true);
-    await abrirNoCapitulo(page, FLAVIO, capitulo.numero);
-    await expect(jogo(page)).toHaveAttribute("data-humor", "ligado");
-    // O capítulo pede um registro de processo: a entrada dele vem só com a instrução e a informação do capítulo.
-    const entrada = page.locator('[data-escrivao-caixa="entrada"]');
-    await expect(entrada.locator('[data-camada="instrucao"]')).toHaveCount(1);
-    await expect(entrada.locator('[data-camada="humor"]')).toHaveCount(0);
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-recolher="${denuncia}"]`));
-    const ficha = dialogo(page, "registro");
-    await expect(ficha.locator("[data-ficha-judicial]")).toBeVisible();
-    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="instrucao"]')).toHaveCount(1);
-    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="documental"]')).toHaveCount(1);
-    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="humor"]')).toHaveCount(0);
-    await clicar(page, page.getByRole("button", { name: /Guardar e/ }));
-    // Um registro do mesmo capítulo que não é de contexto sensível: a descoberta dele tem humor.
-    const comum = capitulo.eventIds.find((id) => !isSensitive(id))!;
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-    await clicar(page, page.locator(`[data-recolher="${comum}"]`));
-    await expect(ficha.locator("[data-ficha-judicial]")).toHaveCount(0);
-    await expect(ficha.locator('[data-escrivao="descoberta"] [data-camada="humor"]')).toHaveCount(1);
+  test("com movimento reduzido, a explicação abre na hora, sem a caminhada", async ({ page }) => {
+    await abrir(page, "lula", 7);
+    await expect(jogo(page)).toHaveAttribute("data-movimento", "reduzido");
+    await page.locator('[data-marcador="marco"]').click();
+    await expect(dialogo(page, "fase")).toBeVisible();
+    await expect(page.locator("[data-palco]")).toHaveAttribute("data-andando", "nao");
   });
 });

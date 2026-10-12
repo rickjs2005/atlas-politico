@@ -55,8 +55,8 @@ export const comissao: SceneSpec = {
   spawn: { x: 2, y: 3 },
   guia: { x: 1, y: 4 },
   saida: { x: 5, y: 8, lado: "sul" },
-  // Nenhum fica ao lado da saída, onde a porta o esconderia. O quarto é a
-  // decisão do capítulo (o voto), diante da bancada.
+  // As pastas: a primeira é a do marco. Nenhuma fica ao lado da saída, onde a
+  // porta a esconderia; a quarta fica diante da bancada.
   registros: [
     { x: 3, y: 4 },
     { x: 9, y: 5 },

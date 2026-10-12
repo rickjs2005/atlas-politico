@@ -8,7 +8,7 @@
 // (character-faces.ts). Os dois personagens jogáveis recebem o mesmo cuidado:
 // mesma estrutura, mesmo traço, mesma animação.
 //
-// Cada personagem tem três figuras, uma por época dos capítulos (D-111):
+// Cada personagem tem três figuras, uma por época das fases (D-111):
 // mudam o cabelo, a barba e a roupa, de forma estilizada e com a mesma
 // escala para os dois. Não afirmam a aparência real da pessoa em cada data.
 
@@ -279,7 +279,7 @@ export const CHARACTERS: CharacterArtSet = {
   "flavio-bolsonaro": figures("Flávio Bolsonaro", FLAVIO_BUILD, 1.7, FLAVIO_LOOKS),
 };
 
-/** A figura de um personagem na época de um capítulo. */
+/** A figura de um personagem na época de uma fase. */
 export function characterArt(personagem: PersonagemSlug, epoca: Epoca): CharacterArt {
   return CHARACTERS[personagem][epoca];
 }

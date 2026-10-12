@@ -1,16 +1,19 @@
 "use client";
 
-// Estado do jogo que vem do navegador: o progresso salvo, a preferência por
-// menos movimento, o tipo de ponteiro e se a janela está ativa. Tudo por
-// `useSyncExternalStore`, para o HTML do build sair com o estado padrão e o
-// navegador assumir depois da hidratação, sem `setState` em efeito.
+// Estado do jogo que vem do navegador: o progresso salvo, as preferências, a
+// fase pedida pelo endereço, a preferência por menos movimento e se a janela
+// está ativa. Tudo por `useSyncExternalStore`, para o HTML do build sair com o
+// estado padrão e o navegador assumir depois da hidratação, sem `setState` em
+// efeito.
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 
+import type { ProgressKeys } from "@/lib/game/content";
 import { DEFAULT_PREFERENCES, PREFERENCES_KEY, parsePreferences, serializePreferences, type GamePreferences } from "@/lib/game/preferences";
-import { initialProgress, type SignatureSource } from "@/lib/game/progress";
+import { initialProgress } from "@/lib/game/progress";
+import { PHASE_PARAM, READING_PARAM, isGamePath, parseGameQuery, type GameQuery } from "@/lib/game/query";
 import { createProgressStore, type ProgressStore } from "@/lib/game/storage";
-import type { ChapterSpec, PersonagemSlug, PlayerProgress } from "@/lib/game/types";
+import type { PersonagemSlug, PlayerProgress } from "@/lib/game/types";
 
 // ---------------------------------------------------------------------------
 // Progresso
@@ -32,15 +35,15 @@ interface ProgressState {
   reset(): void;
 }
 
-function createProgressState(personagem: PersonagemSlug, capitulos: readonly ChapterSpec[], conteudo: SignatureSource): ProgressState {
+function createProgressState(personagem: PersonagemSlug, chaves: ProgressKeys): ProgressState {
   const listeners = new Set<() => void>();
-  const inicial: ProgressSnapshot = { carregado: false, progresso: initialProgress(personagem, capitulos), duravel: false };
+  const inicial: ProgressSnapshot = { carregado: false, progresso: initialProgress(personagem), duravel: false };
   let store: ProgressStore | null = null;
   let snapshot: ProgressSnapshot = inicial;
 
   const ensure = () => {
     if (store !== null) return;
-    store = createProgressStore(personagem, capitulos, conteudo);
+    store = createProgressStore(personagem, chaves.fases, chaves.assinaturas);
     const salvo = store.load();
     snapshot = { carregado: true, progresso: salvo ?? inicial.progresso, duravel: store.duravel };
   };
@@ -68,15 +71,19 @@ function createProgressState(personagem: PersonagemSlug, capitulos: readonly Cha
     reset() {
       ensure();
       store!.clear();
-      snapshot = { carregado: true, progresso: initialProgress(personagem, capitulos), duravel: store!.duravel };
+      snapshot = { carregado: true, progresso: initialProgress(personagem), duravel: store!.duravel };
       notify();
     },
   };
 }
 
-/** O progresso do personagem, lido com o conteúdo dele ou com as assinaturas já calculadas (as assinaturas das tarefas dependem dos registros e das decisões). */
-export function useGameProgress(personagem: PersonagemSlug, capitulos: readonly ChapterSpec[], conteudo: SignatureSource) {
-  const state = useMemo(() => createProgressState(personagem, capitulos, conteudo), [personagem, capitulos, conteudo]);
+/**
+ * O progresso do personagem. `chaves` traz todas as fases dele, de todas as
+ * salas, e a assinatura atual da atividade de cada uma: é o que a leitura do
+ * que foi salvo precisa, e por isso vale para a sala aberta e para a entrada.
+ */
+export function useGameProgress(personagem: PersonagemSlug, chaves: ProgressKeys) {
+  const state = useMemo(() => createProgressState(personagem, chaves), [personagem, chaves]);
   const snapshot = useSyncExternalStore(state.subscribe, state.get, state.getServer);
   const update = useCallback(
     (fn: (atual: PlayerProgress) => PlayerProgress) => {
@@ -127,7 +134,80 @@ function subscribePreferences(listener: () => void) {
 export function useGamePreferences() {
   const atual = useSyncExternalStore(subscribePreferences, readPreferences, () => DEFAULT_PREFERENCES);
   const setHumor = useCallback((humor: boolean) => writePreferences({ ...readPreferences(), humor }), []);
-  return { preferencias: atual, setHumor };
+  const setCenario = useCallback((cenario: boolean) => writePreferences({ ...readPreferences(), cenario }), []);
+  return { preferencias: atual, setHumor, setCenario };
+}
+
+// ---------------------------------------------------------------------------
+// O que o endereço pede: a fase e o modo de leitura
+// ---------------------------------------------------------------------------
+
+/**
+ * O que se sabe do endereço da página. O HTML do build e a hidratação saem sem
+ * ele (`html`). Em uma navegação interna, o Next desenha a página antes de
+ * escrever o endereço novo: nessa primeira passada o endereço do navegador
+ * ainda é o da página anterior (`aguardando`), e nada dele vale para esta.
+ */
+export type GameAddress =
+  | { situacao: "html" }
+  | { situacao: "aguardando" }
+  /** `consulta` é o pedido de agora; `chegada`, o pedido com que a pessoa chegou à página, antes de o jogo escrever nele a fase aberta. */
+  | { situacao: "lido"; consulta: GameQuery; chegada: GameQuery };
+
+const DO_HTML: GameAddress = { situacao: "html" };
+const AGUARDANDO: GameAddress = { situacao: "aguardando" };
+
+function createAddressReader(caminho: string) {
+  let lida: string | null = null;
+  let chegada: GameQuery | null = null;
+  let atual: GameAddress = AGUARDANDO;
+  return (): GameAddress => {
+    const { pathname, search } = window.location;
+    // Fora do endereço desta página (antes de ele entrar, ou depois de a pessoa sair por Voltar), fica o que já se sabia.
+    if (isGamePath(pathname, caminho) && search !== lida) {
+      lida = search;
+      const consulta = parseGameQuery(search);
+      chegada ??= consulta;
+      atual = { situacao: "lido", consulta, chegada };
+    }
+    return atual;
+  };
+}
+
+function subscribeAddress(listener: () => void) {
+  window.addEventListener("popstate", listener);
+  return () => window.removeEventListener("popstate", listener);
+}
+
+/**
+ * O que o endereço pede ao jogo da página de `caminho`. O pedido só vale
+ * quando o endereço do navegador é o dela: sem isso, "Ver desde o início",
+ * aberto pela entrada, cairia na fase da retomada, porque a primeira passada
+ * ainda lê o endereço da entrada. Quem traz o endereço novo é a conferência
+ * que `useSyncExternalStore` faz logo depois de desenhar.
+ *
+ * Um link para a mesma página com outro pedido não passaria por aqui: dentro
+ * do jogo, mudar de fase é ação do jogo, e não link.
+ */
+export function useGameAddress(caminho: string): GameAddress {
+  const ler = useMemo(() => createAddressReader(caminho), [caminho]);
+  return useSyncExternalStore(subscribeAddress, ler, () => DO_HTML);
+}
+
+/**
+ * Escreve a fase aberta no endereço, sem criar entrada no histórico:
+ * recarregar volta à mesma fase, e Voltar sai do jogo. O pedido de leitura sem
+ * o cenário é só de entrada: fica no endereço enquanto ainda não virou a
+ * preferência guardada (`manterLeitura`), e sai depois. Só escreve no endereço
+ * da própria página (`caminho`).
+ */
+export function writePhaseToUrl(caminho: string, numero: number, manterLeitura: boolean) {
+  if (!isGamePath(window.location.pathname, caminho)) return;
+  const url = new URL(window.location.href);
+  url.searchParams.set(PHASE_PARAM, String(numero));
+  if (!manterLeitura) url.searchParams.delete(READING_PARAM);
+  if (url.search === window.location.search) return;
+  window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -152,11 +232,6 @@ export function useMotion(): boolean {
   return !useMediaQuery("(prefers-reduced-motion: reduce)", false);
 }
 
-/** Ponteiro grosso (toque): os controles de toque aparecem. */
-export function useCoarsePointer(): boolean {
-  return useMediaQuery("(pointer: coarse)", false);
-}
-
 function subscribeWindow(listener: () => void) {
   window.addEventListener("focus", listener);
   window.addEventListener("blur", listener);
@@ -168,11 +243,11 @@ function subscribeWindow(listener: () => void) {
   };
 }
 
-/** A aba está visível e a janela tem o foco: o jogo pausa quando não. */
+/** A aba está visível: a animação da cena para quando não. */
 export function useWindowActive(): boolean {
   return useSyncExternalStore(
     subscribeWindow,
-    () => document.visibilityState === "visible" && document.hasFocus(),
+    () => document.visibilityState === "visible",
     () => true,
   );
 }

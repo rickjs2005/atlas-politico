@@ -178,7 +178,8 @@ describe("regras entre registros", () => {
     });
     const { ok } = semCasa.result();
     expect(ok).toBe(true);
-    expect(withCode(semCasa, "competencia-nao-confirmada").map((item) => item.id)).toEqual(["teste-voto-01", "teste-voto-02"]);
+    // Os dois votos e a atuação legislativa que dependem do mandato sem casa; a relatoria em comissão mista do Congresso não confere a casa.
+    expect(withCode(semCasa, "competencia-nao-confirmada").map((item) => item.id).sort()).toEqual(["teste-atuacao-a1", "teste-voto-01", "teste-voto-02"]);
   });
 
   it("checkIntegrity confere o conjunto montado com as mesmas regras", () => {

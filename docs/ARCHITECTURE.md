@@ -1,10 +1,10 @@
 # Arquitetura
 
-Descreve o que está implementado até a fase 9 e na primeira etapa do jogo, e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O jogo tem documento próprio, [GAMEPLAY.md](GAMEPLAY.md): fluxo, capítulos, regras, progresso e direção visual. O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem sete: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md), [MAP.md](MAP.md), [COMPARISON.md](COMPARISON.md) e [PAGES.md](PAGES.md). O que cada página carrega, e as medições, estão em [PERFORMANCE.md](PERFORMANCE.md).
+Descreve o que está implementado até a fase 9 e no jogo, e o que cada espaço reservado vai receber. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md). O jogo tem documento próprio, [GAMEPLAY.md](GAMEPLAY.md): fluxo, fases, regras, progresso e direção visual. O pipeline de dados tem documento próprio, [DATA-PIPELINE.md](DATA-PIPELINE.md), e a interface tem sete: [UX.md](UX.md), [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md), [INTERACTIONS.md](INTERACTIONS.md), [TIMELINE.md](TIMELINE.md), [MAP.md](MAP.md), [COMPARISON.md](COMPARISON.md) e [PAGES.md](PAGES.md). O que cada página carrega, e as medições, estão em [PERFORMANCE.md](PERFORMANCE.md).
 
 ## Visão geral
 
-Uma única aplicação Next.js (App Router) que vira um site de arquivos estáticos. O conteúdo é JSON versionado dentro do projeto. Um gerador local valida o conteúdo, seleciona o que é elegível e grava os dados públicos. No build, as páginas leem só esses dados e geram HTML. No navegador, a exploração (lista, mapa, linha do tempo, painel) recebe os mesmos dados e trabalha sobre um estado único, guardado no endereço. O jogo é um segundo caminho sobre os mesmos dados: recebe, no build, só os registros que os capítulos citam, e guarda o progresso de quem joga no navegador.
+Uma única aplicação Next.js (App Router) que vira um site de arquivos estáticos. O conteúdo é JSON versionado dentro do projeto. Um gerador local valida o conteúdo, seleciona o que é elegível e grava os dados públicos. No build, as páginas leem só esses dados e geram HTML. No navegador, a exploração (lista, mapa, linha do tempo, painel) recebe os mesmos dados e trabalha sobre um estado único, guardado no endereço. O jogo é um segundo caminho sobre os mesmos dados: recebe, no build, só os registros que as fases citam, e guarda o progresso de quem joga no navegador.
 
 ```
 content/published/  content/drafts/  public/media/
@@ -39,7 +39,7 @@ HTML estático por rota em out/                             │
 | Pipeline | `src/lib/publication/` | Validação com diagnósticos, elegibilidade, montagem dos dados, relatório de cobertura, plano de importação | Ler arquivos, usar React |
 | Disco | `src/lib/content/` | Ler `content/`, gravar e ler `generated/`, sondar arquivos de mídia, orquestrar os comandos | Ser importada por código do navegador |
 | Estado | `src/lib/state/` | Estado da exploração e da comparação, seletores, parâmetros de URL, regras do endereço e do histórico, endereços entre telas com o contexto de retorno (`links.ts`), leitura do endereço no navegador (`location.tsx`) e os dois providers (memória e endereço) | Ler arquivos, importar Zod em tempo de execução |
-| Jogo | `src/lib/game/` | Capítulos (identificadores de acontecimentos, tarefa e cenário), cenários, regras de missão, progresso e formato salvo, e o mundo: projeção isométrica, grade e colisão, movimento, alcance, câmera e direcional de toque | Ler arquivos, usar React, escrever conteúdo editorial |
+| Jogo | `src/lib/game/` | O recorte do conteúdo para o jogo, as regras da trilha (abrir, responder, concluir), o progresso e o formato salvo com a migração, o endereço, as salas, a apresentação de cada fase (cenário e figura), o Escrivão, o contexto sensível, a ficha judicial, a matriz de cobertura, os cenários e o mundo: projeção isométrica, grade, caminho do boneco e câmera | Ler arquivos, usar React, escrever conteúdo editorial |
 | Mídia | `src/lib/media/` | Molduras, larguras e nomes das versões preparadas dos retratos, e o manifesto do que foi gerado | Ler arquivos: o manifesto só é lido pelos comandos e pelos testes |
 | Configuração | `src/lib/site.ts` | O que depende de decisão do responsável pelo projeto: domínio público, indexação e canal público de correção, todos ainda sem valor | Guardar conteúdo editorial |
 | Editorial | `src/lib/editorial/` | Funções puras sobre o conjunto publicado que servem à publicação, e não às telas: a lista de revisão humana (`human-review.ts`, para `npm run review:human`) e a barreira de release (`release.ts`, para `npm run verify:release`, que recusa a publicação sem revisão humana, domínio e canal) | Escrever conteúdo editorial, registrar revisão como humana, usar React |
@@ -113,10 +113,10 @@ As fronteiras são verificadas, e não só combinadas:
 | `EventReturn`, `CopyLink`, `CorrectionTemplate` | Navegador | Client Components pequenos dentro de páginas estáticas: o retorno da página do acontecimento, a cópia do link e o modelo de correção. No HTML do build saem sem contexto; o endereço e a origem são lidos depois da hidratação |
 | `UrlWatcher` (`src/lib/state/location.tsx`) | Só navegador | Único uso de `useSearchParams`, isolado em um `Suspense` sem saída visual, para as telas continuarem inteiras no HTML gerado. Serve à exploração, à comparação, ao retorno e ao modelo de correção |
 | `AtlasStateProvider` | Navegador | Estado em memória, para as telas de prova e os testes |
-| Páginas `/jogo` e `/jogo/[personagem]` | Build | Server Components. Montam o recorte do jogo (`buildGameContent`) e o entregam por props. O HTML traz o capítulo, o objetivo e os botões; a cena e o progresso entram no navegador |
-| `GameShell`, `CharacterSelect` e a interface do jogo (`ui/`) | Navegador | Client Components. Pré-renderizados com o estado inicial; o progresso salvo é lido depois da hidratação, com `useSyncExternalStore` |
-| `GameStage` (palco) e `WorldPreview` (prévia) | Só navegador | Carregados por `next/dynamic` com `ssr: false`. O palco só é pedido em `/jogo/[personagem]`, e a prévia, em `/jogo`. Canvas 2D, sem WebGL |
-| Progresso do jogo | Só navegador | `localStorage`, uma chave por personagem, com versão de formato. Nunca vai ao endereço |
+| Páginas `/jogo`, `/jogo/[personagem]` e `/jogo/[personagem]/[sala]` | Build | Server Components. Montam o recorte do jogo (`buildGameContent`) e o entregam por props. O HTML traz a primeira fase da sala (o cartão, com a posição, o período, o título e a instrução, e os botões) e, dentro de `noscript`, todas as fases em texto; a cena, a fase pedida pelo endereço e o progresso entram no navegador |
+| `GameShell`, `CharacterSelect` e a interface do jogo (`ui/`) | Navegador | Client Components. Pré-renderizados com o estado inicial; o progresso salvo, as preferências e o endereço da página são lidos depois da hidratação, com `useSyncExternalStore` |
+| `GameStage` (palco) e `WorldPreview` (prévia) | Só navegador | Carregados por `next/dynamic` com `ssr: false`. O palco só é pedido nas páginas do jogo com o cenário, e não em "Ler sem o cenário"; a prévia, em `/jogo`. Canvas 2D, sem WebGL |
+| Progresso e preferências do jogo | Só navegador | `localStorage`, uma chave por personagem para o progresso, com versão de formato, e uma chave para as preferências. O progresso nunca vai ao endereço |
 | `MapCanvas` (MapLibre) | Só navegador | Carregado por `next/dynamic` com `ssr: false`, e só quando a moldura do mapa está na tela ou perto dela. Não aparece no HTML do servidor. A instância é criada uma vez; filtros e seleção não a recriam |
 | Trecho de `layout.tsx` que marca o documento | Só navegador, antes do primeiro desenho | Em um link com consulta, encobre a área que vai mudar até o endereço ser lido (D-83). É o único script escrito dentro do HTML |
 | Contornos da base (`terra.geojson`, `estados-br.geojson`) | Só navegador | Arquivos próprios, publicados pelo bundler em `/_next/static/media/` e pedidos ao próprio site |
@@ -134,8 +134,8 @@ fonte → rascunho → revisão → validação → dados gerados → build
 |---|---|---|
 | Fonte | Páginas institucionais e bases públicas | Catálogo feito na fase 2 (SOURCES.md) |
 | Rascunho | `content/drafts/` | Coleções parciais, que citam registros da edição. Recebe também as importações (`npm run data:import`) |
-| Revisão | Estado editorial de cada registro (`rascunho`, `em-revisao`, `revisado`) e tipo da revisão (`assistida-por-ia`, `humana`) | Modelado e validado. Na edição 0.1.1 toda revisão é assistida por IA |
-| Edição | `content/published/` | Edição 0.1.1. A promoção de um rascunho é manual (DATA-PIPELINE.md) |
+| Revisão | Estado editorial de cada registro (`rascunho`, `em-revisao`, `revisado`) e tipo da revisão (`assistida-por-ia`, `humana`) | Modelado e validado. Em todas as edições até a 0.3.0, toda revisão é assistida por IA |
+| Edição | `content/published/` | Edição 0.3.0. A promoção de um rascunho é manual (DATA-PIPELINE.md) |
 | Validação | `npm run data:validate` | Diagnósticos por arquivo, registro e campo, em três severidades |
 | Dados gerados | `npm run data:build` grava `generated/` | Só o que é elegível, com índices e GeoJSON |
 | Build | `npm run build` | Gera os dados e depois o site. Conteúdo com erro interrompe |
@@ -156,8 +156,9 @@ Regras que valem:
 | `/acontecimentos/[slug]` | `src/app/acontecimentos/[slug]/page.published.tsx`, com `EventReturn.tsx` e `EventLocator.tsx` | `generateStaticParams` a partir dos acontecimentos dos dados gerados; contexto de retorno opcional em `de`, `ate`, `categorias` e `origem` | Leitura completa, com retorno, cópia do link, ficha lateral e mapa de localização (ver abaixo) |
 | `/comparar` | `src/app/comparar/page.tsx`, com `Comparison.tsx` | Consulta em `de`, `ate` e `categorias` | As duas trajetórias no mesmo período, com as mesmas categorias e na mesma escala, com a consulta no endereço (fase 7, [COMPARISON.md](COMPARISON.md)) |
 | `/metodologia` | `src/app/metodologia/page.tsx`, com `CorrectionTemplate.tsx` | `acontecimento`, opcional, para o modelo de correção | Objetivo, seleção, fontes, revisão feita, datas, lugares, limites da comparação, edição, correção, créditos e o catálogo de fontes (fase 7, [PAGES.md](PAGES.md)) |
-| `/jogo` | `src/app/jogo/page.tsx` | | Entrada do jogo: escolha do personagem, prévia do mundo, capítulos e onde cada um parou ([GAMEPLAY.md](GAMEPLAY.md)) |
-| `/jogo/flavio-bolsonaro`, `/jogo/lula` | `src/app/jogo/[personagem]/page.tsx` | `generateStaticParams` a partir de `PROFILES`. Sem consulta: o progresso fica no navegador | O jogo do personagem, no capítulo em que parou |
+| `/jogo` | `src/app/jogo/page.tsx` | | Entrada do jogo: as duas trajetórias, com a situação de cada uma neste navegador, a prévia do cenário e os aprofundamentos ([GAMEPLAY.md](GAMEPLAY.md)) |
+| `/jogo/flavio-bolsonaro`, `/jogo/lula` | `src/app/jogo/[personagem]/page.tsx`, com `GamePage.tsx` | `generateStaticParams` a partir de `PROFILES`. Consulta opcional em `fase` (a posição da fase) e `leitura`; o progresso fica no navegador | A trajetória do personagem: a fase pedida ou, sem pedido, a fase em que a pessoa parou |
+| `/jogo/<personagem>/economia`, `/jogo/<personagem>/seguranca-publica` | `src/app/jogo/[personagem]/[sala]/page.tsx`, com `GamePage.tsx` | `generateStaticParams` a partir de `PROFILES` e das salas | Os aprofundamentos do personagem |
 | 404 | `src/app/not-found.tsx` | | Com a identidade do projeto. Vira `out/404.html` |
 | `/dev/previa` | `src/app/dev/previa/page.dev.tsx` | | Só em desenvolvimento. Guia da prévia: caminhos, tokens e estados de cada componente |
 | `/dev/prova` | `src/app/dev/prova/page.dev.tsx` | | Só em desenvolvimento. Dados sintéticos, passados pelo pipeline em memória |
@@ -235,7 +236,7 @@ Regras (ao carregar, recarregar, voltar ou avançar):
 9. A página de um acontecimento (`/acontecimentos/<slug>`) é o endereço para compartilhar. O link de volta à exploração leva `?acontecimento=<slug>` para a página do perfil.
 10. Os links da exploração e da comparação para a página de um acontecimento levam o recorte (`de`, `ate`, `categorias`) e, vindos da comparação, `origem=comparar`. A página lê esse contexto com o mesmo `parseAtlasParams` e monta o retorno. Um contexto que não contém o acontecimento é descartado. As regras são funções puras em `src/lib/state/links.ts`.
 11. Na comparação valem as regras de 1 a 8, com duas diferenças: o período é ajustado à escala comum das duas coberturas, e `acontecimento` é sempre descartado.
-12. O jogo não usa a query string. A página de um acontecimento aberta de dentro dele leva `origem=jogo` e `personagem=<slug>`, e com isso oferece **Voltar ao jogo**; um personagem que não é do acontecimento é descartado. O progresso não vai no endereço: abrir um link direto não o altera (`eventHrefFromGame` e `gameReturn`, em `src/lib/state/links.ts`).
+12. O jogo usa a query string só para navegação: `fase`, a posição da fase na sala, e `leitura`, que pede "Ler sem o cenário" (`src/lib/game/query.ts`). O jogo só lê e só escreve o endereço quando ele é o da própria página, porque em uma navegação interna a página nova é desenhada antes de o endereço dela entrar (D-139). A página de um acontecimento aberta de dentro do jogo leva `origem=jogo` e `personagem=<slug>`, e com isso oferece **Voltar ao jogo**; um personagem que não é do acontecimento é descartado. O progresso não vai no endereço: abrir um link direto não o altera (`eventHrefFromGame` e `gameReturn`, em `src/lib/state/links.ts`).
 
 ## Limites entre as funcionalidades
 
@@ -244,7 +245,7 @@ Regras (ao carregar, recarregar, voltar ou avançar):
 | `features/map` | Coleção GeoJSON do recorte (os pontos gerados, recortados por `filterPoints`), os acontecimentos do recorte sem ponto (`listUnplaced`) e o slug selecionado | `onSelect(slug)` ao escolher um acontecimento, pelo marcador ou pelo seletor | Não filtra, não guarda seleção, não lê conteúdo, não monta os pontos, não escreve no endereço |
 | `features/events` | Lista de acontecimentos e as lacunas do conjunto, ou um acontecimento resolvido | `onSelect(slug)` na lista | Não conhece o mapa, não calcula lacunas |
 | `features/timeline` | Domínio de anos, acontecimentos do recorte, período e categorias em vigor, cargos e partidos do período | `onSelect(slug)` nas marcas; `onChange` e `onPeriodChange` do período; `onToggle` das categorias | Não fala com o mapa, não guarda recorte, não escreve no endereço |
-| `features/game` | O recorte do jogo de um personagem (capítulos e registros já resolvidos) | Apenas apresentação e o progresso, que ela mesma guarda no navegador | Não lê conteúdo, não escreve texto editorial, não usa o estado nem o endereço da exploração, não carrega o mapa |
+| `features/game` | O recorte do jogo de um personagem em uma sala (as fases e os registros que elas apontam, já resolvidos) | Apenas apresentação, o progresso e as preferências, que ela mesma guarda no navegador | Não lê conteúdo, não escreve texto editorial, não usa o estado nem o endereço da exploração, não carrega o mapa |
 | `features/comparison` | Uma faixa por pessoa: acontecimentos, mandatos, filiações, cobertura e lacunas; o recorte em vigor e a função que dá o endereço de cada acontecimento | Apenas apresentação | Não filtra, não escreve no endereço, não calcula nota nem ranking |
 
 As funcionalidades não se importam entre si. Quem as junta é a página, por meio do estado central: a lista despacha `selectEvent`, o provider escreve o endereço e recalcula o recorte, e o mapa recebe o novo slug selecionado. O clique no mapa percorre o mesmo caminho. O contrato está em [TIMELINE.md](TIMELINE.md), seção Contrato com o mapa, e o que o mapa faz com ele, em [MAP.md](MAP.md).
@@ -265,38 +266,45 @@ Dentro de `features/map`:
 
 ## Jogo
 
-Um segundo caminho de leitura sobre os mesmos dados ([GAMEPLAY.md](GAMEPLAY.md)). Cinco coisas ficam separadas:
+Um segundo caminho de leitura sobre o mesmo conteúdo ([GAMEPLAY.md](GAMEPLAY.md)): uma trilha de fases curtas, com um ciclo só. Estas partes ficam separadas:
 
 | O quê | Onde | Regra |
 | --- | --- | --- |
-| Dados históricos | `generated/dados/`, pelo pipeline | O jogo não tem conteúdo editorial. `buildGameContent` recorta, no build, os registros que os capítulos citam, com as fontes resolvidas, a situação da revisão e a marca de ordem em aberto (`findUndeterminedOrder`, a mesma regra da lista do atlas, em `src/lib/domain/order.ts`) |
-| Configuração dos capítulos | `src/lib/game/chapters.ts`, `scenes/`, `coverage.ts` e `judicial.ts` | Um capítulo cita acontecimentos pelo `id`, define a tarefa, aponta um cenário e a época da figura. Todo registro de um capítulo é anterior, sem ambiguidade de data e precisão, a todo registro do seguinte; todo acontecimento publicado de cada personagem está em um capítulo dele, ou em uma exclusão justificada (`coverage.ts` gera a matriz de [GAME-COVERAGE.md](GAME-COVERAGE.md)). A ficha judicial relaciona os episódios de processo por identificador. Testes conferem tudo contra a edição |
-| Regras de missão | `src/lib/game/mission.ts` | Funções puras: recolher, cumprir a tarefa, abrir a saída (a tarefa cumprida e todos os registros do capítulo recolhidos, acontecimentos e decisões), decidir se duas datas dão ordem, montar as opções de documento, de lugar e de interpretação a partir dos registros, avaliar uma resposta, inclusive as duas etapas da tarefa de decisão |
-| Salas do jogo | `src/lib/game/rooms.ts` | As três salas (D-125): Histórico, a investigação, e os temas Economia e Segurança pública; o agrupamento dos capítulos por sala, que é a unidade da progressão. Não é cena nem categoria |
-| Cartão de decisão | `src/lib/data/decisions.ts`, `src/features/decisions/` | A visão de leitura de um voto ou de um ato (cargo, instituição, data, objeto e manifestação ou tipo do ato, proposição, fontes, revisão), montada no build e usada pela página da pessoa, pela comparação por tema e pelo jogo. Não escreve fato |
-| Escrivão | `src/lib/game/escrivao/` | O guia fictício (D-127): catálogo de falas em três camadas (instrução, documental, humor), por sala e evento; seletor puro com controle de repetição; validação por teste. Sem IA na partida, sem pessoa ou partido nas falas. Em registro de contexto sensível (`sensitivity.ts`, D-129), sem humor; as falas guardadas pertencem ao registro ou ao capítulo de que foram ditas |
-| Estado do jogador | `src/lib/game/progress.ts` e `storage.ts` | Capítulos bloqueados, disponíveis e concluídos, com transições previsíveis; um capítulo só conclui com a saída aberta; formato com versão (5), com a assinatura da tarefa e dos dados que decidem a resposta, e migração explícita das versões 1 a 4; reabrir um capítulo não apaga os seguintes (D-130); dado inválido vira começo; sem armazenamento, vale uma cópia em memória, que é da página e atravessa a navegação entre o jogo e a ficha |
-| Desenho do mundo | `src/features/game/draw/` e `engine/` | Canvas 2D, por código. Recebe a cena e o estado e desenha; não conhece regras. A cena aponta a arte que a desenha (`arts/`), e o personagem é desenhado na figura da época do capítulo |
+| Conteúdo | `content/published/` e `generated/dados/`, pelo pipeline | As fases, os fatos biográficos e os conceitos são coleções do conjunto, com estado editorial (D-134). `buildGameContent` recorta, no build, as fases da sala aberta e só os registros que elas apontam, com as fontes resolvidas, a situação da revisão e a marca de ordem em aberto (`findUndeterminedOrder`, a mesma regra da lista do atlas, em `src/lib/domain/order.ts`). Das outras salas vai só o que o progresso precisa: os identificadores das fases e as assinaturas das atividades |
+| Regras da trilha | `src/lib/game/trail.ts` | Funções puras: abrir uma fase, responder a pergunta ou a ordenação, concluir pela explicação, a ordem certa pelas datas dos registros, a assinatura da atividade e a ordem estável das opções na tela. Nenhuma fase segura a seguinte |
+| Estado do jogador | `src/lib/game/progress.ts`, `legacy.ts`, `storage.ts` e `preferences.ts` | Por fase, o que foi lido e respondido; por sala, a fase em que a pessoa parou. Formato com versão (6), com a assinatura do que decide a resposta e a migração dos formatos 1 a 5, que guarda o salvo anterior inteiro (D-135). Dado inválido vira começo; sem armazenamento, vale uma cópia em memória, que é da página e atravessa a navegação entre o jogo e a ficha |
+| Endereço | `src/lib/game/query.ts` | `?fase=N` e `?leitura=1`, só navegação, e a regra de que o endereço lido é o da própria página (D-139) |
+| Salas | `src/lib/game/rooms.ts` | A trajetória e os aprofundamentos de Economia e de Segurança pública. A sala agrupa as fases; não é cena nem categoria |
+| Apresentação | `src/lib/game/presentation.ts`, `scenes/` | O cenário e a figura de cada fase, por identificador. É a única parte de uma fase que mora no código, e não afirma nada sobre as pessoas |
+| Cartão de decisão | `src/lib/data/decisions.ts`, `src/features/decisions/` | A visão de leitura de um voto, de um ato ou de uma atuação legislativa (cargo, instituição, data, objeto e manifestação, ou tipo do ato, ou matéria e desfecho, com fontes e revisão), montada no build e usada pela página da pessoa, pela comparação por tema e pelo jogo. Não escreve fato |
+| Escrivão | `src/lib/game/escrivao/` | O guia fictício (D-127, D-133): catálogo de falas em duas camadas (instrução e humor), por sala e evento; seletor puro, que roda as falas pela vez de cada momento; validação por teste. Sem IA na partida, sem pessoa ou partido nas falas. Em fase ou registro de contexto sensível (`sensitivity.ts`, D-129 e D-142), sem humor |
+| Ficha judicial e cobertura | `src/lib/game/judicial.ts` e `coverage.ts` | A ficha relaciona os episódios de processo por identificador. A cobertura gera a matriz de [GAME-COVERAGE.md](GAME-COVERAGE.md): todo acontecimento e toda decisão publicados de cada personagem aparecem em alguma fase, ou em uma exclusão justificada. Testes conferem tudo contra a edição |
+| Mundo | `src/lib/game/world/` | A projeção isométrica, a grade, o caminho do boneco até uma pasta e a câmera, que enquadra a cena inteira na área livre do palco (D-137). Regras puras |
+| Desenho do mundo | `src/features/game/draw/` e `engine/` | Canvas 2D, por código. Recebe a cena e o estado e desenha; não conhece regras. A cena aponta a arte que a desenha (`arts/`), e o personagem é desenhado na figura da época da fase |
 
 ```
-getAtlasData()  ──▶  buildGameContent(dados, personagem)        (build)
+getAtlasData()  ──▶  buildGameContent(dados, personagem, sala)   (build)
+                     buildProgressKeys(dados, personagem)
                               │ props
                               ▼
                         GameShell                                (navegador)
             progresso ◀── useGameProgress ──▶ localStorage
+            endereço  ◀── useGameAddress  ──▶ history.replaceState
                 │
-                ├─ GameStage  ── laço, entrada, câmera ──▶ renderScene ──▶ draw/
-                ├─ Hud, TouchControls
-                └─ diálogos e painel  ── regras de mission.ts e progress.ts
+                ├─ GameStage  ── laço, caminhada, câmera ──▶ renderScene ──▶ draw/
+                │       └─ um botão da página sobre cada pasta
+                ├─ Hud  ── o cartão da fase e o botão principal
+                ├─ PhaseContent  ── a fase, na janela ou na página (Ler sem o cenário)
+                └─ janelas  ── regras de trail.ts e progress.ts
 ```
 
-A casca decide o que acontece com uma interação e quando um capítulo termina. O palco só anda e desenha: avisa o que está ao alcance, a interação e a travessia da saída. As teclas são ouvidas no elemento da cena, e não na janela, lidas pela posição no teclado, e a simulação para quando um diálogo abre, quando a janela perde o foco e quando a aba fica oculta.
+A casca decide o que acontece quando a pessoa abre o marco, responde, segue ou muda de fase. O palco só desenha e leva o boneco até a pasta ativada: ninguém dirige o personagem, e a cena não ouve teclas. As pastas são botões da página, e a animação para quando uma janela abre, quando a janela do navegador perde o foco e quando a aba fica oculta.
 
-O palco e a prévia do mundo são pacotes carregados à parte, e ficam atrás de uma fronteira de erro (`ui/StageBoundary.tsx`): se um deles não chega, aparece o substituto, e o cabeçalho, o objetivo e o painel continuam funcionando. As janelas do jogo ficam em um contexto de empilhamento próprio (`.jogo-palco`, em `globals.css`), abaixo do cabeçalho do site.
+O palco e a prévia do mundo são pacotes carregados à parte, e ficam atrás de uma fronteira de erro (`ui/StageBoundary.tsx`): se o palco não chega, ou o navegador não dá o canvas, aparece um aviso com o caminho para "Ler sem o cenário", que tem o mesmo conteúdo. As janelas do jogo ficam em um contexto de empilhamento próprio (`.jogo-palco`, em `globals.css`), abaixo do cabeçalho do site.
 
-O que é fixo na cena (paredes, piso, parapeitos e objetos parados) é desenhado uma vez, em telas à parte, e copiado a cada quadro; `engine/render.ts` redesenha só o que se move (D-106).
+O que é fixo na cena (paredes, piso, parapeitos e objetos parados) é desenhado uma vez, em telas à parte, e copiado a cada quadro; `engine/render.ts` redesenha só o que se move (D-106). Com movimento reduzido, o quadro só é refeito quando algo muda.
 
-O desenho tem um arquivo por parte, todos em `src/features/game/draw/`: `kit.ts` (tinta, luz e primitivas isométricas), `characters.ts` e `character-*.ts` (os três personagens, os dois jogáveis em três épocas), `scene.ts` (a montagem), `scene-floor.ts`, `scene-walls.ts`, `scene-exit.ts` (o portal, a porta e a soleira), `scene-record.ts` (o registro, o anel de alcance e o efeito de recolher), `props.ts` e `props-*.ts` (os objetos de cenário). As artes de ambiente ficam em `arts/`, uma por arquivo, registradas em `arts/index.ts` (`ARTS`, por `SceneArtId`): cada uma diz o estilo e o caráter da parede, o piso, a porta e a receita de materiais, com os kits compartilhados `wall-kit.ts`, `floor-kit.ts`, `floors.ts`, `exit-kit.ts` e `door-leaves.ts`. Uma cena (`SceneId`) aponta a arte que a desenha; duas cenas podem dividir uma arte com paleta própria (D-112). O contrato está em `draw/types.ts` e em `arts/types.ts`.
+O desenho tem um arquivo por parte, todos em `src/features/game/draw/`: `kit.ts` (tinta, luz e primitivas isométricas), `characters.ts` e `character-*.ts` (os três personagens, os dois da trilha em três épocas), `scene.ts` (a montagem), `scene-floor.ts`, `scene-walls.ts`, `scene-exit.ts` (o portal, a porta e a soleira), `scene-record.ts` (a pasta e o anel sob a pasta do marco), `props.ts` e `props-*.ts` (os objetos de cenário). As artes de ambiente ficam em `arts/`, uma por arquivo, registradas em `arts/index.ts` (`ARTS`, por `SceneArtId`): cada uma diz o estilo e o caráter da parede, o piso, a porta e a receita de materiais, com os kits compartilhados `wall-kit.ts`, `floor-kit.ts`, `floors.ts`, `exit-kit.ts` e `door-leaves.ts`. Uma cena (`SceneId`) aponta a arte que a desenha; duas cenas podem dividir uma arte com paleta própria (D-112). O contrato está em `draw/types.ts` e em `arts/types.ts`.
 
 ## Espaços reservados
 

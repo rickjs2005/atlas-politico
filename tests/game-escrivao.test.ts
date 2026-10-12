@@ -1,147 +1,151 @@
-// O Escrivão: o catálogo de falas obedece às regras (três camadas, sala e
-// evento, sem pessoa, partido, data ou juízo; instrução de reserva e humor
-// suficiente em todo evento), a seleção é determinística, controla a
-// repetição pelo histórico, só preenche a camada documental com os dados do
-// registro e cala o humor quando a preferência manda.
+// O Escrivão, o guia fictício do jogo (src/lib/game/escrivao, D-127 e D-133):
+// uma instrução curta e, no máximo, uma fala de humor; nenhum humor em
+// contexto sensível; sem sorteio; e nenhuma fala repete fato, cita pessoa ou
+// partido, nem traz juízo.
 
 import { describe, expect, it } from "vitest";
 
-import { CATALOGO, ESCRIVAO_EVENTS, ESCRIVAO_NOME, HISTORICO_MAXIMO, MINIMO_DE_HUMOR, candidatas, falasDe, falasVisiveis, menosRecente, preencher, registrarDitas, selectLines, validateCatalog, type Fala, type Momento } from "@/lib/game/escrivao";
+import { readSources, resolvePaths } from "@/lib/content/sources";
+import { PROFILES } from "@/lib/domain/profiles";
+import { buildGameContent } from "@/lib/game/content";
+import { CATALOGO, ESCRIVAO_EVENTS, ESCRIVAO_NOME, ESCRIVAO_ROTULO, INSTRUCAO_MAXIMA, MINIMO_DE_HUMOR, candidatas, daVez, falasVisiveis, selectLines, validateCatalog, type Fala } from "@/lib/game/escrivao";
 import { ROOM_IDS } from "@/lib/game/rooms";
+import { buildAtlasData } from "@/lib/publication/build";
 
-const momento = (mudancas: Partial<Momento> = {}): Momento => ({ sala: "historico", evento: "entrada", humor: true, vistas: [], ...mudancas });
+const fala = (id: string, sala: Fala["sala"], evento: Fala["evento"], camada: Fala["camada"], texto: string): Fala => ({ id, sala, evento, camada, texto });
 
 describe("catálogo do Escrivão", () => {
-  it("é válido: toda fala tem sala, evento e camada conhecidos, e as regras de conteúdo valem para todas", () => {
+  it("passa na validação inteira", () => {
     expect(validateCatalog(CATALOGO)).toEqual([]);
-    expect(ESCRIVAO_NOME).toBe("Escrivão");
   });
 
-  it("todo evento tem instrução própria em cada sala, humor de reserva em número suficiente e pelo menos uma fala documental", () => {
+  it("só tem duas camadas: instrução e humor; a camada que repetia dados do registro não existe mais", () => {
+    expect([...new Set(CATALOGO.map((item) => item.camada))].sort()).toEqual(["humor", "instrucao"]);
+    for (const item of CATALOGO) {
+      expect(item.texto, item.id).not.toMatch(/\{[a-zA-Z]+\}/);
+      expect(item.texto, item.id).not.toMatch(/\b(?:1[89]|20)\d{2}\b/);
+    }
+  });
+
+  it("toda sala tem instrução própria em todo momento, e humor suficiente para a rotação não repetir na hora", () => {
     for (const evento of ESCRIVAO_EVENTS) {
-      for (const sala of ROOM_IDS) expect(candidatas(CATALOGO, sala, evento, "instrucao").some((fala) => fala.sala === sala), `${evento} ${sala}`).toBe(true);
-      expect(CATALOGO.filter((fala) => fala.evento === evento && fala.sala === "todas" && fala.camada === "humor").length, evento).toBeGreaterThanOrEqual(MINIMO_DE_HUMOR);
-      if (evento !== "erro") expect(CATALOGO.some((fala) => fala.evento === evento && fala.camada === "documental"), evento).toBe(true);
+      for (const sala of ROOM_IDS) {
+        expect(candidatas(CATALOGO, sala, evento, "instrucao").length, `${evento} ${sala}`).toBeGreaterThan(0);
+        expect(candidatas(CATALOGO, sala, evento, "humor").length, `${evento} ${sala}`).toBeGreaterThanOrEqual(MINIMO_DE_HUMOR);
+      }
     }
   });
 
-  it("a validação recusa fala que cita pessoa, partido, data, juízo ou fala atribuída, e catálogo sem reserva", () => {
-    const base: Fala = { id: "x", sala: "todas", evento: "entrada", camada: "humor", texto: "Uma fala qualquer sobre carimbos." };
-    const problemasDe = (texto: string) => validateCatalog([...CATALOGO, { ...base, texto }]);
-    expect(problemasDe("O Lula passou por aqui.").join(" ")).toMatch(/pessoa, partido ou lado/);
-    expect(problemasDe("Isso foi em 1989, eu lembro.").join(" ")).toMatch(/ano ou data/);
-    expect(problemasDe("Ele disse que sim.").join(" ")).toMatch(/atribui fala/);
-    expect(problemasDe("O culpado era o grampeador.").join(" ")).toMatch(/juízo/);
-    expect(problemasDe("Uma pausa — e seguimos.").join(" ")).toMatch(/travessão/);
-    expect(problemasDe("Veja {titulo}.").join(" ")).toMatch(/só a camada documental/);
-    expect(validateCatalog([...CATALOGO, { ...base, id: "entrada-todas-humor-1" }]).join(" ")).toMatch(/repetido/);
-    expect(validateCatalog([...CATALOGO, { ...base, camada: "documental", texto: "Sem campo nenhum." }]).join(" ")).toMatch(/sem campo/);
-    expect(validateCatalog([...CATALOGO, { ...base, camada: "documental", texto: "Campo {inventado}." }]).join(" ")).toMatch(/campo desconhecido/);
-    // Sem o reserva de um evento, a validação aponta o evento.
-    expect(validateCatalog(CATALOGO.filter((fala) => !(fala.evento === "erro" && fala.sala === "todas"))).join(" ")).toMatch(/evento erro: sem instrução de reserva/);
+  it("a instrução é curta, e o humor é igual para os dois personagens: o catálogo não tem fala por pessoa", () => {
+    for (const item of CATALOGO.filter((outro) => outro.camada === "instrucao")) expect(item.texto.length, item.id).toBeLessThanOrEqual(INSTRUCAO_MAXIMA);
+    for (const item of CATALOGO) {
+      expect(Object.keys(item).sort(), item.id).toEqual(["camada", "evento", "id", "sala", "texto"]);
+      expect(item.texto, item.id).not.toMatch(/\b(lula|bolsonaro|fl[aá]vio)\b/i);
+    }
+    expect(ESCRIVAO_NOME).toBe("Escrivão");
+    expect(ESCRIVAO_ROTULO).toContain("fictício");
   });
 
-  it("nenhuma fala de humor nem de instrução escreve ano, e as documentais só têm campos conhecidos", () => {
-    for (const fala of CATALOGO) {
-      if (fala.camada !== "documental") expect(fala.texto, fala.id).not.toMatch(/\b(?:1[89]|20)\d{2}\b/);
-      else expect(fala.texto, fala.id).toMatch(/\{[a-zA-Z]+\}/);
-    }
+  it("a validação acusa o que o jogo não promete: pessoa, partido, fala atribuída, juízo, data, campo a preencher e instrução longa", () => {
+    const base = CATALOGO.filter((item) => item.sala === "todas");
+    const com = (texto: string, camada: Fala["camada"] = "humor") => validateCatalog([...CATALOGO, fala("teste-1", "todas", "entrada", camada, texto)]).filter((linha) => linha.startsWith("fala teste-1"));
+    expect(com("O PT deixou uma pasta aqui.")).toEqual(["fala teste-1: cita pessoa, partido ou lado; o Escrivão não fala das pessoas retratadas."]);
+    expect(com("Ele disse que vinha buscar a pasta.")).toEqual(["fala teste-1: atribui fala a alguém."]);
+    expect(com("Esta é a melhor pasta do arquivo.")).toEqual(["fala teste-1: traz juízo de valor."]);
+    // Outra pessoa, mesmo inventada, fica fora do humor: conforme a fase, a piada viraria recado sobre uma das pessoas retratadas.
+    expect(com("Foi a estagiária que nunca existiu.")).toEqual(["fala teste-1: piada com outra pessoa; o humor é sobre a papelada e sobre o próprio Escrivão."]);
+    expect(com("O funcionário do mês é o carimbo.")).toEqual(["fala teste-1: piada com outra pessoa; o humor é sobre a papelada e sobre o próprio Escrivão."]);
+    // As duas trilhas começam pelo nascimento, e em uma delas os documentos divergem sobre o dia: piada de aniversário, ali, vira comentário.
+    expect(com("Eu já comemorei um aniversário no mês errado.")).toEqual(["fala teste-1: piada com nascimento ou aniversário; conforme a fase, vira comentário sobre a pessoa retratada."]);
+    expect(com("Nasci para arquivar, e arquivo mal.")).toEqual(["fala teste-1: piada com nascimento ou aniversário; conforme a fase, vira comentário sobre a pessoa retratada."]);
+    expect(com("O aniversariante do arquivo é o grampeador.")).toEqual(["fala teste-1: piada com nascimento ou aniversário; conforme a fase, vira comentário sobre a pessoa retratada."]);
+    expect(com("Esta pasta é de 1989.")).toEqual(["fala teste-1: ano ou data; o Escrivão não escreve fato."]);
+    expect(com("Abra {titulo}.")).toEqual(["fala teste-1: campo a preencher; o Escrivão não repete dado do registro."]);
+    expect(com("Uma pasta — e um carimbo.")).toEqual(["fala teste-1: travessão ou meia-risca; o projeto não os usa."]);
+    expect(com("x".repeat(INSTRUCAO_MAXIMA + 1), "instrucao")).toEqual([`fala teste-1: instrução longa demais (mais de ${INSTRUCAO_MAXIMA} caracteres).`]);
+    expect(validateCatalog([...base, base[0]!])).toContain(`fala ${base[0]!.id}: identificador repetido.`);
+    // Sem o reserva de um momento, a validação diz qual falta.
+    expect(validateCatalog(CATALOGO.filter((item) => !(item.evento === "erro" && item.sala === "todas" && item.camada === "instrucao")))).toContain('evento erro: sem instrução de reserva (sala "todas").');
   });
 });
 
 describe("seleção das falas", () => {
-  it("devolve a instrução sempre, a documental só com os dados e o humor só com a preferência ligada, nessa ordem", () => {
-    const semDados = selectLines(momento());
-    expect(semDados.map((fala) => fala.camada)).toEqual(["instrucao", "humor"]);
-    const comDados = selectLines(momento({ dados: { capitulo: "Teste", registros: "3 registros", periodo: "2000 a 2001" } }));
-    expect(comDados.map((fala) => fala.camada)).toEqual(["instrucao", "documental", "humor"]);
-    expect(comDados[1]!.texto).toContain("3 registros");
-    const semHumor = selectLines(momento({ humor: false, dados: { capitulo: "Teste", registros: "3 registros", periodo: "2000 a 2001" } }));
-    expect(semHumor.map((fala) => fala.camada)).toEqual(["instrucao", "documental"]);
-    expect(semHumor.some((fala) => fala.camada === "humor")).toBe(false);
+  it("cada momento tem uma instrução e, no máximo, uma fala de humor, nessa ordem", () => {
+    for (const sala of ROOM_IDS) {
+      for (const evento of ESCRIVAO_EVENTS) {
+        for (let vez = 0; vez < 12; vez += 1) {
+          const ditas = selectLines({ sala, evento, humor: true, vez });
+          expect(ditas.map((item) => item.camada), `${sala} ${evento} ${vez}`).toEqual(["instrucao", "humor"]);
+          expect(selectLines({ sala, evento, humor: false, vez }).map((item) => item.camada)).toEqual(["instrucao"]);
+        }
+      }
+    }
   });
 
-  it("prefere as falas da sala e cai no reserva quando a sala não tem a sua", () => {
-    const historico = selectLines(momento({ sala: "historico" }));
-    expect(historico[0]!.id).toMatch(/^entrada-historico-instrucao/);
-    const economia = selectLines(momento({ sala: "economia", evento: "descoberta" }));
-    expect(economia[0]!.id).toMatch(/^descoberta-economia-instrucao/);
-    // Uma sala sem humor próprio em um evento usa o reserva.
-    const soReserva: Fala[] = [
-      { id: "i", sala: "todas", evento: "erro", camada: "instrucao", texto: "Releia." },
-      { id: "h1", sala: "todas", evento: "erro", camada: "humor", texto: "Um." },
-      { id: "h2", sala: "todas", evento: "erro", camada: "humor", texto: "Dois." },
+  it("não há sorteio: o mesmo momento dá sempre as mesmas falas", () => {
+    const momento = { sala: "historico", evento: "entrada", humor: true, vez: 4 } as const;
+    expect(selectLines(momento)).toEqual(selectLines({ ...momento }));
+    expect(selectLines(momento)).toEqual(selectLines(momento, CATALOGO));
+  });
+
+  it("o humor roda pela vez: fases seguidas não repetem a mesma fala, e a rotação volta ao começo", () => {
+    const humorDa = (vez: number) => selectLines({ sala: "historico", evento: "entrada", humor: true, vez })[1]!.id;
+    const quantas = candidatas(CATALOGO, "historico", "entrada", "humor").length;
+    expect(humorDa(0)).not.toBe(humorDa(1));
+    expect(humorDa(1)).not.toBe(humorDa(2));
+    expect(humorDa(quantas)).toBe(humorDa(0));
+    expect(daVez([], 3)).toBeNull();
+    // Vez negativa ou quebrada não sai da lista.
+    const opcoes = candidatas(CATALOGO, "historico", "erro", "humor");
+    expect(opcoes).toContain(daVez(opcoes, -1));
+    expect(opcoes).toContain(daVez(opcoes, 2.7));
+  });
+
+  it("em contexto sensível não há humor, mesmo com a preferência ligada, e a instrução é a mesma", () => {
+    for (const sala of ROOM_IDS) {
+      for (const evento of ESCRIVAO_EVENTS) {
+        const comum = selectLines({ sala, evento, humor: true, vez: 2 });
+        const sensivel = selectLines({ sala, evento, humor: true, vez: 2, sensivel: true });
+        expect(sensivel.map((item) => item.camada), `${sala} ${evento}`).toEqual(["instrucao"]);
+        expect(sensivel[0]).toEqual(comum[0]);
+      }
+    }
+  });
+
+  it("a sala usa as falas dela; sem falas próprias, vale o reserva de todas as salas", () => {
+    const catalogo = [
+      fala("a", "todas", "entrada", "instrucao", "Instrução de reserva."),
+      fala("b", "todas", "entrada", "humor", "Humor de reserva."),
+      fala("c", "economia", "entrada", "instrucao", "Instrução da sala."),
     ];
-    expect(selectLines(momento({ sala: "economia", evento: "erro" }), soReserva).map((fala) => fala.id)).toEqual(["i", "h1"]);
+    expect(selectLines({ sala: "economia", evento: "entrada", humor: true, vez: 0 }, catalogo).map((item) => item.id)).toEqual(["c", "b"]);
+    expect(selectLines({ sala: "historico", evento: "entrada", humor: true, vez: 0 }, catalogo).map((item) => item.id)).toEqual(["a", "b"]);
+    expect(selectLines({ sala: "historico", evento: "erro", humor: true, vez: 0 }, catalogo)).toEqual([]);
   });
 
-  it("roda as falas pelo histórico: a não dita vem antes, depois a dita há mais tempo; o mesmo histórico dá a mesma fala", () => {
-    const humorDe = (vistas: string[]) => selectLines(momento({ sala: "historico", evento: "erro", vistas })).find((fala) => fala.camada === "humor")!.id;
-    const primeira = humorDe([]);
-    const segunda = humorDe([primeira]);
-    const terceira = humorDe([primeira, segunda]);
-    expect(new Set([primeira, segunda, terceira]).size).toBe(3);
-    // Com as três ditas, volta a primeira, que é a dita há mais tempo.
-    expect(humorDe([primeira, segunda, terceira])).toBe(primeira);
-    expect(humorDe([primeira, segunda, terceira])).toBe(humorDe([primeira, segunda, terceira]));
-    // O histórico cresce com o que foi dito, na ordem.
-    const ditas = selectLines(momento({ evento: "erro" }));
-    expect(registrarDitas(["antes"], ditas)).toEqual(["antes", ...ditas.map((fala) => fala.id)]);
-  });
-
-  it("menosRecente e preencher são previsíveis", () => {
-    const falas: Fala[] = [
-      { id: "a", sala: "todas", evento: "ajuda", camada: "humor", texto: "A" },
-      { id: "b", sala: "todas", evento: "ajuda", camada: "humor", texto: "B" },
-    ];
-    expect(menosRecente(falas, [])!.id).toBe("a");
-    expect(menosRecente(falas, ["a"])!.id).toBe("b");
-    expect(menosRecente(falas, ["a", "b"])!.id).toBe("a");
-    expect(menosRecente(falas, ["b", "a"])!.id).toBe("b");
-    expect(menosRecente([], [])).toBeNull();
-    expect(preencher("Registro de {data}: {titulo}.", { data: "hoje", titulo: "X" })).toBe("Registro de hoje: X.");
-    expect(preencher("Registro de {data}: {titulo}.", { data: "hoje" })).toBeNull();
-  });
-
-  it("uma fala documental que pede campo ausente fica de fora, e outra que cabe entra", () => {
-    const ditas = selectLines(momento({ sala: "economia", evento: "descoberta", dados: { data: "1º de janeiro de 2000", cargo: "Cargo", instituicao: "Casa", tipoDoAto: "Decreto" } }));
-    const documental = ditas.find((fala) => fala.camada === "documental")!;
-    expect(documental.id).toBe("descoberta-economia-documental-2");
-    expect(documental.texto).toContain("Decreto");
+  it("desligar o humor tira a fala de humor na hora, inclusive de falas já escolhidas", () => {
+    const ditas = selectLines({ sala: "economia", evento: "conclusao", humor: true, vez: 1 });
+    expect(falasVisiveis(ditas, true)).toEqual(ditas);
+    expect(falasVisiveis(ditas, false).map((item) => item.camada)).toEqual(["instrucao"]);
   });
 });
 
-describe("histórico das falas e exibição com a preferência", () => {
-  it("o histórico não cresce sem limite: guarda as últimas falas, e as novas continuam entrando no fim", () => {
-    let vistas: string[] = [];
-    for (let rodada = 0; rodada < 200; rodada += 1) vistas = registrarDitas(vistas, selectLines(momento({ vistas })));
-    expect(vistas.length).toBe(HISTORICO_MAXIMO);
-    const proximas = selectLines(momento({ vistas }));
-    const depois = registrarDitas(vistas, proximas);
-    expect(depois.length).toBe(HISTORICO_MAXIMO);
-    expect(depois.slice(-proximas.length)).toEqual(proximas.map((fala) => fala.id));
-    // Abaixo do limite, nada é descartado.
-    expect(registrarDitas(["a", "b"], proximas)).toEqual(["a", "b", ...proximas.map((fala) => fala.id)]);
-  });
+describe("o Escrivão nas fases publicadas", () => {
+  const data = buildAtlasData(readSources(resolvePaths())).data!;
 
-  it("a exibição tira o humor de falas já escolhidas quando a preferência desliga, e mantém a instrução e a documental", () => {
-    const falas = selectLines(momento({ dados: { capitulo: "Teste", registros: "3 registros", periodo: "2000 a 2001" } }));
-    expect(falas.map((fala) => fala.camada)).toEqual(["instrucao", "documental", "humor"]);
-    expect(falasVisiveis(falas, false).map((fala) => fala.camada)).toEqual(["instrucao", "documental"]);
-    expect(falasVisiveis(falas, true)).toEqual(falas);
-    expect(falasVisiveis(falas, true)).not.toBe(falas);
-    expect(falasVisiveis([], false)).toEqual([]);
-  });
-});
-
-describe("falas guardadas", () => {
-  it("só aparecem para o registro ou o capítulo de que foram ditas", () => {
-    const falas = selectLines(momento({ evento: "descoberta", dados: { titulo: "Registro A", data: "1 de janeiro de 2000", fontes: "1 fonte" } }));
-    const guardadas = { de: "registro-a", falas };
-    expect(falasDe(guardadas, "registro-a")).toBe(falas);
-    // Outro registro aberto (uma releitura, por exemplo) não herda a fala, com o título e a data do primeiro.
-    expect(falasDe(guardadas, "registro-b")).toEqual([]);
-    expect(falasDe(guardadas, null)).toEqual([]);
-    expect(falasDe(null, "registro-a")).toEqual([]);
+  it("as fases de processo judicial, prisão e violência são de contexto sensível para os dois personagens, e nelas não sai humor", () => {
+    const sensiveis: string[] = [];
+    for (const perfil of PROFILES) {
+      for (const sala of ROOM_IDS) {
+        for (const fase of buildGameContent(data, perfil.slug, sala)!.fases) {
+          if (!fase.sensivel) continue;
+          sensiveis.push(fase.id);
+          for (const evento of ["entrada", "erro", "conclusao"] as const) {
+            expect(selectLines({ sala, evento, humor: true, vez: fase.numero - 1, sensivel: fase.sensivel }).some((item) => item.camada === "humor"), `${fase.id} ${evento}`).toBe(false);
+          }
+        }
+      }
+    }
+    expect(sensiveis.sort()).toEqual(["flavio-bolsonaro-processos", "lula-partido-e-constituinte", "lula-processos", "lula-retorno", "lula-seguranca-publica"]);
   });
 });

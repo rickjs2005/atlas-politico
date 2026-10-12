@@ -22,14 +22,14 @@ export type Recorte = Pick<AtlasState, "periodo" | "categorias">;
 export const ORIGIN_PARAM = "origem";
 export const ORIGIN_COMPARISON = "comparar";
 export const ORIGIN_GAME = "jogo";
-/** Com `origem=jogo`, o personagem cujo capítulo estava aberto. */
+/** Com `origem=jogo`, o personagem cuja fase estava aberta. */
 export const GAME_PERSON_PARAM = "personagem";
 
 const PERSON_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /**
- * A entrada do jogo, o jogo de um personagem (a sala Histórico, a trajetória
- * em capítulos) ou uma sala temática dele.
+ * A entrada do jogo, o jogo de um personagem (a trajetória, em fases) ou um
+ * aprofundamento por assunto dele.
  */
 export function gameHref(personagem?: string, sala?: string): string {
   if (personagem === undefined) return "/jogo/";
@@ -43,7 +43,7 @@ export function decisionHref(pessoaSlug: string, decisaoId: string): string {
 
 /**
  * A página de um acontecimento aberta de dentro do jogo. O endereço diz de
- * onde a pessoa veio, para a página oferecer a volta ao capítulo. O progresso
+ * onde a pessoa veio, para a página oferecer a volta à trajetória. O progresso
  * do jogo não vai no endereço: fica guardado no navegador.
  */
 export function eventHrefFromGame(slug: string, personagem: string): string {

@@ -1,7 +1,7 @@
 "use client";
 
-// Prévia do mundo de um capítulo: a cena inteira, com o personagem parado no
-// início. Serve à entrada do jogo. Só no navegador.
+// Prévia do cenário de uma fase: a cena inteira, com o personagem parado no
+// início e a pasta do marco em destaque. Serve à entrada do jogo. Só no navegador.
 //
 // O desenho só anima enquanto a prévia está na tela; fora dela, ou com
 // movimento reduzido, fica um quadro parado, refeito quando o tamanho muda.
@@ -9,14 +9,14 @@
 import { useEffect, useRef } from "react";
 
 import { getScene } from "@/lib/game/scenes";
-import type { ChapterSpec, PersonagemSlug } from "@/lib/game/types";
+import type { Epoca, PersonagemSlug, SceneId } from "@/lib/game/types";
 import { sceneBounds, zoomToFit } from "@/lib/game/world/camera";
-import { initialPlayer } from "@/lib/game/world/movement";
+import { initialPlayer } from "@/lib/game/world/path";
 
 import { renderScene } from "./engine/render";
 import { useMotion } from "./hooks";
 
-export function WorldPreview({ capitulo, personagem }: { capitulo: ChapterSpec; personagem: PersonagemSlug }) {
+export function WorldPreview({ cena, epoca, personagem }: { cena: SceneId; epoca: Epoca; personagem: PersonagemSlug }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const movimento = useMotion();
 
@@ -25,7 +25,8 @@ export function WorldPreview({ capitulo, personagem }: { capitulo: ChapterSpec; 
     if (canvas === null) return;
     const ctx = canvas.getContext("2d");
     if (ctx === null) return;
-    const scene = getScene(capitulo.cena);
+    const scene = getScene(cena);
+    const marco = scene.registros[0];
     const player = initialPlayer(scene);
     const caixa = sceneBounds(scene);
     const inicio = performance.now();
@@ -49,13 +50,11 @@ export function WorldPreview({ capitulo, personagem }: { capitulo: ChapterSpec; 
         ctx,
         {
           scene,
-          chapter: capitulo,
           personagem,
+          epoca,
           player,
-          recolhidos: [],
+          pastas: marco === undefined ? [] : [{ ...marco, destaque: true }],
           abertura: 0,
-          alcance: null,
-          efeitos: [],
           camera: { cx: (caixa.minX + caixa.maxX) / 2, cy: (caixa.minY + caixa.maxY) / 2, zoom: zoomToFit(scene, viewport) },
           tempo: movimento ? (agora - inicio) / 1000 : 0,
           movimento,
@@ -86,7 +85,7 @@ export function WorldPreview({ capitulo, personagem }: { capitulo: ChapterSpec; 
       visivel.disconnect();
       cancelAnimationFrame(pedido);
     };
-  }, [capitulo, personagem, movimento]);
+  }, [cena, epoca, personagem, movimento]);
 
-  return <canvas ref={ref} aria-hidden="true" className="block h-full w-full" data-previa-mundo={capitulo.cena} />;
+  return <canvas ref={ref} aria-hidden="true" className="block h-full w-full" data-previa-mundo={cena} />;
 }

@@ -15,11 +15,11 @@ export const tribunalB: SceneSpec = {
   mapa: [
     "############",
     "#..ooooo..o#",
-    "#o1......2.#",
+    "#o1........#",
     "#...o...o..#",
     "#....S.....E",
     "#G.oo..oo..#",
-    "#3........4#",
+    "#3....2...4#",
     "#.5..o..6..#",
     "############",
   ],
@@ -57,10 +57,11 @@ export const tribunalB: SceneSpec = {
   spawn: { x: 5, y: 4 },
   guia: { x: 1, y: 5 },
   saida: { x: 11, y: 4, lado: "leste" },
-  // Nenhum fica ao norte, a oeste ou na diagonal de um objeto alto, que o esconderia, nem ao lado da porta.
+  // Nenhum fica ao norte, a oeste ou na diagonal de um objeto alto, que o esconderia, nem ao lado da porta ou atrás dela:
+  // o canto nordeste fica na coluna do portal, e por isso o segundo vai para o meio da frente da sala.
   registros: [
     { x: 2, y: 2 },
-    { x: 9, y: 2 },
+    { x: 6, y: 6 },
     { x: 1, y: 6 },
     { x: 10, y: 6 },
     { x: 2, y: 7 },

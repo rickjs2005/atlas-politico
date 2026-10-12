@@ -1,14 +1,15 @@
-// A grade de uma cena: o que bloqueia a passagem, onde estão o início, o guia,
-// os registros e a saída, e se tudo é alcançável.
+// A grade de uma cena: por onde o boneco passa e onde estão o início, o guia,
+// as pastas e a porta.
 //
 // Legenda do mapa (`SceneSpec.mapa`), um caractere por célula:
 //   .   chão livre
 //   #   parede
 //   o   elemento de cenário que bloqueia (a arte escolhe o que é)
 //   S   início do personagem
-//   G   guia (bloqueia; a interação é pela célula vizinha)
-//   E   saída: só passa quando está aberta (a tarefa cumprida e todos os registros recolhidos)
-//   1-9 registro, na ordem de `ChapterSpec.eventIds`
+//   G   guia (bloqueia)
+//   E   porta: ninguém a atravessa; fecha a cena e abre quando a fase termina
+//   1-9 pasta, na ordem de `SceneSpec.registros`: a primeira é a do marco. O
+//       boneco para ao lado dela, e não em cima
 
 import type { SceneSpec } from "../types";
 
@@ -37,12 +38,19 @@ export function isPropCell(scene: SceneSpec, x: number, y: number): boolean {
   return scene.props.some((prop) => prop.x === x && prop.y === y && prop.tipo !== "decoracao");
 }
 
-/** A célula bloqueia o personagem? A saída bloqueia enquanto está fechada. */
-export function isBlocked(scene: SceneSpec, x: number, y: number, saidaAberta: boolean): boolean {
-  const celula = cellAt(scene, Math.floor(x), Math.floor(y));
-  if (celula === CELL.parede || celula === CELL.guia) return true;
-  if (celula === CELL.saida) return !saidaAberta;
-  return isPropCell(scene, Math.floor(x), Math.floor(y));
+/** A célula tem uma pasta, pelo mapa. */
+export function isMarkerCell(scene: SceneSpec, x: number, y: number): boolean {
+  const celula = cellAt(scene, x, y);
+  return celula >= "1" && celula <= "9";
+}
+
+/** A célula bloqueia o boneco? Parede, guia, porta, móvel e pasta bloqueiam. */
+export function isBlocked(scene: SceneSpec, x: number, y: number): boolean {
+  const cx = Math.floor(x);
+  const cy = Math.floor(y);
+  const celula = cellAt(scene, cx, cy);
+  if (celula === CELL.parede || celula === CELL.guia || celula === CELL.saida) return true;
+  return isMarkerCell(scene, cx, cy) || isPropCell(scene, cx, cy);
 }
 
 /** Lê do mapa as posições marcadas, para conferir que batem com a cena. */
@@ -68,22 +76,16 @@ export function readMarkers(scene: SceneSpec): {
   return { spawn, guia, saida, registros: registros.filter((item): item is Cell => item !== undefined) };
 }
 
-/** Células alcançáveis a pé a partir de `origem`, sem passar pela saída fechada. */
-export function reachable(scene: SceneSpec, origem: Cell, saidaAberta = false): Set<string> {
+/** Células alcançáveis a pé a partir de `origem`. */
+export function reachable(scene: SceneSpec, origem: Cell): Set<string> {
   const chave = (c: Cell) => `${c.x},${c.y}`;
   const vistos = new Set<string>([chave(origem)]);
   const fila: Cell[] = [origem];
   while (fila.length > 0) {
     const atual = fila.shift()!;
-    for (const [dx, dy] of [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ] as const) {
-      const proximo = { x: atual.x + dx, y: atual.y + dy };
+    for (const proximo of neighbours(atual)) {
       if (vistos.has(chave(proximo))) continue;
-      if (isBlocked(scene, proximo.x, proximo.y, saidaAberta)) continue;
+      if (isBlocked(scene, proximo.x, proximo.y)) continue;
       vistos.add(chave(proximo));
       fila.push(proximo);
     }
@@ -91,7 +93,7 @@ export function reachable(scene: SceneSpec, origem: Cell, saidaAberta = false): 
   return vistos;
 }
 
-/** As quatro células vizinhas (ortogonais) de uma célula. */
+/** As quatro células vizinhas (ortogonais) de uma célula, sempre na mesma ordem. */
 export function neighbours(cell: Cell): Cell[] {
   return [
     { x: cell.x + 1, y: cell.y },

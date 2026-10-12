@@ -10,11 +10,22 @@ import Link from "next/link";
 
 import { CategoryLabel } from "@/components/Category";
 import { ReviewNote } from "@/components/ReviewNote";
+import { PATH_LINK } from "@/components/touch";
 import { describePrecision, formatDate, yearOf } from "@/lib/domain/dates";
+import { PROPOSAL_NOTICE } from "@/lib/data/proposals";
+import { TEMA_LABELS } from "@/lib/domain/decisions";
+import { TIPO_DE_FATO_LABELS } from "@/lib/domain/game";
 import { JUDICIAL_KIND_LABEL, JUDICIAL_NOTICE, judicialOf, type RelatedRecord } from "@/lib/game/judicial";
-import { placeLabel } from "@/lib/game/mission";
-import type { GameRecord } from "@/lib/game/types";
+import type { GameConcept, GameFact, GameLocation, GamePosition, GameProposal, GameRecord } from "@/lib/game/types";
 import { eventHrefFromGame } from "@/lib/state/links";
+
+import { SourceList, sourceCount } from "./SourceList";
+
+/** O rótulo de um lugar documentado, ou da abrangência, como a ficha diz. */
+export function placeLabel(localizacao: GameLocation): string {
+  if (localizacao.tipo === "lugares") return localizacao.lugares.join(" e ");
+  return localizacao.tipo === "nacional" ? "Abrangência nacional" : "Lugar não documentado";
+}
 
 interface RecordCardProps {
   registro: GameRecord;
@@ -45,7 +56,7 @@ export function RecordCard({ registro, personagem, detalhe, relacionados = [], o
         <h3 className="font-serif text-xl font-medium leading-snug">{registro.titulo}</h3>
         <p className="text-xs text-ink-soft">
           <CategoryLabel categoria={registro.categoria} />
-          <span data-lugar-documentado={registro.localizacao.tipo}> · {placeLabel(registro)}</span>
+          <span data-lugar-documentado={registro.localizacao.tipo}> · {placeLabel(registro.localizacao)}</span>
         </p>
       </div>
       {detalhe === "completo" && (
@@ -82,30 +93,8 @@ export function RecordCard({ registro, personagem, detalhe, relacionados = [], o
             </section>
           )}
           <section aria-label={`Fontes do registro: ${registro.fontes.length}`} className="space-y-1.5 border-t border-line pt-3">
-            <h4 className="eyebrow text-ink-soft">
-              {registro.fontes.length === 1 ? "1 fonte" : `${registro.fontes.length} fontes`}
-            </h4>
-            <ol className="space-y-1.5 text-sm">
-              {registro.fontes.map((fonte) => (
-                <li key={`${fonte.id}:${fonte.localizacao}`} data-fonte={fonte.id}>
-                  <a href={fonte.url} target="_blank" rel="noreferrer" className="underline decoration-line-strong hover:decoration-ink">
-                    {fonte.titulo}
-                    <span className="sr-only"> (abre em nova aba)</span>
-                  </a>
-                  <span className="block text-xs text-ink-soft" data-documento>
-                    {fonte.autoria} ·{" "}
-                    {fonte.dataDocumento.tipo === "data" ? `documento de ${formatDate(fonte.dataDocumento)}` : "data do documento desconhecida"} · acesso em{" "}
-                    {formatDate({ valor: fonte.acessadoEm, precisao: "dia" })}
-                  </span>
-                  <span className="block text-xs text-ink-soft" data-onde>
-                    Onde: {fonte.localizacao}
-                  </span>
-                  <span className="block text-xs text-ink-soft" data-evidencia>
-                    Sustenta: {fonte.evidencia}
-                  </span>
-                </li>
-              ))}
-            </ol>
+            <h4 className="eyebrow text-ink-soft">{sourceCount(registro.fontes)}</h4>
+            <SourceList fontes={registro.fontes} />
           </section>
           <div data-revisao>
             <ReviewNote editorial={registro.editorial} />
@@ -114,7 +103,7 @@ export function RecordCard({ registro, personagem, detalhe, relacionados = [], o
             <Link
               href={eventHrefFromGame(registro.slug, personagem)}
               prefetch={false}
-              className="font-medium underline decoration-line-strong hover:decoration-ink"
+              className={PATH_LINK}
               data-ficha={registro.slug}
               onClick={onOpenRecordPage}
             >
@@ -125,5 +114,110 @@ export function RecordCard({ registro, personagem, detalhe, relacionados = [], o
         </>
       )}
     </article>
+  );
+}
+
+/** Um fato biográfico: o que o documento diz da origem, da família, da formação ou do trabalho, com a divergência entre documentos, quando há. */
+export function FactCard({ fato }: { fato: GameFact }) {
+  // Com divergência entre documentos, a nota de precisão diria o contrário do que eles dizem: vale a divergência, logo abaixo.
+  const precisao = fato.data === null || fato.divergencia !== null ? null : describePrecision(fato.data);
+  return (
+    <article className="space-y-3" data-fato-cartao={fato.id}>
+      <div className="space-y-1">
+        <p className="numerals text-lg font-semibold leading-none tracking-tight">
+          {fato.data === null ? <span data-sem-data>Sem data documentada</span> : <time dateTime={fato.data.valor}>{formatDate(fato.data)}</time>}
+        </p>
+        {precisao !== null && <p className="text-xs italic text-ink-soft">{precisao}</p>}
+        <h3 className="font-serif text-xl font-medium leading-snug">{fato.titulo}</h3>
+        <p className="text-xs text-ink-soft">{TIPO_DE_FATO_LABELS[fato.tipo]} · registro biográfico</p>
+      </div>
+      <p className="reading text-base leading-relaxed">{fato.texto}</p>
+      {fato.divergencia !== null && (
+        <p className="border-l-2 border-ink-faint pl-3 text-sm" data-divergencia>
+          <span className="font-medium">Os documentos divergem. </span>
+          {fato.divergencia}
+        </p>
+      )}
+      <section aria-label={`Fontes do registro: ${fato.fontes.length}`} className="space-y-1.5 border-t border-line pt-3">
+        <h4 className="eyebrow text-ink-soft">{sourceCount(fato.fontes)}</h4>
+        <SourceList fontes={fato.fontes} />
+      </section>
+      <div data-revisao>
+        <ReviewNote editorial={fato.editorial} />
+      </div>
+    </article>
+  );
+}
+
+/** Um cargo, uma função ou uma filiação partidária, como o atlas os registra. */
+export function PositionCard({ posicao }: { posicao: GamePosition }) {
+  return (
+    <article className="space-y-3" data-posicao-cartao={posicao.id}>
+      <div className="space-y-1">
+        <p className="numerals text-lg font-semibold leading-none tracking-tight">{posicao.periodo}</p>
+        <h3 className="font-serif text-xl font-medium leading-snug">{posicao.titulo}</h3>
+        <p className="text-xs text-ink-soft">
+          {posicao.detalhe} · {posicao.natureza === "mandato" ? "cargo ou função" : "filiação partidária"}
+        </p>
+      </div>
+      <section aria-label={`Fontes do registro: ${posicao.fontes.length}`} className="space-y-1.5 border-t border-line pt-3">
+        <h4 className="eyebrow text-ink-soft">{sourceCount(posicao.fontes)}</h4>
+        <SourceList fontes={posicao.fontes} />
+      </section>
+      <div data-revisao>
+        <ReviewNote editorial={posicao.editorial} />
+      </div>
+    </article>
+  );
+}
+
+/** Uma proposta do documento registrado no TSE: a frase, a área, a ressalva e a página do documento. */
+export function ProposalCard({ proposta }: { proposta: GameProposal }) {
+  return (
+    <article className="space-y-3" data-proposta-cartao={proposta.id}>
+      <div className="space-y-1">
+        <p className="numerals text-lg font-semibold leading-none tracking-tight">Eleição de {proposta.eleicao}</p>
+        <h3 className="font-serif text-xl font-medium leading-snug">Proposta registrada no TSE · {TEMA_LABELS[proposta.tema]}</h3>
+      </div>
+      <p className="reading text-base leading-relaxed" data-proposta-texto>
+        {proposta.texto}
+      </p>
+      {proposta.ressalva !== null && (
+        <p className="border-l-2 border-ink-faint pl-3 text-sm" data-ressalva>
+          {proposta.ressalva}
+        </p>
+      )}
+      <p className="text-xs text-ink-soft" data-aviso-de-proposta>
+        {PROPOSAL_NOTICE}
+      </p>
+      <section aria-label={`Fontes do registro: ${proposta.fontes.length}`} className="space-y-1.5 border-t border-line pt-3">
+        <h4 className="eyebrow text-ink-soft">{sourceCount(proposta.fontes)}</h4>
+        <SourceList fontes={proposta.fontes} />
+      </section>
+      <div data-revisao>
+        <ReviewNote editorial={proposta.editorial} />
+      </div>
+    </article>
+  );
+}
+
+/** A definição de um termo, para abrir no lugar em que ele aparece: o que é, o que a definição simplifica e o texto oficial que a sustenta. */
+export function ConceptNote({ conceito }: { conceito: GameConcept }) {
+  return (
+    <details className="border border-line bg-paper text-sm" data-conceito={conceito.id}>
+      <summary className="flex min-h-11 cursor-pointer items-center px-3 py-2 font-medium">O que é: {conceito.termo}</summary>
+      <div className="space-y-2 border-t border-line px-3 py-3">
+        <p className="reading text-base leading-relaxed" data-definicao>
+          {conceito.definicao}
+        </p>
+        {conceito.simplificacao !== null && (
+          <p className="text-xs text-ink-soft" data-simplificacao>
+            O que esta definição simplifica: {conceito.simplificacao}
+          </p>
+        )}
+        <p className="eyebrow text-ink-soft">De onde vem a definição</p>
+        <SourceList fontes={conceito.fontes} />
+      </div>
+    </details>
   );
 }

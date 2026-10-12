@@ -6,6 +6,10 @@ import { readFileSync } from "node:fs";
 
 import { expect, test, type Page } from "@playwright/test";
 
+import { listDecisionViews, type DecisionView } from "@/lib/data/decisions";
+import { COLECOES_FACTUAIS_DO_CONJUNTO } from "@/lib/domain/integrity";
+
+import { data } from "./jogo-apoio";
 import { MAP_PACKAGE } from "./map-package";
 
 interface Citacao {
@@ -51,6 +55,12 @@ const conjunto = JSON.parse(readFileSync("generated/dados/conjunto.json", "utf8"
   atosExecutivos: { id: string; atribuicao: { pessoaId: string }; dispositivosAlvo?: string[]; fontes: Citacao[] }[];
   coberturaPolitica: { fontes: Citacao[] }[];
   identidadesInstitucionais: { fontes: Citacao[] }[];
+  // O que a edição 0.3.0 trouxe: a atuação legislativa e o conteúdo do jogo.
+  atuacoesLegislativas: { id: string; fontes: Citacao[] }[];
+  propostasEleitorais: { id: string; fontes: Citacao[] }[];
+  fatosBiograficos: { id: string; fontes: Citacao[] }[];
+  conceitos: { id: string; fontes: Citacao[] }[];
+  fasesDoJogo: { id: string }[];
 };
 
 const flavio = conjunto.pessoas.find((pessoa) => pessoa.slug === "flavio-bolsonaro")!;
@@ -536,6 +546,7 @@ test.describe("metodologia", () => {
     const secoes = [
       ["objetivo", "Objetivo e escopo"],
       ["selecao", "Seleção dos acontecimentos"],
+      ["registros", "Decisões, propostas e conteúdo do jogo"],
       ["fontes", "Fontes"],
       ["revisao", "Revisão"],
       ["datas", "Datas"],
@@ -556,20 +567,27 @@ test.describe("metodologia", () => {
     await expect(page.locator("#objetivo [data-numeros]")).toContainText(
       `${conjunto.acontecimentos.length} acontecimentos, ${conjunto.mandatos.length} cargos e funções, ${conjunto.filiacoes.length} filiações partidárias e ${conjunto.fontes.length} fontes`,
     );
-    // As citações são as de todos os registros da edição, inclusive os das decisões.
-    const citacoes = [
-      ...conjunto.pessoas,
-      ...conjunto.mandatos,
-      ...conjunto.filiacoes,
-      ...conjunto.acontecimentos,
-      ...conjunto.proposicoes,
-      ...conjunto.votacoes,
-      ...conjunto.votos,
-      ...conjunto.atosExecutivos,
-      ...conjunto.coberturaPolitica,
-      ...conjunto.identidadesInstitucionais,
-    ].reduce((total, registro) => total + registro.fontes.length, 0);
+    // As citações são as de todas as coleções factuais da edição, pela lista do domínio: as das decisões, das propostas,
+    // dos fatos biográficos e dos termos entram na conta. A fase do jogo não cita documento por conta própria.
+    const colecoes = conjunto as unknown as Record<string, { fontes: Citacao[] }[]>;
+    const citacoes = COLECOES_FACTUAIS_DO_CONJUNTO.filter((colecao) => colecao !== "fasesDoJogo").reduce(
+      (total, colecao) => total + colecoes[colecao]!.reduce((soma, registro) => soma + registro.fontes.length, 0),
+      0,
+    );
     await expect(page.locator("#fontes")).toContainText(`${conjunto.fontes.length} documentos e ${citacoes} citações`);
+    // Os outros tipos de registro, com o que cada um é, e os números deles.
+    const decisoes = PESSOAS.reduce((total, pessoa) => total + listDecisionViews(data, pessoa.id).length, 0);
+    await expect(page.locator("#objetivo [data-numeros-dos-registros]")).toContainText(
+      `${decisoes} decisões documentadas, ${conjunto.propostasEleitorais.length} propostas eleitorais, ${conjunto.fatosBiograficos.length} fatos biográficos, ${conjunto.conceitos.length} termos explicados e ${conjunto.fasesDoJogo.length} fases do jogo`,
+    );
+    const tipos = page.locator("#registros [data-tipos-de-registro] > li");
+    await expect(tipos).toHaveCount(7);
+    await expect(tipos.nth(0)).toContainText("o voto nominal de um parlamentar, o ato do Executivo");
+    await expect(tipos.nth(0)).toContainText("a atuação legislativa (autoria ou relatoria de uma matéria)");
+    await expect(page.locator("#registros")).toContainText("Propor ou relatar não é votar.");
+    await expect(page.locator("#registros")).toContainText("Dizem o que o documento propõe: não são ato, voto nem resultado.");
+    await expect(page.locator("#registros")).toContainText("Material de campanha não é fonte.");
+    await expect(page.locator("#registros")).toContainText("nenhuma pergunta pede opinião nem juízo sobre as pessoas");
     await expect(page.locator("#selecao tbody tr")).toHaveCount(5);
 
     // A revisão descrita é a que foi feita.
@@ -683,9 +701,15 @@ test.describe("metodologia", () => {
   });
 });
 
-// As decisões de uma pessoa, como as telas as listam: os votos vigentes dela e os atos atribuídos a ela.
+// As decisões de uma pessoa, como as telas as listam: os votos vigentes dela, os atos atribuídos a ela e a atuação legislativa dela.
 const votosDe = (pessoaId: string) => conjunto.votos.filter((item) => item.pessoaId === pessoaId && item.situacao.tipo === "vigente");
 const atosDe = (pessoaId: string) => conjunto.atosExecutivos.filter((item) => item.atribuicao.pessoaId === pessoaId);
+const decisoesDe = (pessoaId: string) => listDecisionViews(data, pessoaId);
+/** Quantos cartões uma decisão ocupa na tela: um por tema dela, ou um só no grupo "Outros assuntos". */
+const cartoesDe = (decisao: DecisionView) => Math.max(1, decisao.temas.length);
+const cartoesDeTodas = (decisoes: readonly DecisionView[]) => decisoes.reduce((soma, decisao) => soma + cartoesDe(decisao), 0);
+/** A divergência entre documentos que o cartão mostra: a do objeto votado, ou a da atuação legislativa. */
+const divergenciaDe = (decisao: DecisionView) => (decisao.natureza === "voto" ? decisao.votacao.objeto.divergencia : decisao.natureza === "atuacao" ? decisao.atuacao.divergencia : null);
 const objetoDe = (votacaoId: string) => conjunto.votacoes.find((item) => item.id === votacaoId)!.objeto;
 /** Quantos itens uma lista do cartão mostra aberta: o mesmo limite do componente do cartão (`ITENS_ABERTOS`). */
 const ITENS_ABERTOS = 6;
@@ -697,20 +721,60 @@ test.describe("decisões documentadas nas páginas do atlas", () => {
       const secao = page.locator('#decisoes[data-secao="decisoes"]');
       const votos = votosDe(pessoa.id);
       const atos = atosDe(pessoa.id);
-      const total = votos.length + atos.length;
-      expect(total, "a pessoa deveria ter decisões publicadas").toBeGreaterThan(0);
-      await expect(secao.getByRole("heading", { level: 2 })).toContainText(`Votos e atos de ${pessoa.nome}, por tema`);
-      await expect(secao).toHaveAttribute("data-quantas", String(total));
-      await expect(secao.locator("[data-decisao-cartao]")).toHaveCount(total);
+      const decisoes = decisoesDe(pessoa.id);
+      const atuacoes = decisoes.filter((decisao) => decisao.natureza === "atuacao");
+      // As três naturezas somam as decisões da pessoa: nenhuma fica fora da tela.
+      expect(decisoes.length, "a pessoa deveria ter decisões publicadas").toBeGreaterThan(0);
+      expect(decisoes.length).toBe(votos.length + atos.length + atuacoes.length);
+      const cartoes = cartoesDeTodas(decisoes);
+      await expect(secao.getByRole("heading", { level: 2 })).toContainText(`Votos, atos e atuação legislativa de ${pessoa.nome}, por tema`);
+      // A seção conta as decisões; a decisão com dois temas aparece nos dois, e a sem tema, no grupo à parte.
+      await expect(secao).toHaveAttribute("data-quantas", String(decisoes.length));
+      await expect(secao.locator("[data-decisao-cartao]")).toHaveCount(cartoes);
 
       // Hierarquia dos títulos, sem salto: a seção (h2), o tema (h3) e o cartão (h4).
       const temas = await secao.locator("[data-tema]").count();
       expect(temas).toBeGreaterThan(0);
       await expect(secao.locator("[data-tema] > h3")).toHaveCount(temas);
-      await expect(secao.locator("[data-decisao-cartao] > div > h4")).toHaveCount(total);
+      await expect(secao.locator("[data-decisao-cartao] > div > h4")).toHaveCount(cartoes);
+
+      // A decisão sem tema não some: fica em "Outros assuntos", depois dos temas, com a nota que explica o grupo.
+      const semTema = decisoes.filter((decisao) => decisao.temas.length === 0);
+      const outros = secao.locator('[data-tema="outros-assuntos"]');
+      if (semTema.length === 0) {
+        await expect(outros).toHaveCount(0);
+      } else {
+        await expect(outros.getByRole("heading", { level: 3 })).toHaveText("Outros assuntos");
+        await expect(outros.locator("[data-nota-do-grupo]")).toContainText("A classificação por tema é decisão editorial.");
+        await expect(outros.locator("[data-decisao-cartao]")).toHaveCount(semTema.length);
+        await expect(secao.locator("[data-tema]").last()).toHaveAttribute("data-tema", "outros-assuntos");
+      }
+      // A âncora de cada decisão existe uma vez só na página, ainda que o cartão apareça em dois temas.
+      for (const decisao of decisoes) {
+        await expect(page.locator(`[id="decisao-${decisao.id}"]`), decisao.id).toHaveCount(1);
+        await expect(secao.locator(`[data-decisao-cartao="${decisao.id}"]`), decisao.id).toHaveCount(cartoesDe(decisao));
+        await expect(secao.locator(`[data-decisao-cartao="${decisao.id}"]`).first()).toHaveAttribute("data-natureza", decisao.natureza);
+      }
+      // A atuação legislativa diz o tipo, a matéria, de quem ela é e o destino dela, e avisa o que isso não diz.
+      for (const decisao of atuacoes) {
+        if (decisao.natureza !== "atuacao") continue;
+        const cartao = secao.locator(`[data-decisao-cartao="${decisao.id}"]`).first();
+        await expect(cartao.locator("[data-natureza-rotulo]")).toContainText("Atuação legislativa");
+        await expect(cartao.locator(`[data-tipo-de-atuacao="${decisao.atuacao.tipo}"]`)).toBeVisible();
+        await expect(cartao.locator("[data-materia]")).toContainText(decisao.atuacao.materia.identificador);
+        await expect(cartao.locator("[data-materia]")).toContainText(decisao.atuacao.materia.ementa);
+        await expect(cartao.locator("[data-autoria-da-materia]")).toHaveText(decisao.atuacao.materia.autoria);
+        await expect(cartao.locator(`[data-desfecho="${decisao.atuacao.desfecho.tipo}"]`)).toContainText(decisao.atuacao.desfecho.descricao);
+        if (decisao.atuacao.desfecho.norma !== null) await expect(cartao.locator("[data-desfecho]")).toContainText(decisao.atuacao.desfecho.norma);
+        await expect(cartao.locator("[data-aviso-atuacao]")).toHaveText("O registro documenta que a pessoa propôs ou relatou a matéria e o que aconteceu com ela depois. Ele não diz como a pessoa votou, nem o que a norma produziu na prática.");
+        if (decisao.atuacao.divergencia === null) await expect(cartao.locator("[data-divergencia]")).toHaveCount(0);
+        else await expect(cartao.locator("[data-divergencia]")).toContainText(decisao.atuacao.divergencia);
+        // As fontes de cada cartão abrem no endereço seguro do órgão.
+        await expect(cartao.locator("[data-fonte] a").first()).toHaveAttribute("href", /^https:\/\//);
+      }
 
       for (const voto of votos) {
-        const cartao = secao.locator(`[data-decisao-cartao="${voto.id}"]`);
+        const cartao = secao.locator(`[data-decisao-cartao="${voto.id}"]`).first();
         const objeto = objetoDe(voto.votacaoId);
         // O texto submetido à votação: ligado, com o documento, ou a tela diz que não está ligado, em vez de calar.
         if (objeto.textoReferencia === null) {
@@ -724,7 +788,7 @@ test.describe("decisões documentadas nas páginas do atlas", () => {
       }
 
       for (const ato of atos) {
-        const cartao = secao.locator(`[data-decisao-cartao="${ato.id}"]`);
+        const cartao = secao.locator(`[data-decisao-cartao="${ato.id}"]`).first();
         const itens = ato.dispositivosAlvo ?? [];
         if (itens.length === 0) {
           await expect(cartao.locator("[data-itens]")).toHaveCount(0);
@@ -748,9 +812,15 @@ test.describe("decisões documentadas nas páginas do atlas", () => {
     });
   }
 
-  test("a edição dá matéria a estes testes: há divergência documentada, votação sem texto ligado, lista curta e lista longa", () => {
+  test("a edição dá matéria a estes testes: há divergência documentada, votação sem texto ligado, lista curta e lista longa, atuação legislativa, decisão sem tema e decisão com dois temas", () => {
     const votos = PESSOAS.flatMap((pessoa) => votosDe(pessoa.id));
     const atos = PESSOAS.flatMap((pessoa) => atosDe(pessoa.id));
+    const decisoes = PESSOAS.flatMap((pessoa) => decisoesDe(pessoa.id));
+    expect(decisoes.filter((decisao) => decisao.natureza === "atuacao").length).toBe(conjunto.atuacoesLegislativas.length);
+    expect(conjunto.atuacoesLegislativas.length).toBeGreaterThan(0);
+    expect(decisoes.some((decisao) => decisao.natureza === "atuacao" && decisao.atuacao.divergencia !== null)).toBe(true);
+    expect(decisoes.some((decisao) => decisao.temas.length === 0)).toBe(true);
+    expect(decisoes.some((decisao) => decisao.temas.length > 1)).toBe(true);
     expect(votos.filter((voto) => objetoDe(voto.votacaoId).divergenciaDocumentada !== null).length).toBeGreaterThan(0);
     expect(votos.filter((voto) => objetoDe(voto.votacaoId).textoReferencia === null).length).toBeGreaterThan(0);
     const tamanhos = atos.map((ato) => ato.dispositivosAlvo?.length ?? 0);
@@ -761,18 +831,30 @@ test.describe("decisões documentadas nas páginas do atlas", () => {
   test("na comparação, os cartões ficam um nível abaixo do título da pessoa, com as mesmas notas", async ({ page }) => {
     await page.goto("/comparar/");
     const secao = page.locator('#decisoes[data-secao="decisoes"]');
-    const votos = PESSOAS.flatMap((pessoa) => votosDe(pessoa.id));
-    const total = votos.length + PESSOAS.flatMap((pessoa) => atosDe(pessoa.id)).length;
-    await expect(secao).toHaveAttribute("data-quantas", String(total));
-    await expect(secao.locator("[data-decisao-cartao]")).toHaveCount(total);
+    const decisoes = PESSOAS.flatMap((pessoa) => decisoesDe(pessoa.id));
+    const cartoes = cartoesDeTodas(decisoes);
+    await expect(secao.getByRole("heading", { level: 2 })).toHaveText("Votos, atos e atuação legislativa no mesmo tema");
+    await expect(secao).toHaveAttribute("data-quantas", String(decisoes.length));
+    await expect(secao.locator("[data-decisao-cartao]")).toHaveCount(cartoes);
 
     // A seção (h2), o tema (h3), a pessoa (h4) e o cartão (h5).
     const temas = await secao.locator("[data-tema]").count();
     await expect(secao.locator("[data-tema] > h3")).toHaveCount(temas);
     await expect(secao.locator("[data-coluna-decisoes] > h4")).toHaveCount(temas * PESSOAS.length);
-    await expect(secao.locator("[data-decisao-cartao] > div > h5")).toHaveCount(total);
+    await expect(secao.locator("[data-decisao-cartao] > div > h5")).toHaveCount(cartoes);
+    // O título de cada coluna é só o nome da pessoa: nenhuma contagem ao lado, e a tela não ordena por quantidade.
+    const titulosDasColunas = await secao.locator("[data-coluna-decisoes] > h4").allTextContents();
+    expect([...new Set(titulosDasColunas)].sort()).toEqual(PESSOAS.map((pessoa) => pessoa.nome).sort());
+    // O grupo das decisões sem tema fica por último, com as duas colunas, como os temas.
+    await expect(secao.locator("[data-tema]").last()).toHaveAttribute("data-tema", "outros-assuntos");
+    await expect(secao.locator('[data-tema="outros-assuntos"] [data-coluna-decisoes]')).toHaveCount(PESSOAS.length);
 
-    await expect(secao.locator("[data-divergencia]")).toHaveCount(votos.filter((voto) => objetoDe(voto.votacaoId).divergenciaDocumentada !== null).length);
-    await expect(secao.locator('[data-texto-referencia="nao-ligado"]')).toHaveCount(votos.filter((voto) => objetoDe(voto.votacaoId).textoReferencia === null).length);
+    // Cada cartão mostra a divergência e a falta do texto ligado da decisão dele, em todos os temas em que aparece.
+    const comDivergencia = decisoes.filter((decisao) => divergenciaDe(decisao) !== null);
+    await expect(secao.locator("[data-divergencia]")).toHaveCount(cartoesDeTodas(comDivergencia));
+    const semTexto = decisoes.filter((decisao) => decisao.natureza === "voto" && decisao.votacao.textoReferencia === null);
+    await expect(secao.locator('[data-texto-referencia="nao-ligado"]')).toHaveCount(cartoesDeTodas(semTexto));
+    // O aviso da amostra diz que as três naturezas não se equiparam.
+    await expect(secao).toContainText("Um voto no Senado, um ato da Presidência e a autoria de uma lei estadual são coisas diferentes");
   });
 });

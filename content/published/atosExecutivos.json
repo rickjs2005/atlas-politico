@@ -305,5 +305,535 @@
         "observacoes": "Conferido na página do ato no Portal da Legislação (ccivil_03), em 10 de outubro de 2026, com assistência de IA: identificação, data, ementa, nota de mensagem de veto e dispositivos marcados (VETADO); a mensagem de veto, quando há, foi lida na própria página dela. A origem na ficha do Planalto não informa o projeto; a ligação com o PL 1087/2025 vem da ficha da matéria no Senado. Revisão humana pendente."
       }
     }
+  },
+  {
+    "id": "planalto-mpv-132-2003-bolsa-familia",
+    "tipo": "medida-provisoria",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2003-2007"
+    },
+    "data": {
+      "valor": "2003-10-20",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Medida Provisória nº 132, de 20 de outubro de 2003",
+      "fonteId": "planalto-mpv-132-2003"
+    },
+    "proposicaoIds": [
+      "camara-mpv-132-2003"
+    ],
+    "medida": {
+      "numero": 132,
+      "ano": 2003
+    },
+    "versao": "Texto original da edição, de 20 de outubro de 2003. A página do ato registra que a medida foi convertida na Lei nº 10.836, de 2004.",
+    "temas": [],
+    "fontes": [
+      {
+        "fonteId": "planalto-mpv-132-2003",
+        "localizacao": "Cabeçalho, ementa, anotação de conversão e fecho",
+        "evidencia": "Medida provisória de 20 de outubro de 2003, que cria o Programa Bolsa Família; assinada em Brasília pelo presidente Luiz Inácio Lula da Silva; convertida na Lei nº 10.836, de 2004."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. O ato não se encaixa com clareza em nenhum dos sete temas da comparação (trata de transferência de renda) e ficou sem tema. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-10836-2004-bolsa-familia",
+    "tipo": "sancao-expressa",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2003-2007"
+    },
+    "data": {
+      "valor": "2004-01-09",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 10.836, de 9 de janeiro de 2004",
+      "fonteId": "planalto-lei-10836-2004"
+    },
+    "proposicaoIds": [
+      "camara-mpv-132-2003"
+    ],
+    "temas": [],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-10836-2004",
+        "localizacao": "Cabeçalho, ementa, anotação de conversão, fórmula de sanção e fecho",
+        "evidencia": "Lei de 9 de janeiro de 2004, que cria o Programa Bolsa Família; conversão da Medida Provisória nº 132, de 2003; decretada pelo Congresso Nacional e sancionada pelo presidente Luiz Inácio Lula da Silva."
+      },
+      {
+        "fonteId": "camara-norma-lei-10836-2004",
+        "localizacao": "Campos Proposição Originária e Ementa da ficha da norma",
+        "evidencia": "A ficha aponta a MPV 132/2003 como origem, pelo PLV 28/2003, e traz uma ementa mais longa que a da página do Planalto."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. A página do ato não traz indicação de mensagem de veto. A ementa da ficha da Câmara é mais longa que a da página do Planalto; o registro segue a do Planalto. Sem tema, como a medida provisória de origem. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-10826-2003-armas-de-fogo",
+    "tipo": "sancao-expressa",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2003-2007"
+    },
+    "data": {
+      "valor": "2003-12-22",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 10.826, de 22 de dezembro de 2003",
+      "fonteId": "planalto-lei-10826-2003"
+    },
+    "proposicaoIds": [
+      "camara-pl-1555-2003"
+    ],
+    "temas": [
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-10826-2003",
+        "localizacao": "Cabeçalho, início da ementa, fórmula de sanção e fecho",
+        "evidencia": "Lei de 22 de dezembro de 2003, sobre registro, posse e comercialização de armas de fogo e munição e sobre o Sistema Nacional de Armas; decretada pelo Congresso Nacional e sancionada pelo presidente Luiz Inácio Lula da Silva."
+      },
+      {
+        "fonteId": "camara-proposicao-pl-1555-2003-situacao",
+        "localizacao": "Campo statusProposicao.despacho",
+        "evidencia": "O PL 1555/2003 foi transformado na Lei 10.826/2003."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. A página do ato não traz indicação de mensagem de veto. A origem do projeto foi lida nos dados abertos da Câmara e não tem trecho guardado nas evidências; a sanção não é autoria. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "camara-pec-40-2003-iniciativa",
+    "tipo": "iniciativa",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2003-2007"
+    },
+    "data": {
+      "valor": "2003-04-30",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Proposta de Emenda à Constituição nº 40, de 2003",
+      "fonteId": "camara-proposicao-pec-40-2003"
+    },
+    "proposicaoIds": [
+      "camara-pec-40-2003"
+    ],
+    "temas": [
+      "reforma-do-estado"
+    ],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-pec-40-2003",
+        "localizacao": "Campos id, siglaTipo, numero, ano, ementa e dataApresentacao",
+        "evidencia": "PEC 40/2003, apresentada em 30 de abril de 2003."
+      },
+      {
+        "fonteId": "camara-proposicao-pec-40-2003-autores",
+        "localizacao": "Campos nome e tipo do primeiro autor",
+        "evidencia": "O autor registrado da proposta é o Poder Executivo."
+      },
+      {
+        "fonteId": "camara-norma-emenda-constitucional-41-2003",
+        "localizacao": "Campo Proposição Originária da ficha da norma",
+        "evidencia": "A PEC 40/2003 é a proposição de origem da Emenda Constitucional nº 41, de 2003."
+      },
+      {
+        "fonteId": "planalto-emenda-constitucional-41-2003",
+        "localizacao": "Preâmbulo",
+        "evidencia": "A Emenda Constitucional nº 41 foi promulgada pelas Mesas da Câmara dos Deputados e do Senado Federal: a promulgação não é ato do presidente."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. O que se atribui ao presidente é a proposta, registrada na Câmara com o autor \"Poder Executivo\"; a emenda foi promulgada pelo Congresso. O tema (reforma do Estado) é classificação editorial: a ficha da Câmara dá à emenda o apelido \"Reforma Previdenciária (2003)\". Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-decreto-5090-2004-farmacia-popular",
+    "tipo": "decreto",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2003-2007"
+    },
+    "data": {
+      "valor": "2004-05-20",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Decreto nº 5.090, de 20 de maio de 2004",
+      "fonteId": "planalto-decreto-5090-2004"
+    },
+    "proposicaoIds": [],
+    "decreto": {
+      "numero": 5090,
+      "ano": 2004
+    },
+    "temas": [
+      "saude"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-decreto-5090-2004",
+        "localizacao": "Cabeçalho, ementa e fecho",
+        "evidencia": "Decreto de 20 de maio de 2004, que regulamenta a Lei nº 10.858, de 13 de abril de 2004, e institui o programa \"Farmácia Popular do Brasil\"; assinado em Brasília pelo presidente Luiz Inácio Lula da Silva."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. A lei que o decreto regulamenta (Lei nº 10.858, de 2004) e a medida provisória que deu origem a ela (nº 154, de 2003) foram lidas na pesquisa, sem trecho guardado nas evidências, e não têm registro próprio nesta edição. A página é texto compilado, com redação posterior em um dos parágrafos; do texto do decreto, só o cabeçalho, a ementa e o fecho sustentam o registro. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-11096-2005-prouni",
+    "tipo": "veto-parcial",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2003-2007"
+    },
+    "data": {
+      "valor": "2005-01-13",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 11.096, de 13 de janeiro de 2005",
+      "fonteId": "planalto-lei-11096-2005"
+    },
+    "proposicaoIds": [
+      "camara-mpv-213-2004"
+    ],
+    "mensagem": "Mensagem nº 14, de 13 de janeiro de 2005",
+    "dispositivosAlvo": [
+      "Art. 17 do Projeto de Lei de Conversão nº 59, de 2004"
+    ],
+    "temas": [
+      "educacao"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-11096-2005",
+        "localizacao": "Cabeçalho, ementa, anotação de conversão, fórmula de sanção e fecho",
+        "evidencia": "Lei de 13 de janeiro de 2005, que institui o Programa Universidade para Todos (Prouni); conversão da Medida Provisória nº 213, de 2004; sancionada pelo presidente Luiz Inácio Lula da Silva."
+      },
+      {
+        "fonteId": "planalto-mensagem-14-2005",
+        "localizacao": "Primeiro parágrafo e título do dispositivo vetado",
+        "evidencia": "Veto parcial, por contrariedade ao interesse público, ao Projeto de Lei de Conversão nº 59, de 2004 (MP nº 213/04): art. 17."
+      },
+      {
+        "fonteId": "camara-norma-lei-11096-2005",
+        "localizacao": "Campo Proposição Originária da ficha da norma",
+        "evidencia": "A ficha aponta a MPV 213/2004 como origem, pelo PLV 59/2004."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. As razões do veto não foram transcritas. A medida provisória de origem (nº 213, de 2004) tem registro próprio entre as proposições, com o trecho dos dados abertos da Câmara; a assinatura dela não tem trecho guardado nas evidências. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-11340-2006-violencia-contra-a-mulher",
+    "tipo": "sancao-expressa",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2003-2007"
+    },
+    "data": {
+      "valor": "2006-08-07",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 11.340, de 7 de agosto de 2006",
+      "fonteId": "planalto-lei-11340-2006"
+    },
+    "proposicaoIds": [
+      "camara-pl-4559-2004"
+    ],
+    "temas": [
+      "direitos-das-mulheres",
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-11340-2006",
+        "localizacao": "Cabeçalho, ementa, fórmula de sanção e fecho",
+        "evidencia": "Lei de 7 de agosto de 2006, que cria mecanismos para coibir a violência doméstica e familiar contra a mulher; decretada pelo Congresso Nacional e sancionada pelo presidente Luiz Inácio Lula da Silva."
+      },
+      {
+        "fonteId": "camara-norma-lei-11340-2006",
+        "localizacao": "Campo Proposição Originária da ficha da norma",
+        "evidencia": "A ficha aponta o PL 4559/2004 como origem."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. A página do ato não traz indicação de mensagem de veto. A lei é conhecida como Lei Maria da Penha; o nome não está no texto do Planalto lido, e por isso não entra no registro. A origem do projeto foi lida nos dados abertos da Câmara e não tem trecho guardado nas evidências; ela não foi registrada como ato próprio. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-decreto-6025-2007-pac",
+    "tipo": "decreto",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2007-2011"
+    },
+    "data": {
+      "valor": "2007-01-22",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Decreto nº 6.025, de 22 de janeiro de 2007",
+      "fonteId": "planalto-decreto-6025-2007"
+    },
+    "proposicaoIds": [],
+    "decreto": {
+      "numero": 6025,
+      "ano": 2007
+    },
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-decreto-6025-2007",
+        "localizacao": "Cabeçalho, ementa e fecho",
+        "evidencia": "Decreto de 22 de janeiro de 2007, que institui o Programa de Aceleração do Crescimento (PAC) e o seu Comitê Gestor; assinado em Brasília pelo presidente Luiz Inácio Lula da Silva."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. A página registra que o decreto foi revogado pelo Decreto nº 11.632, de 2023; a norma revogadora não foi lida. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-11738-2008-piso-do-magisterio",
+    "tipo": "veto-parcial",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2007-2011"
+    },
+    "data": {
+      "valor": "2008-07-16",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 11.738, de 16 de julho de 2008",
+      "fonteId": "planalto-lei-11738-2008"
+    },
+    "proposicaoIds": [
+      "camara-pl-7431-2006"
+    ],
+    "mensagem": "Mensagem nº 508, de 16 de julho de 2008",
+    "dispositivosAlvo": [
+      "Inciso I do art. 3º",
+      "Art. 7º"
+    ],
+    "temas": [
+      "educacao"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-11738-2008",
+        "localizacao": "Cabeçalho, ementa original, fórmula de sanção e fecho",
+        "evidencia": "Lei de 16 de julho de 2008, que institui o piso salarial profissional nacional para os profissionais do magistério público da educação básica; sancionada pelo presidente Luiz Inácio Lula da Silva."
+      },
+      {
+        "fonteId": "planalto-mensagem-508-2008",
+        "localizacao": "Primeiro parágrafo e títulos dos dispositivos vetados",
+        "evidencia": "Veto parcial, por contrariedade ao interesse público, ao Projeto de Lei nº 59, de 2004 (nº 7.431/06 na Câmara dos Deputados): inciso I do art. 3º e art. 7º."
+      },
+      {
+        "fonteId": "camara-norma-lei-11738-2008",
+        "localizacao": "Campo Proposição Originária da ficha da norma",
+        "evidencia": "A ficha aponta o PL 7431/2006 como origem."
+      },
+      {
+        "fonteId": "camara-proposicao-pl-7431-2006-autores",
+        "localizacao": "Campos nome e tipo do primeiro autor",
+        "evidencia": "O autor registrado do projeto é o Senado Federal (senador Cristovam Buarque)."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. As razões do veto não foram transcritas. O projeto de origem é do Senado; a sanção não é autoria. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-12187-2009-mudanca-do-clima",
+    "tipo": "veto-parcial",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2007-2011"
+    },
+    "data": {
+      "valor": "2009-12-29",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 12.187, de 29 de dezembro de 2009",
+      "fonteId": "planalto-lei-12187-2009"
+    },
+    "proposicaoIds": [
+      "camara-pl-18-2007"
+    ],
+    "mensagem": "Mensagem nº 1.123, de 29 de dezembro de 2009",
+    "dispositivosAlvo": [
+      "Inciso VI do art. 3º",
+      "Inciso III do art. 4º",
+      "Art. 10"
+    ],
+    "temas": [
+      "meio-ambiente"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-12187-2009",
+        "localizacao": "Cabeçalho, ementa, fórmula de sanção e fecho",
+        "evidencia": "Lei de 29 de dezembro de 2009, que institui a Política Nacional sobre Mudança do Clima (PNMC); sancionada pelo presidente Luiz Inácio Lula da Silva."
+      },
+      {
+        "fonteId": "planalto-mensagem-1123-2009",
+        "localizacao": "Primeiro parágrafo e títulos dos dispositivos vetados",
+        "evidencia": "Veto parcial, por contrariedade ao interesse público e inconstitucionalidade, ao Projeto de Lei nº 18, de 2007: inciso VI do art. 3º, inciso III do art. 4º e art. 10."
+      },
+      {
+        "fonteId": "camara-norma-lei-12187-2009",
+        "localizacao": "Campo Proposição Originária da ficha da norma",
+        "evidencia": "A ficha aponta o PL 18/2007 como origem."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. As razões do veto não foram transcritas. A origem do projeto foi lida nos dados abertos da Câmara e não tem trecho guardado nas evidências; a sanção não é autoria. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "planalto-lei-12351-2010-partilha-do-pre-sal",
+    "tipo": "veto-parcial",
+    "atribuicao": {
+      "tipo": "autor-documentado",
+      "pessoaId": "lula",
+      "mandatoId": "lula-presidente-da-republica-2007-2011"
+    },
+    "data": {
+      "valor": "2010-12-22",
+      "precisao": "dia"
+    },
+    "atoOficial": {
+      "identificador": "Lei nº 12.351, de 22 de dezembro de 2010",
+      "fonteId": "planalto-lei-12351-2010"
+    },
+    "proposicaoIds": [
+      "camara-pl-5940-2009"
+    ],
+    "mensagem": "Mensagem nº 707, de 22 de dezembro de 2010",
+    "dispositivosAlvo": [
+      "§ 2º do art. 47",
+      "Art. 64"
+    ],
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-12351-2010",
+        "localizacao": "Cabeçalho, início da ementa, fórmula de sanção e fecho",
+        "evidencia": "Lei de 22 de dezembro de 2010, sobre a exploração e a produção de petróleo e gás natural sob o regime de partilha de produção, em áreas do pré-sal e em áreas estratégicas; sancionada pelo presidente Luiz Inácio Lula da Silva."
+      },
+      {
+        "fonteId": "planalto-mensagem-707-2010",
+        "localizacao": "Primeiro parágrafo e títulos dos dispositivos vetados",
+        "evidencia": "Veto parcial, por contrariedade ao interesse público, ao Projeto de Lei nº 5.940, de 2009: § 2º do art. 47 e art. 64."
+      },
+      {
+        "fonteId": "camara-norma-lei-12351-2010",
+        "localizacao": "Campo Proposição Originária da ficha da norma",
+        "evidencia": "A ficha aponta o PL 5940/2009 como origem."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na página do ato no Portal da Legislação (ccivil_03), com assistência de IA: identificação, data, ementa, fórmula do ato e assinatura; a mensagem de veto, quando há, foi lida na página dela, e a proposição de origem, na ficha da norma na Câmara dos Deputados. As razões do veto não foram transcritas. A ementa do projeto de origem na Câmara fala só em criar o Fundo Social; a lei trata também do regime de partilha, e a pesquisa não documentou por qual projeto esse regime entrou no texto. Revisão humana pendente."
+      }
+    }
   }
 ]

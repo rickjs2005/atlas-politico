@@ -1,248 +1,131 @@
-// Onde o progresso fica: um armazenamento por personagem, com cópia em memória
-// quando o `localStorage` não existe ou recusa. Nada aqui pode quebrar o jogo.
-//
-// A cópia em memória é da página. Cada teste passa a própria, para um não ver
-// o progresso do outro.
+// Onde o progresso fica (src/lib/game/storage.ts): uma chave por personagem
+// no armazenamento do navegador, com cópia na página quando ele recusa. Nada
+// aqui apaga o armazenamento inteiro: apagar o progresso de um personagem não
+// toca no do outro, nas preferências nem em chaves de outras páginas.
 
 import { describe, expect, it } from "vitest";
 
-import type { TaskContent } from "@/lib/game/mission";
-import { completeChapter, initialProgress, withTaskState } from "@/lib/game/progress";
+import { DEFAULT_PREFERENCES, PREFERENCES_KEY, parsePreferences, serializePreferences } from "@/lib/game/preferences";
+import { initialProgress, openPhase, type PhaseKey } from "@/lib/game/progress";
 import { STORAGE_PREFIX, createProgressStore, storageKey } from "@/lib/game/storage";
-import { PROGRESS_VERSION, type ChapterSpec, type PlayerProgress } from "@/lib/game/types";
+import { PROGRESS_VERSION, type PlayerProgress } from "@/lib/game/types";
 
-const capitulo = (numero: number, eventId: string): ChapterSpec => ({
-  id: `teste-${numero}`,
-  personagem: "lula",
-  sala: "historico",
-  numero,
-  titulo: `Capítulo ${numero}`,
-  periodo: { de: 1970 + numero, ate: 1970 + numero },
-  motivo: "Fixture dos testes.",
-  objetivo: "Fixture dos testes.",
-  eventIds: [eventId],
-  tarefa: { tipo: "registro", eventId },
-  cena: "sindicato",
-  epoca: "inicio",
-});
+const FASES: PhaseKey[] = [
+  { id: "t1", sala: "historico" },
+  { id: "t2", sala: "historico" },
+];
+const ASSINATURAS = { t1: "t1:pergunta@00000001", t2: "t2:pergunta@00000002" };
 
-const CAPITULOS: readonly ChapterSpec[] = [capitulo(1, "a"), capitulo(2, "b")];
-/** Os capítulos de teste só pedem recolher: a leitura não precisa de registros nem de decisões. */
-const SEM_CONTEUDO: TaskContent = { registros: {}, decisoes: {} };
-const [UM] = CAPITULOS as [ChapterSpec, ChapterSpec];
-
-/** Um progresso com história: o primeiro capítulo concluído. */
-function progressoAvancado(): PlayerProgress {
-  const inicial = initialProgress("lula", CAPITULOS);
-  const comTarefa = withTaskState(inicial, UM.id, { recolhidos: ["a"], confirmada: false, tentativas: 0 });
-  return completeChapter(comTarefa, CAPITULOS, UM.id);
-}
-
-/** Um `Storage` em memória, com os três métodos que o jogo usa. */
+/** Um armazenamento de teste, com a mesma interface do navegador e contagem do que foi apagado. */
 function fakeStorage(inicial: Record<string, string> = {}) {
-  const itens = new Map(Object.entries(inicial));
+  const dados = new Map(Object.entries(inicial));
+  const removidas: string[] = [];
   return {
-    itens,
-    getItem: (chave: string) => itens.get(chave) ?? null,
-    setItem: (chave: string, valor: string) => {
-      itens.set(chave, valor);
-    },
+    dados,
+    removidas,
+    getItem: (chave: string) => dados.get(chave) ?? null,
+    setItem: (chave: string, valor: string) => void dados.set(chave, valor),
     removeItem: (chave: string) => {
-      itens.delete(chave);
+      removidas.push(chave);
+      dados.delete(chave);
     },
   };
 }
 
-const recusa = () => {
-  throw new DOMException("cota excedida", "QuotaExceededError");
-};
+const loja = (personagem: "lula" | "flavio-bolsonaro", storage: ReturnType<typeof fakeStorage> | null, memoria = new Map<string, PlayerProgress>()) =>
+  createProgressStore(personagem, FASES, ASSINATURAS, storage, memoria);
 
-/** A memória de uma página nova. */
-const pagina = () => new Map<string, PlayerProgress>();
-
-describe("chave do armazenamento", () => {
-  it("tem o prefixo do jogo e o personagem, para os progressos não se misturarem", () => {
+describe("armazenamento do progresso", () => {
+  it("cada personagem tem a própria chave", () => {
     expect(storageKey("lula")).toBe(`${STORAGE_PREFIX}:lula`);
     expect(storageKey("flavio-bolsonaro")).toBe(`${STORAGE_PREFIX}:flavio-bolsonaro`);
-    expect(storageKey("lula")).not.toBe(storageKey("flavio-bolsonaro"));
+    expect(PREFERENCES_KEY.startsWith(STORAGE_PREFIX)).toBe(true);
+    expect(PREFERENCES_KEY).not.toBe(storageKey("lula"));
   });
-});
 
-describe("com armazenamento durável", () => {
-  it("salva e lê o progresso na chave do personagem", () => {
+  it("sem nada salvo, não há progresso; o que é salvo volta em outra visita", () => {
     const storage = fakeStorage();
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, pagina());
-    const progresso = progressoAvancado();
-
-    expect(store.duravel).toBe(true);
-    expect(store.load()).toBeNull();
-    expect(store.save(progresso)).toBe(true);
-    expect([...storage.itens.keys()]).toEqual([storageKey("lula")]);
-    expect(JSON.parse(storage.itens.get(storageKey("lula"))!)).toEqual(progresso);
-    expect(store.load()).toEqual(progresso);
+    expect(loja("lula", storage).load()).toBeNull();
+    const progresso = openPhase(initialProgress("lula"), FASES[1]!);
+    expect(loja("lula", storage).save(progresso)).toBe(true);
+    // Outra visita: outra memória de página, o mesmo armazenamento.
+    expect(loja("lula", storage).load()).toEqual(progresso);
+    expect(loja("lula", storage).duravel).toBe(true);
+    // O outro personagem não vê esse progresso.
+    expect(loja("flavio-bolsonaro", storage).load()).toBeNull();
   });
 
-  it("outro armazenamento sobre o mesmo Storage lê o que foi salvo, como depois de recarregar", () => {
+  it("apagar o progresso de um personagem remove só a chave dele", () => {
+    const storage = fakeStorage({ [PREFERENCES_KEY]: serializePreferences({ humor: false, cenario: true }), "outra-pagina:chave": "fica" });
+    loja("lula", storage).save(openPhase(initialProgress("lula"), FASES[0]!));
+    loja("flavio-bolsonaro", storage).save(openPhase(initialProgress("flavio-bolsonaro"), FASES[1]!));
+    const daLula = loja("lula", storage);
+    daLula.clear();
+    expect(storage.removidas).toEqual([storageKey("lula")]);
+    expect(daLula.load()).toBeNull();
+    expect(loja("flavio-bolsonaro", storage).load()?.posicao).toEqual({ historico: "t2" });
+    expect(storage.dados.get(PREFERENCES_KEY)).toBe(serializePreferences({ humor: false, cenario: true }));
+    expect(storage.dados.get("outra-pagina:chave")).toBe("fica");
+  });
+
+  it("conteúdo salvo que não dá para ler vira começo, sem apagar o que estava lá", () => {
+    const storage = fakeStorage({ [storageKey("lula")]: "{isto não é JSON" });
+    expect(loja("lula", storage).load()).toBeNull();
+    expect(storage.dados.get(storageKey("lula"))).toBe("{isto não é JSON");
+    expect(storage.removidas).toEqual([]);
+  });
+
+  it("progresso de um formato anterior é lido sem ser apagado: só a gravação seguinte troca o formato, com o antigo dentro", () => {
+    const antigo = JSON.stringify({ versao: 5, personagem: "lula", capitulos: { "lula-1-sindicato": { status: "concluido" } } });
+    const storage = fakeStorage({ [storageKey("lula")]: antigo });
+    const armazem = loja("lula", storage);
+    const migrado = armazem.load()!;
+    expect(migrado.versao).toBe(PROGRESS_VERSION);
+    expect(migrado.legado).toEqual({ versao: 5, capitulos: { "lula-1-sindicato": { status: "concluido" } } });
+    // Ler não grava nem apaga.
+    expect(storage.dados.get(storageKey("lula"))).toBe(antigo);
+    expect(storage.removidas).toEqual([]);
+    armazem.save(migrado);
+    expect(JSON.parse(storage.dados.get(storageKey("lula"))!).legado.capitulos).toEqual({ "lula-1-sindicato": { status: "concluido" } });
+  });
+
+  it("sem armazenamento, o jogo segue com a cópia da página e avisa que não é durável", () => {
+    const memoria = new Map<string, PlayerProgress>();
+    const armazem = loja("lula", null, memoria);
+    expect(armazem.duravel).toBe(false);
+    expect(armazem.load()).toBeNull();
+    const progresso = openPhase(initialProgress("lula"), FASES[0]!);
+    expect(armazem.save(progresso)).toBe(false);
+    // Outra montagem do jogo na mesma página encontra o progresso.
+    expect(loja("lula", null, memoria).load()).toBe(progresso);
+    loja("lula", null, memoria).clear();
+    expect(loja("lula", null, memoria).load()).toBeNull();
+  });
+
+  it("quando o armazenamento recusa a gravação, a cópia da página guarda o progresso da visita", () => {
     const storage = fakeStorage();
-    createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, pagina()).save(progressoAvancado());
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, pagina()).load()).toEqual(progressoAvancado());
-  });
-
-  it("o progresso de um personagem não aparece para o outro", () => {
-    const storage = fakeStorage();
-    const memoria = pagina();
-    createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, memoria).save(progressoAvancado());
-    expect(createProgressStore("flavio-bolsonaro", CAPITULOS, SEM_CONTEUDO, storage, memoria).load()).toBeNull();
-  });
-
-  it("lê só o que é válido: JSON ilegível, versão errada e personagem errado viram começo", () => {
-    const chave = storageKey("lula");
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, fakeStorage({ [chave]: "{ isto não é json" }), pagina()).load()).toBeNull();
-    const outraVersao = JSON.stringify({ ...progressoAvancado(), versao: PROGRESS_VERSION + 1 });
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, fakeStorage({ [chave]: outraVersao }), pagina()).load()).toBeNull();
-    const outroPersonagem = JSON.stringify({ ...progressoAvancado(), personagem: "flavio-bolsonaro" });
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, fakeStorage({ [chave]: outroPersonagem }), pagina()).load()).toBeNull();
-  });
-
-  it("o que é lido passa pela leitura tolerante do progresso", () => {
-    const chave = storageKey("lula");
-    const salvo = progressoAvancado();
-    // Um capítulo a mais no salvo é descartado; o resto volta igual.
-    const comExtra = JSON.stringify({ ...salvo, capitulos: { ...salvo.capitulos, antigo: salvo.capitulos[UM.id] } });
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, fakeStorage({ [chave]: comExtra }), pagina()).load()).toEqual(salvo);
-  });
-
-  it("clear apaga só o progresso do personagem: o do outro continua guardado, igual", () => {
-    const storage = fakeStorage();
-    const memoria = pagina();
-    const lula = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, memoria);
-    const outro = createProgressStore("flavio-bolsonaro", CAPITULOS, SEM_CONTEUDO, storage, memoria);
-    const doOutro: PlayerProgress = { ...progressoAvancado(), personagem: "flavio-bolsonaro" };
-    lula.save(progressoAvancado());
-    outro.save(doOutro);
-    const guardado = storage.itens.get(storageKey("flavio-bolsonaro"));
-    expect(storage.itens.size).toBe(2);
-
-    lula.clear();
-    expect(storage.itens.has(storageKey("lula"))).toBe(false);
-    expect(storage.itens.get(storageKey("flavio-bolsonaro"))).toBe(guardado);
-    expect(lula.load()).toBeNull();
-    // Em outra página, o progresso do outro personagem volta do armazenamento, inteiro.
-    expect(createProgressStore("flavio-bolsonaro", CAPITULOS, SEM_CONTEUDO, storage, pagina()).load()).toEqual(doOutro);
-  });
-
-  it("clear apaga o que foi guardado", () => {
-    const storage = fakeStorage();
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, pagina());
-    store.save(progressoAvancado());
-    store.clear();
-    expect(storage.itens.size).toBe(0);
-    expect(store.load()).toBeNull();
-  });
-});
-
-describe("sem armazenamento", () => {
-  it("não é durável e responde pela memória", () => {
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, null, pagina());
-    const progresso = progressoAvancado();
-
-    expect(store.duravel).toBe(false);
-    expect(store.load()).toBeNull();
-    expect(store.save(progresso)).toBe(false);
-    expect(store.load()).toBe(progresso);
-  });
-
-  it("clear esquece a memória", () => {
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, null, pagina());
-    store.save(progressoAvancado());
-    store.clear();
-    expect(store.load()).toBeNull();
-  });
-
-  it("a memória é da página: outro armazenamento do mesmo personagem continua de onde o anterior parou", () => {
-    // Ir do jogo à ficha de um registro e voltar monta o jogo de novo, na mesma página.
-    const memoria = pagina();
-    createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, null, memoria).save(progressoAvancado());
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, null, memoria).load()).toEqual(progressoAvancado());
-  });
-
-  it("a memória da página é por personagem, e reiniciar um não apaga o outro", () => {
-    const memoria = pagina();
-    const lula = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, null, memoria);
-    const outro = createProgressStore("flavio-bolsonaro", CAPITULOS, SEM_CONTEUDO, null, memoria);
-    lula.save(progressoAvancado());
-    expect(outro.load()).toBeNull();
-    outro.save(initialProgress("flavio-bolsonaro", CAPITULOS));
-    lula.clear();
-    expect(lula.load()).toBeNull();
-    expect(outro.load()).toEqual(initialProgress("flavio-bolsonaro", CAPITULOS));
-  });
-
-  it("em outra página (recarregar, fechar e abrir), a memória começa do zero", () => {
-    createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, null, pagina()).save(progressoAvancado());
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, null, pagina()).load()).toBeNull();
-  });
-
-  it("fora do navegador, o padrão é a memória da página", () => {
-    // Nos testes não há `window`, e a detecção do localStorage devolve null.
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO);
-    expect(store.duravel).toBe(false);
-    expect(store.save(progressoAvancado())).toBe(false);
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO).load()).toEqual(progressoAvancado());
-    // Limpa a memória padrão, para não vazar para outro teste.
-    store.clear();
-    expect(createProgressStore("lula", CAPITULOS, SEM_CONTEUDO).load()).toBeNull();
-  });
-});
-
-describe("com armazenamento que falha", () => {
-  it("quando a escrita é recusada, save avisa com false e o jogo continua pela memória", () => {
-    const storage = { ...fakeStorage(), setItem: recusa };
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, pagina());
-    const progresso = progressoAvancado();
-
-    expect(store.duravel).toBe(true);
-    expect(() => store.save(progresso)).not.toThrow();
-    expect(store.save(progresso)).toBe(false);
-    expect(store.load()).toEqual(progresso);
-  });
-
-  it("a memória vale mais do que uma cópia antiga que ficou no Storage", () => {
-    // A primeira gravação coube; a segunda estourou a cota.
-    const storage = fakeStorage();
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, pagina());
-    const inicial = initialProgress("lula", CAPITULOS);
-    expect(store.save(inicial)).toBe(true);
-
-    storage.setItem = recusa;
-    const avancado = progressoAvancado();
-    expect(store.save(avancado)).toBe(false);
-    expect(store.load()).toEqual(avancado);
-  });
-
-  it("quando a leitura falha, load não quebra", () => {
-    const storage = {
-      ...fakeStorage(),
-      getItem: (): string | null => {
-        throw new Error("sem acesso");
-      },
+    storage.setItem = () => {
+      throw new Error("cota excedida");
     };
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, pagina());
-    expect(() => store.load()).not.toThrow();
-    expect(store.load()).toBeNull();
+    const memoria = new Map<string, PlayerProgress>();
+    const armazem = loja("lula", storage, memoria);
+    const progresso = openPhase(initialProgress("lula"), FASES[1]!);
+    expect(armazem.save(progresso)).toBe(false);
+    expect(armazem.load()).toBe(progresso);
+  });
+});
 
-    const progresso = progressoAvancado();
-    store.save(progresso);
-    expect(store.load()).toEqual(progresso);
+describe("preferências do jogo", () => {
+  it("o padrão é com humor e com cenário, e qualquer coisa fora do formato vira o padrão", () => {
+    expect(DEFAULT_PREFERENCES).toEqual({ humor: true, cenario: true });
+    for (const invalido of [null, undefined, 3, "x", [], { humor: "sim" }]) expect(parsePreferences(invalido)).toEqual(DEFAULT_PREFERENCES);
+    expect(parsePreferences({ humor: false })).toEqual({ humor: false, cenario: true });
+    expect(parsePreferences({ cenario: false, outro: 1 })).toEqual({ humor: true, cenario: false });
   });
 
-  it("com armazenamento só de leitura, reiniciar não quebra: clear esquece a memória e nada fica guardado", () => {
-    const storage = { ...fakeStorage(), setItem: recusa, removeItem: recusa };
-    const store = createProgressStore("lula", CAPITULOS, SEM_CONTEUDO, storage, pagina());
-    expect(store.save(progressoAvancado())).toBe(false);
-    expect(store.load()).toEqual(progressoAvancado());
-    expect(() => store.clear()).not.toThrow();
-    expect(store.load()).toBeNull();
-    expect(storage.itens.size).toBe(0);
+  it("o que é gravado volta igual, e não carrega progresso", () => {
+    const texto = serializePreferences({ humor: false, cenario: false });
+    expect(parsePreferences(JSON.parse(texto))).toEqual({ humor: false, cenario: false });
+    expect(Object.keys(JSON.parse(texto)).sort()).toEqual(["cenario", "humor"]);
   });
 });

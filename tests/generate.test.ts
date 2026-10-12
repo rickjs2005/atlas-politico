@@ -60,8 +60,13 @@ describe("geração", () => {
       votacoes: 6,
       votos: 3,
       atosExecutivos: 1,
+      atuacoesLegislativas: 2,
       coberturaPolitica: 2,
       identidadesInstitucionais: 1,
+      propostasEleitorais: 3,
+      fatosBiograficos: 2,
+      conceitos: 1,
+      fasesDoJogo: 3,
       lugares: 6,
       fontes: 3,
       imagens: 0,
@@ -267,8 +272,13 @@ describe("pasta controlada pelo gerador", () => {
       mandatos: base.mandatos.filter(deA),
       acontecimentos: base.acontecimentos.filter((item) => !item.pessoaIds.includes("teste-pessoa-b")),
       votos: base.votos.filter(deA),
+      atuacoesLegislativas: base.atuacoesLegislativas.filter(deA),
       coberturaPolitica: base.coberturaPolitica.filter(deA),
       identidadesInstitucionais: base.identidadesInstitucionais.filter(deA),
+      propostasEleitorais: base.propostasEleitorais.filter(deA),
+      fatosBiograficos: base.fatosBiograficos.filter(deA),
+      // As fases da pessoa A apontam o acontecimento compartilhado, que sai com a pessoa B: saem também.
+      fasesDoJogo: [],
       edicao: { ...base.edicao, cobertura: base.edicao.cobertura.slice(0, 1) },
     });
     const { resultado, gravacao } = runBuild(projeto.paths);

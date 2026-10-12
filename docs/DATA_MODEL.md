@@ -28,9 +28,21 @@ Edicao ── cobertura ──▶ Pessoa
 
 Pessoa, Mandato e Filiacao também têm fontes[] (Citacao) ──▶ Fonte
 Pessoa.retratoId ──▶ Imagem (opcional)
+
+Voto ─────────────── votacaoId ──▶ Votacao ── proposicaoId ──▶ Proposicao
+Voto, AtoExecutivo, AtuacaoLegislativa ── pessoaId, mandatoId ──▶ Pessoa, Mandato
+PropostaEleitoral, FatoBiografico ─────── pessoaId ───────────▶ Pessoa
+Conceito ── não pertence a pessoa nenhuma
+
+FaseDoJogo ── pessoaId ──▶ Pessoa
+     └── marco, explicacao[].referencias, atividade, explorar
+              │  cada referência é { tipo, id }
+              ▼
+         Acontecimento · decisão (Voto, AtoExecutivo ou AtuacaoLegislativa) ·
+         FatoBiografico · Mandato · Filiacao · PropostaEleitoral · Conceito
 ```
 
-Um acontecimento pode envolver várias pessoas e vários lugares. Uma fonte pode sustentar vários registros, com um trecho diferente em cada citação.
+Um acontecimento pode envolver várias pessoas e vários lugares. Uma fonte pode sustentar vários registros, com um trecho diferente em cada citação. Uma fase do jogo não cita fonte: aponta registros, e as fontes chegam por eles.
 
 ## Entidades
 
@@ -147,7 +159,7 @@ O uso que um registro faz de uma fonte.
 
 ## Decisões políticas
 
-Entraram em 10 de outubro de 2026 (D-122), para o histórico de votos e de atos do Executivo. Três naturezas que o modelo não confunde: o **voto parlamentar** (manifestação individual em uma votação identificada), o **ato do Executivo** (sanção, veto, medida provisória, decreto, iniciativa) e a **participação** como autoria ou relatoria, que não é voto e fica fora desta entrega. Os contratos estão em `src/lib/domain/schemas.ts`, seção Decisões políticas; as taxonomias, em `src/lib/domain/decisions.ts`.
+Entraram em 10 de outubro de 2026 (D-122), para o histórico de votos e de atos do Executivo. Três naturezas que o modelo não confunde: o **voto parlamentar** (manifestação individual em uma votação identificada), o **ato do Executivo** (sanção, veto, medida provisória, decreto, iniciativa) e a **atuação legislativa**, que é a autoria ou a relatoria de uma matéria e não é voto. A terceira ficou de fora da primeira entrega e entrou na edição 0.3.0, em 11 de outubro de 2026 (D-136). Os contratos estão em `src/lib/domain/schemas.ts`, seção Decisões políticas; as taxonomias, em `src/lib/domain/decisions.ts`.
 
 Os sete temas da comparação por assunto: `economia`, `seguranca-publica`, `saude`, `educacao`, `reforma-do-estado`, `meio-ambiente`, `direitos-das-mulheres`. São separados das categorias dos acontecimentos: um registro pode ter mais de um tema, e classificar é decisão editorial, a justificar na revisão. "Não localizado em Saúde" não significa "nunca atuou em Saúde".
 
@@ -177,6 +189,26 @@ A falta de uma linha no acervo **não produz ausência**: sem documento, não h�
 
 Discriminado por `tipo`, cada um com os campos que o distinguem: `sancao-expressa`; `sancao-tacita` (com `evidenciaDoProcedimento`: a sanção tácita é efeito do procedimento, não declaração de apoio); `veto-total` (com `mensagem`); `veto-parcial` (com `mensagem` e `dispositivosAlvo`, ao menos um: o veto não atinge o projeto inteiro); `medida-provisoria` (com `medida` número e ano, e `versao`); `decreto` (com `decreto` número e ano); `iniciativa` (proposição apresentada). Comuns: `atribuicao` (`autor-documentado`, com `pessoaId` e `mandatoId`: quem praticou o ato, pelo documento), `data`, `atoOficial` (`identificador` e `fonteId`), `proposicaoIds`, `temas`, `fontes`, `editorial`. Não existe "voto presidencial" nem "sanção de PEC": emendas constitucionais são promulgadas pelas Mesas.
 
+### Atuação legislativa (`atuacoesLegislativas.json`)
+
+Uma matéria de que o parlamentar é autor, ou de que foi relator, com o destino documentado dela. Não é voto: não diz como ele votou. Não é ato do Executivo. E não entra na linha do tempo: é registro de trabalho no cargo, como os atos de um presidente.
+
+| Campo | Tipo | Regra |
+| --- | --- | --- |
+| `id`, `pessoaId` | ids | A pessoa precisa existir |
+| `mandatoId` | id de mandato | O mandato pelo qual a pessoa atuou: é o que dá a competência. O mandato tem de ser da pessoa, e a data, ficar dentro do período documentado dele. A casa do mandato tem de ser a instituição da atuação, salvo no Congresso Nacional: em uma comissão mista, a pessoa atua pelo mandato da casa dela |
+| `tipo` | `autoria` ou `relatoria` | |
+| `instituicao` | uma das instituições | A casa ou o órgão em que a atuação aconteceu |
+| `data` | data histórica | A da lei, na autoria que virou lei; a da designação, na relatoria |
+| `titulo` | texto | Como o cartão chama o registro, em uma linha |
+| `materia` | `{ identificador, ementa, autoria }` | Como o acervo a identifica. Na relatoria, a matéria é de outro autor |
+| `desfecho` | `{ tipo, norma, descricao }` | `tipo`: `lei-sancionada`, `lei-promulgada-pelo-legislativo`, `norma-gerada` ou `nao-documentado`. `norma` é obrigatória, salvo em `nao-documentado`, em que é `null` |
+| `divergenciaDocumentada` | texto ou `null` | O que cada documento diz e o que o atlas adotou |
+| `temas` | lista de temas | Pode ficar vazia; temas repetidos são recusados |
+| `fontes`, `editorial` | | Ao menos uma citação quando revisado |
+
+A `descricao` do desfecho diz o que o documento diz do destino e o que ele não diz: se o parecer foi aprovado, por que a promulgação coube à Assembleia, o que a norma produziu.
+
 ### Cobertura da pesquisa (`coberturaPolitica.json`)
 
 O que foi pesquisado para uma pessoa, em um tema (ou `geral`) e um período, em quais acervos (`nome`, `url`, `consultadoEm`, `recorte`, `completa`), com `criterios`, `estado` (`completa`, `parcial`, `pendente`) e `lacunas`. É o que separa "a fonte não individualiza" de "a pesquisa ainda não encontrou". Não exige citação: os acervos são a evidência. Tem estado editorial, como os demais.
@@ -200,6 +232,81 @@ A consulta (`resolveParticipation`, em `src/lib/data/participation.ts`) responde
 | `pesquisa-pendente` | A pessoa podia votar e a pesquisa do recorte está `parcial`, `pendente` ou não declarada |
 
 Dois modos de comparação, pela política editorial: **mesma votação** (os registros de participação, com "não se aplica" onde não havia competência; nunca promete um voto por linha para os dois) e **mesmo tema** (registros das duas trajetórias por tema, cada um com cargo, instituição, data, tipo e fonte, com a diferença institucional explícita). Sem pontuação, vencedor ou percentual.
+
+## Propostas eleitorais
+
+Entraram na edição 0.3.0 (D-138). Uma proposta eleitoral (`propostasEleitorais.json`) é uma frase do documento que a candidatura registrou na Justiça Eleitoral como proposta de governo. Diz o que o documento propõe. Não é ato, voto nem resultado, e por isso não entra entre as decisões nem na linha do tempo.
+
+| Campo | Tipo | Regra |
+| --- | --- | --- |
+| `id`, `pessoaId` | ids | A pessoa precisa existir |
+| `eleicao` | ano | O ano da eleição a que o documento se refere |
+| `tema` | um dos sete temas | Classificação editorial, a justificar na revisão |
+| `texto` | texto | Começa por "O documento" e tem até 45 palavras: quem propõe é o documento registrado |
+| `ressalva` | texto ou `null` | Sem uso nesta edição: `null` nos 42 registros. Condição e segunda formulação do documento vão no texto da frase. Se voltar a ser usado, não avalia se a frase é precisa, e as duas candidaturas têm o mesmo número (D-149) |
+| `fontes`, `editorial` | | Ao menos uma citação quando revisado: a página do documento e a ficha da candidatura que o traz |
+
+A leitura para as telas está em `src/lib/data/proposals.ts`, com os avisos fixos do que uma proposta é e de que três frases por área não são o documento inteiro. Nenhuma tela soma propostas nem as põe em ordem de valor.
+
+## Conteúdo educativo
+
+Entrou na edição 0.3.0, para a trilha do jogo (D-134, [GAME-TRAIL.md](GAME-TRAIL.md)). São três coleções, com estado editorial e a mesma barreira de publicação das demais. As taxonomias e os limites de tamanho estão em `src/lib/domain/game.ts`.
+
+### Fato biográfico (`fatosBiograficos.json`)
+
+Um fato da vida da pessoa anterior à trajetória pública, ou paralelo a ela. Não é acontecimento da linha do tempo; tem as mesmas exigências de evidência.
+
+| Campo | Tipo | Regra |
+| --- | --- | --- |
+| `id`, `pessoaId` | ids | A pessoa precisa existir |
+| `tipo` | `nascimento`, `familia`, `migracao`, `formacao`, `trabalho`, `atuacao-sindical` ou `outro` | |
+| `titulo` | texto | |
+| `data` | data histórica ou `{ "tipo": "desconhecida" }` | Na precisão que o documento sustenta. Não pode ser posterior à data de corte |
+| `texto` | texto | O fato, em uma ou duas frases, só com o que as citações sustentam |
+| `divergenciaDocumentada` | texto ou `null` | O que cada documento diz e o que o atlas adotou |
+| `fontes`, `editorial` | | Ao menos uma citação quando revisado |
+
+### Conceito (`conceitos.json`)
+
+A definição simples de um termo cívico. Não é fato sobre nenhuma das pessoas, e por isso não tem `pessoaId`: é o que o texto oficial citado diz do termo.
+
+| Campo | Tipo | Regra |
+| --- | --- | --- |
+| `id` | id | |
+| `termo` | texto | |
+| `definicao` | texto | Até 45 palavras. Diz só o que as citações sustentam |
+| `simplificacao` | texto ou `null` | O que a definição deixa de fora |
+| `fontes`, `editorial` | | Ao menos uma citação quando revisado |
+
+### Fase do jogo (`fasesDoJogo.json`)
+
+Um marco, uma explicação curta, uma atividade e o que mais há para explorar no período. O texto é novo, mas não é fonte de fato: a fase não tem `fontes`, e cada bloco aponta os registros publicados que o sustentam.
+
+| Campo | Tipo | Regra |
+| --- | --- | --- |
+| `id`, `pessoaId` | ids | A pessoa precisa existir |
+| `sala` | `historico`, `economia` ou `seguranca-publica` | A trajetória ou um aprofundamento |
+| `ordem` | inteiro a partir de 1 | A posição na sala. Em cada sala de cada pessoa, as posições vão de 1 em sequência, sem repetição |
+| `titulo`, `objetivo` | textos | O objetivo é o que a pessoa sabe ao terminar a fase, em uma frase |
+| `periodo` | `{ de, ate }`, em anos | `de` não pode ser maior que `ate` |
+| `marco` | referência | O registro principal. Não pode ser conceito nem proposta, e a data dele fica dentro do período |
+| `explicacao` | de um a quatro blocos `{ texto, referencias }` | Até 100 palavras no total. Cada bloco aponta ao menos um registro |
+| `conceitos` | lista de ids de conceito | Os termos definidos nesta fase, sem repetição |
+| `atividade` | pergunta ou ordenação | Abaixo |
+| `explorar` | lista de referências | Os outros registros do período, opcionais. Sem repetição e sem conceito |
+| `lacunas` | lista de textos | O que a edição não pesquisou neste período |
+| `editorial` | estado editorial | |
+
+Uma **referência** é `{ tipo, id }`, com `tipo` em `acontecimento`, `decisao` (um voto, um ato do Executivo ou uma atuação legislativa), `fato`, `mandato`, `filiacao`, `proposta` ou `conceito`. O registro apontado precisa existir e ser da mesma pessoa; um acontecimento compartilhado serve às duas. Fase revisada só aponta o que entra na publicação.
+
+A **atividade** é uma de duas:
+
+| Tipo | Campos | Regra |
+| --- | --- | --- |
+| `pergunta` | `enunciado`, `opcoes` (duas ou três, `{ id, texto }`), `correta`, `explicacao`, `referencias` | Enunciado com até 40 palavras e opção com até 24. `correta` é o `id` de uma das opções |
+| `ordem` | `enunciado`, `itens` (duas ou três referências), `explicacao` | Só acontecimento, decisão e fato com data. As datas têm de decidir a ordem: os intervalos de cálculo não se cruzam |
+
+O piso de 60 palavras da explicação e as regras de redação (todo ano escrito em um bloco está em um registro que ele aponta; cada termo é definido na primeira fase em que aparece) são conferidos por teste sobre o conteúdo publicado, em `tests/game-phases.test.ts`. O cenário e a figura de cada fase não são conteúdo: ficam em `src/lib/game/presentation.ts`, por `id` da fase.
 
 ## Regras temporais
 
@@ -284,7 +391,7 @@ Uma lista de lugares vazia não é aceita. Acontecimentos sem ponto continuam na
 | `em-revisao` | `pendencias` opcional | Não |
 | `revisado` | `revisao` obrigatória: tipo, quem e quando | Sim, se estiver em `content/published/` e tudo o que cita também entrar |
 
-Vale para os registros factuais: pessoa, mandato, filiação e acontecimento.
+Vale para todas as coleções factuais do conjunto (`COLECOES_FACTUAIS_DO_CONJUNTO`, em `src/lib/domain/integrity.ts`): pessoas, mandatos, filiações, acontecimentos, proposições, votações, votos, atos do Executivo, atuações legislativas, cobertura da pesquisa, identidades institucionais, propostas eleitorais, fatos biográficos, conceitos e fases do jogo.
 
 `revisao.tipo` é obrigatório e tem dois valores:
 
@@ -321,6 +428,9 @@ Desde a fase 3, quem confere é o pipeline de dados, em `npm run data:validate` 
 | Referências: `pessoaId`, `pessoaIds`, `lugarIds`, `fonteId`, `retratoId`, `imagemId`, cobertura | `validate.ts` | Erro no revisado, pendência no rascunho |
 | Revisado só cita o que entra na publicação | `validate.ts` | Erro |
 | Acontecimento e limites de período até a data de corte | `validate.ts` | Erro no revisado, pendência no rascunho |
+| Decisões: mandato da pessoa, data dentro do período do mandato, casa igual à instituição, um voto vigente por pessoa e votação | `validate.ts`, com `competenceOf` | Erro; mandato sem `casa` é aviso |
+| Fases do jogo: referência a registro que existe e é da mesma pessoa, marco dentro do período, ordenação que as datas decidem, uma fase por posição em cada sala | `validate.ts` (`referencia-de-outra-pessoa`, `marco-fora-do-periodo`, `ordem-indeterminada`, `posicao-repetida`) | Erro no revisado, pendência no rascunho |
+| Tamanho dos textos de fase, de conceito e de proposta, e o começo do texto de uma proposta | `schemas.ts` | Erro |
 | Documento não é posterior ao acesso | `validate.ts` | Erro na edição, pendência nos rascunhos |
 | Arquivo de cada imagem existe, é do formato da extensão e tem as dimensões declaradas | `validate.ts`, com a sonda de `src/lib/content/media.ts` | Erro na edição, pendência nos rascunhos |
 | Nenhum dado sintético nas pastas de conteúdo | `validate.ts` | Erro |

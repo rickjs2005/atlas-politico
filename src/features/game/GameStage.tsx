@@ -1,68 +1,72 @@
 "use client";
 
-// O palco: o canvas, o laço de animação e a entrada do personagem. Recebe a
-// cena e o que mudou (registros recolhidos, saída aberta, pausa) e avisa o
-// que aconteceu no mundo: um objeto ao alcance, uma interação, a travessia da
-// saída. Não guarda progresso nem conhece os diálogos.
+// O palco: o canvas com o cenário, o boneco e as pastas da fase, e, por cima
+// do desenho, um botão da página em cada pasta (D-137). Ninguém dirige o
+// personagem: ativar uma pasta (pelo toque, pelo clique ou pelo teclado) faz o
+// boneco andar um caminho curto até ela, e então a casca abre o conteúdo. A
+// caminhada é enfeite: com movimento reduzido ela não acontece, e o conteúdo
+// abre na hora. O palco não guarda progresso nem conhece os diálogos.
+//
+// A câmera não segue o boneco: enquadra a cena inteira na área que a
+// interface deixa livre (`margens`), para a pasta do marco estar sempre à
+// vista, inclusive em celular.
 //
 // Só existe no navegador: é carregado por `next/dynamic` em GameShell.
 
 import { useEffect, useImperativeHandle, useRef, type RefObject } from "react";
 
-import { recordIds } from "@/lib/game/mission";
-import type { ChapterSpec, Interactable, PersonagemSlug, PlayerState, SceneSpec } from "@/lib/game/types";
-import { clampCenter, followCamera, zoomFor, type Camera } from "@/lib/game/world/camera";
-import { listInteractables, nearestInteractable } from "@/lib/game/world/interact";
+import type { Epoca, PersonagemSlug, PlayerState, SceneMarker, SceneSpec } from "@/lib/game/types";
+import { frameScene, project, spacedMarkers, type Camera, type StageInsets } from "@/lib/game/world/camera";
 import { toScreen } from "@/lib/game/world/iso";
-import { initialPlayer, isOnExit, stepPlayer } from "@/lib/game/world/movement";
+import { cellOf, initialPlayer, pathToMarker, stepWalk, walkAlong, type Walk } from "@/lib/game/world/path";
 
-import { createInput } from "./engine/input";
 import { createLoop, type GameLoop } from "./engine/loop";
-import { renderScene, type CollectEffect } from "./engine/render";
+import { renderScene } from "./engine/render";
 
 /** Marca que identifica o pacote do palco na saída estática (tests/export). */
 export const STAGE_MARKER = "atlas-jogo-palco";
 
 export interface GameStageHandle {
-  /** Direção dos controles de toque, em eixos de tela. */
-  setTouch(dx: number, dy: number): void;
-  /** Interage com o que está ao alcance, como a tecla E. */
-  interact(): void;
-  focus(): void;
+  /** Leva o boneco até a pasta e, ao chegar, avisa por `onOpen`. Com movimento reduzido, avisa na hora. */
+  open(chave: string): void;
+  /** Põe o foco no botão de uma pasta (a do marco, se nenhuma for dita). */
+  focusMarker(chave?: string): void;
 }
 
 export interface GameStageProps {
-  /** Recebe as ações que a interface manda para a cena (toque, interagir, foco). */
+  /** Recebe as ações que a interface manda para a cena. */
   handle: RefObject<GameStageHandle | null>;
   scene: SceneSpec;
-  chapter: ChapterSpec;
   personagem: PersonagemSlug;
-  /** Muda quando a cena tem de recomeçar sem trocar de capítulo (reinício, fim da etapa). */
-  sessao: number;
-  recolhidos: readonly string[];
-  saidaAberta: boolean;
-  /** Pausa a simulação: diálogo aberto, painel aberto, janela sem foco. */
+  epoca: Epoca;
+  /** A fase aberta: quando muda, o boneco volta ao início da cena. */
+  faseId: string;
+  /** As pastas da fase: a do marco e as dos registros para explorar. */
+  marcadores: readonly SceneMarker[];
+  /** A fase terminou: a porta abre. */
+  concluida: boolean;
+  /** O que a interface cobre do palco, em cima e embaixo: a cena é enquadrada no que sobra. */
+  margens: StageInsets;
+  /** Para a animação: janela aberta sobre a cena, ou aba fora da vista. */
   pausado: boolean;
   movimento: boolean;
-  onInteract(alvo: Interactable): void;
-  onExit(): void;
-  onReach(alvo: Interactable | null): void;
-  onEscape(): void;
+  /** O boneco chegou à pasta (ou não precisou andar): é hora de abrir o conteúdo dela. */
+  onOpen(chave: string): void;
   /**
    * O navegador não deu o contexto 2D do canvas: a cena não pode ser
-   * desenhada. A casca avisa e aponta o painel, que cumpre tudo sem o cenário.
+   * desenhada. A casca passa para a leitura sem o cenário.
    */
   onUnavailable(): void;
-  /** Elemento com as instruções, para o leitor de tela. */
-  describedBy: string;
 }
 
-const EFFECT_SECONDS = 0.9;
-const EXIT_OPEN_SECONDS = 0.6;
+const DOOR_SECONDS = 0.6;
+/** A altura, em pixels de mundo, do centro de uma pasta acima do chão da célula: é onde o botão dela fica. */
+const FOLDER_LIFT = 12;
 
 export function GameStage(props: GameStageProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const botoesRef = useRef(new Map<string, HTMLButtonElement>());
   // O laço lê as props pelo ref, atualizado depois de cada renderização.
   const propsRef = useRef(props);
   useEffect(() => {
@@ -72,67 +76,68 @@ export function GameStage(props: GameStageProps) {
   const playerRef = useRef<PlayerState>(initialPlayer(props.scene));
   const cameraRef = useRef<Camera>({ cx: 0, cy: 0, zoom: 1 });
   const tempoRef = useRef(0);
-  const aberturaRef = useRef(props.saidaAberta ? 1 : 0);
-  const efeitosRef = useRef<CollectEffect[]>([]);
-  const alcanceRef = useRef<Interactable | null>(null);
-  const saiuRef = useRef(false);
-  const recolhidosVistosRef = useRef<ReadonlySet<string>>(new Set(props.recolhidos));
-  const inputRef = useRef(createInput());
+  const aberturaRef = useRef(props.concluida ? 1 : 0);
+  // A caminhada em curso e a pasta a que ela leva.
+  const caminhadaRef = useRef<{ walk: Walk; chave: string } | null>(null);
   const loopRef = useRef<GameLoop | null>(null);
   const tamanhoRef = useRef({ largura: 0, altura: 0, dpr: 1 });
-  // Algo mudou desde o último desenho: em pausa, o quadro não é refeito à toa.
+  // Algo mudou desde o último desenho: parado, o quadro não é refeito à toa.
   const sujoRef = useRef(true);
 
+  // As pastas que têm botão sobre a cena neste enquadramento: em zoom pequeno, a opcional que encostaria em outra fica só na lista da fase.
+  const visiveisRef = useRef<Set<string>>(new Set());
+
+  /** A câmera para a cena, o tamanho do palco e as margens de agora, e as pastas que cabem nela. */
+  const enquadrar = () => {
+    const p = propsRef.current;
+    const { largura, altura } = tamanhoRef.current;
+    const viewport = { largura: largura || 800, altura: altura || 600 };
+    const marco = p.marcadores.find((item) => item.natureza === "marco");
+    const alvo = marco === undefined ? null : toScreen(marco.x + 0.5, marco.y + 0.5);
+    cameraRef.current = frameScene(p.scene, viewport, p.margens, alvo);
+    visiveisRef.current = spacedMarkers(p.marcadores, cameraRef.current, viewport, FOLDER_LIFT);
+    sujoRef.current = true;
+  };
+
   useImperativeHandle(props.handle, () => ({
-    setTouch: (dx, dy) => inputRef.current.setTouch(dx, dy),
-    interact: () => {
-      const alvo = alcanceRef.current;
-      if (alvo !== null) propsRef.current.onInteract(alvo);
+    open: (chave) => {
+      const p = propsRef.current;
+      const marcador = p.marcadores.find((item) => item.chave === chave);
+      if (marcador === undefined || caminhadaRef.current !== null) return;
+      const caminho = p.movimento ? pathToMarker(p.scene, cellOf(playerRef.current), marcador) : null;
+      // Sem movimento, sem caminho ou já ao lado da pasta: abre na hora.
+      if (caminho === null || caminho.length <= 1) {
+        p.onOpen(chave);
+        return;
+      }
+      caminhadaRef.current = { walk: walkAlong(caminho, marcador), chave };
+      rootRef.current?.setAttribute("data-andando", "sim");
+      sujoRef.current = true;
     },
-    focus: () => rootRef.current?.focus({ preventScroll: true }),
+    focusMarker: (chave = "marco") => botoesRef.current.get(chave)?.focus({ preventScroll: true }),
   }));
 
-  // Nova cena: o personagem volta ao início, a câmera o enquadra, nada em curso.
+  // Nova fase: o boneco volta ao início, a câmera enquadra a cena, nada em curso.
+  // O mesmo enquadramento vale quando as margens mudam (o cartão da fase muda de altura).
   useEffect(() => {
-    const { scene, saidaAberta } = propsRef.current;
+    const { scene, concluida } = propsRef.current;
     playerRef.current = initialPlayer(scene);
-    const { sx, sy } = toScreen(playerRef.current.x, playerRef.current.y);
-    const { largura, altura } = tamanhoRef.current;
-    const zoom = zoomFor(scene, { largura: largura || 800, altura: altura || 600 });
-    const centro = clampCenter(sx, sy, scene, { largura: largura || 800, altura: altura || 600 }, zoom);
-    cameraRef.current = { ...centro, zoom };
     tempoRef.current = 0;
-    aberturaRef.current = saidaAberta ? 1 : 0;
-    efeitosRef.current = [];
-    saiuRef.current = false;
-    alcanceRef.current = null;
-    sujoRef.current = true;
-    propsRef.current.onReach(null);
-    recolhidosVistosRef.current = new Set(propsRef.current.recolhidos);
-  }, [props.scene.id, props.chapter.id, props.sessao]);
-
-  // Registro recolhido: o efeito sai de onde ele estava. Com movimento
-  // reduzido não há efeito: a pasta some de uma vez, como a porta abre de uma vez.
+    aberturaRef.current = concluida ? 1 : 0;
+    caminhadaRef.current = null;
+    rootRef.current?.setAttribute("data-andando", "nao");
+    enquadrar();
+  }, [props.scene.id, props.faseId]);
   useEffect(() => {
-    const vistos = recolhidosVistosRef.current;
-    const novos = props.recolhidos.filter((id) => !vistos.has(id));
-    if (novos.length === 0) return;
-    for (const id of novos) {
-      const indice = recordIds(props.chapter).indexOf(id);
-      const posicao = props.scene.registros[indice];
-      if (posicao !== undefined && props.movimento) efeitosRef.current.push({ x: posicao.x + 0.5, y: posicao.y + 0.5, t: 0 });
-    }
-    recolhidosVistosRef.current = new Set(props.recolhidos);
-    sujoRef.current = true;
-  }, [props.recolhidos, props.chapter, props.scene.registros, props.movimento]);
+    // As margens e as pastas chegam por `propsRef`, que o primeiro efeito deste componente atualiza a cada passada, antes deste.
+    enquadrar();
+  }, [props.margens.topo, props.margens.base, props.margens.esquerda, props.marcadores]);
 
-  // Pausa: congela a simulação e solta as teclas, para o personagem não
-  // continuar andando ao voltar.
+  // Pausa, porta e pastas: o quadro parado é refeito quando algo disso muda.
   useEffect(() => {
     loopRef.current?.setPaused(props.pausado);
-    if (props.pausado) inputRef.current.release();
     sujoRef.current = true;
-  }, [props.pausado, props.saidaAberta, props.movimento]);
+  }, [props.pausado, props.concluida, props.movimento, props.marcadores]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -140,7 +145,7 @@ export function GameStage(props: GameStageProps) {
     if (root === null || canvas === null) return;
     const ctx = canvas.getContext("2d");
     if (ctx === null) {
-      // Sem canvas 2D não há cena: nada de laço, e a casca mostra o aviso.
+      // Sem canvas 2D não há cena: nada de laço, e a casca passa para a leitura.
       root.dataset.palco = "sem-canvas";
       propsRef.current.onUnavailable();
       return;
@@ -156,66 +161,56 @@ export function GameStage(props: GameStageProps) {
       tamanhoRef.current = { largura, altura, dpr };
       canvas.width = largura * dpr;
       canvas.height = altura * dpr;
-      // A câmera já enquadra o personagem na medida nova, sem deslizar até ele.
-      const cena = propsRef.current.scene;
-      const zoom = zoomFor(cena, { largura, altura });
-      const { sx, sy } = toScreen(playerRef.current.x, playerRef.current.y);
-      cameraRef.current = { ...clampCenter(sx, sy, cena, { largura, altura }, zoom), zoom };
-      sujoRef.current = true;
+      // A câmera enquadra a cena na medida nova.
+      enquadrar();
     };
     medir();
     const observer = new ResizeObserver(medir);
     observer.observe(root);
 
-    const soltar = inputRef.current.attach(root, {
-      onInteract: () => {
-        const alvo = alcanceRef.current;
-        if (alvo !== null && !propsRef.current.pausado) propsRef.current.onInteract(alvo);
-      },
-      onEscape: () => propsRef.current.onEscape(),
-    });
+    /** Põe cada botão em cima da pasta dele, pelo que a câmera mostra agora. */
+    const posicionar = () => {
+      const { largura, altura } = tamanhoRef.current;
+      for (const marcador of propsRef.current.marcadores) {
+        const botao = botoesRef.current.get(marcador.chave);
+        if (botao === undefined) continue;
+        botao.hidden = !visiveisRef.current.has(marcador.chave);
+        const { sx, sy } = toScreen(marcador.x + 0.5, marcador.y + 0.5);
+        const { px, py } = project(cameraRef.current, { largura, altura }, sx, sy - FOLDER_LIFT);
+        botao.style.transform = `translate(${Math.round(px)}px, ${Math.round(py)}px)`;
+      }
+    };
 
     const loop = createLoop({
       update(dt) {
         const p = propsRef.current;
-        const { largura, altura } = tamanhoRef.current;
-        const viewport = { largura, altura };
-        const input = inputRef.current.read();
-        playerRef.current = stepPlayer(playerRef.current, input, dt, p.scene, p.saidaAberta);
         tempoRef.current += dt;
 
-        const alvoAbertura = p.saidaAberta ? 1 : 0;
-        if (!p.movimento) aberturaRef.current = alvoAbertura;
+        const caminhada = caminhadaRef.current;
+        if (caminhada !== null) {
+          const passo = stepWalk(playerRef.current, caminhada.walk, dt);
+          playerRef.current = passo.player;
+          if (passo.chegou) {
+            caminhadaRef.current = null;
+            root.dataset.andando = "nao";
+            p.onOpen(caminhada.chave);
+          } else {
+            caminhadaRef.current = { walk: passo.walk, chave: caminhada.chave };
+          }
+        }
+
+        const aberturaAntes = aberturaRef.current;
+        const alvoDaPorta = p.concluida ? 1 : 0;
+        if (!p.movimento) aberturaRef.current = alvoDaPorta;
         else {
-          const delta = alvoAbertura - aberturaRef.current;
-          const passo = dt / EXIT_OPEN_SECONDS;
+          const delta = alvoDaPorta - aberturaRef.current;
+          const passo = dt / DOOR_SECONDS;
           aberturaRef.current += Math.abs(delta) <= passo ? delta : Math.sign(delta) * passo;
         }
 
-        efeitosRef.current = efeitosRef.current
-          .map((efeito) => ({ ...efeito, t: efeito.t + dt / EFFECT_SECONDS }))
-          .filter((efeito) => efeito.t < 1);
-
-        const alcance = nearestInteractable(playerRef.current, listInteractables(p.scene, p.chapter, p.recolhidos));
-        const anterior = alcanceRef.current;
-        if ((alcance?.tipo ?? null) !== (anterior?.tipo ?? null) || (alcance?.id ?? null) !== (anterior?.id ?? null)) {
-          alcanceRef.current = alcance;
-          p.onReach(alcance);
-        }
-
-        // Atravessar avisa uma vez por entrada na célula da saída: quem sai dela e volta atravessa de novo.
-        if (!isOnExit(playerRef.current, p.scene)) saiuRef.current = false;
-        else if (p.saidaAberta && !saiuRef.current) {
-          saiuRef.current = true;
-          inputRef.current.release();
-          p.onExit();
-        }
-
-        const { sx, sy } = toScreen(playerRef.current.x, playerRef.current.y);
-        const centro = clampCenter(sx, sy, p.scene, viewport, cameraRef.current.zoom);
-        cameraRef.current = followCamera(cameraRef.current, centro, dt, p.movimento);
-
-        sujoRef.current = true;
+        // Com movimento, a cena tem o que balança com o tempo e é refeita a cada quadro. Com movimento reduzido ela
+        // fica parada: o quadro só é refeito quando o boneco anda ou a porta muda.
+        if (p.movimento || caminhada !== null || aberturaRef.current !== aberturaAntes) sujoRef.current = true;
       },
       render() {
         medir();
@@ -225,7 +220,6 @@ export function GameStage(props: GameStageProps) {
         // A posição fica no documento, para os testes e para quem depura.
         root.dataset.jogoX = playerRef.current.x.toFixed(2);
         root.dataset.jogoY = playerRef.current.y.toFixed(2);
-        root.dataset.andando = playerRef.current.andando ? "sim" : "nao";
         // A porta como o palco a desenha neste quadro: é o que a pessoa vê, e não só o que a casca decidiu.
         root.dataset.porta = aberturaRef.current >= 1 ? "aberta" : aberturaRef.current <= 0 ? "fechada" : "abrindo";
         const { largura, altura, dpr } = tamanhoRef.current;
@@ -233,13 +227,12 @@ export function GameStage(props: GameStageProps) {
           ctx,
           {
             scene: p.scene,
-            chapter: p.chapter,
             personagem: p.personagem,
+            epoca: p.epoca,
             player: playerRef.current,
-            recolhidos: p.recolhidos,
+            // A pasta sem botão também não é desenhada: o que aparece na cena é o que responde ao toque.
+            pastas: p.marcadores.filter((marcador) => visiveisRef.current.has(marcador.chave)).map((marcador) => ({ x: marcador.x, y: marcador.y, destaque: marcador.natureza === "marco" })),
             abertura: aberturaRef.current,
-            alcance: alcanceRef.current,
-            efeitos: efeitosRef.current,
             camera: cameraRef.current,
             tempo: tempoRef.current,
             movimento: p.movimento,
@@ -247,6 +240,7 @@ export function GameStage(props: GameStageProps) {
           { largura, altura },
           dpr,
         );
+        posicionar();
       },
     });
     loop.setPaused(propsRef.current.pausado);
@@ -254,33 +248,45 @@ export function GameStage(props: GameStageProps) {
     loopRef.current = loop;
     root.dataset.palco = "pronto";
 
-    // O foco vai para a cena quando nada mais está em uso, para as setas já valerem.
-    if (document.activeElement === null || document.activeElement === document.body) root.focus({ preventScroll: true });
-
     return () => {
       loopRef.current = null;
       observer.disconnect();
       loop.stop();
-      soltar();
     };
   }, []);
 
   return (
     <div
       ref={rootRef}
-      tabIndex={0}
-      role="application"
-      aria-label="Cena do jogo"
-      aria-describedby={props.describedBy}
+      role="group"
+      aria-label={`Cenário da fase: ${props.scene.nome}. É uma representação.`}
       data-palco="carregando"
       data-pausado={props.pausado ? "sim" : "nao"}
+      data-andando="nao"
       data-marca={STAGE_MARKER}
       // A cena não usa arraste: o dedo sobre ela ainda rola a página na vertical.
-      // O foco é o contorno do atlas, virado para dentro: um contorno é pintado
-      // por cima do canvas; uma sombra interna ficaria escondida atrás dele.
-      className="absolute inset-0 touch-pan-y select-none focus-visible:-outline-offset-2"
+      className="absolute inset-0 touch-pan-y select-none overflow-hidden"
     >
       <canvas ref={canvasRef} className="block h-full w-full" aria-hidden="true" />
+      {props.marcadores.map((marcador) => (
+        <button
+          key={marcador.chave}
+          type="button"
+          ref={(elemento) => {
+            if (elemento === null) botoesRef.current.delete(marcador.chave);
+            else botoesRef.current.set(marcador.chave, elemento);
+          }}
+          className={`jogo-marcador ${marcador.natureza === "marco" ? "jogo-marcador-marco" : "jogo-marcador-explorar"}`}
+          aria-label={marcador.natureza === "marco" ? `Abrir o marco: ${marcador.rotulo}` : `Explorar: ${marcador.rotulo}`}
+          data-marcador={marcador.chave}
+          data-natureza={marcador.natureza}
+          onClick={() => props.handle.current?.open(marcador.chave)}
+        >
+          <span className="jogo-marcador-rotulo" aria-hidden="true">
+            {marcador.natureza === "marco" ? "Abrir" : "+"}
+          </span>
+        </button>
+      ))}
     </div>
   );
 }

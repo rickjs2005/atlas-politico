@@ -1,8 +1,8 @@
 # Conteúdo
 
-Tudo o que o atlas afirma sobre pessoas, mandatos e acontecimentos mora aqui, em JSON versionado. O código nunca traz conteúdo embutido.
+Tudo o que o atlas afirma sobre pessoas, mandatos, acontecimentos e decisões mora aqui, em JSON versionado, e também o texto das fases do jogo, as definições dos termos e as propostas eleitorais. O código nunca traz conteúdo embutido: do jogo, só o cenário e a figura de cada fase ficam no código.
 
-Situação: edição 0.2.0, com data de corte em 8 de outubro de 2026. São 39 acontecimentos conferidos, 5 rascunhos de acontecimento e a primeira amostra de decisões políticas: 6 votos (com 6 votações e 7 proposições) e 6 atos do Executivo, com 4 declarações de cobertura da pesquisa e 1 identidade institucional (a seleção está em `research/selecao-decisoes-2026-10.md`). Toda a conferência foi assistida por IA; a revisão humana está pendente (ver `docs/CONTENT-REVIEW.md` e `docs/HUMAN-REVIEW.md`).
+Situação: edição 0.3.0, com data de corte em 8 de outubro de 2026. São 39 acontecimentos conferidos e 6 rascunhos de acontecimento. As decisões políticas são amostras: 6 votos (com 6 votações), 17 atos do Executivo e 9 atuações legislativas, com 15 proposições, 7 declarações de cobertura da pesquisa e 1 identidade institucional. A edição 0.3.0 acrescentou o conteúdo da trilha do jogo: 22 fases, 14 fatos biográficos e 26 conceitos, e 42 propostas eleitorais. O que foi pesquisado, o que entrou e o que ficou de fora está em `research/selecao-decisoes-2026-10.md` (edição 0.2.0) e em `research/trilha-2026-10.md` (edição 0.3.0). Toda a conferência foi assistida por IA; a revisão humana está pendente (ver `docs/CONTENT-REVIEW.md` e `docs/HUMAN-REVIEW.md`).
 
 As páginas não leem estas pastas. Elas leem `generated/`, que `npm run data:build` produz depois de validar o conteúdo. O funcionamento está em `docs/DATA-PIPELINE.md`.
 
@@ -17,8 +17,10 @@ A edição: os registros que passaram pela revisão.
 | `mandatos.json` | Mandatos e funções, com período |
 | `filiacoes.json` | Filiações partidárias, com período |
 | `acontecimentos.json` | Acontecimentos |
-| `proposicoes.json`, `votacoes.json`, `votos.json`, `atosExecutivos.json` | Decisões políticas: a proposição, a votação, o voto individual e o ato do Executivo (`docs/DATA_MODEL.md`, seção Decisões). Só a amostra documentada; nunca inferidos |
+| `proposicoes.json`, `votacoes.json`, `votos.json`, `atosExecutivos.json`, `atuacoesLegislativas.json` | Decisões políticas: a proposição, a votação, o voto individual, o ato do Executivo e a atuação legislativa, que é a autoria ou a relatoria de uma matéria (`docs/DATA_MODEL.md`, seção Decisões políticas). Só a amostra documentada; nunca inferidos |
 | `coberturaPolitica.json`, `identidadesInstitucionais.json` | O que foi pesquisado para cada pessoa, tema e período, com as lacunas; e a pessoa em cada acervo oficial, pelo identificador que o acervo usa |
+| `propostasEleitorais.json` | Frases do documento que cada candidatura registrou na Justiça Eleitoral, três por área, com a página. Dizem o que o documento propõe: não são ato, voto nem resultado (`docs/DATA_MODEL.md`, seção Propostas eleitorais) |
+| `fatosBiograficos.json`, `conceitos.json`, `fasesDoJogo.json` | O conteúdo educativo da trilha do jogo: os fatos de origem, formação e trabalho antes da vida pública; a definição simples de cada termo, com o texto oficial que a sustenta; e as fases, com a explicação, a atividade e os registros que cada bloco aponta (`docs/DATA_MODEL.md`, seção Conteúdo educativo) |
 | `lugares.json` | Lugares com coordenada, precisão e origem |
 | `fontes.json` | Documentos citados |
 | `imagens.json` | Imagens com autoria, crédito e condições de uso. Os arquivos ficam em `public/media/`. Depois de trocar o arquivo de um retrato, rode `npm run images`: as páginas pedem versões preparadas dele, e o build recusa versões desatualizadas |
@@ -29,6 +31,7 @@ Regras:
 - Um registro em outro estado, nesta pasta, fica fora da publicação e aparece no relatório.
 - Toda revisão declara o tipo: `assistida-por-ia` ou `humana`.
 - Lugar, fonte e imagem só vão para os dados públicos quando um registro publicado os usa.
+- Uma fase do jogo não cita fonte: cada bloco aponta os registros publicados que o sustentam. Fato que não está em registro nenhum entra antes, como registro, com documento lido.
 - Nenhum identificador pode começar com `sintetico-` (prefixo reservado aos dados de teste).
 - Sem `edicao.json` e sem registros, o atlas mostra "nenhuma edição publicada".
 
@@ -36,7 +39,7 @@ Regras:
 
 Pesquisa em andamento e o que chega por importação. Nada desta pasta é publicado.
 
-- As mesmas treze coleções, parciais: só os registros em pesquisa.
+- As mesmas dezoito coleções, parciais: só os registros em pesquisa.
 - `importacoes.json`: registro de cada importação, escrito por `npm run data:import` e por `npm run importar:decisoes`.
 - Um rascunho pode citar pessoas, lugares e fontes de `published/`.
 - Todo rascunho traz `pendencias`: o que falta para ser conferido.

@@ -1,0 +1,2518 @@
+[
+  {
+    "id": "lula-origem",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 1,
+    "titulo": "De Garanhuns a São Paulo",
+    "objetivo": "saber onde Lula nasceu e como a família dele foi parar em São Paulo.",
+    "periodo": {
+      "de": 1945,
+      "ate": 1956
+    },
+    "marco": {
+      "tipo": "fato",
+      "id": "lula-nascimento"
+    },
+    "explicacao": [
+      {
+        "texto": "Lula nasceu em outubro de 1945, em Garanhuns, no interior de Pernambuco. O nome completo dele é Luiz Inácio Lula da Silva. Segundo a biografia publicada pela Presidência, foi o sétimo de oito irmãos.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "lula-nascimento"
+          }
+        ]
+      },
+      {
+        "texto": "Em dezembro de 1952, a mãe e os filhos foram para o litoral do estado de São Paulo. Segundo as biografias da Presidência, a viagem durou 13 dias, de caminhão, e a família fugia da seca e da fome.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "lula-mudanca-para-o-litoral-paulista"
+          }
+        ]
+      },
+      {
+        "texto": "Em 1956, a família se mudou para a cidade de São Paulo e passou a morar em um único cômodo, nos fundos de um bar.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "lula-mudanca-para-a-cidade-de-sao-paulo"
+          }
+        ]
+      }
+    ],
+    "conceitos": [],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Como a família de Lula viajou para São Paulo, em dezembro de 1952?",
+      "opcoes": [
+        {
+          "id": "caminhao",
+          "texto": "De caminhão, em uma viagem de 13 dias."
+        },
+        {
+          "id": "trem",
+          "texto": "De trem, em uma viagem de três dias."
+        },
+        {
+          "id": "navio",
+          "texto": "De navio, até o porto de Santos."
+        }
+      ],
+      "correta": "caminhao",
+      "explicacao": "A biografia da Presidência registra a viagem de 13 dias em um caminhão, em dezembro de 1952. Os documentos divergem sobre a cidade de chegada, e o atlas guarda as duas versões.",
+      "referencias": [
+        {
+          "tipo": "fato",
+          "id": "lula-mudanca-para-o-litoral-paulista"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "fato",
+        "id": "lula-escola"
+      }
+    ],
+    "lacunas": [
+      "A infância em Pernambuco, antes de 1952: os documentos oficiais lidos trazem só o nascimento e a mudança.",
+      "Os anos em que Lula estudou e os endereços da família: os documentos lidos não trazem datas."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-sindicato",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 2,
+    "titulo": "Da fábrica ao sindicato",
+    "objetivo": "entender o que é um sindicato e como Lula chegou à presidência de um.",
+    "periodo": {
+      "de": 1956,
+      "ate": 1979
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "lula-1975-eleito-presidente-do-sindicato"
+    },
+    "explicacao": [
+      {
+        "texto": "Lula fez o curso de torneiro mecânico do Senai, tornou-se metalúrgico e trabalhou em várias fábricas, entre elas as Indústrias Villares, em São Bernardo do Campo.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "lula-curso-no-senai"
+          },
+          {
+            "tipo": "fato",
+            "id": "lula-trabalho-na-villares"
+          }
+        ]
+      },
+      {
+        "texto": "Na Villares, conheceu o movimento sindical por meio de um irmão. Em 1969 entrou na diretoria do sindicato dos metalúrgicos, como suplente. Em 1975 foi eleito presidente. Segundo a biografia publicada pela Presidência, teve 92% dos votos.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "lula-trabalho-na-villares"
+          },
+          {
+            "tipo": "fato",
+            "id": "lula-entrada-na-diretoria-do-sindicato"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "lula-1975-eleito-presidente-do-sindicato"
+          }
+        ]
+      },
+      {
+        "texto": "Reeleito em 1978, estava à frente do sindicato quando os metalúrgicos do ABC paulista entraram em greve, em março de 1979. Segundo a mesma biografia, eram 170 mil.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "lula-reeleicao-no-sindicato"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "lula-1979-greve-dos-metalurgicos-do-abc"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "sindicato",
+      "greve"
+    ],
+    "atividade": {
+      "tipo": "ordem",
+      "enunciado": "Ponha em ordem, do mais antigo para o mais recente, três momentos de Lula no sindicato.",
+      "itens": [
+        {
+          "tipo": "acontecimento",
+          "id": "lula-1979-greve-dos-metalurgicos-do-abc"
+        },
+        {
+          "tipo": "fato",
+          "id": "lula-entrada-na-diretoria-do-sindicato"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "lula-1975-eleito-presidente-do-sindicato"
+        }
+      ],
+      "explicacao": "Primeiro ele entrou na diretoria, como suplente, em 1969. Depois foi eleito presidente do sindicato, em 1975. A greve de março de 1979 aconteceu quando ele já presidia o sindicato."
+    },
+    "explorar": [
+      {
+        "tipo": "fato",
+        "id": "lula-primeiros-trabalhos"
+      },
+      {
+        "tipo": "mandato",
+        "id": "lula-presidente-do-sindicato-dos-metalurgicos"
+      }
+    ],
+    "lacunas": [
+      "Os anos em que Lula fez o curso do Senai e entrou na Villares: os documentos oficiais lidos não trazem.",
+      "Quando ele deixou a presidência do sindicato: os documentos lidos não informam, e o atlas registra o fim como desconhecido."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-partido-e-constituinte",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 3,
+    "titulo": "Um partido e uma Constituição",
+    "objetivo": "ver como um líder sindical entrou na política: fundou um partido e foi eleito deputado.",
+    "periodo": {
+      "de": 1980,
+      "ate": 1988
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "lula-1986-eleito-deputado-federal-constituinte"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 1980, o país ainda era governado por militares. Em fevereiro, Lula e outros sindicalistas, intelectuais e políticos fundaram o PT, o Partido dos Trabalhadores. No mesmo ano, durante uma greve, ele foi preso com base na Lei de Segurança Nacional. Segundo a biografia publicada pela Presidência, ficou 31 dias na prisão.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-1980-fundacao-do-pt"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "lula-1980-prisao-pela-lei-de-seguranca-nacional"
+          }
+        ]
+      },
+      {
+        "texto": "Em 1986, foi eleito deputado federal por São Paulo, pelo PT, para a Assembleia Nacional Constituinte, que escreveu a Constituição de 1988. Tomou posse em 1º de fevereiro de 1987.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-1986-eleito-deputado-federal-constituinte"
+          },
+          {
+            "tipo": "conceito",
+            "id": "assembleia-constituinte"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "partido-politico",
+      "deputado-federal",
+      "assembleia-constituinte"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Para que serve uma Assembleia Constituinte, como a de que Lula participou?",
+      "opcoes": [
+        {
+          "id": "constituicao",
+          "texto": "Para escrever a Constituição do país."
+        },
+        {
+          "id": "presidente",
+          "texto": "Para escolher o presidente da República."
+        },
+        {
+          "id": "justica",
+          "texto": "Para julgar processos da Justiça."
+        }
+      ],
+      "correta": "constituicao",
+      "explicacao": "Assembleia constituinte é a assembleia convocada para escrever a Constituição. Lula foi eleito para ela em 1986, como deputado federal por São Paulo. A Constituição em vigor é de 1988.",
+      "referencias": [
+        {
+          "tipo": "conceito",
+          "id": "assembleia-constituinte"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "lula-1986-eleito-deputado-federal-constituinte"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "mandato",
+        "id": "lula-deputado-federal-1987-1991"
+      },
+      {
+        "tipo": "mandato",
+        "id": "lula-presidente-do-pt-1980-1988"
+      },
+      {
+        "tipo": "filiacao",
+        "id": "lula-pt"
+      }
+    ],
+    "lacunas": [
+      "Os votos e as propostas de Lula como deputado constituinte, de 1987 a 1991.",
+      "Não há acontecimentos registrados de 1981 a 1985 e em 1987 e 1988."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-disputas-pela-presidencia",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 4,
+    "titulo": "Quatro disputas pela Presidência",
+    "objetivo": "entender o que são primeiro e segundo turno, pelas eleições que Lula disputou até vencer.",
+    "periodo": {
+      "de": 1989,
+      "ate": 2002
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "lula-2002-eleito-presidente"
+    },
+    "explicacao": [
+      {
+        "texto": "Lula disputou a Presidência da República três vezes sem vencer. Em 1989, perdeu no segundo turno. Em 1994 e em 1998, Fernando Henrique Cardoso venceu já no primeiro turno.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-1989-primeira-candidatura-a-presidencia"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "lula-1994-derrota-na-eleicao-presidencial"
+          }
+        ]
+      },
+      {
+        "texto": "Em 2002, a eleição foi ao segundo turno, que é disputado só pelos dois mais votados do primeiro. Em 27 de outubro de 2002, Lula foi eleito presidente da República. Segundo a biografia publicada pela Presidência, teve quase 53 milhões de votos. Tomou posse em 1º de janeiro de 2003.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2002-eleito-presidente"
+          },
+          {
+            "tipo": "conceito",
+            "id": "turnos-da-eleicao"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "turnos-da-eleicao",
+      "presidente-da-republica"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Quando uma eleição para presidente vai ao segundo turno?",
+      "opcoes": [
+        {
+          "id": "sem-maioria",
+          "texto": "Quando nenhum candidato passa da metade dos votos válidos no primeiro turno."
+        },
+        {
+          "id": "sempre",
+          "texto": "Sempre: toda eleição para presidente tem dois turnos."
+        },
+        {
+          "id": "congresso",
+          "texto": "Quando o Congresso decide repetir a votação."
+        }
+      ],
+      "correta": "sem-maioria",
+      "explicacao": "Só há segundo turno se ninguém passar da metade dos votos válidos no primeiro. Em 1994 e 1998, Fernando Henrique Cardoso venceu no primeiro turno. Em 1989 e 2002, a eleição foi ao segundo.",
+      "referencias": [
+        {
+          "tipo": "conceito",
+          "id": "turnos-da-eleicao"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "lula-1989-primeira-candidatura-a-presidencia"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "lula-1994-derrota-na-eleicao-presidencial"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "lula-2002-eleito-presidente"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "mandato",
+        "id": "lula-presidente-do-pt-1990-1994"
+      }
+    ],
+    "lacunas": [
+      "Não há acontecimentos registrados de 1990 a 1993 e de 1995 a 2001.",
+      "A eleição de 1998 não tem registro próprio: aparece no contexto da de 1994, sem o número de votos."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-primeiro-governo",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 5,
+    "titulo": "O primeiro governo",
+    "objetivo": "entender o que é uma medida provisória e como ela vira lei.",
+    "periodo": {
+      "de": 2003,
+      "ate": 2006
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "planalto-mpv-132-2003-bolsa-familia"
+    },
+    "explicacao": [
+      {
+        "texto": "Presidente desde 1º de janeiro de 2003, Lula passou a chefiar o governo federal. Uma das ferramentas do cargo é a medida provisória: uma regra com força de lei, que o Congresso precisa aprovar para virar lei de vez.",
+        "referencias": [
+          {
+            "tipo": "mandato",
+            "id": "lula-presidente-da-republica-2003-2007"
+          },
+          {
+            "tipo": "conceito",
+            "id": "presidente-da-republica"
+          },
+          {
+            "tipo": "conceito",
+            "id": "medida-provisoria"
+          }
+        ]
+      },
+      {
+        "texto": "Em 20 de outubro de 2003, ele assinou a Medida Provisória 132, que criou o Programa Bolsa Família. O Congresso aprovou, e em 9 de janeiro de 2004 a medida virou a Lei 10.836, sancionada por Lula.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-mpv-132-2003-bolsa-familia"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-10836-2004-bolsa-familia"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "medida-provisoria",
+      "sancao"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "O que acontece com uma medida provisória depois que o presidente a assina?",
+      "opcoes": [
+        {
+          "id": "congresso",
+          "texto": "Vai ao Congresso, que decide se ela vira lei."
+        },
+        {
+          "id": "para-sempre",
+          "texto": "Vira lei para sempre, sem passar pelo Congresso."
+        },
+        {
+          "id": "plebiscito",
+          "texto": "Só começa a valer depois de um plebiscito."
+        }
+      ],
+      "correta": "congresso",
+      "explicacao": "A medida provisória tem força de lei desde que é editada, mas tem de ser enviada ao Congresso e perde a validade se não virar lei no prazo. A do Bolsa Família virou a Lei 10.836, em janeiro de 2004.",
+      "referencias": [
+        {
+          "tipo": "conceito",
+          "id": "medida-provisoria"
+        },
+        {
+          "tipo": "decisao",
+          "id": "planalto-lei-10836-2004-bolsa-familia"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "decisao",
+        "id": "camara-pec-40-2003-iniciativa"
+      },
+      {
+        "tipo": "decisao",
+        "id": "planalto-lei-10826-2003-armas-de-fogo"
+      },
+      {
+        "tipo": "decisao",
+        "id": "planalto-decreto-5090-2004-farmacia-popular"
+      },
+      {
+        "tipo": "decisao",
+        "id": "planalto-lei-11096-2005-prouni"
+      },
+      {
+        "tipo": "decisao",
+        "id": "planalto-lei-11340-2006-violencia-contra-a-mulher"
+      },
+      {
+        "tipo": "acontecimento",
+        "id": "lula-2006-reeleito-presidente"
+      }
+    ],
+    "lacunas": [
+      "O atlas registra sete atos de 2003 a 2006, escolhidos como amostra. Não é a lista do que o governo fez.",
+      "Os efeitos de cada lei e o resultado dos vetos no Congresso."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-segundo-governo",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 6,
+    "titulo": "O segundo governo",
+    "objetivo": "entender a diferença entre sancionar e vetar um projeto aprovado pelo Congresso.",
+    "periodo": {
+      "de": 2007,
+      "ate": 2010
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "planalto-lei-11738-2008-piso-do-magisterio"
+    },
+    "explicacao": [
+      {
+        "texto": "Lula começou o segundo mandato de presidente em 1º de janeiro de 2007.",
+        "referencias": [
+          {
+            "tipo": "mandato",
+            "id": "lula-presidente-da-republica-2007-2011"
+          }
+        ]
+      },
+      {
+        "texto": "Quando o Congresso aprova um projeto de lei, o presidente escolhe: sanciona, e o projeto vira lei, ou veta, e recusa o projeto inteiro ou uma parte dele.",
+        "referencias": [
+          {
+            "tipo": "conceito",
+            "id": "sancao"
+          },
+          {
+            "tipo": "conceito",
+            "id": "veto"
+          }
+        ]
+      },
+      {
+        "texto": "Em 16 de julho de 2008, Lula sancionou a lei que criou o piso salarial nacional dos profissionais do magistério da educação básica pública. O projeto tinha vindo do Senado. Ele vetou dois trechos: o veto foi parcial.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-11738-2008-piso-do-magisterio"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "veto",
+      "projeto-de-lei"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Lula sancionou a lei do piso do magistério e vetou dois trechos dela. Como se chama esse tipo de veto?",
+      "opcoes": [
+        {
+          "id": "parcial",
+          "texto": "Veto parcial: só uma parte do projeto é recusada."
+        },
+        {
+          "id": "total",
+          "texto": "Veto total: o projeto inteiro é recusado."
+        },
+        {
+          "id": "medida",
+          "texto": "Medida provisória."
+        }
+      ],
+      "correta": "parcial",
+      "explicacao": "No veto parcial, o presidente recusa só uma parte do projeto, e o resto vira lei. Na Lei 11.738, de 2008, foram vetados o inciso I do artigo 3º e o artigo 7º, segundo a mensagem de veto.",
+      "referencias": [
+        {
+          "tipo": "decisao",
+          "id": "planalto-lei-11738-2008-piso-do-magisterio"
+        },
+        {
+          "tipo": "conceito",
+          "id": "veto"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "decisao",
+        "id": "planalto-decreto-6025-2007-pac"
+      },
+      {
+        "tipo": "decisao",
+        "id": "planalto-lei-12187-2009-mudanca-do-clima"
+      },
+      {
+        "tipo": "decisao",
+        "id": "planalto-lei-12351-2010-partilha-do-pre-sal"
+      }
+    ],
+    "lacunas": [
+      "O atlas registra quatro atos de 2007 a 2010, escolhidos como amostra. Não é a lista do que o governo fez.",
+      "Se o Congresso manteve ou derrubou cada veto.",
+      "Não há acontecimentos registrados de 2011 a 2015."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-processos",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 7,
+    "titulo": "Condenação, prisão e anulação",
+    "objetivo": "acompanhar, na ordem, o que a Justiça decidiu nos processos contra Lula e entender o que é anular uma decisão.",
+    "periodo": {
+      "de": 2016,
+      "ate": 2021
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "lula-2021-stf-anula-condenacoes"
+    },
+    "explicacao": [
+      {
+        "texto": "Em julho de 2017, um juiz federal de Curitiba condenou Lula por corrupção passiva e lavagem de dinheiro, no caso do triplex do Guarujá. Em janeiro de 2018, a segunda instância confirmou a condenação, com pena maior. A defesa pediu a absolvição e disse que o processo era nulo.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2017-condenacao-em-primeira-instancia"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2018-tribunal-confirma-condenacao"
+          }
+        ]
+      },
+      {
+        "texto": "Lula ficou preso de abril de 2018 a novembro de 2019, e o TSE negou o registro da candidatura dele em 2018.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2018-prisao-em-curitiba"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2019-saida-da-prisao"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2018-registro-de-candidatura-indeferido"
+          }
+        ]
+      },
+      {
+        "texto": "Em março de 2021, o STF anulou as condenações: entendeu que o juízo de Curitiba não era o competente. Também declarou a suspeição do juiz no caso do triplex.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2021-stf-anula-condenacoes"
+          },
+          {
+            "tipo": "conceito",
+            "id": "anulacao"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "condenacao-e-recurso",
+      "anulacao"
+    ],
+    "atividade": {
+      "tipo": "ordem",
+      "enunciado": "Ponha em ordem, do mais antigo para o mais recente, três decisões e fatos dos processos contra Lula.",
+      "itens": [
+        {
+          "tipo": "acontecimento",
+          "id": "lula-2021-stf-anula-condenacoes"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "lula-2017-condenacao-em-primeira-instancia"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "lula-2018-prisao-em-curitiba"
+        }
+      ],
+      "explicacao": "Primeiro veio a condenação em primeira instância, em 2017. Depois, com a condenação confirmada em segunda instância, a prisão, em 2018. Por fim, em 2021, o STF anulou as condenações, e os processos foram à Justiça Federal do Distrito Federal. Anular não é absolver nem condenar: é declarar inválidas as decisões."
+    },
+    "explorar": [
+      {
+        "tipo": "acontecimento",
+        "id": "lula-2016-nomeacao-para-a-casa-civil-suspensa"
+      }
+    ],
+    "lacunas": [
+      "O que aconteceu com cada processo depois de enviado à Justiça Federal do Distrito Federal.",
+      "Três dos quatro processos atingidos pela anulação não têm registro próprio no atlas.",
+      "Quem apresentou a acusação que levou à condenação de 2017: os registros desta edição não dizem."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-retorno",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 8,
+    "titulo": "De volta à Presidência",
+    "objetivo": "ver como Lula voltou à Presidência e o que são um decreto e uma intervenção federal.",
+    "periodo": {
+      "de": 2022,
+      "ate": 2026
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "lula-2022-eleito-presidente-pela-terceira-vez"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 30 de outubro de 2022, Lula foi eleito presidente pela terceira vez, no segundo turno, com 50,90% dos votos válidos, contra 49,10% de Jair Bolsonaro. Tomou posse em 1º de janeiro de 2023.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2022-eleito-presidente-pela-terceira-vez"
+          }
+        ]
+      },
+      {
+        "texto": "Em 8 de janeiro de 2023, as sedes do Congresso, da Presidência e do STF foram invadidas e depredadas. No mesmo dia, Lula assinou um decreto de intervenção federal na segurança pública do Distrito Federal, e o Congresso aprovou a medida.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2023-intervencao-federal-no-distrito-federal"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-decreto-11377-2023-intervencao-df"
+          },
+          {
+            "tipo": "conceito",
+            "id": "intervencao-federal"
+          }
+        ]
+      },
+      {
+        "texto": "No cargo, ele também sancionou leis e vetou partes de leis sobre economia e segurança pública. Esses atos estão nos aprofundamentos.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-14843-2024-saidas-temporarias"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-15270-2025-imposto-de-renda"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "decreto",
+      "intervencao-federal"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "O que foi a intervenção federal de 8 de janeiro de 2023?",
+      "opcoes": [
+        {
+          "id": "decreto",
+          "texto": "Um decreto do presidente, limitado à segurança pública do Distrito Federal e com prazo para acabar."
+        },
+        {
+          "id": "lei",
+          "texto": "Uma lei do Congresso que fechou o governo do Distrito Federal."
+        },
+        {
+          "id": "stf",
+          "texto": "Uma decisão do STF que anulou a eleição."
+        }
+      ],
+      "correta": "decreto",
+      "explicacao": "A intervenção foi feita por decreto do presidente, limitada à área de segurança pública do Distrito Federal e com prazo até 31 de janeiro de 2023. O Congresso examinou e aprovou o decreto.",
+      "referencias": [
+        {
+          "tipo": "decisao",
+          "id": "planalto-decreto-11377-2023-intervencao-df"
+        },
+        {
+          "tipo": "conceito",
+          "id": "intervencao-federal"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "mandato",
+        "id": "lula-presidente-da-republica-2023"
+      },
+      {
+        "tipo": "decisao",
+        "id": "planalto-lei-complementar-214-2025-ibs-cbs"
+      },
+      {
+        "tipo": "decisao",
+        "id": "planalto-lei-15358-2026-crime-organizado"
+      }
+    ],
+    "lacunas": [
+      "O atlas registra seis atos do terceiro mandato, só em economia e segurança pública. Saúde, educação, meio ambiente e os demais temas não foram pesquisados neste período."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-eleicao-2026",
+    "pessoaId": "lula",
+    "sala": "historico",
+    "ordem": 9,
+    "titulo": "A eleição de 2026",
+    "objetivo": "saber como estava a eleição de 2026 em 8 de outubro, até onde este atlas vai, e onde ler o que a candidatura propõe.",
+    "periodo": {
+      "de": 2026,
+      "ate": 2026
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "eleicao-2026-primeiro-turno"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 2 de agosto de 2026, a convenção do PT oficializou a candidatura de Lula à Presidência, com Geraldo Alckmin como vice. O TSE aprovou o registro em 2 de setembro.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "lula-2026-convencao-do-pt"
+          },
+          {
+            "tipo": "conceito",
+            "id": "convencao-e-registro-de-candidatura"
+          }
+        ]
+      },
+      {
+        "texto": "No primeiro turno, em 4 de outubro, Lula teve 45,16% dos votos válidos e Flávio Bolsonaro, 47,03%, com 99,99% das urnas apuradas. Ninguém passou da metade: os dois foram ao segundo turno.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "eleicao-2026-primeiro-turno"
+          }
+        ]
+      },
+      {
+        "texto": "A candidatura entregou ao TSE um documento com propostas. O atlas traz três por área, cada uma com a página.",
+        "referencias": [
+          {
+            "tipo": "conceito",
+            "id": "proposta-de-governo"
+          },
+          {
+            "tipo": "proposta",
+            "id": "proposta-lula-2026-economia-1"
+          }
+        ]
+      },
+      {
+        "texto": "O atlas vai até 8 de outubro de 2026 e não traz o resultado do segundo turno.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "eleicao-2026-primeiro-turno"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "convencao-e-registro-de-candidatura",
+      "proposta-de-governo"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "O que é uma proposta de governo registrada no TSE?",
+      "opcoes": [
+        {
+          "id": "intencao",
+          "texto": "O que a candidatura diz que pretende fazer se vencer."
+        },
+        {
+          "id": "lei",
+          "texto": "Uma lei que já está valendo."
+        },
+        {
+          "id": "votacao",
+          "texto": "O resultado de uma votação no Congresso."
+        }
+      ],
+      "correta": "intencao",
+      "explicacao": "Proposta de governo é o documento com o que a candidatura diz que pretende fazer. Não é lei, voto nem resultado: por isso cada frase do atlas começa por \"O documento\", com a página, e nunca diz \"vai fazer\".",
+      "referencias": [
+        {
+          "tipo": "conceito",
+          "id": "proposta-de-governo"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-economia-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-seguranca-publica-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-saude-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-educacao-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-reforma-do-estado-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-meio-ambiente-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-direitos-das-mulheres-1"
+      }
+    ],
+    "lacunas": [
+      "O atlas registra três frases por área de cada documento. O documento inteiro tem outras propostas e capítulos fora das sete áreas.",
+      "O segundo turno ficou marcado para depois da data de corte desta edição."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-economia",
+    "pessoaId": "lula",
+    "sala": "economia",
+    "ordem": 1,
+    "titulo": "Economia: cinco atos de Lula na Presidência",
+    "objetivo": "ver cinco atos de Lula na área de economia e de que tipo é cada um.",
+    "periodo": {
+      "de": 2007,
+      "ate": 2026
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+    },
+    "explicacao": [
+      {
+        "texto": "No segundo mandato, Lula assinou em 2007 o decreto que instituiu o Programa de Aceleração do Crescimento, o PAC. Em 2010, sancionou com veto parcial a lei sobre a exploração de petróleo e gás no pré-sal pelo regime de partilha de produção.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-decreto-6025-2007-pac"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-12351-2010-partilha-do-pre-sal"
+          }
+        ]
+      },
+      {
+        "texto": "No terceiro mandato, sancionou com veto parcial duas leis complementares: a do regime fiscal, em 2023, e a que institui os tributos IBS, CBS e Imposto Seletivo, em 2025. Também em 2025, sancionou a lei que reduz o imposto de renda, com imposto zero até 5 mil reais por mês.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-214-2025-ibs-cbs"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-15270-2025-imposto-de-renda"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "decreto",
+      "sancao",
+      "veto",
+      "lei-complementar"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "O PAC, de 2007, foi instituído por qual tipo de ato?",
+      "opcoes": [
+        {
+          "id": "decreto",
+          "texto": "Um decreto do presidente."
+        },
+        {
+          "id": "emenda",
+          "texto": "Uma emenda à Constituição."
+        },
+        {
+          "id": "voto",
+          "texto": "Um voto no Senado."
+        }
+      ],
+      "correta": "decreto",
+      "explicacao": "O Programa de Aceleração do Crescimento foi instituído pelo Decreto 6.025, de 22 de janeiro de 2007. Decreto é um ato do próprio presidente. Uma lei, diferente dele, é aprovada pelo Congresso e depois sancionada ou vetada.",
+      "referencias": [
+        {
+          "tipo": "decisao",
+          "id": "planalto-decreto-6025-2007-pac"
+        },
+        {
+          "tipo": "conceito",
+          "id": "decreto"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-economia-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-economia-2"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-economia-3"
+      }
+    ],
+    "lacunas": [
+      "O atlas não registra cargo público de Lula entre 2011 e 2022.",
+      "Os atos de economia de 2003 a 2006 conferidos na pesquisa não entraram na amostra desta edição.",
+      "É uma amostra de cinco atos: não é a lista do que o governo decidiu na área."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-seguranca-publica",
+    "pessoaId": "lula",
+    "sala": "seguranca-publica",
+    "ordem": 1,
+    "titulo": "Segurança pública: cinco atos de Lula na Presidência",
+    "objetivo": "ver cinco atos de Lula na área de segurança pública e o que acontece quando o Congresso derruba um veto.",
+    "periodo": {
+      "de": 2003,
+      "ate": 2026
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "planalto-lei-14843-2024-saidas-temporarias"
+    },
+    "explicacao": [
+      {
+        "texto": "No primeiro mandato, Lula sancionou em 2003 a lei sobre registro, posse e venda de armas de fogo e, em 2006, a lei que cria mecanismos para coibir a violência doméstica e familiar contra a mulher.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-10826-2003-armas-de-fogo"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-11340-2006-violencia-contra-a-mulher"
+          }
+        ]
+      },
+      {
+        "texto": "No terceiro mandato, decretou em 2023 a intervenção federal na segurança pública do Distrito Federal. Em 2024, sancionou com veto parcial a lei que restringe as saídas temporárias de presos; os trechos vetados foram promulgados depois, e passaram a valer. Em 2026, sancionou com veto parcial a lei do marco legal do combate ao crime organizado.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-decreto-11377-2023-intervencao-df"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-14843-2024-saidas-temporarias"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-15358-2026-crime-organizado"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "sancao",
+      "veto",
+      "decreto",
+      "intervencao-federal"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Lula vetou trechos da lei das saídas temporárias, em 2024, e o veto foi derrubado. O que aconteceu com os trechos vetados?",
+      "opcoes": [
+        {
+          "id": "valem",
+          "texto": "Passaram a fazer parte da lei."
+        },
+        {
+          "id": "apagados",
+          "texto": "Foram apagados para sempre."
+        },
+        {
+          "id": "suspensos",
+          "texto": "Ficaram suspensos até a eleição seguinte."
+        }
+      ],
+      "correta": "valem",
+      "explicacao": "Quando o Congresso derruba um veto, o trecho vetado passa a fazer parte da lei. Na Lei 14.843, as partes vetadas foram promulgadas em 12 de junho de 2024.",
+      "referencias": [
+        {
+          "tipo": "decisao",
+          "id": "planalto-lei-14843-2024-saidas-temporarias"
+        },
+        {
+          "tipo": "conceito",
+          "id": "veto"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-seguranca-publica-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-seguranca-publica-2"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-lula-2026-seguranca-publica-3"
+      }
+    ],
+    "lacunas": [
+      "O atlas não registra cargo público de Lula entre 2011 e 2022.",
+      "Os atos de segurança pública de 2007 a 2010 conferidos na pesquisa não entraram na amostra desta edição.",
+      "É uma amostra de cinco atos: não é a lista do que o governo decidiu na área."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-origem",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 1,
+    "titulo": "Origem e formação",
+    "objetivo": "saber onde Flávio Bolsonaro nasceu, de que família vem e o que estudou.",
+    "periodo": {
+      "de": 1981,
+      "ate": 2001
+    },
+    "marco": {
+      "tipo": "fato",
+      "id": "flavio-bolsonaro-nascimento"
+    },
+    "explicacao": [
+      {
+        "texto": "Flávio Bolsonaro nasceu em 30 de abril de 1981, em Resende, no estado do Rio de Janeiro. O nome completo dele é Flávio Nantes Bolsonaro. É o filho mais velho de Jair Bolsonaro; a mãe é Rogéria Bolsonaro.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "flavio-bolsonaro-nascimento"
+          }
+        ]
+      },
+      {
+        "texto": "Estudou direito na Universidade Cândido Mendes, no Rio de Janeiro. Os documentos lidos não dizem em que ano se formou.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "flavio-bolsonaro-formacao"
+          }
+        ]
+      },
+      {
+        "texto": "A ficha dele na Assembleia Legislativa registra um curso técnico em eletrônica e dois estágios: no Instituto Militar de Engenharia, em 1998, e na Defensoria Pública do estado, de 2000 a 2001.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "flavio-bolsonaro-formacao"
+          },
+          {
+            "tipo": "fato",
+            "id": "flavio-bolsonaro-estagios"
+          }
+        ]
+      }
+    ],
+    "conceitos": [],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Onde Flávio Bolsonaro fez estágio antes da primeira eleição, segundo a ficha dele na Assembleia Legislativa?",
+      "opcoes": [
+        {
+          "id": "ime-e-defensoria",
+          "texto": "No Instituto Militar de Engenharia e na Defensoria Pública do estado."
+        },
+        {
+          "id": "senado-e-tse",
+          "texto": "No Senado Federal e no TSE."
+        },
+        {
+          "id": "hospital-e-escola",
+          "texto": "Em um hospital e em uma escola."
+        }
+      ],
+      "correta": "ime-e-defensoria",
+      "explicacao": "A ficha dele na Alerj registra os dois estágios: no Instituto Militar de Engenharia, de março a dezembro de 1998, e na Defensoria Pública do Estado do Rio de Janeiro, de agosto de 2000 a outubro de 2001.",
+      "referencias": [
+        {
+          "tipo": "fato",
+          "id": "flavio-bolsonaro-estagios"
+        }
+      ]
+    },
+    "explorar": [],
+    "lacunas": [
+      "A infância, a escola básica e a cidade em que ele cresceu: nenhum documento oficial lido traz.",
+      "O ano em que ele concluiu cada curso."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-primeira-eleicao",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 2,
+    "titulo": "A primeira eleição",
+    "objetivo": "entender o que faz um deputado estadual e como Flávio Bolsonaro chegou ao cargo.",
+    "periodo": {
+      "de": 2002,
+      "ate": 2003
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "flavio-bolsonaro-2002-eleito-deputado-estadual"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 2002, Flávio Bolsonaro se candidatou a deputado estadual pelo Rio de Janeiro, pelo PPB. Nos dados do TSE sobre essa candidatura, a ocupação informada é a de estudante, bolsista ou estagiário. O pai, Jair Bolsonaro, concorreu a deputado federal na mesma eleição.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "flavio-bolsonaro-registro-da-primeira-candidatura"
+          }
+        ]
+      },
+      {
+        "texto": "Em 6 de outubro de 2002, foi eleito. Tinha 21 anos na data da posse e começou o mandato em 2003, na Assembleia Legislativa do Estado do Rio de Janeiro, a Alerj.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2002-eleito-deputado-estadual"
+          },
+          {
+            "tipo": "fato",
+            "id": "flavio-bolsonaro-registro-da-primeira-candidatura"
+          },
+          {
+            "tipo": "mandato",
+            "id": "flavio-bolsonaro-deputado-estadual-2003-2019"
+          }
+        ]
+      },
+      {
+        "texto": "Em 2003, o PPB mudou de nome e passou a se chamar PP. Era o mesmo partido, com outro nome.",
+        "referencias": [
+          {
+            "tipo": "fato",
+            "id": "flavio-bolsonaro-partido-muda-de-nome"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "partido-politico",
+      "deputado-estadual",
+      "deputado-federal"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "O que faz a assembleia legislativa, onde trabalha um deputado estadual?",
+      "opcoes": [
+        {
+          "id": "leis",
+          "texto": "Faz, discute e aprova as leis do estado."
+        },
+        {
+          "id": "crimes",
+          "texto": "Julga os crimes cometidos no estado."
+        },
+        {
+          "id": "presidente",
+          "texto": "Escolhe o presidente da República."
+        }
+      ],
+      "correta": "leis",
+      "explicacao": "A assembleia legislativa é o Poder Legislativo de cada estado: seus membros, os deputados estaduais, são eleitos pelo povo e fazem as leis estaduais. Flávio Bolsonaro foi eleito para a do Rio de Janeiro em 2002.",
+      "referencias": [
+        {
+          "tipo": "conceito",
+          "id": "deputado-estadual"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "flavio-bolsonaro-2002-eleito-deputado-estadual"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "filiacao",
+        "id": "flavio-bolsonaro-ppb"
+      },
+      {
+        "tipo": "filiacao",
+        "id": "flavio-bolsonaro-pp"
+      }
+    ],
+    "lacunas": [
+      "O número de votos de 2002: esta edição não localizou documento oficial com o total já somado.",
+      "A data de filiação ao PPB."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-alerj-primeiros-mandatos",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 3,
+    "titulo": "Na Alerj: como um projeto vira lei",
+    "objetivo": "ver, com exemplos, como um projeto de deputado vira lei estadual.",
+    "periodo": {
+      "de": 2003,
+      "ate": 2010
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "alerj-lei-4250-2003-autoria"
+    },
+    "explicacao": [
+      {
+        "texto": "Uma das tarefas de um deputado é propor leis. O projeto é votado pela assembleia e, se aprovado, vai ao governador, que pode sancionar.",
+        "referencias": [
+          {
+            "tipo": "conceito",
+            "id": "projeto-de-lei"
+          },
+          {
+            "tipo": "mandato",
+            "id": "flavio-bolsonaro-deputado-estadual-2003-2019"
+          }
+        ]
+      },
+      {
+        "texto": "A lei mais antiga de autoria de Flávio Bolsonaro que o atlas registra é de 29 de dezembro de 2003: trata da não exigência de certidão negativa de entidades de proteção ao crédito para entrar no serviço público estadual. Em 2006, virou lei um projeto dele sobre laqueadura e vasectomia gratuitas na rede de saúde do estado.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "alerj-lei-4250-2003-autoria"
+          },
+          {
+            "tipo": "decisao",
+            "id": "alerj-lei-4916-2006-autoria"
+          }
+        ]
+      },
+      {
+        "texto": "Ele foi reeleito deputado estadual em 2006 e em 2010.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2006-reeleito-deputado-estadual"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2010-reeleito-deputado-estadual"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "projeto-de-lei",
+      "sancao"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Depois que a assembleia aprova um projeto de lei, quem pode sancioná-lo para que vire lei estadual?",
+      "opcoes": [
+        {
+          "id": "governador",
+          "texto": "O governador do estado."
+        },
+        {
+          "id": "presidente",
+          "texto": "O presidente da República."
+        },
+        {
+          "id": "deputado",
+          "texto": "O próprio deputado que escreveu o projeto."
+        }
+      ],
+      "correta": "governador",
+      "explicacao": "No estado, o projeto aprovado pela assembleia vai ao governador. A Lei 4.250, de 2003, traz as palavras \"decreta e eu sanciono\" e a assinatura da governadora.",
+      "referencias": [
+        {
+          "tipo": "decisao",
+          "id": "alerj-lei-4250-2003-autoria"
+        },
+        {
+          "tipo": "conceito",
+          "id": "projeto-de-lei"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "decisao",
+        "id": "alerj-lei-5019-2007-autoria"
+      },
+      {
+        "tipo": "decisao",
+        "id": "alerj-lei-5646-2010-autoria"
+      }
+    ],
+    "lacunas": [
+      "O atlas registra oito leis de autoria individual dele, duas por legislatura, por regra fixa. O acervo da Alerj lista outras.",
+      "Os projetos que não viraram lei, os votos dele e as comissões de que participou na Alerj."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-alerj-ultimos-mandatos",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 4,
+    "titulo": "Na Alerj: os últimos mandatos",
+    "objetivo": "ver que uma lei também pode nascer sem a sanção do governador e acompanhar os últimos anos dele na Alerj.",
+    "periodo": {
+      "de": 2011,
+      "ate": 2018
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "alerj-lei-5938-2011-autoria"
+    },
+    "explicacao": [
+      {
+        "texto": "Nem toda lei é sancionada pelo governador. Em abril de 2011, uma lei de autoria de Flávio Bolsonaro, sobre o acesso do candidato aos motivos da reprovação em exame psicológico de concurso, virou lei por ato do presidente da Assembleia: é a promulgação. A página cita, como base, o artigo 115 da Constituição do Estado.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "alerj-lei-5938-2011-autoria"
+          }
+        ]
+      },
+      {
+        "texto": "Reeleito em 2014 pelo PP, ele concorreu em 2016 a prefeito do Rio de Janeiro, já pelo PSC. Não foi eleito e continuou deputado estadual.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2014-reeleito-deputado-estadual"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2016-candidatura-a-prefeitura-do-rio"
+          }
+        ]
+      },
+      {
+        "texto": "Em 2018, a Assembleia promulgou outra lei de autoria dele, que autoriza um programa estadual de recifes artificiais.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "alerj-lei-7877-2018-autoria"
+          }
+        ]
+      }
+    ],
+    "conceitos": [],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "O que aconteceu em 2016, quando Flávio Bolsonaro concorreu a prefeito do Rio de Janeiro?",
+      "opcoes": [
+        {
+          "id": "nao-eleito",
+          "texto": "Não foi eleito e continuou deputado estadual."
+        },
+        {
+          "id": "eleito",
+          "texto": "Foi eleito prefeito."
+        },
+        {
+          "id": "desistiu",
+          "texto": "Desistiu antes da votação."
+        }
+      ],
+      "correta": "nao-eleito",
+      "explicacao": "Em 2016, ele concorreu a prefeito do Rio de Janeiro pelo PSC e não foi eleito. Seguiu na Assembleia Legislativa até 2019.",
+      "referencias": [
+        {
+          "tipo": "acontecimento",
+          "id": "flavio-bolsonaro-2016-candidatura-a-prefeitura-do-rio"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "decisao",
+        "id": "alerj-lei-6785-2014-autoria"
+      },
+      {
+        "tipo": "decisao",
+        "id": "alerj-lei-7008-2015-autoria"
+      },
+      {
+        "tipo": "filiacao",
+        "id": "flavio-bolsonaro-psc"
+      },
+      {
+        "tipo": "filiacao",
+        "id": "flavio-bolsonaro-psl"
+      }
+    ],
+    "lacunas": [
+      "Por que cada lei foi promulgada pela Assembleia, e não sancionada pelo governador: a página cita os parágrafos 5º e 7º do artigo 115 da Constituição do Estado, que esta edição não leu, e a tramitação não foi pesquisada.",
+      "O resultado da ação de inconstitucionalidade a que a Lei 5.938 foi submetida.",
+      "As datas de entrada dele no PSC e no PSL."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-senado",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 5,
+    "titulo": "Do Rio de Janeiro para o Senado",
+    "objetivo": "entender o que é um senador e como Flávio Bolsonaro chegou ao Senado.",
+    "periodo": {
+      "de": 2018,
+      "ate": 2019
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "flavio-bolsonaro-2018-eleito-senador"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 2018, Flávio Bolsonaro foi eleito senador pelo Rio de Janeiro, pelo PSL. Segundo a Agência Senado, foi o mais votado do estado para o cargo, com 31,3% dos votos válidos.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2018-eleito-senador"
+          }
+        ]
+      },
+      {
+        "texto": "O mandato começou em 1º de fevereiro de 2019 e vai até 31 de janeiro de 2027. Cinco dias depois do início do mandato, ele assumiu o cargo de 3º secretário da Comissão Diretora do Senado.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2018-eleito-senador"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2019-terceiro-secretario-do-senado"
+          },
+          {
+            "tipo": "mandato",
+            "id": "flavio-bolsonaro-senador-2019"
+          }
+        ]
+      },
+      {
+        "texto": "Ainda em 2019, foi relator de uma medida provisória que autoriza a criação de uma empresa pública de navegação aérea. A medida virou lei.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "congresso-mpv-866-2018-relatoria"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "senador",
+      "relator",
+      "medida-provisoria"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Quanto tempo dura o mandato de um senador?",
+      "opcoes": [
+        {
+          "id": "oito",
+          "texto": "Oito anos."
+        },
+        {
+          "id": "quatro",
+          "texto": "Quatro anos."
+        },
+        {
+          "id": "dois",
+          "texto": "Dois anos."
+        }
+      ],
+      "correta": "oito",
+      "explicacao": "O mandato de senador dura oito anos, e cada estado tem três senadores. O de Flávio Bolsonaro começou em 1º de fevereiro de 2019 e vai até 31 de janeiro de 2027.",
+      "referencias": [
+        {
+          "tipo": "conceito",
+          "id": "senador"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "flavio-bolsonaro-2018-eleito-senador"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "mandato",
+        "id": "flavio-bolsonaro-terceiro-secretario-do-senado"
+      }
+    ],
+    "lacunas": [
+      "O número de votos de 2018 não está no registro: o atlas traz o percentual informado pela Agência Senado.",
+      "As comissões de que ele participou no Senado foram lidas na pesquisa e não têm registro próprio nesta edição."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-processos",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 6,
+    "titulo": "Denúncia, anulação e rejeição",
+    "objetivo": "acompanhar, na ordem, o que a Justiça decidiu sobre a denúncia contra Flávio Bolsonaro e entender o que é rejeitar uma denúncia.",
+    "periodo": {
+      "de": 2019,
+      "ate": 2025
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "flavio-bolsonaro-2022-tribunal-rejeita-denuncia"
+    },
+    "explicacao": [
+      {
+        "texto": "Em outubro de 2020, o Ministério Público do Rio denunciou Flávio Bolsonaro e outras pessoas por lavagem de dinheiro, peculato, apropriação indébita e organização criminosa, em um suposto esquema de \"rachadinha\" na Assembleia. A defesa disse que a acusação não se sustentava.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2020-denuncia-do-ministerio-publico"
+          }
+        ]
+      },
+      {
+        "texto": "Em novembro de 2021, o STJ anulou as decisões do juiz do caso: só o Tribunal de Justiça poderia decidir.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao"
+          },
+          {
+            "tipo": "conceito",
+            "id": "anulacao"
+          }
+        ]
+      },
+      {
+        "texto": "Em 2022, a pedido do próprio Ministério Público, o Tribunal de Justiça rejeitou a denúncia.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2022-tribunal-rejeita-denuncia"
+          },
+          {
+            "tipo": "conceito",
+            "id": "rejeicao-da-denuncia"
+          }
+        ]
+      },
+      {
+        "texto": "Segundo a CartaCapital, o Ministério Público recorreu, e um ministro do STF negou os recursos em fevereiro de 2025.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2022-tribunal-rejeita-denuncia"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "denuncia",
+      "anulacao",
+      "rejeicao-da-denuncia"
+    ],
+    "atividade": {
+      "tipo": "ordem",
+      "enunciado": "Ponha em ordem, do mais antigo para o mais recente, três decisões e fatos do caso.",
+      "itens": [
+        {
+          "tipo": "acontecimento",
+          "id": "flavio-bolsonaro-2022-tribunal-rejeita-denuncia"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "flavio-bolsonaro-2020-denuncia-do-ministerio-publico"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "flavio-bolsonaro-2021-stj-anula-decisoes-da-investigacao"
+        }
+      ],
+      "explicacao": "Primeiro veio a denúncia do Ministério Público, apresentada em outubro de 2020 e divulgada em 4 de novembro. Depois o STJ anulou as decisões do juiz do caso, em 2021. Por fim, em 2022, o Tribunal de Justiça rejeitou a denúncia; segundo a decisão, isso não impede a retomada das investigações. Rejeitar a denúncia não é condenar nem absolver: a acusação não chegou a ser julgada."
+    },
+    "explorar": [
+      {
+        "tipo": "acontecimento",
+        "id": "flavio-bolsonaro-2019-saida-do-psl"
+      },
+      {
+        "tipo": "acontecimento",
+        "id": "flavio-bolsonaro-2021-filiacao-ao-patriota"
+      },
+      {
+        "tipo": "mandato",
+        "id": "flavio-bolsonaro-lider-do-patriota-no-senado"
+      },
+      {
+        "tipo": "acontecimento",
+        "id": "flavio-bolsonaro-2021-filiacao-ao-pl"
+      },
+      {
+        "tipo": "filiacao",
+        "id": "flavio-bolsonaro-republicanos"
+      }
+    ],
+    "lacunas": [
+      "O que aconteceu no caso depois de fevereiro de 2025: o processo tramita em segredo de justiça, e o andamento depois de 2022 vem de reportagens citadas na ficha do atlas.",
+      "A data de filiação dele ao Republicanos."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-funcoes-no-senado",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 7,
+    "titulo": "Líder, relator e presidente de comissão",
+    "objetivo": "entender três funções que um senador pode ter: líder, relator e presidente de comissão.",
+    "periodo": {
+      "de": 2022,
+      "ate": 2025
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "flavio-bolsonaro-2024-relatoria-das-saidas-temporarias"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 2022, Flávio Bolsonaro foi designado líder do PL no Senado. Em abril de 2023, com Lula na Presidência, tornou-se líder da Minoria no Congresso, até fevereiro de 2025.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2022-lider-do-pl-no-senado"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2023-lider-da-minoria-no-congresso"
+          },
+          {
+            "tipo": "conceito",
+            "id": "lider-e-minoria"
+          }
+        ]
+      },
+      {
+        "texto": "Em 2024, foi o relator do projeto que restringe as saídas temporárias de presos. O relator estuda o projeto e recomenda aprovar ou rejeitar. O Senado aprovou o texto em 20 de fevereiro. Segundo a Agência Senado, foram 62 votos a 2. O projeto virou lei; o presidente vetou uma parte, e o Congresso derrubou o veto.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2024-relatoria-das-saidas-temporarias"
+          },
+          {
+            "tipo": "conceito",
+            "id": "relator"
+          }
+        ]
+      },
+      {
+        "texto": "Em fevereiro de 2025, passou a presidir a Comissão de Segurança Pública do Senado.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2025-presidente-da-comissao-de-seguranca-publica"
+          },
+          {
+            "tipo": "conceito",
+            "id": "comissao"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "lider-e-minoria",
+      "comissao",
+      "veto",
+      "relator"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "O que faz o relator de um projeto?",
+      "opcoes": [
+        {
+          "id": "recomenda",
+          "texto": "Estuda o projeto e recomenda que seja aprovado ou rejeitado."
+        },
+        {
+          "id": "decide",
+          "texto": "Decide sozinho se o projeto vira lei."
+        },
+        {
+          "id": "sanciona",
+          "texto": "Sanciona ou veta o projeto."
+        }
+      ],
+      "correta": "recomenda",
+      "explicacao": "O relator estuda a proposta e escreve um parecer que recomenda a aprovação ou a rejeição. Ele não decide sozinho: o projeto das saídas temporárias, relatado por Flávio Bolsonaro, foi votado pelo Senado.",
+      "referencias": [
+        {
+          "tipo": "conceito",
+          "id": "relator"
+        },
+        {
+          "tipo": "acontecimento",
+          "id": "flavio-bolsonaro-2024-relatoria-das-saidas-temporarias"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "mandato",
+        "id": "flavio-bolsonaro-vice-lider-do-governo-no-congresso"
+      },
+      {
+        "tipo": "mandato",
+        "id": "flavio-bolsonaro-lider-do-pl-no-senado"
+      },
+      {
+        "tipo": "mandato",
+        "id": "flavio-bolsonaro-lider-da-minoria-no-congresso"
+      },
+      {
+        "tipo": "mandato",
+        "id": "flavio-bolsonaro-presidente-da-comissao-de-seguranca-publica"
+      }
+    ],
+    "lacunas": [
+      "O Senado lista outras relatorias dele e as comissões de que participou: o atlas registra duas relatorias e os cargos de direção.",
+      "Se o parecer dele foi aprovado em cada relatoria: os serviços consultados não dizem."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-decisoes-no-senado",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 8,
+    "titulo": "Como ler um voto no Senado",
+    "objetivo": "ler um voto nominal: o que foi votado, como ele votou e qual foi o resultado.",
+    "periodo": {
+      "de": 2023,
+      "ate": 2025
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "senado-voto-6777-5894"
+    },
+    "explicacao": [
+      {
+        "texto": "Em uma votação nominal, o voto de cada senador fica registrado com o nome dele. Em 8 de novembro de 2023, o Senado votou em segundo turno a PEC 45, de 2019, que altera o sistema tributário. Flávio Bolsonaro votou não; a proposta foi aprovada.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6777-5894"
+          },
+          {
+            "tipo": "conceito",
+            "id": "pec"
+          }
+        ]
+      },
+      {
+        "texto": "Nas seis votações que o atlas registra, de 2023 a 2025, ele votou não em três, de economia, e sim em três, de segurança pública. As seis propostas foram aprovadas.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6714-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6777-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6899-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6818-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6825-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-7037-5894"
+          }
+        ]
+      },
+      {
+        "texto": "O registro mostra como ele votou naquele texto, naquele dia. Não diz, sozinho, o motivo do voto.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6777-5894"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "pec"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Em novembro de 2023, o Senado aprovou a PEC 45, de 2019, e Flávio Bolsonaro votou não. O que o registro mostra?",
+      "opcoes": [
+        {
+          "id": "voto-e-resultado",
+          "texto": "Duas coisas: o voto dele foi contra aquele texto, e a proposta foi aprovada."
+        },
+        {
+          "id": "rejeitada",
+          "texto": "Que a proposta foi rejeitada."
+        },
+        {
+          "id": "ausente",
+          "texto": "Que ele não participou da votação."
+        }
+      ],
+      "correta": "voto-e-resultado",
+      "explicacao": "O registro traz duas informações diferentes: o voto individual (não) e o resultado da votação (aprovada). Uma PEC precisa de três quintos dos votos dos senadores para passar.",
+      "referencias": [
+        {
+          "tipo": "decisao",
+          "id": "senado-voto-6777-5894"
+        },
+        {
+          "tipo": "conceito",
+          "id": "pec"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "decisao",
+        "id": "senado-voto-6714-5894"
+      },
+      {
+        "tipo": "decisao",
+        "id": "senado-voto-6899-5894"
+      },
+      {
+        "tipo": "decisao",
+        "id": "senado-voto-6818-5894"
+      },
+      {
+        "tipo": "decisao",
+        "id": "senado-voto-6825-5894"
+      },
+      {
+        "tipo": "decisao",
+        "id": "senado-voto-7037-5894"
+      }
+    ],
+    "lacunas": [
+      "O atlas registra seis votos, em economia e segurança pública, de 2023 a 2025. Os demais temas e os anos de 2019 a 2022 não foram pesquisados.",
+      "Votações secretas e simbólicas não registram a posição de cada senador."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-eleicao-2026",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "historico",
+    "ordem": 9,
+    "titulo": "A eleição de 2026",
+    "objetivo": "saber como estava a eleição de 2026 em 8 de outubro, até onde este atlas vai, e onde ler o que a candidatura propõe.",
+    "periodo": {
+      "de": 2025,
+      "ate": 2026
+    },
+    "marco": {
+      "tipo": "acontecimento",
+      "id": "eleicao-2026-primeiro-turno"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 25 de julho de 2026, a convenção do PL oficializou a candidatura dele à Presidência, com Alfredo Gaspar como vice. O TSE aprovou o registro em 2 de setembro.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2026-convencao-do-pl"
+          },
+          {
+            "tipo": "conceito",
+            "id": "convencao-e-registro-de-candidatura"
+          }
+        ]
+      },
+      {
+        "texto": "No primeiro turno, em 4 de outubro, Flávio Bolsonaro teve 47,03% dos votos válidos e Lula, 45,16%, com 99,99% das urnas apuradas. Ninguém passou da metade: os dois foram ao segundo turno.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "eleicao-2026-primeiro-turno"
+          },
+          {
+            "tipo": "conceito",
+            "id": "turnos-da-eleicao"
+          }
+        ]
+      },
+      {
+        "texto": "A candidatura entregou ao TSE um documento com propostas. O atlas traz três por área, cada uma com a página.",
+        "referencias": [
+          {
+            "tipo": "conceito",
+            "id": "proposta-de-governo"
+          },
+          {
+            "tipo": "proposta",
+            "id": "proposta-flavio-bolsonaro-2026-economia-1"
+          }
+        ]
+      },
+      {
+        "texto": "O atlas vai até 8 de outubro de 2026 e não traz o resultado do segundo turno.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "eleicao-2026-primeiro-turno"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "convencao-e-registro-de-candidatura",
+      "turnos-da-eleicao",
+      "proposta-de-governo"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "O que é uma proposta de governo registrada no TSE?",
+      "opcoes": [
+        {
+          "id": "intencao",
+          "texto": "O que a candidatura diz que pretende fazer se vencer."
+        },
+        {
+          "id": "lei",
+          "texto": "Uma lei que já está valendo."
+        },
+        {
+          "id": "votacao",
+          "texto": "O resultado de uma votação no Congresso."
+        }
+      ],
+      "correta": "intencao",
+      "explicacao": "Proposta de governo é o documento com o que a candidatura diz que pretende fazer. Não é lei, voto nem resultado: por isso cada frase do atlas começa por \"O documento\", com a página, e nunca diz \"vai fazer\".",
+      "referencias": [
+        {
+          "tipo": "conceito",
+          "id": "proposta-de-governo"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "acontecimento",
+        "id": "flavio-bolsonaro-2025-indicacao-para-a-presidencia"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-economia-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-saude-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-educacao-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-reforma-do-estado-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-meio-ambiente-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-direitos-das-mulheres-1"
+      }
+    ],
+    "lacunas": [
+      "O atlas registra três frases por área de cada documento. O documento inteiro tem outras propostas e capítulos fora das sete áreas.",
+      "O segundo turno ficou marcado para depois da data de corte desta edição."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-economia",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "economia",
+    "ordem": 1,
+    "titulo": "Economia: três votos de Flávio Bolsonaro no Senado",
+    "objetivo": "ver como ele votou em três propostas de economia e o que cada uma era.",
+    "periodo": {
+      "de": 2023,
+      "ate": 2026
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "senado-voto-6714-5894"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 21 de junho de 2023, o Senado votou o projeto de lei complementar que institui o regime fiscal sustentável. Flávio Bolsonaro votou não; o projeto foi aprovado.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6714-5894"
+          }
+        ]
+      },
+      {
+        "texto": "Em novembro de 2023, votou não, em segundo turno, na PEC que altera o sistema tributário. Em dezembro de 2024, votou não no projeto de lei complementar que institui os tributos IBS, CBS e Imposto Seletivo. As duas propostas foram aprovadas.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6777-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6899-5894"
+          }
+        ]
+      },
+      {
+        "texto": "Nos três casos, o registro mostra o voto dele naquele texto e o resultado da votação. Não diz, sozinho, o motivo do voto.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6714-5894"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "lei-complementar",
+      "pec"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "Como Flávio Bolsonaro votou nas três propostas de economia que o atlas registra, de 2023 e 2024?",
+      "opcoes": [
+        {
+          "id": "nao-nas-tres",
+          "texto": "Votou não nas três, e as três foram aprovadas."
+        },
+        {
+          "id": "sim-nas-tres",
+          "texto": "Votou sim nas três."
+        },
+        {
+          "id": "ausente",
+          "texto": "Não participou de nenhuma."
+        }
+      ],
+      "correta": "nao-nas-tres",
+      "explicacao": "O acervo do Senado registra o voto \"não\" dele nas três votações, e as três propostas foram aprovadas: o regime fiscal, em junho de 2023; a PEC do sistema tributário, em novembro de 2023; e o projeto dos tributos IBS, CBS e Imposto Seletivo, em dezembro de 2024.",
+      "referencias": [
+        {
+          "tipo": "decisao",
+          "id": "senado-voto-6714-5894"
+        },
+        {
+          "tipo": "decisao",
+          "id": "senado-voto-6777-5894"
+        },
+        {
+          "tipo": "decisao",
+          "id": "senado-voto-6899-5894"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-economia-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-economia-2"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-economia-3"
+      }
+    ],
+    "lacunas": [
+      "Os votos dele em economia de 2019 a 2022 não foram pesquisados.",
+      "Os votos dele na Alerj, de 2003 a 2018, não foram pesquisados.",
+      "É uma amostra de três votações: não é a lista de como ele votou na área."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-seguranca-publica",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "seguranca-publica",
+    "ordem": 1,
+    "titulo": "Segurança pública: três votos de Flávio Bolsonaro no Senado",
+    "objetivo": "ver como ele votou em três propostas de segurança pública e o que cada uma era.",
+    "periodo": {
+      "de": 2024,
+      "ate": 2026
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "senado-voto-6818-5894"
+    },
+    "explicacao": [
+      {
+        "texto": "Em 20 de fevereiro de 2024, o Senado aprovou o projeto que restringe as saídas temporárias de presos. Flávio Bolsonaro era o relator do projeto e votou sim.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6818-5894"
+          },
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2024-relatoria-das-saidas-temporarias"
+          }
+        ]
+      },
+      {
+        "texto": "Em abril de 2024, votou sim, em segundo turno, na PEC sobre a posse e o porte de drogas. Em dezembro de 2025, votou sim no projeto do marco legal do combate ao crime organizado. As duas propostas foram aprovadas no Senado.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6825-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-7037-5894"
+          }
+        ]
+      },
+      {
+        "texto": "Em fevereiro de 2025, ele passou a presidir a Comissão de Segurança Pública do Senado.",
+        "referencias": [
+          {
+            "tipo": "acontecimento",
+            "id": "flavio-bolsonaro-2025-presidente-da-comissao-de-seguranca-publica"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "pec",
+      "relator",
+      "comissao"
+    ],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "No projeto das saídas temporárias, em 2024, qual era o papel de Flávio Bolsonaro, além de votar?",
+      "opcoes": [
+        {
+          "id": "relator",
+          "texto": "Era o relator do projeto."
+        },
+        {
+          "id": "presidente",
+          "texto": "Era o presidente da República."
+        },
+        {
+          "id": "juiz",
+          "texto": "Era o juiz do caso."
+        }
+      ],
+      "correta": "relator",
+      "explicacao": "Ele foi o relator do projeto, o de número 2.253, de 2022. O Senado aprovou o projeto em 20 de fevereiro de 2024, e ele votou sim.",
+      "referencias": [
+        {
+          "tipo": "acontecimento",
+          "id": "flavio-bolsonaro-2024-relatoria-das-saidas-temporarias"
+        },
+        {
+          "tipo": "decisao",
+          "id": "senado-voto-6818-5894"
+        }
+      ]
+    },
+    "explorar": [
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-1"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-2"
+      },
+      {
+        "tipo": "proposta",
+        "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-3"
+      }
+    ],
+    "lacunas": [
+      "Os votos dele em segurança pública de 2019 a 2022 não foram pesquisados.",
+      "Os votos dele na Alerj, de 2003 a 2018, não foram pesquisados.",
+      "É uma amostra de três votações: não é a lista de como ele votou na área."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
+      }
+    }
+  }
+]

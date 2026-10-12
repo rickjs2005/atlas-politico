@@ -192,7 +192,8 @@ export function buildCoverageReport(
       const entidade = ENTIDADE_DA_COLECAO[colecao];
       for (const { dados } of registros[colecao]) {
         if (!candidatos[colecao].has(dados.id)) continue;
-        for (const citacao of dados.fontes) {
+        // A fase do jogo não cita documento por conta própria; as demais coleções factuais, sim.
+        for (const citacao of "fontes" in dados ? dados.fontes : []) {
           const registro = `${entidade}:${dados.id}`;
           if (registrados.has(`${registro}|${citacao.fonteId}`)) comTrecho += 1;
           else semTrecho.push({ registro, fonteId: citacao.fonteId });

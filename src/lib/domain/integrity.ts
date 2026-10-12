@@ -8,8 +8,8 @@
 // diagnósticos por registro e usa estas funções para conferir a saída antes de
 // gravá-la.
 
-import { calcInterval, calcPeriodBounds, classifyOverlap, formatDate, type DataHistorica, type PeriodOverlap } from "./dates";
-import type { Citacao, Conjunto, Mandato } from "./schemas";
+import { calcInterval, calcPeriodBounds, classifyOverlap, formatDate, intervalsOverlap, yearOf, type DataHistorica, type PeriodOverlap } from "./dates";
+import type { Citacao, Conjunto, Mandato, ReferenciaDeFase } from "./schemas";
 
 export interface IntegrityIssue {
   /** Onde está o problema, em formato legível: `acontecimentos["id"].fontes[0]`. */
@@ -34,8 +34,13 @@ export const COLECOES_FACTUAIS_DO_CONJUNTO = [
   "votacoes",
   "votos",
   "atosExecutivos",
+  "atuacoesLegislativas",
   "coberturaPolitica",
   "identidadesInstitucionais",
+  "propostasEleitorais",
+  "fatosBiograficos",
+  "conceitos",
+  "fasesDoJogo",
 ] as const;
 
 /**
@@ -56,6 +61,64 @@ export function competenceOf(mandato: Pick<Mandato, "periodo">, data: DataHistor
   return COMPETENCIA[classifyOverlap(calcPeriodBounds(mandato.periodo, dataDeCorte), calcInterval(data))];
 }
 
+/** O que uma referência de fase resolve: de quem é o registro e, quando há, a data dele. */
+export interface PhaseTarget {
+  /** As pessoas do registro; `null` para um conceito, que não é de ninguém. */
+  pessoaIds: readonly string[] | null;
+  data: DataHistorica | null;
+}
+
+/**
+ * Resolve as referências de uma fase contra o conjunto: `decisao` é um voto
+ * (a data é a da votação), um ato do Executivo ou uma atuação legislativa.
+ * Devolve `null` quando o registro não existe.
+ */
+export function phaseResolver(
+  conjunto: Pick<Conjunto, "acontecimentos" | "votos" | "votacoes" | "atosExecutivos" | "atuacoesLegislativas" | "fatosBiograficos" | "mandatos" | "filiacoes" | "propostasEleitorais" | "conceitos">,
+): (referencia: ReferenciaDeFase) => PhaseTarget | null {
+  const acontecimentos = new Map(conjunto.acontecimentos.map((item) => [item.id, item] as const));
+  const votos = new Map(conjunto.votos.map((item) => [item.id, item] as const));
+  const votacoes = new Map(conjunto.votacoes.map((item) => [item.id, item] as const));
+  const atos = new Map(conjunto.atosExecutivos.map((item) => [item.id, item] as const));
+  const atuacoes = new Map(conjunto.atuacoesLegislativas.map((item) => [item.id, item] as const));
+  const fatos = new Map(conjunto.fatosBiograficos.map((item) => [item.id, item] as const));
+  const mandatos = new Map(conjunto.mandatos.map((item) => [item.id, item] as const));
+  const filiacoes = new Map(conjunto.filiacoes.map((item) => [item.id, item] as const));
+  const propostas = new Map(conjunto.propostasEleitorais.map((item) => [item.id, item] as const));
+  const conceitos = new Set(conjunto.conceitos.map((item) => item.id));
+  return ({ tipo, id }) => {
+    if (tipo === "acontecimento") {
+      const alvo = acontecimentos.get(id);
+      return alvo === undefined ? null : { pessoaIds: alvo.pessoaIds, data: alvo.data };
+    }
+    if (tipo === "decisao") {
+      const voto = votos.get(id);
+      if (voto !== undefined) return { pessoaIds: [voto.pessoaId], data: votacoes.get(voto.votacaoId)?.data ?? null };
+      const ato = atos.get(id);
+      if (ato !== undefined) return { pessoaIds: [ato.atribuicao.pessoaId], data: ato.data };
+      const atuacao = atuacoes.get(id);
+      return atuacao === undefined ? null : { pessoaIds: [atuacao.pessoaId], data: atuacao.data };
+    }
+    if (tipo === "fato") {
+      const alvo = fatos.get(id);
+      return alvo === undefined ? null : { pessoaIds: [alvo.pessoaId], data: alvo.data.tipo === "data" ? { valor: alvo.data.valor, precisao: alvo.data.precisao } : null };
+    }
+    if (tipo === "mandato") {
+      const alvo = mandatos.get(id);
+      return alvo === undefined ? null : { pessoaIds: [alvo.pessoaId], data: null };
+    }
+    if (tipo === "filiacao") {
+      const alvo = filiacoes.get(id);
+      return alvo === undefined ? null : { pessoaIds: [alvo.pessoaId], data: null };
+    }
+    if (tipo === "proposta") {
+      const alvo = propostas.get(id);
+      return alvo === undefined ? null : { pessoaIds: [alvo.pessoaId], data: null };
+    }
+    return conceitos.has(id) ? { pessoaIds: null, data: null } : null;
+  };
+}
+
 function findDuplicates(valores: readonly string[]): string[] {
   const vistos = new Set<string>();
   const repetidos = new Set<string>();
@@ -71,7 +134,8 @@ export function checkIntegrity(conjunto: Conjunto): IntegrityIssue[] {
   const report = (caminho: string, mensagem: string) => issues.push({ caminho, mensagem });
 
   const { edicao, pessoas, mandatos, filiacoes, acontecimentos, lugares, fontes, imagens } = conjunto;
-  const { proposicoes, votacoes, votos, atosExecutivos, coberturaPolitica, identidadesInstitucionais } = conjunto;
+  const { proposicoes, votacoes, votos, atosExecutivos, atuacoesLegislativas, coberturaPolitica, identidadesInstitucionais } = conjunto;
+  const { propostasEleitorais, fatosBiograficos, conceitos, fasesDoJogo } = conjunto;
   const colecoes = {
     pessoas,
     mandatos,
@@ -81,8 +145,13 @@ export function checkIntegrity(conjunto: Conjunto): IntegrityIssue[] {
     votacoes,
     votos,
     atosExecutivos,
+    atuacoesLegislativas,
     coberturaPolitica,
     identidadesInstitucionais,
+    propostasEleitorais,
+    fatosBiograficos,
+    conceitos,
+    fasesDoJogo,
     lugares,
     fontes,
     imagens,
@@ -244,6 +313,16 @@ export function checkIntegrity(conjunto: Conjunto): IntegrityIssue[] {
     checkCut(`${caminho}.data`, ato.data);
   }
 
+  for (const atuacao of atuacoesLegislativas) {
+    const caminho = `atuacoesLegislativas["${atuacao.id}"]`;
+    requireReference(pessoaIds, atuacao.pessoaId, `${caminho}.pessoaId`, "pessoa");
+    requireReference(mandatoIds, atuacao.mandatoId, `${caminho}.mandatoId`, "mandato");
+    // Em uma comissão mista do Congresso, a pessoa atua pelo mandato da casa dela: a casa só é conferida fora do Congresso Nacional.
+    checkMandate(`${caminho}.mandatoId`, atuacao.pessoaId, atuacao.mandatoId, atuacao.data, atuacao.instituicao === "congresso-nacional" ? undefined : atuacao.instituicao);
+    checkCitations(caminho, atuacao.fontes);
+    checkCut(`${caminho}.data`, atuacao.data);
+  }
+
   for (const cobertura of coberturaPolitica) {
     const caminho = `coberturaPolitica["${cobertura.id}"]`;
     requireReference(pessoaIds, cobertura.pessoaId, `${caminho}.pessoaId`, "pessoa");
@@ -254,6 +333,98 @@ export function checkIntegrity(conjunto: Conjunto): IntegrityIssue[] {
     const caminho = `identidadesInstitucionais["${identidade.id}"]`;
     requireReference(pessoaIds, identidade.pessoaId, `${caminho}.pessoaId`, "pessoa");
     checkCitations(caminho, identidade.fontes);
+  }
+
+  for (const proposta of propostasEleitorais) {
+    const caminho = `propostasEleitorais["${proposta.id}"]`;
+    requireReference(pessoaIds, proposta.pessoaId, `${caminho}.pessoaId`, "pessoa");
+    checkCitations(caminho, proposta.fontes);
+    // A proposta é de uma eleição até a data de corte: o documento de uma eleição futura não entra.
+    if (proposta.eleicao > Number(edicao.dataDeCorte.slice(0, 4))) report(`${caminho}.eleicao`, `Eleição posterior à data de corte da edição (${edicao.dataDeCorte}).`);
+  }
+
+  // -------------------------------------------------------------------------
+  // Conteúdo educativo do jogo: fatos biográficos, conceitos e fases
+  // -------------------------------------------------------------------------
+
+  for (const fato of fatosBiograficos) {
+    const caminho = `fatosBiograficos["${fato.id}"]`;
+    requireReference(pessoaIds, fato.pessoaId, `${caminho}.pessoaId`, "pessoa");
+    checkCitations(caminho, fato.fontes);
+    if (fato.data.tipo === "data") checkCut(`${caminho}.data`, fato.data);
+  }
+
+  for (const conceito of conceitos) {
+    checkCitations(`conceitos["${conceito.id}"]`, conceito.fontes);
+  }
+
+  const resolver = phaseResolver(conjunto);
+  const conceitoIds = new Set(conceitos.map((conceito) => conceito.id));
+  const posicoes = new Map<string, Map<number, string>>();
+  for (const fase of fasesDoJogo) {
+    const caminho = `fasesDoJogo["${fase.id}"]`;
+    requireReference(pessoaIds, fase.pessoaId, `${caminho}.pessoaId`, "pessoa");
+
+    const checkRef = (referencia: ReferenciaDeFase, campo: string) => {
+      const alvo = resolver(referencia);
+      if (alvo === null) {
+        report(`${caminho}.${campo}`, `Referência a ${referencia.tipo} inexistente: "${referencia.id}".`);
+        return;
+      }
+      if (alvo.pessoaIds !== null && !alvo.pessoaIds.includes(fase.pessoaId)) {
+        report(`${caminho}.${campo}`, `O registro "${referencia.id}" é de outra pessoa: uma fase só aponta registros da pessoa dela.`);
+      }
+    };
+    checkRef(fase.marco, "marco");
+    fase.explicacao.forEach((bloco, indice) => bloco.referencias.forEach((referencia, posicao) => checkRef(referencia, `explicacao[${indice}].referencias[${posicao}]`)));
+    fase.explorar.forEach((referencia, indice) => checkRef(referencia, `explorar[${indice}]`));
+    for (const id of fase.conceitos) requireReference(conceitoIds, id, `${caminho}.conceitos`, "conceito");
+
+    // O marco fica dentro do período declarado da fase.
+    const marco = resolver(fase.marco);
+    if (marco !== null && marco.data !== null) {
+      const ano = yearOf(marco.data);
+      if (ano < fase.periodo.de || ano > fase.periodo.ate) {
+        report(`${caminho}.periodo`, `O marco é de ${ano}, fora do período da fase (${fase.periodo.de} a ${fase.periodo.ate}).`);
+      }
+    }
+
+    const { atividade } = fase;
+    if (atividade.tipo === "pergunta") {
+      atividade.referencias.forEach((referencia, indice) => checkRef(referencia, `atividade.referencias[${indice}]`));
+    } else {
+      atividade.itens.forEach((referencia, indice) => checkRef(referencia, `atividade.itens[${indice}]`));
+      // A ordenação só vale quando as datas decidem a ordem, sem ambiguidade.
+      const datas = atividade.itens.map((referencia) => resolver(referencia)?.data ?? null);
+      datas.forEach((data, indice) => {
+        if (data === null) {
+          report(`${caminho}.atividade.itens[${indice}]`, "Registro sem data documentada não entra em uma ordenação.");
+          return;
+        }
+        for (let outro = indice + 1; outro < datas.length; outro += 1) {
+          const outra = datas[outro];
+          if (outra === null || outra === undefined) continue;
+          if (intervalsOverlap(calcInterval(data), calcInterval(outra))) {
+            report(`${caminho}.atividade.itens`, `As datas de "${atividade.itens[indice]!.id}" (${formatDate(data)}) e de "${atividade.itens[outro]!.id}" (${formatDate(outra)}) não decidem a ordem.`);
+          }
+        }
+      });
+    }
+
+    // Uma fase por posição em cada sala de cada pessoa.
+    const chave = `${fase.pessoaId}:${fase.sala}`;
+    const daSala = posicoes.get(chave) ?? new Map<number, string>();
+    const outra = daSala.get(fase.ordem);
+    if (outra !== undefined) report(`${caminho}.ordem`, `A posição ${fase.ordem} da sala "${fase.sala}" já é da fase "${outra}".`);
+    else daSala.set(fase.ordem, fase.id);
+    posicoes.set(chave, daSala);
+  }
+  // As posições de cada sala vão de 1 em diante, sem salto.
+  for (const [chave, daSala] of posicoes) {
+    const ordens = [...daSala.keys()].sort((a, b) => a - b);
+    ordens.forEach((ordem, indice) => {
+      if (ordem !== indice + 1) report(`fasesDoJogo["${daSala.get(ordem)}"].ordem`, `As fases de ${chave} não estão numeradas em sequência a partir de 1 (esperava ${indice + 1}, veio ${ordem}).`);
+    });
   }
 
   edicao.cobertura.forEach((cobertura, indice) => {

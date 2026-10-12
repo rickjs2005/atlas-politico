@@ -1,5 +1,6 @@
-// A lista de revisão humana: cobre todos os acontecimentos, filiações e
-// mandatos publicados, com as fontes de cada um, e o documento gerado
+// A lista de revisão humana: cobre todos os registros publicados
+// (acontecimentos, filiações, mandatos, decisões, propostas eleitorais e o
+// conteúdo educativo do jogo), com as fontes de cada um, e o documento gerado
 // (docs/HUMAN-REVIEW.md) está em dia. Nada aqui marca revisão como humana.
 
 import { readFileSync } from "node:fs";
@@ -15,7 +16,7 @@ const data = buildAtlasData(readSources(resolvePaths())).data!;
 const texto = renderHumanReview(data);
 
 describe("lista de revisão humana", () => {
-  it("cita todo acontecimento, filiação, mandato, decisão, cobertura e identidade publicados, com todas as fontes", () => {
+  it("cita todo registro publicado (acontecimento, filiação, mandato, decisão, proposta, fase, fato e conceito), com todas as fontes", () => {
     for (const item of data.conjunto.acontecimentos) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const item of data.conjunto.filiacoes) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const item of data.conjunto.mandatos) expect(texto, item.id).toContain(`\`${item.id}\``);
@@ -23,12 +24,25 @@ describe("lista de revisão humana", () => {
     for (const item of data.conjunto.votacoes) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const item of data.conjunto.proposicoes) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const item of data.conjunto.atosExecutivos) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.atuacoesLegislativas) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.propostasEleitorais) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.fasesDoJogo) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.fatosBiograficos) expect(texto, item.id).toContain(`\`${item.id}\``);
+    for (const item of data.conjunto.conceitos) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const item of data.conjunto.coberturaPolitica) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const item of data.conjunto.identidadesInstitucionais) expect(texto, item.id).toContain(`\`${item.id}\``);
     for (const fonte of data.conjunto.fontes) expect(texto, fonte.id).toContain(fonte.url);
     // A seção das decisões vem depois das demais e diz que a amostra não é o histórico completo.
-    expect(texto).toContain("## 6. Decisões políticas: votos e atos do Executivo");
+    expect(texto).toContain("## 6. Decisões políticas: votos, atos do Executivo e atuação legislativa");
     expect(texto).toContain("não o histórico completo");
+    // As propostas vêm em seção própria, depois das decisões: proposta não é ato, voto nem resultado.
+    const decisoes = texto.indexOf("## 6. Decisões políticas");
+    const propostas = texto.indexOf("## 7. Propostas eleitorais registradas no TSE");
+    const jogo = texto.indexOf("## 8. Conteúdo educativo do jogo");
+    expect(propostas).toBeGreaterThan(decisoes);
+    expect(jogo).toBeGreaterThan(propostas);
+    expect(texto).toContain("Proposta é o que o documento diz que pretende fazer: não é ato, não é voto e não é resultado.");
+    expect(texto).toContain("propor ou relatar uma matéria não diz como a pessoa votou nela");
   });
 
   it("começa pelos episódios judiciais, e cada um deles está na seção judicial", () => {

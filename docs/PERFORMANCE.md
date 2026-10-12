@@ -2,7 +2,7 @@
 
 Fase 8. O que foi medido e em que condições, o que mudou entre o build da fase 7 e o desta fase, e o que ficou pendente. Os motivos de cada escolha estão em [DECISIONS.md](DECISIONS.md), de D-74 a D-86.
 
-Tudo aqui é **resultado de laboratório**: um navegador controlado por script, em uma máquina só, com rede e processador limitados por emulação. Não há dados de campo, porque o atlas não foi publicado. Também não havia aparelho móvel real disponível nesta fase: o perfil de celular é uma emulação.
+Tudo aqui é **resultado de laboratório**: um navegador controlado por script, em uma máquina só, com rede e processador limitados por emulação. Não há dados de campo: quando as medições foram feitas o atlas não estava publicado, e o endereço provisório em que ele responde desde 11 de outubro de 2026 ([DEPLOY.md](DEPLOY.md)) não tem medição de uso nem foi medido. Também não havia aparelho móvel real disponível: o perfil de celular é uma emulação.
 
 Nas tabelas e no texto, 1 KB são 1.024 bytes.
 
@@ -433,6 +433,51 @@ Leitura, contra a medição de 10 de outubro:
 
 Nada disso foi mexido nesta data: são medições de laboratório de um custo que entrou com o Escrivão, e as duas saídas abaixo mudam o primeiro desenho da página do jogo, o que pede uma passagem própria. Ficam nas pendências.
 
+## Páginas do jogo, trilha simples (11 de outubro de 2026)
+
+Medidas por `npm run measure:game -- --rotulo trilha-2026-10-11`, nas mesmas condições das duas medições anteriores (mediana de 3 execuções, cache vazio, Chromium sem interface com o canvas 2D por software, mesmos perfis de rede e de CPU, na mesma máquina de 8 GB), sobre a saída da edição 0.3.0, com a trilha simples ([GAME-TRAIL.md](GAME-TRAIL.md)). Arquivo: `desempenho/jogo-trilha-2026-10-11.json`.
+
+O medidor mudou em três pontos:
+
+- **Abre mais duas páginas:** uma fase pedida pelo endereço (`?fase=5`) e a leitura sem o cenário (`?leitura=1`).
+- **Mede a cadência com a janela da fase aberta,** que é como a pessoa passa a maior parte do tempo.
+- **A cadência da caminhada é amostrada só enquanto o boneco anda.** Antes, a amostra era um tempo fixo depois do toque, e a caminhada da trilha pode acabar antes: entravam quadros da cena já parada. As colunas "Cena andando" das tabelas acima são dessa forma antiga, de um jogo em que a pessoa dirigia o boneco, e não se comparam com a coluna "Durante a caminhada" desta.
+
+| Perfil | Página | FCP | LCP | Carregamento | Palco pronto | Transferido | Bloqueio | Cena parada | Durante a caminhada | Com a janela aberta |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Computador | `/jogo/` | 308 ms | 308 ms | 501 ms | | 377 KB | 43 ms | | | |
+| Computador | `/jogo/lula/?fase=1` | 292 ms | 292 ms | 560 ms | 863 ms | 436 KB | 24 ms | 58,4 fps, p95 de 16,8 ms, 0 quadros longos | 55,4 fps, p95 de 33,2 ms, 0 quadros longos, 24 quadros em 450 ms | 60,3 fps, p95 de 16,7 ms, 0 quadros longos |
+| Computador | `/jogo/flavio-bolsonaro/?fase=1` | 280 ms | 280 ms | 538 ms | 749 ms | 435 KB | 18 ms | 59,0 fps, p95 de 16,8 ms, 0 quadros longos | 57,8 fps, p95 de 16,8 ms, 0 quadros longos, 26 quadros em 450 ms | 60,6 fps, p95 de 16,7 ms, 0 quadros longos |
+| Computador | `/jogo/lula/?fase=5` | 288 ms | 288 ms | 535 ms | 825 ms | 436 KB | 17 ms | 57,3 fps, p95 de 33,3 ms, 0 quadros longos | 55,6 fps, p95 de 33,3 ms, 0 quadros longos, 25 quadros em 450 ms | 60,6 fps, p95 de 16,7 ms, 0 quadros longos |
+| Computador | `/jogo/lula/economia/` | 260 ms | 260 ms | 518 ms | 830 ms | 400 KB | 37 ms | 59,3 fps, p95 de 16,8 ms, 0 quadros longos | 55,4 fps, p95 de 33,3 ms, 0 quadros longos, 12 quadros em 217 ms | 60,5 fps, p95 de 16,8 ms, 0 quadros longos |
+| Computador | `/jogo/flavio-bolsonaro/seguranca-publica/` | 268 ms | 268 ms | 554 ms | 834 ms | 399 KB | 23 ms | 59,2 fps, p95 de 16,8 ms, 0 quadros longos | 57,9 fps, p95 de 16,8 ms, 0 quadros longos, 81 quadros em 1.400 ms | 60,6 fps, p95 de 16,8 ms, 0 quadros longos |
+| Computador | `/jogo/lula/?fase=1&leitura=1` | 288 ms | 504 ms | 478 ms | | 397 KB | 1 ms | | | |
+| Celular emulado | `/jogo/` | 996 ms | 996 ms | 2.413 ms | | 380 KB | 578 ms | | | |
+| Celular emulado | `/jogo/lula/?fase=1` | 1.088 ms | 1.088 ms | 2.540 ms | 2.769 ms | 436 KB | 306 ms | 26,6 fps, p95 de 50 ms, 3 quadros longos | 24,0 fps, p95 de 66,7 ms, 2 quadros longos, 10 quadros em 417 ms | 60,2 fps, p95 de 16,7 ms, 0 quadros longos |
+| Celular emulado | `/jogo/flavio-bolsonaro/?fase=1` | 1.068 ms | 1.068 ms | 2.541 ms | 2.777 ms | 435 KB | 303 ms | 27,3 fps, p95 de 50 ms, 2 quadros longos | 25,4 fps, p95 de 83,4 ms, 1 quadro longo, 11 quadros em 433 ms | 60,2 fps, p95 de 16,8 ms, 0 quadros longos |
+| Celular emulado | `/jogo/lula/?fase=5` | 1.084 ms | 1.084 ms | 2.511 ms | 2.825 ms | 436 KB | 371 ms | 22,8 fps, p95 de 50,1 ms, 11 quadros longos | 20,8 fps, p95 de 83,3 ms, 2 quadros longos, 9 quadros em 433 ms | 60,2 fps, p95 de 16,8 ms, 0 quadros longos |
+| Celular emulado | `/jogo/lula/economia/` | 1.132 ms | 1.132 ms | 2.474 ms | 2.700 ms | 400 KB | 312 ms | 24,2 fps, p95 de 50,1 ms, 6 quadros longos | 20,0 fps, p95 de 66,7 ms, 1 quadro longo, 4 quadros em 183 ms | 60,2 fps, p95 de 16,8 ms, 0 quadros longos |
+| Celular emulado | `/jogo/flavio-bolsonaro/seguranca-publica/` | 1.164 ms | 1.164 ms | 2.537 ms | 2.760 ms | 399 KB | 314 ms | 25,8 fps, p95 de 50,1 ms, 5 quadros longos | 24,9 fps, p95 de 50,1 ms, 2 quadros longos, 33 quadros em 1.350 ms | 60,2 fps, p95 de 16,7 ms, 0 quadros longos |
+| Celular emulado | `/jogo/lula/?fase=1&leitura=1` | 1.072 ms | 2.344 ms | 2.282 ms | | 397 KB | 206 ms | | | |
+
+Nenhuma página teve erro no console nem pedido a outro domínio.
+
+Leitura, contra a medição da manhã de 11 de outubro (edição 0.2.1):
+
+- **O LCP das páginas com cena voltou a coincidir com o primeiro desenho.** No celular emulado, de 2,3 a 2,4 s para 1,07 a 1,16 s; em computador, de 0,46 s para 0,26 a 0,29 s. Conferido lendo as entradas de LCP de três páginas com cena (a primeira fase e a quinta de Lula, e o aprofundamento de Economia), nos dois perfis: há uma só entrada, e o maior elemento é a frase do próximo passo no cartão da fase, que vem no HTML. A caixa do Escrivão sobre a cena, que entrava depois de o JavaScript carregar, não existe mais.
+- **A leitura sem o cenário, pedida pelo endereço, é a exceção.** O primeiro desenho é o das outras páginas, mas o LCP fica em 0,50 s em computador e em 2,34 s no celular emulado: o HTML chega com o cartão da fase, e o texto da leitura só entra depois de o JavaScript carregar e ler o endereço. São duas entradas de LCP, a frase do cartão e depois um parágrafo da explicação (conferido em duas páginas, nos dois perfis). O número fica abaixo de 2,5 s, mas perto, em um perfil que é pessimista. A troca para a leitura pelo botão, com a página já aberta, não entra nessa métrica, que é do carregamento. Não foi mexido: fica nas pendências.
+- **O bloqueio no carregamento caiu no celular emulado:** de 0,61 a 0,89 s para 0,30 a 0,37 s nas páginas com cena, e de 0,74 para 0,58 s na entrada.
+- **O peso da página da trajetória subiu 29 KB,** de 407 para 436 KB. O do aprofundamento caiu de 407 para 400 KB, e o da entrada, de 382 para 377 KB. O que distingue as duas páginas com cena é o conteúdo: a da trajetória leva as nove fases, com as explicações, os termos e as atividades, e a do aprofundamento, uma. As páginas com cena fazem 16 pedidos, um a mais do que faziam.
+- **O palco fica pronto na mesma faixa de tempo:** de 0,75 a 0,86 s em computador e de 2,70 a 2,83 s no celular emulado.
+- **A cena parada ficou mais leve no celular emulado:** de 17,6 a 18,6 para 22,8 a 27,3 quadros por segundo. Em computador, de 55,4 a 59,3 para 57,3 a 59,3. A causa não foi isolada. O que mudou sobre a cena é que a caixa do Escrivão, com fundo desfocado sobre um canvas que redesenha a cada quadro, saiu: o código não tem mais nenhum desfoque de fundo.
+- **Durante a caminhada, de 55 a 58 quadros por segundo em computador e de 20 a 25 no celular emulado.** A caminhada é curta: de 0,18 a 0,45 s nas três fases medidas e no aprofundamento de Economia de Lula, e 1,4 s no aprofundamento de Segurança pública de Flávio Bolsonaro. No celular emulado isso dá de 4 a 33 quadros por amostra, e um número tirado de 4 quadros é grosseiro. A caminhada é enfeite: a explicação abre do mesmo jeito sem ela, e com movimento reduzido ela não acontece.
+- **Com a janela da fase aberta, 60 quadros por segundo nos dois perfis, sem quadro longo.** O laço da cena para enquanto a janela está aberta, e a leitura não disputa o processador com o desenho.
+- **Uma fase pedida pelo endereço carrega no mesmo tempo que a primeira.** A cena dela é outra, e parada ficou em 22,8 quadros por segundo no celular emulado, contra 26,6 da primeira fase.
+
+O perfil de celular continua sendo emulação, com o canvas desenhado por software e o processador quatro vezes mais lento. Nenhum aparelho real foi usado.
+
+Uma mudança entrou depois desta medição: na sala de audiências da fase 6 de Flávio Bolsonaro, uma pasta opcional trocou de lugar, porque ficava atrás da porta. Essa fase não está entre as páginas medidas, e a mudança é a posição de um objeto que a cena já desenhava. O build não foi medido de novo por causa dela.
+
 ## Pendências
 
 1. **Aparelho móvel real.** Conferir a jornada e, principalmente, o tempo para abrir a vista do mapa. Fase 9.
@@ -441,10 +486,9 @@ Nada disso foi mexido nesta data: são medições de laboratório de um custo qu
 4. **Bloqueio de 0,5 a 0,9 segundo no carregamento, no perfil de celular.** Não mudou nesta fase. Reduzir pede menos código de cliente na abertura de cada tela, que é um trabalho de outra ordem.
 5. **Dados de campo e INP,** depois da publicação.
 6. **Hospedagem** (fase 10): compressão, cache longo para `/_next/static/`, `404.html` e tipo de conteúdo dos arquivos `.mjs`. Medir de novo no endereço público.
-7. **LCP das páginas do jogo, que passou a seguir a fala de entrada do Escrivão** (seção Páginas do jogo, com as salas temáticas). A saída conhecida é a fala de entrada do capítulo que abre a página vir já no HTML do build, como o objetivo vem. O cuidado: sem JavaScript, a caixa cobriria o aviso de que o jogo precisa dele, em tela estreita; a mudança tem de tratar isso e passar pelos testes da página sem JavaScript.
-8. **Desfoque de fundo da caixa do Escrivão sobre a cena.** Medir a cadência com e sem o desfoque de 2 pixels da caixa, em computador e em aparelho real, e tirar o desfoque se a diferença se confirmar.
-9. **Cadência da cena do jogo em celular real.** No perfil emulado a cena fica em 19 a 24 quadros por segundo (seção Páginas do jogo). Medir em um aparelho de verdade e, se ficar perto disso, reduzir o trabalho por quadro.
-8. **Passos do ajuste da saída:** rever a cada atualização do Next ou do MapLibre. Se o defeito sumir, o passo sai.
-9. **Fontes.** A Newsreader, com 129 KB, é o maior arquivo das páginas de leitura, e em celular com rede lenta o texto só assume a forma final perto de 2 segundos. Um subconjunto menor pede uma ferramenta que o projeto não tem instalada.
-10. **Navegador sem WebP** não mostra o retrato. Não há versão em outro formato.
-11. **Segunda visita e troca de página** não foram medidas: todas as execuções abrem a tela direto, com o cache vazio.
+7. **LCP da leitura sem o cenário, quando pedida pelo endereço** (seção Páginas do jogo, trilha simples): 2,34 s no celular emulado, porque o texto da leitura só entra depois de o JavaScript carregar e ler o endereço. A exportação estática não conhece a consulta quando gera o HTML. Uma saída possível é uma rota própria para a leitura, com o texto no HTML. Conferir em aparelho real antes de mexer. As duas pendências que estavam aqui, o LCP que seguia a fala de entrada do Escrivão e o desfoque de fundo da caixa dele, deixaram de existir com a trilha: a caixa sobre a cena saiu.
+8. **Cadência da cena do jogo em celular real.** No perfil emulado a cena parada fica em 23 a 27 quadros por segundo e a caminhada em 20 a 25 (seção Páginas do jogo, trilha simples). Medir em um aparelho de verdade e, se ficar perto disso, reduzir o trabalho por quadro, por exemplo limitando a densidade de pixels do canvas da cena em telas pequenas.
+9. **Passos do ajuste da saída:** rever a cada atualização do Next ou do MapLibre. Se o defeito sumir, o passo sai.
+10. **Fontes.** A Newsreader, com 129 KB, é o maior arquivo das páginas de leitura, e em celular com rede lenta o texto só assume a forma final perto de 2 segundos. Um subconjunto menor pede uma ferramenta que o projeto não tem instalada.
+11. **Navegador sem WebP** não mostra o retrato. Não há versão em outro formato.
+12. **Segunda visita e troca de página** não foram medidas: todas as execuções abrem a tela direto, com o cache vazio.

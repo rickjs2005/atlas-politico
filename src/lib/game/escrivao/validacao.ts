@@ -4,8 +4,7 @@
 
 import { ROOM_IDS } from "../rooms";
 
-import { camposDe } from "./selecao";
-import { CAMADAS, CAMPOS_DOCUMENTAIS, ESCRIVAO_EVENTS, type Fala } from "./types";
+import { CAMADAS, ESCRIVAO_EVENTS, type Fala } from "./types";
 
 /** Nomes, siglas e adjetivos das pessoas retratadas e dos partidos: fala nenhuma pode trazê-los. As mesmas regras para os dois. */
 const PESSOAS_E_PARTIDOS = /\b(lula|bolsonaro|fl[aá]vio|luiz in[aá]cio|pt|pl|psl|patriota|petista|bolsonarista|esquerda|direita|governo|oposi[çc][aã]o)\b/i;
@@ -13,8 +12,22 @@ const PESSOAS_E_PARTIDOS = /\b(lula|bolsonaro|fl[aá]vio|luiz in[aá]cio|pt|pl|p
 const FALA_ATRIBUIDA = /["“”«»]|\b(disse|afirmou|declarou|falou|segundo ele|segundo ela)\b/i;
 /** Palavras de juízo: o jogo não decide culpa nem valor. */
 const JUIZO = /\b(culpad[oa]s?|inocentes?|absolvid[oa]s?|criminos[oa]s?|corrupt[oa]s?|mentir[oa]s?|ladr[aã]o|ladr[oõ]es|her[oó]i|heroína|melhor|pior)\b/i;
-/** Um ano ou uma data: só a camada documental, preenchida pelos dados, pode trazê-los. */
+/**
+ * Outras pessoas, mesmo inventadas: o humor é sobre a papelada e sobre o
+ * próprio Escrivão. Uma piada com um funcionário imaginário pode ser lida como
+ * recado sobre uma das pessoas retratadas, conforme a fase em que aparece.
+ */
+const TERCEIROS = /\b(estagi[áa]ri[oa]s?|assessor(a|es|as)?|funcion[áa]ri[oa]s?|colegas?|chefes?|secret[áa]ri[oa]s?)\b/i;
+/**
+ * Nascimento e aniversário: as duas trilhas começam pelo nascimento da pessoa, e em uma delas os documentos divergem
+ * sobre o dia. Uma piada com data de aniversário, dita ali, vira comentário sobre a pessoa retratada.
+ */
+const NASCIMENTO = /\b(anivers\w*|nasc\w*|natal[íi]ci\w*)\b/i;
+/** Um ano ou uma data: fala nenhuma os traz. Data é fato, e fato fica no conteúdo publicado. */
 const ANO = /\b(?:1[89]|20)\d{2}\b/;
+
+/** O tamanho máximo de uma instrução, em caracteres. */
+export const INSTRUCAO_MAXIMA = 200;
 
 /** Quantas falas de humor, no mínimo, cada evento precisa ter no reserva para a rotação não repetir na hora. */
 export const MINIMO_DE_HUMOR = 3;
@@ -34,16 +47,17 @@ export function validateCatalog(catalogo: readonly Fala[]): string[] {
     if (PESSOAS_E_PARTIDOS.test(fala.texto)) problemas.push(`${onde}: cita pessoa, partido ou lado; o Escrivão não fala das pessoas retratadas.`);
     if (FALA_ATRIBUIDA.test(fala.texto)) problemas.push(`${onde}: atribui fala a alguém.`);
     if (JUIZO.test(fala.texto)) problemas.push(`${onde}: traz juízo de valor.`);
+    if (fala.camada === "humor" && TERCEIROS.test(fala.texto)) problemas.push(`${onde}: piada com outra pessoa; o humor é sobre a papelada e sobre o próprio Escrivão.`);
+    if (fala.camada === "humor" && NASCIMENTO.test(fala.texto)) problemas.push(`${onde}: piada com nascimento ou aniversário; conforme a fase, vira comentário sobre a pessoa retratada.`);
     if (fala.texto.includes("—") || fala.texto.includes("–")) problemas.push(`${onde}: travessão ou meia-risca; o projeto não os usa.`);
-    const campos = camposDe(fala.texto);
-    if (fala.camada === "documental") {
-      if (campos.length === 0) problemas.push(`${onde}: fala documental sem campo; o que ela afirma não viria do registro.`);
-      for (const campo of campos) if (!(CAMPOS_DOCUMENTAIS as readonly string[]).includes(campo)) problemas.push(`${onde}: campo desconhecido {${campo}}.`);
-    } else {
-      if (campos.length > 0) problemas.push(`${onde}: só a camada documental pode ter campos.`);
-      if (ANO.test(fala.texto)) problemas.push(`${onde}: ano ou data escrita à mão fora da camada documental.`);
-    }
+    if (/\{[a-zA-Z]+\}/.test(fala.texto)) problemas.push(`${onde}: campo a preencher; o Escrivão não repete dado do registro.`);
+    if (ANO.test(fala.texto)) problemas.push(`${onde}: ano ou data; o Escrivão não escreve fato.`);
     if (fala.camada === "humor" && /\?$/.test(fala.texto.trim()) === false && fala.texto.trim().length > 220) problemas.push(`${onde}: fala de humor longa demais (mais de 220 caracteres).`);
+  }
+
+  // A instrução é uma frase curta sobre a ação de agora: um bloco longo do guia tiraria a atenção do marco e do botão de avanço (D-133).
+  for (const fala of catalogo) {
+    if (fala.camada === "instrucao" && fala.texto.trim().length > INSTRUCAO_MAXIMA) problemas.push(`fala ${fala.id}: instrução longa demais (mais de ${INSTRUCAO_MAXIMA} caracteres).`);
   }
 
   // Cobertura: todo evento tem instrução de reserva e humor de reserva suficiente para rodar; toda sala tem a sua instrução e o seu humor em todo evento.

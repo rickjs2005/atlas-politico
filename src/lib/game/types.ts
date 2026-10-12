@@ -1,13 +1,17 @@
-// Contratos do jogo (docs/GAMEPLAY.md). Só tipos: servem ao build, ao
-// navegador e aos testes.
+// Contratos do jogo (docs/GAMEPLAY.md e docs/GAME-TRAIL.md). Só tipos: servem
+// ao build, ao navegador e aos testes.
 //
-// O jogo não guarda conteúdo editorial. Um capítulo cita acontecimentos pelo
-// identificador do conjunto publicado; os textos, as datas e as fontes chegam
-// pelos dados gerados, como em qualquer outra tela do atlas.
+// O jogo não guarda conteúdo editorial. As fases, com a explicação e a
+// atividade, vêm do conjunto publicado (`fasesDoJogo`), como os fatos
+// biográficos e os conceitos; cada bloco de uma fase aponta, pelo
+// identificador, os registros que o sustentam, e os textos, as datas e as
+// fontes desses registros chegam pelos dados gerados, como em qualquer outra
+// tela do atlas. O que fica no código é apresentação: o cenário e a figura de
+// cada fase.
 
 import type { DecisionView } from "@/lib/data/decisions";
-import type { Categoria, DataHistorica, Editorial, Fonte } from "@/lib/domain/types";
 import type { ProfileSlug } from "@/lib/domain/profiles";
+import type { AtividadeDeFase, Categoria, DataHistorica, Editorial, Fonte, ReferenciaDeFase, SalaDoJogo, Tema, TipoDeFatoBiografico } from "@/lib/domain/types";
 
 export type PersonagemSlug = ProfileSlug;
 
@@ -16,52 +20,34 @@ export type PersonagemSlug = ProfileSlug;
 // ---------------------------------------------------------------------------
 
 /**
- * As salas do jogo (D-125). `historico` é a sala de investigação: a
- * trajetória em capítulos, por período. `economia` e `seguranca-publica` são
- * salas temáticas: as decisões políticas (votos e atos) de cada tema. A sala
- * não é a cena (`SceneId`, o layout de um capítulo) nem uma categoria do
- * atlas: é o agrupamento que o jogador escolhe na entrada.
+ * As salas do jogo. `historico` é a trajetória: a trilha da vida, da origem à
+ * data de corte. `economia` e `seguranca-publica` são aprofundamentos sobre
+ * decisões documentadas de um assunto. A sala não é a cena (`SceneId`, o cenário de uma fase)
+ * nem uma categoria do atlas: é a trilha que a pessoa percorre. Os
+ * identificadores estão nos endereços e no conteúdo (`SALAS_DO_JOGO`).
  */
-export type RoomId = "historico" | "economia" | "seguranca-publica";
+export type RoomId = SalaDoJogo;
 
 // ---------------------------------------------------------------------------
-// Capítulos e tarefas
+// Fases
 // ---------------------------------------------------------------------------
 
-/**
- * A tarefa de um capítulo. Cinco tipos:
- *   `registro`  encontrar e recolher o registro de um acontecimento;
- *   `ordem`     recolher dois registros e pô-los em ordem cronológica. As
- *               datas dos dois têm de decidir a ordem sem ambiguidade (um
- *               teste confere isso contra o conteúdo);
- *   `fonte`     recolher um registro e indicar, entre documentos do capítulo,
- *               o que o sustenta;
- *   `lugar`     recolher um registro e indicar o lugar em que o atlas o
- *               documenta, entre lugares da trajetória;
- *   `decisao`   recolher o registro de uma decisão (voto ou ato) e, em duas
- *               etapas, indicar o documento que a sustenta e interpretar o que
- *               ela documenta (a manifestação e o objeto votado, ou o tipo do
- *               ato). As duas etapas são conferidas contra o próprio registro.
- * As opções das tarefas de fonte, de lugar e de decisão saem dos próprios
- * registros (src/lib/game/mission.ts): o jogo não escreve fato nenhum.
- */
-export type TaskSpec =
-  | { tipo: "registro"; eventId: string }
-  | { tipo: "ordem"; eventIds: readonly [string, string] }
-  | { tipo: "fonte"; eventId: string }
-  | { tipo: "lugar"; eventId: string }
-  | { tipo: "decisao"; decisaoId: string };
+/** Um registro apontado por uma fase: tipo e identificador no conjunto publicado. */
+export type PhaseRef = ReferenciaDeFase;
 
-export type TaskType = TaskSpec["tipo"];
+/** A atividade de uma fase: pergunta com duas ou três opções, ou ordenação curta. */
+export type PhaseActivity = AtividadeDeFase;
 
 /**
  * A arte de um cenário: piso, paredes, porta e materiais. Uma arte pode
  * servir a mais de uma cena, com paleta e disposição próprias; a cena é o
- * que o capítulo aponta (`SceneId`).
+ * que a fase aponta (`SceneId`).
  */
 export type SceneArtId = "sindicato" | "constituinte" | "alerj" | "senado" | "comite" | "tribunal" | "gabinete" | "comissao" | "convencao";
 
 export type SceneId =
+  | "arquivo-origem-a"
+  | "arquivo-origem-b"
   | "sindicato"
   | "constituinte"
   | "alerj"
@@ -79,9 +65,9 @@ export type SceneId =
   | "arquivo-seguranca-b";
 
 /**
- * A época da figura do personagem no capítulo: variações estilizadas de
- * cabelo, barba e roupa, as mesmas para os dois personagens (D-111). Não
- * afirmam a aparência real em cada data.
+ * A época da figura do personagem na fase: variações estilizadas de cabelo,
+ * barba e roupa, as mesmas para os dois personagens (D-111). Não afirmam a
+ * aparência real em cada data.
  */
 export type Epoca = "inicio" | "meio" | "atual";
 
@@ -92,93 +78,100 @@ export const EPOCA_LABEL: Record<Epoca, string> = {
   atual: "figura dos anos recentes",
 };
 
-export interface ChapterSpec {
+/** Um bloco da explicação de uma fase: o texto e os registros que o sustentam. */
+export interface PhaseBlock {
+  texto: string;
+  referencias: readonly PhaseRef[];
+}
+
+/**
+ * Uma fase como o jogo a recebe: o que o conteúdo publicado diz dela
+ * (`FaseDoJogo`), mais a apresentação (cenário e figura), que é do código, e
+ * a marca de contexto sensível, que é regra do jogo.
+ */
+export interface PhaseSpec {
   /** Identificador estável, usado no progresso salvo. */
   id: string;
   personagem: PersonagemSlug;
-  /** A sala a que o capítulo pertence. A progressão (bloqueado, disponível, concluído) corre dentro de cada sala. */
   sala: RoomId;
   /** Posição na sala, a partir de 1. */
   numero: number;
   titulo: string;
-  /** Anos que o capítulo cobre, pelas datas dos registros citados. */
-  periodo: { de: number; ate: number };
-  /** Por que estes registros formam um capítulo (docs/GAMEPLAY.md). */
-  motivo: string;
-  /** Objetivo curto, mostrado ao jogador. */
+  /** O que a pessoa sabe ao terminar a fase. */
   objetivo: string;
-  /**
-   * Acontecimentos do capítulo, pelo `id` do conjunto publicado. A ordem é a
-   * das posições na cena (`SceneSpec.registros`). Todos aparecem como
-   * registros no cenário. A tarefa exige alguns deles; a saída, todos.
-   */
-  eventIds: readonly string[];
-  /**
-   * Decisões políticas do capítulo (votos e atos do Executivo), pelo `id` do
-   * conjunto publicado. Aparecem como registros no cenário, nas posições
-   * depois das dos acontecimentos (`recordIds`, em mission.ts). Ausente ou
-   * vazio nos capítulos só de acontecimentos.
-   */
-  decisaoIds?: readonly string[];
-  tarefa: TaskSpec;
+  /** Os anos que a fase cobre. */
+  periodo: { de: number; ate: number };
+  /** O registro principal: é o que o cenário destaca. */
+  marco: PhaseRef;
+  explicacao: readonly PhaseBlock[];
+  /** Os conceitos definidos nesta fase. */
+  conceitos: readonly string[];
+  atividade: PhaseActivity;
+  /** Os outros registros do período, opcionais. */
+  explorar: readonly PhaseRef[];
+  /** O que a edição não pesquisou neste período. */
+  lacunas: readonly string[];
+  /** Quem conferiu o texto da fase e quando. */
+  editorial: Editorial;
   cena: SceneId;
   epoca: Epoca;
+  /** A fase trata de processo judicial, prisão, acusação ou violência: o Escrivão não faz humor (D-129). */
+  sensivel: boolean;
 }
-
-export type ChapterStatus = "bloqueado" | "disponivel" | "concluido";
 
 // ---------------------------------------------------------------------------
 // Progresso do jogador (salvo localmente, por personagem)
 // ---------------------------------------------------------------------------
 
 /**
- * Versão do formato salvo. A 1 guardava a tarefa com `ordemConfirmada`; a 2
- * generalizou para `confirmada`, que vale para qualquer tarefa com resposta
- * (ordem, fonte, lugar); a 3 guarda, junto com a confirmação, a assinatura
- * da tarefa respondida (`taskSignature`), para uma resposta antiga não
- * concluir uma tarefa que mudou sob os mesmos identificadores; a 4 guarda a
- * etapa de evidência da tarefa de decisão (`evidencia`) e lê capítulos de
- * mais de uma sala; a 5 passa a assinar a tarefa também pelos dados que
- * decidem a resposta (datas, documentos, lugar, manifestação, tipo do ato),
- * para uma correção editorial sob os mesmos identificadores reabrir só a
- * resposta afetada (D-130). A leitura migra as versões 1 a 4
- * (src/lib/game/progress.ts).
+ * Versão do formato salvo. As versões 1 a 5 guardavam capítulos com registros
+ * recolhidos, tarefa confirmada e saída (src/lib/game/legacy.ts as lê). A 6 é
+ * a da trilha (D-135): por fase, se a explicação foi aberta, como a atividade
+ * foi concluída e a assinatura do que decide a resposta, mais a fase em que a
+ * pessoa parou em cada sala e, quando houve migração, o salvo anterior inteiro.
  */
-export const PROGRESS_VERSION = 5;
+export const PROGRESS_VERSION = 6;
 
-export interface TaskState {
-  /** Registros recolhidos neste capítulo, na ordem em que foram recolhidos. */
-  recolhidos: string[];
-  /** Tarefa com resposta (ordem, fonte, lugar, decisão): a resposta certa foi confirmada. */
-  confirmada: boolean;
-  /** Tarefa com resposta: quantas tentativas foram feitas (só informação; não pune). */
-  tentativas: number;
+/** Como a atividade de uma fase foi concluída: com a resposta certa, ou lendo a explicação no lugar de responder. */
+export type ActivityOutcome = "resposta" | "explicacao";
+
+export interface PhaseProgress {
+  /** A explicação da fase foi aberta. */
+  vista: boolean;
+  /** Como a atividade foi concluída. Ausente enquanto não foi. */
+  concluida?: ActivityOutcome;
   /**
-   * A tarefa que a resposta respondeu, pela assinatura de `taskSignature`
-   * (tipo, identificadores e um resumo dos dados que decidem a resposta). Só
-   * existe com `confirmada` ou com `evidencia`. Se a tarefa do capítulo mudar,
-   * ou os dados que decidem a resposta mudarem, a resposta deixa de valer na
-   * leitura do progresso; o que foi recolhido fica.
+   * A atividade que foi concluída, pela assinatura de `activitySignature`
+   * (identificador da fase, tipo e um resumo do que decide a resposta). Só
+   * existe com `concluida`. Se o que decide a resposta mudar, a conclusão
+   * deixa de valer na leitura do progresso; `vista` e as tentativas ficam.
    */
   assinatura?: string;
+  /** Quantas respostas foram dadas (só informação; não pune). */
+  tentativas: number;
   /**
-   * Tarefa de decisão: a primeira etapa (o documento que sustenta o registro)
-   * foi confirmada. Só existe quando verdadeira. A segunda etapa, a
-   * interpretação, é o que `confirmada` registra.
+   * A fase cobre registros de um capítulo concluído em um formato anterior. A
+   * atividade nova não foi respondida: a marca só diz que a pessoa já passou
+   * por este período.
    */
-  evidencia?: true;
-}
-
-export interface ChapterProgress {
-  status: ChapterStatus;
-  tarefa: TaskState;
+  anterior?: true;
+  /**
+   * A fase tinha sido concluída e uma correção no conteúdo mudou o que decide
+   * a resposta: a conclusão deixou de valer, e a tela diz por quê. Sai quando
+   * a fase é concluída de novo.
+   */
+  reaberta?: true;
 }
 
 export interface PlayerProgress {
   versao: typeof PROGRESS_VERSION;
   personagem: PersonagemSlug;
-  /** Por `ChapterSpec.id`. Todo capítulo do personagem tem entrada. */
-  capitulos: Record<string, ChapterProgress>;
+  /** Por `PhaseSpec.id`. Só as fases em que algo aconteceu. */
+  fases: Record<string, PhaseProgress>;
+  /** A fase em que a pessoa parou, por sala. */
+  posicao: Partial<Record<RoomId, string>>;
+  /** O progresso salvo em um formato anterior, como estava: a migração não o apaga. */
+  legado?: { versao: number; capitulos: Record<string, unknown> };
 }
 
 // ---------------------------------------------------------------------------
@@ -204,7 +197,7 @@ export interface GameSource {
 /** Onde o atlas documenta o acontecimento, com os nomes dos lugares já resolvidos. */
 export type GameLocation = { tipo: "lugares"; lugares: readonly string[] } | { tipo: "nacional" } | { tipo: "desconhecida" };
 
-/** O que um registro mostra ao ser recolhido: o mesmo que a ficha, em resumo. */
+/** Um acontecimento como o jogo o mostra: o mesmo que a ficha, em resumo. */
 export interface GameRecord {
   id: string;
   slug: string;
@@ -233,21 +226,93 @@ export interface GameRecord {
  */
 export type GameDecision = DecisionView;
 
-/** O que registros e decisões têm em comum, para as regras que servem aos dois. */
-export type GameDocument = Pick<GameRecord, "id" | "titulo" | "data" | "fontes">;
+/** Um fato biográfico: origem, família, mudança de cidade, formação, trabalho. */
+export interface GameFact {
+  id: string;
+  tipo: TipoDeFatoBiografico;
+  titulo: string;
+  /** `null` quando o documento não data o fato. */
+  data: DataHistorica | null;
+  texto: string;
+  /** O que os documentos dizem de diferente e o que o atlas adotou; `null` quando concordam. */
+  divergencia: string | null;
+  fontes: readonly GameSource[];
+  editorial: Editorial;
+}
+
+/** A definição simples de um termo, com o texto oficial que a sustenta. */
+export interface GameConcept {
+  id: string;
+  termo: string;
+  definicao: string;
+  /** O que a definição simplifica; `null` quando não há o que avisar. */
+  simplificacao: string | null;
+  fontes: readonly GameSource[];
+  editorial: Editorial;
+}
+
+/** Um cargo ou uma função, ou uma filiação partidária, quando um bloco os aponta. */
+export interface GamePosition {
+  id: string;
+  natureza: "mandato" | "filiacao";
+  /** O cargo, ou a sigla do partido. */
+  titulo: string;
+  /** A instituição, ou o nome do partido. */
+  detalhe: string;
+  /** O período, por extenso, com as pontas desconhecidas ditas como tais. */
+  periodo: string;
+  fontes: readonly GameSource[];
+  editorial: Editorial;
+}
+
+/**
+ * Uma proposta do documento que a candidatura registrou na Justiça Eleitoral.
+ * É o que o documento diz que pretende fazer: não é ato, voto nem resultado.
+ */
+export interface GameProposal {
+  id: string;
+  tema: Tema;
+  /** O ano da eleição a que o documento se refere. */
+  eleicao: number;
+  /** O que o documento propõe, em uma frase. */
+  texto: string;
+  /** Condição, divergência dentro do documento ou número que é afirmação do próprio texto; `null` quando não há. */
+  ressalva: string | null;
+  fontes: readonly GameSource[];
+  editorial: Editorial;
+}
+
+/** Uma sala do personagem, para os caminhos entre elas: quantas fases e que anos. */
+export interface RoomSummary {
+  id: RoomId;
+  fases: number;
+  periodo: { de: number; ate: number };
+}
 
 export interface GameContent {
   personagem: { slug: PersonagemSlug; nome: string };
-  /** Todos os capítulos do personagem, de todas as salas, na ordem de `chapters.ts`. */
-  capitulos: readonly ChapterSpec[];
-  /** Por `id` de acontecimento. Só os citados pelos capítulos. */
+  /** A sala aberta. */
+  sala: RoomId;
+  /** As fases da sala, na ordem de percurso. */
+  fases: readonly PhaseSpec[];
+  /** Por `id` de acontecimento. Só os apontados pelas fases da sala. */
   registros: Record<string, GameRecord>;
-  /** Por `id` de voto ou de ato. Só os citados pelos capítulos. */
+  /** Por `id` de voto ou de ato. Só os apontados pelas fases da sala. */
   decisoes: Record<string, GameDecision>;
+  /** Por `id` de fato biográfico. */
+  fatos: Record<string, GameFact>;
+  /** Por `id` de conceito. */
+  conceitos: Record<string, GameConcept>;
+  /** Por `id` de mandato ou de filiação. */
+  posicoes: Record<string, GamePosition>;
+  /** Por `id` de proposta eleitoral. */
+  propostas: Record<string, GameProposal>;
+  /** Todas as salas do personagem com fase publicada, na ordem das salas, inclusive a aberta. */
+  salas: readonly RoomSummary[];
 }
 
 // ---------------------------------------------------------------------------
-// Cena: o mundo de um capítulo
+// Cena: o cenário de uma fase
 // ---------------------------------------------------------------------------
 
 /**
@@ -300,14 +365,14 @@ export interface ScenePalette {
   acento: string;
 }
 
-/** Direção de saída da cena, pela borda em que o portal está. */
+/** A borda em que a porta da cena está. */
 export type ExitSide = "norte" | "sul" | "leste" | "oeste";
 
 export interface SceneSpec {
   id: SceneId;
   /** A arte que desenha esta cena. */
   arte: SceneArtId;
-  /** Nome do lugar, mostrado na transição e no painel. */
+  /** Nome do lugar, mostrado junto da fase. */
   nome: string;
   /** Uma linha por fileira, um caractere por célula (legenda em grid.ts). */
   mapa: readonly string[];
@@ -320,23 +385,18 @@ export interface SceneSpec {
   tapetes: readonly { x: number; y: number }[];
   spawn: { x: number; y: number };
   guia: { x: number; y: number };
+  /** A porta: fecha a cena e abre quando a fase termina. Ninguém a atravessa: é sinal, e não passagem. */
   saida: { x: number; y: number; lado: ExitSide };
-  /** Posições dos registros, na ordem de `recordIds` (os acontecimentos e depois as decisões do capítulo). */
+  /** As posições das pastas: a primeira é a do marco; as seguintes, as dos registros para explorar. */
   registros: readonly { x: number; y: number }[];
 }
 
 // ---------------------------------------------------------------------------
-// Mundo em movimento
+// O que se mexe na cena
 // ---------------------------------------------------------------------------
 
 /** Direção em que o personagem olha, em eixos do mundo (ver iso.ts). */
 export type Facing = "frente-direita" | "frente-esquerda" | "costas-direita" | "costas-esquerda";
-
-export interface InputState {
-  /** Vetor de intenção em eixos de tela: -1, 0 ou 1 em cada eixo. */
-  dx: number;
-  dy: number;
-}
 
 export interface PlayerState {
   x: number;
@@ -347,12 +407,18 @@ export interface PlayerState {
   fase: number;
 }
 
-export type InteractableKind = "registro" | "guia" | "saida";
-
-export interface Interactable {
-  tipo: InteractableKind;
-  /** O `id` do acontecimento ou da decisão para registros; `guia` ou `saida` para os demais. */
-  id: string;
+/**
+ * Uma pasta no cenário: o marco da fase, em destaque, ou um registro para
+ * explorar. É um botão da página, posto sobre o desenho; a cena só diz onde
+ * ele fica.
+ */
+export interface SceneMarker {
+  /** `marco`, ou a chave do registro (`tipo:id`). */
+  chave: string;
+  natureza: "marco" | "explorar";
+  /** O que o botão diz. */
+  rotulo: string;
+  /** A célula da pasta. */
   x: number;
   y: number;
 }

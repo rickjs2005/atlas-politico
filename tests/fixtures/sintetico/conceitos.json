@@ -1,0 +1,19 @@
+[
+  {
+    "id": "sintetico-conceito-01",
+    "termo": "[SINTÉTICO] Termo de teste",
+    "definicao": "[SINTÉTICO] Definição fictícia e curta de um termo de teste.",
+    "simplificacao": "[SINTÉTICO] A definição de teste deixa de fora as exceções fictícias.",
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Artigo de teste 1",
+        "evidencia": "[SINTÉTICO] Trecho fictício do texto oficial de teste."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

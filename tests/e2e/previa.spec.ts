@@ -144,7 +144,7 @@ test.describe("exploração em tela larga", () => {
     // Pela rolagem.
     await titulo.scrollIntoViewIfNeeded();
     await expect(titulo).toBeInViewport();
-    await expect(titulo).toContainText(`Votos e atos de ${lula.nome}, por tema`);
+    await expect(titulo).toContainText(`Votos, atos e atuação legislativa de ${lula.nome}, por tema`);
 
     // Pelo teclado: o primeiro link da seção recebe o foco e fica à vista; um passo atrás, o foco está na área de
     // trabalho, antes da seção. Ela entra na ordem do Tab logo depois dos controles da exploração.

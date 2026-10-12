@@ -1,170 +1,155 @@
 "use client";
 
-// O que fica sobre a cena: a sala e o capítulo, o objetivo e a contagem dos
-// registros, os botões do painel e do Escrivão, a fala do Escrivão na entrada
-// e na conclusão, a dica do que está ao alcance e o aviso de pausa. Tudo em
-// DOM, fora do elemento que captura as teclas.
+// O que fica sobre a cena: onde a pessoa está (sala, fase X de Y, período e
+// título), a instrução de agora em uma frase, os caminhos (ler sem o cenário,
+// a lista de fases, como funciona) e, na base, o botão principal: abrir o
+// marco, ou continuar quando a fase já foi concluída. Tudo em DOM, e o
+// cabeçalho da fase já vem no HTML do build.
 //
-// Em janela baixa (celular deitado), o cabeçalho encolhe para a cena e os
-// controles de toque caberem juntos.
+// Nada do guia cobre o caminho do boneco nem o botão principal: a instrução é
+// uma linha dentro do cartão da fase (D-133).
+//
+// Quem chega sem pedir fase cai onde tinha parado: o cartão diz isso e
+// oferece o começo, com o ano (ResumeNotice).
+//
+// Em tela estreita, os três caminhos viram uma linha acima do cartão, e o
+// cartão vai de um lado ao outro: a cena fica inteira no espaço entre ele e o
+// botão principal (a casca mede os dois blocos, `data-hud-topo` e
+// `data-hud-base`, e o palco enquadra a cena no que sobra). Em tela baixa, a
+// fala de humor sai do cartão: é enfeite, e o espaço é da cena.
 
+import Link from "next/link";
+
+import { PATH_LINK } from "@/components/touch";
 import { falasVisiveis, type FalaDita } from "@/lib/game/escrivao";
-import type { RoomSpec } from "@/lib/game/rooms";
-import { EPOCA_LABEL, type ChapterSpec, type Interactable } from "@/lib/game/types";
+import { periodLabel, roomLabel, type RoomSpec } from "@/lib/game/rooms";
+import type { PhaseSpec } from "@/lib/game/types";
+import { gameHref } from "@/lib/state/links";
 
 import { useGamePreferences } from "../hooks";
 
-import { quietButton, secondaryButton } from "./Dialog";
-import { EscrivaoSays } from "./EscrivaoSays";
-import { missingLabel } from "./saida";
-import { countingSentence, hudPendingSentence } from "./tarefa";
+import { primaryButton, secondaryButton } from "./Dialog";
 
-export function reachLabel(alvo: Interactable | null, saidaAberta: boolean): string | null {
-  if (alvo === null) return null;
-  if (alvo.tipo === "registro") return "Recolher o registro";
-  if (alvo.tipo === "guia") return "Falar com o Escrivão";
-  return saidaAberta ? "Atravessar a saída" : "Saída fechada";
+/** O que a tela diz a quem caiu onde tinha parado, sem ter escolhido a fase. */
+export interface ResumeInfo {
+  /** O ano em que a trajetória começa. */
+  ano: number;
+  /** O salvo é de um formato anterior, e a trajetória ganhou fases no começo. */
+  mudou: boolean;
+}
+
+/** O aviso de retomada, com o caminho para a primeira fase. Rever o começo é navegação: não apaga nada. */
+export function ResumeNotice({ retomada, className, onGoToStart }: { retomada: ResumeInfo; className: string; onGoToStart(): void }) {
+  return (
+    <p className={className} data-aviso-retomada={retomada.mudou ? "mudou" : "retomada"}>
+      {retomada.mudou ? "O jogo mudou desde a sua última visita: a trajetória agora começa pela origem." : "Você continua de onde parou."}{" "}
+      <button type="button" className="inline-flex min-h-11 items-center font-medium underline decoration-line-strong hover:decoration-ink" onClick={onGoToStart} data-ver-desde-o-inicio>
+        <span>
+          Ver desde o início: <span className="numerals">{retomada.ano}</span>
+        </span>
+      </button>
+    </p>
+  );
 }
 
 interface HudProps {
-  capitulo: ChapterSpec;
-  sala: RoomSpec;
-  cenaNome: string;
-  alcance: Interactable | null;
-  /** A tarefa cumprida e todos os registros recolhidos: a passagem está aberta. */
-  saidaAberta: boolean;
-  tarefaConcluida: boolean;
-  /** Os registros pedidos já estão recolhidos, e a resposta (ordem, documento, lugar ou decisão) ainda não foi dada. */
-  respostaPendente: boolean;
-  /** Registros do capítulo que ainda não foram recolhidos. */
-  faltam: number;
-  /** Registros do capítulo, ao todo: acontecimentos e decisões. */
+  fase: PhaseSpec;
+  /** Quantas fases a sala tem. */
   total: number;
-  /** Este é o último capítulo da sala: a saída encerra, e não leva a outro. */
-  ultimo: boolean;
-  /** Tela de toque: a dica do alcance fica no botão de ação. */
-  toque: boolean;
-  pausadoPelaJanela: boolean;
-  instrucoesId: string;
-  /** A fala do Escrivão à vista sobre a cena (a entrada do capítulo, a conclusão), ou nada. */
-  falas: { evento: string; falas: readonly FalaDita[] } | null;
-  onDismissFalas(): void;
-  onOpenPanel(): void;
-  onOpenGuide(): void;
+  sala: RoomSpec;
+  /** O título do marco, como o registro o escreve. */
+  marco: string;
+  /** A fase já foi concluída: o botão principal passa a ser o de continuar. */
+  concluida: boolean;
+  /** A fase seguinte, ou `null` na última. */
+  proxima: PhaseSpec | null;
+  /** O que o Escrivão diz ao abrir a fase: a instrução e, quando ligado, o humor. */
+  falas: readonly FalaDita[];
+  /** A pessoa caiu nesta fase pela retomada, sem tê-la escolhido: o cartão diz isso e oferece o começo. */
+  retomada: ResumeInfo | null;
+  onGoToStart(): void;
+  /** A cena está pronta para o toque: antes disso, o botão principal abre a explicação direto. */
+  onOpenMarker(): void;
+  onContinue(): void;
+  onOpenPhases(): void;
+  onOpenHelp(): void;
+  onReadWithoutScene(): void;
 }
 
-export function Hud({
-  capitulo,
-  sala,
-  cenaNome,
-  alcance,
-  saidaAberta,
-  tarefaConcluida,
-  respostaPendente,
-  faltam,
-  total,
-  ultimo,
-  toque,
-  pausadoPelaJanela,
-  instrucoesId,
-  falas,
-  onDismissFalas,
-  onOpenPanel,
-  onOpenGuide,
-}: HudProps) {
-  const dica = reachLabel(alcance, saidaAberta);
-  const recolhidos = total - faltam;
-  // A caixa do Escrivão só existe se sobrar fala com a preferência de humor atual.
+export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retomada, onGoToStart, onOpenMarker, onContinue, onOpenPhases, onOpenHelp, onReadWithoutScene }: HudProps) {
   const { preferencias } = useGamePreferences();
-  const haFalas = falas !== null && falasVisiveis(falas.falas, preferencias.humor).length > 0;
-  // A linha do objetivo diz o próximo passo: a tarefa, a resposta a dar, os registros que faltam, a passagem.
-  const objetivo = saidaAberta
-    ? ultimo
-      ? `Tarefa concluída e registros recolhidos. A saída abriu: atravesse a passagem para encerrar a sala ${sala.nome}.`
-      : "Tarefa concluída e registros recolhidos. A saída abriu: atravesse a passagem para seguir."
-    : tarefaConcluida
-      ? `Tarefa concluída. ${missingLabel(faltam)} para a saída abrir.`
-      : respostaPendente
-        ? hudPendingSentence(capitulo.tarefa.tipo)
-        : capitulo.objetivo;
-  // Recolher todos cumpre a tarefa de registro, mas não as que pedem resposta: enquanto a resposta não é dada, a contagem diz as duas coisas.
-  const contagem = saidaAberta ? "saída aberta" : faltam === 0 ? "falta a tarefa" : tarefaConcluida ? "a saída abre com todos" : countingSentence(capitulo.tarefa.tipo);
-  const periodo = capitulo.periodo.de === capitulo.periodo.ate ? `${capitulo.periodo.de}` : `${capitulo.periodo.de}–${capitulo.periodo.ate}`;
+  const visiveis = falasVisiveis(falas, preferencias.humor);
+  const instrucao = visiveis.find((fala) => fala.camada === "instrucao");
+  const humor = visiveis.find((fala) => fala.camada === "humor");
+  // A linha do próximo passo: a do Escrivão ao abrir a fase; depois de concluída, o que vem em seguida.
+  const proximoPasso = concluida
+    ? proxima === null
+      ? "Fase concluída. Esta é a última: use o botão para ver o resumo."
+      : `Fase concluída. Use o botão para seguir à fase ${proxima.numero}.`
+    : (instrucao?.texto ?? "Toque na pasta em destaque, ou no botão Abrir o marco, para ler a explicação desta fase.");
   return (
     <>
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-wrap items-start justify-between gap-2 p-3 md:p-4">
-        <div className="flex max-w-[min(100%,28rem)] flex-col gap-2">
-          <div
-            className={`pointer-events-auto space-y-1 border bg-paper/90 px-3 py-2 backdrop-blur-[2px] janela-baixa:space-y-0 janela-baixa:py-1.5 ${
-              saidaAberta ? "border-ink border-l-4 border-l-accent" : "border-ink/15"
-            }`}
-            data-objetivo-caixa={saidaAberta ? "saida-aberta" : tarefaConcluida ? "tarefa-concluida" : "pendente"}
-          >
-            {/* O nome do lugar é o do cenário, e não o do fato: o rótulo diz isso. A figura é a da época, estilizada. */}
-            <p className="eyebrow text-ink-soft janela-baixa:hidden" data-cenario data-epoca={capitulo.epoca} data-sala={sala.id}>
-              {sala.id === "historico" ? "" : `Sala ${sala.nome} · `}Capítulo {capitulo.numero} · {periodo} · cenário: {cenaNome} · {EPOCA_LABEL[capitulo.epoca]}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex flex-col-reverse gap-2 p-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between md:p-4" data-hud-topo>
+        <div className={`pointer-events-auto space-y-1 border bg-paper/95 px-3 py-2 sm:max-w-[min(100%,26rem)] janela-baixa:space-y-0 janela-baixa:py-1.5 ${concluida ? "border-ink border-l-4 border-l-accent" : "border-ink/20"}`} data-fase-cartao={concluida ? "concluida" : "aberta"}>
+          <p className="eyebrow text-ink-soft" data-fase-posicao>
+            {roomLabel(sala)} · Fase {fase.numero} de {total} · <span className="numerals">{periodLabel(fase.periodo)}</span>
+          </p>
+          <p className="font-serif text-lg font-medium leading-tight janela-baixa:text-base" data-fase-titulo>
+            {fase.titulo}
+          </p>
+          <p className="text-sm janela-baixa:text-xs" role="status" data-proximo-passo>
+            {proximoPasso}
+          </p>
+          {/* O aviso de retomada ocupa o lugar do humor: o cartão não cresce a ponto de cobrir a cena. */}
+          {retomada !== null && <ResumeNotice retomada={retomada} className="text-xs janela-baixa:hidden" onGoToStart={onGoToStart} />}
+          {!concluida && retomada === null && humor !== undefined && (
+            <p className="text-xs italic text-ink-soft janela-curta:hidden" data-fala={humor.id} data-camada="humor">
+              <span className="sr-only">Humor do Escrivão, ficção: </span>
+              {humor.texto}
             </p>
-            <p className="font-serif text-lg font-medium leading-tight janela-baixa:text-base">{capitulo.titulo}</p>
-            <p className={`text-sm janela-baixa:text-xs ${saidaAberta ? "font-medium" : ""}`} data-objetivo role="status">
-              {objetivo}
+          )}
+          {sala.natureza === "aprofundamento" && (
+            <p className="text-xs janela-baixa:hidden" data-aviso-aprofundamento>
+              {/* Em tela estreita a instrução acima já diz que é um aprofundamento: aqui fica só o caminho, com a área de toque inteira. */}
+              <span className="max-sm:sr-only">Aprofundamento sobre um assunto, e não o começo da trajetória. </span>
+              <Link href={`${gameHref(fase.personagem)}?fase=1`} prefetch={false} className={PATH_LINK} data-ir-para-o-inicio>
+                Ir para o início da vida
+              </Link>
             </p>
-            {/* A regra da saída fica sempre à vista: quantos registros já vieram e o que ainda segura a porta. */}
-            <p className="numerals text-xs text-ink-soft" data-registros={`${recolhidos}/${total}`}>
-              Registros: {recolhidos} de {total} · {contagem}
-            </p>
-          </div>
-          {/* O Escrivão sobre a cena: ao entrar no capítulo e quando a saída abre. Fecha pelo botão; some sozinho com uma janela aberta. */}
-          {falas !== null && haFalas && (
-            <div className="pointer-events-auto flex items-start gap-2 border border-ink/15 bg-paper/90 px-3 py-2 backdrop-blur-[2px] janela-baixa:hidden" data-escrivao-caixa={falas.evento}>
-              <EscrivaoSays falas={falas.falas} evento={falas.evento} className="flex-1" />
-              <button type="button" className={`${quietButton} shrink-0`} onClick={onDismissFalas} aria-label="Fechar a fala do Escrivão" data-fechar-escrivao>
-                Fechar
-              </button>
-            </div>
           )}
         </div>
-        <div className="pointer-events-auto flex gap-2">
-          <button type="button" className={secondaryButton} onClick={onOpenGuide} data-abrir-guia>
-            Como jogar
+        <div className="pointer-events-auto flex flex-wrap justify-end gap-2 max-sm:justify-stretch" data-caminhos-do-jogo>
+          <button type="button" className={`${secondaryButton} max-sm:flex-auto max-sm:px-2.5 max-sm:text-[0.8125rem]`} onClick={onReadWithoutScene} data-ler-sem-cenario>
+            Ler sem o cenário
           </button>
-          <button type="button" className={secondaryButton} onClick={onOpenPanel} data-abrir-painel>
-            Capítulos e tarefas
+          <button type="button" className={`${secondaryButton} max-sm:flex-auto max-sm:px-2.5 max-sm:text-[0.8125rem]`} onClick={onOpenPhases} data-abrir-fases>
+            Fases
+          </button>
+          <button type="button" className={`${secondaryButton} max-sm:flex-auto max-sm:px-2.5 max-sm:text-[0.8125rem] janela-baixa:hidden`} onClick={onOpenHelp} data-abrir-ajuda>
+            Como funciona
           </button>
         </div>
       </div>
 
-      <p id={instrucoesId} className="sr-only">
-        Cena do jogo. Use as setas ou W, A, S e D para andar, e E, Enter ou espaço para interagir com o que está ao alcance.
-        A saída abre com todos os registros do capítulo recolhidos e a tarefa cumprida. O botão Capítulos e tarefas faz o
-        mesmo sem o cenário.
-      </p>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end p-3 md:p-4">
-        <p
-          role="status"
-          aria-live="polite"
-          className={`pointer-events-auto border border-ink bg-raised px-3 py-1.5 text-sm font-medium ${dica === null ? "invisible" : ""} ${toque ? "sr-only" : ""}`}
-          data-alcance={alcance?.tipo ?? ""}
-          data-alcance-id={alcance?.id ?? ""}
-        >
-          {dica !== null && (
-            <>
-              <kbd className="numerals mr-1.5 border border-line-strong bg-paper px-1.5 py-0.5 text-xs">E</kbd>
-              {dica}
-            </>
-          )}
-        </p>
+      {/* O anel claro separa o botão escuro do fundo nos cenários escuros. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-wrap items-end justify-center gap-2 p-3 md:p-4 [&>button]:ring-1 [&>button]:ring-paper/70" data-hud-base>
+        {concluida ? (
+          <>
+            <button type="button" className={`${secondaryButton} pointer-events-auto`} onClick={onOpenMarker} data-abrir-marco>
+              Reabrir o marco
+            </button>
+            <button type="button" className={`${primaryButton} pointer-events-auto min-h-12 gap-1.5 px-5 text-base`} onClick={onContinue} data-continuar={proxima?.id ?? "resumo"}>
+              {proxima === null ? "Ver o resumo" : `Continuar: fase ${proxima.numero}`}
+              {proxima !== null && <span className="sr-only">, {proxima.titulo}</span>}
+              <span aria-hidden="true">→</span>
+            </button>
+          </>
+        ) : (
+          <button type="button" className={`${primaryButton} pointer-events-auto min-h-12 px-5 text-base`} onClick={onOpenMarker} data-abrir-marco aria-label={`Abrir o marco: ${marco}`}>
+            Abrir o marco
+          </button>
+        )}
       </div>
-
-      {pausadoPelaJanela && (
-        <p
-          role="status"
-          className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 border border-ink bg-notice px-3 py-1.5 text-center text-sm font-medium"
-          data-pausado-janela
-        >
-          Pausado: a janela perdeu o foco
-        </p>
-      )}
     </>
   );
 }

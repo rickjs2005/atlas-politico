@@ -31,7 +31,7 @@ const franklin = localFont({
 // A prévia de compartilhamento: só com o domínio decidido ela ganha imagem,
 // porque o endereço da imagem precisa ser absoluto (docs/DEPLOY.md). A imagem
 // fica em public/share/ e é gerada por `node scripts/share-image.mjs`.
-const SHARE_IMAGE = { url: "/share/atlas.png", width: 1200, height: 630, alt: `${SITE.nome}: trajetórias públicas com fontes e um jogo por capítulos` };
+const SHARE_IMAGE = { url: "/share/atlas.png", width: 1200, height: 630, alt: `${SITE.nome}: trajetórias públicas com fontes e um jogo em fases curtas` };
 
 export const metadata: Metadata = {
   // O endereço canônico e os endereços absolutos dependem do domínio público (src/lib/site.ts).

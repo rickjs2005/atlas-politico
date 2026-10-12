@@ -1,560 +1,359 @@
 "use client";
 
-// Os diálogos do jogo: o registro recolhido (acontecimento ou decisão), a
-// tarefa de ordem, a tarefa de escolha (documento ou lugar), a tarefa de
-// decisão em duas etapas, o Escrivão, a saída fechada, a confirmação de
-// reinício, a transição de capítulo e o fim da sala. Todos pausam o movimento
-// enquanto estão abertos. O Escrivão fala pelo catálogo (src/lib/game/escrivao):
-// a instrução, o que vem do registro e, quando ligado, o humor marcado como ficção.
+// As janelas do jogo: a fase (explicação e atividade), um registro do período,
+// a lista de fases com as preferências, "Como funciona", a confirmação para
+// apagar o progresso e o resumo do fim. Todas param a animação da cena
+// enquanto estão abertas. O Escrivão fala pelo catálogo
+// (src/lib/game/escrivao): a instrução, o que vem do conteúdo e, quando
+// ligado, o humor marcado como ficção.
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { PATH_LINK } from "@/components/touch";
 import { DecisionCard } from "@/features/decisions/DecisionCard";
 import { ESCRIVAO_NOME, ESCRIVAO_ROTULO, type FalaDita } from "@/lib/game/escrivao";
 import type { RelatedRecord } from "@/lib/game/judicial";
-import { isEvidenceDone, type Attempt, type ChoiceOption } from "@/lib/game/mission";
-import type { RoomSpec } from "@/lib/game/rooms";
-import { getScene } from "@/lib/game/scenes";
-import { EPOCA_LABEL, type ChapterSpec, type GameDecision, type GameRecord, type TaskSpec, type TaskState, type TaskType } from "@/lib/game/types";
+import { periodLabel, roomLabel, roomOf, type RoomSpec } from "@/lib/game/rooms";
+import { phaseStatus, type PhaseStatus } from "@/lib/game/trail";
+import type { GameContent, PhaseProgress, PhaseRef, PhaseSpec, PlayerProgress } from "@/lib/game/types";
 import { comparisonHref, decisionHref, explorationHref, gameHref } from "@/lib/state/links";
 
 import { Dialog, primaryButton, quietButton, secondaryButton } from "./Dialog";
 import { EscrivaoSays } from "./EscrivaoSays";
-import { RecordCard } from "./RecordCard";
-import { EXIT_RULE, collectedSentence, exitOpen, exitSentence, missingLabel, type ExitState } from "./saida";
-import { answerLabel, pendingSentence } from "./tarefa";
-
-/** Uma avaliação com as falas do Escrivão para o que aconteceu (erro, ou nada). */
-export type AttemptWithLines = Attempt & { falas: readonly FalaDita[] };
+import { PhaseContent, type AnswerFeedback } from "./PhaseContent";
+import { FactCard, PositionCard, ProposalCard, RecordCard } from "./RecordCard";
 
 // ---------------------------------------------------------------------------
+// A fase
+// ---------------------------------------------------------------------------
 
-/** O aviso do que um registro recolhido mudou: a tarefa, se era ele o pedido, e a saída, com o que ainda a segura. */
-function RecordNotice({ concluiu, respostaPendente, tipoDaTarefa, saida }: { concluiu: boolean; respostaPendente: boolean; tipoDaTarefa: TaskType; saida: ExitState }) {
-  const aberta = exitOpen(saida);
+export function PhaseDialog({
+  fase,
+  total,
+  sala,
+  content,
+  estado,
+  proxima,
+  falasDaConclusao,
+  onAnswerQuestion,
+  onAnswerOrder,
+  onSkip,
+  onOpenRecord,
+  onContinue,
+  onClose,
+  encoberta = false,
+}: {
+  fase: PhaseSpec;
+  total: number;
+  sala: RoomSpec;
+  content: GameContent;
+  estado: PhaseProgress;
+  proxima: PhaseSpec | null;
+  falasDaConclusao: readonly FalaDita[];
+  onAnswerQuestion(opcaoId: string): AnswerFeedback;
+  onAnswerOrder(chaves: readonly string[]): AnswerFeedback;
+  onSkip(): void;
+  onOpenRecord(referencia: PhaseRef): void;
+  onContinue(): void;
+  onClose(): void;
+  /** Um registro está aberto por cima: a fase continua montada, com a escolha e a rolagem como estavam. */
+  encoberta?: boolean;
+}) {
   return (
-    <div role="status" className={`mb-4 space-y-1 border px-3 py-2 text-sm ${concluiu || aberta ? "border-ink bg-notice" : "border-line bg-paper"}`} data-aviso-do-registro>
-      {concluiu && (
-        <p className="font-medium" data-tarefa-concluida>
-          Tarefa concluída: este era o registro pedido.
-        </p>
-      )}
-      {respostaPendente && <p data-resposta-pronta={tipoDaTarefa}>{pendingSentence(tipoDaTarefa)}</p>}
-      <p
-        className={aberta ? "font-medium" : concluiu ? "" : "text-ink-soft"}
-        data-saida-situacao={aberta ? "aberta" : "fechada"}
-        data-registros={`${saida.total - saida.faltam}/${saida.total}`}
-      >
-        {collectedSentence(saida)} {exitSentence(saida)}
-      </p>
-    </div>
+    <Dialog
+      nome="fase"
+      eyebrow={
+        <span data-fase-posicao>
+          {roomLabel(sala)} · Fase {fase.numero} de {total} · {periodLabel(fase.periodo)}
+        </span>
+      }
+      titulo={<span data-fase-titulo>{fase.titulo}</span>}
+      tamanho="largo"
+      // A leitura começa no topo, e cada fase que entra na janela também.
+      focoInicial="inicio"
+      focoChave={fase.id}
+      encoberta={encoberta}
+      onClose={onClose}
+      acoes={
+        <button type="button" className={quietButton} onClick={onClose} data-fechar-fase>
+          Voltar ao cenário
+        </button>
+      }
+    >
+      <PhaseContent
+        // Cada fase começa com a atividade em branco: o que foi escolhido em uma não passa para a outra.
+        key={fase.id}
+        fase={fase}
+        total={total}
+        sala={sala}
+        content={content}
+        estado={estado}
+        proxima={proxima}
+        cabecalho={false}
+        falasDaConclusao={falasDaConclusao}
+        onAnswerQuestion={onAnswerQuestion}
+        onAnswerOrder={onAnswerOrder}
+        onSkip={onSkip}
+        onOpenRecord={onOpenRecord}
+        onContinue={onContinue}
+      />
+    </Dialog>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Um registro do período
+// ---------------------------------------------------------------------------
+
+/**
+ * Um registro aberto de dentro de uma fase: o acontecimento, a decisão, o
+ * fato biográfico, o cargo, a filiação ou a proposta eleitoral, como o atlas
+ * o traz. É sempre opcional, e fechar volta à fase.
+ */
 export function RecordDialog({
-  registro,
-  personagem,
-  tipoDaTarefa,
-  respostaPendente,
-  concluiu,
-  saida,
-  releitura,
+  referencia,
+  content,
   relacionados,
   falas,
+  voltar,
   onOpenRecordPage,
   onClose,
 }: {
-  registro: GameRecord;
-  personagem: string;
-  tipoDaTarefa: TaskType;
-  /** Os registros da tarefa já estão recolhidos e falta a resposta (ordem, documento, lugar ou decisão). */
-  respostaPendente: boolean;
-  /** Este era o registro que a tarefa pedia. */
-  concluiu: boolean;
-  /** Como ficou a saída depois deste registro: aberta, ou o que falta. */
-  saida: ExitState;
-  /** Aberto pelo painel, para ler de novo um registro já recolhido: nada mudou agora. */
-  releitura: boolean;
+  referencia: PhaseRef;
+  content: GameContent;
+  /** As decisões relacionadas a um episódio judicial, já resolvidas. */
   relacionados: readonly RelatedRecord[];
-  /** O que o Escrivão diz sobre a descoberta; vazio na releitura. */
+  /** O que o Escrivão diz ao abrir o registro. */
   falas: readonly FalaDita[];
+  /** O rótulo do botão que fecha: para onde a pessoa volta. */
+  voltar: string;
   /** A pessoa seguiu para a ficha completa, fora do jogo. */
-  onOpenRecordPage: () => void;
-  onClose: () => void;
+  onOpenRecordPage(): void;
+  onClose(): void;
 }) {
+  const personagem = content.personagem.slug;
+  const registro = referencia.tipo === "acontecimento" ? content.registros[referencia.id] : undefined;
+  const decisao = referencia.tipo === "decisao" ? content.decisoes[referencia.id] : undefined;
+  const fato = referencia.tipo === "fato" ? content.fatos[referencia.id] : undefined;
+  const posicao = referencia.tipo === "mandato" || referencia.tipo === "filiacao" ? content.posicoes[referencia.id] : undefined;
+  const proposta = referencia.tipo === "proposta" ? content.propostas[referencia.id] : undefined;
+  if (registro === undefined && decisao === undefined && fato === undefined && posicao === undefined && proposta === undefined) return null;
   return (
     <Dialog
       nome="registro"
-      eyebrow={releitura ? "Registro já recolhido" : "Registro recolhido"}
-      titulo="O que o atlas registra"
+      eyebrow="Registro do atlas · leitura opcional"
+      titulo={decisao !== undefined ? "O que o atlas registra desta decisão" : proposta !== undefined ? "O que o documento registrado propõe" : "O que o atlas registra"}
+      tamanho={decisao !== undefined ? "largo" : "medio"}
       onClose={onClose}
       acoes={
-        <button type="button" className={primaryButton} onClick={onClose} data-foco-inicial>
-          {releitura ? "Voltar ao painel" : respostaPendente ? "Guardar e responder" : "Guardar e continuar"}
+        <button type="button" className={primaryButton} onClick={onClose} data-foco-inicial data-fechar-registro>
+          {voltar}
         </button>
       }
     >
-      {!releitura && <RecordNotice concluiu={concluiu} respostaPendente={respostaPendente} tipoDaTarefa={tipoDaTarefa} saida={saida} />}
-      {!releitura && <EscrivaoSays falas={falas} evento="descoberta" className="mb-4" />}
-      <RecordCard registro={registro} personagem={personagem} detalhe="completo" relacionados={relacionados} onOpenRecordPage={onOpenRecordPage} />
-    </Dialog>
-  );
-}
-
-// ---------------------------------------------------------------------------
-
-/** O registro de uma decisão recolhido: o mesmo cartão do atlas, com o aviso do que mudou e a fala do Escrivão. */
-export function DecisionRecordDialog({
-  decisao,
-  personagem,
-  tipoDaTarefa,
-  respostaPendente,
-  saida,
-  releitura,
-  falas,
-  onOpenRecordPage,
-  onClose,
-}: {
-  decisao: GameDecision;
-  personagem: string;
-  tipoDaTarefa: TaskType;
-  respostaPendente: boolean;
-  saida: ExitState;
-  releitura: boolean;
-  falas: readonly FalaDita[];
-  onOpenRecordPage: () => void;
-  onClose: () => void;
-}) {
-  return (
-    <Dialog
-      nome="registro"
-      eyebrow={releitura ? "Decisão já recolhida" : "Decisão recolhida"}
-      titulo="O que o atlas registra desta decisão"
-      tamanho="largo"
-      onClose={onClose}
-      acoes={
-        <button type="button" className={primaryButton} onClick={onClose} data-foco-inicial>
-          {releitura ? "Voltar ao painel" : respostaPendente ? "Guardar e responder" : "Guardar e continuar"}
-        </button>
-      }
-    >
-      {!releitura && <RecordNotice concluiu={false} respostaPendente={respostaPendente} tipoDaTarefa={tipoDaTarefa} saida={saida} />}
-      {!releitura && <EscrivaoSays falas={falas} evento="descoberta" className="mb-4" />}
-      <DecisionCard decisao={decisao} detalhe="completo" link={{ href: decisionHref(personagem, decisao.id), rotulo: "Ver esta decisão na trajetória, no atlas", onFollow: onOpenRecordPage }} />
-    </Dialog>
-  );
-}
-
-// ---------------------------------------------------------------------------
-
-export function OrderDialog({
-  tarefa,
-  registros,
-  personagem,
-  tentativas,
-  saida,
-  onSubmit,
-  onClose,
-}: {
-  tarefa: Extract<TaskSpec, { tipo: "ordem" }>;
-  registros: Record<string, GameRecord>;
-  personagem: string;
-  tentativas: number;
-  /** Como está a saída: com a ordem certa, abre se não faltar registro. */
-  saida: ExitState;
-  /** Responde a ordem. Devolve a avaliação, já aplicada ao progresso, com as falas do Escrivão. */
-  onSubmit(resposta: readonly [string, string]): AttemptWithLines;
-  onClose: () => void;
-}) {
-  const [primeiro, setPrimeiro] = useState<string | null>(null);
-  const [resultado, setResultado] = useState<AttemptWithLines | null>(null);
-  const [a, b] = tarefa.eventIds;
-  const ra = registros[a];
-  const rb = registros[b];
-  if (ra === undefined || rb === undefined) return null;
-  const segundo = primeiro === null ? null : primeiro === a ? b : a;
-
-  const confirmar = () => {
-    if (primeiro === null || segundo === null) return;
-    setResultado(onSubmit([primeiro, segundo]));
-  };
-  const tentarDeNovo = () => {
-    setPrimeiro(null);
-    setResultado(null);
-  };
-
-  return (
-    <Dialog
-      nome="ordem"
-      eyebrow="Tarefa do capítulo"
-      titulo="Qual destes acontecimentos veio primeiro?"
-      tamanho="largo"
-      onClose={onClose}
-      // O rodapé troca de botões a cada resposta: o foco acompanha.
-      focoChave={resultado === null ? "pergunta" : resultado.certo ? "certo" : "errado"}
-      acoes={
-        resultado === null ? (
-          <>
-            <button key="depois" type="button" className={quietButton} onClick={onClose}>
-              Decidir depois
-            </button>
-            <button key="confirmar" type="button" className={primaryButton} onClick={confirmar} disabled={primeiro === null} data-confirmar-ordem>
-              Confirmar a ordem
-            </button>
-          </>
-        ) : resultado.certo ? (
-          <button key="continuar" type="button" className={primaryButton} onClick={onClose} data-foco-inicial data-ordem-concluida>
-            Continuar
-          </button>
-        ) : (
-          <button key="tentar" type="button" className={primaryButton} onClick={tentarDeNovo} data-foco-inicial data-tentar-de-novo>
-            Tentar de novo
-          </button>
-        )
-      }
-    >
-      <p className="text-sm text-ink-soft">
-        Leia a data de cada registro e escolha o que aconteceu antes. Errar não tem penalidade: dá para tentar de novo.
-        {tentativas > 0 && ` Tentativas até agora: ${tentativas}.`}
-      </p>
-      <ul className="mt-4 grid gap-3 md:grid-cols-2">
-        {[ra, rb].map((registro) => {
-          const escolhido = primeiro === registro.id;
-          const posicao = primeiro === null ? null : escolhido ? 1 : 2;
-          return (
-            <li
-              key={registro.id}
-              className={`flex flex-col gap-3 border p-3 ${escolhido ? "border-accent bg-accent-soft" : "border-line bg-paper"}`}
-              data-ordem-item={registro.id}
-            >
-              {posicao !== null && (
-                <p className="eyebrow text-ink-soft" data-ordem-posicao={posicao}>
-                  {posicao === 1 ? "Primeiro" : "Depois"}
-                </p>
-              )}
-              <RecordCard registro={registro} personagem={personagem} detalhe="curto" />
-              {resultado === null && (
-                <button
-                  type="button"
-                  className={escolhido ? primaryButton : secondaryButton}
-                  aria-pressed={escolhido}
-                  onClick={() => setPrimeiro(registro.id)}
-                  data-escolher-primeiro={registro.id}
-                >
-                  {escolhido ? "Escolhido como o primeiro" : "Este veio primeiro"}
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-      {resultado !== null && (
-        <div role="status" className={`mt-4 space-y-2 border px-3 py-2 text-sm ${resultado.certo ? "border-ink bg-raised" : "border-line-strong bg-notice"}`} data-ordem-resultado={resultado.certo ? "certo" : "errado"}>
-          <p>
-            {resultado.explicacao}
-            {/* No mesmo aviso do resultado: quem ouve que acertou ouve também se a saída abriu ou o que falta. */}
-            {resultado.certo && (
-              <span className="mt-1 block font-medium" data-saida-situacao={exitOpen(saida) ? "aberta" : "fechada"}>
-                Tarefa concluída. {exitSentence(saida)}
-              </span>
-            )}
-          </p>
-          <EscrivaoSays falas={resultado.falas} evento={resultado.certo ? "conclusao" : "erro"} />
-        </div>
+      <EscrivaoSays falas={falas} evento="explorar" className="mb-4" />
+      {registro !== undefined && <RecordCard registro={registro} personagem={personagem} detalhe="completo" relacionados={relacionados} onOpenRecordPage={onOpenRecordPage} />}
+      {decisao !== undefined && (
+        <DecisionCard decisao={decisao} detalhe="completo" link={{ href: decisionHref(personagem, decisao.id), rotulo: "Ver esta decisão na trajetória, no atlas", onFollow: onOpenRecordPage }} />
       )}
+      {fato !== undefined && <FactCard fato={fato} />}
+      {posicao !== undefined && <PositionCard posicao={posicao} />}
+      {proposta !== undefined && <ProposalCard proposta={proposta} />}
     </Dialog>
   );
 }
 
 // ---------------------------------------------------------------------------
-
-/**
- * A tarefa de escolha: associar o registro recolhido ao documento que o
- * sustenta (`fonte`) ou ao lugar em que o atlas o documenta (`lugar`). As
- * opções vêm dos próprios registros; errar explica e deixa tentar de novo.
- */
-export function ChoiceDialog({
-  tipo,
-  registro,
-  opcoes,
-  personagem,
-  tentativas,
-  saida,
-  onSubmit,
-  onClose,
-}: {
-  tipo: "fonte" | "lugar";
-  /** O registro pedido pela tarefa, já recolhido. */
-  registro: GameRecord;
-  opcoes: readonly ChoiceOption[];
-  personagem: string;
-  tentativas: number;
-  saida: ExitState;
-  /** Responde com o `id` da opção. Devolve a avaliação, já aplicada ao progresso, com as falas do Escrivão. */
-  onSubmit(id: string): AttemptWithLines;
-  onClose: () => void;
-}) {
-  const [escolha, setEscolha] = useState<string | null>(null);
-  const [resultado, setResultado] = useState<AttemptWithLines | null>(null);
-  const confirmar = () => {
-    if (escolha === null) return;
-    setResultado(onSubmit(escolha));
-  };
-  const tentarDeNovo = () => {
-    setEscolha(null);
-    setResultado(null);
-  };
-  const deFonte = tipo === "fonte";
-  return (
-    <Dialog
-      nome="escolha"
-      eyebrow="Tarefa do capítulo"
-      titulo={deFonte ? "Qual documento sustenta este registro?" : "Em que lugar o atlas documenta este acontecimento?"}
-      tamanho="largo"
-      onClose={onClose}
-      focoChave={resultado === null ? "pergunta" : resultado.certo ? "certo" : "errado"}
-      acoes={
-        resultado === null ? (
-          <>
-            <button key="depois" type="button" className={quietButton} onClick={onClose}>
-              Decidir depois
-            </button>
-            <button key="confirmar" type="button" className={primaryButton} onClick={confirmar} disabled={escolha === null} data-confirmar-escolha>
-              {deFonte ? "Confirmar o documento" : "Confirmar o lugar"}
-            </button>
-          </>
-        ) : resultado.certo ? (
-          <button key="continuar" type="button" className={primaryButton} onClick={onClose} data-foco-inicial data-escolha-concluida>
-            Continuar
-          </button>
-        ) : (
-          <button key="tentar" type="button" className={primaryButton} onClick={tentarDeNovo} data-foco-inicial data-tentar-de-novo>
-            Tentar de novo
-          </button>
-        )
-      }
-    >
-      <p className="text-sm text-ink-soft" data-dica-da-escolha>
-        {deFonte
-          ? "O registro recolhido lista os documentos que o sustentam; o documento certo está nessa lista. Os outros são citados por outros registros do capítulo. Errar não tem penalidade: dá para tentar de novo."
-          : "O registro recolhido diz o lugar em que o atlas o documenta. Os outros lugares são de outros registros da trajetória. Errar não tem penalidade: dá para tentar de novo."}
-        {tentativas > 0 && ` Tentativas até agora: ${tentativas}.`}
-      </p>
-      <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-        <div className="border border-line bg-paper p-3" data-escolha-registro={registro.id}>
-          <RecordCard registro={registro} personagem={personagem} detalhe="curto" />
-          <p className="mt-2 text-sm text-ink-soft">{registro.resumo}</p>
-        </div>
-        <OptionList opcoes={opcoes} escolha={escolha} travada={resultado !== null} rotulo={deFonte ? "Documentos" : "Lugares"} onChoose={setEscolha} />
-      </div>
-      {resultado !== null && (
-        <div role="status" className={`mt-4 space-y-2 border px-3 py-2 text-sm ${resultado.certo ? "border-ink bg-raised" : "border-line-strong bg-notice"}`} data-escolha-resultado={resultado.certo ? "certo" : "errado"}>
-          <p>
-            {resultado.explicacao}
-            {resultado.certo && (
-              <span className="mt-1 block font-medium" data-saida-situacao={exitOpen(saida) ? "aberta" : "fechada"}>
-                Tarefa concluída. {exitSentence(saida)}
-              </span>
-            )}
-          </p>
-          <EscrivaoSays falas={resultado.falas} evento={resultado.certo ? "conclusao" : "erro"} />
-        </div>
-      )}
-    </Dialog>
-  );
-}
-
-/** A lista de opções de uma escolha, um botão por opção. */
-function OptionList({ opcoes, escolha, travada, rotulo, onChoose }: { opcoes: readonly ChoiceOption[]; escolha: string | null; travada: boolean; rotulo: string; onChoose(id: string): void }) {
-  return (
-    <ul className="space-y-2" aria-label={rotulo}>
-      {opcoes.map((opcao) => {
-        const escolhida = escolha === opcao.id;
-        return (
-          <li key={opcao.id} data-escolha-opcao={opcao.id}>
-            <button
-              type="button"
-              className={`w-full border px-3 py-2 text-left text-sm ${escolhida ? "border-accent bg-accent-soft font-medium" : "border-line bg-paper hover:border-line-strong"}`}
-              aria-pressed={escolhida}
-              disabled={travada}
-              onClick={() => onChoose(opcao.id)}
-              data-escolher={opcao.id}
-            >
-              {opcao.rotulo}
-              {opcao.detalhe.length > 0 && <span className="block text-xs text-ink-soft">{opcao.detalhe}</span>}
-            </button>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
+// A lista de fases, as preferências e o progresso
 // ---------------------------------------------------------------------------
 
-/**
- * A tarefa de decisão, em duas etapas sobre o mesmo registro recolhido:
- * primeiro o documento que o sustenta (a evidência), depois a interpretação
- * do que ele documenta (a manifestação e o objeto votado, ou o tipo do ato).
- * As opções vêm do próprio registro; errar explica e deixa tentar de novo. A
- * etapa é a do estado da tarefa: quem fecha a janela no meio volta à etapa
- * em que parou.
- */
-export function DecisionTaskDialog({
-  decisao,
-  estado,
-  opcoesDeEvidencia,
-  opcoesDeInterpretacao,
-  saida,
-  falasDaFonte,
-  onSubmitEvidence,
-  onSubmitInterpretation,
-  onClose,
-}: {
-  decisao: GameDecision;
-  estado: TaskState;
-  opcoesDeEvidencia: readonly ChoiceOption[];
-  opcoesDeInterpretacao: readonly ChoiceOption[];
-  saida: ExitState;
-  /** O que o Escrivão diz ao abrir a etapa da evidência. */
-  falasDaFonte: readonly FalaDita[];
-  onSubmitEvidence(fonteId: string): AttemptWithLines;
-  onSubmitInterpretation(opcaoId: string): AttemptWithLines;
-  onClose: () => void;
-}) {
-  const [escolha, setEscolha] = useState<string | null>(null);
-  const [resultado, setResultado] = useState<AttemptWithLines | null>(null);
-  const etapa: "evidencia" | "interpretacao" = isEvidenceDone(estado) ? "interpretacao" : "evidencia";
-  // A etapa que o resultado à vista respondeu: ao acertar a evidência, o estado já é o da interpretação, e a janela mostra o resultado antes de seguir.
-  const [etapaRespondida, setEtapaRespondida] = useState<"evidencia" | "interpretacao" | null>(null);
-  const confirmar = () => {
-    if (escolha === null) return;
-    setEtapaRespondida(etapa);
-    setResultado(etapa === "evidencia" ? onSubmitEvidence(escolha) : onSubmitInterpretation(escolha));
-  };
-  const seguir = () => {
-    setEscolha(null);
-    setResultado(null);
-    setEtapaRespondida(null);
-  };
-  const daEvidencia = etapa === "evidencia" && resultado === null ? true : etapaRespondida === "evidencia";
-  return (
-    <Dialog
-      nome="decisao"
-      eyebrow={`Tarefa do capítulo · etapa ${daEvidencia ? "1 de 2: a evidência" : "2 de 2: a interpretação"}`}
-      titulo={daEvidencia ? "Qual documento sustenta este registro?" : "O que este registro documenta?"}
-      tamanho="largo"
-      onClose={onClose}
-      focoChave={`${etapa}:${resultado === null ? "pergunta" : resultado.certo ? "certo" : "errado"}`}
-      acoes={
-        resultado === null ? (
-          <>
-            <button key="depois" type="button" className={quietButton} onClick={onClose}>
-              Decidir depois
-            </button>
-            <button key="confirmar" type="button" className={primaryButton} onClick={confirmar} disabled={escolha === null} data-confirmar-decisao={etapa}>
-              {etapa === "evidencia" ? "Confirmar o documento" : "Confirmar a interpretação"}
-            </button>
-          </>
-        ) : resultado.certo && etapaRespondida === "evidencia" ? (
-          <button key="seguir" type="button" className={primaryButton} onClick={seguir} data-foco-inicial data-evidencia-concluida>
-            Seguir para a interpretação
-          </button>
-        ) : resultado.certo ? (
-          <button key="continuar" type="button" className={primaryButton} onClick={onClose} data-foco-inicial data-decisao-concluida>
-            Continuar
-          </button>
-        ) : (
-          <button key="tentar" type="button" className={primaryButton} onClick={seguir} data-foco-inicial data-tentar-de-novo>
-            Tentar de novo
-          </button>
-        )
-      }
-    >
-      <p className="text-sm text-ink-soft" data-dica-da-decisao={etapa}>
-        {daEvidencia
-          ? "O registro recolhido lista os documentos que o sustentam; o documento certo está nessa lista. Os outros são citados por outros registros do capítulo. Errar não tem penalidade: dá para tentar de novo."
-          : "Leia no registro a manifestação registrada e o objeto votado, ou o tipo do ato. A opção certa é o que está escrito nele; as outras trocam uma coisa só. Errar não tem penalidade: dá para tentar de novo."}
-        {estado.tentativas > 0 && ` Tentativas até agora: ${estado.tentativas}.`}
-      </p>
-      {daEvidencia && resultado === null && <EscrivaoSays falas={falasDaFonte} evento="fonte" className="mt-3" />}
-      <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-        <div className="border border-line bg-paper p-3" data-escolha-registro={decisao.id}>
-          <DecisionCard decisao={decisao} detalhe={daEvidencia ? "curto" : "completo"} headingLevel={4} />
-        </div>
-        <OptionList
-          opcoes={daEvidencia ? opcoesDeEvidencia : opcoesDeInterpretacao}
-          escolha={escolha}
-          travada={resultado !== null}
-          rotulo={daEvidencia ? "Documentos" : "Interpretações"}
-          onChoose={setEscolha}
-        />
-      </div>
-      {resultado !== null && (
-        <div role="status" className={`mt-4 space-y-2 border px-3 py-2 text-sm ${resultado.certo ? "border-ink bg-raised" : "border-line-strong bg-notice"}`} data-decisao-resultado={resultado.certo ? "certo" : "errado"} data-etapa={etapaRespondida ?? etapa}>
-          <p>
-            {resultado.explicacao}
-            {resultado.certo && etapaRespondida === "interpretacao" && (
-              <span className="mt-1 block font-medium" data-saida-situacao={exitOpen(saida) ? "aberta" : "fechada"}>
-                Tarefa concluída. {exitSentence(saida)}
-              </span>
-            )}
-          </p>
-          <EscrivaoSays falas={resultado.falas} evento={resultado.certo ? "conclusao" : "erro"} />
-        </div>
-      )}
-    </Dialog>
-  );
+const STATUS_LABEL: Record<PhaseStatus, string> = { nova: "ainda não aberta", vista: "explicação lida", concluida: "concluída" };
+
+/** A situação de uma fase em palavras: a marca de um formato anterior entra enquanto a fase nova não foi concluída. */
+export function statusText(estado: PhaseProgress | undefined): string {
+  const status = phaseStatus(estado);
+  if (status !== "concluida" && estado?.anterior === true) return "período visto na versão anterior";
+  if (status !== "concluida" && estado?.reaberta === true) return "resposta reaberta por correção";
+  return STATUS_LABEL[status];
 }
 
-// ---------------------------------------------------------------------------
-
-export function EscrivaoDialog({
-  capitulo,
+export function PhaseListDialog({
+  content,
   sala,
-  saida,
-  respostaPendente,
-  ultimo,
+  progresso,
+  aberta,
+  duravel,
+  humor,
+  leitura,
+  onToggleHumor,
+  onToggleReading,
+  onOpenPhase,
+  onReset,
+  onClose,
+  encoberta = false,
+}: {
+  content: GameContent;
+  sala: RoomSpec;
+  progresso: PlayerProgress;
+  /** A fase em que a pessoa está. */
+  aberta: PhaseSpec;
+  duravel: boolean;
+  humor: boolean;
+  /** A trilha está em "Ler sem o cenário". */
+  leitura: boolean;
+  onToggleHumor(): void;
+  onToggleReading(): void;
+  onOpenPhase(id: string): void;
+  onReset(): void;
+  onClose(): void;
+  /** A confirmação de apagar está aberta por cima: a lista continua montada, como estava. */
+  encoberta?: boolean;
+}) {
+  const { personagem, fases, salas } = content;
+  const outrasSalas = salas.filter((item) => item.id !== sala.id);
+  return (
+    <Dialog
+      nome="fases"
+      eyebrow={`${personagem.nome} · ${roomLabel(sala)}`}
+      titulo="Fases"
+      tamanho="largo"
+      encoberta={encoberta}
+      onClose={onClose}
+      acoes={
+        <>
+          <button type="button" className={quietButton} onClick={onReset} data-apagar-progresso>
+            Apagar o progresso
+          </button>
+          <button type="button" className={primaryButton} onClick={onClose} data-foco-inicial>
+            Fechar
+          </button>
+        </>
+      }
+    >
+      <div className="space-y-6">
+        <section aria-labelledby="lista-de-fases" className="space-y-2">
+          <h3 id="lista-de-fases" className="eyebrow text-ink-soft">
+            {fases.length === 1 ? "A fase" : `As ${fases.length} fases`} · nenhuma segura a seguinte
+          </h3>
+          <ol className="divide-y divide-line border-y border-line">
+            {fases.map((fase) => {
+              const estado = progresso.fases[fase.id];
+              const atual = fase.id === aberta.id;
+              return (
+                <li key={fase.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-2 text-sm" data-fase-item={fase.id} data-situacao={phaseStatus(estado)} aria-current={atual ? "step" : undefined}>
+                  <span className="numerals w-6 font-semibold">{fase.numero}</span>
+                  <span className="min-w-[11rem] flex-1">
+                    <span className={atual ? "font-semibold" : "font-medium"}>{fase.titulo}</span>
+                    <span className="numerals text-ink-soft"> · {periodLabel(fase.periodo)}</span>
+                    <span className="block text-xs text-ink-soft" data-situacao-texto>
+                      {statusText(estado)}
+                      {atual && " · você está aqui"}
+                    </span>
+                  </span>
+                  <button type="button" className={secondaryButton} onClick={() => onOpenPhase(fase.id)} data-abrir-fase={fase.id} aria-label={`Abrir a fase ${fase.numero}: ${fase.titulo}`}>
+                    {atual ? "Voltar a ela" : "Abrir"}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+
+        <section aria-labelledby="preferencias-do-jogo" className="space-y-3 text-sm">
+          <h3 id="preferencias-do-jogo" className="eyebrow text-ink-soft">
+            Preferências
+          </h3>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p className="min-w-[14rem] flex-1" id="preferencia-cenario">
+              {leitura ? "Você está lendo sem o cenário: as mesmas fases, só com o texto." : "Dá para ler as mesmas fases sem o cenário, só com o texto."}
+            </p>
+            <button type="button" className={secondaryButton} onClick={onToggleReading} aria-pressed={leitura} aria-describedby="preferencia-cenario" data-alternar-leitura={leitura ? "leitura" : "cenario"}>
+              {leitura ? "Voltar ao cenário" : "Ler sem o cenário"}
+            </button>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p className="min-w-[14rem] flex-1" id="preferencia-humor">
+              O {ESCRIVAO_NOME}, guia fictício, faz falas de humor sobre papelada e sobre ele mesmo, iguais para os dois personagens. Elas são ficção, marcadas como
+              tal, e podem ser desligadas; a instrução e o que vem do conteúdo continuam.
+            </p>
+            <button type="button" className={secondaryButton} onClick={onToggleHumor} aria-pressed={humor} aria-describedby="preferencia-humor" data-humor={humor ? "ligado" : "desligado"}>
+              {humor ? "Desligar o humor" : "Ligar o humor"}
+            </button>
+          </div>
+        </section>
+
+        <section aria-labelledby="progresso-e-caminhos" className="space-y-1 text-sm">
+          <h3 id="progresso-e-caminhos" className="eyebrow text-ink-soft">
+            Progresso e outros caminhos
+          </h3>
+          <p data-progresso-duravel={duravel ? "sim" : "nao"}>
+            {duravel
+              ? "O que você leu e respondeu fica guardado neste navegador, separado por personagem. Abrir uma fase pela lista, ou por um link, não apaga nada."
+              : "O armazenamento do navegador está indisponível: o progresso vale enquanto esta página estiver aberta, e se perde ao recarregar ou fechar."}
+          </p>
+          <ul className="pt-1">
+            {outrasSalas.map((outra) => {
+              const spec = roomOf(outra.id);
+              return (
+                <li key={outra.id}>
+                  <Link href={gameHref(personagem.slug, outra.id)} prefetch={false} className={PATH_LINK} data-ir-para-sala={outra.id}>
+                    {roomLabel(spec)}
+                  </Link>
+                  <span className="text-ink-soft">
+                    {" "}
+                    · {periodLabel(outra.periodo)} · {outra.fases === 1 ? "1 fase" : `${outra.fases} fases`}
+                  </span>
+                </li>
+              );
+            })}
+            <li>
+              <Link href={explorationHref(personagem.slug, { periodo: { de: null, ate: null }, categorias: [], acontecimento: null })} prefetch={false} className={PATH_LINK}>
+                Ver a trajetória de {personagem.nome} no atlas, com todos os registros
+              </Link>
+            </li>
+            <li>
+              <Link href={gameHref()} prefetch={false} className={PATH_LINK}>
+                Escolher a outra trajetória
+              </Link>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </Dialog>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Como funciona
+// ---------------------------------------------------------------------------
+
+export function HelpDialog({
+  sala,
   falas,
   humor,
+  leitura,
   onToggleHumor,
-  onAnswer,
   onClose,
 }: {
-  capitulo: ChapterSpec;
   sala: RoomSpec;
-  /** Como está a saída: aberta, ou o que falta. */
-  saida: ExitState;
-  respostaPendente: boolean;
-  /** Este é o último capítulo da sala: a saída encerra, e não leva a outro. */
-  ultimo: boolean;
-  /** O que o Escrivão diz nesta ajuda. */
   falas: readonly FalaDita[];
-  /** O humor do Escrivão está ligado. */
   humor: boolean;
+  /** A pessoa está lendo sem o cenário: a fase já está na página, sem pasta e sem o botão de abrir o marco. */
+  leitura: boolean;
   onToggleHumor(): void;
-  onAnswer: () => void;
-  onClose: () => void;
+  onClose(): void;
 }) {
-  const aberta = exitOpen(saida);
-  const tipo = capitulo.tarefa.tipo;
   return (
     <Dialog
-      nome="guia"
+      nome="ajuda"
       eyebrow={ESCRIVAO_ROTULO}
-      titulo={aberta ? "A saída está aberta" : "O objetivo deste capítulo"}
+      titulo="Como funciona"
       onClose={onClose}
       acoes={
         <>
           <button type="button" className={quietButton} onClick={onToggleHumor} aria-pressed={humor} data-humor={humor ? "ligado" : "desligado"}>
             {humor ? "Desligar o humor" : "Ligar o humor"}
           </button>
-          {respostaPendente && (
-            <button type="button" className={secondaryButton} onClick={onAnswer} data-responder-tarefa={tipo}>
-              {answerLabel(tipo)}
-            </button>
-          )}
           <button type="button" className={primaryButton} onClick={onClose} data-foco-inicial>
             Entendi
           </button>
@@ -562,38 +361,23 @@ export function EscrivaoDialog({
       }
     >
       <div className="space-y-3 text-base">
-        <p className="reading">{capitulo.objetivo}</p>
-        {aberta ? (
-          <p>
-            {ultimo
-              ? `A tarefa está cumprida e os registros estão todos com você. A saída está aberta: atravesse a passagem para encerrar a sala ${sala.nome}.`
-              : "A tarefa está cumprida e os registros estão todos com você. A saída está aberta: atravesse a passagem para seguir ao próximo capítulo."}
-          </p>
-        ) : respostaPendente ? (
-          <p>
-            {pendingSentence(tipo)}
-            {saida.faltam > 0 && ` ${missingLabel(saida.faltam)} para a saída abrir.`}
-          </p>
-        ) : saida.tarefaConcluida ? (
-          <p>
-            A tarefa está cumprida. {missingLabel(saida.faltam)} para a saída abrir: {saida.faltam === 1 ? "ele continua" : "eles continuam"} no
-            cenário.
-          </p>
-        ) : (
-          <p>Os registros estão espalhados pelo cenário. Chegue perto de um deles e use a tecla E, ou o botão de interação, para recolher.</p>
-        )}
-        {!aberta && (
-          <p data-regra-da-saida>
-            {EXIT_RULE} {collectedSentence(saida)}
-          </p>
-        )}
+        <ol className="list-decimal space-y-1 pl-5">
+          <li data-passo-de-abrir>{leitura ? "Sem o cenário, a fase já está aberta na página." : "Toque na pasta em destaque, ou no botão Abrir o marco."}</li>
+          <li>Leia a explicação curta. As fontes e os termos explicados abrem no próprio texto.</li>
+          <li>Responda a atividade, ou peça a explicação e siga. Errar não tira nada.</li>
+          <li data-passo-de-continuar>Use Continuar para ir à próxima fase. {leitura ? "Os outros registros são opcionais." : "As outras pastas são opcionais."}</li>
+        </ol>
         <EscrivaoSays falas={falas} evento="ajuda" />
+        {sala.natureza === "aprofundamento" && (
+          <p className="text-sm" data-aviso-aprofundamento>
+            Esta sala é um aprofundamento sobre um assunto, e não o começo da trajetória. As decisões são uma amostra documentada da edição, e não o
+            histórico completo.
+          </p>
+        )}
         <p className="text-sm text-ink-soft" data-aviso-cenario>
-          O cenário é uma representação: não afirma que a pessoa esteve neste lugar nem que os fatos aconteceram nele. A
-          figura do personagem muda de cabelo, barba e roupa conforme a época do capítulo, de forma estilizada; não afirma
-          a aparência real em cada data. O {ESCRIVAO_NOME} é uma figura inventada para guiar o jogo: as falas de humor dele são
-          ficção sobre papelada e sobre ele mesmo, iguais para os dois personagens, e podem ser desligadas. Os registros são
-          os do atlas, com data e fontes; o jogo não atribui falas às pessoas retratadas.
+          O cenário é uma representação: não afirma que a pessoa esteve neste lugar nem que os fatos aconteceram nele. A figura do personagem muda de cabelo,
+          barba e roupa conforme a época, de forma estilizada; não afirma a aparência real em cada data. O {ESCRIVAO_NOME} é uma figura inventada para guiar o
+          jogo. O jogo não atribui falas às pessoas retratadas, não dá nota e não recomenda voto.
         </p>
       </div>
     </Dialog>
@@ -601,238 +385,181 @@ export function EscrivaoDialog({
 }
 
 // ---------------------------------------------------------------------------
-
-export function ClosedExitDialog({
-  capitulo,
-  saida,
-  respostaPendente,
-  onAnswer,
-  onClose,
-}: {
-  capitulo: ChapterSpec;
-  saida: ExitState;
-  /** Os registros da tarefa já estão recolhidos: falta responder, e a janela leva à pergunta. */
-  respostaPendente: boolean;
-  onAnswer: () => void;
-  onClose: () => void;
-}) {
-  const tipo = capitulo.tarefa.tipo;
-  return (
-    <Dialog
-      nome="saida-fechada"
-      eyebrow="Saída"
-      titulo="A saída está fechada"
-      onClose={onClose}
-      acoes={
-        <>
-          {respostaPendente && (
-            <button type="button" className={secondaryButton} onClick={onAnswer} data-responder-tarefa={tipo}>
-              {answerLabel(tipo)}
-            </button>
-          )}
-          <button type="button" className={primaryButton} onClick={onClose} data-foco-inicial>
-            Entendi
-          </button>
-        </>
-      }
-    >
-      <p className="reading" data-regra-da-saida>
-        {EXIT_RULE}
-      </p>
-      {/* O que falta, item por item: os registros e a tarefa. */}
-      <ul className="mt-3 space-y-1 text-sm">
-        <li data-falta-registros={saida.faltam}>
-          {collectedSentence(saida)} {saida.faltam === 0 ? "Não falta nenhum." : `${missingLabel(saida.faltam)}.`}
-        </li>
-        <li data-falta-tarefa={saida.tarefaConcluida ? "nao" : "sim"}>
-          {respostaPendente ? (
-            `Tarefa pendente: ${pendingSentence(tipo)}`
-          ) : (
-            <>
-              Tarefa {saida.tarefaConcluida ? "cumprida" : "pendente"}: <span className="text-ink-soft">{capitulo.objetivo}</span>
-            </>
-          )}
-        </li>
-      </ul>
-    </Dialog>
-  );
-}
-
+// Apagar o progresso
 // ---------------------------------------------------------------------------
 
-export function ConfirmResetDialog({ nome, onConfirm, onClose }: { nome: string; onConfirm: () => void; onClose: () => void }) {
+export function ConfirmResetDialog({ nome, onConfirm, onClose }: { nome: string; onConfirm(): void; onClose(): void }) {
   return (
     <Dialog
-      nome="reiniciar"
+      nome="apagar"
       eyebrow="Progresso"
-      titulo={`Reiniciar o progresso de ${nome}?`}
+      titulo={`Apagar o progresso de ${nome}?`}
       onClose={onClose}
       acoes={
         <>
           <button type="button" className={secondaryButton} onClick={onClose} data-foco-inicial>
             Cancelar
           </button>
-          <button type="button" className={primaryButton} onClick={onConfirm} data-confirmar-reinicio>
-            Reiniciar
+          <button type="button" className={primaryButton} onClick={onConfirm} data-confirmar-apagar>
+            Apagar
           </button>
         </>
       }
     >
       <p className="reading">
-        O progresso guardado neste navegador para este personagem, em todas as salas, será apagado, e cada sala volta ao
-        primeiro capítulo. O progresso do outro personagem não muda.
+        O que foi lido e respondido com este personagem, neste navegador, será apagado, na trajetória e nos aprofundamentos. O progresso do outro personagem não
+        muda. Para rever as fases desde o começo não é preciso apagar nada: a lista de fases abre qualquer uma.
       </p>
     </Dialog>
   );
 }
 
 // ---------------------------------------------------------------------------
-
-const TRANSITION_MS = 2600;
-
-/**
- * Leva o foco ao botão principal de uma tela que cobre a cena, no mesmo passo
- * em que a cena sai da tabulação: o foco não fica um instante solto na página.
- */
-function useFocusOnMount() {
-  const ref = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    ref.current?.querySelector<HTMLElement>("[data-foco-inicial]")?.focus({ preventScroll: true });
-  }, []);
-  return ref;
-}
-
-export function ChapterTransition({
-  concluido,
-  proximo,
-  falas,
-  onContinue,
-}: {
-  concluido: ChapterSpec;
-  proximo: ChapterSpec | null;
-  /** O que o Escrivão diz na conclusão. */
-  falas: readonly FalaDita[];
-  onContinue: () => void;
-}) {
-  // Segue sozinho depois de um instante; o botão adianta.
-  useEffect(() => {
-    const timer = window.setTimeout(onContinue, TRANSITION_MS);
-    return () => window.clearTimeout(timer);
-  }, [onContinue]);
-
-  const cena = proximo === null ? null : getScene(proximo.cena);
-  const ref = useFocusOnMount();
-  return (
-    <div ref={ref} className="animate-enter absolute inset-0 z-30 flex items-center justify-center bg-paper/95 p-6" data-transicao={proximo?.id ?? "fim"}>
-      <div role="status" aria-live="polite" className="max-w-lg space-y-5 text-center">
-        <p className="eyebrow text-ink-soft">Capítulo {concluido.numero} concluído</p>
-        <p className="font-serif text-2xl font-medium leading-tight tracking-tight">{concluido.titulo}</p>
-        <EscrivaoSays falas={falas} evento="conclusao" className="text-left" />
-        {proximo !== null && cena !== null ? (
-          <div className="space-y-2 border-t border-line pt-5">
-            <p className="eyebrow text-ink-soft">A seguir · Capítulo {proximo.numero}</p>
-            <p className="font-serif text-3xl font-medium leading-tight tracking-tight">{proximo.titulo}</p>
-            <p className="numerals text-sm text-ink-soft">
-              {proximo.periodo.de === proximo.periodo.ate ? proximo.periodo.de : `${proximo.periodo.de}–${proximo.periodo.ate}`} · cenário: {cena.nome} ·{" "}
-              {EPOCA_LABEL[proximo.epoca]}
-            </p>
-            {/* O contexto do capítulo, antes de entrar: o que os registros dele dizem. */}
-            <p className="text-sm text-ink-soft" data-contexto-do-capitulo>
-              {proximo.motivo}
-            </p>
-          </div>
-        ) : (
-          <p className="border-t border-line pt-5 text-ink-soft">Este era o último capítulo desta sala.</p>
-        )}
-        <button type="button" className={primaryButton} onClick={onContinue} data-foco-inicial>
-          Continuar
-        </button>
-      </div>
-    </div>
-  );
-}
-
+// O resumo do fim
 // ---------------------------------------------------------------------------
 
-export function EndScreen({
-  nome,
-  personagem,
+/**
+ * O que a pessoa viu na sala, o que a edição não pesquisou e para onde ir. Sem
+ * troféu e sem juízo: é uma lista. Serve à janela sobre o cenário e à leitura
+ * sem o cenário.
+ */
+export function SummaryContent({
+  content,
   sala,
-  capitulos,
-  outrasSalas,
-  onReview,
-  onReset,
+  progresso,
+  outraPessoa,
+  onOpenPhase,
 }: {
-  nome: string;
-  personagem: string;
+  content: GameContent;
   sala: RoomSpec;
-  /** Os capítulos da sala percorrida. */
-  capitulos: readonly ChapterSpec[];
-  /** As outras salas do personagem, para seguir. */
-  outrasSalas: readonly RoomSpec[];
-  onReview: () => void;
-  onReset: () => void;
+  progresso: PlayerProgress;
+  /** A outra trajetória do atlas, para o caminho até ela. */
+  outraPessoa: { slug: string; nome: string } | null;
+  onOpenPhase(id: string): void;
 }) {
-  const ref = useFocusOnMount();
-  const acontecimentos = capitulos.reduce((soma, capitulo) => soma + capitulo.eventIds.length, 0);
-  const decisoes = capitulos.reduce((soma, capitulo) => soma + (capitulo.decisaoIds?.length ?? 0), 0);
-  const historico = sala.id === "historico";
+  const { personagem, fases, salas } = content;
+  const concluidas = fases.filter((fase) => phaseStatus(progresso.fases[fase.id]) === "concluida").length;
+  const lacunas = fases.flatMap((fase) => fase.lacunas.map((lacuna) => ({ fase, lacuna })));
+  const outrasSalas = salas.filter((item) => item.id !== sala.id);
+  const trajetoria = sala.natureza === "trajetoria";
   return (
-    // O conteúdo fica no meio quando cabe; quando é mais alto que o palco, começa do alto e rola inteiro.
-    <div ref={ref} className="absolute inset-0 z-30 flex justify-center overflow-y-auto bg-paper/95 p-4 md:p-6" data-fim="sim" data-fim-sala={sala.id}>
-      <div className="my-auto max-w-xl space-y-5">
-        <div className="space-y-2">
-          <p className="eyebrow text-ink-soft">{historico ? "Fim da trajetória" : `Fim da sala ${sala.nome}`}</p>
-          <h2 className="font-serif text-3xl font-medium leading-tight tracking-tight">
-            {historico ? `Você percorreu os ${capitulos.length} capítulos de ${nome}` : `Você percorreu a sala ${sala.nome} de ${nome}`}
-          </h2>
-          <p className="reading">
-            {historico
-              ? `Os capítulos cobrem de ${capitulos[0]?.periodo.de} a ${capitulos.at(-1)?.periodo.ate}, com os ${acontecimentos} acontecimentos que o atlas publica sobre ${nome} até a data de corte da edição${decisoes > 0 ? ` e ${decisoes === 1 ? "uma decisão documentada" : `${decisoes} decisões documentadas`}` : ""}.`
-              : `${decisoes === 1 ? "Uma decisão documentada" : `${decisoes} decisões documentadas`} no tema ${sala.nome}, com cargo, instituição, data, objeto e fontes: uma amostra da edição, e não o histórico completo.`}{" "}
-            Nada do que o jogo mostrou fica só nele: está todo no atlas, com data, lugar e fontes, sem precisar jogar.
-          </p>
-        </div>
-        <ul className="space-y-2 text-sm">
-          <li>
-            <Link href={explorationHref(personagem, { periodo: { de: null, ate: null }, categorias: [], acontecimento: null })} prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink">
-              Trajetória completa de {nome} no atlas
-            </Link>
-          </li>
-          {!historico && (
+    <div className="space-y-6" data-resumo={sala.id}>
+      <div className="space-y-2">
+        <p className="reading" data-resumo-contagem>
+          {trajetoria
+            ? `A trajetória de ${personagem.nome} tem ${fases.length} fases nesta edição, com marcos documentados de ${fases[0]?.periodo.de} a ${fases.at(-1)?.periodo.ate}. Você concluiu ${concluidas} de ${fases.length}.`
+            : `Este aprofundamento tem ${fases.length === 1 ? "uma fase" : `${fases.length} fases`} sobre decisões documentadas de ${personagem.nome} no tema ${sala.nome}, de ${fases[0]?.periodo.de} a ${fases.at(-1)?.periodo.ate}. Você concluiu ${concluidas} de ${fases.length}.`}{" "}
+          São marcos documentados, e não a vida inteira nem tudo o que a pessoa fez.
+        </p>
+      </div>
+
+      <section aria-labelledby="resumo-fases" className="space-y-2">
+        <h3 id="resumo-fases" className="eyebrow text-ink-soft">
+          O que cada fase mostrou
+        </h3>
+        <ol className="divide-y divide-line border-y border-line">
+          {fases.map((fase) => (
+            <li key={fase.id} className="flex flex-wrap items-start gap-x-4 gap-y-1 py-2 text-sm" data-resumo-fase={fase.id} data-situacao={phaseStatus(progresso.fases[fase.id])}>
+              <span className="numerals w-6 font-semibold">{fase.numero}</span>
+              <span className="min-w-[12rem] flex-1">
+                <span className="font-medium">{fase.titulo}</span>
+                <span className="numerals text-ink-soft"> · {periodLabel(fase.periodo)}</span>
+                <span className="block text-ink-soft">Para {fase.objetivo}</span>
+                <span className="block text-xs text-ink-soft">{statusText(progresso.fases[fase.id])}</span>
+              </span>
+              <button type="button" className={quietButton} onClick={() => onOpenPhase(fase.id)} data-abrir-fase={fase.id} aria-label={`Rever a fase ${fase.numero}: ${fase.titulo}`}>
+                Rever
+              </button>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {lacunas.length > 0 && (
+        <section aria-labelledby="resumo-lacunas" className="space-y-2 text-sm" data-resumo-lacunas>
+          <h3 id="resumo-lacunas" className="eyebrow text-ink-soft">
+            Ainda não pesquisado nesta edição
+          </h3>
+          <p className="text-ink-soft">Uma lacuna da pesquisa não é uma afirmação sobre a pessoa: diz só o que o atlas ainda não tem.</p>
+          <ul className="list-disc space-y-1 pl-5">
+            {lacunas.map(({ fase, lacuna }, indice) => (
+              <li key={`${fase.id}-${indice}`}>
+                <span className="text-ink-soft">Fase {fase.numero}: </span>
+                {lacuna}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section aria-labelledby="resumo-caminhos" className="space-y-2 text-sm">
+        <h3 id="resumo-caminhos" className="eyebrow text-ink-soft">
+          Para onde ir agora
+        </h3>
+        <ul>
+          {!trajetoria && (
             <li>
-              <Link href={decisionHref(personagem, "")} prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink">
-                Decisões documentadas de {nome} no atlas
+              <Link href={gameHref(personagem.slug)} prefetch={false} className={PATH_LINK} data-ir-para-sala="historico">
+                A trajetória de {personagem.nome}, desde a origem
+              </Link>
+            </li>
+          )}
+          {outraPessoa !== null && (
+            <li>
+              <Link href={gameHref(outraPessoa.slug)} prefetch={false} className={PATH_LINK} data-outra-trajetoria={outraPessoa.slug}>
+                A trajetória de {outraPessoa.nome}
               </Link>
             </li>
           )}
           <li>
-            <Link href={comparisonHref()} prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink">
+            <Link href={comparisonHref()} prefetch={false} className={PATH_LINK} data-ir-para-comparar>
               Comparar as duas trajetórias
             </Link>
           </li>
-          {outrasSalas.map((outra) => (
-            <li key={outra.id}>
-              <Link href={gameHref(personagem, outra.id)} prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink" data-ir-para-sala={outra.id}>
-                Sala {outra.nome} de {nome}
-              </Link>
-            </li>
-          ))}
           <li>
-            <Link href={gameHref()} prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink">
-              Escolher outro personagem
+            <Link href={`${comparisonHref()}#propostas`} prefetch={false} className={PATH_LINK} data-ir-para-propostas>
+              As propostas das duas candidaturas registradas no TSE, por área
+            </Link>
+          </li>
+          {outrasSalas.map((outra) => {
+            const spec = roomOf(outra.id);
+            if (spec.natureza === "trajetoria") return null;
+            return (
+              <li key={outra.id}>
+                <Link href={gameHref(personagem.slug, outra.id)} prefetch={false} className={PATH_LINK} data-ir-para-sala={outra.id}>
+                  {roomLabel(spec)} de {personagem.nome}
+                </Link>
+                <span className="text-ink-soft"> · decisões de {periodLabel(outra.periodo)}</span>
+              </li>
+            );
+          })}
+          <li>
+            <Link href={explorationHref(personagem.slug, { periodo: { de: null, ate: null }, categorias: [], acontecimento: null })} prefetch={false} className={PATH_LINK}>
+              Todos os registros de {personagem.nome} no atlas, com data, lugar e fontes
             </Link>
           </li>
         </ul>
-        <div className="flex flex-wrap gap-2">
-          <button type="button" className={primaryButton} onClick={onReview} data-foco-inicial>
-            Rever os capítulos
-          </button>
-          <button type="button" className={secondaryButton} onClick={onReset}>
-            Reiniciar o progresso
-          </button>
-        </div>
-      </div>
+      </section>
     </div>
+  );
+}
+
+export function SummaryDialog(props: Parameters<typeof SummaryContent>[0] & { onClose(): void }) {
+  const { content, sala, onClose } = props;
+  return (
+    <Dialog
+      nome="resumo"
+      eyebrow={`${content.personagem.nome} · ${roomLabel(sala)}`}
+      titulo={sala.natureza === "trajetoria" ? "Resumo da trajetória" : "Resumo do aprofundamento"}
+      tamanho="largo"
+      onClose={onClose}
+      acoes={
+        <button type="button" className={primaryButton} onClick={onClose} data-foco-inicial data-fechar-resumo>
+          Fechar
+        </button>
+      }
+    >
+      <SummaryContent {...props} />
+    </Dialog>
   );
 }

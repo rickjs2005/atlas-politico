@@ -39,7 +39,8 @@ function group<T extends { id: string }>(
 
 export function buildIndexes(conjunto: PublishedSet): Indexes {
   const { pessoas, mandatos, filiacoes, acontecimentos, lugares, fontes, imagens } = conjunto;
-  const { proposicoes, votacoes, votos, atosExecutivos, coberturaPolitica, identidadesInstitucionais } = conjunto;
+  const { proposicoes, votacoes, votos, atosExecutivos, atuacoesLegislativas, coberturaPolitica, identidadesInstitucionais } = conjunto;
+  const { propostasEleitorais, fatosBiograficos, conceitos, fasesDoJogo } = conjunto;
 
   const temasDaProposicao = new Map(proposicoes.map((item) => [item.id, item.temas]));
   const vigentePorVotacaoEPessoa: Record<string, string> = {};
@@ -110,6 +111,12 @@ export function buildIndexes(conjunto: PublishedSet): Indexes {
       porAno: group(atosExecutivos, (item) => [String(yearOf(item.data))]),
       porProposicao: group(atosExecutivos, (item) => item.proposicaoIds),
     },
+    atuacoesLegislativas: {
+      porId: positions(atuacoesLegislativas),
+      porPessoa: group(atuacoesLegislativas, (item) => [item.pessoaId]),
+      porTema: byTheme(atuacoesLegislativas),
+      porAno: group(atuacoesLegislativas, (item) => [String(yearOf(item.data))]),
+    },
     coberturaPolitica: {
       porId: positions(coberturaPolitica),
       porPessoa: group(coberturaPolitica, (item) => [item.pessoaId]),
@@ -117,6 +124,14 @@ export function buildIndexes(conjunto: PublishedSet): Indexes {
     identidadesInstitucionais: {
       porId: positions(identidadesInstitucionais),
       porPessoa: group(identidadesInstitucionais, (item) => [item.pessoaId]),
+    },
+    propostasEleitorais: { porId: positions(propostasEleitorais), porPessoa: group(propostasEleitorais, (item) => [item.pessoaId]) },
+    fatosBiograficos: { porId: positions(fatosBiograficos), porPessoa: group(fatosBiograficos, (item) => [item.pessoaId]) },
+    conceitos: { porId: positions(conceitos) },
+    fasesDoJogo: {
+      porId: positions(fasesDoJogo),
+      // O conjunto já vem na ordem de percurso: o grupo a conserva.
+      porPessoaESala: group(fasesDoJogo, (item) => [`${item.pessoaId}:${item.sala}`]),
     },
     lugares: { porId: positions(lugares) },
     fontes: { porId: positions(fontes) },

@@ -1,20 +1,30 @@
 "use client";
 
-// Entrada do jogo: a escolha entre os dois personagens, com o mesmo cartão
-// para os dois, a prévia do mundo do primeiro capítulo, a trajetória em
-// capítulos (a sala Histórico) e as salas temáticas de cada um, com a
-// situação de cada sala neste navegador.
+// Entrada do jogo: as duas trajetórias, com o mesmo cartão e o mesmo destaque
+// para as duas. Quem nunca jogou começa pela origem; quem já jogou vê onde
+// parou, com a fase e o período, e o caminho para rever desde o início, que é
+// navegação e não apaga nada. Os aprofundamentos (decisões documentadas de um
+// tema) ficam abaixo, identificados pelo assunto e pelos anos: não são o
+// começo de nada.
+//
+// Em cada cartão, o nome e os caminhos vêm antes da prévia do cenário: são o
+// que a pessoa veio fazer, e ficam na primeira tela em qualquer largura. As
+// três partes do cartão (os caminhos, a prévia, o resto) ocupam as mesmas
+// linhas nos dois cartões, para um não ficar desalinhado do outro quando só um
+// tem progresso.
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo } from "react";
 
 import { Portrait, PortraitCredit } from "@/components/Portrait";
+import { PATH_LINK } from "@/components/touch";
 import type { Imagem } from "@/lib/domain/types";
+import type { ProgressKeys } from "@/lib/game/content";
 import { ESCRIVAO_NOME } from "@/lib/game/escrivao";
-import { countCompleted, currentChapter, hasStarted, isTrajectoryComplete } from "@/lib/game/progress";
-import { chaptersInRoom, roomsWithChapters, type RoomSpec } from "@/lib/game/rooms";
-import type { ChapterSpec, PersonagemSlug, PlayerProgress } from "@/lib/game/types";
+import { countDone, hasNewStart, hasStarted, isTrailComplete, resumePhase } from "@/lib/game/progress";
+import { gameQuery } from "@/lib/game/query";
+import { periodLabel, roomOf } from "@/lib/game/rooms";
+import type { Epoca, PersonagemSlug, PlayerProgress, RoomId, RoomSummary, SceneId } from "@/lib/game/types";
 import { gameHref } from "@/lib/state/links";
 
 import { useGameProgress } from "./hooks";
@@ -25,117 +35,142 @@ const WorldPreview = dynamic(() => import("./WorldPreview").then((modulo) => ({ 
   loading: () => <div className="h-full w-full bg-sunken" />,
 });
 
+/** O que a entrada precisa saber de uma fase da trajetória. */
+export interface TrailPhaseSummary {
+  id: string;
+  sala: RoomId;
+  numero: number;
+  titulo: string;
+  periodo: { de: number; ate: number };
+}
+
 export interface CharacterOption {
   slug: PersonagemSlug;
   nome: string;
   retrato: Imagem | null;
-  /** Todos os capítulos jogáveis do personagem, de todas as salas. */
-  capitulos: readonly ChapterSpec[];
-  /** A assinatura atual da tarefa de cada capítulo (`signaturesOf`), para ler o progresso salvo sem carregar o conteúdo do personagem na entrada. */
-  assinaturas: Readonly<Record<string, string>>;
+  /** As fases da trajetória, na ordem de percurso. */
+  fases: readonly TrailPhaseSummary[];
+  /** O cenário e a figura da primeira fase, para a prévia. */
+  previa: { cena: SceneId; epoca: Epoca };
+  /** Os aprofundamentos com fase publicada. */
+  aprofundamentos: readonly RoomSummary[];
+  /** Todas as fases do personagem e as assinaturas das atividades, para ler o progresso salvo sem carregar o conteúdo. */
+  chaves: ProgressKeys;
 }
 
-/** A situação de uma sala neste navegador: o que a chamada e a frase dizem. */
-function roomStatus(carregado: boolean, progresso: PlayerProgress, capitulos: readonly ChapterSpec[]): { chamada: string; situacao: string; estado: "carregando" | "inicio" | "em-andamento" | "completa" } {
-  if (!carregado) return { chamada: "Começar", situacao: "Ainda não jogado neste navegador.", estado: "carregando" };
-  if (isTrajectoryComplete(progresso, capitulos)) {
-    return { chamada: "Rever", situacao: `${capitulos.length === 1 ? "O capítulo foi concluído" : `Os ${capitulos.length} capítulos foram concluídos`} neste navegador.`, estado: "completa" };
-  }
-  const atual = currentChapter(progresso, capitulos);
-  if (hasStarted(progresso, capitulos) && atual !== null) return { chamada: "Continuar", situacao: `Parou no capítulo ${atual.numero}: ${atual.titulo}.`, estado: "em-andamento" };
-  return { chamada: "Começar", situacao: "Ainda não jogado neste navegador.", estado: "inicio" };
+interface TrailStatus {
+  estado: "carregando" | "inicio" | "em-andamento" | "completa";
+  /** A fase em que a pessoa continua, quando já começou. */
+  continua: TrailPhaseSummary | null;
+  situacao: string;
 }
+
+/** A situação da trajetória neste navegador: o que a frase diz e de onde se continua. */
+function trailStatus(carregado: boolean, progresso: PlayerProgress, fases: readonly TrailPhaseSummary[]): TrailStatus {
+  if (!carregado) return { estado: "carregando", continua: null, situacao: "Ainda não aberta neste navegador." };
+  if (isTrailComplete(progresso, fases)) return { estado: "completa", continua: null, situacao: `Você concluiu as ${fases.length} fases neste navegador.` };
+  if (!hasStarted(progresso, fases)) return { estado: "inicio", continua: null, situacao: "Ainda não aberta neste navegador." };
+  const continua = resumePhase(progresso, fases);
+  const feitas = countDone(progresso, fases);
+  const novasNoComeco = hasNewStart(progresso, fases);
+  return {
+    estado: "em-andamento",
+    continua,
+    situacao: `${feitas === 0 ? "Nenhuma fase concluída ainda" : feitas === 1 ? "1 fase concluída" : `${feitas} fases concluídas`} de ${fases.length}.${novasNoComeco ? " O jogo mudou desde a sua última visita: a trajetória agora começa pela origem." : ""}`,
+  };
+}
+
+const cta = "inline-flex min-h-12 items-center justify-center gap-2 border px-4 text-center text-sm font-medium no-underline";
 
 function CharacterChoice({ opcao }: { opcao: CharacterOption }) {
-  const fonteDasAssinaturas = useMemo(() => ({ assinaturas: opcao.assinaturas }), [opcao.assinaturas]);
-  const { carregado, progresso } = useGameProgress(opcao.slug, opcao.capitulos, fonteDasAssinaturas);
-  const salas = roomsWithChapters(opcao.capitulos);
-  const historico = chaptersInRoom(opcao.capitulos, "historico");
-  const tematicas: RoomSpec[] = salas.filter((sala) => sala.id !== "historico");
-  const feitos = countCompleted(progresso, historico);
-  const primeiro = historico[0] ?? opcao.capitulos[0];
-  const ultimo = historico.at(-1);
-  const { chamada, situacao, estado } = roomStatus(carregado, progresso, historico);
+  const { carregado, progresso } = useGameProgress(opcao.slug, opcao.chaves);
+  const { fases } = opcao;
+  const primeira = fases[0];
+  const ultima = fases.at(-1);
+  const { estado, continua, situacao } = trailStatus(carregado, progresso, fases);
+  const inicio = `${gameHref(opcao.slug)}${gameQuery(1)}`;
+  const destino = continua === null ? inicio : `${gameHref(opcao.slug)}${gameQuery(continua.numero)}`;
 
   return (
-    <article className="flex flex-col border border-ink bg-raised" data-escolha={opcao.slug} data-situacao={estado}>
-      <div className="relative aspect-[16/10] overflow-hidden border-b border-ink bg-sunken">
-        {/* A prévia é um enfeite: se o pacote dela não chega, fica o fundo, e a escolha continua valendo. */}
-        {primeiro !== undefined && (
-          <StageBoundary fallback={<div className="h-full w-full bg-sunken" />}>
-            <WorldPreview capitulo={primeiro} personagem={opcao.slug} />
-          </StageBoundary>
-        )}
-        <p className="sr-only">Prévia do cenário do primeiro capítulo: {primeiro?.titulo}.</p>
-      </div>
-      <div className="flex flex-1 flex-col gap-3 p-3 md:p-4">
+    <article className="row-span-3 grid grid-rows-subgrid gap-y-0 border border-ink bg-raised" data-escolha={opcao.slug} data-situacao={estado}>
+      <div className="flex flex-col gap-3 p-3 md:p-4" data-caminhos>
         <div className="flex items-center gap-3">
           <Portrait nome={opcao.nome} imagem={opcao.retrato} shape="quadrado" sizes="56px" loading="imediata" decorative className="w-14 shrink-0" />
           <div>
             <h3 className="font-serif text-2xl font-medium leading-none tracking-tight">{opcao.nome}</h3>
-            <p className="numerals mt-1 text-sm text-ink-soft">
-              {historico.length} {historico.length === 1 ? "capítulo" : "capítulos"}
-              {primeiro !== undefined && ultimo !== undefined && ` · ${primeiro.periodo.de}–${ultimo.periodo.ate}`}
-              {tematicas.length > 0 && ` · ${tematicas.length} ${tematicas.length === 1 ? "sala temática" : "salas temáticas"}`}
+            <p className="numerals mt-1 text-sm text-ink-soft" data-trilha-resumo>
+              {fases.length} {fases.length === 1 ? "fase" : "fases"}
+              {primeira !== undefined && ultima !== undefined && ` · ${periodLabel({ de: primeira.periodo.de, ate: ultima.periodo.ate })}`}
             </p>
           </div>
         </div>
-        <ol className="space-y-1 text-sm" aria-label={`Capítulos da trajetória de ${opcao.nome}`}>
-          {historico.map((capitulo) => (
-            <li key={capitulo.id} className="flex gap-2">
-              <span className="numerals w-5 shrink-0 font-semibold">{capitulo.numero}</span>
-              <span>
-                {capitulo.titulo}
-                <span className="numerals text-ink-soft">
-                  {" "}
-                  · {capitulo.periodo.de}–{capitulo.periodo.ate}
-                </span>
-              </span>
-            </li>
-          ))}
-        </ol>
         <p className="text-sm text-ink-soft" data-situacao-texto>
           {situacao}
-          {estado === "em-andamento" && feitos > 0 && ` ${feitos} ${feitos === 1 ? "capítulo concluído" : "capítulos concluídos"}.`}
         </p>
-        <Link
-          href={gameHref(opcao.slug)}
-          prefetch={false}
-          className="mt-auto inline-flex min-h-12 items-center justify-center border border-ink bg-ink px-4 text-sm font-medium text-paper no-underline hover:bg-ink-soft"
-          data-jogar={opcao.slug}
-        >
-          {chamada} com {opcao.nome}
-          <span aria-hidden="true"> →</span>
-        </Link>
-        {tematicas.length > 0 && (
-          <section aria-label={`Salas temáticas de ${opcao.nome}`} className="space-y-2 border-t border-line pt-3">
-            <h4 className="eyebrow text-ink-soft">Salas temáticas</h4>
-            <ul className="space-y-2 text-sm">
-              {tematicas.map((sala) => {
-                const daSala = chaptersInRoom(opcao.capitulos, sala.id);
-                const decisoes = daSala.reduce((soma, capitulo) => soma + (capitulo.decisaoIds?.length ?? 0), 0);
-                const status = roomStatus(carregado, progresso, daSala);
-                return (
-                  <li key={sala.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1" data-sala-item={sala.id} data-situacao={status.estado}>
-                    <span className="min-w-0 flex-1">
-                      <span className="font-medium">{sala.nome}</span>
-                      <span className="numerals text-ink-soft"> · {decisoes} {decisoes === 1 ? "decisão documentada" : "decisões documentadas"}</span>
-                      <span className="block text-xs text-ink-soft" data-situacao-da-sala>
-                        {status.situacao}
-                      </span>
-                    </span>
-                    <Link
-                      href={gameHref(opcao.slug, sala.id)}
-                      prefetch={false}
-                      className="inline-flex min-h-11 items-center justify-center border border-ink bg-raised px-3 text-sm font-medium no-underline hover:bg-paper"
-                      data-jogar-sala={`${opcao.slug}:${sala.id}`}
-                    >
-                      {status.chamada}
-                      <span aria-hidden="true"> →</span>
-                    </Link>
-                  </li>
-                );
-              })}
+        <div className="mt-auto flex flex-col gap-2">
+          {estado === "em-andamento" && continua !== null ? (
+            <>
+              <Link href={destino} prefetch={false} className={`${cta} border-ink bg-ink text-paper hover:bg-ink-soft`} data-continuar={opcao.slug} data-destino={continua.id}>
+                <span>
+                  Continuar de onde parei: fase {continua.numero}, <span className="numerals">{periodLabel(continua.periodo)}</span>
+                </span>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link href={inicio} prefetch={false} className={`${cta} border-ink bg-raised hover:bg-paper`} data-ver-desde-o-inicio={opcao.slug}>
+                <span>
+                  Ver desde o início{primeira !== undefined && <span className="numerals">: {primeira.periodo.de}</span>}
+                </span>
+              </Link>
+            </>
+          ) : (
+            <Link href={inicio} prefetch={false} className={`${cta} border-ink bg-ink text-paper hover:bg-ink-soft`} data-comecar={opcao.slug}>
+              <span>
+                {estado === "completa" ? "Rever desde o início" : "Começar do início"}
+                {primeira !== undefined && <span className="numerals">: {primeira.periodo.de}</span>}
+              </span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          )}
+          <Link href={`${gameHref(opcao.slug)}${gameQuery(continua?.numero ?? 1, true)}`} prefetch={false} className="inline-flex min-h-11 items-center justify-center text-sm font-medium underline decoration-line-strong hover:decoration-ink" data-ler-sem-cenario={opcao.slug}>
+            Ler sem o cenário
+          </Link>
+        </div>
+      </div>
+      <div className="relative aspect-[16/10] overflow-hidden border-y border-ink bg-sunken">
+        {/* A prévia é um enfeite: se o pacote dela não chega, fica o fundo, e a escolha continua valendo. */}
+        <StageBoundary fallback={<div className="h-full w-full bg-sunken" />}>
+          <WorldPreview cena={opcao.previa.cena} epoca={opcao.previa.epoca} personagem={opcao.slug} />
+        </StageBoundary>
+        <p className="sr-only">Prévia do cenário da primeira fase. É uma representação.</p>
+      </div>
+      <div className="flex flex-col gap-3 p-3 md:p-4">
+        <details className="text-sm" data-fases-da-trilha>
+          <summary className="flex min-h-11 cursor-pointer items-center font-medium">Ver as {fases.length} fases</summary>
+          <ol className="space-y-1 pb-1">
+            {fases.map((fase) => (
+              <li key={fase.id} className="flex gap-2">
+                <span className="numerals w-5 shrink-0 font-semibold">{fase.numero}</span>
+                <span>
+                  {fase.titulo}
+                  <span className="numerals text-ink-soft"> · {periodLabel(fase.periodo)}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </details>
+        {opcao.aprofundamentos.length > 0 && (
+          <section aria-label={`Aprofundamentos de ${opcao.nome}`} className="space-y-1 border-t border-line pt-3 text-sm" data-aprofundamentos={opcao.slug}>
+            <h4 className="eyebrow text-ink-soft">Aprofundamento por assunto</h4>
+            <p className="text-xs text-ink-soft">Para depois da trajetória. Não é o começo da vida de ninguém.</p>
+            <ul>
+              {opcao.aprofundamentos.map((sala) => (
+                <li key={sala.id}>
+                  <Link href={gameHref(opcao.slug, sala.id)} prefetch={false} className="inline-flex min-h-11 items-center font-medium underline decoration-line-strong hover:decoration-ink" data-abrir-sala={`${opcao.slug}:${sala.id}`}>
+                    {roomOf(sala.id).nome}
+                  </Link>
+                  <span className="numerals text-ink-soft"> · {periodLabel(sala.periodo)}</span>
+                </li>
+              ))}
             </ul>
           </section>
         )}
@@ -151,38 +186,27 @@ interface CharacterSelectProps {
 }
 
 export function CharacterSelect({ opcoes, notaDeRevisao }: CharacterSelectProps) {
-  const temSalaTematica = opcoes.some((opcao) => roomsWithChapters(opcao.capitulos).some((sala) => sala.id !== "historico"));
   return (
     <div className="page space-y-8 py-7 md:space-y-10 md:py-12">
       <header className="max-w-3xl space-y-4">
         <p className="eyebrow text-ink-soft">Jogo</p>
-        <h1 className="font-serif text-[2.75rem] font-medium leading-[0.95] tracking-[-0.02em] md:text-6xl">
-          Percorra a trajetória em capítulos
-        </h1>
-        <p className="reading max-w-[34rem] text-xl leading-snug">
-          Escolha uma pessoa, controle o personagem pelo cenário de cada período e, em cada capítulo, recolha todos os
-          registros e cumpra a tarefa para abrir a passagem ao seguinte.
-          {temSalaTematica && " Nas salas temáticas, os registros são decisões documentadas: votos e atos, com cargo, instituição, data e fontes."}
-        </p>
-        <p className="max-w-[34rem] text-sm text-ink-soft">
-          Cada registro é um acontecimento ou uma decisão publicada no atlas, com a data na precisão documentada e as fontes. Os
-          cenários são representações de cada período: não afirmam que a pessoa esteve nesses lugares nem que os fatos
-          aconteceram neles. O guia do jogo, o {ESCRIVAO_NOME}, é um personagem fictício; as falas de humor dele são ficção sobre
-          papelada e sobre ele mesmo, iguais para os dois personagens, e podem ser desligadas. Nada aqui avalia as pessoas
-          retratadas, e tudo o que o jogo mostra está no atlas sem precisar jogar.
+        <h1 className="font-serif text-[2.75rem] font-medium leading-[0.95] tracking-[-0.02em] md:text-6xl">Conheça as duas trajetórias</h1>
+        <p className="reading max-w-[34rem] text-xl leading-snug" data-proposta>
+          Escolha uma pessoa e siga a vida dela em fases curtas: um marco, uma explicação e uma pergunta por fase. Tudo vem do atlas, com as fontes.
         </p>
         <p className="max-w-[34rem] text-sm" data-revisao>
           {notaDeRevisao}{" "}
-          <Link href="/metodologia" prefetch={false} className="font-medium underline decoration-line-strong hover:decoration-ink">
+          <Link href="/metodologia" prefetch={false} className={PATH_LINK}>
             Metodologia e fontes
           </Link>
         </p>
       </header>
 
-      <section aria-labelledby="escolha-personagem" className="space-y-3">
-        <h2 id="escolha-personagem" className="eyebrow text-ink-soft">
-          Escolha um personagem
+      <section aria-labelledby="escolha-trajetoria" className="space-y-3">
+        <h2 id="escolha-trajetoria" className="eyebrow text-ink-soft">
+          Escolha uma trajetória
         </h2>
+        {/* Cada cartão ocupa três linhas da grade, as mesmas para os dois: os caminhos, a prévia e o resto. */}
         <div className="grid gap-4 md:grid-cols-2 md:gap-6">
           {opcoes.map((opcao) => (
             <CharacterChoice key={opcao.slug} opcao={opcao} />
@@ -192,29 +216,22 @@ export function CharacterSelect({ opcoes, notaDeRevisao }: CharacterSelectProps)
         <div className="grid gap-x-4 gap-y-1 md:grid-cols-2 md:gap-x-6">
           {opcoes.map((opcao) => (opcao.retrato === null ? <span key={opcao.slug} /> : <PortraitCredit key={opcao.slug} imagem={opcao.retrato} detail />))}
         </div>
-        <p className="text-xs text-ink-faint">
-          Os personagens e os cenários do jogo são desenhos feitos para o projeto; não são fotografias nem registros de lugares.
-          Cada personagem tem três figuras, uma por época dos capítulos: cabelo, barba e roupa mudam de forma estilizada, com a
-          mesma escala para os dois, sem afirmar a aparência real da pessoa em cada data.
-        </p>
       </section>
 
-      <section aria-labelledby="como-jogar" className="max-w-3xl space-y-2 text-sm">
-        <h2 id="como-jogar" className="eyebrow text-ink-soft">
-          Como jogar
+      <section aria-labelledby="como-funciona" className="max-w-3xl space-y-2 text-sm">
+        <h2 id="como-funciona" className="eyebrow text-ink-soft">
+          Como funciona
         </h2>
-        <ul className="list-disc space-y-1 pl-5">
-          <li>No computador: setas ou W, A, S e D para andar; E, Enter ou espaço para interagir com o que está ao alcance.</li>
-          <li>No celular: o direcional na tela e o botão de ação.</li>
-          <li>
-            As tarefas: encontrar um registro, pôr dois em ordem pelas datas, indicar o documento que sustenta um registro ou o
-            lugar em que o atlas o documenta e, nas decisões, conferir a evidência e interpretar o que o registro documenta.
-            Errar explica e deixa tentar de novo, sem penalidade.
-          </li>
-          <li>A saída de cada capítulo abre com todos os registros recolhidos e a tarefa cumprida.</li>
-          <li>O painel Capítulos e tarefas faz tudo por botões, sem o cenário, mostra o que está pendente e liga ou desliga o humor do {ESCRIVAO_NOME}.</li>
-          <li>O progresso fica guardado neste navegador, separado por personagem e por sala. Dá para continuar de onde parou ou reiniciar.</li>
-        </ul>
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>Toque na pasta em destaque no cenário, ou no botão Abrir o marco.</li>
+          <li>Leia a explicação curta. As fontes e os termos explicados abrem no próprio texto.</li>
+          <li>Responda a pergunta, ou peça a explicação, e siga para a fase seguinte. Errar não tira nada.</li>
+        </ol>
+        <p className="text-ink-soft" data-avisos-do-jogo>
+          São marcos documentados de cada trajetória, e não a vida inteira. O jogo não dá nota, não aponta vencedor e não recomenda voto. Os cenários e os
+          bonecos são desenhos feitos para o projeto: não afirmam que a pessoa esteve nesses lugares nem a aparência dela em cada data. O {ESCRIVAO_NOME}, que
+          guia o jogo, é um personagem fictício, e o humor dele pode ser desligado. O que você lê e responde fica guardado só neste navegador.
+        </p>
       </section>
     </div>
   );

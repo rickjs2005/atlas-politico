@@ -1,0 +1,42 @@
+[
+  {
+    "id": "sintetico-fato-a1",
+    "pessoaId": "sintetico-pessoa-a",
+    "tipo": "nascimento",
+    "titulo": "[SINTÉTICO] Nascimento de teste",
+    "data": { "tipo": "data", "valor": "1960", "precisao": "ano" },
+    "texto": "[SINTÉTICO] Fato biográfico fictício, com data de ano.",
+    "divergenciaDocumentada": "[SINTÉTICO] Dois documentos fictícios divergem no dia; o conjunto de teste adota só o ano.",
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Página de teste 1, primeiro parágrafo",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria o ano."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-fato-b1",
+    "pessoaId": "sintetico-pessoa-b",
+    "tipo": "formacao",
+    "titulo": "[SINTÉTICO] Formação de teste, sem data",
+    "data": { "tipo": "desconhecida" },
+    "texto": "[SINTÉTICO] Fato biográfico fictício que o documento não data.",
+    "divergenciaDocumentada": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Página de teste 2",
+        "evidencia": "[SINTÉTICO] Trecho fictício que sustentaria o curso, sem o ano."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

@@ -18,7 +18,11 @@ import {
   ENTIDADES,
   acontecimentoSchema,
   atoExecutivoSchema,
+  atuacaoLegislativaSchema,
   coberturaPoliticaSchema,
+  conceitoSchema,
+  faseDoJogoSchema,
+  fatoBiograficoSchema,
   filiacaoSchema,
   fonteSchema,
   identidadeInstitucionalSchema,
@@ -27,6 +31,7 @@ import {
   mandatoSchema,
   pessoaSchema,
   proposicaoSchema,
+  propostaEleitoralSchema,
   votacaoSchema,
   votoSchema,
   type Citacao,
@@ -54,8 +59,13 @@ const SCHEMAS: Record<Colecao, z.ZodType<{ id: string }>> = {
   votacoes: votacaoSchema,
   votos: votoSchema,
   atosExecutivos: atoExecutivoSchema,
+  atuacoesLegislativas: atuacaoLegislativaSchema,
   coberturaPolitica: coberturaPoliticaSchema,
   identidadesInstitucionais: identidadeInstitucionalSchema,
+  propostasEleitorais: propostaEleitoralSchema,
+  fatosBiograficos: fatoBiograficoSchema,
+  conceitos: conceitoSchema,
+  fasesDoJogo: faseDoJogoSchema,
   lugares: lugarSchema,
   fontes: fonteSchema,
   imagens: imagemSchema,
@@ -288,7 +298,7 @@ export function planImport(
       }
     };
 
-    if (isFactual(colecao)) {
+    if (isFactual(colecao) && colecao !== "fasesDoJogo") {
       const fontes = dados.fontes as Citacao[];
       if (fontes.length === 0 && (COLECOES_COM_CITACAO as readonly string[]).includes(colecao)) {
         pendencias.push("Sem fonte: registrar ao menos uma citação, com o trecho e o que ele sustenta.");
@@ -298,7 +308,7 @@ export function planImport(
     if (colecao === "pessoas" && typeof dados.retratoId === "string") {
       missing("imagens", dados.retratoId);
     }
-    if (colecao === "mandatos" || colecao === "filiacoes" || colecao === "coberturaPolitica" || colecao === "identidadesInstitucionais") {
+    if (colecao === "mandatos" || colecao === "filiacoes" || colecao === "coberturaPolitica" || colecao === "identidadesInstitucionais" || colecao === "propostasEleitorais" || colecao === "fatosBiograficos" || colecao === "fasesDoJogo") {
       missing("pessoas", dados.pessoaId as string);
     }
     if (colecao === "votacoes") {
@@ -319,6 +329,11 @@ export function planImport(
       missing("mandatos", ato.atribuicao.mandatoId);
       for (const id of new Set(ato.proposicaoIds)) missing("proposicoes", id);
       missing("fontes", ato.atoOficial.fonteId);
+    }
+    if (colecao === "atuacoesLegislativas") {
+      const atuacao = atuacaoLegislativaSchema.parse(dados);
+      missing("pessoas", atuacao.pessoaId);
+      missing("mandatos", atuacao.mandatoId);
     }
     if (colecao === "acontecimentos") {
       const acontecimento = acontecimentoSchema.parse(dados);

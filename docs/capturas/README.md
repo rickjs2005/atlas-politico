@@ -10,9 +10,10 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | `fase-7/` | A comparação, o perfil, a página do acontecimento com o retorno, a cópia do link e a metodologia | `npm run capture:pages` | `tests/e2e/paginas.capture.ts` |
 | `fase-8/` | O acabamento: abertura, exploração, comparação e leitura, na saída estática. Em `fase-8/antes/`, as mesmas telas antes da fase | `npm run build` e `npm run capture:finish` | `tests/export/acabamento.capture.ts` |
 | `jogo-etapa-1/` | O jogo na etapa 1, na saída estática: entrada do atlas com o acesso, escolha de personagem, os dois capítulos de cada personagem, registro, tarefa de ordem, painel, guia, fim da etapa, celular, rodapé e a volta da ficha. Guardadas como história; o roteiro passou a gravar em `jogo-lancamento/` | (roteiro da etapa 1) | |
-| `jogo-lancamento/` | O jogo na versão de lançamento, na saída estática: os onze capítulos, as quatro tarefas, a ficha judicial, as figuras por época, o painel, o fim da trajetória, celular em pé e deitado, guia, saída fechada, rodapé e a volta da ficha | `npm run build` e `npm run capture:game` | `tests/export/jogo.capture.ts` |
+| `jogo-lancamento/` | O jogo anterior, na versão de lançamento de 10 de outubro de 2026, na saída estática: os onze capítulos, as quatro tarefas, a ficha judicial, as figuras por época, o painel, o fim da trajetória, celular em pé e deitado, guia, saída fechada, rodapé e a volta da ficha. Guardadas como história: o roteiro que as fazia foi reescrito para a trilha e passou a gravar em `jogo-trilha/` | (roteiro do jogo anterior) | |
+| `jogo-trilha/` | **O jogo em vigor,** a trilha simples, na saída estática com a edição 0.3.0: as entradas, o ciclo de uma fase para os dois personagens, as nove cenas de cada trajetória, as fases de processos e de 2026, os aprofundamentos, os registros, a lista de fases, o resumo, a retomada, a leitura sem o cenário, as falhas, o celular em pé, estreito e deitado, e o resumo e as propostas na comparação | `npm run build` e `npm run capture:game` | `tests/export/jogo.capture.ts` |
 | `fase-9/` | As oito telas da conferência final, nas quatro larguras, com a edição 0.1.1; o relatório da passagem de acessibilidade; e a linha do tempo antes e depois da correção da hachura | `npm run build` e `npm run audit:a11y -- --saida docs/capturas/fase-9` | `scripts/audit-a11y.mjs` |
-| `jogo-salas/` | A entrega P1 do jogo, na saída estática com a edição 0.2.0: a entrada com as salas temáticas, a missão da sala Histórico passo a passo (a decisão no cenário, o cartão, a evidência errada e certa com o Escrivão, a interpretação, a saída aberta), o painel com as preferências, a sala Economia (cena, painel e fim), as decisões na página da pessoa e na comparação por tema, e o celular na sala Segurança pública. Refeitas em 11 de outubro de 2026, com a edição 0.2.1: os cartões dizem quando o texto de referência não está ligado, a lista longa de dispositivos vem dobrada, e os capítulos de contexto sensível aparecem sem a fala de humor | `npm run build` e `npx playwright test -c playwright.export.config.ts --project=capturas jogo-salas.capture` | `tests/export/jogo-salas.capture.ts` |
+| `jogo-salas/` | A entrega P1 do jogo, na saída estática com a edição 0.2.0: a entrada com as salas temáticas, a missão da sala Histórico passo a passo (a decisão no cenário, o cartão, a evidência errada e certa com o Escrivão, a interpretação, a saída aberta), o painel com as preferências, a sala Economia (cena, painel e fim), as decisões na página da pessoa e na comparação por tema, e o celular na sala Segurança pública. Refeitas em 11 de outubro de 2026, com a edição 0.2.1: os cartões dizem quando o texto de referência não está ligado, a lista longa de dispositivos vem dobrada, e os capítulos de contexto sensível aparecem sem a fala de humor | (roteiro do jogo anterior, que não existe mais) | |
 
 Os comandos não conferem nada: os testes ficam em `tests/e2e/previa.spec.ts`, `tests/e2e/linha-do-tempo.spec.ts`, `tests/e2e/mapa.spec.ts`, `tests/e2e/comparacao.spec.ts`, `tests/e2e/paginas.spec.ts`, `tests/e2e/acabamento.spec.ts` e, sobre a saída estática, `tests/export/carregamento.spec.ts`. Cada comando refaz todos os arquivos da sua pasta. Para rodar um roteiro sem mexer nas imagens guardadas, aponte `CAPTURE_DIR` para outra pasta.
 
@@ -28,9 +29,40 @@ As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeita
 | `--celular` | 390×844 |
 | `--celular-estreito` | 360×800 |
 
-## Jogo, versão de lançamento
+## Jogo, trilha simples
 
-Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o conteúdo da edição 0.1.1, em `jogo-lancamento/`. O celular é emulado (390×844 em pé e 844×390 deitado, com toque). Os capítulos avançados são abertos com um progresso salvo (os anteriores concluídos).
+Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o conteúdo da edição 0.3.0, em `jogo-trilha/`. São 114 imagens. O computador é 1440×900. O celular é emulado, com toque e movimento reduzido: 390×844 em pé, 360×640 (a tela mais estreita e baixa que o projeto confere) e 844×390 deitado. As fases avançadas são abertas pelo endereço (`?fase=N`): nenhuma fase segura a seguinte, e o roteiro não precisa de progresso salvo para chegar a elas. O roteiro recusa captura com a página rolada, fora as que rolam de propósito.
+
+| Arquivo | O que mostra |
+| --- | --- |
+| `01-entrada-do-atlas--computador` e `--celular` | A entrada do atlas, com o acesso **Jogar com** e o número de fases abaixo de cada cartão |
+| `02-entrada-do-jogo` e `02-entrada-do-jogo-pagina-inteira`, em computador e em celular | A entrada do jogo para quem chega: as duas trajetórias, com **Começar do início** e o ano antes da prévia do cenário |
+| `03-entrada-do-jogo-de-quem-volta` | A entrada com progresso em uma trajetória: **Continuar de onde parei**, com a fase e o período, e **Ver desde o início** |
+| `04-entrada-do-jogo-com-as-fases-abertas` | A lista das fases de cada trajetória e os aprofundamentos, na entrada |
+| `<personagem>-05` a `-12` | O ciclo da fase 1: a cena, a explicação, a atividade, a resposta errada, a resposta certa, os registros opcionais com as lacunas, a cena da fase concluída e a cena da fase 2 |
+| `<personagem>-13-cena-da-fase-3` a `-9` | A cena de cada uma das outras fases da trajetória |
+| `<personagem>-14` a `-17` | A fase de processos: a explicação, a ficha judicial com os termos, um termo aberto e **Ver fontes** |
+| `<personagem>-18` a `-20` | A ordenação: a pergunta, a ordem errada com a explicação e a ordem certa |
+| `<personagem>-21` e `-22` | O registro de um episódio de processo, com a ficha judicial e as decisões relacionadas |
+| `<personagem>-23` a `-25` | A fase da eleição de 2026: a explicação, as propostas em "Explorar este período" e uma proposta aberta |
+| `<personagem>-26` e `-27` | O resumo da trajetória: o que cada fase mostrou, as lacunas e os caminhos |
+| `<personagem>-28` a `-30` | Os dois aprofundamentos: a cena, a explicação e uma decisão aberta |
+| `31` e `32` | A atuação legislativa: o cartão e a matéria com o destino |
+| `33` a `37` | Um fato biográfico aberto pela pasta do cenário, a lista de fases, **Como funciona**, o registro de um acontecimento e a página dele com **Voltar ao jogo** |
+| `38` e `39` | A retomada com o aviso no cartão da fase, e o rodapé da página do jogo |
+| `40` e `41` | **Ler sem o cenário**, na primeira tela e na página inteira |
+| `42` a `44` | Quando algo falha: sem canvas, com o pacote da cena derrubado e sem JavaScript (em computador e em celular) |
+| `45` a `53` | Celular em pé: o ciclo da fase 1, a cena da fase 2, a lista de fases, a fase de processos e a leitura sem o cenário |
+| `54` a `57` | Celular estreito, 360×640: a cena, a explicação, a retomada e um aprofundamento |
+| `58` e `59` | Celular deitado: a cena e a explicação |
+| `60` e `61`, em computador e em celular | A comparação: a primeira tela, com as faixas e o atalho, e o resumo por cargo e por área |
+| `62` e `63`, em computador | A comparação: as propostas por área e o grupo "Outros assuntos" das decisões |
+
+Nenhuma pessoa conferiu estas capturas, e nenhuma foi tirada em aparelho real. O que uma IA olhou nelas, e quando, está em [STATUS.md](../STATUS.md), seção Trilha simples do jogo.
+
+## Jogo anterior, versão de lançamento
+
+História: as imagens abaixo são do jogo de exploração, que a trilha substituiu, e o roteiro que as fazia não existe mais. Tiradas da saída estática, com o conteúdo da edição 0.1.1, em `jogo-lancamento/`. O celular é emulado (390×844 em pé e 844×390 deitado, com toque). Os capítulos avançados são abertos com um progresso salvo (os anteriores concluídos).
 
 | Arquivo | O que mostra |
 | --- | --- |
@@ -59,7 +91,7 @@ O roteiro confere uma coisa só: que a página não esteja rolada em nenhuma cap
 
 ## Jogo, etapa 1
 
-Tiradas da saída estática em 10 de outubro de 2026, com o conteúdo da edição 0.1.1, pelo roteiro de então. O celular é emulado (390×844 em pé e 844×390 deitado, com toque). Ficam como registro da primeira entrega; para o estado atual valem as de `jogo-lancamento/`.
+Tiradas da saída estática em 10 de outubro de 2026, com o conteúdo da edição 0.1.1, pelo roteiro de então. O celular é emulado (390×844 em pé e 844×390 deitado, com toque). Ficam como registro da primeira entrega; para o estado atual valem as de `jogo-trilha/`.
 
 | Arquivo | O que mostra |
 | --- | --- |
@@ -221,7 +253,7 @@ As capturas escondem o indicador do servidor de desenvolvimento do Next, que nã
 
 ## Jogo, salas e decisões (entrega P1)
 
-Tiradas em 11 de outubro de 2026, da saída estática com a edição 0.2.0, em 1440×900 (e 390×844 nas de celular). O percurso é o da missão documental: explorar, recolher a decisão, conferir a evidência, interpretar e abrir a passagem, com o Escrivão em cada passo.
+História: são do jogo anterior, com as salas temáticas e a missão de decisão, que a trilha substituiu no mesmo dia. As linhas 14 e 15, da página da pessoa e da comparação, mostram telas do atlas que continuam existindo, hoje com mais registros. Tiradas em 11 de outubro de 2026, da saída estática com a edição 0.2.0, em 1440×900 (e 390×844 nas de celular). O percurso é o da missão documental: explorar, recolher a decisão, conferir a evidência, interpretar e abrir a passagem, com o Escrivão em cada passo.
 
 | Arquivo | O que mostra |
 | --- | --- |

@@ -1,0 +1,553 @@
+[
+  {
+    "id": "lula-nascimento",
+    "pessoaId": "lula",
+    "tipo": "nascimento",
+    "titulo": "Lula nasce em Garanhuns, no interior de Pernambuco",
+    "data": {
+      "tipo": "data",
+      "valor": "1945-10",
+      "precisao": "mes"
+    },
+    "texto": "Luiz Inácio Lula da Silva nasceu em outubro de 1945, em Garanhuns, no interior de Pernambuco. É o sétimo dos oito filhos de Aristides Inácio da Silva e Eurídice Ferreira de Mello.",
+    "divergenciaDocumentada": "O dia varia: a biografia da Presidência da República e a do Arquivo Nacional dizem 27 de outubro de 1945; os dados abertos da Câmara dos Deputados e o registro de candidatura de 2026 no TSE dizem 6 de outubro de 1945. O atlas registra o mês e o ano, em que todos concordam. O lugar também varia: os documentos oficiais dizem Garanhuns, e a Agência Senado, em 2002, situou o nascimento em Vargem Grande, no atual município de Caetés. O IBGE registra que Caetés era distrito de Garanhuns em 1950 e virou município em 1963.",
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Primeiro parágrafo da biografia",
+        "evidencia": "Nascimento em 27 de outubro de 1945, em Garanhuns; sétimo dos oito filhos de Aristides Inácio da Silva e Eurídice Ferreira de Mello."
+      },
+      {
+        "fonteId": "arquivo-nacional-biografia-lula",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Nascimento em 27 de outubro de 1945, em Garanhuns, Pernambuco."
+      },
+      {
+        "fonteId": "camara-dados-abertos-lula",
+        "localizacao": "Campos dataNascimento, ufNascimento e municipioNascimento",
+        "evidencia": "Nascimento registrado em 6 de outubro de 1945, em Garanhuns (PE)."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Campos dataDeNascimento e descricaoNaturalidade",
+        "evidencia": "Registro de candidatura de 2026: nascimento em 6 de outubro de 1945 e naturalidade Garanhuns (PE)."
+      },
+      {
+        "fonteId": "agencia-senado-2002-trajetoria-lula",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "A agência situa o nascimento em Vargem Grande, no atual município de Caetés (PE)."
+      },
+      {
+        "fonteId": "ibge-biblioteca-caetes",
+        "localizacao": "Campo FORMACAO_ADMINISTRATIVA",
+        "evidencia": "Caetés era distrito de Garanhuns na divisão territorial de 1950 e foi elevado a município em 20 de dezembro de 1963. O documento não cita Lula."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-mudanca-para-o-litoral-paulista",
+    "pessoaId": "lula",
+    "tipo": "migracao",
+    "titulo": "A família de Lula se muda para o litoral de São Paulo",
+    "data": {
+      "tipo": "data",
+      "valor": "1952-12",
+      "precisao": "mes"
+    },
+    "texto": "Em dezembro de 1952, a mãe de Lula e os oito filhos migraram para o litoral do estado de São Paulo, em uma viagem de 13 dias de caminhão. A biografia oficial da Presidência da República diz que a família fugia da seca e da fome.",
+    "divergenciaDocumentada": "A cidade de chegada varia: a biografia da Presidência diz que a família foi morar em Vicente de Carvalho, no Guarujá; o Arquivo Nacional e a Agência Senado dizem Santos. O atlas registra o litoral paulista, como a biografia da Presidência, e não escolhe a cidade.",
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Primeiro parágrafo da biografia",
+        "evidencia": "Em dezembro de 1952, a família migrou para o litoral paulista, em viagem de 13 dias de caminhão, e foi morar em Vicente de Carvalho, no Guarujá."
+      },
+      {
+        "fonteId": "planalto-biografia-do-presidente",
+        "localizacao": "Segundo parágrafo",
+        "evidencia": "Quem migrou: a mãe e os oito filhos; o motivo, como a biografia o afirma; a família morou de início na periferia de Guarujá."
+      },
+      {
+        "fonteId": "arquivo-nacional-biografia-lula",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "A família se estabeleceu primeiro em Santos e depois na capital."
+      },
+      {
+        "fonteId": "agencia-senado-2022-lula-eleito",
+        "localizacao": "Parágrafo de perfil, na parte final da matéria",
+        "evidencia": "Aos sete anos, migrou com a família para Santos (SP)."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-mudanca-para-a-cidade-de-sao-paulo",
+    "pessoaId": "lula",
+    "tipo": "migracao",
+    "titulo": "A família se muda para a cidade de São Paulo",
+    "data": {
+      "tipo": "data",
+      "valor": "1956",
+      "precisao": "ano"
+    },
+    "texto": "Em 1956, a família se mudou para a cidade de São Paulo e passou a morar em um único cômodo, nos fundos de um bar.",
+    "divergenciaDocumentada": "O bairro varia: a biografia da Presidência diz Ipiranga; a Agência Senado, em 2002, diz Vila Carioca. Nenhum dos dois documentos diz se um bairro fica dentro do outro.",
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Segundo parágrafo da biografia",
+        "evidencia": "Mudança para São Paulo em 1956; um único cômodo, nos fundos de um bar, no bairro do Ipiranga."
+      },
+      {
+        "fonteId": "agencia-senado-2002-trajetoria-lula",
+        "localizacao": "Segundo parágrafo",
+        "evidencia": "Na capital, a família morou em um quarto nos fundos de um bar, na Vila Carioca."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-escola",
+    "pessoaId": "lula",
+    "tipo": "formacao",
+    "titulo": "Lula é alfabetizado e faz o ensino primário",
+    "data": {
+      "tipo": "desconhecida"
+    },
+    "texto": "Lula foi alfabetizado no Grupo Escolar Marcílio Dias, segundo a biografia da Presidência da República. Os documentos lidos não dizem em que anos ele estudou.",
+    "divergenciaDocumentada": "A escolaridade é descrita com palavras diferentes: a Câmara dos Deputados registra primário; o registro de candidatura de 2026 no TSE, ensino fundamental completo; a Agência Senado, em 2002, diz que ele estudou até a 5ª série. O atlas não escolhe.",
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Segundo parágrafo da biografia",
+        "evidencia": "Alfabetização no Grupo Escolar Marcílio Dias."
+      },
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Campo Escolaridade",
+        "evidencia": "Escolaridade registrada: primário."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Campo grauInstrucao",
+        "evidencia": "Grau de instrução declarado no registro de candidatura de 2026: ensino fundamental completo."
+      },
+      {
+        "fonteId": "agencia-senado-2002-trajetoria-lula",
+        "localizacao": "Segundo parágrafo",
+        "evidencia": "Estudou até a 5ª série do ensino fundamental."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-primeiros-trabalhos",
+    "pessoaId": "lula",
+    "tipo": "trabalho",
+    "titulo": "Lula começa a trabalhar ainda menino",
+    "data": {
+      "tipo": "desconhecida"
+    },
+    "texto": "Segundo a biografia da Presidência da República, Lula teve o primeiro emprego aos 12 anos, em uma tinturaria, e também foi engraxate e office-boy. Aos 14 anos, começou a trabalhar com carteira assinada.",
+    "divergenciaDocumentada": "O emprego dos 14 anos varia: a biografia da Presidência diz que ele começou nos Armazéns Gerais Columbia e depois foi para a Fábrica de Parafusos Marte; o Arquivo Nacional diz que ele ingressou aos 14 anos na Fábrica de Parafusos Marte e não cita os Armazéns.",
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Segundo e terceiro parágrafos da biografia",
+        "evidencia": "Primeiro emprego aos 12 anos, em uma tinturaria; engraxate e office-boy; aos 14 anos, Armazéns Gerais Columbia, com a carteira de trabalho assinada pela primeira vez; depois, Fábrica de Parafusos Marte."
+      },
+      {
+        "fonteId": "arquivo-nacional-biografia-lula",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Ingresso, aos 14 anos, na Fábrica de Parafusos Marte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-curso-no-senai",
+    "pessoaId": "lula",
+    "tipo": "formacao",
+    "titulo": "Lula se forma torneiro mecânico no Senai",
+    "data": {
+      "tipo": "desconhecida"
+    },
+    "texto": "Lula fez o curso de torneiro mecânico do Senai, o Serviço Nacional de Aprendizagem Industrial. O curso durou três anos, e com ele Lula se tornou metalúrgico. Os documentos oficiais lidos não dizem em que ano ele se formou.",
+    "divergenciaDocumentada": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Terceiro parágrafo da biografia",
+        "evidencia": "Vaga no curso de torneiro mecânico do Senai; o curso durou três anos, e Lula se tornou metalúrgico."
+      },
+      {
+        "fonteId": "planalto-biografia-do-presidente",
+        "localizacao": "Quinto parágrafo",
+        "evidencia": "O diploma de torneiro mecânico foi o primeiro da vida dele."
+      },
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Seção Estudos e Cursos Diversos",
+        "evidencia": "Curso de formação de torneiro mecânico no Senai."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-trabalho-na-villares",
+    "pessoaId": "lula",
+    "tipo": "trabalho",
+    "titulo": "Lula trabalha nas Indústrias Villares, em São Bernardo do Campo",
+    "data": {
+      "tipo": "desconhecida"
+    },
+    "texto": "Depois de passar por várias fábricas, Lula ingressou nas Indústrias Villares, metalúrgica de São Bernardo do Campo. Trabalhando lá, começou a ter contato com o movimento sindical, por meio do irmão José Ferreira da Silva, conhecido como Frei Chico. Os documentos lidos não dizem em que ano ele entrou na empresa.",
+    "divergenciaDocumentada": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Quarto parágrafo da biografia",
+        "evidencia": "Passagem por várias fábricas até o ingresso nas Indústrias Villares, em São Bernardo do Campo; contato com o movimento sindical por meio do irmão, Frei Chico."
+      },
+      {
+        "fonteId": "arquivo-nacional-biografia-lula",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Passagem pela Metalúrgica Independência e, depois, pela Metalúrgica Villares, em São Bernardo do Campo."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-entrada-na-diretoria-do-sindicato",
+    "pessoaId": "lula",
+    "tipo": "atuacao-sindical",
+    "titulo": "Lula entra para a diretoria do sindicato dos metalúrgicos",
+    "data": {
+      "tipo": "data",
+      "valor": "1969",
+      "precisao": "ano"
+    },
+    "texto": "Em 1969, o Sindicato dos Metalúrgicos de São Bernardo do Campo e Diadema elegeu nova diretoria, e Lula foi eleito suplente. Na eleição seguinte, em 1972, tornou-se primeiro-secretário.",
+    "divergenciaDocumentada": "Os nomes dos cargos variam: para 1969, a biografia da Presidência diz suplente, e a da Câmara dos Deputados, diretor; para 1972, a Presidência e a Câmara dizem primeiro-secretário, e a Agência Senado, em 2002, secretário-geral. O atlas usa os nomes da biografia da Presidência.",
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Quinto parágrafo da biografia",
+        "evidencia": "Eleição da diretoria em 1969, com Lula eleito suplente; primeiro-secretário na eleição de 1972."
+      },
+      {
+        "fonteId": "camara-biografia-lula",
+        "localizacao": "Seção Atividades Sindicais, Representativas de Classe, Associativas e Conselhos",
+        "evidencia": "Diretor do sindicato em 1969 e primeiro-secretário em 1972."
+      },
+      {
+        "fonteId": "agencia-senado-2002-trajetoria-lula",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Em 1969, concorreu ao primeiro cargo no sindicato e ficou como suplente; três anos depois, foi eleito secretário-geral."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lula-reeleicao-no-sindicato",
+    "pessoaId": "lula",
+    "tipo": "atuacao-sindical",
+    "titulo": "Lula é reeleito presidente do sindicato",
+    "data": {
+      "tipo": "data",
+      "valor": "1978",
+      "precisao": "ano"
+    },
+    "texto": "Em 1978, Lula foi reeleito presidente do sindicato. Naquele ano, depois de dez anos sem greves operárias, ocorreram no país as primeiras paralisações.",
+    "divergenciaDocumentada": null,
+    "fontes": [
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Sexto parágrafo da biografia",
+        "evidencia": "Reeleição em 1978 e, depois de dez anos sem greves operárias, as primeiras paralisações no país."
+      },
+      {
+        "fonteId": "planalto-biografia-do-presidente",
+        "localizacao": "Oitavo parágrafo",
+        "evidencia": "Em 1978, foi reeleito presidente do sindicato."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O verbete do Dicionário Histórico-Biográfico Brasileiro (CPDOC/FGV) foi lido e não foi usado como fonte: o que só ele traz ficou de fora. Idades citadas pelos documentos não foram convertidas em anos. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-nascimento",
+    "pessoaId": "flavio-bolsonaro",
+    "tipo": "nascimento",
+    "titulo": "Flávio Bolsonaro nasce em Resende, no estado do Rio de Janeiro",
+    "data": {
+      "tipo": "data",
+      "valor": "1981-04-30",
+      "precisao": "dia"
+    },
+    "texto": "Flávio Nantes Bolsonaro nasceu em 30 de abril de 1981, em Resende, no estado do Rio de Janeiro. É o filho mais velho de Jair Bolsonaro; a mãe é Rogéria Bolsonaro.",
+    "divergenciaDocumentada": "O lugar varia: os dados abertos do Senado e os registros de candidatura de 2002 e de 2026 no TSE dizem Resende; os registros de candidatura de 2014, 2016 e 2018 no TSE dizem Rio de Janeiro. A data é a mesma em todos. O atlas registra Resende, como o Senado e o registro mais recente do TSE.",
+    "fontes": [
+      {
+        "fonteId": "senado-dados-abertos-flavio",
+        "localizacao": "Parlamentar.IdentificacaoParlamentar e Parlamentar.DadosBasicosParlamentar",
+        "evidencia": "Nome completo; nascimento em 30 de abril de 1981; naturalidade Resende (RJ)."
+      },
+      {
+        "fonteId": "tse-candidatos-2002",
+        "localizacao": "Arquivo consulta_cand_2002_RJ.csv, linha do candidato de número 11120",
+        "evidencia": "Registro de candidatura de 2002: município de nascimento Resende (RJ), data de nascimento 30/04/1981."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Campos nomeMunicipioNascimento e dataDeNascimento",
+        "evidencia": "Registro de candidatura de 2026: município de nascimento Resende (RJ), data de nascimento 30 de abril de 1981."
+      },
+      {
+        "fonteId": "tse-divulgacand-2014-flavio",
+        "localizacao": "Campos sgUfNascimento e nomeMunicipioNascimento",
+        "evidencia": "Registro de candidatura de 2014: município de nascimento Rio de Janeiro (RJ)."
+      },
+      {
+        "fonteId": "tse-divulgacand-2016-flavio",
+        "localizacao": "Campos sgUfNascimento e nomeMunicipioNascimento",
+        "evidencia": "Registro de candidatura de 2016: município de nascimento Rio de Janeiro (RJ)."
+      },
+      {
+        "fonteId": "tse-divulgacand-2018-flavio",
+        "localizacao": "Campos sgUfNascimento e nomeMunicipioNascimento",
+        "evidencia": "Registro de candidatura de 2018: município de nascimento Rio de Janeiro (RJ)."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-perfil-flavio",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "É o filho mais velho do ex-presidente Jair Bolsonaro."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-flavio-e-lula-votam",
+        "localizacao": "Trecho sobre Flávio Bolsonaro, parágrafo que começa com \"Flávio foi acompanhado\"",
+        "evidencia": "A mãe do candidato é Rogéria Bolsonaro."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O material de campanha do candidato foi lido e não foi usado como fonte: o que só ele traz ficou de fora. As fichas do TSE trazem dados pessoais (CPF e título de eleitor), que não foram copiados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-formacao",
+    "pessoaId": "flavio-bolsonaro",
+    "tipo": "formacao",
+    "titulo": "Flávio Bolsonaro se forma em direito",
+    "data": {
+      "tipo": "desconhecida"
+    },
+    "texto": "Flávio Bolsonaro é bacharel em direito pela Universidade Cândido Mendes, no Rio de Janeiro. A ficha dele na Assembleia Legislativa registra também um curso técnico em eletrônica, e a Agência Senado, especializações em políticas públicas e em empreendedorismo. Os documentos lidos não dizem em que ano ele concluiu cada curso.",
+    "divergenciaDocumentada": null,
+    "fontes": [
+      {
+        "fonteId": "agencia-senado-2019-perfil-flavio",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "Bacharel em direito pela Universidade Cândido Mendes; especializações em políticas públicas (Iuperj) e em empreendedorismo (FGV)."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-perfil-flavio",
+        "localizacao": "Segundo parágrafo",
+        "evidencia": "Formado em direito pela Universidade Cândido Mendes, com especialização nas áreas de políticas públicas e empreendedorismo."
+      },
+      {
+        "fonteId": "alerj-perfil-flavio",
+        "localizacao": "Seção Cursos Acadêmicos",
+        "evidencia": "Curso técnico em eletrônica pela Escola Técnica Rezende Rammel e bacharelado em direito pela Universidade Cândido Mendes, no Rio de Janeiro."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O registro traz só o que as páginas dizem hoje. A página da Agência Senado registra modificação em 12 de agosto de 2026, e cópias antigas dela e da ficha da Alerj, guardadas por terceiro (Internet Archive), mencionavam uma pós-graduação em ciências políticas que não está mais nas páginas; nenhum documento lido explica a mudança, e por isso o registro não afirma nem nega esse curso. O caso está descrito em research/trilha-2026-10.md, para decisão editorial. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-estagios",
+    "pessoaId": "flavio-bolsonaro",
+    "tipo": "trabalho",
+    "titulo": "Flávio Bolsonaro faz estágios antes da vida pública",
+    "data": {
+      "tipo": "data",
+      "valor": "1998",
+      "precisao": "ano"
+    },
+    "texto": "A ficha de Flávio Bolsonaro na Assembleia Legislativa registra dois estágios antes da primeira eleição: no Instituto Militar de Engenharia, de março a dezembro de 1998, e na Defensoria Pública do Estado do Rio de Janeiro, de agosto de 2000 a outubro de 2001.",
+    "divergenciaDocumentada": null,
+    "fontes": [
+      {
+        "fonteId": "alerj-perfil-flavio",
+        "localizacao": "Seção Estágios",
+        "evidencia": "Estágio no Instituto Militar de Engenharia, de março a dezembro de 1998, e na Defensoria Pública Geral do Estado do Rio de Janeiro, de agosto de 2000 a outubro de 2001."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir da ficha do deputado no portal da Alerj, baixada nesse dia, com assistência de IA. A ficha é a única fonte dos dois estágios: não foi localizado documento do Instituto Militar de Engenharia nem da Defensoria Pública que os confirme, e por isso o texto os atribui à ficha. A data do registro é a do início do primeiro estágio. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-registro-da-primeira-candidatura",
+    "pessoaId": "flavio-bolsonaro",
+    "tipo": "outro",
+    "titulo": "Flávio Bolsonaro se candidata a deputado estadual",
+    "data": {
+      "tipo": "data",
+      "valor": "2002",
+      "precisao": "ano"
+    },
+    "texto": "Em 2002, Flávio Bolsonaro se candidatou a deputado estadual pelo Rio de Janeiro, pelo Partido Progressista Brasileiro (PPB). No registro da candidatura, nos dados publicados pelo TSE, a ocupação informada é a de estudante, bolsista ou estagiário, o grau de instrução é superior incompleto, e a idade na data da posse é de 21 anos. Na mesma eleição, o pai dele, Jair Bolsonaro, concorreu a deputado federal.",
+    "divergenciaDocumentada": null,
+    "fontes": [
+      {
+        "fonteId": "tse-candidatos-2002",
+        "localizacao": "Arquivo consulta_cand_2002_RJ.csv, linhas dos candidatos de números 11120 (deputado estadual) e 1120 (deputado federal)",
+        "evidencia": "Candidatura a deputado estadual pelo PPB, deferida; ocupação, grau de instrução e idade na data da posse; candidatura de Jair Messias Bolsonaro a deputado federal na mesma eleição."
+      },
+      {
+        "fonteId": "agencia-brasil-2026-perfil-flavio",
+        "localizacao": "Primeiro parágrafo",
+        "evidencia": "O parentesco: é o filho mais velho de Jair Bolsonaro."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir dos documentos baixados nesse dia, com assistência de IA: cada frase foi conferida contra o trecho literal do documento citado. O material de campanha do candidato foi lido e não foi usado como fonte: o que só ele traz ficou de fora. As fichas do TSE trazem dados pessoais (CPF e título de eleitor), que não foram copiados. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-partido-muda-de-nome",
+    "pessoaId": "flavio-bolsonaro",
+    "tipo": "outro",
+    "titulo": "O partido de Flávio Bolsonaro muda de nome: de PPB para PP",
+    "data": {
+      "tipo": "data",
+      "valor": "2003",
+      "precisao": "ano"
+    },
+    "texto": "Em 2003, o Partido Progressista Brasileiro (PPB), pelo qual Flávio Bolsonaro tinha sido eleito, passou a se chamar Partido Progressista (PP). O TSE registra a mudança de nome e de sigla do mesmo partido. A lista de deputados da legislatura de 2003 a 2007, publicada pela Alerj, já o traz como do PP.",
+    "divergenciaDocumentada": null,
+    "fontes": [
+      {
+        "fonteId": "tse-partido-progressistas",
+        "localizacao": "Lista de estatutos, item do estatuto de 4 de abril de 2003",
+        "evidencia": "Estatuto aprovado em 29 de maio de 2003: mudança de nomenclatura e sigla de Partido Progressista Brasileiro (PPB) para Partido Progressista (PP)."
+      },
+      {
+        "fonteId": "alerj-8a-legislatura",
+        "localizacao": "Item 32 da lista de deputados",
+        "evidencia": "Deputado Flávio Bolsonaro, com a sigla PP."
+      },
+      {
+        "fonteId": "tse-candidatos-2002",
+        "localizacao": "Arquivo consulta_cand_2002_RJ.csv, linha do candidato de número 11120",
+        "evidencia": "Candidatura de 2002 pelo PPB."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Escrito em 11 de outubro de 2026 a partir da página do partido no TSE e da lista de deputados da Alerj, baixadas nesse dia, com assistência de IA. O cadastro de filiações do atlas guarda PPB e PP em registros separados; este fato existe para dizer que é o mesmo partido com outro nome. Revisão humana pendente."
+      }
+    }
+  }
+]

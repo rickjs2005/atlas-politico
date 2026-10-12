@@ -1,5 +1,8 @@
-// Câmera: segue o personagem, com um atraso curto, e não sai do mundo quando
-// o mundo cabe na tela. Regras puras, em pixels de tela na escala 1.
+// Câmera: enquadra a cena inteira na área do palco que a interface deixa
+// livre. Ninguém dirige o boneco (D-137): o que a pessoa precisa ver é a sala
+// toda, com a pasta do marco. Só quando a cena não cabe nem no zoom mínimo a
+// câmera escolhe um ponto, que é a pasta do marco. Regras puras, em pixels de
+// tela na escala 1.
 
 import type { SceneSpec } from "../types";
 
@@ -38,15 +41,67 @@ export function sceneBounds(scene: SceneSpec): { minX: number; maxX: number; min
 }
 
 /**
- * O zoom da cena em jogo: a cena quase inteira na tela quando cabe, para
- * dominar a página; em tela estreita, um piso que mantém o personagem
- * legível, e a câmera o segue.
+ * O que a interface cobre do palco, em pixels: em cima, o cabeçalho da fase
+ * quando ele vai de um lado ao outro (tela estreita); embaixo, o botão
+ * principal; à esquerda, o cartão da fase quando a janela é baixa (celular
+ * deitado) e a cena não tem altura para passar por baixo dele.
+ */
+export interface StageInsets {
+  topo: number;
+  base: number;
+  esquerda?: number;
+}
+
+export const NO_INSETS: StageInsets = { topo: 0, base: 0 };
+
+/** O menor zoom da cena em jogo: abaixo dele o desenho perde a leitura. */
+export const ZOOM_MINIMO = 0.36;
+/** O maior: a cena não cresce além disso em tela grande. */
+export const ZOOM_MAXIMO = 1.9;
+/** O menor lado que a conta da área livre aceita: evita área nula quando a interface cobre quase tudo. */
+export const LADO_LIVRE_MINIMO = 80;
+
+/**
+ * A área do palco que sobra para a cena, e quanto o meio dela fica à direita e
+ * abaixo do meio do palco. A área vale mesmo pequena: a cena pode não caber
+ * inteira nela, mas a pasta do marco fica à vista, e não atrás do cartão.
+ */
+export function freeArea(viewport: Viewport, margens: StageInsets): Viewport & { desvioX: number; desvioY: number } {
+  const esquerda = margens.esquerda ?? 0;
+  return {
+    largura: Math.max(LADO_LIVRE_MINIMO, viewport.largura - esquerda),
+    altura: Math.max(LADO_LIVRE_MINIMO, viewport.altura - margens.topo - margens.base),
+    desvioX: esquerda / 2,
+    desvioY: (margens.topo - margens.base) / 2,
+  };
+}
+
+/**
+ * O zoom da cena em jogo: a cena inteira na área dada, com uma folga pequena,
+ * entre o mínimo e o máximo. Na largura a conta dispensa meio ladrilho de cada
+ * lado da caixa da cena: as pontas da sala só têm a parede, e em celular essa
+ * margem custava o tamanho do desenho.
  */
 export function zoomFor(scene: SceneSpec, viewport: Viewport): number {
-  const piso = viewport.largura < 480 ? 0.85 : viewport.largura < 768 ? 0.95 : 1;
   const caixa = sceneBounds(scene);
-  const cabe = Math.min(viewport.largura / (caixa.maxX - caixa.minX), viewport.altura / (caixa.maxY - caixa.minY));
-  return Math.min(1.9, Math.max(piso, cabe * 0.9));
+  const cabe = Math.min(viewport.largura / (caixa.maxX - caixa.minX - TILE_W), viewport.altura / (caixa.maxY - caixa.minY));
+  return Math.min(ZOOM_MAXIMO, Math.max(ZOOM_MINIMO, cabe * 0.97));
+}
+
+/**
+ * O enquadramento da cena em jogo: a cena inteira no meio da área livre do
+ * palco. Se ela não cabe nem no zoom mínimo, o ponto dado (a pasta do marco)
+ * fica à vista, e a câmera não sai da cena.
+ */
+export function frameScene(scene: SceneSpec, viewport: Viewport, margens: StageInsets, alvo: { sx: number; sy: number } | null): Camera {
+  const livre = freeArea(viewport, margens);
+  const zoom = zoomFor(scene, livre);
+  const caixa = sceneBounds(scene);
+  const meio = { cx: (caixa.minX + caixa.maxX) / 2, cy: (caixa.minY + caixa.maxY) / 2 };
+  // A cena cabe quando o zoom não foi segurado pelo mínimo: fica no meio, e o alvo não muda nada.
+  const centro = zoom > ZOOM_MINIMO || alvo === null ? meio : clampCenter(alvo.sx, alvo.sy, scene, livre, zoom);
+  // O meio da área livre não é o meio do palco: a câmera compensa.
+  return { cx: centro.cx - livre.desvioX / zoom, cy: centro.cy - livre.desvioY / zoom, zoom };
 }
 
 /** Zoom que faz a cena inteira caber na tela (prévia e transições). */
@@ -57,7 +112,7 @@ export function zoomToFit(scene: SceneSpec, viewport: Viewport): number {
   return Math.min(viewport.largura / largura, viewport.altura / altura, 1.4);
 }
 
-/** O centro ideal: o personagem, limitado para a tela não sair do mundo. */
+/** O centro ideal: o ponto dado, limitado para a tela não sair do mundo; a cena que cabe na tela fica no meio dela. */
 export function clampCenter(cx: number, cy: number, scene: SceneSpec, viewport: Viewport, zoom: number): { cx: number; cy: number } {
   const caixa = sceneBounds(scene);
   const meiaLargura = viewport.largura / zoom / 2;
@@ -69,21 +124,34 @@ export function clampCenter(cx: number, cy: number, scene: SceneSpec, viewport: 
   };
 }
 
+/** A menor distância, em pixels de tela, entre duas pastas com botão sobre a cena: abaixo disso as áreas de toque se confundem. */
+export const DISTANCIA_ENTRE_PASTAS = 46;
+
 /**
- * Aproxima a câmera do alvo. `dt` em segundos; com movimento reduzido a
- * câmera vai direto, sem o atraso.
+ * As pastas que ganham botão sobre a cena, no enquadramento dado. Em zoom
+ * pequeno, pastas vizinhas ficam uma sobre a outra na tela: a do marco entra
+ * sempre; cada pasta opcional entra, na ordem dada, se não ficar perto demais
+ * de uma que já entrou. A que fica de fora continua na lista da fase.
+ * `elevacao` é a altura do centro da pasta acima do chão, em pixels de mundo.
  */
-export function followCamera(camera: Camera, alvo: { cx: number; cy: number }, dt: number, movimento: boolean): Camera {
-  if (!movimento) return { ...camera, cx: alvo.cx, cy: alvo.cy };
-  const taxa = 1 - Math.exp(-dt * 7);
-  const cx = camera.cx + (alvo.cx - camera.cx) * taxa;
-  const cy = camera.cy + (alvo.cy - camera.cy) * taxa;
-  // Perto o bastante: encosta, para o desenho parar de tremer.
-  return {
-    ...camera,
-    cx: Math.abs(alvo.cx - cx) < 0.05 ? alvo.cx : cx,
-    cy: Math.abs(alvo.cy - cy) < 0.05 ? alvo.cy : cy,
-  };
+export function spacedMarkers(
+  marcadores: readonly { chave: string; natureza: "marco" | "explorar"; x: number; y: number }[],
+  camera: Camera,
+  viewport: Viewport,
+  elevacao: number,
+  distancia: number = DISTANCIA_ENTRE_PASTAS,
+): Set<string> {
+  const postas: { px: number; py: number }[] = [];
+  const visiveis = new Set<string>();
+  const emOrdem = [...marcadores.filter((item) => item.natureza === "marco"), ...marcadores.filter((item) => item.natureza !== "marco")];
+  for (const marcador of emOrdem) {
+    const { sx, sy } = toScreen(marcador.x + 0.5, marcador.y + 0.5);
+    const ponto = project(camera, viewport, sx, sy - elevacao);
+    if (marcador.natureza !== "marco" && postas.some((outra) => Math.hypot(outra.px - ponto.px, outra.py - ponto.py) < distancia)) continue;
+    postas.push(ponto);
+    visiveis.add(marcador.chave);
+  }
+  return visiveis;
 }
 
 /** De um ponto do mundo (pixels, escala 1) para o pixel na tela. */

@@ -1,39 +1,38 @@
-// Desenho de um quadro da cena: piso, paredes, elementos de cenário,
-// registros, guia, personagem, saída e efeitos, em ordem de profundidade. Puro
-// sobre o estado que recebe; quem anima é o laço (loop.ts).
+// Desenho de um quadro da cena: piso, paredes, elementos de cenário, pastas,
+// guia, personagem e porta, em ordem de profundidade. Puro sobre o estado que
+// recebe; quem anima é o laço (loop.ts).
 //
 // O que não muda de um quadro para o outro é desenhado uma vez, em telas à
 // parte, e copiado a cada quadro: as paredes de trás com o piso e os detalhes
 // de chão; os parapeitos da frente; e cada elemento de cenário parado. A cada
-// quadro, de novo, só o que se move: o personagem, o guia, os registros, a
-// porta, a bandeira e a planta, que balançam, e os efeitos. Sem isso, os
-// milhares de traços do cenário seriam refeitos sessenta vezes por segundo.
+// quadro, de novo, só o que se move: o personagem, o guia, as pastas, a
+// porta, a bandeira e a planta, que balançam. Sem isso, os milhares de traços
+// do cenário seriam refeitos sessenta vezes por segundo.
 
-import { recordIds } from "@/lib/game/mission";
-import type { ChapterSpec, Interactable, PersonagemSlug, PlayerState, PropKind, SceneSpec } from "@/lib/game/types";
+import type { Epoca, PersonagemSlug, PlayerState, PropKind, SceneSpec } from "@/lib/game/types";
 import { sceneBounds, type Camera, type Viewport } from "@/lib/game/world/camera";
 import { CELL, cellAt } from "@/lib/game/world/grid";
 import { toScreen } from "@/lib/game/world/iso";
 
 import { GUIDE, RECORD_ART, SCENE_ART, characterArt, type CellInfo, type DrawContext, type WallSide } from "../draw";
 
-export interface CollectEffect {
+/** Uma pasta no cenário: a célula em que fica e se é o marco da fase, que vai em destaque. */
+export interface SceneFolder {
   x: number;
   y: number;
-  /** Progresso de 0 a 1. */
-  t: number;
+  destaque: boolean;
 }
 
 export interface RenderState {
   scene: SceneSpec;
-  chapter: ChapterSpec;
   personagem: PersonagemSlug;
+  /** A figura do personagem nesta fase (D-111). */
+  epoca: Epoca;
   player: PlayerState;
-  recolhidos: readonly string[];
-  /** Abertura da saída, de 0 (fechada) a 1 (aberta). */
+  /** As pastas da fase: a do marco e as dos registros para explorar. */
+  pastas: readonly SceneFolder[];
+  /** Abertura da porta, de 0 (fechada) a 1 (aberta): abre quando a fase termina. */
   abertura: number;
-  alcance: Interactable | null;
-  efeitos: readonly CollectEffect[];
   camera: Camera;
   tempo: number;
   movimento: boolean;
@@ -263,9 +262,10 @@ export function renderScene(ctx: CanvasRenderingContext2D, state: RenderState, v
     SCENE_ART.drawThreshold(d, scene.paleta, sx, sy, lado, state.abertura, infoOf(scene, x, y));
   }
 
-  // Anel sob o que está ao alcance: no chão.
-  if (state.alcance !== null) {
-    const { sx, sy } = toScreen(state.alcance.x, state.alcance.y);
+  // Anel no chão, sob a pasta do marco: é para onde a fase aponta.
+  for (const pasta of state.pastas) {
+    if (!pasta.destaque) continue;
+    const { sx, sy } = toScreen(pasta.x + 0.5, pasta.y + 0.5);
     SCENE_ART.drawReachRing(d, scene.paleta, sx, sy);
   }
 
@@ -285,14 +285,11 @@ export function renderScene(ctx: CanvasRenderingContext2D, state: RenderState, v
     });
   });
 
-  // Registros ainda no cenário: os acontecimentos e as decisões do capítulo, nas posições da cena.
-  recordIds(state.chapter).forEach((id, indice) => {
-    const posicao = scene.registros[indice];
-    if (posicao === undefined || state.recolhidos.includes(id)) return;
-    const { sx, sy } = toScreen(posicao.x + 0.5, posicao.y + 0.5);
-    const destaque = state.alcance?.tipo === "registro" && state.alcance.id === id;
-    drawables.push({ z: posicao.x + posicao.y, draw: () => RECORD_ART.draw(d, sx, sy, destaque) });
-  });
+  // As pastas da fase, nas posições da cena. Ficam no cenário: abrir uma não a tira dali.
+  for (const pasta of state.pastas) {
+    const { sx, sy } = toScreen(pasta.x + 0.5, pasta.y + 0.5);
+    drawables.push({ z: pasta.x + pasta.y, draw: () => RECORD_ART.draw(d, sx, sy, pasta.destaque) });
+  }
 
   // Guia.
   {
@@ -304,8 +301,8 @@ export function renderScene(ctx: CanvasRenderingContext2D, state: RenderState, v
   // personagem fica na frente dele quando a soma das próprias coordenadas é maior.
   if (!state.semJogador) {
     const { sx, sy } = toScreen(state.player.x, state.player.y);
-    // A figura da época do capítulo (D-111): o mesmo personagem, com cabelo, barba e roupa do período.
-    const arte = characterArt(state.personagem, state.chapter.epoca);
+    // A figura da época da fase (D-111): o mesmo personagem, com cabelo, barba e roupa do período.
+    const arte = characterArt(state.personagem, state.epoca);
     drawables.push({
       z: state.player.x + state.player.y - 1,
       draw: () => arte.draw(d, { facing: state.player.facing, andando: state.player.andando, fase: state.player.fase }, sx, sy),
@@ -322,10 +319,5 @@ export function renderScene(ctx: CanvasRenderingContext2D, state: RenderState, v
     const { x, y, lado } = scene.saida;
     const { sx, sy } = toScreen(x + 0.5, y + 0.5);
     SCENE_ART.drawExit(d, scene.paleta, sx, sy, lado, state.abertura, infoOf(scene, x, y));
-  }
-
-  for (const efeito of state.efeitos) {
-    const { sx, sy } = toScreen(efeito.x, efeito.y);
-    SCENE_ART.drawCollectEffect(d, scene.paleta, sx, sy, efeito.t);
   }
 }

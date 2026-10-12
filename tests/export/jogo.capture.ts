@@ -1,453 +1,400 @@
-// Capturas do jogo, versão de lançamento, para docs/capturas/jogo-lancamento/.
+// Capturas do jogo em fases curtas (a trilha), para docs/capturas/jogo-trilha/.
 // Tiradas da saída estática: `npm run build` e `npm run capture:game`. Não é
 // teste do jogo: só registra as telas. Os testes ficam em
 // `tests/e2e/jogo.spec.ts` e `tests/export/jogo.spec.ts`.
 //
-// O celular é emulado: janela de 390×844, com toque, e de 844×390 deitado.
-// Os capítulos avançados são abertos com um progresso salvo (os anteriores
-// concluídos), para cada cenário aparecer sem jogar tudo antes.
+// O celular é emulado, com toque: 390×844 em pé, 360×640 (a tela mais
+// estreita e baixa que o projeto confere) e 844×390 deitado. As fases
+// avançadas são abertas pelo endereço (`?fase=N`): nenhuma fase segura a
+// seguinte, e por isso o roteiro não precisa de progresso salvo para chegar a
+// elas.
 
-import { expect, test, type Page } from "@playwright/test";
+import { readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
 
-import { chaptersOf } from "@/lib/game/chapters";
-import { legacyTaskSignature, recordIds, requiredRecords } from "@/lib/game/mission";
-import { chaptersInRoom } from "@/lib/game/rooms";
-import { getScene } from "@/lib/game/scenes";
-import { storageKey } from "@/lib/game/storage";
-import type { ChapterSpec, PersonagemSlug } from "@/lib/game/types";
+import { expect, test, type Browser, type Locator, type Page } from "@playwright/test";
 
-import { clearProgress, clicar, jogo, palco, walkTo } from "../e2e/jogo-caminho";
+import { PERSONAGENS, abrir, abrirMarco, conteudoDe, fasesDe, janela, jogo, lerESeguir, opcoesDe, ordemDe, pronto, refKey, responder, rota, type Slug } from "../e2e/jogo-apoio";
 
-const OUT = process.env.GAME_CAPTURE_DIR ?? "docs/capturas/jogo-lancamento";
+const OUT = process.env.GAME_CAPTURE_DIR ?? "docs/capturas/jogo-trilha";
 const COMPUTADOR = { width: 1440, height: 900 };
 const CELULAR = { width: 390, height: 844 };
+const CELULAR_ESTREITO = { width: 360, height: 640 };
 const CELULAR_DEITADO = { width: 844, height: 390 };
+/** O servidor de pré-visualização (playwright.export.config.ts). */
+const ORIGEM = "http://localhost:4311";
 
-const PERSONAGENS = ["flavio-bolsonaro", "lula"] as const;
-
-const shot = async (page: Page, nome: string, rolada = false) => {
+const shot = async (page: Page, nome: string, opcoes: { rolada?: boolean; inteira?: boolean } = {}) => {
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(350);
-  // A captura mostra a tela como a pessoa a encontra: fora a que rola de propósito, nenhum passo do roteiro rola a página.
-  if (!rolada) expect(await page.evaluate(() => Math.round(window.scrollY)), `rolagem da página na captura ${nome}`).toBe(0);
-  await page.screenshot({ path: `${OUT}/${nome}.png` });
+  // A captura mostra a tela como a pessoa a encontra: fora as que rolam de propósito, nenhum passo do roteiro rola a página.
+  if (!opcoes.rolada && !opcoes.inteira) expect(await page.evaluate(() => Math.round(window.scrollY)), `rolagem da página na captura ${nome}`).toBe(0);
+  await page.screenshot({ path: `${OUT}/${nome}.png`, fullPage: opcoes.inteira === true });
 };
 
-// Os cliques dentro de uma janela passam por `clicar` (tests/e2e/jogo-caminho.ts),
-// que espera a janela aceitar ponteiro: sem isso o robô rola a página, e as
-// capturas seguintes sairiam com ela fora do lugar.
-
-const guardar = (page: Page) => page.getByRole("button", { name: /Guardar e/ });
-const abrirPainel = (page: Page) => page.getByRole("button", { name: "Capítulos e tarefas" }).click();
-const dialogo = (page: Page, nome: string) => page.locator(`[data-dialogo="${nome}"]`);
-
-async function ready(page: Page) {
-  await expect(palco(page)).toHaveAttribute("data-palco", "pronto", { timeout: 30_000 });
-  await palco(page).focus();
-  await page.waitForTimeout(500);
+/** Rola o corpo de uma janela até um trecho dela, sem rolar a página. */
+async function mostrar(caixa: Locator, seletor: string) {
+  await caixa.locator("[data-janela-corpo]").evaluate((corpo, alvo) => {
+    const no = corpo.querySelector(alvo);
+    if (no === null) return;
+    corpo.scrollTop += no.getBoundingClientRect().top - corpo.getBoundingClientRect().top - 12;
+  }, seletor);
 }
 
-async function openFresh(page: Page, rota: string) {
-  await page.goto(rota);
-  await clearProgress(page);
-  await page.reload();
-  await ready(page);
+/** Uma página de celular: janela estreita, com toque e movimento reduzido, como o resto do roteiro. */
+async function celular(browser: Browser, viewport: { width: number; height: number }, extras: { javaScriptEnabled?: boolean } = {}) {
+  const context = await browser.newContext({ baseURL: ORIGEM, viewport, isMobile: true, hasTouch: true, reducedMotion: "reduce", ...extras });
+  return { context, page: await context.newPage() };
 }
 
-/** Os capítulos da trajetória (a sala Histórico) de um personagem. */
-const trajetoriaDe = (slug: PersonagemSlug) => chaptersInRoom(chaptersOf(slug), "historico");
-
-/** Um progresso salvo com os capítulos da trajetória anteriores ao de número `numero` concluídos e ele disponível. */
-function progressoAte(slug: PersonagemSlug, numero: number) {
-  const entradas: Record<string, unknown> = {};
-  trajetoriaDe(slug).forEach((capitulo, indice) => {
-    const comResposta = capitulo.tarefa.tipo !== "registro";
-    if (indice < numero - 1) {
-      entradas[capitulo.id] = {
-        status: "concluido",
-        tarefa: {
-          recolhidos: recordIds(capitulo),
-          confirmada: comResposta,
-          tentativas: comResposta ? 1 : 0,
-          ...(comResposta ? { assinatura: legacyTaskSignature(capitulo.tarefa) } : {}),
-          ...(capitulo.tarefa.tipo === "decisao" ? { evidencia: true } : {}),
-        },
-      };
-    }
-    else entradas[capitulo.id] = { status: indice === numero - 1 ? "disponivel" : "bloqueado", tarefa: { recolhidos: [], confirmada: false, tentativas: 0 } };
-  });
-  return { versao: 4, personagem: slug, capitulos: entradas };
-}
-
-/** Abre o jogo no capítulo de número `numero` da trajetória, com os anteriores concluídos. */
-async function openAtChapter(page: Page, slug: PersonagemSlug, numero: number) {
-  await page.goto(`/jogo/${slug}/`);
-  await page.evaluate(({ chave, salvo }) => window.localStorage.setItem(chave, JSON.stringify(salvo)), { chave: storageKey(slug), salvo: progressoAte(slug, numero) });
-  await page.reload();
-  await ready(page);
-  await expect(jogo(page)).toHaveAttribute("data-capitulo", trajetoriaDe(slug)[numero - 1]!.id);
-}
-
-const posicaoDe = (capitulo: ChapterSpec, id: string) => getScene(capitulo.cena).registros[recordIds(capitulo).indexOf(id)]!;
-const exigidos = (capitulo: ChapterSpec) => [...requiredRecords(capitulo.tarefa)];
-const foraDaTarefa = (capitulo: ChapterSpec) => recordIds(capitulo).filter((id) => !exigidos(capitulo).includes(id));
-
-/** Responde as duas etapas da decisão que está aberta: tenta as opções até acertar cada uma. */
-async function answerDecision(page: Page) {
-  const janela = dialogo(page, "decisao");
-  await expect(janela).toBeVisible();
-  for (const etapa of ["evidencia", "interpretacao"] as const) {
-    if ((await jogo(page).getAttribute("data-etapa")) !== etapa) continue;
-    const ids = await janela.locator("[data-escolher]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")!));
-    for (const id of ids) {
-      await clicar(page, janela.locator(`[data-escolher="${id}"]`));
-      await clicar(page, janela.locator(`[data-confirmar-decisao="${etapa}"]`));
-      if ((await janela.locator("[data-decisao-resultado]").getAttribute("data-decisao-resultado")) === "certo") break;
-      await clicar(page, janela.locator("[data-tentar-de-novo]"));
-    }
-    await clicar(page, janela.locator(etapa === "evidencia" ? "[data-evidencia-concluida]" : "[data-decisao-concluida]"));
-  }
-}
-
-/** Responde a pergunta de ordem que está aberta: tenta uma opção e, se errar, troca. */
-async function answerOrder(page: Page, capitulo: ChapterSpec) {
-  if (capitulo.tarefa.tipo !== "ordem") return;
-  const ordem = dialogo(page, "ordem");
-  await expect(ordem).toBeVisible();
-  const [a, b] = capitulo.tarefa.eventIds;
-  await clicar(page, ordem.locator(`[data-escolher-primeiro="${a}"]`));
-  await clicar(page, ordem.locator("[data-confirmar-ordem]"));
-  if ((await ordem.locator("[data-ordem-resultado]").getAttribute("data-ordem-resultado")) === "errado") {
-    await clicar(page, ordem.locator("[data-tentar-de-novo]"));
-    await clicar(page, ordem.locator(`[data-escolher-primeiro="${b}"]`));
-    await clicar(page, ordem.locator("[data-confirmar-ordem]"));
-  }
-  await clicar(page, ordem.locator("[data-ordem-concluida]"));
-}
-
-/** Responde a pergunta de documento ou de lugar que está aberta: tenta as opções até acertar. */
-async function answerChoice(page: Page) {
-  const escolha = dialogo(page, "escolha");
-  await expect(escolha).toBeVisible();
-  const ids = await escolha.locator("[data-escolher]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")!));
-  for (const id of ids) {
-    await clicar(page, escolha.locator(`[data-escolher="${id}"]`));
-    await clicar(page, escolha.locator("[data-confirmar-escolha]"));
-    if ((await escolha.locator("[data-escolha-resultado]").getAttribute("data-escolha-resultado")) === "certo") break;
-    await clicar(page, escolha.locator("[data-tentar-de-novo]"));
-  }
-  await clicar(page, escolha.locator("[data-escolha-concluida]"));
-}
-
-/** Recolhe um registro pelo painel e guarda; responde a pergunta, se ela abrir em seguida. */
-async function collectByPanel(page: Page, capitulo: ChapterSpec, id: string) {
-  await abrirPainel(page);
-  await clicar(page, page.locator(`[data-recolher="${id}"]`));
-  await clicar(page, guardar(page));
-  await expect(jogo(page)).toHaveAttribute("data-modo", /^(jogando|ordem|escolha|decisao)$/);
-  const modo = await jogo(page).getAttribute("data-modo");
-  if (modo === "ordem") await answerOrder(page, capitulo);
-  else if (modo === "escolha") await answerChoice(page);
-  else if (modo === "decisao") await answerDecision(page);
-}
-
-/**
- * Abre a saída do capítulo aberto pelo painel, sem o cenário: recolhe o que
- * ainda falta, primeiro o que a tarefa pede, e responde a pergunta. A saída só
- * abre com a tarefa cumprida e todos os registros recolhidos.
- */
-async function openExitByPanel(page: Page, capitulo: ChapterSpec) {
-  await abrirPainel(page);
-  await expect(page.locator("[data-registro]")).toHaveCount(recordIds(capitulo).length);
-  const recolhidos = await page.locator('[data-registro][data-recolhido="sim"]').evaluateAll((nos) => nos.map((no) => no.getAttribute("data-registro")));
-  await page.keyboard.press("Escape");
-  await expect(dialogo(page, "painel")).toHaveCount(0);
-  for (const id of [...exigidos(capitulo), ...foraDaTarefa(capitulo)]) {
-    if (!recolhidos.includes(id)) await collectByPanel(page, capitulo, id);
-  }
-  await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-}
-
-async function crossByPanel(page: Page) {
-  await abrirPainel(page);
-  await clicar(page, page.locator("[data-atravessar-saida]"));
-}
-
-test.describe("entrada", () => {
-  test("entrada do atlas e escolha de personagem", async ({ page }) => {
-    for (const [nome, tela] of [
-      ["computador", COMPUTADOR],
-      ["celular", CELULAR],
-    ] as const) {
-      await page.setViewportSize(tela);
-      await page.goto("/");
-      await page.waitForLoadState("networkidle");
-      await shot(page, `01-entrada-do-atlas--${nome}`);
-      await page.goto("/jogo/");
-      await clearProgress(page);
-      await page.reload();
-      await page.waitForLoadState("networkidle");
-      await expect(page.locator("[data-previa-mundo]").first()).toBeVisible();
-      await shot(page, `02-escolha-de-personagem--${nome}`);
-    }
-  });
-});
-
-for (const personagem of PERSONAGENS) {
-  const capitulos = trajetoriaDe(personagem);
-  const [primeiro, segundo, terceiro] = capitulos as [ChapterSpec, ChapterSpec, ChapterSpec];
-  const cena1 = getScene(primeiro.cena);
-  const cena2 = getScene(segundo.cena);
-
-  test.describe(personagem, () => {
-    test("capítulo 1: cena, registro ao alcance, registro recolhido, saída aberta e transição", async ({ page }) => {
-      test.slow();
-      await page.setViewportSize(COMPUTADOR);
-      await openFresh(page, `/jogo/${personagem}/`);
-      await shot(page, `${personagem}-03-capitulo-1`);
-
-      const alvo = exigidos(primeiro)[0]!;
-      await walkTo(page, cena1, posicaoDe(primeiro, alvo));
-      await shot(page, `${personagem}-04-registro-ao-alcance`);
-      await page.keyboard.press("e");
-      await expect(dialogo(page, "registro")).toBeVisible();
-      await shot(page, `${personagem}-05-registro-recolhido`);
-      await clicar(page, guardar(page));
-      // A tarefa está cumprida; a porta abre com os registros que faltam, recolhidos aqui pelo painel.
-      await openExitByPanel(page, primeiro);
-      await palco(page).focus();
-      await page.waitForTimeout(900);
-      await shot(page, `${personagem}-06-saida-aberta`);
-
-      await walkTo(page, cena1, { x: cena1.saida.x, y: cena1.saida.y }, true);
-      await expect(page.locator("[data-transicao]")).toBeVisible();
-      await shot(page, `${personagem}-07-transicao`);
-      await clicar(page, page.getByRole("button", { name: "Continuar" }));
-      await expect(jogo(page)).toHaveAttribute("data-capitulo", segundo.id);
-      await ready(page);
-      await shot(page, `${personagem}-08-capitulo-2`);
-    });
-
-    test("capítulo 2: tarefa de ordem, nova tentativa, painel e a transição para o capítulo 3", async ({ page }) => {
-      test.slow();
-      await page.setViewportSize(COMPUTADOR);
-      await openAtChapter(page, personagem, 2);
-
-      // Os dois registros pelo cenário, e a ordem errada primeiro.
-      const [a, b] = exigidos(segundo) as [string, string];
-      for (const id of [a, b]) {
-        await walkTo(page, cena2, posicaoDe(segundo, id));
-        await page.keyboard.press("e");
-        await clicar(page, guardar(page));
-      }
-      const ordem = dialogo(page, "ordem");
-      await expect(ordem).toBeVisible();
-      await shot(page, `${personagem}-09-tarefa-de-ordem`);
-      await clicar(page, ordem.locator(`[data-escolher-primeiro="${b}"]`));
-      await clicar(page, ordem.locator("[data-confirmar-ordem]"));
-      const errou = (await ordem.locator("[data-ordem-resultado]").getAttribute("data-ordem-resultado")) === "errado";
-      if (errou) {
-        await shot(page, `${personagem}-10-ordem-errada-com-explicacao`);
-        await clicar(page, ordem.locator("[data-tentar-de-novo]"));
-        await clicar(page, ordem.locator(`[data-escolher-primeiro="${a}"]`));
-        await clicar(page, ordem.locator("[data-confirmar-ordem]"));
-      }
-      await shot(page, `${personagem}-11-ordem-certa`);
-      await clicar(page, ordem.locator("[data-ordem-concluida]"));
-
-      // O registro que a tarefa não pede, pelo cenário: é ele que abre a saída.
-      for (const id of foraDaTarefa(segundo)) {
-        await walkTo(page, cena2, posicaoDe(segundo, id));
-        await page.keyboard.press("e");
-        await clicar(page, guardar(page));
-      }
-      await expect(jogo(page)).toHaveAttribute("data-saida", "aberta");
-
-      await abrirPainel(page);
-      await shot(page, `${personagem}-12-painel-de-capitulos`);
-      await page.keyboard.press("Escape");
-
-      // A transição apresenta o capítulo 3 com o período, o cenário, a época e o contexto.
-      await walkTo(page, cena2, { x: cena2.saida.x, y: cena2.saida.y }, true);
-      await expect(page.locator("[data-transicao]")).toHaveAttribute("data-transicao", terceiro.id);
-      await shot(page, `${personagem}-13-transicao-com-contexto`);
-      await clicar(page, page.getByRole("button", { name: "Continuar" }));
-      await expect(jogo(page)).toHaveAttribute("data-capitulo", terceiro.id);
-    });
-
-    test("os cenários dos capítulos seguintes, com o personagem no início", async ({ page }) => {
-      test.slow();
-      await page.setViewportSize(COMPUTADOR);
-      for (const capitulo of capitulos.slice(2)) {
-        await openAtChapter(page, personagem, capitulo.numero);
-        await shot(page, `${personagem}-14-capitulo-${capitulo.numero}`);
-      }
-    });
-
-    test("tarefa de documento: a pergunta, a opção errada com explicação e a certa", async ({ page }) => {
-      test.slow();
-      await page.setViewportSize(COMPUTADOR);
-      const capitulo = capitulos.find((item) => item.tarefa.tipo === "fonte");
-      if (capitulo === undefined) return;
-      await openAtChapter(page, personagem, capitulo.numero);
-      const pedido = exigidos(capitulo)[0]!;
-      await abrirPainel(page);
-      await clicar(page, page.locator(`[data-recolher="${pedido}"]`));
-      await clicar(page, guardar(page));
-      const escolha = dialogo(page, "escolha");
-      await expect(escolha).toBeVisible();
-      await shot(page, `${personagem}-15-tarefa-de-documento`);
-      const ids = await escolha.locator("[data-escolher]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-escolher")!));
-      for (const [indice, id] of ids.entries()) {
-        await clicar(page, escolha.locator(`[data-escolher="${id}"]`));
-        await clicar(page, escolha.locator("[data-confirmar-escolha]"));
-        const certo = (await escolha.locator("[data-escolha-resultado]").getAttribute("data-escolha-resultado")) === "certo";
-        if (certo) {
-          await shot(page, `${personagem}-17-documento-certo`);
-          break;
-        }
-        if (indice === 0) await shot(page, `${personagem}-16-documento-errado-com-explicacao`);
-        await clicar(page, escolha.locator("[data-tentar-de-novo]"));
-      }
-    });
-
-    test("tarefa de lugar: a pergunta e a resposta certa", async ({ page }) => {
-      test.slow();
-      await page.setViewportSize(COMPUTADOR);
-      const capitulo = capitulos.find((item) => item.tarefa.tipo === "lugar");
-      if (capitulo === undefined) return;
-      await openAtChapter(page, personagem, capitulo.numero);
-      const pedido = exigidos(capitulo)[0]!;
-      await abrirPainel(page);
-      await clicar(page, page.locator(`[data-recolher="${pedido}"]`));
-      await clicar(page, guardar(page));
-      const escolha = dialogo(page, "escolha");
-      await expect(escolha).toBeVisible();
-      await shot(page, `${personagem}-18-tarefa-de-lugar`);
-      await answerChoice(page);
-    });
-
-    test("ficha judicial: natureza, decisões relacionadas com data e o aviso", async ({ page }) => {
-      await page.setViewportSize(COMPUTADOR);
-      const judicial = personagem === "lula" ? "lula-2017-condenacao-em-primeira-instancia" : "flavio-bolsonaro-2020-denuncia-do-ministerio-publico";
-      const capitulo = capitulos.find((item) => item.eventIds.includes(judicial))!;
-      await openAtChapter(page, personagem, capitulo.numero);
-      await abrirPainel(page);
-      await clicar(page, page.locator(`[data-recolher="${judicial}"]`));
-      const ficha = dialogo(page, "registro");
-      await expect(ficha.locator("[data-ficha-judicial]")).toBeVisible();
-      await shot(page, `${personagem}-19-ficha-judicial`);
-      // A ficha rola até as decisões relacionadas e as fontes, com o que cada uma sustenta.
-      await ficha.locator("[data-aviso-judicial]").scrollIntoViewIfNeeded();
-      await page.waitForTimeout(300);
-      await shot(page, `${personagem}-20-ficha-judicial-decisoes-relacionadas`);
-    });
-
-    test("fim da trajetória", async ({ page }) => {
-      test.slow();
-      await page.setViewportSize(COMPUTADOR);
-      const ultimo = capitulos.at(-1)!;
-      await openAtChapter(page, personagem, capitulos.length);
-      await openExitByPanel(page, ultimo);
-      await crossByPanel(page);
-      await expect(page.locator("[data-transicao]")).toHaveAttribute("data-transicao", "fim");
-      await shot(page, `${personagem}-21-transicao-para-o-fim`);
-      await clicar(page, page.getByRole("button", { name: "Continuar" }));
-      await expect(page.locator('[data-fim="sim"]')).toBeVisible();
-      await shot(page, `${personagem}-22-fim-da-trajetoria`);
-    });
-
-    test("celular: cena com os controles de toque, registro, painel e a tarefa de documento", async ({ browser }) => {
-      test.slow();
-      const context = await browser.newContext({ viewport: CELULAR, hasTouch: true, isMobile: true, reducedMotion: "reduce", baseURL: "http://localhost:4311" });
-      const page = await context.newPage();
-      await openFresh(page, `/jogo/${personagem}/`);
-      await shot(page, `${personagem}-23-celular-capitulo-1`);
-      const alvo = exigidos(primeiro)[0]!;
-      await walkTo(page, cena1, posicaoDe(primeiro, alvo));
-      await shot(page, `${personagem}-24-celular-registro-ao-alcance`);
-      // Um toque de verdade, com o dedo levantando em cima do botão que aparece.
-      await page.locator("[data-acao-toque]").tap();
-      await expect(dialogo(page, "registro")).toBeVisible();
-      await shot(page, `${personagem}-25-celular-registro`);
-      await clicar(page, guardar(page));
-      await abrirPainel(page);
-      await shot(page, `${personagem}-26-celular-painel`);
-      await page.keyboard.press("Escape");
-      const deDocumento = capitulos.find((item) => item.tarefa.tipo === "fonte");
-      if (deDocumento !== undefined) {
-        await openAtChapter(page, personagem, deDocumento.numero);
-        await shot(page, `${personagem}-27-celular-capitulo-${deDocumento.numero}`);
-        await abrirPainel(page);
-        await clicar(page, page.locator(`[data-recolher="${exigidos(deDocumento)[0]}"]`));
-        await clicar(page, guardar(page));
-        await expect(dialogo(page, "escolha")).toBeVisible();
-        await shot(page, `${personagem}-28-celular-tarefa-de-documento`);
-      }
-      await context.close();
-    });
-  });
-}
-
-test("celular deitado: o palco inteiro na janela, com o direcional e o botão de ação, em dois cenários", async ({ browser }) => {
-  const context = await browser.newContext({ viewport: CELULAR_DEITADO, hasTouch: true, isMobile: true, reducedMotion: "reduce", baseURL: "http://localhost:4311" });
-  const page = await context.newPage();
-  await openFresh(page, "/jogo/lula/");
-  await shot(page, "29-celular-deitado");
-  await openAtChapter(page, "lula", 4);
-  await shot(page, "30-celular-deitado-capitulo-4");
-  await context.close();
-});
-
-test("guia, registro com a ordem não documentada, saída fechada, porta aberta de perto e rodapé da página", async ({ page }) => {
+test("entradas: a do atlas e a do jogo, para quem chega e para quem volta", async ({ page, browser }) => {
   await page.setViewportSize(COMPUTADOR);
-  const [primeiro] = trajetoriaDe("lula") as [ChapterSpec];
-  const cena = getScene(primeiro.cena);
-  await openFresh(page, "/jogo/lula/");
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await shot(page, "01-entrada-do-atlas--computador");
+  await page.goto("/jogo/");
+  await expect(page.locator("[data-previa-mundo]")).toHaveCount(2);
+  await page.waitForLoadState("networkidle");
+  await shot(page, "02-entrada-do-jogo--computador");
+  await shot(page, "02-entrada-do-jogo-pagina-inteira--computador", { inteira: true });
 
-  // O guia, com a tarefa pendente: quem ele é, o que o cenário representa e como se joga.
-  await page.getByRole("button", { name: "Como jogar" }).click();
-  await expect(dialogo(page, "guia")).toBeVisible();
-  await shot(page, "31-guia-como-jogar");
+  // Quem volta: uma trajetória em andamento e a outra por começar.
+  await abrir(page, "lula", 1);
+  await lerESeguir(page);
+  await lerESeguir(page);
+  await page.goto("/jogo/");
+  await expect(page.locator('[data-escolha="lula"]')).toHaveAttribute("data-situacao", "em-andamento");
+  await page.waitForLoadState("networkidle");
+  await shot(page, "03-entrada-do-jogo-de-quem-volta--computador");
+  // A lista das fases, aberta na entrada.
+  await page.locator('[data-escolha="lula"] [data-fases-da-trilha] summary').click();
+  await page.locator('[data-escolha="flavio-bolsonaro"] [data-fases-da-trilha] summary').click();
+  await shot(page, "04-entrada-do-jogo-com-as-fases-abertas--computador", { inteira: true });
+
+  const movel = await celular(browser, CELULAR);
+  await movel.page.goto("/");
+  await movel.page.waitForLoadState("networkidle");
+  await shot(movel.page, "01-entrada-do-atlas--celular");
+  await movel.page.goto("/jogo/");
+  await expect(movel.page.locator("[data-previa-mundo]")).toHaveCount(2);
+  await movel.page.waitForLoadState("networkidle");
+  await shot(movel.page, "02-entrada-do-jogo--celular");
+  await shot(movel.page, "02-entrada-do-jogo-pagina-inteira--celular", { inteira: true });
+  await movel.context.close();
+});
+
+for (const slug of PERSONAGENS) {
+  test(`${slug}: o ciclo de uma fase, do marco à fase seguinte`, async ({ page }) => {
+    await page.setViewportSize(COMPUTADOR);
+    const [primeira, segunda] = fasesDe(slug);
+    const { certa, errada } = opcoesDe(primeira!);
+    await abrir(page, slug, 1);
+    await shot(page, `${slug}-05-fase-1-cena`);
+
+    const fase = await abrirMarco(page);
+    await shot(page, `${slug}-06-fase-1-explicacao`);
+    await mostrar(fase, "[data-atividade]");
+    await shot(page, `${slug}-07-fase-1-atividade`);
+    await responder(fase, errada);
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+    await mostrar(fase, "[data-atividade]");
+    await shot(page, `${slug}-08-fase-1-resposta-errada`);
+    await fase.locator("[data-tentar-de-novo]").click();
+    await responder(fase, certa);
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+    await mostrar(fase, "[data-atividade]");
+    await shot(page, `${slug}-09-fase-1-resposta-certa`);
+    await mostrar(fase, "[data-explorar]");
+    await shot(page, `${slug}-10-fase-1-explorar-e-lacunas`);
+    await page.keyboard.press("Escape");
+    await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+    await shot(page, `${slug}-11-fase-1-concluida`);
+    await page.locator(`[data-continuar="${segunda!.id}"]`).click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await page.waitForTimeout(400);
+    await shot(page, `${slug}-12-fase-2-cena`);
+  });
+
+  test(`${slug}: os cenários das fases da trajetória`, async ({ page }) => {
+    await page.setViewportSize(COMPUTADOR);
+    for (const fase of fasesDe(slug).slice(2)) {
+      await abrir(page, slug, fase.numero);
+      await shot(page, `${slug}-13-cena-da-fase-${fase.numero}`);
+    }
+  });
+
+  test(`${slug}: ordenação, fontes da fase, termos, registros e fase de processos`, async ({ page }) => {
+    await page.setViewportSize(COMPUTADOR);
+    const content = conteudoDe(slug);
+    const processos = content.fases.find((item) => item.id === `${slug}-processos`)!;
+    await abrir(page, slug, processos.numero);
+    const fase = await abrirMarco(page);
+    await shot(page, `${slug}-14-fase-de-processos-explicacao`);
+    await mostrar(fase, "[data-ficha-judicial], [data-conceito]");
+    await shot(page, `${slug}-15-fase-de-processos-ficha-e-termos`);
+    // Um termo aberto, com a definição, o que ela simplifica e o texto oficial.
+    await fase.locator("[data-conceito] summary").first().click();
+    await mostrar(fase, "[data-conceito]");
+    await shot(page, `${slug}-16-termo-explicado`);
+    // As fontes de cada bloco.
+    await fase.locator("[data-fontes-da-fase] summary").click();
+    await mostrar(fase, "[data-fontes-da-fase]");
+    await shot(page, `${slug}-17-fontes-da-fase`);
+    // A ordenação: a pergunta, a ordem errada com a explicação e a ordem certa com as datas.
+    const ordem = ordemDe(processos, content);
+    await mostrar(fase, "[data-atividade]");
+    await shot(page, `${slug}-18-ordenacao`);
+    for (const chave of [...ordem].reverse()) await fase.locator(`[data-ordem-item="${chave}"]`).click();
+    await fase.locator("[data-responder]").click();
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+    await mostrar(fase, "[data-atividade]");
+    await shot(page, `${slug}-19-ordenacao-errada`);
+    await fase.locator("[data-tentar-de-novo]").click();
+    for (const chave of ordem) await fase.locator(`[data-ordem-item="${chave}"]`).click();
+    await fase.locator("[data-responder]").click();
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+    await mostrar(fase, "[data-atividade]");
+    await shot(page, `${slug}-20-ordenacao-certa`);
+    // O registro do marco: um episódio de processo, com a natureza, os relacionados e o aviso.
+    await fase.locator(`[data-apoio="${refKey(processos.marco)}"] [data-abrir-registro]`).click();
+    const registro = await janela(page, "registro");
+    await shot(page, `${slug}-21-registro-de-processo`);
+    await mostrar(registro, "[data-relacionado], [data-aviso-judicial]");
+    await shot(page, `${slug}-22-registro-de-processo-relacionados`);
+  });
+
+  test(`${slug}: a eleição de 2026, as propostas e o resumo`, async ({ page }) => {
+    await page.setViewportSize(COMPUTADOR);
+    const fases = fasesDe(slug);
+    const ultima = fases.at(-1)!;
+    await abrir(page, slug, ultima.numero);
+    const fase = await abrirMarco(page);
+    await shot(page, `${slug}-23-fase-de-2026-explicacao`);
+    await mostrar(fase, "[data-explorar]");
+    await shot(page, `${slug}-24-fase-de-2026-propostas`);
+    await fase.locator('[data-explorar] [data-abrir-registro^="proposta:"]').first().click();
+    await janela(page, "registro");
+    await shot(page, `${slug}-25-proposta-registrada`);
+    await page.keyboard.press("Escape");
+    await expect(page.locator('[data-dialogo="registro"]')).toHaveCount(0);
+    await fase.locator("[data-ver-explicacao]").click();
+    await fase.locator('[data-continuar="resumo"]').click();
+    const resumo = await janela(page, "resumo");
+    await shot(page, `${slug}-26-resumo-da-trajetoria`);
+    await mostrar(resumo, "[data-resumo-lacunas]");
+    await shot(page, `${slug}-27-resumo-lacunas-e-caminhos`);
+  });
+
+  test(`${slug}: os aprofundamentos`, async ({ page }) => {
+    await page.setViewportSize(COMPUTADOR);
+    for (const sala of ["economia", "seguranca-publica"] as const) {
+      const [fase] = fasesDe(slug, sala);
+      await page.goto(rota(slug, sala));
+      await pronto(page);
+      await shot(page, `${slug}-28-aprofundamento-${sala}-cena`);
+      const aberta = await abrirMarco(page);
+      await shot(page, `${slug}-29-aprofundamento-${sala}-explicacao`);
+      // O registro de decisão do marco, com o cartão do atlas.
+      await aberta.locator("[data-fontes-da-fase] summary").click();
+      await aberta.locator(`[data-apoio="${refKey(fase!.marco)}"] [data-abrir-registro]`).click();
+      await janela(page, "registro");
+      await shot(page, `${slug}-30-aprofundamento-${sala}-decisao`);
+    }
+  });
+}
+
+test("a atuação legislativa, o fato biográfico, a lista de fases, o guia e a volta da ficha", async ({ page }) => {
+  await page.setViewportSize(COMPUTADOR);
+  // A atuação legislativa: o marco da terceira fase de Flávio Bolsonaro.
+  const flavio = conteudoDe("flavio-bolsonaro");
+  const terceira = flavio.fases[2]!;
+  await abrir(page, "flavio-bolsonaro", 3);
+  let fase = await abrirMarco(page);
+  await fase.locator("[data-fontes-da-fase] summary").click();
+  await fase.locator(`[data-apoio="${refKey(terceira.marco)}"] [data-abrir-registro]`).click();
+  let registro = await janela(page, "registro");
+  await shot(page, "31-atuacao-legislativa-cartao");
+  await mostrar(registro, "[data-atuacao]");
+  await shot(page, "32-atuacao-legislativa-materia-e-destino");
+
+  // O fato biográfico: um registro opcional da primeira fase de Lula, aberto pela pasta do cenário.
+  const lula = conteudoDe("lula");
+  const opcional = lula.fases[0]!.explorar[0]!;
+  await abrir(page, "lula", 1);
+  await page.locator(`[data-marcador="${refKey(opcional)}"]`).click();
+  await janela(page, "registro");
+  await shot(page, "33-fato-biografico-aberto-pelo-cenario");
   await page.keyboard.press("Escape");
 
-  await abrirPainel(page);
-  await shot(page, "32-painel-com-o-aviso-de-ordem");
-  await clicar(page, page.locator("[data-registro]:has([data-ordem-em-aberto]) [data-recolher]").first());
-  await expect(page.locator('[data-dialogo="registro"] [data-ordem-em-aberto]')).toBeVisible();
-  await shot(page, "33-registro-com-a-ordem-nao-documentada");
-  await clicar(page, guardar(page));
+  // A lista de fases, com o que já foi feito, e o guia.
+  await lerESeguir(page);
+  await page.locator("[data-abrir-fases]").click();
+  await janela(page, "fases");
+  await shot(page, "34-lista-de-fases");
+  await page.keyboard.press("Escape");
+  await page.locator("[data-abrir-ajuda]").click();
+  await janela(page, "ajuda");
+  await shot(page, "35-como-funciona");
+  await page.keyboard.press("Escape");
 
-  // A tarefa cumprida não abre a porta: faltam registros. O personagem diante da saída fechada.
-  await collectByPanel(page, primeiro, exigidos(primeiro)[0]!);
-  await expect(jogo(page)).toHaveAttribute("data-tarefa", "concluida");
-  await expect(jogo(page)).toHaveAttribute("data-saida", "fechada");
-  await walkTo(page, cena, { x: cena.saida.x - 1, y: cena.saida.y });
-  await page.waitForTimeout(400);
-  await shot(page, "34-tarefa-cumprida-e-saida-fechada");
-  await page.keyboard.press("e");
-  await expect(dialogo(page, "saida-fechada")).toBeVisible();
-  await shot(page, "35-saida-fechada-o-que-falta");
-  await clicar(page, page.getByRole("button", { name: "Entendi" }));
-
-  // Os registros que faltavam, pelo painel, e o personagem diante da porta aberta.
-  await openExitByPanel(page, primeiro);
-  await walkTo(page, cena, { x: cena.saida.x - 1, y: cena.saida.y }, true);
-  await page.waitForTimeout(900);
-  await shot(page, "36-diante-da-porta-aberta");
-
-  // O que fica abaixo do palco: a página rolada até o fim, de propósito.
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await shot(page, "37-rodape-da-pagina-do-jogo", true);
-});
-
-test("da ficha do registro à página do acontecimento, com a volta ao jogo", async ({ page }) => {
-  await page.setViewportSize(COMPUTADOR);
-  const [primeiro] = trajetoriaDe("lula") as [ChapterSpec];
-  await openFresh(page, "/jogo/lula/");
-  await abrirPainel(page);
-  await clicar(page, page.locator(`[data-recolher="${exigidos(primeiro)[0]}"]`));
-  await clicar(page, page.locator("[data-ficha]"));
+  // A ficha completa no atlas, aberta pelo jogo, com a volta.
+  const evento = "lula-1975-eleito-presidente-do-sindicato";
+  fase = await abrirMarco(page);
+  await fase.locator("[data-fontes-da-fase] summary").click();
+  await fase.locator(`[data-apoio="acontecimento:${evento}"] [data-abrir-registro]`).click();
+  registro = await janela(page, "registro");
+  await shot(page, "36-registro-de-acontecimento");
+  await registro.locator(`[data-ficha="${lula.registros[evento]!.slug}"]`).click();
   await expect(page.locator('[data-retorno="jogo"]')).toBeVisible();
-  await shot(page, "38-pagina-do-acontecimento-com-volta-ao-jogo");
+  await shot(page, "37-pagina-do-acontecimento-com-volta-ao-jogo");
+});
+
+test("retomada, leitura sem o cenário, cena indisponível e rodapé", async ({ page }) => {
+  await page.setViewportSize(COMPUTADOR);
+  const slug: Slug = "flavio-bolsonaro";
+  await abrir(page, slug, 1);
+  await lerESeguir(page);
+  await lerESeguir(page);
+  // Quem chega sem pedir fase cai onde parou, e a tela diz isso.
+  await page.goto(rota(slug));
+  await pronto(page);
+  await shot(page, "38-retomada-com-o-aviso");
+  // O rodapé da página do jogo, rolada de propósito.
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await shot(page, "39-rodape-da-pagina-do-jogo", { rolada: true });
+  await page.evaluate(() => window.scrollTo(0, 0));
+
+  // Ler sem o cenário: a fase na página, a atividade e a navegação entre fases.
+  await page.locator("[data-ler-sem-cenario]").click();
+  await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await shot(page, "40-leitura-sem-o-cenario", { rolada: true });
+  await shot(page, "41-leitura-sem-o-cenario-pagina-inteira", { inteira: true });
+  await page.locator("[data-voltar-ao-cenario]").click();
+  await pronto(page);
+});
+
+test("cena indisponível: sem o canvas e sem o pacote do palco", async ({ browser }) => {
+  // O navegador não dá o canvas.
+  const semCanvas = await browser.newContext({ baseURL: ORIGEM, viewport: COMPUTADOR, reducedMotion: "reduce" });
+  const pagina = await semCanvas.newPage();
+  await pagina.addInitScript(() => {
+    HTMLCanvasElement.prototype.getContext = (() => null) as typeof HTMLCanvasElement.prototype.getContext;
+  });
+  await pagina.goto(`${rota("lula")}?fase=1`);
+  await pronto(pagina, false);
+  await expect(pagina.locator('[data-palco="sem-canvas"]')).toBeVisible();
+  await shot(pagina, "42-cena-indisponivel-sem-canvas");
+  await semCanvas.close();
+
+  // O pacote do palco não chega.
+  const chunks = path.join(path.resolve(process.env.OUT_DIR ?? "out"), "_next", "static", "chunks");
+  const doPalco = readdirSync(chunks)
+    .filter((nome) => nome.endsWith(".js") && readFileSync(path.join(chunks, nome), "utf8").includes("atlas-jogo-palco"))
+    .map((nome) => `/_next/static/chunks/${nome}`);
+  const semPacote = await browser.newContext({ baseURL: ORIGEM, viewport: COMPUTADOR, reducedMotion: "reduce" });
+  const outra = await semPacote.newPage();
+  await outra.route("**/_next/static/chunks/*.js", (pedido) => (doPalco.includes(new URL(pedido.request().url()).pathname) ? pedido.abort() : pedido.continue()));
+  await outra.goto(`${rota("lula")}?fase=1`);
+  await expect(outra.locator('[data-palco="falhou"]')).toBeVisible({ timeout: 30_000 });
+  await shot(outra, "43-cena-nao-carregou");
+  await semPacote.close();
+
+  // Sem JavaScript: a casca sai, e a página começa pelo texto das fases.
+  for (const [nome, viewport] of [
+    ["computador", COMPUTADOR],
+    ["celular", CELULAR],
+  ] as const) {
+    const semScript = await browser.newContext({ baseURL: ORIGEM, viewport, javaScriptEnabled: false });
+    const texto = await semScript.newPage();
+    await texto.goto(rota("lula"));
+    await texto.waitForTimeout(350);
+    await texto.screenshot({ path: `${OUT}/44-sem-javascript--${nome}.png` });
+    await semScript.close();
+  }
+});
+
+test("celular: em pé, estreito e deitado", async ({ browser }) => {
+  const slug: Slug = "lula";
+  const emPe = await celular(browser, CELULAR);
+  let page = emPe.page;
+  await page.goto(`${rota(slug)}?fase=1`);
+  await pronto(page);
+  await shot(page, "45-celular-fase-1-cena");
+  await page.locator("[data-abrir-marco]").tap();
+  let fase = await janela(page, "fase");
+  await shot(page, "46-celular-fase-1-explicacao");
+  await mostrar(fase, "[data-atividade]");
+  await shot(page, "47-celular-fase-1-atividade");
+  await fase.locator(`[data-opcao="${opcoesDe(fasesDe(slug)[0]!).certa}"]`).tap();
+  await fase.locator("[data-responder]").tap();
+  await mostrar(fase, "[data-atividade]");
+  await shot(page, "48-celular-fase-1-resposta-certa");
+  await fase.locator("[data-continuar]").tap();
+  await page.waitForTimeout(400);
+  await shot(page, "49-celular-fase-2-cena");
+  await page.locator("[data-abrir-fases]").tap();
+  await janela(page, "fases");
+  await shot(page, "50-celular-lista-de-fases");
+  await page.keyboard.press("Escape");
+  // As fases de processos e de 2026, em celular.
+  const processos = fasesDe(slug).find((item) => item.id === `${slug}-processos`)!;
+  await page.goto(`${rota(slug)}?fase=${processos.numero}`);
+  await pronto(page);
+  await shot(page, "51-celular-fase-de-processos-cena");
+  await page.locator("[data-abrir-marco]").tap();
+  await janela(page, "fase");
+  await shot(page, "52-celular-fase-de-processos-explicacao");
+  // A leitura sem o cenário, em celular.
+  await page.goto(`${rota(slug)}?fase=2&leitura=1`);
+  await pronto(page, false);
+  await shot(page, "53-celular-leitura-sem-o-cenario");
+  await emPe.context.close();
+
+  // A tela mais estreita e baixa: a cena, o aviso de retomada e a janela.
+  const estreito = await celular(browser, CELULAR_ESTREITO);
+  page = estreito.page;
+  await page.goto(`${rota("flavio-bolsonaro")}?fase=1`);
+  await pronto(page);
+  await shot(page, "54-celular-estreito-fase-1-cena");
+  for (let vez = 0; vez < 2; vez += 1) {
+    await page.locator("[data-abrir-marco]").tap();
+    fase = await janela(page, "fase");
+    if (vez === 0) await shot(page, "55-celular-estreito-explicacao");
+    await fase.locator("[data-ver-explicacao]").tap();
+    await fase.locator("[data-continuar]").tap();
+  }
+  await page.goto(rota("flavio-bolsonaro"));
+  await pronto(page);
+  await shot(page, "56-celular-estreito-retomada");
+  await page.goto(rota("flavio-bolsonaro", "seguranca-publica"));
+  await pronto(page);
+  await shot(page, "57-celular-estreito-aprofundamento");
+  await estreito.context.close();
+
+  const deitado = await celular(browser, CELULAR_DEITADO);
+  page = deitado.page;
+  await page.goto(`${rota(slug)}?fase=5`);
+  await pronto(page);
+  await shot(page, "58-celular-deitado-cena");
+  await page.locator("[data-abrir-marco]").tap();
+  await janela(page, "fase");
+  await shot(page, "59-celular-deitado-explicacao");
+  await deitado.context.close();
+});
+
+test("a comparação curta e as propostas por área", async ({ page, browser }) => {
+  await page.setViewportSize(COMPUTADOR);
+  await page.goto("/comparar/");
+  await page.waitForLoadState("networkidle");
+  await shot(page, "60-comparacao-primeira-tela--computador");
+  await page.locator("#resumo").screenshot({ path: `${OUT}/61-comparacao-resumo--computador.png` });
+  await page.locator("#propostas").screenshot({ path: `${OUT}/62-comparacao-propostas--computador.png` });
+  await page.locator('#decisoes [data-tema="outros-assuntos"]').screenshot({ path: `${OUT}/63-comparacao-outros-assuntos--computador.png` });
+  const movel = await celular(browser, CELULAR);
+  await movel.page.goto("/comparar/");
+  await movel.page.waitForLoadState("networkidle");
+  await shot(movel.page, "60-comparacao-primeira-tela--celular");
+  await movel.page.locator("#resumo").screenshot({ path: `${OUT}/61-comparacao-resumo--celular.png` });
+  await movel.context.close();
 });

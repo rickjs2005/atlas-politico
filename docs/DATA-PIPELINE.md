@@ -7,7 +7,7 @@ O pipeline roda só na máquina de quem edita e no build. Não há servidor, ban
 ## Visão geral
 
 ```
-content/published/   a edição: edicao.json e sete coleções      (editado à mão)
+content/published/   a edição: edicao.json e uma lista por coleção (editado à mão)
 content/drafts/      pesquisa em andamento e importações        (editado à mão, por data:import e por importar:decisoes)
 research/            capturas brutas dos acervos e pacotes      (escrito por importar:decisoes; nunca lido pelo pipeline)
 public/media/        arquivos das imagens cadastradas
@@ -35,7 +35,7 @@ Três regras sustentam o resto:
 
 | Pasta | Conteúdo | Quem escreve |
 | --- | --- | --- |
-| `content/published/` | `edicao.json` e uma lista por coleção: `pessoas`, `mandatos`, `filiacoes`, `acontecimentos`, `proposicoes`, `votacoes`, `votos`, `atosExecutivos`, `coberturaPolitica`, `identidadesInstitucionais`, `lugares`, `fontes`, `imagens` | Edição manual |
+| `content/published/` | `edicao.json` e uma lista por coleção, dezoito ao todo: `pessoas`, `mandatos`, `filiacoes`, `acontecimentos`, `proposicoes`, `votacoes`, `votos`, `atosExecutivos`, `atuacoesLegislativas`, `coberturaPolitica`, `identidadesInstitucionais`, `propostasEleitorais`, `fatosBiograficos`, `conceitos`, `fasesDoJogo`, `lugares`, `fontes`, `imagens` | Edição manual |
 | `content/drafts/` | As mesmas listas, parciais, e `importacoes.json` (registro das importações) | Edição manual, `data:import` e `importar:decisoes` |
 | `research/` | Capturas brutas dos acervos oficiais e os pacotes normalizados de cada importação de decisões. Nunca lida pelo pipeline | `importar:decisoes` |
 | `public/media/` | Arquivo de cada imagem cadastrada em `imagens.json` | Edição manual |
@@ -82,9 +82,11 @@ generated/
 
 ## Estados editoriais e elegibilidade
 
-Os estados são os de [EDITORIAL.md](EDITORIAL.md): `rascunho`, `em-revisao` e `revisado`. Valem para as dez coleções factuais: pessoa, mandato, filiação, acontecimento, proposição, votação, voto, ato do Executivo, cobertura da pesquisa e identidade institucional (`COLECOES_FACTUAIS`, em `src/lib/publication/sources.ts`). Lugar, fonte e imagem não têm estado: são cadastros de referência. A cobertura da pesquisa é a única factual que não exige citação ao ser revisada: a evidência dela são os acervos que ela descreve.
+Os estados são os de [EDITORIAL.md](EDITORIAL.md): `rascunho`, `em-revisao` e `revisado`. Valem para as quinze coleções factuais: pessoa, mandato, filiação, acontecimento, proposição, votação, voto, ato do Executivo, atuação legislativa, cobertura da pesquisa, identidade institucional, proposta eleitoral, fato biográfico, conceito e fase do jogo (`COLECOES_FACTUAIS`, em `src/lib/publication/sources.ts`). Lugar, fonte e imagem não têm estado: são cadastros de referência. Duas factuais não exigem citação ao ser revisadas (`COLECOES_SEM_CITACAO`): a cobertura da pesquisa, cuja evidência são os acervos que ela descreve, e a fase do jogo, que não cita documento por conta própria, porque cada bloco aponta os registros que o sustentam.
 
-Entre as decisões políticas valem mais quatro regras (docs/DATA_MODEL.md, seção Decisões políticas): o voto e o ato só entram com a pessoa, o mandato, a votação e a proposição que citam também elegíveis; voto ou ato fora do período documentado do mandato, ou de mandato de outra pessoa ou de outra casa, é erro; dois votos vigentes da mesma pessoa na mesma votação são erro (a retificação aponta o que vale); e a fonte do ato oficial e a do texto votado entram pelo uso, como qualquer citação.
+Entre as decisões políticas valem mais quatro regras (docs/DATA_MODEL.md, seção Decisões políticas): o voto e o ato só entram com a pessoa, o mandato, a votação e a proposição que citam também elegíveis; voto ou ato fora do período documentado do mandato, ou de mandato de outra pessoa ou de outra casa, é erro; dois votos vigentes da mesma pessoa na mesma votação são erro (a retificação aponta o que vale); e a fonte do ato oficial e a do texto votado entram pelo uso, como qualquer citação. A atuação legislativa segue as regras do mandato, com uma diferença: em uma comissão mista do Congresso Nacional a pessoa atua pelo mandato da casa dela, e a casa não é conferida.
+
+O conteúdo educativo do jogo (docs/DATA_MODEL.md, seção Conteúdo educativo) tem as próprias: uma fase revisada só aponta registros elegíveis e da mesma pessoa, com o marco dentro do período dela; uma ordenação só vale quando as datas dos registros decidem a ordem; em cada sala de cada pessoa há uma fase por posição, de 1 em sequência; e as fontes de um fato biográfico, de um conceito e de uma proposta entram na publicação pelo uso. Fase revisada que aponta um registro em rascunho é erro, e não some em silêncio. A fase em rascunho fica fora, com pendência, e o resto entra.
 
 ### Regra de elegibilidade
 
@@ -188,7 +190,7 @@ Detalhes que evitam ruído:
 
 ### `dados/conjunto.json`
 
-O mesmo formato do conteúdo ([DATA_MODEL.md](DATA_MODEL.md)): `edicao` e as sete coleções, só com o que é elegível. Sem edição publicada, `edicao` é `null` e as listas ficam vazias.
+O mesmo formato do conteúdo ([DATA_MODEL.md](DATA_MODEL.md)): `edicao` e as dezoito coleções, só com o que é elegível. Sem edição publicada, `edicao` é `null` e as listas ficam vazias.
 
 Ordem de cada lista:
 
@@ -205,7 +207,7 @@ A ordem de `pessoas` é técnica. A ordem em que os perfis aparecem na interface
 
 ### `dados/indices.json`
 
-Desde o formato 2, os índices também cobrem as decisões políticas: `proposicoes` (por id, por tema, por instituição), `votacoes` (por id, por proposição, por instituição, por ano e por tema da proposição votada, em ordem cronológica), `votos` (por id, por votação, por pessoa, e `vigentePorVotacaoEPessoa`, que diz qual voto vale para cada par), `atosExecutivos` (por id, por pessoa, por tema, por ano, por proposição), `coberturaPolitica` e `identidadesInstitucionais` (por id e por pessoa). Todos os temas aparecem, mesmo vazios. O formato 3 acrescenta ao objeto votado de uma votação o campo `divergenciaDocumentada`; os índices não mudaram.
+Desde o formato 2, os índices também cobrem as decisões políticas: `proposicoes` (por id, por tema, por instituição), `votacoes` (por id, por proposição, por instituição, por ano e por tema da proposição votada, em ordem cronológica), `votos` (por id, por votação, por pessoa, e `vigentePorVotacaoEPessoa`, que diz qual voto vale para cada par), `atosExecutivos` (por id, por pessoa, por tema, por ano, por proposição), `coberturaPolitica` e `identidadesInstitucionais` (por id e por pessoa). Todos os temas aparecem, mesmo vazios. O formato 3 acrescenta ao objeto votado de uma votação o campo `divergenciaDocumentada`; os índices não mudaram. O formato 4, da edição 0.3.0, acrescenta cinco coleções e os índices delas: `atuacoesLegislativas` (por id, por pessoa, por tema e por ano, em ordem cronológica), `propostasEleitorais` (por id e por pessoa, na ordem dos temas), `fatosBiograficos` (por id e por pessoa), `conceitos` (por id) e `fasesDoJogo` (por id e `porPessoaESala`, com a chave `pessoaId:sala` e as fases na ordem de percurso). A leitura recusa a saída de um formato anterior e manda rodar `npm run data:build`.
 
 Listas de `id`, nunca cópias de registros. Toda lista de acontecimentos está em ordem cronológica.
 
@@ -423,11 +425,11 @@ Os scripts rodam o TypeScript do projeto direto no Node, sem compilar. Exigem No
 }
 ```
 
-O campo `editorial` pode faltar. As coleções aceitas são as treze; `edicao` não é importável.
+O campo `editorial` pode faltar. As coleções aceitas são as dezoito; `edicao` não é importável.
 
 Regras:
 
-- **Tudo entra como rascunho.** Pessoas, mandatos, filiações e acontecimentos são gravados com estado `rascunho`, seja qual for o estado declarado no pacote. Uma revisão feita na origem não é aceita, e o registro sai com a pendência de refazê-la. Lugares, fontes e imagens, que não têm estado, entram em `content/drafts/` e por isso ficam fora da publicação.
+- **Tudo entra como rascunho.** Todo registro de coleção factual (pessoas, mandatos, filiações, acontecimentos, decisões, propostas, fatos biográficos, conceitos e fases) é gravado com estado `rascunho`, seja qual for o estado declarado no pacote. Uma revisão feita na origem não é aceita, e o registro sai com a pendência de refazê-la. Lugares, fontes e imagens, que não têm estado, entram em `content/drafts/` e por isso ficam fora da publicação.
 - **Nada existente é alterado.** A importação só acrescenta registros aos arquivos de `content/drafts/`. Nunca escreve em `content/published/` nem em `generated/`.
 - **Conflito é recusa.** `id` já usado na coleção, em qualquer das duas pastas, ou `slug` já usado: o registro importado é recusado e o existente fica como está. Para atualizar um rascunho, edite o arquivo.
 - **Cadastro repetido e igual não é conflito.** Um lugar, uma fonte ou uma imagem idêntico ao que já existe é listado como "já existente" e não é gravado de novo. Assim um pacote pode trazer junto as fontes que cita.
@@ -489,7 +491,7 @@ Fora do alcance dos adaptadores, pelo que a pesquisa dos acervos mostrou: a **Al
 - quantas citações de registros elegíveis têm trecho literal registrado em `docs/evidencias/`;
 - a lista de erros, pendências e avisos.
 
-O relatório não tem horário e é reproduzível. Uma cópia da edição 0.2.1 está em [DATA-REPORT.md](DATA-REPORT.md).
+O relatório não tem horário e é reproduzível. Uma cópia da edição 0.3.0 está em [DATA-REPORT.md](DATA-REPORT.md).
 
 ## Procedimento de atualização
 

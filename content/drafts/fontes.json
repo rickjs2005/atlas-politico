@@ -1,0 +1,14 @@
+[
+  {
+    "id": "tse-resultados-1982",
+    "titulo": "Repositório de dados eleitorais: votação nominal por unidade da federação em 1982 (votacao_candidato_uf_1982)",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_uf/votacao_candidato_uf_1982.zip",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2013-07-16",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  }
+]

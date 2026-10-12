@@ -8,9 +8,9 @@ import { describe, expect, it } from "vitest";
 import { ARTS } from "@/features/game/draw/arts";
 import { CHARACTERS, EPOCAS, GUIDE } from "@/features/game/draw/characters";
 import { DESENHOS, PROP_KINDS } from "@/features/game/draw/props";
-import { CHAPTERS } from "@/lib/game/chapters";
+import { PHASE_PRESENTATION } from "@/lib/game/presentation";
 import { SCENES } from "@/lib/game/scenes";
-import type { PropKind, SceneArtId } from "@/lib/game/types";
+import type { PropKind, SceneArtId, SceneId } from "@/lib/game/types";
 
 describe("artes dos ambientes", () => {
   const artesUsadas = new Set(Object.values(SCENES).map((scene) => scene.arte));
@@ -20,9 +20,7 @@ describe("artes dos ambientes", () => {
     expect([...artesUsadas].sort()).toEqual((Object.keys(ARTS) as SceneArtId[]).sort());
   });
 
-  it("os quatro ambientes da etapa 1 não são a aparência de todos os períodos novos: há cinco artes a mais, e cada uma tem nome", () => {
-    const novas = (Object.keys(ARTS) as SceneArtId[]).filter((id) => !["sindicato", "constituinte", "alerj", "senado"].includes(id));
-    expect(novas.sort()).toEqual(["comissao", "comite", "convencao", "gabinete", "tribunal"]);
+  it("cada arte tem nome, piso, parede e a receita das pastas", () => {
     for (const arte of Object.values(ARTS)) {
       expect(arte.id).toBeDefined();
       expect(arte.nome.length).toBeGreaterThan(0);
@@ -32,15 +30,24 @@ describe("artes dos ambientes", () => {
     }
   });
 
-  it("cada capítulo novo tem cenário próprio, e uma arte reaproveitada por duas cenas tem paletas diferentes", () => {
-    const porArte = new Map<SceneArtId, string[]>();
+  it("uma arte reaproveitada por duas cenas tem paletas diferentes, e as salas de arquivo de cada personagem não têm a mesma cor", () => {
+    const porArte = new Map<SceneArtId, SceneId[]>();
     for (const scene of Object.values(SCENES)) porArte.set(scene.arte, [...(porArte.get(scene.arte) ?? []), scene.id]);
     for (const [arte, cenas] of porArte) {
       if (cenas.length < 2) continue;
-      const paletas = cenas.map((id) => JSON.stringify(SCENES[id as keyof typeof SCENES].paleta));
+      const paletas = cenas.map((id) => JSON.stringify(SCENES[id].paleta));
       expect(new Set(paletas).size, `${arte}: ${cenas.join(", ")}`).toBe(cenas.length);
     }
-    expect(new Set(CHAPTERS.map((capitulo) => capitulo.cena)).size).toBe(CHAPTERS.length);
+    for (const base of ["arquivo-origem", "arquivo-economia", "arquivo-seguranca", "tribunal", "convencao"] as const) {
+      expect(SCENES[`${base}-a` as SceneId].paleta, base).not.toEqual(SCENES[`${base}-b` as SceneId].paleta);
+    }
+  });
+
+  it("cada personagem passa por cenários próprios e por cenários comuns: nenhum cenário identifica pessoa ou partido pelo nome", () => {
+    const cenasDe = (prefixo: string) => new Set(Object.entries(PHASE_PRESENTATION).filter(([id]) => id.startsWith(prefixo)).map(([, apresentacao]) => apresentacao.cena));
+    expect(cenasDe("lula-").size).toBeGreaterThanOrEqual(6);
+    expect(cenasDe("flavio-bolsonaro-").size).toBeGreaterThanOrEqual(6);
+    for (const scene of Object.values(SCENES)) expect(scene.nome, scene.id).not.toMatch(/\b(lula|bolsonaro|fl[aá]vio|PT|PL)\b/);
   });
 });
 
@@ -54,7 +61,7 @@ describe("elementos de cenário", () => {
   it("a lista da galeria é a dos desenhos, sem repetição", () => {
     expect(PROP_KINDS).toEqual(Object.keys(DESENHOS) as PropKind[]);
     expect(new Set(PROP_KINDS).size).toBe(PROP_KINDS.length);
-    for (const novo of ["tela", "balcao", "fileira", "sofa", "cartaz"] as PropKind[]) expect(PROP_KINDS).toContain(novo);
+    for (const tipo of ["tela", "balcao", "fileira", "sofa", "cartaz", "arquivo", "estante"] as PropKind[]) expect(PROP_KINDS).toContain(tipo);
   });
 });
 
@@ -67,15 +74,11 @@ describe("figuras dos personagens", () => {
       expect(new Set(figuras.map((figura) => figura.altura)).size, slug).toBe(1);
       for (const figura of figuras) expect(typeof figura.draw).toBe("function");
     }
-    // O guia fictício é o Escrivão (chamado Arquivista até a versão de lançamento; D-127).
+    // O guia fictício é o Escrivão (D-127).
     expect(GUIDE.nome).toBe("Escrivão");
   });
 
-  it("cada capítulo pede uma época que existe, e os dois personagens passam pelas três", () => {
-    for (const capitulo of CHAPTERS) expect(EPOCAS, capitulo.id).toContain(capitulo.epoca);
-    for (const slug of ["lula", "flavio-bolsonaro"] as const) {
-      const epocas = new Set(CHAPTERS.filter((capitulo) => capitulo.personagem === slug).map((capitulo) => capitulo.epoca));
-      expect([...epocas].sort(), slug).toEqual(["atual", "inicio", "meio"]);
-    }
+  it("toda fase pede uma época que existe", () => {
+    for (const [id, apresentacao] of Object.entries(PHASE_PRESENTATION)) expect(EPOCAS, id).toContain(apresentacao.epoca);
   });
 });

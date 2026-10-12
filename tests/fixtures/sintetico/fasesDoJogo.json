@@ -1,0 +1,119 @@
+[
+  {
+    "id": "sintetico-fase-a1",
+    "pessoaId": "sintetico-pessoa-a",
+    "sala": "historico",
+    "ordem": 1,
+    "titulo": "[SINTÉTICO] Fase de origem",
+    "objetivo": "[SINTÉTICO] Saber de onde a pessoa de teste veio.",
+    "periodo": { "de": 1960, "ate": 2011 },
+    "marco": { "tipo": "fato", "id": "sintetico-fato-a1" },
+    "explicacao": [
+      {
+        "texto": "[SINTÉTICO] Primeiro bloco fictício, sobre o fato de 1960.",
+        "referencias": [{ "tipo": "fato", "id": "sintetico-fato-a1" }]
+      },
+      {
+        "texto": "[SINTÉTICO] Segundo bloco fictício, sobre o acontecimento de 2011 e o termo de teste.",
+        "referencias": [
+          { "tipo": "acontecimento", "id": "sintetico-evento-03" },
+          { "tipo": "conceito", "id": "sintetico-conceito-01" }
+        ]
+      }
+    ],
+    "conceitos": ["sintetico-conceito-01"],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "[SINTÉTICO] Qual das opções fictícias é a certa?",
+      "opcoes": [
+        { "id": "a", "texto": "[SINTÉTICO] Opção fictícia errada." },
+        { "id": "b", "texto": "[SINTÉTICO] Opção fictícia certa." },
+        { "id": "c", "texto": "[SINTÉTICO] Outra opção fictícia errada." }
+      ],
+      "correta": "b",
+      "explicacao": "[SINTÉTICO] A opção certa é a segunda, como o primeiro bloco disse.",
+      "referencias": [{ "tipo": "fato", "id": "sintetico-fato-a1" }]
+    },
+    "explorar": [{ "tipo": "acontecimento", "id": "sintetico-evento-03" }],
+    "lacunas": ["[SINTÉTICO] O conjunto de teste não pesquisou o período entre 1961 e 2010."],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-fase-a2",
+    "pessoaId": "sintetico-pessoa-a",
+    "sala": "historico",
+    "ordem": 2,
+    "titulo": "[SINTÉTICO] Fase com ordenação",
+    "objetivo": "[SINTÉTICO] Pôr dois registros de teste em ordem.",
+    "periodo": { "de": 2011, "ate": 2026 },
+    "marco": { "tipo": "acontecimento", "id": "sintetico-evento-07" },
+    "explicacao": [
+      {
+        "texto": "[SINTÉTICO] Bloco fictício sobre os acontecimentos de 2011 e de 2024.",
+        "referencias": [
+          { "tipo": "acontecimento", "id": "sintetico-evento-03" },
+          { "tipo": "acontecimento", "id": "sintetico-evento-07" }
+        ]
+      }
+    ],
+    "conceitos": [],
+    "atividade": {
+      "tipo": "ordem",
+      "enunciado": "[SINTÉTICO] Qual destes registros de teste veio primeiro?",
+      "itens": [
+        { "tipo": "acontecimento", "id": "sintetico-evento-07" },
+        { "tipo": "acontecimento", "id": "sintetico-evento-03" }
+      ],
+      "explicacao": "[SINTÉTICO] O registro de 2011 vem antes do de 2024."
+    },
+    "explorar": [{ "tipo": "decisao", "id": "sintetico-voto-01" }],
+    "lacunas": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-fase-b1",
+    "pessoaId": "sintetico-pessoa-b",
+    "sala": "historico",
+    "ordem": 1,
+    "titulo": "[SINTÉTICO] Fase da outra pessoa",
+    "objetivo": "[SINTÉTICO] Conferir que cada pessoa de teste tem a própria trilha.",
+    "periodo": { "de": 2012, "ate": 2021 },
+    "marco": { "tipo": "acontecimento", "id": "sintetico-evento-04" },
+    "explicacao": [
+      {
+        "texto": "[SINTÉTICO] Bloco fictício sobre o acontecimento de 2012 e a formação sem data.",
+        "referencias": [
+          { "tipo": "acontecimento", "id": "sintetico-evento-04" },
+          { "tipo": "fato", "id": "sintetico-fato-b1" }
+        ]
+      }
+    ],
+    "conceitos": [],
+    "atividade": {
+      "tipo": "pergunta",
+      "enunciado": "[SINTÉTICO] Qual das duas opções fictícias é a certa?",
+      "opcoes": [
+        { "id": "sim", "texto": "[SINTÉTICO] Opção fictícia certa." },
+        { "id": "nao", "texto": "[SINTÉTICO] Opção fictícia errada." }
+      ],
+      "correta": "sim",
+      "explicacao": "[SINTÉTICO] A opção certa é a primeira.",
+      "referencias": [{ "tipo": "acontecimento", "id": "sintetico-evento-04" }]
+    },
+    "explorar": [
+      { "tipo": "acontecimento", "id": "sintetico-evento-05" },
+      { "tipo": "acontecimento", "id": "sintetico-evento-06" }
+    ],
+    "lacunas": [],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

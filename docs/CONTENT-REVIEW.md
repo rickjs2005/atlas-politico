@@ -2,6 +2,8 @@
 
 Situação do conteúdo na edição 0.1.1, com data de corte em 8 de outubro de 2026. A revisão editorial de 9 de outubro de 2026, com o que foi conferido, corrigido e deixado pendente, está em [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md).
 
+> **Este documento para na edição 0.1.1.** Os 39 acontecimentos e as filiações que ele descreve não mudaram desde então; os mandatos ganharam a casa declarada, na edição 0.2.0, e um deles, a data de início, na 0.3.0. O que as edições seguintes acrescentaram está registrado em outro lugar: a amostra de decisões da edição 0.2.0, em [../research/selecao-decisoes-2026-10.md](../research/selecao-decisoes-2026-10.md); os fatos biográficos, os atos de 2003 a 2010, as leis estaduais, as propostas eleitorais, os termos explicados e as fases do jogo da edição 0.3.0, em [../research/trilha-2026-10.md](../research/trilha-2026-10.md). A contagem atual de cada coleção está em [DATA-REPORT.md](DATA-REPORT.md), e a lista do que espera revisão humana, em [HUMAN-REVIEW.md](HUMAN-REVIEW.md). Os rascunhos de acontecimento são seis hoje: entrou o da candidatura de Lula à Presidência em 1998, e o da candidatura de 1982 foi refeito.
+
 ## Situação
 
 - **39 acontecimentos conferidos**, em `content/published/`: 20 de Lula e 20 de Flávio Bolsonaro, sendo um deles compartilhado (o primeiro turno de 2026).

@@ -18,8 +18,16 @@ export function sliceForPerson(data: AtlasData, pessoaId: string): AtlasData {
   // que eles citam, a cobertura da pesquisa e as identidades institucionais.
   const votos = conjunto.votos.filter((item) => item.pessoaId === pessoaId);
   const atosExecutivos = conjunto.atosExecutivos.filter((item) => item.atribuicao.pessoaId === pessoaId);
+  const atuacoesLegislativas = conjunto.atuacoesLegislativas.filter((item) => item.pessoaId === pessoaId);
   const coberturaPolitica = conjunto.coberturaPolitica.filter((item) => item.pessoaId === pessoaId);
   const identidadesInstitucionais = conjunto.identidadesInstitucionais.filter((item) => item.pessoaId === pessoaId);
+  // As propostas do documento que a candidatura dela registrou.
+  const propostasEleitorais = conjunto.propostasEleitorais.filter((item) => item.pessoaId === pessoaId);
+  // O conteúdo educativo da pessoa: os fatos biográficos e as fases dela, com os conceitos que as fases definem.
+  const fatosBiograficos = conjunto.fatosBiograficos.filter((item) => item.pessoaId === pessoaId);
+  const fasesDoJogo = conjunto.fasesDoJogo.filter((item) => item.pessoaId === pessoaId);
+  const conceitoIds = new Set(fasesDoJogo.flatMap((fase) => [...fase.conceitos, ...fase.explicacao.flatMap((bloco) => bloco.referencias.filter((ref) => ref.tipo === "conceito").map((ref) => ref.id))]));
+  const conceitos = conjunto.conceitos.filter((item) => conceitoIds.has(item.id));
   const votacaoIds = new Set(votos.map((item) => item.votacaoId));
   const votacoes = conjunto.votacoes.filter((item) => votacaoIds.has(item.id));
   const proposicaoIds = new Set([...votacoes.map((item) => item.proposicaoId), ...atosExecutivos.flatMap((item) => item.proposicaoIds)]);
@@ -32,7 +40,7 @@ export function sliceForPerson(data: AtlasData, pessoaId: string): AtlasData {
   const principal = pessoas.filter((pessoa) => pessoa.id === pessoaId);
 
   const fonteIds = new Set([
-    ...[...principal, ...mandatos, ...filiacoes, ...acontecimentos, ...proposicoes, ...votacoes, ...votos, ...atosExecutivos, ...coberturaPolitica, ...identidadesInstitucionais].flatMap(
+    ...[...principal, ...mandatos, ...filiacoes, ...acontecimentos, ...proposicoes, ...votacoes, ...votos, ...atosExecutivos, ...atuacoesLegislativas, ...coberturaPolitica, ...identidadesInstitucionais, ...propostasEleitorais, ...fatosBiograficos, ...conceitos].flatMap(
       (registro) => registro.fontes.map((citacao) => citacao.fonteId),
     ),
     ...votacoes.flatMap((item) => (item.objeto.textoReferencia === null ? [] : [item.objeto.textoReferencia.fonteId])),
@@ -65,8 +73,13 @@ export function sliceForPerson(data: AtlasData, pessoaId: string): AtlasData {
     votacoes,
     votos,
     atosExecutivos,
+    atuacoesLegislativas,
     coberturaPolitica,
     identidadesInstitucionais,
+    propostasEleitorais,
+    fatosBiograficos,
+    conceitos,
+    fasesDoJogo,
     lugares: conjunto.lugares.filter((lugar) => lugarIds.has(lugar.id)),
     fontes: conjunto.fontes.filter((fonte) => fonteIds.has(fonte.id)),
     imagens: conjunto.imagens.filter((imagem) => imagemIds.has(imagem.id)),

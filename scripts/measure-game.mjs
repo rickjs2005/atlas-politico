@@ -1,11 +1,15 @@
 // Medições de laboratório das páginas do jogo, sobre a saída estática
 // (docs/PERFORMANCE.md e docs/GAMEPLAY.md, seção Verificação).
 //
-// Sobe o servidor de pré-visualização, abre a entrada do jogo e a página de
-// cada personagem em um Chromium sem interface, com o cache vazio, e registra:
-// carregamento (TTFB, primeira pintura, LCP, load), quando o palco fica
-// pronto, o que a rede transferiu e a cadência de quadros da cena, parada e
-// andando, em quadros por segundo e quadros longos.
+// Sobe o servidor de pré-visualização, abre a entrada do jogo, a primeira fase
+// de cada personagem, uma fase pedida pelo endereço, um aprofundamento de cada
+// um e a leitura sem o cenário,
+// em um Chromium sem interface, com o cache vazio, e registra: carregamento
+// (TTFB, primeira pintura, LCP, load), quando o palco fica pronto, o que a rede
+// transferiu e a cadência de quadros da cena, em quadros por segundo e quadros
+// longos: parada, durante a caminhada do boneco até a pasta do marco (ninguém
+// o dirige: a caminhada começa no toque na pasta) e com a janela da fase
+// aberta, quando o laço da cena para.
 //
 // Uso:
 //   npm run build
@@ -62,14 +66,18 @@ const PROFILES = {
     cpu: 4,
   },
 };
-// A entrada, a trajetória dos dois personagens e uma sala temática de cada um
-// (as cenas das salas são outras artes, com as decisões como registros).
+// A entrada, a primeira fase da trajetória dos dois personagens, um
+// aprofundamento de cada um (as cenas deles são outras artes) e a leitura sem
+// o cenário, que não baixa o palco.
 const ROUTES = [
   { id: "entrada-do-jogo", path: "/jogo/", cena: false },
-  { id: "jogo-lula", path: "/jogo/lula/", cena: true },
-  { id: "jogo-flavio-bolsonaro", path: "/jogo/flavio-bolsonaro/", cena: true },
+  { id: "jogo-lula", path: "/jogo/lula/?fase=1", cena: true },
+  { id: "jogo-flavio-bolsonaro", path: "/jogo/flavio-bolsonaro/?fase=1", cena: true },
+  // Uma fase pedida pelo endereço, que não é a do HTML do build: é como chega quem continua de onde parou.
+  { id: "jogo-lula-fase-5", path: "/jogo/lula/?fase=5", cena: true },
   { id: "jogo-lula-economia", path: "/jogo/lula/economia/", cena: true },
   { id: "jogo-flavio-bolsonaro-seguranca-publica", path: "/jogo/flavio-bolsonaro/seguranca-publica/", cena: true },
+  { id: "jogo-lula-leitura-sem-cenario", path: "/jogo/lula/?fase=1&leitura=1", cena: false },
 ];
 const profileNames = (args.get("--perfis") ?? Object.keys(PROFILES).join(",")).split(",");
 
@@ -123,6 +131,55 @@ function sampleFrames(ms) {
           quadrosLongos: tempos.filter((t) => t > 50).length,
         });
       }
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+/**
+ * Amostra a cadência só enquanto o boneco anda: espera o palco dizer que a
+ * caminhada começou (`data-andando="sim"`), conta os quadros até ela acabar e
+ * devolve o resumo, com a duração. Devolve `null` se a caminhada não começar
+ * dentro do limite ou tiver menos de três quadros. É instalada antes do toque
+ * na pasta, para o começo da caminhada entrar na conta.
+ */
+function sampleWalk(limite) {
+  return new Promise((resolve) => {
+    const palco = document.querySelector("[data-palco]");
+    const tempos = [];
+    const inicio = performance.now();
+    let ultimo = inicio;
+    let andou = false;
+    const terminar = () => {
+      if (tempos.length < 3) {
+        resolve(null);
+        return;
+      }
+      const ordenados = [...tempos].sort((a, b) => a - b);
+      const total = tempos.reduce((soma, t) => soma + t, 0);
+      resolve({
+        quadros: tempos.length,
+        duracao: Math.round(total),
+        fps: Math.round((tempos.length / total) * 1000 * 10) / 10,
+        intervaloMediano: Math.round(ordenados[Math.floor(ordenados.length / 2)] * 10) / 10,
+        intervaloP95: Math.round(ordenados[Math.floor(ordenados.length * 0.95)] * 10) / 10,
+        intervaloMaximo: Math.round(ordenados[ordenados.length - 1] * 10) / 10,
+        quadrosLongos: tempos.filter((t) => t > 50).length,
+      });
+    };
+    const tick = (agora) => {
+      const andando = palco !== null && palco.getAttribute("data-andando") === "sim";
+      if (andando) {
+        // O primeiro quadro da caminhada só marca o começo: o intervalo dele ainda é o da cena parada.
+        if (andou) tempos.push(agora - ultimo);
+        andou = true;
+      } else if (andou) {
+        terminar();
+        return;
+      }
+      ultimo = agora;
+      if (agora - inicio > limite) terminar();
+      else requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
   });
@@ -236,16 +293,17 @@ async function runOnce(browser, profile, route) {
   const execucao = { ...pagina, transferido, pedidos, externos, erros };
 
   if (route.cena && pagina.palcoPronto !== null) {
-    // Cadência da cena parada e andando (a tecla segurada por três segundos).
-    await page.locator("[data-palco]").focus();
+    // Cadência da cena parada.
     execucao.cadenciaParada = await page.evaluate(sampleFrames, 3000);
-    await page.keyboard.down("ArrowRight");
-    execucao.cadenciaAndando = await page.evaluate(sampleFrames, 3000);
-    await page.keyboard.up("ArrowRight");
-    // Com uma janela aberta, o laço para: a cadência medida é a da página, e não da cena.
-    await page.getByRole("button", { name: "Capítulos e tarefas" }).click();
+    // O toque na pasta do marco faz o boneco andar até ela. A amostra é instalada antes do toque e vale só enquanto
+    // o palco diz que o boneco anda: a caminhada dura no máximo 1,6 segundo e pode ser bem mais curta.
+    const caminhada = page.evaluate(sampleWalk, 5000);
+    await page.locator('[data-marcador="marco"]').click();
+    execucao.cadenciaAndando = await caminhada;
+    // Ao chegar, a janela da fase abre e o laço da cena para: a cadência medida é a da página, e não da cena.
+    await page.waitForSelector('[data-dialogo="fase"]', { timeout: 15_000 }).catch(() => {});
     await sleep(400);
-    execucao.cadenciaComPainel = await page.evaluate(sampleFrames, 1500);
+    execucao.cadenciaComJanela = await page.evaluate(sampleFrames, 1500);
   }
 
   await context.close();
@@ -257,6 +315,8 @@ function summarize(execucoes) {
   const cadencia = (campo) =>
     execucoes.some((e) => e[campo])
       ? {
+          quadros: round(de((e) => e[campo]?.quadros)),
+          duracao: round(de((e) => e[campo]?.duracao)),
           fps: round(de((e) => e[campo]?.fps), 1),
           intervaloMediano: round(de((e) => e[campo]?.intervaloMediano), 1),
           intervaloP95: round(de((e) => e[campo]?.intervaloP95), 1),
@@ -279,7 +339,7 @@ function summarize(execucoes) {
     erros: execucoes.flatMap((e) => e.erros),
     cadenciaParada: cadencia("cadenciaParada"),
     cadenciaAndando: cadencia("cadenciaAndando"),
-    cadenciaComPainel: cadencia("cadenciaComPainel"),
+    cadenciaComJanela: cadencia("cadenciaComJanela"),
   };
 }
 
@@ -300,10 +360,10 @@ try {
       for (let i = 0; i < RUNS; i += 1) execucoes.push(await runOnce(browser, profile, route));
       const resumo = summarize(execucoes);
       resultados.push({ perfil: nome, rota: route.id, caminho: route.path, mediana: resumo, execucoes });
-      const cad = resumo.cadenciaAndando ? `  cena andando ${resumo.cadenciaAndando.fps} fps (p95 ${resumo.cadenciaAndando.intervaloP95} ms, longos ${resumo.cadenciaAndando.quadrosLongos})` : "";
+      const cad = resumo.cadenciaAndando ? `  na caminhada ${resumo.cadenciaAndando.fps} fps em ${resumo.cadenciaAndando.quadros} quadros e ${resumo.cadenciaAndando.duracao} ms (p95 ${resumo.cadenciaAndando.intervaloP95} ms, longos ${resumo.cadenciaAndando.quadrosLongos})` : "";
       const parada = resumo.cadenciaParada ? `  parada ${resumo.cadenciaParada.fps} fps` : "";
       console.log(
-        `${nome.padEnd(10)} ${route.id.padEnd(22)} LCP ${String(resumo.lcp).padStart(5)} ms  load ${String(resumo.load).padStart(5)} ms  palco pronto ${String(resumo.palcoPronto ?? "-").padStart(5)} ms  rede ${String(Math.round((resumo.transferido ?? 0) / 1024)).padStart(4)} KB${parada}${cad}`,
+        `${nome.padEnd(10)} ${route.id.padEnd(40)} LCP ${String(resumo.lcp).padStart(5)} ms  load ${String(resumo.load).padStart(5)} ms  palco pronto ${String(resumo.palcoPronto ?? "-").padStart(5)} ms  rede ${String(Math.round((resumo.transferido ?? 0) / 1024)).padStart(4)} KB${parada}${cad}`,
       );
       if (resumo.erros.length > 0) console.log(`  erros na página: ${[...new Set(resumo.erros)].join(" | ")}`);
     }

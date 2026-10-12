@@ -191,7 +191,7 @@ describe("importação para os rascunhos", () => {
         entidade: null,
         id: null,
         motivos: [
-          "Coleção desconhecida. As aceitas são: pessoas, mandatos, filiacoes, acontecimentos, proposicoes, votacoes, votos, atosExecutivos, coberturaPolitica, identidadesInstitucionais, lugares, fontes, imagens.",
+          "Coleção desconhecida. As aceitas são: pessoas, mandatos, filiacoes, acontecimentos, proposicoes, votacoes, votos, atosExecutivos, atuacoesLegislativas, coberturaPolitica, identidadesInstitucionais, propostasEleitorais, fatosBiograficos, conceitos, fasesDoJogo, lugares, fontes, imagens.",
         ],
       },
     ]);

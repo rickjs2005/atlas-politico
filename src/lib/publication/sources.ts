@@ -2,7 +2,7 @@
 // validar. Só tipos e constantes; quem abre os arquivos é `src/lib/content`.
 //
 // As fontes editoriais são duas pastas:
-//   content/published/  a edição: `edicao.json` e as treze coleções;
+//   content/published/  a edição: `edicao.json` e as dezoito coleções;
 //   content/drafts/     a pesquisa em andamento e o que chega por importação:
 //                       coleções parciais, que podem citar registros da edição.
 // As duas são lidas juntas, e cada registro lembra de qual pasta veio.
@@ -18,8 +18,13 @@ export const COLECOES = [
   "votacoes",
   "votos",
   "atosExecutivos",
+  "atuacoesLegislativas",
   "coberturaPolitica",
   "identidadesInstitucionais",
+  "propostasEleitorais",
+  "fatosBiograficos",
+  "conceitos",
+  "fasesDoJogo",
   "lugares",
   "fontes",
   "imagens",
@@ -36,8 +41,13 @@ export const COLECOES_FACTUAIS = [
   "votacoes",
   "votos",
   "atosExecutivos",
+  "atuacoesLegislativas",
   "coberturaPolitica",
   "identidadesInstitucionais",
+  "propostasEleitorais",
+  "fatosBiograficos",
+  "conceitos",
+  "fasesDoJogo",
 ] as const;
 export type ColecaoFactual = (typeof COLECOES_FACTUAIS)[number];
 
@@ -48,9 +58,12 @@ export type ColecaoDeReferencia = (typeof COLECOES_DE_REFERENCIA)[number];
 /**
  * Coleções factuais que exigem ao menos uma citação quando revisadas. A
  * cobertura da pesquisa fica de fora: a evidência dela são os acervos
- * consultados, que o próprio registro descreve.
+ * consultados, que o próprio registro descreve. A fase do jogo também: ela
+ * não cita documento por conta própria; cada bloco aponta os registros que o
+ * sustentam, e esses registros é que citam.
  */
-export const COLECOES_COM_CITACAO = COLECOES_FACTUAIS.filter((colecao) => colecao !== "coberturaPolitica") as readonly Exclude<ColecaoFactual, "coberturaPolitica">[];
+export const COLECOES_SEM_CITACAO = ["coberturaPolitica", "fasesDoJogo"] as const;
+export const COLECOES_COM_CITACAO = COLECOES_FACTUAIS.filter((colecao) => !(COLECOES_SEM_CITACAO as readonly string[]).includes(colecao)) as readonly Exclude<ColecaoFactual, (typeof COLECOES_SEM_CITACAO)[number]>[];
 
 export const ENTIDADE_DA_COLECAO: Record<Colecao, Entidade> = {
   pessoas: "pessoa",
@@ -61,8 +74,13 @@ export const ENTIDADE_DA_COLECAO: Record<Colecao, Entidade> = {
   votacoes: "votacao",
   votos: "voto",
   atosExecutivos: "ato-executivo",
+  atuacoesLegislativas: "atuacao-legislativa",
   coberturaPolitica: "cobertura-politica",
   identidadesInstitucionais: "identidade-institucional",
+  propostasEleitorais: "proposta-eleitoral",
+  fatosBiograficos: "fato-biografico",
+  conceitos: "conceito",
+  fasesDoJogo: "fase-do-jogo",
   lugares: "lugar",
   fontes: "fonte",
   imagens: "imagem",

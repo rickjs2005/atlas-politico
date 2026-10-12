@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/jogo/[personagem]
   if (!perfil) return {};
   return {
     title: `Jogo · ${perfil.nome}`,
-    description: `Percorra os capítulos da trajetória pública de ${perfil.nome}, recolhendo os registros do atlas em cada período.`,
+    description: `A trajetória de ${perfil.nome} em fases curtas, da origem à data de corte: um marco, uma explicação e uma pergunta por fase, com as fontes do atlas.`,
   };
 }
 

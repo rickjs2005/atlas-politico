@@ -66,8 +66,25 @@ export interface Indexes {
     porAno: Record<string, string[]>;
     porProposicao: Record<string, string[]>;
   };
+  /** Autorias e relatorias. As listas vêm em ordem cronológica. */
+  atuacoesLegislativas: {
+    porId: Record<string, number>;
+    porPessoa: Record<string, string[]>;
+    porTema: Record<Tema, string[]>;
+    porAno: Record<string, string[]>;
+  };
   coberturaPolitica: { porId: Record<string, number>; porPessoa: Record<string, string[]> };
   identidadesInstitucionais: { porId: Record<string, number>; porPessoa: Record<string, string[]> };
+  /** Propostas dos documentos registrados na Justiça Eleitoral. As listas vêm na ordem dos temas. */
+  propostasEleitorais: { porId: Record<string, number>; porPessoa: Record<string, string[]> };
+  /** Conteúdo educativo do jogo (docs/DATA_MODEL.md, seção Conteúdo educativo). */
+  fatosBiograficos: { porId: Record<string, number>; porPessoa: Record<string, string[]> };
+  conceitos: { porId: Record<string, number> };
+  fasesDoJogo: {
+    porId: Record<string, number>;
+    /** Chave: `pessoaId:sala`. As fases na ordem em que são percorridas. */
+    porPessoaESala: Record<string, string[]>;
+  };
   lugares: { porId: Record<string, number> };
   fontes: { porId: Record<string, number> };
   imagens: { porId: Record<string, number> };

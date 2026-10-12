@@ -1,74 +1,51 @@
 "use client";
 
-// A casca do jogo de um personagem em uma sala: junta o progresso salvo (de
-// todas as salas), o capítulo aberto, a cena, os diálogos, o Escrivão e o
-// painel. É quem decide o que acontece com uma interação e quando um capítulo
-// termina; a cena só anda e desenha.
+// A casca do jogo de um personagem em uma sala: junta o progresso salvo, a
+// fase aberta, o cenário, as janelas e o Escrivão. É quem decide o que
+// acontece quando a pessoa abre o marco, responde, segue ou muda de fase; o
+// palco só desenha e leva o boneco até a pasta.
 //
-// A saída de um capítulo abre com a tarefa cumprida e todos os registros
-// recolhidos (`isExitOpen`), acontecimentos e decisões. A tarefa cumprida
-// sozinha não abre a porta.
+// O ciclo é um só (D-133): abrir o marco, ler a explicação, responder a
+// atividade ou ler a explicação dela, continuar. Nenhuma fase segura a
+// seguinte, e os registros de "Explorar este período" são opcionais.
 //
-// O HTML do build sai sem a cena (o palco é carregado só no navegador) e com
-// o estado inicial; o progresso guardado entra depois da hidratação.
+// Dois modos mostram o mesmo conteúdo: com o cenário, a fase abre em uma
+// janela; em "Ler sem o cenário", ela está na página, sem o palco. O segundo
+// é também o caminho de quem não tem o canvas.
+//
+// O HTML do build sai com a primeira fase da sala, sem a cena (o palco é
+// carregado só no navegador); a fase pedida pelo endereço e o progresso
+// guardado entram depois da hidratação. Em uma navegação interna, o endereço
+// da página entra um instante depois dela: até lá o jogo espera, sem supor
+// fase nenhuma.
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { formatDate } from "@/lib/domain/dates";
-import { INSTITUICAO_LABELS, TIPO_DE_ATO_LABELS } from "@/lib/domain/decisions";
-import { documentsOf, playableChapters } from "@/lib/game/content";
-import { falasDe, registrarDitas, selectLines, type DadosDoMomento, type EscrivaoEvent, type FalaDita, type FalasGuardadas } from "@/lib/game/escrivao";
+import { PATH_LINK } from "@/components/touch";
+import type { ProgressKeys } from "@/lib/game/content";
+import { selectLines, type EscrivaoEvent, type FalaDita } from "@/lib/game/escrivao";
 import { relatedRecords } from "@/lib/game/judicial";
-import {
-  collect,
-  interpretationOptions,
-  isAnswerPending,
-  isEvidenceDone,
-  isExitOpen,
-  isTaskDone,
-  manifestationLabel,
-  missingRecords,
-  placeOptions,
-  recordIds,
-  requiredRecords,
-  sourceOptions,
-  submitEvidence,
-  submitInterpretation,
-  submitOrder,
-  submitPlace,
-  submitSource,
-  type Attempt,
-} from "@/lib/game/mission";
-import { chapterStatus, completeChapter, currentChapter, taskStateOf, withTaskState } from "@/lib/game/progress";
-import { chaptersInRoom, roomOf, roomsWithChapters } from "@/lib/game/rooms";
+import { hasNewStart, nextPhase, openPhase, phaseProgressOf, resumePhase, withPhase, withPosition } from "@/lib/game/progress";
+import { NO_QUERY } from "@/lib/game/query";
+import { roomLabel, roomOf } from "@/lib/game/rooms";
 import { getScene } from "@/lib/game/scenes";
-import { isSensitive, isSensitiveChapter } from "@/lib/game/sensitivity";
-import type { ChapterSpec, GameContent, GameDecision, Interactable, RoomId, TaskState } from "@/lib/game/types";
+import { isSensitive } from "@/lib/game/sensitivity";
+import { answerOrder, answerQuestion, concludeByExplanation, isResolved, phaseStatus, refKey, refShortLabel, refTitle } from "@/lib/game/trail";
+import type { GameContent, PhaseRef, PhaseSpec, SceneMarker } from "@/lib/game/types";
+import { NO_INSETS, type StageInsets } from "@/lib/game/world/camera";
+import { gameHref } from "@/lib/state/links";
 
 import type { GameStageHandle } from "./GameStage";
-import { useCoarsePointer, useGamePreferences, useGameProgress, useMotion, useWindowActive } from "./hooks";
-import { ChapterPanel } from "./ui/ChapterPanel";
-import { primaryButton } from "./ui/Dialog";
-import {
-  ChapterTransition,
-  ChoiceDialog,
-  ClosedExitDialog,
-  ConfirmResetDialog,
-  DecisionRecordDialog,
-  DecisionTaskDialog,
-  EndScreen,
-  EscrivaoDialog,
-  OrderDialog,
-  RecordDialog,
-  type AttemptWithLines,
-} from "./ui/dialogs";
-import { Hud, reachLabel } from "./ui/Hud";
-import type { ExitState } from "./ui/saida";
+import { useGameAddress, useGamePreferences, useGameProgress, useMotion, useWindowActive, writePhaseToUrl } from "./hooks";
+import { primaryButton, quietButton, secondaryButton } from "./ui/Dialog";
+import { ConfirmResetDialog, HelpDialog, PhaseDialog, PhaseListDialog, RecordDialog, SummaryDialog } from "./ui/dialogs";
+import { Hud, ResumeNotice, type ResumeInfo } from "./ui/Hud";
+import { PhaseContent, type AnswerFeedback } from "./ui/PhaseContent";
 import { StageBoundary } from "./ui/StageBoundary";
-import { TouchControls } from "./ui/TouchControls";
 
-// O palco (canvas, laço, entrada) fica em um pacote à parte, pedido só nesta página.
+// O palco (canvas e laço) fica em um pacote à parte, pedido só nesta página.
 const GameStage = dynamic(() => import("./GameStage").then((modulo) => ({ default: modulo.GameStage })), {
   ssr: false,
   loading: () => (
@@ -79,683 +56,574 @@ const GameStage = dynamic(() => import("./GameStage").then((modulo) => ({ defaul
 });
 
 function StageNotice({ children }: { children: React.ReactNode }) {
+  // O espaço em cima é o do cartão da fase e dos botões: o aviso não fica atrás deles em tela estreita.
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sunken p-6 text-center" role="status">
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sunken p-6 pt-40 text-center" role="status">
       {children}
     </div>
   );
 }
 
-/** O navegador não desenha canvas 2D: a cena não existe, e o painel é o caminho (não é falha de rede: recarregar não resolve). */
-function StageUnavailable({ onOpenPanel, slug, nome }: { onOpenPanel(): void; slug: string; nome: string }) {
+/** A cena não pôde ser desenhada (o navegador não deu o canvas) ou o pacote dela não chegou: o conteúdo continua inteiro, sem ela. */
+function StageMissing({ motivo, onRead }: { motivo: "sem-canvas" | "falhou"; onRead(): void }) {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sunken p-6 text-center" role="alert" data-palco="sem-canvas">
-      <p className="max-w-md font-serif text-xl font-medium leading-snug">O navegador não conseguiu desenhar a cena</p>
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sunken p-6 pt-40 text-center" role="alert" data-palco={motivo}>
+      <p className="max-w-md font-serif text-xl font-medium leading-snug">{motivo === "sem-canvas" ? "O navegador não conseguiu desenhar a cena" : "A cena não carregou"}</p>
       <p className="max-w-md text-sm text-ink-soft">
-        Ele não ofereceu o desenho em canvas, que o cenário usa. Os capítulos continuam jogáveis pelo painel Capítulos e tarefas: dá para
-        recolher os registros, cumprir as tarefas e abrir a saída por ele, sem o cenário. Os registros também estão na{" "}
-        <a href={`/politicos/${slug}/`} className="font-medium underline">
-          trajetória de {nome} no atlas
-        </a>
-        .
+        {motivo === "sem-canvas" ? "Ele não ofereceu o desenho em canvas, que o cenário usa." : "Pode ter sido a conexão."} Nada se perde: as mesmas fases, com a
+        explicação, a atividade e as fontes, estão em Ler sem o cenário.
       </p>
-      {/* O nome não repete "Capítulos e tarefas": o botão do HUD, com esse nome, continua na tela, e dois iguais confundiriam leitor de tela e testes. */}
-      <button type="button" className={primaryButton} onClick={onOpenPanel} data-abrir-painel-sem-cena>
-        Abrir o painel
-      </button>
+      <div className="flex flex-wrap justify-center gap-2">
+        {motivo === "falhou" && (
+          <button type="button" className={secondaryButton} onClick={() => window.location.reload()}>
+            Recarregar a página
+          </button>
+        )}
+        <button type="button" className={primaryButton} onClick={onRead} data-ler-sem-cenario-do-aviso>
+          Ler sem o cenário
+        </button>
+      </div>
     </div>
   );
 }
 
-/** O pacote do palco não chegou: o painel continua valendo, e recarregar tenta de novo. */
-function StageFailure() {
-  return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sunken p-6 text-center" role="alert" data-palco="falhou">
-      <p className="max-w-md font-serif text-xl font-medium leading-snug">A cena não carregou</p>
-      <p className="max-w-md text-sm text-ink-soft">
-        Pode ter sido a conexão. O painel Capítulos e tarefas continua funcionando: dá para cumprir as tarefas por ele, sem o
-        cenário.
-      </p>
-      <button type="button" className={primaryButton} onClick={() => window.location.reload()}>
-        Recarregar a página
-      </button>
-    </div>
-  );
+type Vista =
+  | { tipo: "base" }
+  | { tipo: "fase" }
+  | { tipo: "registro"; referencia: PhaseRef; de: "base" | "fase" }
+  | { tipo: "fases" }
+  | { tipo: "ajuda" }
+  | { tipo: "apagar" }
+  | { tipo: "resumo" };
+
+interface GameShellProps {
+  content: GameContent;
+  /** Todas as fases do personagem e as assinaturas das atividades, para ler e gravar o progresso sem perder o das outras salas. */
+  chaves: ProgressKeys;
+  /** A outra trajetória do atlas, para o caminho até ela no resumo. */
+  outraPessoa: { slug: string; nome: string } | null;
 }
 
-type Modo = "jogando" | "registro" | "ordem" | "escolha" | "decisao" | "guia" | "saida-fechada" | "painel" | "reiniciar" | "transicao" | "fim";
-
-interface Transicao {
-  concluido: ChapterSpec;
-  proximo: ChapterSpec | null;
-}
-
-/**
- * O capítulo que estava aberto quando a pessoa saiu do jogo para a ficha de um
- * registro, nesta página: ao voltar, pela navegação do site, ela reencontra o
- * capítulo que estava revendo. Vale para uma volta só. Não é progresso, e não
- * vai ao endereço nem ao navegador.
- */
-const OPEN_CHAPTER = new Map<string, string>();
-
-const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`;
-
-/** Os dados de uma decisão para as falas documentais do Escrivão. */
-function dadosDaDecisao(decisao: GameDecision): DadosDoMomento {
-  return {
-    titulo: decisao.titulo,
-    data: formatDate(decisao.data),
-    fontes: plural(decisao.fontes.length, "fonte", "fontes"),
-    cargo: decisao.cargo?.cargo ?? "cargo não publicado",
-    instituicao: INSTITUICAO_LABELS[decisao.instituicao],
-    ...(decisao.natureza === "voto" ? { manifestacao: manifestationLabel(decisao), objeto: decisao.votacao.objeto.descricao } : { tipoDoAto: TIPO_DE_ATO_LABELS[decisao.ato.tipo] }),
-  };
-}
-
-export function GameShell({ content, sala }: { content: GameContent; sala: RoomId }) {
+export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
   const slug = content.personagem.slug;
+  const { sala, fases } = content;
   const salaSpec = roomOf(sala);
-  // O progresso é de todas as salas; a navegação, da sala aberta.
-  const todos = useMemo(() => playableChapters(content), [content]);
-  const capitulos = useMemo(() => chaptersInRoom(todos, sala), [todos, sala]);
-  const outrasSalas = useMemo(() => roomsWithChapters(todos).filter((outra) => outra.id !== sala), [todos, sala]);
-  const documentos = useMemo(() => documentsOf(content), [content]);
-  const { carregado, progresso, duravel, update, reset } = useGameProgress(slug, todos, content);
-  const { preferencias, setHumor } = useGamePreferences();
+  const { carregado, progresso, duravel, update, reset } = useGameProgress(slug, chaves);
+  const { preferencias, setHumor, setCenario } = useGamePreferences();
+  const caminho = gameHref(slug, sala);
+  const endereco = useGameAddress(caminho);
+  const consulta = endereco.situacao === "lido" ? endereco.consulta : NO_QUERY;
+  // O jogo está pronto quando leu o progresso guardado e o endereço da própria página: antes disso, não se sabe que fase abrir.
+  const pronto = carregado && endereco.situacao === "lido";
   const movimento = useMotion();
-  const toque = useCoarsePointer();
   const janelaAtiva = useWindowActive();
-  const instrucoesId = useId();
   const handle = useRef<GameStageHandle | null>(null);
   const raiz = useRef<HTMLDivElement>(null);
-  const chaveDaVolta = `${slug}:${sala}`;
 
-  const [capituloId, setCapituloId] = useState<string | null>(() => OPEN_CHAPTER.get(chaveDaVolta) ?? null);
-  const [modo, setModo] = useState<Modo>("jogando");
-  const [registroAberto, setRegistroAberto] = useState<string | null>(null);
-  // O registro aberto já estava recolhido: foi aberto pelo painel, para ler de novo.
-  const [releitura, setReleitura] = useState(false);
-  // O registro relido por último: na volta ao painel, o foco fica no botão dele.
-  const [focoDoPainel, setFocoDoPainel] = useState<string | null>(null);
-  const [alcance, setAlcance] = useState<Interactable | null>(null);
-  const [transicao, setTransicao] = useState<Transicao | null>(null);
-  // Muda quando a cena tem de recomeçar sem trocar de capítulo: ao reiniciar
-  // o progresso e ao chegar ao fim.
-  const [sessao, setSessao] = useState(0);
-  // O reinício foi pedido na tela de fim: desistir dele volta a ela.
-  const [reinicioDoFim, setReinicioDoFim] = useState(false);
+  // A fase escolhida nesta visita, pela lista, pelo botão de continuar ou pelo resumo. Antes disso, vale o endereço e, sem ele, o progresso.
+  const [escolhida, setEscolhida] = useState<string | null>(null);
+  const [vista, setVista] = useState<Vista>({ tipo: "base" });
+  // O navegador não deu o canvas: a cena sai, e a leitura sem o cenário é o caminho.
+  const [semCanvas, setSemCanvas] = useState(false);
+  // A pessoa pediu a leitura sem o cenário nesta visita, pelo aviso de cena indisponível, sem mexer na preferência guardada.
+  const [leituraDaVisita, setLeituraDaVisita] = useState(false);
+  // Quantas vezes o progresso foi apagado nesta visita: remonta a fase que a leitura sem o cenário mantém na página.
+  const [reinicios, setReinicios] = useState(0);
 
-  // O capítulo lembrado serve à volta que acabou de acontecer, e a mais nenhuma.
-  useEffect(() => {
-    OPEN_CHAPTER.delete(chaveDaVolta);
-  }, [chaveDaVolta]);
-
-  // O capítulo aberto: o escolhido no painel, se continua acessível, ou o em que se continua na sala.
-  const escolhido = capituloId === null ? undefined : capitulos.find((item) => item.id === capituloId);
-  const capitulo =
-    (escolhido !== undefined && chapterStatus(progresso, escolhido.id) !== "bloqueado" ? escolhido : undefined) ??
-    currentChapter(progresso, capitulos) ??
-    capitulos[0]!;
-  const cena = getScene(capitulo.cena);
-  const tarefa = taskStateOf(progresso, capitulo.id);
-  const tarefaConcluida = isTaskDone(capitulo.tarefa, tarefa);
-  const respostaPendente = isAnswerPending(capitulo.tarefa, tarefa);
-  // A porta: a tarefa cumprida e nenhum registro do capítulo por recolher.
-  const saidaAberta = isExitOpen(capitulo, tarefa);
-  const total = recordIds(capitulo).length;
-  const saida: ExitState = { tarefaConcluida, faltam: missingRecords(capitulo, tarefa).length, total };
-  const ultimo = capitulos.at(-1)?.id === capitulo.id;
-  const pausado = modo !== "jogando" || !janelaAtiva;
-  // A janela da resposta: a de ordem, a de decisão ou a de escolha (documento ou lugar).
-  const modoDaResposta: Modo = capitulo.tarefa.tipo === "ordem" ? "ordem" : capitulo.tarefa.tipo === "decisao" ? "decisao" : "escolha";
+  const pedida = consulta.fase === null ? undefined : fases[consulta.fase - 1];
+  const fase: PhaseSpec = fases.find((item) => item.id === escolhida) ?? pedida ?? (pronto ? resumePhase(progresso, fases) : null) ?? fases[0]!;
+  const proxima = nextPhase(fases, fase.id);
+  const estado = phaseProgressOf(progresso, fase.id);
+  const concluida = estado.concluida !== undefined;
+  const cena = getScene(fase.cena);
+  const leitura = pronto && (!preferencias.cenario || consulta.leitura || leituraDaVisita);
+  const marcoTitulo = refTitle(fase.marco, content) ?? fase.titulo;
+  // A pessoa chegou sem pedir fase, e o jogo abriu onde ela tinha parado: a tela diz isso e oferece o começo, como a entrada do jogo faz.
+  const retomada: ResumeInfo | null =
+    pronto && endereco.situacao === "lido" && endereco.chegada.fase === null && escolhida === null && fase.numero > 1
+      ? { ano: fases[0]!.periodo.de, mudou: hasNewStart(progresso, fases) }
+      : null;
 
   // -------------------------------------------------------------------------
-  // O Escrivão: as falas de cada momento, com o histórico do que já foi dito
-  // nesta visita (a repetição é controlada por ele, sem sorteio). Em momento
-  // sobre um registro de contexto sensível (D-129), o humor fica de fora. A
-  // exibição aplica a preferência de humor por conta própria (EscrivaoSays):
-  // desligar tira o humor também das falas já escolhidas.
+  // O Escrivão: as falas de cada momento, sem estado: uma instrução e, no
+  // máximo, uma fala de humor. A vez de cada fala vem da posição da fase, ou
+  // do número da tentativa; em fase ou registro de contexto sensível (D-129),
+  // o humor fica de fora. A exibição aplica a preferência de humor por conta
+  // própria (EscrivaoSays e Hud).
   // -------------------------------------------------------------------------
-  const vistas = useRef<string[]>([]);
-  const falar = useCallback(
-    (evento: EscrivaoEvent, dados?: DadosDoMomento, sensivel = false): FalaDita[] => {
-      const ditas = selectLines({ sala, evento, humor: preferencias.humor, vistas: vistas.current, dados, sensivel });
-      vistas.current = registrarDitas(vistas.current, ditas);
-      return ditas;
-    },
-    [sala, preferencias.humor],
-  );
-  // As falas do capítulo (entrada, ajuda e conclusão) seguem o contexto do capítulo; as de um registro, o do registro.
-  const capituloSensivel = isSensitiveChapter(capitulo);
-  const dadosDoCapitulo = useCallback(
-    (estado: TaskState): DadosDoMomento => ({
-      capitulo: capitulo.titulo,
-      registros: plural(total, "registro", "registros"),
-      periodo: capitulo.periodo.de === capitulo.periodo.ate ? `${capitulo.periodo.de}` : `${capitulo.periodo.de} a ${capitulo.periodo.ate}`,
-      recolhidos: `${estado.recolhidos.filter((id) => recordIds(capitulo).includes(id)).length} de ${total}`,
-    }),
-    [capitulo, total],
-  );
-  // A fala sobre a cena: a entrada do capítulo, e depois a conclusão quando a saída abre.
-  const [falasNaCena, setFalasNaCena] = useState<{ evento: string; falas: readonly FalaDita[] } | null>(null);
-  // As falas da descoberta pertencem ao registro recolhido: outro registro aberto depois (uma releitura) não as herda.
-  const [falasDoRegistro, setFalasDoRegistro] = useState<FalasGuardadas | null>(null);
-  const [falasDaAjuda, setFalasDaAjuda] = useState<readonly FalaDita[]>([]);
-  const [falasDaFonte, setFalasDaFonte] = useState<readonly FalaDita[]>([]);
-  // As falas da conclusão pertencem ao capítulo em que a saída abriu: a transição de outro capítulo (um já concluído, revisto) não as herda.
-  const [falasDaConclusao, setFalasDaConclusao] = useState<FalasGuardadas | null>(null);
-  // A entrada: uma vez por capítulo aberto, depois que o progresso chegou.
-  const entradaDita = useRef<string | null>(null);
-  useEffect(() => {
-    if (!carregado || entradaDita.current === capitulo.id) return;
-    entradaDita.current = capitulo.id;
-    const ditas = falar("entrada", dadosDoCapitulo(tarefa), capituloSensivel);
-    setFalasNaCena({ evento: "entrada", falas: ditas });
-  }, [carregado, capitulo.id, falar, dadosDoCapitulo, tarefa, capituloSensivel]);
-  /**
-   * Depois de uma mudança no estado da tarefa: se a saída acabou de abrir, o
-   * Escrivão conclui. `gatilhoSensivel` diz que a mudança veio de um registro
-   * de contexto sensível: a conclusão que aparece logo depois dele fica sem
-   * humor, mesmo em um capítulo que não é sensível.
-   */
-  const aoMudarTarefa = useCallback(
-    (antes: TaskState, depois: TaskState, gatilhoSensivel = false) => {
-      if (isExitOpen(capitulo, antes) || !isExitOpen(capitulo, depois)) return;
-      const ditas = falar("conclusao", dadosDoCapitulo(depois), capituloSensivel || gatilhoSensivel);
-      setFalasDaConclusao({ de: capitulo.id, falas: ditas });
-      setFalasNaCena({ evento: "conclusao", falas: ditas });
-    },
-    [capitulo, falar, dadosDoCapitulo, capituloSensivel],
-  );
-  // O erro de uma resposta é sobre os registros que a tarefa pede: o contexto sensível de qualquer um deles vale para a fala.
-  const comFalas = useCallback(
-    (avaliacao: Attempt): AttemptWithLines => ({ ...avaliacao, falas: avaliacao.certo ? [] : falar("erro", undefined, requiredRecords(capitulo.tarefa).some(isSensitive)) }),
-    [falar, capitulo.tarefa],
-  );
+  const falar = useCallback((evento: EscrivaoEvent, vez: number, sensivel: boolean): FalaDita[] => selectLines({ sala, evento, humor: true, vez, sensivel }), [sala]);
+  const falasDaEntrada = useMemo(() => falar("entrada", fase.numero - 1, fase.sensivel), [falar, fase]);
+  const falasDaConclusao = useMemo(() => (concluida ? falar("conclusao", fase.numero - 1, fase.sensivel) : []), [falar, fase, concluida]);
+  const falasDaAjuda = useMemo(() => falar("ajuda", fase.numero - 1, fase.sensivel), [falar, fase]);
 
-  // Com um diálogo aberto, a cena fica fora da tabulação (`inert`). O foco só
-  // pode voltar a ela depois que o diálogo sai do documento: fica pedido aqui
-  // e é dado no efeito abaixo. Sem o palco (pacote que não chegou), o foco vai
-  // para o botão do painel, que é o caminho que resta.
-  const focoPendente = useRef(false);
-  const focusStage = useCallback(() => {
-    focoPendente.current = true;
+  // -------------------------------------------------------------------------
+  // As pastas da fase no cenário: a do marco e as dos registros para explorar
+  // que couberem nas posições da cena. O que não couber fica só na lista.
+  // -------------------------------------------------------------------------
+  const marcadores = useMemo<SceneMarker[]>(() => {
+    const [doMarco, ...demais] = cena.registros;
+    const lista: SceneMarker[] = [];
+    if (doMarco !== undefined) lista.push({ chave: "marco", natureza: "marco", rotulo: marcoTitulo, x: doMarco.x, y: doMarco.y });
+    fase.explorar
+      .filter((referencia) => isResolved(referencia, content))
+      .slice(0, demais.length)
+      .forEach((referencia, indice) => {
+        const posicao = demais[indice]!;
+        lista.push({ chave: refKey(referencia), natureza: "explorar", rotulo: refShortLabel(referencia, content) ?? referencia.id, x: posicao.x, y: posicao.y });
+      });
+    return lista;
+  }, [cena, fase, content, marcoTitulo]);
+
+  // -------------------------------------------------------------------------
+  // Foco. Fechar uma janela devolve o foco ao controle que a abriu: o botão do
+  // cabeçalho, a pasta, o botão dentro da fase. Assim quem lê pelo teclado, ou
+  // pelo toque em "Ler sem o cenário", continua de onde estava, sem a página
+  // voltar ao começo. Mudar de fase, ou de modo, é diferente: o foco vai para o
+  // começo da fase, que é a pasta do marco (ou o botão principal, sem cena) e,
+  // na leitura sem o cenário, o título da fase.
+  //
+  // O controle é lembrado pelo clique, e não pelo foco: nem todo navegador põe
+  // o foco em um botão tocado ou clicado.
+  // -------------------------------------------------------------------------
+  const focoPendente = useRef<"abridor" | "fase" | "de-cima" | null>(null);
+  const ultimoAtivado = useRef<HTMLElement | null>(null);
+  const abridorDaBase = useRef<HTMLElement | null>(null);
+  const abridorDeCima = useRef<HTMLElement | null>(null);
+  const lembrarControle = useCallback((evento: React.MouseEvent) => {
+    const alvo = evento.target instanceof Element ? evento.target.closest<HTMLElement>("button, a[href], summary") : null;
+    if (alvo !== null) ultimoAtivado.current = alvo;
   }, []);
-  useEffect(() => {
-    if (modo !== "jogando" || !focoPendente.current) return;
-    focoPendente.current = false;
-    if (handle.current !== null) handle.current.focus();
-    else raiz.current?.querySelector<HTMLElement>("[data-abrir-painel]")?.focus({ preventScroll: true });
-  }, [modo, capituloId, sessao]);
-  const voltarAoJogo = useCallback(() => {
-    setModo("jogando");
-    focusStage();
-  }, [focusStage]);
 
-  // Uma tecla segurada desde antes de uma janela abrir ou fechar não age no
-  // que veio depois: a repetição do teclado cairia no botão que recebeu o
-  // foco (Enter fecharia o registro que acabou de abrir) ou rolaria a página
-  // (a seta com que se atravessou a saída). O jogo não passa a ouvir teclas na
-  // janela: só a repetição de uma tecla que atravessou uma troca de tela é
-  // descartada, até a tecla soltar.
-  const modoAtual = useRef(modo);
-  useLayoutEffect(() => {
-    modoAtual.current = modo;
-  }, [modo]);
   useEffect(() => {
-    const apertadaEm = new Map<string, Modo>();
-    const aoApertar = (evento: KeyboardEvent) => {
-      if (!evento.repeat) {
-        apertadaEm.set(evento.code, modoAtual.current);
+    const pendente = focoPendente.current;
+    const caixa = raiz.current;
+    if (pendente === null || caixa === null) return;
+    if (pendente === "de-cima") {
+      // A janela de cima fechou: o foco volta ao botão que a abriu, dentro da de baixo, sem rolar nada.
+      if (vista.tipo === "registro" || vista.tipo === "apagar") return;
+      focoPendente.current = null;
+      const alvo = abridorDeCima.current;
+      abridorDeCima.current = null;
+      if (alvo !== null && alvo.isConnected) alvo.focus({ preventScroll: true });
+      return;
+    }
+    if (vista.tipo !== "base") return;
+    focoPendente.current = null;
+    const abridor = abridorDaBase.current;
+    abridorDaBase.current = null;
+    if (pendente === "abridor") {
+      if (abridor !== null && abridor.isConnected) {
+        abridor.focus({ preventScroll: true });
         return;
       }
-      const origem = apertadaEm.get(evento.code);
-      if (origem !== undefined && origem !== modoAtual.current) {
-        evento.preventDefault();
-        evento.stopPropagation();
+      // Sem o controle (ele saiu da tela com a mudança dos botões): na leitura, nada rola, e o foco vai para o botão de continuar da fase, quando ele existe; na cena, o foco vai para o marco.
+      if (leitura) {
+        caixa.querySelector<HTMLElement>("[data-leitura-da-fase] [data-continuar]")?.focus({ preventScroll: true });
+        return;
       }
-    };
-    const aoSoltar = (evento: KeyboardEvent) => {
-      apertadaEm.delete(evento.code);
-    };
-    window.addEventListener("keydown", aoApertar, true);
-    window.addEventListener("keyup", aoSoltar, true);
-    return () => {
-      window.removeEventListener("keydown", aoApertar, true);
-      window.removeEventListener("keyup", aoSoltar, true);
-    };
+    }
+    const alvo = leitura ? caixa.querySelector<HTMLElement>("[data-fase-titulo]") : (caixa.querySelector<HTMLElement>('[data-marcador="marco"]') ?? caixa.querySelector<HTMLElement>("[data-abrir-marco]"));
+    alvo?.focus({ preventScroll: !leitura });
+    if (leitura) caixa.scrollIntoView({ block: "start" });
+  }, [vista, fase.id, leitura]);
+
+  /** Abre uma janela a partir da base, lembrando o controle que a abriu. */
+  const abrirDaBase = useCallback((proxima: Vista) => {
+    abridorDaBase.current = ultimoAtivado.current;
+    setVista(proxima);
+  }, []);
+  /** Abre uma janela por cima de outra, que continua montada embaixo. */
+  const abrirPorCima = useCallback((proxima: Vista) => {
+    abridorDeCima.current = ultimoAtivado.current;
+    setVista(proxima);
+  }, []);
+  /** Fecha a janela de cima e volta à de baixo, com o foco no botão que a abriu. */
+  const voltarParaDeBaixo = useCallback((deBaixo: Vista) => {
+    focoPendente.current = "de-cima";
+    setVista(deBaixo);
+  }, []);
+  /** Fecha a janela e volta à base, sem mudar de fase: o foco volta ao controle que a abriu. */
+  const voltarParaBase = useCallback(() => {
+    focoPendente.current = "abridor";
+    setVista({ tipo: "base" });
+  }, []);
+  /** Volta à base depois de a fase ou o modo mudar: o foco vai para o começo da fase. */
+  const mostrarFase = useCallback(() => {
+    focoPendente.current = "fase";
+    setVista({ tipo: "base" });
   }, []);
 
-  const recolher = useCallback(
-    (id: string) => {
-      const antes = taskStateOf(progresso, capitulo.id);
-      const depois = collect(antes, id);
-      update((atual) => withTaskState(atual, capitulo.id, collect(taskStateOf(atual, capitulo.id), id)));
-      const documento = documentos[id];
-      const decisao = content.decisoes[id];
-      setFalasDoRegistro({
-        de: id,
-        falas: falar(
-          "descoberta",
-          decisao !== undefined ? dadosDaDecisao(decisao) : documento === undefined ? undefined : { titulo: documento.titulo, data: formatDate(documento.data), fontes: plural(documento.fontes.length, "fonte", "fontes") },
-          isSensitive(id),
-        ),
-      });
-      // A conclusão que vem logo depois de um registro sensível também fica sem humor.
-      aoMudarTarefa(antes, depois, isSensitive(id));
-      setRegistroAberto(id);
-      setReleitura(false);
-      setModo("registro");
-    },
-    [update, capitulo.id, progresso, documentos, content.decisoes, falar, aoMudarTarefa],
+  // -------------------------------------------------------------------------
+  // O que a interface cobre do palco. O palco enquadra a cena no que sobra, para
+  // a pasta do marco não ficar atrás do cartão da fase nem do botão principal.
+  // O bloco de cima só conta em tela estreita, onde vai de um lado ao outro; em
+  // tela larga o cartão e os botões ficam nos cantos, e a cena passa entre eles.
+  // Em janela baixa e larga (celular deitado) não há altura para isso: a cena
+  // fica ao lado do cartão e abaixo dos botões.
+  // -------------------------------------------------------------------------
+  const [margens, setMargens] = useState<StageInsets>(NO_INSETS);
+  const comHud = !leitura && endereco.situacao !== "aguardando";
+  useEffect(() => {
+    const caixa = raiz.current;
+    if (caixa === null || !comHud) return;
+    const medir = () => {
+      const deCima = caixa.querySelector<HTMLElement>("[data-hud-topo]");
+      const deBaixo = caixa.querySelector<HTMLElement>("[data-hud-base]");
+      const palco = caixa.getBoundingClientRect();
+      const estreita = window.matchMedia("(max-width: 639.98px)").matches;
+      const deitada = !estreita && window.matchMedia("(max-height: 30rem)").matches;
+      const cartao = caixa.querySelector<HTMLElement>("[data-fase-cartao]");
+      const caminhos = caixa.querySelector<HTMLElement>("[data-caminhos-do-jogo]");
+      const topo = estreita && deCima !== null ? Math.round(deCima.getBoundingClientRect().height) : deitada && caminhos !== null ? Math.round(caminhos.getBoundingClientRect().bottom - palco.top) : 0;
+      const esquerda = deitada && cartao !== null ? Math.round(cartao.getBoundingClientRect().right - palco.left) + 8 : 0;
+      const base = deBaixo === null ? 0 : Math.round(deBaixo.getBoundingClientRect().height);
+      setMargens((atual) => (atual.topo === topo && atual.base === base && (atual.esquerda ?? 0) === esquerda ? atual : { topo, base, esquerda }));
+    };
+    // O observador chama `medir` ao começar a observar, e de novo quando o cartão muda de altura ou a janela muda de tamanho.
+    const observador = new ResizeObserver(medir);
+    observador.observe(caixa);
+    for (const bloco of caixa.querySelectorAll("[data-hud-topo], [data-hud-base]")) observador.observe(bloco);
+    return () => observador.disconnect();
+  }, [comHud]);
+
+  // -------------------------------------------------------------------------
+  // O endereço acompanha a fase aberta, sem criar entrada no histórico:
+  // recarregar volta à mesma fase, e Voltar sai do jogo. Em "Ler sem o
+  // cenário", abrir a página da fase é ler a explicação: ela fica vista.
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    if (!pronto) return;
+    writePhaseToUrl(caminho, fase.numero, consulta.leitura && preferencias.cenario);
+  }, [pronto, caminho, fase.numero, consulta.leitura, preferencias.cenario]);
+  useEffect(() => {
+    if (!leitura) return;
+    // Apagar o progresso com a fase aberta não troca de fase: `reinicios` refaz o efeito, e a fase volta a constar como lida.
+    void reinicios;
+    update((atual) => openPhase(atual, fase));
+  }, [leitura, fase, update, reinicios]);
+  // O endereço pediu a leitura sem o cenário: o pedido vira a preferência, para valer também nas outras fases e salas.
+  useEffect(() => {
+    if (pronto && consulta.leitura && preferencias.cenario) setCenario(false);
+  }, [pronto, consulta.leitura, preferencias.cenario, setCenario]);
+
+  // -------------------------------------------------------------------------
+  // Ações
+  // -------------------------------------------------------------------------
+
+  /** Abre a explicação da fase: ela fica vista, e a posição da sala vai para ela. */
+  const abrirFase = useCallback(() => {
+    update((atual) => openPhase(atual, fase));
+    abrirDaBase({ tipo: "fase" });
+  }, [update, fase, abrirDaBase]);
+
+  /** O botão principal e a pasta em destaque: com a cena pronta, o boneco anda até a pasta antes; sem ela, a explicação abre direto. */
+  const abrirMarco = useCallback(() => {
+    if (handle.current !== null) handle.current.open("marco");
+    else abrirFase();
+  }, [abrirFase]);
+
+  /** Abre um registro: da base (a pasta do cenário, ou a lista da leitura sem o cenário) ou por cima da janela da fase. */
+  const abrirRegistro = useCallback(
+    (referencia: PhaseRef, de: "base" | "fase") => (de === "fase" ? abrirPorCima : abrirDaBase)({ tipo: "registro", referencia, de }),
+    [abrirDaBase, abrirPorCima],
   );
 
-  // Ler de novo um registro já recolhido, pelo painel: o progresso não muda, e
-  // a releitura não é uma descoberta: o Escrivão não fala nela.
-  const lerDeNovo = useCallback((id: string) => {
-    setFalasDoRegistro(null);
-    setRegistroAberto(id);
-    setReleitura(true);
-    setModo("registro");
-  }, []);
+  /** O boneco chegou a uma pasta do cenário. */
+  const aoChegar = useCallback(
+    (chave: string) => {
+      if (chave === "marco") {
+        abrirFase();
+        return;
+      }
+      const referencia = fase.explorar.find((item) => refKey(item) === chave);
+      if (referencia !== undefined) abrirRegistro(referencia, "base");
+    },
+    [abrirFase, abrirRegistro, fase],
+  );
 
-  // Abrir a resposta da tarefa. Na decisão, a etapa da evidência começa com a fala do Escrivão.
-  const abrirResposta = useCallback(() => {
-    if (capitulo.tarefa.tipo === "decisao" && !isEvidenceDone(taskStateOf(progresso, capitulo.id))) {
-      const decisao = content.decisoes[capitulo.tarefa.decisaoId];
-      setFalasDaFonte(falar("fonte", decisao === undefined ? undefined : { titulo: decisao.titulo, fontes: plural(decisao.fontes.length, "fonte", "fontes") }, isSensitive(capitulo.tarefa.decisaoId)));
-    }
-    setModo(modoDaResposta);
-  }, [capitulo, progresso, content.decisoes, falar, modoDaResposta]);
-
-  const fecharRegistro = useCallback(() => {
-    setRegistroAberto(null);
-    if (releitura) {
-      // Quem relia volta ao painel, de onde veio, com o foco no registro que leu.
-      setReleitura(false);
-      setFocoDoPainel(registroAberto);
-      setModo("painel");
-      return;
-    }
-    if (isAnswerPending(capitulo.tarefa, taskStateOf(progresso, capitulo.id))) abrirResposta();
-    else voltarAoJogo();
-  }, [releitura, registroAberto, capitulo, progresso, abrirResposta, voltarAoJogo]);
-
-  // Abrir o painel pelos botões e pela tecla: o foco começa no rodapé, e não em um registro relido antes.
-  const abrirPainel = useCallback(() => {
-    setFocoDoPainel(null);
-    setModo("painel");
-  }, []);
-
-  const abrirGuia = useCallback(() => {
-    setFalasDaAjuda(falar("ajuda", dadosDoCapitulo(taskStateOf(progresso, capitulo.id)), capituloSensivel));
-    setModo("guia");
-  }, [falar, dadosDoCapitulo, progresso, capitulo.id, capituloSensivel]);
-
-  /** Aplica uma resposta ao progresso e devolve a avaliação com as falas do Escrivão. */
+  /** Aplica uma resposta ao progresso e devolve o que a tela mostra: se acertou e, no erro, a fala do Escrivão. */
   const responder = useCallback(
-    (avaliar: (estado: TaskState) => Attempt): AttemptWithLines => {
-      const antes = taskStateOf(progresso, capitulo.id);
-      let avaliacao: Attempt | null = null;
+    (avaliar: (atual: ReturnType<typeof phaseProgressOf>) => { estado: ReturnType<typeof phaseProgressOf>; certo: boolean }): AnswerFeedback => {
+      let certo = false;
+      let tentativas = 0;
       update((atual) => {
-        avaliacao = avaliar(taskStateOf(atual, capitulo.id));
-        return withTaskState(atual, capitulo.id, avaliacao.estado);
+        const avaliacao = avaliar(phaseProgressOf(atual, fase.id));
+        certo = avaliacao.certo;
+        tentativas = avaliacao.estado.tentativas;
+        return withPosition(withPhase(atual, fase.id, avaliacao.estado), fase);
       });
-      aoMudarTarefa(antes, avaliacao!.estado);
-      return comFalas(avaliacao!);
+      return { certo, falas: certo ? [] : falar("erro", tentativas - 1, fase.sensivel) };
     },
-    [progresso, capitulo.id, update, aoMudarTarefa, comFalas],
+    [update, fase, falar],
   );
+  const responderPergunta = useCallback((opcaoId: string) => responder((atual) => answerQuestion(fase, atual, opcaoId, content)), [responder, fase, content]);
+  const responderOrdem = useCallback((chavesDaOrdem: readonly string[]) => responder((atual) => answerOrder(fase, atual, chavesDaOrdem, content)), [responder, fase, content]);
+  const lerEContinuar = useCallback(() => {
+    update((atual) => withPosition(withPhase(atual, fase.id, concludeByExplanation(fase, phaseProgressOf(atual, fase.id), content)), fase));
+  }, [update, fase, content]);
 
-  const responderOrdem = useCallback(
-    (resposta: readonly [string, string]): AttemptWithLines => {
-      const tarefaDeOrdem = capitulo.tarefa;
-      if (tarefaDeOrdem.tipo !== "ordem") throw new Error("A tarefa deste capítulo não é de ordem.");
-      return responder((estado) => submitOrder(tarefaDeOrdem, estado, resposta, content));
-    },
-    [capitulo, responder, content],
-  );
-
-  // Responder a tarefa de documento ou de lugar com o `id` da opção escolhida.
-  const responderEscolha = useCallback(
-    (id: string): AttemptWithLines => {
-      const tarefaDeEscolha = capitulo.tarefa;
-      if (tarefaDeEscolha.tipo !== "fonte" && tarefaDeEscolha.tipo !== "lugar") throw new Error("A tarefa deste capítulo não é de escolha.");
-      return responder((estado) =>
-        tarefaDeEscolha.tipo === "fonte" ? submitSource(tarefaDeEscolha, estado, capitulo, content, id) : submitPlace(tarefaDeEscolha, estado, capitulos, content, id),
-      );
-    },
-    [capitulo, capitulos, responder, content],
-  );
-
-  // As duas etapas da tarefa de decisão.
-  const responderEvidencia = useCallback(
-    (fonteId: string): AttemptWithLines => {
-      const tarefaDeDecisao = capitulo.tarefa;
-      if (tarefaDeDecisao.tipo !== "decisao") throw new Error("A tarefa deste capítulo não é de decisão.");
-      return responder((estado) => submitEvidence(tarefaDeDecisao, estado, capitulo, content, fonteId));
-    },
-    [capitulo, responder, content],
-  );
-  const responderInterpretacao = useCallback(
-    (opcaoId: string): AttemptWithLines => {
-      const tarefaDeDecisao = capitulo.tarefa;
-      if (tarefaDeDecisao.tipo !== "decisao") throw new Error("A tarefa deste capítulo não é de decisão.");
-      return responder((estado) => submitInterpretation(tarefaDeDecisao, estado, content, opcaoId));
-    },
-    [capitulo, responder, content],
-  );
-
-  const atravessar = useCallback(() => {
-    // Só se atravessa uma saída aberta: o progresso recusaria, e a transição não pode aparecer sem ele.
-    if (!saidaAberta) return;
-    const indice = capitulos.findIndex((item) => item.id === capitulo.id);
-    const proximo = capitulos[indice + 1] ?? null;
-    update((atual) => completeChapter(atual, todos, capitulo.id));
-    // A cena fica a mesma até a transição terminar.
-    setCapituloId(capitulo.id);
-    setFalasNaCena(null);
-    setTransicao({ concluido: capitulo, proximo });
-    setModo("transicao");
-  }, [saidaAberta, capitulos, todos, capitulo, update]);
-
-  const continuarTransicao = useCallback(() => {
-    const proximo = transicao?.proximo ?? null;
-    setTransicao(null);
-    if (proximo === null) {
-      // Fim da sala: a cena do último capítulo recomeça por trás da tela
-      // de fim, para quem voltar a ela encontrar o personagem no início.
-      setSessao((atual) => atual + 1);
-      setModo("fim");
-      return;
-    }
-    setCapituloId(proximo.id);
-    setModo("jogando");
-    focusStage();
-  }, [transicao, focusStage]);
-
-  const interagir = useCallback(
-    (alvo: Interactable) => {
-      if (alvo.tipo === "registro") recolher(alvo.id);
-      else if (alvo.tipo === "guia") abrirGuia();
-      // A saída aberta ao alcance atravessa, como andar para dentro dela.
-      else if (saidaAberta) atravessar();
-      else setModo("saida-fechada");
-    },
-    [recolher, abrirGuia, saidaAberta, atravessar],
-  );
-
-  const reiniciar = useCallback(() => {
-    reset();
-    setCapituloId(null);
-    setRegistroAberto(null);
-    setReleitura(false);
-    setTransicao(null);
-    setReinicioDoFim(false);
-    setFalasNaCena(null);
-    entradaDita.current = null;
-    setSessao((atual) => atual + 1);
-    setModo("jogando");
-    focusStage();
-  }, [reset, focusStage]);
-
-  const desistirDoReinicio = useCallback(() => {
-    if (reinicioDoFim) {
-      setReinicioDoFim(false);
-      setModo("fim");
-    } else voltarAoJogo();
-  }, [reinicioDoFim, voltarAoJogo]);
-
-  const abrirCapitulo = useCallback(
+  /** Ir a uma fase é navegação: não conclui nem apaga nada. */
+  const irPara = useCallback(
     (id: string) => {
-      if (chapterStatus(progresso, id) === "bloqueado") return;
-      setCapituloId(id);
-      setFalasNaCena(null);
-      setModo("jogando");
-      focusStage();
+      setEscolhida(id);
+      mostrarFase();
     },
-    [progresso, focusStage],
+    [mostrarFase],
   );
 
-  // Ao seguir para a ficha de um registro, o capítulo aberto fica lembrado para a volta.
-  const lembrarCapitulo = useCallback(() => {
-    OPEN_CHAPTER.set(chaveDaVolta, capitulo.id);
-  }, [chaveDaVolta, capitulo.id]);
+  const irParaOInicio = useCallback(() => irPara(fases[0]!.id), [irPara, fases]);
+
+  const continuar = useCallback(() => {
+    if (proxima !== null) irPara(proxima.id);
+    // O resumo aberto pelo botão da base lembra esse botão; aberto de dentro da fase, fica valendo o controle que abriu a fase.
+    else if (vista.tipo === "base") abrirDaBase({ tipo: "resumo" });
+    else setVista({ tipo: "resumo" });
+  }, [proxima, irPara, vista.tipo, abrirDaBase]);
+
+  const apagar = useCallback(() => {
+    reset();
+    setEscolhida(fases[0]!.id);
+    // Na leitura sem o cenário a fase fica montada sob as janelas: sem remontar, a resposta dada antes continuaria na tela, sem botão para responder de novo.
+    setReinicios((vezes) => vezes + 1);
+    mostrarFase();
+  }, [reset, fases, mostrarFase]);
 
   const alternarHumor = useCallback(() => setHumor(!preferencias.humor), [setHumor, preferencias.humor]);
 
-  const registro = registroAberto === null ? null : (content.registros[registroAberto] ?? null);
-  const decisaoAberta = registroAberto === null ? null : (content.decisoes[registroAberto] ?? null);
-  // As falas da descoberta só acompanham o registro de que foram ditas.
-  const falasDoRegistroAberto = falasDe(falasDoRegistro, registroAberto);
-  const acao = reachLabel(alcance, saidaAberta);
-  // O navegador não deu canvas 2D: a cena sai, o aviso entra e o painel segue valendo.
-  const [semCanvas, setSemCanvas] = useState(false);
-  // O registro da tarefa de escolha e as opções, que vêm dos próprios registros.
-  const escolha = useMemo(() => {
-    const t = capitulo.tarefa;
-    if (t.tipo === "fonte") return { tipo: t.tipo, registro: content.registros[t.eventId] ?? null, opcoes: sourceOptions(capitulo, content.registros, t.eventId) };
-    if (t.tipo === "lugar") return { tipo: t.tipo, registro: content.registros[t.eventId] ?? null, opcoes: placeOptions(capitulos, content.registros, t.eventId) };
-    return null;
-  }, [capitulo, capitulos, content.registros]);
-  // A decisão da tarefa e as opções das duas etapas, que vêm do próprio registro.
-  const decisaoDaTarefa = useMemo(() => {
-    const t = capitulo.tarefa;
-    if (t.tipo !== "decisao") return null;
-    const decisao = content.decisoes[t.decisaoId];
-    if (decisao === undefined) return null;
-    return { decisao, evidencia: sourceOptions(capitulo, documentos, t.decisaoId), interpretacao: interpretationOptions(decisao) };
-  }, [capitulo, content.decisoes, documentos]);
+  /** Trocar entre o cenário e a leitura sem ele. A preferência fica guardada; sem canvas, só a leitura existe. */
+  const lerSemCenario = useCallback(() => {
+    setCenario(false);
+    mostrarFase();
+  }, [setCenario, mostrarFase]);
+  const voltarAoCenario = useCallback(() => {
+    setLeituraDaVisita(false);
+    setCenario(true);
+    // O pedido de leitura que veio pelo endereço deixa de valer junto com a preferência.
+    const url = new URL(window.location.href);
+    url.searchParams.delete("leitura");
+    window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+    mostrarFase();
+  }, [setCenario, mostrarFase]);
+  const alternarLeitura = useCallback(() => (leitura ? voltarAoCenario() : lerSemCenario()), [leitura, voltarAoCenario, lerSemCenario]);
 
-  return (
-    <div
-      ref={raiz}
-      className="jogo-palco relative overflow-hidden bg-sunken"
-      data-jogo={slug}
-      data-sala={sala}
-      data-capitulo={capitulo.id}
-      data-cena={cena.id}
-      data-epoca={capitulo.epoca}
-      data-modo={modo}
-      data-tarefa={tarefaConcluida ? "concluida" : "pendente"}
-      data-tipo-da-tarefa={capitulo.tarefa.tipo}
-      data-etapa={capitulo.tarefa.tipo === "decisao" ? (tarefaConcluida ? "concluida" : isEvidenceDone(tarefa) ? "interpretacao" : "evidencia") : undefined}
-      data-saida={saidaAberta ? "aberta" : "fechada"}
-      data-registros={`${saida.total - saida.faltam}/${saida.total}`}
-      data-carregado={carregado ? "sim" : "nao"}
-      data-movimento={movimento ? "ligado" : "reduzido"}
-      data-humor={preferencias.humor ? "ligado" : "desligado"}
-    >
-      {/* Com um diálogo aberto, a cena e os botões sobre ela saem da tabulação e da leitura. */}
-      <div className="absolute inset-0" inert={modo !== "jogando"} data-cena-e-hud>
-        {carregado ? (
-          semCanvas ? (
-            <StageUnavailable onOpenPanel={abrirPainel} slug={slug} nome={content.personagem.nome} />
+  // -------------------------------------------------------------------------
+  // O que as janelas mostram
+  // -------------------------------------------------------------------------
+
+  const registroAberto = vista.tipo === "registro" ? vista.referencia : null;
+  const falasDoRegistro = useMemo(() => {
+    // A proposta eleitoral traz o próprio aviso no cartão (o que ela é e o que não é): o Escrivão não comenta, nem com humor.
+    if (registroAberto === null || registroAberto.tipo === "proposta") return [];
+    const posicao = Math.max(0, fase.explorar.findIndex((item) => refKey(item) === refKey(registroAberto)));
+    // Um registro sensível aberto de uma fase comum, ou qualquer registro de uma fase sensível: sem humor.
+    return falar("explorar", posicao, fase.sensivel || isSensitive(registroAberto.id));
+  }, [registroAberto, fase, falar]);
+  const pausado = vista.tipo !== "base" || !janelaAtiva;
+
+  const janelas = (
+    <>
+      {/* A fase continua montada sob o registro aberto de dentro dela: a escolha feita e o lugar da leitura não se perdem. */}
+      {(vista.tipo === "fase" || (vista.tipo === "registro" && vista.de === "fase")) && (
+        <PhaseDialog
+          encoberta={vista.tipo === "registro"}
+          fase={fase}
+          total={fases.length}
+          sala={salaSpec}
+          content={content}
+          estado={estado}
+          proxima={proxima}
+          falasDaConclusao={falasDaConclusao}
+          onAnswerQuestion={responderPergunta}
+          onAnswerOrder={responderOrdem}
+          onSkip={lerEContinuar}
+          onOpenRecord={(referencia) => abrirRegistro(referencia, "fase")}
+          onContinue={continuar}
+          onClose={voltarParaBase}
+        />
+      )}
+      {vista.tipo === "registro" && (
+        <RecordDialog
+          referencia={vista.referencia}
+          content={content}
+          relacionados={vista.referencia.tipo === "acontecimento" ? relatedRecords(vista.referencia.id, content.registros) : []}
+          falas={falasDoRegistro}
+          voltar={vista.de === "fase" ? "Voltar à fase" : leitura ? "Voltar à leitura" : "Voltar ao cenário"}
+          onOpenRecordPage={() => update((atual) => withPosition(atual, fase))}
+          onClose={() => (vista.de === "fase" ? voltarParaDeBaixo({ tipo: "fase" }) : voltarParaBase())}
+        />
+      )}
+      {(vista.tipo === "fases" || vista.tipo === "apagar") && (
+        <PhaseListDialog
+          encoberta={vista.tipo === "apagar"}
+          content={content}
+          sala={salaSpec}
+          progresso={progresso}
+          aberta={fase}
+          duravel={duravel}
+          humor={preferencias.humor}
+          leitura={leitura}
+          onToggleHumor={alternarHumor}
+          onToggleReading={alternarLeitura}
+          onOpenPhase={irPara}
+          onReset={() => abrirPorCima({ tipo: "apagar" })}
+          onClose={voltarParaBase}
+        />
+      )}
+      {vista.tipo === "ajuda" && <HelpDialog sala={salaSpec} falas={falasDaAjuda} humor={preferencias.humor} leitura={leitura} onToggleHumor={alternarHumor} onClose={voltarParaBase} />}
+      {vista.tipo === "apagar" && <ConfirmResetDialog nome={content.personagem.nome} onConfirm={apagar} onClose={() => voltarParaDeBaixo({ tipo: "fases" })} />}
+      {vista.tipo === "resumo" && <SummaryDialog content={content} sala={salaSpec} progresso={progresso} outraPessoa={outraPessoa} onOpenPhase={irPara} onClose={voltarParaBase} />}
+    </>
+  );
+
+  const atributos = {
+    "data-jogo": slug,
+    "data-sala": sala,
+    "data-fase-aberta": fase.id,
+    "data-numero": fase.numero,
+    "data-cena": cena.id,
+    "data-epoca": fase.epoca,
+    "data-vista": vista.tipo,
+    "data-modo": leitura ? "leitura" : "cenario",
+    "data-fase-situacao": phaseStatus(estado),
+    "data-carregado": pronto ? "sim" : "nao",
+    "data-movimento": movimento ? "ligado" : "reduzido",
+    "data-humor": preferencias.humor ? "ligado" : "desligado",
+  };
+
+  // -------------------------------------------------------------------------
+  // Ler sem o cenário: a fase na página, com as mesmas ações.
+  // -------------------------------------------------------------------------
+  if (leitura) {
+    const anterior = fases[fases.findIndex((item) => item.id === fase.id) - 1] ?? null;
+    return (
+      <div ref={raiz} className="page space-y-6 py-6 md:py-10" onClickCapture={lembrarControle} {...atributos}>
+        <nav aria-label="Caminhos da leitura" className="flex flex-wrap items-center justify-between gap-2 border-b border-line pb-3">
+          <p className="text-sm" data-aviso-leitura>
+            Você está lendo sem o cenário: as mesmas fases, com a explicação, a atividade e as fontes.
+            {semCanvas && " O navegador não conseguiu desenhar a cena."}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {!semCanvas && (
+              <button type="button" className={secondaryButton} onClick={voltarAoCenario} data-voltar-ao-cenario>
+                Voltar ao cenário
+              </button>
+            )}
+            <button type="button" className={secondaryButton} onClick={() => abrirDaBase({ tipo: "fases" })} data-abrir-fases>
+              Fases
+            </button>
+            <button type="button" className={secondaryButton} onClick={() => abrirDaBase({ tipo: "ajuda" })} data-abrir-ajuda>
+              Como funciona
+            </button>
+          </div>
+        </nav>
+        {retomada !== null && <ResumeNotice retomada={retomada} className="text-sm" onGoToStart={irParaOInicio} />}
+        {salaSpec.natureza === "aprofundamento" && (
+          <p className="text-sm" data-aviso-aprofundamento>
+            {roomLabel(salaSpec)}: decisões documentadas sobre um assunto, e não o começo da trajetória.{" "}
+            <Link href={`${gameHref(slug)}?fase=1`} prefetch={false} className={PATH_LINK} data-ir-para-o-inicio>
+              Ir para o início da vida
+            </Link>
+          </p>
+        )}
+        <article className="max-w-3xl" inert={vista.tipo !== "base"} data-leitura-da-fase>
+          <PhaseContent
+            key={`${fase.id}:${reinicios}`}
+            fase={fase}
+            total={fases.length}
+            sala={salaSpec}
+            content={content}
+            estado={estado}
+            proxima={proxima}
+            cabecalho
+            falasDaConclusao={falasDaConclusao}
+            onAnswerQuestion={responderPergunta}
+            onAnswerOrder={responderOrdem}
+            onSkip={lerEContinuar}
+            onOpenRecord={(referencia) => abrirRegistro(referencia, "base")}
+            onContinue={continuar}
+          />
+        </article>
+        <nav aria-label="Fase anterior e fase seguinte" className="flex max-w-3xl flex-wrap items-center justify-between gap-2 border-t border-line pt-4" inert={vista.tipo !== "base"}>
+          {anterior === null ? (
+            <span />
           ) : (
-            <StageBoundary fallback={<StageFailure />}>
+            <button type="button" className={`${quietButton} gap-1.5`} onClick={() => irPara(anterior.id)} data-fase-anterior={anterior.id}>
+              <span aria-hidden="true">←</span>
+              <span>
+                Fase {anterior.numero}: {anterior.titulo}
+              </span>
+            </button>
+          )}
+          {proxima !== null && (
+            <button type="button" className={`${quietButton} gap-1.5`} onClick={() => irPara(proxima.id)} data-fase-seguinte={proxima.id}>
+              <span>
+                Fase {proxima.numero}: {proxima.titulo}
+              </span>
+              <span aria-hidden="true">→</span>
+            </button>
+          )}
+        </nav>
+        {/* As janelas, na leitura, cobrem a tela: não há palco para contê-las. */}
+        {vista.tipo !== "base" && <div className="fixed inset-0 z-40">{janelas}</div>}
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Com o cenário
+  // -------------------------------------------------------------------------
+  return (
+    <div ref={raiz} className="jogo-palco relative overflow-hidden bg-sunken" onClickCapture={lembrarControle} {...atributos}>
+      {/* Com uma janela aberta, a cena e os botões sobre ela saem da tabulação e da leitura. */}
+      <div className="absolute inset-0" inert={vista.tipo !== "base"} data-cena-e-hud>
+        {pronto ? (
+          semCanvas ? (
+            <StageMissing motivo="sem-canvas" onRead={() => setLeituraDaVisita(true)} />
+          ) : (
+            <StageBoundary fallback={<StageMissing motivo="falhou" onRead={() => setLeituraDaVisita(true)} />}>
               <GameStage
                 handle={handle}
                 scene={cena}
-                chapter={capitulo}
                 personagem={slug}
-                sessao={sessao}
-                recolhidos={tarefa.recolhidos}
-                saidaAberta={saidaAberta}
+                epoca={fase.epoca}
+                faseId={fase.id}
+                marcadores={marcadores}
+                margens={margens}
+                concluida={concluida}
                 pausado={pausado}
                 movimento={movimento}
-                onInteract={interagir}
-                onExit={atravessar}
-                onReach={setAlcance}
-                onEscape={() => {
-                  if (modo === "jogando") abrirPainel();
-                }}
+                onOpen={aoChegar}
                 onUnavailable={() => setSemCanvas(true)}
-                describedBy={instrucoesId}
               />
             </StageBoundary>
           )
         ) : (
           <StageNotice>
             <p className="map-loading text-sm text-ink-soft">Carregando o jogo…</p>
-            {/* Sem JavaScript a cena não chega. O aviso fica aqui, na primeira tela, e não abaixo do palco. */}
-            <noscript>
-              <p className="max-w-md text-sm" data-sem-javascript>
-                O jogo precisa de JavaScript para desenhar a cena. Os registros destes capítulos estão na{" "}
-                <a href={`/politicos/${slug}/`} className="font-medium underline">
-                  trajetória de {content.personagem.nome} no atlas
-                </a>
-                , com data, lugar e fontes.
-              </p>
-            </noscript>
           </StageNotice>
         )}
 
-        <Hud
-          capitulo={capitulo}
-          sala={salaSpec}
-          cenaNome={cena.nome}
-          // Com uma janela aberta a cena está parada: a dica do alcance, que é do instante em que ela abriu, some.
-          alcance={modo === "jogando" ? alcance : null}
-          saidaAberta={saidaAberta}
-          tarefaConcluida={tarefaConcluida}
-          respostaPendente={respostaPendente}
-          faltam={saida.faltam}
-          total={total}
-          ultimo={ultimo}
-          toque={toque}
-          pausadoPelaJanela={!janelaAtiva && modo === "jogando"}
-          instrucoesId={instrucoesId}
-          falas={falasNaCena}
-          onDismissFalas={() => setFalasNaCena(null)}
-          onOpenPanel={abrirPainel}
-          onOpenGuide={abrirGuia}
-        />
-
-        {toque && modo === "jogando" && (
-          <TouchControls onDirection={(dx, dy) => handle.current?.setTouch(dx, dy)} onInteract={() => handle.current?.interact()} acao={acao} />
+        {/* Enquanto o endereço da página não entra, o cabeçalho de uma fase suposta não aparece: é um instante, e a fase certa vem em seguida. */}
+        {endereco.situacao !== "aguardando" && (
+          <Hud
+            fase={fase}
+            total={fases.length}
+            sala={salaSpec}
+            marco={marcoTitulo}
+            concluida={concluida}
+            proxima={proxima}
+            falas={falasDaEntrada}
+            retomada={retomada}
+            onGoToStart={irParaOInicio}
+            onOpenMarker={abrirMarco}
+            onContinue={continuar}
+            onOpenPhases={() => abrirDaBase({ tipo: "fases" })}
+            onOpenHelp={() => abrirDaBase({ tipo: "ajuda" })}
+            onReadWithoutScene={lerSemCenario}
+          />
         )}
       </div>
-
-      {modo === "registro" && registro !== null && (
-        <RecordDialog
-          registro={registro}
-          personagem={slug}
-          tipoDaTarefa={capitulo.tarefa.tipo}
-          respostaPendente={respostaPendente}
-          concluiu={capitulo.tarefa.tipo === "registro" && capitulo.tarefa.eventId === registro.id}
-          saida={saida}
-          releitura={releitura}
-          relacionados={relatedRecords(registro.id, content.registros)}
-          falas={falasDoRegistroAberto}
-          onOpenRecordPage={lembrarCapitulo}
-          onClose={fecharRegistro}
-        />
-      )}
-      {modo === "registro" && registro === null && decisaoAberta !== null && (
-        <DecisionRecordDialog
-          decisao={decisaoAberta}
-          personagem={slug}
-          tipoDaTarefa={capitulo.tarefa.tipo}
-          respostaPendente={respostaPendente}
-          saida={saida}
-          releitura={releitura}
-          falas={falasDoRegistroAberto}
-          onOpenRecordPage={lembrarCapitulo}
-          onClose={fecharRegistro}
-        />
-      )}
-      {modo === "ordem" && capitulo.tarefa.tipo === "ordem" && (
-        <OrderDialog
-          tarefa={capitulo.tarefa}
-          registros={content.registros}
-          personagem={slug}
-          tentativas={tarefa.tentativas}
-          saida={saida}
-          onSubmit={responderOrdem}
-          onClose={voltarAoJogo}
-        />
-      )}
-      {modo === "escolha" && escolha !== null && escolha.registro !== null && (
-        <ChoiceDialog
-          tipo={escolha.tipo}
-          registro={escolha.registro}
-          opcoes={escolha.opcoes}
-          personagem={slug}
-          tentativas={tarefa.tentativas}
-          saida={saida}
-          onSubmit={responderEscolha}
-          onClose={voltarAoJogo}
-        />
-      )}
-      {modo === "decisao" && decisaoDaTarefa !== null && (
-        <DecisionTaskDialog
-          decisao={decisaoDaTarefa.decisao}
-          estado={tarefa}
-          opcoesDeEvidencia={decisaoDaTarefa.evidencia}
-          opcoesDeInterpretacao={decisaoDaTarefa.interpretacao}
-          saida={saida}
-          falasDaFonte={falasDaFonte}
-          onSubmitEvidence={responderEvidencia}
-          onSubmitInterpretation={responderInterpretacao}
-          onClose={voltarAoJogo}
-        />
-      )}
-      {modo === "guia" && (
-        <EscrivaoDialog
-          capitulo={capitulo}
-          sala={salaSpec}
-          saida={saida}
-          respostaPendente={respostaPendente}
-          ultimo={ultimo}
-          falas={falasDaAjuda}
-          humor={preferencias.humor}
-          onToggleHumor={alternarHumor}
-          onAnswer={abrirResposta}
-          onClose={voltarAoJogo}
-        />
-      )}
-      {modo === "saida-fechada" && (
-        <ClosedExitDialog capitulo={capitulo} saida={saida} respostaPendente={respostaPendente} onAnswer={abrirResposta} onClose={voltarAoJogo} />
-      )}
-      {modo === "painel" && (
-        <ChapterPanel
-          content={content}
-          sala={salaSpec}
-          capitulos={capitulos}
-          outrasSalas={outrasSalas}
-          progresso={progresso}
-          aberto={capitulo}
-          duravel={duravel}
-          humor={preferencias.humor}
-          onToggleHumor={alternarHumor}
-          onCollect={recolher}
-          onRead={lerDeNovo}
-          focoEm={focoDoPainel}
-          onAnswer={abrirResposta}
-          onCrossExit={atravessar}
-          onOpenChapter={abrirCapitulo}
-          onReset={() => setModo("reiniciar")}
-          onClose={voltarAoJogo}
-        />
-      )}
-      {modo === "reiniciar" && <ConfirmResetDialog nome={content.personagem.nome} onConfirm={reiniciar} onClose={desistirDoReinicio} />}
-      {modo === "transicao" && transicao !== null && (
-        <ChapterTransition concluido={transicao.concluido} proximo={transicao.proximo} falas={falasDe(falasDaConclusao, transicao.concluido.id)} onContinue={continuarTransicao} />
-      )}
-      {modo === "fim" && (
-        <EndScreen
-          nome={content.personagem.nome}
-          personagem={slug}
-          sala={salaSpec}
-          capitulos={capitulos}
-          outrasSalas={outrasSalas}
-          onReview={abrirPainel}
-          onReset={() => {
-            setReinicioDoFim(true);
-            setModo("reiniciar");
-          }}
-        />
-      )}
+      {janelas}
     </div>
   );
 }

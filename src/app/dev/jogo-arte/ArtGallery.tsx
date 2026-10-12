@@ -1,17 +1,18 @@
 "use client";
 
 // Galeria da arte do jogo: cada personagem nas quatro direções, em repouso e
-// andando; cada elemento de cenário em cada paleta; piso, paredes, saída,
-// registro e efeito; e cada cena inteira, com o personagem no início. Serve
-// para olhar o desenho sem jogar e para as capturas de conferência.
+// andando; cada elemento de cenário em cada paleta; piso, paredes, porta,
+// pasta e anel do marco; e cada cena inteira, com o personagem no início e as
+// pastas no lugar. Serve para olhar o desenho sem jogar e para as capturas de
+// conferência.
 
 import { useEffect, useRef } from "react";
 
-import { CHAPTERS } from "@/lib/game/chapters";
+import { PHASE_PRESENTATION } from "@/lib/game/presentation";
 import { SCENES } from "@/lib/game/scenes";
-import { EPOCA_LABEL, type Epoca, type Facing, type SceneSpec } from "@/lib/game/types";
+import { EPOCA_LABEL, type Epoca, type Facing, type PersonagemSlug, type SceneSpec } from "@/lib/game/types";
 import { sceneBounds, zoomToFit } from "@/lib/game/world/camera";
-import { initialPlayer } from "@/lib/game/world/movement";
+import { initialPlayer } from "@/lib/game/world/path";
 
 import { ARTS, CHARACTERS, GUIDE, RECORD_ART, SCENE_ART, type CellInfo, type CharacterArt, type DrawContext } from "@/features/game/draw";
 import { PROP_KINDS } from "@/features/game/draw/props";
@@ -145,7 +146,7 @@ function SceneSheet({ scene }: { scene: SceneSpec }) {
         id={`folha-${scene.id}`}
         largura={1180}
         altura={530}
-        legenda="piso (duas variantes e tapete), paredes (norte, oeste, leste, sul), saída fechada, meio aberta e aberta (leste e sul), registro (normal e em destaque), efeito de recolher, elementos de cenário"
+        legenda="piso (duas variantes e tapete), paredes (norte, oeste, leste, sul), porta fechada, meio aberta e aberta (leste e sul), pasta (normal e em destaque), anel do marco, elementos de cenário"
         draw={(ctx, tempo, dpr) => {
           ctx.scale(dpr, dpr);
           const d = contexto(ctx, tempo);
@@ -175,7 +176,6 @@ function SceneSheet({ scene }: { scene: SceneSpec }) {
           RECORD_ART.draw(d, 1150, 60, true);
           SCENE_ART.drawFloor(d, p, 1120, 130, 0, false, info);
           SCENE_ART.drawReachRing(d, p, 1120, 130);
-          SCENE_ART.drawCollectEffect(d, p, 1120, 130, (tempo % 1.2) / 1.2);
           x = 50;
           let y = 200;
           PROPS.forEach((tipo, indice) => {
@@ -198,25 +198,24 @@ function SceneSheet({ scene }: { scene: SceneSpec }) {
         id={`cena-${scene.id}`}
         largura={760}
         altura={440}
-        legenda="a cena inteira, com o personagem no início"
+        legenda="a cena inteira, com o personagem no início e as pastas: a primeira é a do marco"
         draw={(ctx, tempo, dpr) => {
-          const capitulo = CHAPTERS.find((item) => item.cena === scene.id)!;
+          // O personagem e a figura da primeira fase que usa esta cena; sem fase, o primeiro personagem, com a figura recente.
+          const [faseId, apresentacao] = Object.entries(PHASE_PRESENTATION).find(([, item]) => item.cena === scene.id) ?? ["lula", { epoca: "atual" as Epoca }];
+          const personagem: PersonagemSlug = faseId.startsWith("flavio-bolsonaro") ? "flavio-bolsonaro" : "lula";
           const viewport = { largura: 760, altura: 440 };
           const zoom = zoomToFit(scene, viewport);
           const caixa = sceneBounds(scene);
           const player = initialPlayer(scene);
-          const registro = scene.registros[0]!;
           renderScene(
             ctx,
             {
               scene,
-              chapter: capitulo,
-              personagem: capitulo.personagem,
+              personagem,
+              epoca: apresentacao.epoca,
               player: { ...player, facing: "frente-direita", andando: true, fase: (tempo * 1.9) % 1 },
-              recolhidos: [],
+              pastas: scene.registros.map((posicao, indice) => ({ ...posicao, destaque: indice === 0 })),
               abertura: (Math.sin(tempo * 0.8) + 1) / 2,
-              alcance: { tipo: "registro", id: capitulo.eventIds[0]!, x: registro.x + 0.5, y: registro.y + 0.5 },
-              efeitos: [{ x: registro.x + 0.5, y: registro.y + 0.5, t: (tempo % 1.5) / 1.5 }],
               camera: { cx: (caixa.minX + caixa.maxX) / 2, cy: (caixa.minY + caixa.maxY) / 2, zoom },
               tempo,
               movimento: true,
@@ -237,7 +236,7 @@ export function ArtGallery() {
       <section className="space-y-6">
         <h2 className="font-serif text-3xl">Personagens</h2>
         <p className="max-w-prose text-sm text-ink-soft">
-          Cada personagem tem três figuras, uma por época dos capítulos: cabelo, barba e roupa estilizados, com a mesma escala
+          Cada personagem tem três figuras, uma por época das fases: cabelo, barba e roupa estilizados, com a mesma escala
           para os dois. Não afirmam a aparência real da pessoa em cada data.
         </p>
         {EPOCAS.map((epoca) => (

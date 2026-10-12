@@ -1,0 +1,59 @@
+[
+  {
+    "id": "sintetico-proposta-a-economia-1",
+    "pessoaId": "sintetico-pessoa-a",
+    "eleicao": 2026,
+    "tema": "economia",
+    "texto": "O documento [SINTÉTICO] propõe uma medida fictícia de economia.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Página de teste 3, seção fictícia",
+        "evidencia": "[SINTÉTICO] A frase fictícia que o texto resume."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-proposta-a-saude-1",
+    "pessoaId": "sintetico-pessoa-a",
+    "eleicao": 2026,
+    "tema": "saude",
+    "texto": "O documento [SINTÉTICO] propõe uma medida fictícia de saúde.",
+    "ressalva": "[SINTÉTICO] O trecho fictício não traz prazo.",
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-01",
+        "localizacao": "Página de teste 4, seção fictícia",
+        "evidencia": "[SINTÉTICO] A frase fictícia que o texto resume."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  },
+  {
+    "id": "sintetico-proposta-b-economia-1",
+    "pessoaId": "sintetico-pessoa-b",
+    "eleicao": 2026,
+    "tema": "economia",
+    "texto": "O documento [SINTÉTICO] propõe outra medida fictícia de economia.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "sintetico-fonte-02",
+        "localizacao": "Página de teste 5, seção fictícia",
+        "evidencia": "[SINTÉTICO] A frase fictícia que o texto resume."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": { "tipo": "humana", "revisadoPor": "Fixture sintética", "revisadoEm": "2026-10-08" }
+    }
+  }
+]

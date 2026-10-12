@@ -40,6 +40,8 @@ O painel (`ProfilePanel`) tem as mesmas seções, na mesma ordem, para os dois p
 
 **Períodos.** Cada cargo e cada filiação traz o próprio intervalo, na precisão do registro. O que está em vigor na data de corte da edição leva a marca **em curso**; o que tem fim documentado mostra as duas datas; o que tem um limite desconhecido diz "início não documentado" ou "fim não documentado". A ordem é a cronológica da camada de dados.
 
+**Decisões documentadas.** Abaixo da exploração, a página tem a seção **Votos, atos e atuação legislativa**, por tema (`#decisoes`, `src/features/decisions/DecisionsByTheme.tsx`): um grupo por tema que tenha alguma decisão e, por último, "Outros assuntos", com as que não cabem em tema nenhum. Cada decisão é um cartão com cargo e instituição, data, objeto votado e manifestação, ou tipo do ato, ou a matéria e o desfecho, com as fontes e a revisão, e tem âncora própria (`#decisao-<id>`): é para onde o jogo leva quando a pessoa segue de uma decisão para o atlas. A seção não segue o recorte de anos da exploração, e o aviso fixo diz que é amostra, com a regra de escolha de cada parte escrita na metodologia (D-143). As propostas eleitorais não ficam nesta página: estão na comparação, por área.
+
 **Só conteúdo elegível.** A página recebe os dados gerados, já recortados para a pessoa (`sliceForPerson`). Rascunho não chega a ela.
 
 **No HTML do build.** A exploração sai pré-renderizada no estado inicial, e por isso o perfil inteiro está no arquivo gerado, com o título da página igual ao nome e a descrição igual ao resumo.
@@ -154,6 +156,7 @@ As regras são funções puras em `src/lib/state/links.ts` (`profileReturn`, `co
 | --- | --- | --- |
 | Objetivo e escopo | O que o atlas registra e o que não registra | Quantidade de acontecimentos, cargos, filiações e fontes; data de corte |
 | Seleção dos acontecimentos | Os cinco motivos, um por categoria, e as regras que valem para os dois perfis | |
+| Decisões, propostas e conteúdo do jogo | Os outros tipos de registro e o que cada um diz: decisões documentadas (voto, ato do Executivo, atuação legislativa), propostas eleitorais, fatos biográficos, termos explicados e fases do jogo. Um voto vale para o objeto votado; propor ou relatar não é votar; proposta não é ato, voto nem resultado | |
 | Fontes | Que a evidência vem do documento lido, a ordem de preferência e o uso restrito de jornalismo | Quantidade de documentos e de citações |
 | Revisão | O processo que de fato aconteceu: conferência assistida por IA, o que ela prova e o que não prova | Tipo, autor e data da revisão; nota da edição |
 | Datas | Precisão, datas parciais, ordem, períodos com limite desconhecido e recorte por anos | |

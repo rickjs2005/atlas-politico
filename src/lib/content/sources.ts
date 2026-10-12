@@ -34,10 +34,12 @@ import { probeMedia } from "./media";
  * 1: as sete coleções da edição 0.1; 2: as seis coleções de decisões políticas
  * (proposições, votações, votos, atos do Executivo, cobertura da pesquisa e
  * identidades institucionais) e os índices delas; 3: o objeto votado de uma
- * votação traz `divergenciaDocumentada`. Saída de outra versão é recusada na
- * leitura, sem tentar aproveitar.
+ * votação traz `divergenciaDocumentada`; 4: as três coleções do conteúdo
+ * educativo do jogo (fatos biográficos, conceitos e fases) e a das propostas
+ * eleitorais (o que o documento registrado no TSE propõe), com os índices.
+ * Saída de outra versão é recusada na leitura, sem tentar aproveitar.
  */
-export const FORMAT_VERSION = 3;
+export const FORMAT_VERSION = 4;
 
 export interface ProjectPaths {
   /** Raiz do projeto: os caminhos dos diagnósticos são escritos a partir dela. */

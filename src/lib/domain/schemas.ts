@@ -16,6 +16,7 @@ import {
   type DataHistorica,
 } from "./dates";
 import {
+  DESFECHOS_DE_ATUACAO,
   ESTADOS_DE_COBERTURA,
   INSTITUICOES,
   JURISDICOES,
@@ -26,7 +27,9 @@ import {
   RESULTADOS_DE_VOTACAO,
   TEMAS,
   TEMAS_DE_COBERTURA,
+  TIPOS_DE_ATUACAO,
 } from "./decisions";
+import { INICIO_DA_PROPOSTA, LIMITES_DA_FASE, SALAS_DO_JOGO, TIPOS_DE_FATO_BIOGRAFICO, TIPOS_DE_REFERENCIA_DE_FASE, countWords } from "./game";
 import { PRECISOES_GEOGRAFICAS, isInsideBrazilBox } from "./geo";
 
 // Mensagens do próprio Zod em português, para quem lê o erro de validação.
@@ -533,6 +536,59 @@ export const atoExecutivoSchema = z
   .superRefine(requireDistinctThemes);
 
 /**
+ * A atuação legislativa: uma matéria de que o parlamentar é autor, ou de que
+ * foi relator, com o destino documentado dela. Não é voto (não diz como ele
+ * votou) nem ato do Executivo, e não entra na linha do tempo: é registro de
+ * trabalho no cargo, como os atos de um presidente.
+ */
+export const atuacaoLegislativaSchema = z
+  .strictObject({
+    id: idSchema,
+    pessoaId: idSchema,
+    /** O mandato pelo qual a pessoa atuou: é o que dá a competência. */
+    mandatoId: idSchema,
+    tipo: z.enum(TIPOS_DE_ATUACAO),
+    /** A casa ou o órgão em que a atuação aconteceu. */
+    instituicao: z.enum(INSTITUICOES),
+    /** A data do que o documento registra: a da lei, na autoria que virou lei; a da designação, na relatoria. */
+    data: dataHistoricaSchema,
+    /** Como o cartão chama o registro, em uma linha: o tipo, a norma ou a matéria e o assunto. */
+    titulo: texto,
+    /** A matéria, como o acervo a identifica: de quem ela é, e o que diz a ementa. */
+    materia: z.strictObject({
+      identificador: texto,
+      ementa: texto,
+      /** Quem assina a matéria, como o acervo registra. Na relatoria, a matéria é de outro autor. */
+      autoria: texto,
+    }),
+    /** O destino documentado da matéria. */
+    desfecho: z.strictObject({
+      tipo: z.enum(DESFECHOS_DE_ATUACAO),
+      /** A norma em que a matéria se tornou, como o acervo a identifica; `null` quando o desfecho não está documentado. */
+      norma: texto.nullable(),
+      /** O que o documento diz do destino, e o que ele não diz. */
+      descricao: texto,
+    }),
+    /** Uma divergência entre documentos, escrita para quem lê: o que cada um diz e o que o atlas adotou. `null` quando concordam. */
+    divergenciaDocumentada: texto.nullable(),
+    /** Classificação temática: decisão editorial, a justificar na revisão. Pode ficar vazia. */
+    temas: z.array(z.enum(TEMAS)),
+    fontes: z.array(citacaoSchema),
+    editorial: editorialSchema,
+  })
+  .superRefine(requireEvidenceWhenReviewed)
+  .superRefine(requireDistinctThemes)
+  .superRefine((atuacao, ctx) => {
+    const semNorma = atuacao.desfecho.tipo === "nao-documentado";
+    if (semNorma && atuacao.desfecho.norma !== null) {
+      ctx.addIssue({ code: "custom", message: "Desfecho não documentado não tem norma.", path: ["desfecho", "norma"] });
+    }
+    if (!semNorma && atuacao.desfecho.norma === null) {
+      ctx.addIssue({ code: "custom", message: "Este desfecho exige a norma em que a matéria se tornou.", path: ["desfecho", "norma"] });
+    }
+  });
+
+/**
  * O que foi pesquisado para uma pessoa, em um tema e um período, em quais
  * acervos e com que resultado. É o que separa "a fonte não individualiza" de
  * "a pesquisa ainda não encontrou". Não cita trechos: os acervos são a evidência.
@@ -578,6 +634,217 @@ export const identidadeInstitucionalSchema = z
   .superRefine(requireEvidenceWhenReviewed);
 
 // ---------------------------------------------------------------------------
+// Proposta eleitoral (docs/DATA_MODEL.md, seção Propostas eleitorais)
+// ---------------------------------------------------------------------------
+
+/**
+ * Uma frase do documento que a candidatura registrou na Justiça Eleitoral
+ * como proposta de governo. Diz o que o documento propõe; não é ato, voto nem
+ * resultado, e por isso não entra nas decisões nem na linha do tempo. A fonte
+ * é o próprio documento, com a página; o texto resume a frase sem trocar o
+ * sentido e começa sempre por "O documento".
+ */
+export const propostaEleitoralSchema = z
+  .strictObject({
+    id: idSchema,
+    pessoaId: idSchema,
+    /** O ano da eleição a que o documento registrado se refere. */
+    eleicao: z.number().int().min(YEAR_BOUNDS.min).max(YEAR_BOUNDS.max),
+    /** Classificação temática: decisão editorial, a justificar na revisão. */
+    tema: z.enum(TEMAS),
+    /** O que o documento propõe, em uma frase. */
+    texto: texto,
+    /** O que quem lê precisa saber para não ler a mais: uma condição, uma divergência dentro do documento, um número que é afirmação do próprio texto. `null` quando não há. */
+    ressalva: texto.nullable(),
+    fontes: z.array(citacaoSchema),
+    editorial: editorialSchema,
+  })
+  .superRefine(requireEvidenceWhenReviewed)
+  .superRefine((proposta, ctx) => {
+    if (!proposta.texto.startsWith(INICIO_DA_PROPOSTA)) {
+      ctx.addIssue({ code: "custom", message: `O texto de uma proposta começa por "${INICIO_DA_PROPOSTA.trim()}": quem propõe é o documento registrado, e proposta não é ato nem resultado.`, path: ["texto"] });
+    }
+    if (countWords(proposta.texto) > LIMITES_DA_FASE.palavrasDaProposta) {
+      ctx.addIssue({ code: "custom", message: `O texto tem mais de ${LIMITES_DA_FASE.palavrasDaProposta} palavras.`, path: ["texto"] });
+    }
+  });
+
+// ---------------------------------------------------------------------------
+// Conteúdo educativo do jogo: fato biográfico, conceito e fase
+// (docs/GAME-TRAIL.md e docs/DATA_MODEL.md, seção Conteúdo educativo)
+// ---------------------------------------------------------------------------
+
+/**
+ * Um fato da vida da pessoa anterior à trajetória pública, ou paralelo a ela:
+ * nascimento, família, mudança de cidade, formação, trabalho. Não é um
+ * acontecimento da linha do tempo; tem as mesmas exigências de evidência.
+ */
+export const fatoBiograficoSchema = z
+  .strictObject({
+    id: idSchema,
+    pessoaId: idSchema,
+    tipo: z.enum(TIPOS_DE_FATO_BIOGRAFICO),
+    titulo: texto,
+    /** Quando foi, na precisão que o documento sustenta; `desconhecida` quando o documento não data. */
+    data: dataOuDesconhecidaSchema,
+    /** O fato, em uma ou duas frases, só com o que as citações sustentam. */
+    texto: texto,
+    /** Uma divergência entre documentos, escrita para quem lê: o que cada um diz e o que o atlas adotou. `null` quando concordam. */
+    divergenciaDocumentada: texto.nullable(),
+    fontes: z.array(citacaoSchema),
+    editorial: editorialSchema,
+  })
+  .superRefine(requireEvidenceWhenReviewed);
+
+/**
+ * A definição simples de um termo cívico, para quem nunca o viu. Não é fato
+ * sobre nenhuma das pessoas: é o que o texto oficial citado diz do termo.
+ */
+export const conceitoSchema = z
+  .strictObject({
+    id: idSchema,
+    termo: texto,
+    /** A definição, em português simples. Diz só o que as citações sustentam. */
+    definicao: texto,
+    /** O que a definição simplifica: exceções e detalhes que ficaram de fora. `null` quando não há o que avisar. */
+    simplificacao: texto.nullable(),
+    fontes: z.array(citacaoSchema),
+    editorial: editorialSchema,
+  })
+  .superRefine(requireEvidenceWhenReviewed)
+  .superRefine((conceito, ctx) => {
+    if (countWords(conceito.definicao) > LIMITES_DA_FASE.palavrasDoConceito) {
+      ctx.addIssue({ code: "custom", message: `A definição tem mais de ${LIMITES_DA_FASE.palavrasDoConceito} palavras.`, path: ["definicao"] });
+    }
+  });
+
+/** Um registro que a fase aponta, pelo tipo e pelo identificador. */
+const referenciaDeFaseSchema = z.strictObject({
+  tipo: z.enum(TIPOS_DE_REFERENCIA_DE_FASE),
+  id: idSchema,
+});
+
+/** Um bloco da explicação: o texto e os registros que o sustentam. */
+const blocoDeExplicacaoSchema = z.strictObject({
+  texto: texto,
+  referencias: z.array(referenciaDeFaseSchema).min(1),
+});
+
+const opcaoDeAtividadeSchema = z.strictObject({ id: idSchema, texto: texto });
+
+/**
+ * A atividade de uma fase: uma pergunta com duas ou três opções, ou uma
+ * ordenação curta. A pergunta usa o que a explicação acabou de dizer; a
+ * ordenação só existe quando as datas dos registros decidem a ordem (o
+ * conjunto confere). `explicacao` é o que a pessoa lê depois de responder, ou
+ * no lugar de responder.
+ */
+const atividadeSchema = z.discriminatedUnion("tipo", [
+  z.strictObject({
+    tipo: z.literal("pergunta"),
+    enunciado: texto,
+    opcoes: z.array(opcaoDeAtividadeSchema).min(2).max(3),
+    correta: idSchema,
+    explicacao: texto,
+    /** Os registros que sustentam a resposta. */
+    referencias: z.array(referenciaDeFaseSchema).min(1),
+  }),
+  z.strictObject({
+    tipo: z.literal("ordem"),
+    enunciado: texto,
+    /** Os registros a pôr em ordem cronológica: acontecimentos, decisões ou fatos com data. */
+    itens: z.array(referenciaDeFaseSchema).min(2).max(3),
+    explicacao: texto,
+  }),
+]);
+
+const anoDaFase = z.number().int().min(YEAR_BOUNDS.min).max(YEAR_BOUNDS.max);
+
+/**
+ * Uma fase da trilha do jogo: um marco, uma explicação curta, uma atividade
+ * e o que mais há para explorar no período. O texto é novo, mas não é fonte
+ * de fato: cada bloco aponta os registros publicados que o sustentam, e a
+ * fase não cita documento por conta própria.
+ */
+export const faseDoJogoSchema = z
+  .strictObject({
+    id: idSchema,
+    pessoaId: idSchema,
+    sala: z.enum(SALAS_DO_JOGO),
+    /** Posição na sala, a partir de 1. */
+    ordem: z.number().int().min(1).max(20),
+    titulo: texto,
+    /** O que a pessoa sabe ao terminar a fase, em uma frase. */
+    objetivo: texto,
+    /** Os anos que a fase cobre, pelas datas dos registros que ela aponta. */
+    periodo: z.strictObject({ de: anoDaFase, ate: anoDaFase }),
+    /** O registro principal da fase: é o que o cenário destaca. */
+    marco: referenciaDeFaseSchema,
+    explicacao: z.array(blocoDeExplicacaoSchema).min(1).max(LIMITES_DA_FASE.blocos),
+    /** Os conceitos definidos nesta fase, na primeira vez em que aparecem na trilha. */
+    conceitos: z.array(idSchema),
+    atividade: atividadeSchema,
+    /** Os outros registros do período, opcionais: não seguram a fase seguinte. */
+    explorar: z.array(referenciaDeFaseSchema),
+    /** O que a edição não pesquisou neste período, dito a quem joga. */
+    lacunas: z.array(texto),
+    editorial: editorialSchema,
+  })
+  .superRefine((fase, ctx) => {
+    if (fase.periodo.de > fase.periodo.ate) {
+      ctx.addIssue({ code: "custom", message: "O período termina antes de começar.", path: ["periodo", "ate"] });
+    }
+    if (fase.marco.tipo === "conceito") {
+      ctx.addIssue({ code: "custom", message: "O marco de uma fase é um registro da pessoa, e não um conceito.", path: ["marco", "tipo"] });
+    }
+    if (fase.marco.tipo === "proposta") {
+      ctx.addIssue({ code: "custom", message: "O marco de uma fase é algo que aconteceu, e não uma proposta eleitoral.", path: ["marco", "tipo"] });
+    }
+    if (new Set(fase.conceitos).size !== fase.conceitos.length) {
+      ctx.addIssue({ code: "custom", message: "O mesmo conceito aparece mais de uma vez.", path: ["conceitos"] });
+    }
+    const chaves = fase.explorar.map((item) => `${item.tipo}:${item.id}`);
+    if (new Set(chaves).size !== chaves.length) {
+      ctx.addIssue({ code: "custom", message: "O mesmo registro aparece mais de uma vez.", path: ["explorar"] });
+    }
+    fase.explorar.forEach((item, indice) => {
+      if (item.tipo === "conceito") ctx.addIssue({ code: "custom", message: "Conceito não é registro para explorar: use o campo conceitos.", path: ["explorar", indice, "tipo"] });
+    });
+    const palavras = fase.explicacao.reduce((soma, bloco) => soma + countWords(bloco.texto), 0);
+    if (palavras > LIMITES_DA_FASE.palavrasDaExplicacao) {
+      ctx.addIssue({ code: "custom", message: `A explicação tem ${palavras} palavras; o limite é ${LIMITES_DA_FASE.palavrasDaExplicacao}.`, path: ["explicacao"] });
+    }
+    const { atividade } = fase;
+    if (countWords(atividade.enunciado) > LIMITES_DA_FASE.palavrasDoEnunciado) {
+      ctx.addIssue({ code: "custom", message: `O enunciado tem mais de ${LIMITES_DA_FASE.palavrasDoEnunciado} palavras.`, path: ["atividade", "enunciado"] });
+    }
+    if (atividade.tipo === "pergunta") {
+      const ids = atividade.opcoes.map((opcao) => opcao.id);
+      if (new Set(ids).size !== ids.length) {
+        ctx.addIssue({ code: "custom", message: "Duas opções têm o mesmo identificador.", path: ["atividade", "opcoes"] });
+      }
+      if (!ids.includes(atividade.correta)) {
+        ctx.addIssue({ code: "custom", message: `A opção certa ("${atividade.correta}") não está entre as opções.`, path: ["atividade", "correta"] });
+      }
+      atividade.opcoes.forEach((opcao, indice) => {
+        if (countWords(opcao.texto) > LIMITES_DA_FASE.palavrasDaOpcao) {
+          ctx.addIssue({ code: "custom", message: `A opção tem mais de ${LIMITES_DA_FASE.palavrasDaOpcao} palavras.`, path: ["atividade", "opcoes", indice, "texto"] });
+        }
+      });
+    } else {
+      const itens = atividade.itens.map((item) => `${item.tipo}:${item.id}`);
+      if (new Set(itens).size !== itens.length) {
+        ctx.addIssue({ code: "custom", message: "O mesmo registro aparece mais de uma vez na ordenação.", path: ["atividade", "itens"] });
+      }
+      atividade.itens.forEach((item, indice) => {
+        if (item.tipo !== "acontecimento" && item.tipo !== "decisao" && item.tipo !== "fato") {
+          ctx.addIssue({ code: "custom", message: "Só acontecimentos, decisões e fatos com data entram em uma ordenação.", path: ["atividade", "itens", indice, "tipo"] });
+        }
+      });
+    }
+  });
+
+// ---------------------------------------------------------------------------
 // Edição e conjunto
 // ---------------------------------------------------------------------------
 
@@ -590,8 +857,13 @@ export const ENTIDADES = [
   "votacao",
   "voto",
   "ato-executivo",
+  "atuacao-legislativa",
   "cobertura-politica",
   "identidade-institucional",
+  "proposta-eleitoral",
+  "fato-biografico",
+  "conceito",
+  "fase-do-jogo",
   "lugar",
   "fonte",
   "imagem",
@@ -632,8 +904,13 @@ export const conjuntoSchema = z.strictObject({
   votacoes: z.array(votacaoSchema),
   votos: z.array(votoSchema),
   atosExecutivos: z.array(atoExecutivoSchema),
+  atuacoesLegislativas: z.array(atuacaoLegislativaSchema),
   coberturaPolitica: z.array(coberturaPoliticaSchema),
   identidadesInstitucionais: z.array(identidadeInstitucionalSchema),
+  propostasEleitorais: z.array(propostaEleitoralSchema),
+  fatosBiograficos: z.array(fatoBiograficoSchema),
+  conceitos: z.array(conceitoSchema),
+  fasesDoJogo: z.array(faseDoJogoSchema),
   lugares: z.array(lugarSchema),
   fontes: z.array(fonteSchema),
   imagens: z.array(imagemSchema),
@@ -655,7 +932,14 @@ export type ObjetoVotadoRegistro = z.infer<typeof objetoVotadoSchema>;
 export type Voto = z.infer<typeof votoSchema>;
 export type RegistroIndividual = z.infer<typeof registroIndividualSchema>;
 export type AtoExecutivo = z.infer<typeof atoExecutivoSchema>;
+export type AtuacaoLegislativa = z.infer<typeof atuacaoLegislativaSchema>;
 export type CoberturaPolitica = z.infer<typeof coberturaPoliticaSchema>;
 export type IdentidadeInstitucional = z.infer<typeof identidadeInstitucionalSchema>;
+export type PropostaEleitoral = z.infer<typeof propostaEleitoralSchema>;
+export type FatoBiografico = z.infer<typeof fatoBiograficoSchema>;
+export type Conceito = z.infer<typeof conceitoSchema>;
+export type FaseDoJogo = z.infer<typeof faseDoJogoSchema>;
+export type ReferenciaDeFase = z.infer<typeof referenciaDeFaseSchema>;
+export type AtividadeDeFase = z.infer<typeof atividadeSchema>;
 export type Edicao = z.infer<typeof edicaoSchema>;
 export type Conjunto = z.infer<typeof conjuntoSchema>;

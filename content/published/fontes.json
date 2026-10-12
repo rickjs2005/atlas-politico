@@ -914,5 +914,817 @@
       "precisao": "dia"
     },
     "acessadoEm": "2026-10-10"
+  },
+  {
+    "id": "planalto-biografia-do-presidente",
+    "titulo": "Biografia do Presidente da República",
+    "autoria": "Presidência da República",
+    "url": "https://www.gov.br/planalto/pt-br/conheca-a-presidencia/biografia-do-presidente",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-dados-abertos-lula",
+    "titulo": "Dados Abertos da Câmara dos Deputados: deputado de código 139289 (Luiz Inácio Lula da Silva)",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/deputados/139289",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "arquivo-nacional-biografia-lula",
+    "titulo": "Luiz Inácio Lula da Silva (biografias do Centro de Referência de Acervos Presidenciais)",
+    "autoria": "Arquivo Nacional",
+    "url": "https://presidentes.an.gov.br/index.php/centro-de-referencia-de-acervos-presidenciais/assuntos/biografias/204-luiz-inacio-lula-da-silva",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "agencia-senado-2002-trajetoria-lula",
+    "titulo": "Do agreste ao Planalto Central - a trajetória do novo Presidente da República",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2002/12/30/do-agreste-ao-planalto-central-a-trajetoria-do-novo-presidente-da-republica",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2002-12-30",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "agencia-senado-2022-lula-eleito",
+    "titulo": "Lula é eleito presidente da República pela terceira vez",
+    "autoria": "Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/materias/2022/10/30/lula-e-eleito-presidente-da-republica-pela-terceira-vez",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2022-10-30",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "ibge-biblioteca-caetes",
+    "titulo": "Caetés (PE): histórico e formação administrativa do município (API da Biblioteca do IBGE)",
+    "autoria": "Instituto Brasileiro de Geografia e Estatística (IBGE)",
+    "url": "https://servicodados.ibge.gov.br/api/v1/biblioteca?aspas=3&codmun=260320",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-perfil-flavio",
+    "titulo": "Deputados / Ficha completa: Flávio Bolsonaro",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www.alerj.rj.gov.br/Deputados/PerfilDeputado/275",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-8a-legislatura",
+    "titulo": "Alerj: 8ª legislatura (2003-2007), lista de deputados",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro, Biblioteca",
+    "url": "https://www2.alerj.rj.gov.br/biblioteca/assets/documentos/pdf/legislaturas/deputados/8aLegislatura.pdf",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "tse-partido-progressistas",
+    "titulo": "Progressistas (partidos registrados no TSE)",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/partidos/partidos-registrados-no-tse/partido-progressista",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "agencia-brasil-2026-flavio-e-lula-votam",
+    "titulo": "Flávio e Lula votam no 1º turno; acompanhe voto dos demais candidatos",
+    "autoria": "Agência Brasil",
+    "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2026-10/flavio-e-lula-votam-no-1o-turno-saiba-candidatos-que-ja-votaram",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-04",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-lei-4250-2003",
+    "titulo": "Lei nº 4250, de 2003, do estado do Rio de Janeiro: texto e ficha técnica (acervo de leis da Alerj)",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53&url=L0NPTlRMRUkuTlNGL2M4YWEwOTAwMDI1ZmVlZjYwMzI1NjRlYzAwNjBkZmZmLzFmOTYwOGQ0Mzk2ZTY3ZGU4MzI1NmUwYzAwNjdiYmY1P09wZW5Eb2N1bWVudA==",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2003-12-29",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-lei-4916-2006",
+    "titulo": "Lei nº 4916, de 2006, do estado do Rio de Janeiro: texto e ficha técnica (acervo de leis da Alerj)",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53&url=L0NPTlRMRUkuTlNGL2M4YWEwOTAwMDI1ZmVlZjYwMzI1NjRlYzAwNjBkZmZmL2UzNjRlYzkxZjM4ZjViZDM4MzI1NzI0MjAwNjg2OGE2P09wZW5Eb2N1bWVudA==",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2006-12-08",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-lei-5019-2007",
+    "titulo": "Lei nº 5019, de 2007, do estado do Rio de Janeiro: texto e ficha técnica (acervo de leis da Alerj)",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53&url=L0NPTlRMRUkuTlNGL2M4YWEwOTAwMDI1ZmVlZjYwMzI1NjRlYzAwNjBkZmZmLzcxODIyMDU2ZDRmNjQwNmU4MzI1NzJkNjAwNzU1NGE5P09wZW5Eb2N1bWVudA==",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2007-04-19",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-lei-5646-2010",
+    "titulo": "Lei nº 5646, de 2010, do estado do Rio de Janeiro: texto e ficha técnica (acervo de leis da Alerj)",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53&url=L0NPTlRMRUkuTlNGL2M4YWEwOTAwMDI1ZmVlZjYwMzI1NjRlYzAwNjBkZmZmL2VmYzY5YTU0MDM4Y2ZkZTc4MzI1NzZiZTAwNjMyZGUzP09wZW5Eb2N1bWVudA==",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2010-01-15",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-lei-5938-2011",
+    "titulo": "Lei nº 5938, de 2011, do estado do Rio de Janeiro: texto e ficha técnica (acervo de leis da Alerj)",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53&url=L0NPTlRMRUkuTlNGL2M4YWEwOTAwMDI1ZmVlZjYwMzI1NjRlYzAwNjBkZmZmLzVkYTc5ZWM0Y2NiNTJjNDc4MzI1Nzg2ODAwNzFhZjFmP09wZW5Eb2N1bWVudA==",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2011-04-04",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-lei-6785-2014",
+    "titulo": "Lei nº 6785, de 2014, do estado do Rio de Janeiro: texto e ficha técnica (acervo de leis da Alerj)",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53&url=L0NPTlRMRUkuTlNGL2M4YWEwOTAwMDI1ZmVlZjYwMzI1NjRlYzAwNjBkZmZmL2E3N2FhM2Q2NDU0ZDZiNDg4MzI1N2NlMTAwNmE2OTQ1P09wZW5Eb2N1bWVudA==",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2014-05-22",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-lei-7008-2015",
+    "titulo": "Lei nº 7008, de 2015, do estado do Rio de Janeiro: texto e ficha técnica (acervo de leis da Alerj)",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53&url=L0NPTlRMRUkuTlNGL2M4YWEwOTAwMDI1ZmVlZjYwMzI1NjRlYzAwNjBkZmZmL2RiNGMzYmE4ZTc4NGRkMmM4MzI1N2U0YjAwNzA5YzY1P09wZW5Eb2N1bWVudA==",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2015-05-19",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "alerj-lei-7877-2018",
+    "titulo": "Lei nº 7877, de 2018, do estado do Rio de Janeiro: texto e ficha técnica (acervo de leis da Alerj)",
+    "autoria": "Assembleia Legislativa do Estado do Rio de Janeiro",
+    "url": "https://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=53&url=L0NPTlRMRUkuTlNGL2M4YWEwOTAwMDI1ZmVlZjYwMzI1NjRlYzAwNjBkZmZmL2Q1ZThiYmU5ODJiNjVmY2M4MzI1ODI0ODAwNTdhN2FmP09wZW5Eb2N1bWVudA==",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2018-03-02",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-dadosabertos-relatorias-flavio",
+    "titulo": "Dados Abertos do Senado: matérias de relatoria do senador de código 5894",
+    "autoria": "Senado Federal, Dados Abertos Legislativos",
+    "url": "https://legis.senado.leg.br/dadosabertos/senador/5894/relatorias",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-11",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-dadosabertos-processo-mpv-866-2018",
+    "titulo": "Dados Abertos do Senado: processo legislativo da MPV 866/2018",
+    "autoria": "Senado Federal, Dados Abertos Legislativos",
+    "url": "https://legis.senado.leg.br/dadosabertos/processo/7708078",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2026-10-11",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-mpv-132-2003",
+    "titulo": "Medida Provisória nº 132, de 20 de outubro de 2003",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/mpv/antigas_2003/132.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2003-10-20",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-10836-2004",
+    "titulo": "Lei nº 10.836, de 9 de janeiro de 2004",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2004-01-09",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-10826-2003",
+    "titulo": "Lei nº 10.826, de 22 de dezembro de 2003",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/2003/l10.826.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2003-12-22",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-emenda-constitucional-41-2003",
+    "titulo": "Emenda Constitucional nº 41, de 19 de dezembro de 2003",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc41.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2003-12-19",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-decreto-5090-2004",
+    "titulo": "Decreto nº 5.090, de 20 de maio de 2004",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/decreto/d5090.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2004-05-20",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-11096-2005",
+    "titulo": "Lei nº 11.096, de 13 de janeiro de 2005",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2005/lei/l11096.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2005-01-13",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-mensagem-14-2005",
+    "titulo": "Mensagem nº 14, de 13 de janeiro de 2005 (veto parcial)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_Ato2004-2006/2005/Msg/Vep/VEP-0014-05.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2005-01-13",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-11340-2006",
+    "titulo": "Lei nº 11.340, de 7 de agosto de 2006",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2006/lei/l11340.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2006-08-07",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-decreto-6025-2007",
+    "titulo": "Decreto nº 6.025, de 22 de janeiro de 2007",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2007/decreto/d6025.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2007-01-22",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-11738-2008",
+    "titulo": "Lei nº 11.738, de 16 de julho de 2008",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2008/lei/l11738.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2008-07-16",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-mensagem-508-2008",
+    "titulo": "Mensagem nº 508, de 16 de julho de 2008 (veto parcial)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_Ato2007-2010/2008/Msg/VEP-508-08.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2008-07-16",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-12187-2009",
+    "titulo": "Lei nº 12.187, de 29 de dezembro de 2009",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2009/lei/l12187.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2009-12-29",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-mensagem-1123-2009",
+    "titulo": "Mensagem nº 1.123, de 29 de dezembro de 2009 (veto parcial)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_Ato2007-2010/2009/Msg/VEP-1123-09.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2009-12-29",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-12351-2010",
+    "titulo": "Lei nº 12.351, de 22 de dezembro de 2010",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2010/lei/l12351.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2010-12-22",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-mensagem-707-2010",
+    "titulo": "Mensagem nº 707, de 22 de dezembro de 2010 (veto parcial)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/_Ato2007-2010/2010/Msg/VEP-707-10.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2010-12-22",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-mpv-132-2003",
+    "titulo": "Dados Abertos da Câmara: proposição MPV 132/2003",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=MPV&numero=132&ano=2003",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pl-1555-2003",
+    "titulo": "Dados Abertos da Câmara: proposição PL 1555/2003",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PL&numero=1555&ano=2003",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pl-1555-2003-situacao",
+    "titulo": "Dados Abertos da Câmara: situação da proposição 125878 (PL 1555/2003)",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/125878",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pec-40-2003",
+    "titulo": "Dados Abertos da Câmara: proposição PEC 40/2003",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PEC&numero=40&ano=2003",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pec-40-2003-autores",
+    "titulo": "Dados Abertos da Câmara: autores da proposição 113716 (PEC 40/2003)",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/113716/autores",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-mpv-213-2004",
+    "titulo": "Dados Abertos da Câmara: proposição MPV 213/2004",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=MPV&numero=213&ano=2004",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pl-4559-2004",
+    "titulo": "Dados Abertos da Câmara: proposição PL 4559/2004",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PL&numero=4559&ano=2004",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pl-7431-2006",
+    "titulo": "Dados Abertos da Câmara: proposição PL 7431/2006",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PL&numero=7431&ano=2006",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pl-7431-2006-autores",
+    "titulo": "Dados Abertos da Câmara: autores da proposição 332750 (PL 7431/2006)",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes/332750/autores",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pl-18-2007",
+    "titulo": "Dados Abertos da Câmara: proposição PL 18/2007",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PL&numero=18&ano=2007",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-proposicao-pl-5940-2009",
+    "titulo": "Dados Abertos da Câmara: proposição PL 5940/2009",
+    "autoria": "Câmara dos Deputados (Dados Abertos)",
+    "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PL&numero=5940&ano=2009",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-norma-emenda-constitucional-41-2003",
+    "titulo": "Emenda Constitucional nº 41, de 2003: dados da norma",
+    "autoria": "Câmara dos Deputados (Legislação Informatizada)",
+    "url": "https://www2.camara.leg.br/legin/fed/emecon/2003/emendaconstitucional-41-19-dezembro-2003-497025-norma-pl.html",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-norma-lei-10836-2004",
+    "titulo": "Lei nº 10.836, de 9 de janeiro de 2004: dados da norma",
+    "autoria": "Câmara dos Deputados (Legislação Informatizada)",
+    "url": "https://www2.camara.leg.br/legin/fed/lei/2004/lei-10836-9-janeiro-2004-490604-norma-pl.html",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-norma-lei-11096-2005",
+    "titulo": "Lei nº 11.096, de 13 de janeiro de 2005: dados da norma",
+    "autoria": "Câmara dos Deputados (Legislação Informatizada)",
+    "url": "https://www2.camara.leg.br/legin/fed/lei/2005/lei-11096-13-janeiro-2005-535381-norma-pl.html",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-norma-lei-11340-2006",
+    "titulo": "Lei nº 11.340, de 7 de agosto de 2006: dados da norma",
+    "autoria": "Câmara dos Deputados (Legislação Informatizada)",
+    "url": "https://www2.camara.leg.br/legin/fed/lei/2006/lei-11340-7-agosto-2006-545133-norma-pl.html",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-norma-lei-11738-2008",
+    "titulo": "Lei nº 11.738, de 16 de julho de 2008: dados da norma",
+    "autoria": "Câmara dos Deputados (Legislação Informatizada)",
+    "url": "https://www2.camara.leg.br/legin/fed/lei/2008/lei-11738-16-julho-2008-578202-norma-pl.html",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-norma-lei-12187-2009",
+    "titulo": "Lei nº 12.187, de 29 de dezembro de 2009: dados da norma",
+    "autoria": "Câmara dos Deputados (Legislação Informatizada)",
+    "url": "https://www2.camara.leg.br/legin/fed/lei/2009/lei-12187-29-dezembro-2009-599441-norma-pl.html",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-norma-lei-12351-2010",
+    "titulo": "Lei nº 12.351, de 22 de dezembro de 2010: dados da norma",
+    "autoria": "Câmara dos Deputados (Legislação Informatizada)",
+    "url": "https://www2.camara.leg.br/legin/fed/lei/2010/lei-12351-22-dezembro-2010-609797-norma-pl.html",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-constituicao-1988",
+    "titulo": "Constituição da República Federativa do Brasil de 1988 (texto compilado)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "1988-10-05",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-emenda-constitucional-26-1985",
+    "titulo": "Emenda Constitucional nº 26, de 27 de novembro de 1985",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc_anterior1988/emc26-85.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "1985-11-27",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-9096-1995",
+    "titulo": "Lei nº 9.096, de 19 de setembro de 1995 (Lei dos Partidos Políticos, texto compilado)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9096.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "1995-09-19",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-9504-1997",
+    "titulo": "Lei nº 9.504, de 30 de setembro de 1997 (Lei das Eleições, texto compilado)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9504.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "1997-09-30",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-clt",
+    "titulo": "Decreto-Lei nº 5.452, de 1º de maio de 1943 (Consolidação das Leis do Trabalho, texto compilado)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "1943-05-01",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-lei-7783-1989",
+    "titulo": "Lei nº 7.783, de 28 de junho de 1989 (Lei de Greve)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l7783.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "1989-06-28",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "planalto-codigo-de-processo-penal",
+    "titulo": "Decreto-Lei nº 3.689, de 3 de outubro de 1941 (Código de Processo Penal, texto compilado)",
+    "autoria": "Presidência da República (Portal da Legislação)",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689.htm",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "1941-10-03",
+      "precisao": "dia"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "congresso-glossario-de-termos-legislativos",
+    "titulo": "Glossário de Termos Legislativos",
+    "autoria": "Congresso Nacional",
+    "url": "https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario-legislativo",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-glossario-legislativo",
+    "titulo": "Glossário Legislativo (Senado Notícias)",
+    "autoria": "Senado Federal, Agência Senado",
+    "url": "https://www12.senado.leg.br/noticias/glossario-legislativo",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "senado-regimento-interno",
+    "titulo": "Regimento Interno do Senado Federal: Resolução nº 93, de 1970 (volume 1, texto consolidado)",
+    "autoria": "Senado Federal",
+    "url": "https://www25.senado.leg.br/documents/12427/45868/RISF+2018+Volume+1.pdf/cd5769c8-46c5-4c8a-9af7-99be436b89c4",
+    "dataDocumento": {
+      "tipo": "data",
+      "valor": "2025-07",
+      "precisao": "mes"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "tse-glossario-eleitoral-c",
+    "titulo": "Glossário Eleitoral: termos iniciados com a letra C",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/servicos-eleitorais/glossario/termos-iniciados-com-a-letra-c",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "tse-glossario-eleitoral-p",
+    "titulo": "Glossário Eleitoral: termos iniciados com a letra P",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/servicos-eleitorais/glossario/termos-iniciados-com-a-letra-p",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "tse-glossario-eleitoral-r",
+    "titulo": "Glossário Eleitoral: termos iniciados com a letra R",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/servicos-eleitorais/glossario/termos-iniciados-com-a-letra-r",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "tse-glossario-eleitoral-t",
+    "titulo": "Glossário Eleitoral: termos iniciados com a letra T",
+    "autoria": "Tribunal Superior Eleitoral",
+    "url": "https://www.tse.jus.br/servicos-eleitorais/glossario/termos-iniciados-com-a-letra-t",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "stf-glossario-juridico",
+    "titulo": "Glossário Jurídico",
+    "autoria": "Supremo Tribunal Federal",
+    "url": "https://portal.stf.jus.br/jurisprudencia/glossario.asp",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "cnmp-glossario-anulacao",
+    "titulo": "Glossário: Anulação",
+    "autoria": "Conselho Nacional do Ministério Público",
+    "url": "https://www.cnmp.mp.br/portal/institucional/476-glossario/8317-anulacao",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "cnmp-glossario-recurso",
+    "titulo": "Glossário: Recurso",
+    "autoria": "Conselho Nacional do Ministério Público",
+    "url": "https://www.cnmp.mp.br/portal/institucional/476-glossario/7800-recurso",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "cnmp-glossario-instancia",
+    "titulo": "Glossário: Instância",
+    "autoria": "Conselho Nacional do Ministério Público",
+    "url": "https://www.cnmp.mp.br/portal/institucional/476-glossario/8009-instancia",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "camara-entenda-o-processo-legislativo",
+    "titulo": "Entenda o processo legislativo",
+    "autoria": "Câmara dos Deputados",
+    "url": "https://www.camara.leg.br/entenda-o-processo-legislativo/",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "tse-proposta-de-governo-lula-2026",
+    "titulo": "Programa de Governo. Diretrizes para o Programa de Transformação do Brasil: um país soberano, democrático, desenvolvido, sustentável e criativo (proposta de governo registrada no TSE pela candidatura de Lula em 2026)",
+    "autoria": "Coligação Brasil Pronto pra Mais (candidatura de Lula à Presidência em 2026); arquivo publicado pelo Tribunal Superior Eleitoral no DivulgaCandContas",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/rest/arquivo/doc/280017016005",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
+  },
+  {
+    "id": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+    "titulo": "Diretrizes do Plano de Governo 2027-2030 (proposta de governo registrada no TSE pela candidatura de Flávio Bolsonaro em 2026)",
+    "autoria": "Partido Liberal (candidatura de Flávio Bolsonaro à Presidência em 2026); arquivo publicado pelo Tribunal Superior Eleitoral no DivulgaCandContas",
+    "url": "https://divulgacandcontas.tse.jus.br/divulga/rest/arquivo/doc/280017104726",
+    "dataDocumento": {
+      "tipo": "desconhecida"
+    },
+    "acessadoEm": "2026-10-11"
   }
 ]

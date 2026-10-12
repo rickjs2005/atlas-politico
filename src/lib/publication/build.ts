@@ -6,11 +6,14 @@
 //
 // Um registro factual (pessoa, mandato, filiação, acontecimento, proposição,
 // votação, voto, ato do Executivo, cobertura da pesquisa, identidade
-// institucional) entra na publicação quando:
+// institucional, fato biográfico, conceito e fase do jogo) entra na publicação
+// quando:
 //   1. está em content/published/;
 //   2. tem estado editorial `revisado`, com revisão identificada (tipo, quem e
 //      quando) e ao menos uma citação que diga a fonte, o trecho e o que ele
-//      sustenta;
+//      sustenta (a cobertura da pesquisa e a fase do jogo não citam: a
+//      evidência da primeira são os acervos, e a da segunda, os registros que
+//      cada bloco aponta);
 //   3. respeita o contrato e as regras de datas;
 //   4. tudo o que ele cita também entra: as pessoas são elegíveis, e lugares,
 //      fontes e imagens existem em content/published/, com o arquivo de mídia
@@ -25,6 +28,7 @@
 import { buildIndexes } from "@/lib/data/indexes";
 import { buildEventPoints } from "@/lib/data/points";
 import type { AtlasData, PublishedSet } from "@/lib/data/types";
+import { TEMAS } from "@/lib/domain/decisions";
 import { checkIntegrity, checkPublication } from "@/lib/domain/integrity";
 import { compareByDate, compareByPeriod, compareText } from "@/lib/domain/order";
 import { conjuntoSchema, type Citacao } from "@/lib/domain/schemas";
@@ -141,8 +145,13 @@ export function selectPublishable(validacao: Validation): {
   const votacoes = pick(registros.votacoes, candidatos.votacoes);
   const votos = pick(registros.votos, candidatos.votos);
   const atosExecutivos = pick(registros.atosExecutivos, candidatos.atosExecutivos);
+  const atuacoesLegislativas = pick(registros.atuacoesLegislativas, candidatos.atuacoesLegislativas);
   const coberturaPolitica = pick(registros.coberturaPolitica, candidatos.coberturaPolitica);
   const identidadesInstitucionais = pick(registros.identidadesInstitucionais, candidatos.identidadesInstitucionais);
+  const propostasEleitorais = pick(registros.propostasEleitorais, candidatos.propostasEleitorais);
+  const fatosBiograficos = pick(registros.fatosBiograficos, candidatos.fatosBiograficos);
+  const conceitos = pick(registros.conceitos, candidatos.conceitos);
+  const fasesDoJogo = pick(registros.fasesDoJogo, candidatos.fasesDoJogo);
 
   // Lugares, fontes e imagens entram pelo uso: só o que um registro elegível
   // cita, nas citações e nas referências documentais do objeto votado e do ato oficial.
@@ -157,8 +166,12 @@ export function selectPublishable(validacao: Validation): {
     ...citados(votacoes),
     ...citados(votos),
     ...citados(atosExecutivos),
+    ...citados(atuacoesLegislativas),
     ...citados(coberturaPolitica),
     ...citados(identidadesInstitucionais),
+    ...citados(propostasEleitorais),
+    ...citados(fatosBiograficos),
+    ...citados(conceitos),
     ...votacoes.flatMap((item) => (item.objeto.textoReferencia === null ? [] : [item.objeto.textoReferencia.fonteId])),
     ...atosExecutivos.map((item) => item.atoOficial.fonteId),
   ]);
@@ -210,8 +223,15 @@ export function selectPublishable(validacao: Validation): {
       votacoes: [...votacoes].sort(compareByDate),
       votos: sortById(votos),
       atosExecutivos: [...atosExecutivos].sort(compareByDate),
+      atuacoesLegislativas: [...atuacoesLegislativas].sort(compareByDate),
       coberturaPolitica: sortById(coberturaPolitica),
       identidadesInstitucionais: sortById(identidadesInstitucionais),
+      // As propostas, pela pessoa, pelo tema na ordem da taxonomia e pelo identificador.
+      propostasEleitorais: [...propostasEleitorais].sort((a, b) => compareText(a.pessoaId, b.pessoaId) || TEMAS.indexOf(a.tema) - TEMAS.indexOf(b.tema) || compareText(a.id, b.id)),
+      fatosBiograficos: sortById(fatosBiograficos),
+      conceitos: sortById(conceitos),
+      // As fases, pela pessoa, pela sala e pela posição: a ordem em que são percorridas.
+      fasesDoJogo: [...fasesDoJogo].sort((a, b) => compareText(a.pessoaId, b.pessoaId) || compareText(a.sala, b.sala) || a.ordem - b.ordem || compareText(a.id, b.id)),
       lugares: sortById(lugares),
       fontes: sortById(fontes),
       imagens: sortById(imagens),

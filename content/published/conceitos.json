@@ -1,0 +1,734 @@
+[
+  {
+    "id": "sindicato",
+    "termo": "Sindicato",
+    "definicao": "Sindicato é a organização que defende os direitos e os interesses de uma categoria de trabalhadores ou de empregadores, de todos juntos ou de cada um, inclusive na Justiça e diante de órgãos públicos.",
+    "simplificacao": "A frase vem da Constituição de 1988, que é posterior às eleições sindicais de 1969, 1975 e 1978. Ficaram de fora as demais regras do artigo 8º da Constituição.",
+    "fontes": [
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 8º, inciso III",
+        "evidencia": "Ao sindicato cabe a defesa dos direitos e interesses coletivos ou individuais da categoria, inclusive em questões judiciais ou administrativas."
+      },
+      {
+        "fonteId": "planalto-clt",
+        "localizacao": "Artigo 511, caput, na seção Da Associação em Sindicato",
+        "evidencia": "A associação em sindicato é de empregadores e de empregados, para estudo, defesa e coordenação dos seus interesses."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "greve",
+    "termo": "Greve",
+    "definicao": "Greve é quando trabalhadores, juntos, param de trabalhar por um tempo, de forma pacífica, no todo ou em parte. A Constituição de 1988 garante esse direito, e são os trabalhadores que decidem quando usá-lo.",
+    "simplificacao": "A lei citada é de 1989, e a Constituição, de 1988: as duas são posteriores às greves de 1978 a 1980 e não dizem como a greve era tratada naquele tempo.",
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-7783-1989",
+        "localizacao": "Artigo 2º",
+        "evidencia": "A lei considera legítimo exercício do direito de greve a suspensão coletiva, temporária e pacífica, total ou parcial, da prestação de serviços."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 9º, caput",
+        "evidencia": "O direito de greve é assegurado, e cabe aos trabalhadores decidir sobre a oportunidade de exercê-lo."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "partido-politico",
+    "termo": "Partido político",
+    "definicao": "Partido político é um grupo organizado em torno de ideias e interesses, que busca levar seus membros a participar das decisões de governo. Suas regras internas, o estatuto, são registradas no Tribunal Superior Eleitoral.",
+    "simplificacao": "A Lei dos Partidos Políticos define o partido pelo fim a que serve: garantir, no interesse da democracia, que a representação do povo seja autêntica.",
+    "fontes": [
+      {
+        "fonteId": "tse-glossario-eleitoral-p",
+        "localizacao": "Verbete Partido político",
+        "evidencia": "O partido é um grupo destinado à arregimentação coletiva, em torno de ideias e de interesses, para levar seus membros a compartilhar do poder de decisão nas instâncias de governo."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 17, parágrafo 2º",
+        "evidencia": "Os partidos registram seus estatutos no Tribunal Superior Eleitoral."
+      },
+      {
+        "fonteId": "planalto-lei-9096-1995",
+        "localizacao": "Artigo 1º, caput",
+        "evidencia": "O partido político destina-se a assegurar, no interesse do regime democrático, a autenticidade do sistema representativo."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "deputado-federal",
+    "termo": "Deputado federal",
+    "definicao": "Deputado federal é o parlamentar que representa o povo na Câmara dos Deputados. É eleito em cada estado e no Distrito Federal, e o mandato dura quatro anos.",
+    "simplificacao": "Ficou de fora como os votos viram vagas (o sistema proporcional) e quantos deputados cada estado tem.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Deputado Federal",
+        "evidencia": "Parlamentar representante do povo, eleito em cada unidade da Federação para a Câmara dos Deputados; o mandato dura quatro anos."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "assembleia-constituinte",
+    "termo": "Assembleia Constituinte",
+    "definicao": "Assembleia constituinte é a assembleia convocada especialmente para escrever a Constituição de um país. Uma emenda de 1985 mandou deputados e senadores se reunirem em Assembleia Nacional Constituinte em 1987. A Constituição em vigor é de 5 de outubro de 1988.",
+    "simplificacao": "A emenda citada determina a reunião para 1º de fevereiro de 1987; ela não é, sozinha, o registro de como os trabalhos aconteceram.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Assembleia Constituinte",
+        "evidencia": "Assembleia convocada especial ou extraordinariamente para elaborar a Constituição de um Estado."
+      },
+      {
+        "fonteId": "planalto-emenda-constitucional-26-1985",
+        "localizacao": "Artigo 1º",
+        "evidencia": "Os membros da Câmara dos Deputados e do Senado se reuniriam em Assembleia Nacional Constituinte no dia 1º de fevereiro de 1987."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Preâmbulo e fecho do texto",
+        "evidencia": "A Constituição foi feita por representantes do povo reunidos em Assembleia Nacional Constituinte e traz a data de 5 de outubro de 1988."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "turnos-da-eleicao",
+    "termo": "Primeiro e segundo turno",
+    "definicao": "No primeiro turno, todos os candidatos disputam. Se nenhum passar da metade dos votos válidos, há segundo turno, só entre os dois mais votados. É assim na eleição para presidente da República.",
+    "simplificacao": "Votos válidos são os votos sem os brancos e os nulos. A regra citada é a da Constituição de 1988 e da Lei das Eleições, de 1997; eleições anteriores seguiam outras regras.",
+    "fontes": [
+      {
+        "fonteId": "tse-glossario-eleitoral-t",
+        "localizacao": "Verbete Turno eleitoral",
+        "evidencia": "No primeiro turno concorrem todos os candidatos; no segundo, só os dois primeiros colocados do turno anterior."
+      },
+      {
+        "fonteId": "planalto-lei-9504-1997",
+        "localizacao": "Artigo 2º, parágrafo 1º",
+        "evidencia": "Se nenhum candidato alcançar maioria absoluta na primeira votação, há nova eleição entre os dois mais votados."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 77, parágrafo 2º",
+        "evidencia": "É eleito presidente o candidato que obtiver a maioria absoluta de votos, não computados os em branco e os nulos."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "presidente-da-republica",
+    "termo": "Presidente da República",
+    "definicao": "O presidente da República chefia o Poder Executivo do país, com a ajuda dos ministros. Cabe a ele, entre outras coisas, sancionar ou vetar os projetos de lei que o Congresso aprova e fazer decretos para que as leis sejam cumpridas.",
+    "simplificacao": "A Constituição lista mais de vinte competências do presidente; aqui estão só as que a trilha usa.",
+    "fontes": [
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 76",
+        "evidencia": "O Poder Executivo é exercido pelo presidente da República, auxiliado pelos ministros de Estado."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 84, incisos IV e V",
+        "evidencia": "Compete ao presidente sancionar, promulgar e fazer publicar as leis, expedir decretos para a sua execução e vetar projetos de lei, total ou parcialmente."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "medida-provisoria",
+    "termo": "Medida provisória",
+    "definicao": "Medida provisória é uma regra com força de lei que o presidente da República pode baixar em caso importante e urgente. Ela tem de ser enviada logo ao Congresso e perde a validade se não virar lei no prazo.",
+    "simplificacao": "O prazo é de sessenta dias, prorrogável uma vez pelo mesmo tempo. A redação citada é de 2001. Ficaram de fora os assuntos em que a medida provisória é proibida.",
+    "fontes": [
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 62, caput",
+        "evidencia": "Em caso de relevância e urgência, o presidente pode adotar medidas provisórias, com força de lei, e deve submetê-las de imediato ao Congresso Nacional."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 62, parágrafo 3º",
+        "evidencia": "As medidas provisórias perdem a eficácia se não forem convertidas em lei em sessenta dias, prazo prorrogável uma vez por igual período."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "sancao",
+    "termo": "Sanção",
+    "definicao": "Sanção é o ato em que o chefe do Poder Executivo concorda com o projeto aprovado pelo Poder Legislativo. Com ela, o projeto vira lei. No governo federal, quem sanciona é o presidente da República.",
+    "simplificacao": "Se o presidente não disser nada em quinze dias, o projeto é considerado sancionado.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Sanção",
+        "evidencia": "A sanção é a concordância, expressa ou tácita, do chefe do Poder Executivo com o projeto aprovado pelo Poder Legislativo, e encerra a fase de formação da lei."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 66, parágrafo 3º",
+        "evidencia": "Decorrido o prazo de quinze dias, o silêncio do presidente importa sanção."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "veto",
+    "termo": "Veto",
+    "definicao": "Veto é o ato do presidente da República de recusar um projeto de lei aprovado pelo Congresso, inteiro (veto total) ou em parte (veto parcial). O Congresso pode derrubar o veto; nesse caso, o trecho vetado passa a fazer parte da lei.",
+    "simplificacao": "O presidente veta o que considera contrário à Constituição ou ao interesse público. No veto parcial, só pode tirar um artigo, parágrafo, inciso ou alínea inteiro. Para derrubar o veto é preciso a maioria absoluta dos deputados e senadores.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Veto Presidencial",
+        "evidencia": "Instrumento usado pelo presidente da República para recusar a sanção de projeto de lei, no todo ou em parte."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 66, parágrafos 1º, 2º e 4º",
+        "evidencia": "O veto pode ser total ou parcial, por inconstitucionalidade ou contrariedade ao interesse público; o veto parcial abrange texto integral de artigo, parágrafo, inciso ou alínea; o veto só pode ser rejeitado pela maioria absoluta dos deputados e senadores."
+      },
+      {
+        "fonteId": "camara-entenda-o-processo-legislativo",
+        "localizacao": "Item 7, Veto",
+        "evidencia": "Se os vetos forem derrubados, os trechos antes vetados passam a integrar a lei."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "decreto",
+    "termo": "Decreto",
+    "definicao": "Decreto é um ato do presidente da República. Pode tratar de um caso específico, como uma nomeação, ou detalhar como uma lei deve ser cumprida.",
+    "simplificacao": "O glossário citado fala só do decreto do presidente da República.",
+    "fontes": [
+      {
+        "fonteId": "senado-glossario-legislativo",
+        "localizacao": "Verbete Decreto, segunda frase",
+        "evidencia": "O decreto pode ser singular, quando trata de assuntos como nomeação, ou regulamentar, para executar norma instituída por lei."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 84, inciso IV",
+        "evidencia": "Compete ao presidente expedir decretos e regulamentos para a fiel execução das leis."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "pec",
+    "termo": "PEC, a proposta de emenda à Constituição",
+    "definicao": "PEC é a proposta para mudar o texto da Constituição. É votada duas vezes na Câmara e duas vezes no Senado, e só passa com três quintos dos votos dos membros em todas as votações.",
+    "simplificacao": "Ficou de fora quem pode propor uma PEC. A emenda aprovada é promulgada pelas Mesas da Câmara e do Senado.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Proposta de Emenda à Constituição (PEC)",
+        "evidencia": "Proposição legislativa destinada a alterar a Constituição Federal."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 60, parágrafo 2º",
+        "evidencia": "A proposta é discutida e votada em cada casa do Congresso, em dois turnos, e é aprovada se obtiver, em ambos, três quintos dos votos dos membros."
+      },
+      {
+        "fonteId": "planalto-emenda-constitucional-41-2003",
+        "localizacao": "Preâmbulo",
+        "evidencia": "Exemplo de promulgação: as Mesas da Câmara dos Deputados e do Senado Federal promulgam a emenda."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "projeto-de-lei",
+    "termo": "Projeto de lei",
+    "definicao": "Projeto de lei é uma proposta de lei. No Congresso, o projeto aprovado em uma das casas (Câmara ou Senado) é examinado pela outra; depois de aprovado, vai ao presidente da República, que pode sancionar ou vetar.",
+    "simplificacao": "O glossário citado trata do projeto de lei federal. No estado do Rio de Janeiro, as páginas das leis mostram o mesmo caminho: a Assembleia Legislativa aprova e o governador sanciona.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Projeto de Lei (PL)",
+        "evidencia": "Proposição sobre matéria de competência da União, que se sujeita, depois de aprovada, à sanção ou ao veto presidencial."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 65, caput",
+        "evidencia": "O projeto de lei aprovado por uma casa é revisto pela outra."
+      },
+      {
+        "fonteId": "alerj-lei-4250-2003",
+        "localizacao": "Fórmula de sanção, no texto da lei",
+        "evidencia": "Exemplo estadual: a Assembleia Legislativa decreta e o governador sanciona."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lei-complementar",
+    "termo": "Lei complementar",
+    "definicao": "Lei complementar é um tipo de lei que precisa do voto de mais da metade de todos os membros de cada casa do Congresso. A Constituição diz quais assuntos exigem esse tipo de lei.",
+    "simplificacao": "A lei comum (ordinária) precisa só da maioria simples dos votos.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Lei Complementar (LC)",
+        "evidencia": "Norma aprovada pela maioria absoluta dos membros de cada casa do Poder Legislativo; a Constituição determina quais matérias são reservadas à lei complementar."
+      },
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Lei Ordinária",
+        "evidencia": "A lei ordinária depende, para ser aprovada, de maioria simples de votos."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "deputado-estadual",
+    "termo": "Deputado estadual",
+    "definicao": "Deputado estadual é o parlamentar da assembleia legislativa, que é o Poder Legislativo de cada estado. É eleito pelo povo, e o mandato dura quatro anos. Cabe à assembleia fazer, discutir e aprovar as leis estaduais.",
+    "simplificacao": "A regra do mandato de quatro anos é a da Constituição de 1988.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Assembleia Legislativa",
+        "evidencia": "Órgão do Poder Legislativo de cada estado, cujos membros são eleitos pelo povo e ao qual cabe elaborar, discutir e aprovar as normas jurídicas."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 27, parágrafo 1º",
+        "evidencia": "O mandato dos deputados estaduais é de quatro anos."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "senador",
+    "termo": "Senador",
+    "definicao": "Senador é o parlamentar que representa seu estado ou o Distrito Federal no Senado. Cada estado tem três senadores, e o mandato dura oito anos.",
+    "simplificacao": "Ficou de fora como o senador é eleito (o sistema majoritário) e a renovação das vagas de quatro em quatro anos.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Senador",
+        "evidencia": "Parlamentar representante dos estados ou do Distrito Federal; cada unidade da Federação tem três senadores, com mandato de oito anos."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "comissao",
+    "termo": "Comissão",
+    "definicao": "Comissão é um grupo de parlamentares da própria casa que analisa propostas e fiscaliza o governo. Dá parecer sobre propostas, discute e vota projetos de lei e faz audiências públicas. No Senado, cada comissão elege o seu presidente, que organiza e dirige os trabalhos.",
+    "simplificacao": "Há comissões permanentes e comissões temporárias. Entre as tarefas do presidente de uma comissão do Senado está escolher os relatores das matérias.",
+    "fontes": [
+      {
+        "fonteId": "senado-glossario-legislativo",
+        "localizacao": "Verbete Comissão, primeira e segunda frases",
+        "evidencia": "Órgão parlamentar formado por membros da casa, com funções no processo legislativo e na fiscalização da administração pública; entre as atribuições, pareceres, discussão e votação de projetos e audiências públicas."
+      },
+      {
+        "fonteId": "senado-regimento-interno",
+        "localizacao": "Artigos 88 e 89, páginas 50 e 51",
+        "evidencia": "Cada comissão elege seu presidente e vice-presidente; ao presidente compete ordenar e dirigir os trabalhos e designar relatores."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 58, caput",
+        "evidencia": "O Congresso e suas casas têm comissões permanentes e temporárias."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "relator",
+    "termo": "Relator",
+    "definicao": "Relator é o parlamentar escolhido para estudar uma proposta e escrever um relatório ou parecer sobre ela, recomendando que seja aprovada ou rejeitada.",
+    "simplificacao": "O relator recomenda; a proposta ainda é votada. No Senado, quem escolhe os relatores das matérias em uma comissão é o presidente da comissão.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbete Relator",
+        "evidencia": "O relator elabora relatório ou parecer sobre a proposição, no qual recomenda sua aprovação ou rejeição."
+      },
+      {
+        "fonteId": "senado-regimento-interno",
+        "localizacao": "Artigo 89, inciso III, página 51",
+        "evidencia": "Ao presidente de comissão compete designar, na comissão, relatores para as matérias."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "lider-e-minoria",
+    "termo": "Líder e Minoria",
+    "definicao": "Líder é o parlamentar escolhido para representar a bancada do seu partido, ou o bloco de partidos de que faz parte. Minoria, no Congresso, é o nome de uma posição: o maior partido ou bloco que se posiciona contra a Maioria.",
+    "simplificacao": "Minoria não é a mesma coisa que oposição: oposição é o conjunto de partidos e blocos que se opõem ao governo e, em geral, se alinham com a Minoria.",
+    "fontes": [
+      {
+        "fonteId": "congresso-glossario-de-termos-legislativos",
+        "localizacao": "Verbetes Líder, Minoria Parlamentar e Oposição",
+        "evidencia": "Líder: parlamentar escolhido para representar sua bancada ou bloco. Minoria: maior partido ou bloco que se posiciona contrariamente à Maioria. Oposição: partidos e blocos que se opõem ao governo."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "denuncia",
+    "termo": "Denúncia",
+    "definicao": "Denúncia é o documento em que o Ministério Público acusa formalmente alguém de um crime perante a Justiça. É uma acusação, e não uma condenação: pela Constituição, ninguém é considerado culpado antes de a condenação se tornar definitiva.",
+    "simplificacao": "Depois de apresentada a denúncia, a Justiça ainda decide se a recebe ou se a rejeita.",
+    "fontes": [
+      {
+        "fonteId": "stf-glossario-juridico",
+        "localizacao": "Verbete Denúncia, primeira acepção",
+        "evidencia": "Peça pela qual o membro do Ministério Público formaliza a acusação perante o tribunal, dando início à ação penal pública."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 5º, inciso LVII",
+        "evidencia": "Ninguém é considerado culpado até o trânsito em julgado de sentença penal condenatória."
+      },
+      {
+        "fonteId": "planalto-codigo-de-processo-penal",
+        "localizacao": "Artigo 396, caput",
+        "evidencia": "O juiz, se não rejeitar a denúncia, a recebe e ordena a citação do acusado."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "rejeicao-da-denuncia",
+    "termo": "Rejeição da denúncia",
+    "definicao": "Apresentada a denúncia, a Justiça decide: ou a rejeita logo, ou a recebe e manda chamar o acusado para responder à acusação. A lei manda rejeitar a denúncia, por exemplo, quando falta justa causa para a ação penal.",
+    "simplificacao": "A rejeição acontece antes de o acusado ser chamado a responder à acusação. A lei não define justa causa nesses artigos, nem diz neles se uma nova denúncia pode ser apresentada depois. A redação citada é de 2008.",
+    "fontes": [
+      {
+        "fonteId": "planalto-codigo-de-processo-penal",
+        "localizacao": "Artigos 395 e 396",
+        "evidencia": "A denúncia é rejeitada quando faltar justa causa para o exercício da ação penal, entre outros motivos; se não a rejeitar, o juiz a recebe e ordena a citação do acusado para responder à acusação."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "condenacao-e-recurso",
+    "termo": "Condenação e recurso",
+    "definicao": "Condenado é a pessoa a quem a Justiça impõe uma pena por considerá-la culpada. Recurso é o pedido para que uma decisão seja mudada, feito ao mesmo juízo ou a um tribunal acima dele. A segunda instância julga recursos contra decisões da primeira.",
+    "simplificacao": "Pela Constituição, ninguém é considerado culpado antes de a condenação se tornar definitiva, isto é, quando não cabe mais recurso.",
+    "fontes": [
+      {
+        "fonteId": "stf-glossario-juridico",
+        "localizacao": "Verbetes Condenado e Instância",
+        "evidencia": "Condenado é aquele a quem é imposta uma pena correspondente à infração de que foi considerado culpado; as ações em geral se iniciam na primeira instância, e a segunda julga recursos."
+      },
+      {
+        "fonteId": "cnmp-glossario-recurso",
+        "localizacao": "Verbete Recurso",
+        "evidencia": "Instrumento para pedir a mudança de uma decisão, na mesma instância ou em instância superior."
+      },
+      {
+        "fonteId": "cnmp-glossario-instancia",
+        "localizacao": "Verbete Instância, segunda frase",
+        "evidencia": "A primeira instância, onde em geral começam as ações, é composta por juízes."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 5º, inciso LVII",
+        "evidencia": "Ninguém é considerado culpado até o trânsito em julgado de sentença penal condenatória."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "anulacao",
+    "termo": "Anulação",
+    "definicao": "Anulação é a decisão que reconhece um defeito em um ato e o declara inválido. Quando o juízo não era o competente para o caso, anulam-se as decisões dele, e o processo vai para o juiz competente.",
+    "simplificacao": "A definição não diz que a pessoa foi considerada inocente nem culpada: a anulação trata da validade de atos do processo. Competente, aqui, é o juízo a quem a lei manda julgar o caso. O que cada decisão anulou está na própria decisão.",
+    "fontes": [
+      {
+        "fonteId": "cnmp-glossario-anulacao",
+        "localizacao": "Verbete Anulação, primeira frase",
+        "evidencia": "A anulação reconhece a existência de vício ou defeito em um ato e o declara inválido ou desfeito."
+      },
+      {
+        "fonteId": "planalto-codigo-de-processo-penal",
+        "localizacao": "Artigo 567",
+        "evidencia": "A incompetência do juízo anula somente os atos decisórios, e o processo é remetido ao juiz competente."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "intervencao-federal",
+    "termo": "Intervenção federal",
+    "definicao": "Intervenção federal é uma medida excepcional em que a União interfere em um estado ou no Distrito Federal e retira, por um tempo, a autonomia dele. É feita por decreto, que diz o alcance e o prazo, e o Congresso examina o decreto.",
+    "simplificacao": "A regra é a União não intervir; a Constituição lista os casos em que pode. O alcance de cada intervenção é o que o decreto dela diz, e pode se limitar a uma área.",
+    "fontes": [
+      {
+        "fonteId": "stf-glossario-juridico",
+        "localizacao": "Verbete Intervenção federal",
+        "evidencia": "Medida excepcional de interferência da União nos estados ou no Distrito Federal, que suprime temporariamente a autonomia deles."
+      },
+      {
+        "fonteId": "planalto-constituicao-1988",
+        "localizacao": "Artigo 34, caput, e artigo 36, parágrafo 1º",
+        "evidencia": "A União não intervém nos estados nem no Distrito Federal, salvo nos casos listados; o decreto de intervenção especifica a amplitude, o prazo e as condições e é submetido ao Congresso Nacional."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "convencao-e-registro-de-candidatura",
+    "termo": "Convenção partidária e registro de candidatura",
+    "definicao": "Convenção partidária é a reunião dos filiados de um partido; é nela que o partido escolhe seus candidatos. Registro de candidatura é a inscrição, na Justiça Eleitoral, das pessoas escolhidas em convenção para disputar a eleição.",
+    "simplificacao": "Pela lei em vigor, as convenções acontecem de 20 de julho a 5 de agosto do ano da eleição; em eleições antigas o prazo era outro. A Justiça Eleitoral pode aceitar ou negar o registro.",
+    "fontes": [
+      {
+        "fonteId": "tse-glossario-eleitoral-c",
+        "localizacao": "Verbete Convenção partidária, primeiro e terceiro parágrafos",
+        "evidencia": "Reunião dos filiados a um partido para deliberar sobre assuntos de interesse dele; as convenções para escolha de candidatos se realizam de 20 de julho a 5 de agosto do ano da eleição."
+      },
+      {
+        "fonteId": "tse-glossario-eleitoral-r",
+        "localizacao": "Verbete Registro de candidato",
+        "evidencia": "Inscrição na Justiça Eleitoral das pessoas escolhidas em convenção partidária para concorrer a cargos eletivos."
+      },
+      {
+        "fonteId": "tse-glossario-eleitoral-c",
+        "localizacao": "Verbete Candidato",
+        "evidencia": "Candidato é quem tem o registro deferido pela Justiça Eleitoral."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-de-governo",
+    "termo": "Proposta de governo",
+    "definicao": "Proposta de governo é o documento com as propostas defendidas pelo candidato a presidente, a governador ou a prefeito. A lei manda entregá-lo à Justiça Eleitoral junto com o pedido de registro da candidatura. É o que a candidatura diz que pretende fazer.",
+    "simplificacao": "Uma proposta não é ato, voto nem resultado: é intenção declarada. A lei citada pede o documento e não diz, nesse trecho, o que acontece se a proposta não for cumprida.",
+    "fontes": [
+      {
+        "fonteId": "planalto-lei-9504-1997",
+        "localizacao": "Artigo 11, parágrafo 1º, inciso IX",
+        "evidencia": "O pedido de registro deve ser instruído com as propostas defendidas pelo candidato a prefeito, a governador de estado e a presidente da República."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Definição escrita em 11 de outubro de 2026, em português simples, a partir do texto oficial baixado nesse dia, com assistência de IA: a definição diz só o que o trecho citado sustenta, e o campo de simplificação avisa o que ficou de fora. Os textos de lei são os compilados do Portal da Legislação, com a redação em vigor. Revisão humana pendente."
+      }
+    }
+  }
+]

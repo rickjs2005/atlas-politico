@@ -14,7 +14,7 @@ export const tribunalA: SceneSpec = {
   mapa: [
     "############",
     "#o..ooo...o#",
-    "#1.......2.#",
+    "#1........2#",
     "#..o.o..o..#",
     "#G.o....o..#",
     "#..oo.oo.S4#",
@@ -62,9 +62,11 @@ export const tribunalA: SceneSpec = {
   guia: { x: 1, y: 4 },
   saida: { x: 5, y: 8, lado: "sul" },
   // Nenhum fica ao norte, a oeste ou na diagonal de um objeto alto, que o esconderia.
+  // As pastas bloqueiam a passagem (o boneco para ao lado delas): a segunda fica
+  // no canto leste, e não no corredor, para o caminho até as do lado oeste existir.
   registros: [
     { x: 1, y: 2 },
-    { x: 9, y: 2 },
+    { x: 10, y: 2 },
     { x: 1, y: 6 },
     { x: 10, y: 5 },
     { x: 2, y: 7 },

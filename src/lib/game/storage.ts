@@ -7,8 +7,8 @@
 // à ficha de um registro e voltar, pela navegação do site, não perde o
 // progresso da visita. Recarregar ou fechar a página perde.
 
-import { parseProgress, type SignatureSource } from "./progress";
-import type { ChapterSpec, PersonagemSlug, PlayerProgress } from "./types";
+import { parseProgress, type PhaseKey } from "./progress";
+import type { PersonagemSlug, PlayerProgress } from "./types";
 
 export const STORAGE_PREFIX = "atlas-politico:jogo";
 
@@ -41,11 +41,16 @@ function detectStorage(): StorageLike | null {
   }
 }
 
-/** Um armazenamento para o personagem. `conteudo` serve à leitura (as assinaturas das tarefas); `storage` e `memoria` servem aos testes. */
+/**
+ * Um armazenamento para o personagem. `fases` são todas as fases dele, de
+ * todas as salas, e `assinaturas`, a assinatura atual da atividade de cada
+ * uma: é com elas que a leitura confere o que foi salvo. `storage` e
+ * `memoria` servem aos testes.
+ */
 export function createProgressStore(
   personagem: PersonagemSlug,
-  capitulos: readonly ChapterSpec[],
-  conteudo: SignatureSource,
+  fases: readonly PhaseKey[],
+  assinaturas: Readonly<Record<string, string>>,
   storage: StorageLike | null = detectStorage(),
   memoria: Map<string, PlayerProgress> = PAGE_MEMORY,
 ): ProgressStore {
@@ -62,7 +67,7 @@ export function createProgressStore(
       try {
         const bruto = storage.getItem(chave);
         if (bruto === null) return null;
-        return parseProgress(JSON.parse(bruto), personagem, capitulos, conteudo);
+        return parseProgress(JSON.parse(bruto), personagem, fases, assinaturas);
       } catch {
         return null;
       }

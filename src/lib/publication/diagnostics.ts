@@ -40,6 +40,11 @@ export type DiagnosticCode =
   | "casa-diferente"
   | "voto-repetido"
   | "retificacao-incoerente"
+  // conteúdo educativo do jogo
+  | "referencia-de-outra-pessoa"
+  | "ordem-indeterminada"
+  | "posicao-repetida"
+  | "marco-fora-do-periodo"
   // mídia
   | "midia-ausente"
   | "midia-invalida"

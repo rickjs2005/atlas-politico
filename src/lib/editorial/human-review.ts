@@ -9,19 +9,32 @@
 // ordenados por prioridade: episódios judiciais, dados eleitorais,
 // filiações, mandatos e os demais acontecimentos.
 
-import { listDecisionViews, type DecisionView } from "@/lib/data/decisions";
+import { listDecisionViews, proposicaoLabel, type DecisionView } from "@/lib/data/decisions";
 import type { AtlasData } from "@/lib/data/types";
 import { compareDates, formatDate, formatPeriod } from "@/lib/domain/dates";
-import { INSTITUICAO_LABELS, OBJETO_LABELS, POSICAO_LABELS, REGISTRO_INDIVIDUAL_LABELS, TEMA_LABELS, TIPO_DE_ATO_LABELS } from "@/lib/domain/decisions";
-import type { Acontecimento, Citacao, Editorial, Filiacao, Mandato } from "@/lib/domain/types";
+import { DESFECHO_DE_ATUACAO_LABELS, INSTITUICAO_LABELS, OBJETO_LABELS, POSICAO_LABELS, REGISTRO_INDIVIDUAL_LABELS, TEMA_LABELS, TIPO_DE_ATO_LABELS, TIPO_DE_ATUACAO_LABELS } from "@/lib/domain/decisions";
+import { TIPO_DE_FATO_LABELS, countWords } from "@/lib/domain/game";
+import type { Acontecimento, Citacao, Conceito, Editorial, FaseDoJogo, FatoBiografico, Filiacao, Mandato, PropostaEleitoral, ReferenciaDeFase } from "@/lib/domain/types";
 import { JUDICIAL } from "@/lib/game/judicial";
 
 type Tema = "judicial" | "eleitoral" | "filiacao" | "mandato" | "demais";
 
 const DECISOES = {
-  titulo: "Decisões políticas: votos e atos do Executivo",
+  titulo: "Decisões políticas: votos, atos do Executivo e atuação legislativa",
   porque:
-    "Cada decisão é uma amostra documentada, e não o histórico completo. Conferir, no voto: a votação (objeto votado, etapa, modalidade e resultado oficial) contra a ata ou o painel da sessão, e a manifestação registrada com o valor original do acervo. No ato do Executivo: o identificador, a data, o tipo (sanção, veto parcial com os dispositivos, decreto) contra a página oficial e a mensagem de veto. Um voto em requerimento ou em substitutivo não é voto no projeto inteiro, e a posição vale só para o objeto votado. Conferir também a cobertura declarada da pesquisa, com as lacunas, e a classificação de temas, que é decisão editorial.",
+    "Cada decisão é uma amostra documentada, e não o histórico completo. Conferir, no voto: a votação (objeto votado, etapa, modalidade e resultado oficial) contra a ata ou o painel da sessão, e a manifestação registrada com o valor original do acervo. No ato do Executivo: o identificador, a data, o tipo (sanção, veto parcial com os dispositivos, decreto) contra a página oficial e a mensagem de veto. Na atuação legislativa: a autoria ou a relatoria contra a página da lei ou da matéria, a ementa, quem mais assina e o destino documentado (lei sancionada, lei promulgada pelo Legislativo, norma gerada). Um voto em requerimento ou em substitutivo não é voto no projeto inteiro, e a posição vale só para o objeto votado; propor ou relatar uma matéria não diz como a pessoa votou nela. Conferir também a cobertura declarada da pesquisa, com as lacunas, e a classificação de temas, que é decisão editorial.",
+};
+
+const PROPOSTAS = {
+  titulo: "Propostas eleitorais registradas no TSE",
+  porque:
+    "Cada texto resume um trecho do documento que a candidatura registrou no Tribunal Superior Eleitoral. Proposta é o que o documento diz que pretende fazer: não é ato, não é voto e não é resultado. Conferir, em cada uma: se o resumo diz só o que a página citada diz, sem verbo de promessa cumprida e sem adjetivo; se o resumo não acrescenta número, prazo ou valor que o trecho não traz, e se as marcas de distância ('o que chama de', 'descrita como') e a menção a um segundo trecho do documento seguem a mesma régua nas duas candidaturas; e se a escolha das três propostas por área, que é decisão editorial, deixou de fora algo que mude o sentido da área. As duas pessoas têm o mesmo número de propostas por área, de propósito.",
+};
+
+const JOGO = {
+  titulo: "Conteúdo educativo do jogo: fases, fatos biográficos e conceitos",
+  porque:
+    "O texto de cada fase é explicação nova, escrita para quem conhece pouco de política. Conferir, em cada bloco: se ele diz só o que os registros apontados sustentam, se a simplificação não muda o sentido e se nenhum adjetivo entrou. Na atividade: se a pergunta só usa o que a explicação acabou de dizer, se a opção certa está certa e se as erradas não são certas por outro caminho. Nos episódios judiciais, a leitura curta precisa trazer juntos a acusação, a defesa, a decisão e o desfecho na data de corte. Nos fatos biográficos: datas, lugares e nomes contra o documento, e as divergências entre documentos. Nos conceitos: se a definição simples é fiel ao texto oficial citado e se o aviso de simplificação basta.",
 };
 
 const TEMAS: Record<Tema, { titulo: string; porque: string }> = {
@@ -108,19 +121,26 @@ function mandatoBlock(data: AtlasData, mandato: Mandato): string[] {
   return linhas;
 }
 
-/** O bloco de uma decisão: o que o cartão mostra, com cada fonte, e a votação ou a proposição que ela cita. */
+const NATUREZA: Record<DecisionView["natureza"], string> = { voto: "Voto parlamentar", ato: "Ato do Executivo", atuacao: "Atuação legislativa" };
+
+/** O bloco de uma decisão: o que o cartão mostra, com cada fonte, e a votação, a proposição ou a matéria que ela cita. */
 function decisionBlock(data: AtlasData, decisao: DecisionView): string[] {
   const linhas = [`### ${formatDate(decisao.data)}: ${decisao.titulo}`, ""];
   const pessoa = nomeDe(data, [decisao.pessoaId]);
-  linhas.push(`- Identificador: \`${decisao.id}\` · Pessoa: ${pessoa} · ${decisao.natureza === "voto" ? "Voto parlamentar" : "Ato do Executivo"} · ${INSTITUICAO_LABELS[decisao.instituicao]} · Temas: ${decisao.temas.map((tema) => TEMA_LABELS[tema]).join(", ") || "nenhum"} · Revisão: ${reviewLine(decisao.editorial)}`);
+  linhas.push(`- Identificador: \`${decisao.id}\` · Pessoa: ${pessoa} · ${NATUREZA[decisao.natureza]} · ${INSTITUICAO_LABELS[decisao.instituicao]} · Temas: ${decisao.temas.map((tema) => TEMA_LABELS[tema]).join(", ") || "nenhum"} · Revisão: ${reviewLine(decisao.editorial)}`);
   linhas.push(`- **Cargo a conferir:** ${decisao.cargo === null ? "mandato não publicado" : `${decisao.cargo.cargo}, ${decisao.cargo.instituicao} (\`${decisao.cargo.mandatoId}\`)`}`);
   if (decisao.natureza === "voto") {
     const { votacao, registro } = decisao;
     linhas.push(`- **Votação a conferir** (\`${votacao.id}\`): ${OBJETO_LABELS[votacao.objeto.tipo]}${votacao.objeto.identificacao === null ? "" : ` (${votacao.objeto.identificacao})`}; ${votacao.objeto.descricao}; etapa: ${votacao.etapa}; ${votacao.orgao}, ${votacao.modalidade}; resultado oficial: ${votacao.resultado.estado} (valor original "${votacao.resultado.valorOriginal}").`);
     const manifestacao = registro.tipo === "voto-individual" ? `${POSICAO_LABELS[registro.posicao]} (valor original "${registro.valorOriginal}")` : `${REGISTRO_INDIVIDUAL_LABELS[registro.tipo]} (valor original "${registro.valorOriginal}"${registro.motivoDocumentado === undefined ? "" : `; motivo: ${registro.motivoDocumentado}`})`;
     linhas.push(`- **Manifestação a conferir:** ${manifestacao}`);
-  } else {
+  } else if (decisao.natureza === "ato") {
     linhas.push(`- **Ato a conferir:** ${TIPO_DE_ATO_LABELS[decisao.ato.tipo]}; ${decisao.ato.identificador}${decisao.ato.detalhes.map((detalhe) => `; ${detalhe.rotulo}: ${detalhe.valor}`).join("")}`);
+  } else {
+    const { tipo, materia, desfecho, divergencia } = decisao.atuacao;
+    linhas.push(`- **Atuação a conferir:** ${TIPO_DE_ATUACAO_LABELS[tipo]}; matéria: ${materia.identificador}; ementa: ${materia.ementa}; autoria da matéria: ${materia.autoria}`);
+    linhas.push(`- **Destino da matéria a conferir:** ${DESFECHO_DE_ATUACAO_LABELS[desfecho.tipo]}${desfecho.norma === null ? "" : ` (${desfecho.norma})`}. ${desfecho.descricao}`);
+    if (divergencia !== null) linhas.push(`- **Divergência a conferir:** ${divergencia}`);
   }
   for (const proposicao of decisao.proposicoes) linhas.push(`- **Proposição a conferir** (\`${proposicao.id}\`): ${proposicao.identificacao}, ${INSTITUICAO_LABELS[proposicao.instituicao]}: ${proposicao.ementa}`);
   linhas.push("- Fontes:");
@@ -132,10 +152,17 @@ function decisionBlock(data: AtlasData, decisao: DecisionView): string[] {
   return linhas;
 }
 
-/** Os registros de apoio das decisões: proposições sem decisão própria, cobertura da pesquisa e identidades institucionais. */
+/** Os registros de apoio das decisões: as proposições, com as fontes próprias de cada uma, a cobertura da pesquisa e as identidades institucionais. */
 function supportBlocks(data: AtlasData): string[] {
   const { conjunto } = data;
   const linhas: string[] = [];
+  for (const proposicao of conjunto.proposicoes) {
+    linhas.push(`### Proposição: ${proposicaoLabel(proposicao)}, ${INSTITUICAO_LABELS[proposicao.instituicao]}`, "");
+    linhas.push(`- Identificador: \`${proposicao.id}\` · Temas: ${proposicao.temas.map((tema) => TEMA_LABELS[tema]).join(", ") || "nenhum"} · Revisão: ${reviewLine(proposicao.editorial)}`);
+    linhas.push(`- **Ementa a conferir:** ${proposicao.ementa}`);
+    linhas.push("- Fontes:", ...sourceLines(data, proposicao.fontes));
+    linhas.push("- [ ] Conferido por: ______ em ____/____/______", "");
+  }
   for (const cobertura of conjunto.coberturaPolitica) {
     linhas.push(`### Cobertura da pesquisa: ${nomeDe(data, [cobertura.pessoaId])}, ${cobertura.tema === "geral" ? "todos os temas" : TEMA_LABELS[cobertura.tema]}, ${formatPeriod(cobertura.periodo)}`, "");
     linhas.push(`- Identificador: \`${cobertura.id}\` · Estado: ${cobertura.estado} · Revisão: ${reviewLine(cobertura.editorial)}`);
@@ -151,6 +178,65 @@ function supportBlocks(data: AtlasData): string[] {
     linhas.push("- Fontes:", ...sourceLines(data, identidade.fontes));
     linhas.push("- [ ] Conferido por: ______ em ____/____/______", "");
   }
+  return linhas;
+}
+
+const SALA_LABELS: Record<FaseDoJogo["sala"], string> = { historico: "Trajetória", economia: "Aprofundamento: Economia", "seguranca-publica": "Aprofundamento: Segurança pública" };
+
+const refLine = (referencias: readonly ReferenciaDeFase[]) => referencias.map((referencia) => `\`${referencia.tipo}:${referencia.id}\``).join(", ");
+
+/** O bloco de uma fase: o objetivo, cada bloco da explicação com o que ele aponta, a atividade com a resposta e as lacunas. */
+function phaseBlock(data: AtlasData, fase: FaseDoJogo): string[] {
+  const palavras = fase.explicacao.reduce((soma, bloco) => soma + countWords(bloco.texto), 0);
+  const linhas = [`### ${nomeDe(data, [fase.pessoaId])} · ${SALA_LABELS[fase.sala]} · Fase ${fase.ordem}: ${fase.titulo} (${fase.periodo.de === fase.periodo.ate ? fase.periodo.de : `${fase.periodo.de} a ${fase.periodo.ate}`})`, ""];
+  linhas.push(`- Identificador: \`${fase.id}\` · Marco: ${refLine([fase.marco])} · Revisão: ${reviewLine(fase.editorial)}`);
+  linhas.push(`- **Objetivo a conferir:** ${fase.objetivo}`);
+  linhas.push(`- **Explicação a conferir** (${palavras} palavras):`);
+  fase.explicacao.forEach((bloco, indice) => linhas.push(`  ${indice + 1}. ${bloco.texto} Aponta: ${refLine(bloco.referencias)}.`));
+  if (fase.conceitos.length > 0) linhas.push(`- Conceitos definidos nesta fase: ${fase.conceitos.map((id) => `\`${id}\``).join(", ")}`);
+  const { atividade } = fase;
+  if (atividade.tipo === "pergunta") {
+    linhas.push(`- **Pergunta a conferir:** ${atividade.enunciado}`);
+    for (const opcao of atividade.opcoes) linhas.push(`  - ${opcao.id === atividade.correta ? "(certa) " : ""}${opcao.texto}`);
+    linhas.push(`- **Explicação da resposta a conferir:** ${atividade.explicacao} Aponta: ${refLine(atividade.referencias)}.`);
+  } else {
+    linhas.push(`- **Ordenação a conferir:** ${atividade.enunciado} Registros: ${refLine(atividade.itens)}. A ordem certa é a das datas dos registros.`);
+    linhas.push(`- **Explicação da resposta a conferir:** ${atividade.explicacao}`);
+  }
+  if (fase.explorar.length > 0) linhas.push(`- Para explorar no período (opcional no jogo): ${refLine(fase.explorar)}`);
+  for (const lacuna of fase.lacunas) linhas.push(`- Lacuna declarada: ${lacuna}`);
+  linhas.push("- [ ] Conferido por: ______ em ____/____/______", "");
+  return linhas;
+}
+
+function factBlock(data: AtlasData, fato: FatoBiografico): string[] {
+  const quando = fato.data.tipo === "data" ? formatDate(fato.data) : "sem data documentada";
+  const linhas = [`### ${nomeDe(data, [fato.pessoaId])}: ${fato.titulo} (${quando})`, ""];
+  linhas.push(`- Identificador: \`${fato.id}\` · Tipo: ${TIPO_DE_FATO_LABELS[fato.tipo]} · Revisão: ${reviewLine(fato.editorial)}`);
+  linhas.push(`- **Texto a conferir:** ${fato.texto}`);
+  if (fato.divergenciaDocumentada !== null) linhas.push(`- **Divergência a conferir:** ${fato.divergenciaDocumentada}`);
+  linhas.push("- Fontes:", ...sourceLines(data, fato.fontes));
+  linhas.push("- [ ] Conferido por: ______ em ____/____/______", "");
+  return linhas;
+}
+
+function proposalBlock(data: AtlasData, proposta: PropostaEleitoral): string[] {
+  const linhas = [`### ${nomeDe(data, [proposta.pessoaId])} · ${TEMA_LABELS[proposta.tema]} · eleição de ${proposta.eleicao}`, ""];
+  linhas.push(`- Identificador: \`${proposta.id}\` · Revisão: ${reviewLine(proposta.editorial)}`);
+  linhas.push(`- **Texto a conferir:** ${proposta.texto}`);
+  if (proposta.ressalva !== null) linhas.push(`- **Ressalva a conferir:** ${proposta.ressalva}`);
+  linhas.push("- Fontes:", ...sourceLines(data, proposta.fontes));
+  linhas.push("- [ ] Conferido por: ______ em ____/____/______", "");
+  return linhas;
+}
+
+function conceptBlock(data: AtlasData, conceito: Conceito): string[] {
+  const linhas = [`### Conceito: ${conceito.termo}`, ""];
+  linhas.push(`- Identificador: \`${conceito.id}\` · Revisão: ${reviewLine(conceito.editorial)}`);
+  linhas.push(`- **Definição a conferir:** ${conceito.definicao}`);
+  if (conceito.simplificacao !== null) linhas.push(`- **O que a definição simplifica:** ${conceito.simplificacao}`);
+  linhas.push("- Fontes:", ...sourceLines(data, conceito.fontes));
+  linhas.push("- [ ] Conferido por: ______ em ____/____/______", "");
   return linhas;
 }
 
@@ -173,8 +259,13 @@ export function renderHumanReview(data: AtlasData): string {
     ...conjunto.votacoes.map((item) => item.editorial),
     ...conjunto.votos.map((item) => item.editorial),
     ...conjunto.atosExecutivos.map((item) => item.editorial),
+    ...conjunto.atuacoesLegislativas.map((item) => item.editorial),
+    ...conjunto.propostasEleitorais.map((item) => item.editorial),
     ...conjunto.coberturaPolitica.map((item) => item.editorial),
     ...conjunto.identidadesInstitucionais.map((item) => item.editorial),
+    ...conjunto.fatosBiograficos.map((item) => item.editorial),
+    ...conjunto.conceitos.map((item) => item.editorial),
+    ...conjunto.fasesDoJogo.map((item) => item.editorial),
   ].filter((editorial) => editorial.estado === "revisado" && editorial.revisao.tipo === "humana").length;
   const edicao = conjunto.edicao === null ? "sem edição declarada" : `edição ${conjunto.edicao.versao}, data de corte ${conjunto.edicao.dataDeCorte}`;
 
@@ -193,7 +284,7 @@ export function renderHumanReview(data: AtlasData): string {
   linhas.push("4. Marque a caixa de cada item com o nome e a data. O arquivo gerado é regravado pelo comando; guarde as marcações em cópia própria ou no controle de versão da edição.");
   linhas.push("");
   linhas.push(
-    `Resumo: ${conjunto.acontecimentos.length} acontecimentos (${porTema.get("judicial")?.length ?? 0} judiciais, ${porTema.get("eleitoral")?.length ?? 0} eleitorais, ${porTema.get("filiacao")?.length ?? 0} de partidos, ${porTema.get("mandato")?.length ?? 0} de mandatos e funções, ${porTema.get("demais")?.length ?? 0} demais), ${conjunto.filiacoes.length} filiações, ${conjunto.mandatos.length} mandatos, ${decisoes.length} decisões políticas (${conjunto.votos.length} votos e ${conjunto.atosExecutivos.length} atos do Executivo, sobre ${conjunto.proposicoes.length} proposições), ${conjunto.coberturaPolitica.length} declarações de cobertura da pesquisa, ${conjunto.identidadesInstitucionais.length} identidades institucionais, ${conjunto.fontes.length} fontes.`,
+    `Resumo: ${conjunto.acontecimentos.length} acontecimentos (${porTema.get("judicial")?.length ?? 0} judiciais, ${porTema.get("eleitoral")?.length ?? 0} eleitorais, ${porTema.get("filiacao")?.length ?? 0} de partidos, ${porTema.get("mandato")?.length ?? 0} de mandatos e funções, ${porTema.get("demais")?.length ?? 0} demais), ${conjunto.filiacoes.length} filiações, ${conjunto.mandatos.length} mandatos, ${decisoes.length} decisões políticas (${conjunto.votos.length} votos, ${conjunto.atosExecutivos.length} atos do Executivo e ${conjunto.atuacoesLegislativas.length} atuações legislativas; ${conjunto.proposicoes.length} proposições), ${conjunto.coberturaPolitica.length} declarações de cobertura da pesquisa, ${conjunto.identidadesInstitucionais.length} identidades institucionais, ${conjunto.propostasEleitorais.length} propostas eleitorais, ${conjunto.fasesDoJogo.length} fases do jogo, ${conjunto.fatosBiograficos.length} fatos biográficos, ${conjunto.conceitos.length} conceitos, ${conjunto.fontes.length} fontes.`,
   );
   linhas.push("");
 
@@ -209,13 +300,31 @@ export function renderHumanReview(data: AtlasData): string {
     if (tema === "mandato") for (const mandato of conjunto.mandatos) linhas.push(...mandatoBlock(data, mandato));
     numero += 1;
   }
-  if (decisoes.length > 0 || conjunto.coberturaPolitica.length > 0 || conjunto.identidadesInstitucionais.length > 0) {
-    linhas.push(`## ${numero}. ${DECISOES.titulo} (${decisoes.length} decisões, ${conjunto.coberturaPolitica.length} coberturas da pesquisa e ${conjunto.identidadesInstitucionais.length} identidades institucionais)`);
+  if (decisoes.length > 0 || conjunto.proposicoes.length > 0 || conjunto.coberturaPolitica.length > 0 || conjunto.identidadesInstitucionais.length > 0) {
+    linhas.push(`## ${numero}. ${DECISOES.titulo} (${decisoes.length} decisões, ${conjunto.proposicoes.length} proposições, ${conjunto.coberturaPolitica.length} coberturas da pesquisa e ${conjunto.identidadesInstitucionais.length} identidades institucionais)`);
     linhas.push("");
     linhas.push(DECISOES.porque);
     linhas.push("");
     for (const decisao of decisoes) linhas.push(...decisionBlock(data, decisao));
     linhas.push(...supportBlocks(data));
+    numero += 1;
+  }
+  if (conjunto.propostasEleitorais.length > 0) {
+    linhas.push(`## ${numero}. ${PROPOSTAS.titulo} (${conjunto.propostasEleitorais.length} propostas)`);
+    linhas.push("");
+    linhas.push(PROPOSTAS.porque);
+    linhas.push("");
+    for (const proposta of conjunto.propostasEleitorais) linhas.push(...proposalBlock(data, proposta));
+    numero += 1;
+  }
+  if (conjunto.fasesDoJogo.length > 0 || conjunto.fatosBiograficos.length > 0 || conjunto.conceitos.length > 0) {
+    linhas.push(`## ${numero}. ${JOGO.titulo} (${conjunto.fasesDoJogo.length} fases, ${conjunto.fatosBiograficos.length} fatos biográficos e ${conjunto.conceitos.length} conceitos)`);
+    linhas.push("");
+    linhas.push(JOGO.porque);
+    linhas.push("");
+    for (const fase of conjunto.fasesDoJogo) linhas.push(...phaseBlock(data, fase));
+    for (const fato of conjunto.fatosBiograficos) linhas.push(...factBlock(data, fato));
+    for (const conceito of conjunto.conceitos) linhas.push(...conceptBlock(data, conceito));
   }
   return linhas.join("\n");
 }

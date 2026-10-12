@@ -75,12 +75,12 @@ export default async function ProfilePage({ params }: PageProps<"/politicos/[slu
   return (
     <>
       <Explorer data={recorte} pessoaId={pessoa.id} profiles={profiles} />
-      {/* As decisões documentadas (votos e atos), por tema, abaixo da exploração: o cartão de cada uma tem âncora própria. */}
+      {/* As decisões documentadas (votos, atos e atuações legislativas), por tema, abaixo da exploração: o cartão de cada uma tem âncora própria. */}
       <section id="decisoes" aria-labelledby="titulo-decisoes" className="page space-y-5 border-t border-ink py-8 md:py-10" data-secao="decisoes" data-quantas={decisoes.length}>
         <div className="max-w-3xl space-y-2">
           <p className="eyebrow text-ink-soft">Decisões documentadas</p>
           <h2 id="titulo-decisoes" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
-            Votos e atos de {pessoa.nome}, por tema
+            Votos, atos e atuação legislativa de {pessoa.nome}, por tema
           </h2>
           <p className="text-sm text-ink-soft" data-aviso-amostra>
             {SAMPLE_NOTICE}

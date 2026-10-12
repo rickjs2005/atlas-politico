@@ -1,0 +1,1220 @@
+[
+  {
+    "id": "proposta-lula-2026-economia-1",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "economia",
+    "texto": "O documento propõe criar condições para uma redução sustentada das taxas de juros, com inflação controlada e política fiscal responsável, e manter o novo arcabouço fiscal.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 49, seção 8, Promover uma Economia Mais Sustentável, Produtiva e Digital, Para Todas e Todos, subseção Crescimento com Inclusão e Estabilidade",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-economia-2",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "economia",
+    "texto": "O documento propõe elevar a taxa de investimento da economia e ampliar os investimentos em infraestrutura logística e em infraestrutura social.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 48, seção 8, Promover uma Economia Mais Sustentável, Produtiva e Digital, Para Todas e Todos, subseção Crescimento com Inclusão e Estabilidade",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-economia-3",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "economia",
+    "texto": "O documento põe como objetivo central do próximo ciclo de governo aprimorar e fortalecer o que chama de neoindustrialização.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 50, seção 8, Promover uma Economia Mais Sustentável, Produtiva e Digital, Para Todas e Todos, subseção Indústria ainda mais forte, inovadora e verde",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-seguranca-publica-1",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "seguranca-publica",
+    "texto": "O documento propõe criar o Ministério da Segurança Pública depois de aprovada a PEC da Segurança Pública, proposta pelo Executivo.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 30, seção 3, Proteger a vida com uma segurança pública mais eficiente e integrada",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-seguranca-publica-2",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "seguranca-publica",
+    "texto": "O documento propõe manter uma política de controle de armas e munições.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 28, seção 3, Proteger a vida com uma segurança pública mais eficiente e integrada",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-seguranca-publica-3",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "seguranca-publica",
+    "texto": "O documento propõe fortalecer o Programa Brasil Contra o Crime Organizado e avançar, com estados e municípios, em: enfrentamento ao tráfico de armas, munições, acessórios e explosivos; asfixia financeira do crime organizado e das milícias; investigação de homicídios; retomada de territórios; segurança no sistema prisional.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 27, seção 3, Proteger a vida com uma segurança pública mais eficiente e integrada",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-saude-1",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "saude",
+    "texto": "O documento propõe impulsionar o programa Agora Tem Especialistas, com mais terceiro turno nos serviços de saúde, Carretas da Saúde e mutirões de atendimento.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 37, seção 5, Fortalecer a saúde com equidade, inovação e soberania",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-saude-2",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "saude",
+    "texto": "O documento propõe manter o programa Farmácia Popular 100% gratuito, com revisão contínua dos medicamentos ofertados e continuidade da distribuição de fraldas geriátricas.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 36, seção 5, Fortalecer a saúde com equidade, inovação e soberania",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-saude-3",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "saude",
+    "texto": "O documento propõe acelerar a consolidação do prontuário único do cidadão, por meio da Rede Nacional de Dados em Saúde.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 35, seção 5, Fortalecer a saúde com equidade, inovação e soberania",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-educacao-1",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "educacao",
+    "texto": "O documento propõe dar prioridade absoluta ao fomento à expansão da educação em tempo integral.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 31, seção 4, Garantir o Direito à Educação para Transformar Vidas e o País",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-educacao-2",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "educacao",
+    "texto": "O documento propõe seguir com as ações combinadas com estados e municípios para chegar à meta de 80% das crianças alfabetizadas na idade certa.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 31, seção 4, Garantir o Direito à Educação para Transformar Vidas e o País",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-educacao-3",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "educacao",
+    "texto": "O documento propõe dar continuidade ao programa Pé-de-Meia e fortalecê-lo.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 32, seção 4, Garantir o Direito à Educação para Transformar Vidas e o País",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-reforma-do-estado-1",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "reforma-do-estado",
+    "texto": "O documento propõe aprofundar a política de valorização e diálogo com os servidores públicos, a partir da Mesa Nacional de Negociação Permanente.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 16, seção 1, Fortalecer a Democracia, a Participação Social e Modernizar o Estado, subseção Gestão e Modernização do Estado",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-reforma-do-estado-2",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "reforma-do-estado",
+    "texto": "O documento propõe continuar investindo na universalização dos serviços públicos digitais e em infraestruturas públicas digitais.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 17, seção 1, Fortalecer a Democracia, a Participação Social e Modernizar o Estado, subseção Gestão e Modernização do Estado",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-reforma-do-estado-3",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "reforma-do-estado",
+    "texto": "O documento propõe dar sequência às medidas de controle e integridade da administração pública e ao combate à corrupção.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 18, seção 1, Fortalecer a Democracia, a Participação Social e Modernizar o Estado, subseção Gestão e Modernização do Estado",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-meio-ambiente-1",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "meio-ambiente",
+    "texto": "O documento reafirma a meta de desmatamento líquido zero até 2030.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 70, seção 11, Promover a Sustentabilidade Ambiental e Climática",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-meio-ambiente-2",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "meio-ambiente",
+    "texto": "O documento propõe articular as políticas e mobilizar governo, setor privado e sociedade civil para cumprir a nova NDC, que descreve como a meta de reduzir de 59% a 67% as emissões líquidas de gases de efeito estufa até 2035, em relação a 2005.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 71, seção 11, Promover a Sustentabilidade Ambiental e Climática; a descrição da NDC está na página 69, no começo da mesma seção",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-meio-ambiente-3",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "meio-ambiente",
+    "texto": "O documento propõe avançar na destinação de terras públicas para unidades de conservação, territórios indígenas e quilombolas ou assentamentos, e reforçar a regularização fundiária.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 70, seção 11, Promover a Sustentabilidade Ambiental e Climática",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-direitos-das-mulheres-1",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "direitos-das-mulheres",
+    "texto": "O documento propõe dar sequência ao Pacto de Enfrentamento ao Feminicídio e concluir 30 Casas da Mulher Brasileira e 15 Centros de Referência da Mulher Brasileira.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 21, seção 2, Combater as desigualdades (a seção começa na página 18)",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-direitos-das-mulheres-2",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "direitos-das-mulheres",
+    "texto": "O documento propõe avançar na equivalência de remuneração entre mulheres e homens, fortalecendo a aplicação da Lei de Igualdade Salarial.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 75, seção 12, Valorizar o Trabalho em suas Múltiplas Formas (a seção começa na página 73)",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-lula-2026-direitos-das-mulheres-3",
+    "pessoaId": "lula",
+    "eleicao": 2026,
+    "tema": "direitos-das-mulheres",
+    "texto": "O documento propõe fortalecer o planejamento reprodutivo, com mais acesso a métodos contraceptivos modernos e de longa duração, distribuídos gratuitamente no SUS.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-lula-2026",
+        "localizacao": "página 38, seção 5, Fortalecer a saúde com equidade, inovação e soberania",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-lula",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-economia-1",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "economia",
+    "texto": "O documento propõe rever e redimensionar a reforma tributária em curso e o que chama de majoração de impostos do atual governo, para reduzir a carga sobre a produção e o consumo.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 30, capítulo Brasil Mais Barato, seção Menos imposto no que você consome",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-economia-2",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "economia",
+    "texto": "O documento propõe reformular as regras fiscais atuais, com foco na estabilização e na redução da dívida pública.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 71, capítulo Brasil que Não Volta Atrás, seção Contas em ordem para juros e inflação menores (a seção começa na página 70)",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-economia-3",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "economia",
+    "texto": "O documento fixa a meta de crescimento sustentado de 4% ao ano ao longo da próxima década.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 49, capítulo Brasil que Cresce, texto de abertura",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-1",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "seguranca-publica",
+    "texto": "O documento propõe declarar PCC, CV, milícias e as demais facções como organizações narcoterroristas.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 13, capítulo Brasil sem Medo, seção Terrorista vai ser tratado como terrorista",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-2",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "seguranca-publica",
+    "texto": "O documento propõe apoiar e sancionar a redução da maioridade penal de 18 para 16 anos.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 13, capítulo Brasil sem Medo, seção O crime do menor não é menor",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-seguranca-publica-3",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "seguranca-publica",
+    "texto": "O documento propõe cinco novos presídios de segurança máxima, no modelo adotado por El Salvador.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 14, capítulo Brasil sem Medo, seção Mais presídios, menos bandidos soltos",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-saude-1",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "saude",
+    "texto": "O documento propõe garantir as condições para a correção efetiva da tabela SUS.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 37, capítulo Brasil que Prepara, seção Saúde que cuida antes de a doença chegar",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-saude-2",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "saude",
+    "texto": "O documento propõe implantar o prontuário eletrônico único, vinculado ao CPF e integrado ao Gov.br, interoperável entre as redes pública e privada, observados o consentimento do paciente, a LGPD, o sigilo médico e os protocolos de segurança.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 26, capítulo Brasil sem Fila, seção Saúde digital e prontuário eletrônico único (a seção começa na página 25)",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-saude-3",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "saude",
+    "texto": "O documento propõe contratar serviços e exames na rede privada nos horários ociosos.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 37, capítulo Brasil que Prepara, seção Saúde que cuida antes de a doença chegar",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-educacao-1",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "educacao",
+    "texto": "O documento propõe priorizar o método fônico na alfabetização.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 35, capítulo Brasil que Prepara, seção Ensinar de verdade (a seção começa na página 34)",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-educacao-2",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "educacao",
+    "texto": "O documento propõe ampliar as Escolas Cívico-Militares e garantir atendimento ao aluno com altas habilidades, tirando do papel a política nacional sobre o tema.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 35, capítulo Brasil que Prepara, seção Ensinar de verdade",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-educacao-3",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "educacao",
+    "texto": "O documento propõe um voucher educacional para a família matricular o filho em outra escola onde faltar vaga na rede pública.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 36, capítulo Brasil que Prepara, seção Ensinar de verdade",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-reforma-do-estado-1",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "reforma-do-estado",
+    "texto": "O documento propõe dar continuidade à reforma administrativa, para modernizar o funcionamento do Estado e a carreira do servidor.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 69, capítulo Brasil que Não Volta Atrás, seção Enxugar a Máquina e Profissionalizar a Gestão Pública",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-reforma-do-estado-2",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "reforma-do-estado",
+    "texto": "O documento propõe cortar no mínimo dez ministérios, reduzir cargos comissionados e despesas administrativas e combater o que chama de penduricalhos e supersalários.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 69, capítulo Brasil que Não Volta Atrás, seção Enxugar a Máquina e Profissionalizar a Gestão Pública",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-reforma-do-estado-3",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "reforma-do-estado",
+    "texto": "O documento propõe retomar o Programa Nacional de Desestatização, com avaliação caso a caso.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 70, capítulo Brasil que Não Volta Atrás, seção Enxugar a Máquina e Profissionalizar a Gestão Pública (a seção começa na página 69)",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-meio-ambiente-1",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "meio-ambiente",
+    "texto": "O documento fixa a meta de zerar o desmatamento ilegal até 2029 e propõe combater as queimadas ilegais, com mais prevenção, monitoramento e fiscalização.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 58, capítulo Brasil que Cresce, seção Meio ambiente: o ativo verde do Brasil (a seção começa na página 57)",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-meio-ambiente-2",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "meio-ambiente",
+    "texto": "O documento propõe consolidar o mercado regulado de carbono, com segurança jurídica, e impulsionar a bioeconomia.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 57, capítulo Brasil que Cresce, seção Meio ambiente: o ativo verde do Brasil",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-meio-ambiente-3",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "meio-ambiente",
+    "texto": "O documento propõe criar mecanismos de incentivo econômico à preservação e ampliar o pagamento por serviços ambientais.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 57, capítulo Brasil que Cresce, seção Meio ambiente: o ativo verde do Brasil",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-direitos-das-mulheres-1",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "direitos-das-mulheres",
+    "texto": "O documento propõe monitorar com tornozeleira eletrônica os agressores de mulheres com medida protetiva; em outro trecho, na página 19, fala nos agressores sob medida protetiva de maior risco.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 14, capítulo Brasil sem Medo, seção Tolerância zero para o feminicídio; o outro trecho está na página 19, capítulo Brasil por Elas, seção Denúncia facilitada (a seção começa na página 18)",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-direitos-das-mulheres-2",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "direitos-das-mulheres",
+    "texto": "O documento propõe a Central da Mulher, descrita como um espaço físico onde a mulher resolve a vida sem perder tempo nem percorrer a cidade inteira.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 17, capítulo Brasil por Elas, seção Central da Mulher",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "proposta-flavio-bolsonaro-2026-direitos-das-mulheres-3",
+    "pessoaId": "flavio-bolsonaro",
+    "eleicao": 2026,
+    "tema": "direitos-das-mulheres",
+    "texto": "O documento propõe um voucher-creche para acesso à rede privada credenciada onde não houver vaga na rede pública, até a vaga pública surgir.",
+    "ressalva": null,
+    "fontes": [
+      {
+        "fonteId": "tse-proposta-de-governo-flavio-bolsonaro-2026",
+        "localizacao": "página 21, capítulo Brasil por Elas, seção Creche garantida para toda criança",
+        "evidencia": "A frase do documento que o texto resume."
+      },
+      {
+        "fonteId": "tse-divulgacand-2026-flavio",
+        "localizacao": "Lista de arquivos da ficha da candidatura, item de codTipo 5",
+        "evidencia": "O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 no arquivo que a ficha da candidatura no DivulgaCandContas, do TSE, traz como proposta de governo, com assistência de IA: a frase foi localizada no texto do PDF, na página indicada, e o resumo foi escrito para não trocar o sentido dela. São três frases por área, escolhidas entre as que nomeiam uma medida; não é o documento inteiro, e a escolha é editorial. Os números que aparecem são afirmações do documento. O atlas não acrescenta número, prazo nem valor que a frase não traga, e não avalia se a frase é precisa: essa regra é a mesma para as duas candidaturas. O serviço do TSE não informa versão nem data de entrega do arquivo. Revisão humana pendente."
+      }
+    }
+  }
+]

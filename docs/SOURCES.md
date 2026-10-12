@@ -2,6 +2,8 @@
 
 Catálogo das fontes da edição 0.1.1 e critérios de uso. Todas as fontes foram abertas de novo em 9 de outubro de 2026, na revisão editorial descrita em [EDITORIAL-REVIEW.md](EDITORIAL-REVIEW.md); o primeiro acesso foi em 8 de outubro. O cadastro que alimenta o atlas está em `content/published/fontes.json`; este arquivo o apresenta para leitura e é gerado a partir dele.
 
+> **Este catálogo para na edição 0.1.1, com 60 fontes.** As edições seguintes acrescentaram fontes que não estão listadas aqui: as das decisões de 2023 em diante (edição 0.2.0, [../research/selecao-decisoes-2026-10.md](../research/selecao-decisoes-2026-10.md)) e as 74 da edição 0.3.0, dos fatos biográficos, dos atos de 2003 a 2010, das leis estaduais, das propostas registradas no TSE e dos termos explicados ([../research/trilha-2026-10.md](../research/trilha-2026-10.md)). O cadastro completo, com 152 fontes, é `content/published/fontes.json`, e a página de metodologia o mostra inteiro, agrupado por quem publicou. Os critérios abaixo continuam valendo; a edição 0.3.0 acrescentou os do fato biográfico e da proposta eleitoral ([EDITORIAL.md](EDITORIAL.md), seção Origem, termos, fases e propostas), e passou a ter fontes em PDF, citadas com a página.
+
 ## Critérios de uso
 
 1. **A evidência vem do documento lido.** Cada documento foi baixado e lido. A busca na web serviu só para localizar endereços; nenhum resumo de busca foi usado como evidência.

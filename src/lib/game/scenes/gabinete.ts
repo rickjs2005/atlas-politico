@@ -52,8 +52,8 @@ export const gabinete: SceneSpec = {
   spawn: { x: 3, y: 3 },
   guia: { x: 1, y: 4 },
   saida: { x: 11, y: 4, lado: "leste" },
-  // Nenhum fica na diagonal atrás da porta, que os esconderia. O quarto é a
-  // decisão do capítulo (o decreto), junto da estante do fundo.
+  // As pastas: a primeira é a do marco. Nenhuma fica na diagonal atrás da
+  // porta, que a esconderia; a quarta fica junto da estante do fundo.
   registros: [
     { x: 6, y: 3 },
     { x: 4, y: 6 },

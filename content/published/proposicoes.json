@@ -222,5 +222,260 @@
         "observacoes": "Ficha da matéria lida no webservice de dados abertos do Senado em 11 de outubro de 2026 (UTC). O webservice de votações nominais não traz votação deste projeto com registro do senador 5894: não há registro individual a importar. Tema classificado pela ementa (imposto de renda). Revisão humana pendente."
       }
     }
+  },
+  {
+    "id": "camara-mpv-132-2003",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "camara",
+      "id": "138604"
+    },
+    "tipo": "MPV",
+    "numero": 132,
+    "ano": 2003,
+    "ementa": "Cria o programa Bolsa Família e dá outras providências.",
+    "temas": [],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-mpv-132-2003",
+        "localizacao": "Campos id, siglaTipo, numero, ano e ementa",
+        "evidencia": "Identificador 138604 no acervo da Câmara; MPV 132/2003; ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na resposta do serviço de dados abertos da Câmara dos Deputados, com assistência de IA: identificador, tipo, número, ano e ementa. A ementa registrada é a original da proposição; o serviço traz também as ementas das redações posteriores. O tema é classificação editorial pela ementa. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "camara-pl-1555-2003",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "camara",
+      "id": "125878"
+    },
+    "tipo": "PL",
+    "numero": 1555,
+    "ano": 2003,
+    "ementa": "Dispõe sobre registro, posse e comercialização de armas de fogo e munição, sobre o Sistema Nacional de Armas - SINARM, define crimes e dá outras providências.",
+    "temas": [
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-pl-1555-2003",
+        "localizacao": "Campos id, siglaTipo, numero, ano e ementa",
+        "evidencia": "Identificador 125878 no acervo da Câmara; PL 1555/2003; ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na resposta do serviço de dados abertos da Câmara dos Deputados, com assistência de IA: identificador, tipo, número, ano e ementa. A ementa registrada é a original da proposição; o serviço traz também as ementas das redações posteriores. O tema é classificação editorial pela ementa. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "camara-pec-40-2003",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "camara",
+      "id": "113716"
+    },
+    "tipo": "PEC",
+    "numero": 40,
+    "ano": 2003,
+    "ementa": "Modifica os arts. 37, 40, 42, 48, 96, 142 e 149 da Constituição Federal, o art. 8º da Emenda Constitucional nº 20, de 15 de dezembro de 1998, e dá outras providências.",
+    "temas": [
+      "reforma-do-estado"
+    ],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-pec-40-2003",
+        "localizacao": "Campos id, siglaTipo, numero, ano e ementa",
+        "evidencia": "Identificador 113716 no acervo da Câmara; PEC 40/2003; ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na resposta do serviço de dados abertos da Câmara dos Deputados, com assistência de IA: identificador, tipo, número, ano e ementa. A ementa registrada é a original da proposição; o serviço traz também as ementas das redações posteriores. O tema é classificação editorial pela ementa. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "camara-mpv-213-2004",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "camara",
+      "id": "264231"
+    },
+    "tipo": "MPV",
+    "numero": 213,
+    "ano": 2004,
+    "ementa": "Institui o Programa Universidade para Todos - PROUNI, regula a atuação de entidades beneficentes de assistência social no ensino superior, e dá outras providências.",
+    "temas": [
+      "educacao"
+    ],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-mpv-213-2004",
+        "localizacao": "Campos id, siglaTipo, numero, ano e ementa",
+        "evidencia": "Identificador 264231 no acervo da Câmara; MPV 213/2004; ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na resposta do serviço de dados abertos da Câmara dos Deputados, com assistência de IA: identificador, tipo, número, ano e ementa. A ementa registrada é a original da proposição; o serviço traz também as ementas das redações posteriores. O tema é classificação editorial pela ementa. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "camara-pl-4559-2004",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "camara",
+      "id": "272058"
+    },
+    "tipo": "PL",
+    "numero": 4559,
+    "ano": 2004,
+    "ementa": "Cria mecanismos para coibir a violência doméstica e familiar contra a mulher, nos termos do § 8º do art. 226 da Constituição Federal, e dá outras providências.",
+    "temas": [
+      "direitos-das-mulheres",
+      "seguranca-publica"
+    ],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-pl-4559-2004",
+        "localizacao": "Campos id, siglaTipo, numero, ano e ementa",
+        "evidencia": "Identificador 272058 no acervo da Câmara; PL 4559/2004; ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na resposta do serviço de dados abertos da Câmara dos Deputados, com assistência de IA: identificador, tipo, número, ano e ementa. A ementa registrada é a original da proposição; o serviço traz também as ementas das redações posteriores. O tema é classificação editorial pela ementa. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "camara-pl-7431-2006",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "camara",
+      "id": "332750"
+    },
+    "tipo": "PL",
+    "numero": 7431,
+    "ano": 2006,
+    "ementa": "Autoriza o Poder Executivo a instituir o Piso Salarial Profissional dos Educadores Públicos, na forma prevista no art. 206, V, e 212 da Constituição Federal, e dá outras providências.",
+    "temas": [
+      "educacao"
+    ],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-pl-7431-2006",
+        "localizacao": "Campos id, siglaTipo, numero, ano e ementa",
+        "evidencia": "Identificador 332750 no acervo da Câmara; PL 7431/2006; ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na resposta do serviço de dados abertos da Câmara dos Deputados, com assistência de IA: identificador, tipo, número, ano e ementa. A ementa registrada é a original da proposição; o serviço traz também as ementas das redações posteriores. O tema é classificação editorial pela ementa. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "camara-pl-18-2007",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "camara",
+      "id": "339977"
+    },
+    "tipo": "PL",
+    "numero": 18,
+    "ano": 2007,
+    "ementa": "Dispõe sobre a obrigatoriedade da adoção de medidas por parte do Poder Público, objetivando a redução das emissões dos gases responsáveis pelo efeito estufa.",
+    "temas": [
+      "meio-ambiente"
+    ],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-pl-18-2007",
+        "localizacao": "Campos id, siglaTipo, numero, ano e ementa",
+        "evidencia": "Identificador 339977 no acervo da Câmara; PL 18/2007; ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na resposta do serviço de dados abertos da Câmara dos Deputados, com assistência de IA: identificador, tipo, número, ano e ementa. A ementa registrada é a original da proposição; o serviço traz também as ementas das redações posteriores. O tema é classificação editorial pela ementa. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "camara-pl-5940-2009",
+    "instituicao": "camara-dos-deputados",
+    "jurisdicao": "federal",
+    "identidadeExterna": {
+      "provedor": "camara",
+      "id": "447936"
+    },
+    "tipo": "PL",
+    "numero": 5940,
+    "ano": 2009,
+    "ementa": "Cria o Fundo Social - FS, e dá outras providências.",
+    "temas": [
+      "economia"
+    ],
+    "fontes": [
+      {
+        "fonteId": "camara-proposicao-pl-5940-2009",
+        "localizacao": "Campos id, siglaTipo, numero, ano e ementa",
+        "evidencia": "Identificador 447936 no acervo da Câmara; PL 5940/2009; ementa."
+      }
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Conferido em 11 de outubro de 2026 na resposta do serviço de dados abertos da Câmara dos Deputados, com assistência de IA: identificador, tipo, número, ano e ementa. A ementa registrada é a original da proposição; o serviço traz também as ementas das redações posteriores. O tema é classificação editorial pela ementa. Revisão humana pendente."
+      }
+    }
   }
 ]

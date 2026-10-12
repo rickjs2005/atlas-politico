@@ -1,11 +1,11 @@
-// Cenário: piso, paredes, saída, registro, anel de alcance e efeito de
-// recolher. Cada parte tem o próprio arquivo (scene-*.ts); os elementos de
-// cenário ficam em props.ts.
+// Cenário: piso, paredes, saída, pasta e o anel sob a pasta do marco. Cada
+// parte tem o próprio arquivo (scene-*.ts); os elementos de cenário ficam em
+// props.ts.
 
 import { drawProp } from "./props";
 import { drawExit, drawThreshold } from "./scene-exit";
 import { drawFloor } from "./scene-floor";
-import { drawCollectEffect, drawReachRing } from "./scene-record";
+import { drawReachRing } from "./scene-record";
 import { drawWall } from "./scene-walls";
 import type { SceneArt } from "./types";
 
@@ -18,5 +18,4 @@ export const SCENE_ART: SceneArt = {
   drawExit,
   drawProp,
   drawReachRing,
-  drawCollectEffect,
 };

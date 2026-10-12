@@ -1,41 +1,5 @@
 [
   {
-    "id": "lula-1982-candidatura-ao-governo-de-sao-paulo",
-    "slug": "lula-1982-candidatura-ao-governo-de-sao-paulo",
-    "pessoaIds": [
-      "lula"
-    ],
-    "titulo": "Lula disputa o governo de São Paulo",
-    "data": {
-      "valor": "1982",
-      "precisao": "ano"
-    },
-    "categoria": "eleicoes",
-    "resumo": "Em 1982, Lula disputou o governo do estado de São Paulo pelo PT.",
-    "contexto": "Item em pesquisa. A biografia publicada pela Presidência cita a candidatura, mas não informa a data nem o resultado da eleição.",
-    "localizacao": {
-      "tipo": "lugares",
-      "lugarIds": [
-        "estado-de-sao-paulo"
-      ]
-    },
-    "imagemId": null,
-    "fontes": [
-      {
-        "fonteId": "planalto-biografia-lula",
-        "localizacao": "Oitavo parágrafo da biografia",
-        "evidencia": "Candidatura ao governo de São Paulo em 1982."
-      }
-    ],
-    "editorial": {
-      "estado": "rascunho",
-      "pendencias": [
-        "Localizar o resultado oficial da eleição de 1982 no TSE ou no TRE-SP.",
-        "Confirmar a data da votação."
-      ]
-    }
-  },
-  {
     "id": "lula-1984-campanha-das-diretas-ja",
     "slug": "lula-1984-campanha-das-diretas-ja",
     "pessoaIds": [
@@ -172,6 +136,103 @@
       "pendencias": [
         "Localizar a data de filiação ao Republicanos em registro da Justiça Eleitoral ou em notícia do Senado.",
         "Esclarecer por que os dados abertos do Senado registram 'S/Partido' no período."
+      ]
+    }
+  },
+  {
+    "id": "lula-1982-candidatura-ao-governo-de-sao-paulo",
+    "slug": "lula-1982-candidatura-ao-governo-de-sao-paulo",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula disputa o governo de São Paulo e não é eleito",
+    "data": {
+      "valor": "1982",
+      "precisao": "ano"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 1982, Lula disputou o governo do estado de São Paulo pelo PT e não foi eleito. Recebeu 1.144.648 votos. O eleito foi André Franco Montoro (PMDB), com 5.209.952 votos.",
+    "contexto": "Os outros candidatos foram Reynaldo Emygdio de Barros (PDS), com 2.728.732 votos, Jânio da Silva Quadros (PTB), com 1.447.328, e José Antônio de Affonseca Rogê Ferreira (PDT), com 94.395, segundo o arquivo de resultados do TSE. O Arquivo Nacional e a Agência Senado registram que Lula ficou em quarto lugar. Segundo a biografia publicada pela Presidência, em 1982 Lula liderou a organização do PT e disputou naquele ano o governo de São Paulo. O arquivo do TSE não traz a data da votação, e por isso o registro tem precisão de ano.",
+    "localizacao": {
+      "tipo": "lugares",
+      "lugarIds": [
+        "estado-de-sao-paulo"
+      ]
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-resultados-1982",
+        "localizacao": "Arquivo VOTACAO_CANDIDATO_UF_1982_SP.txt, linhas 1 a 5 (os cinco candidatos a governador); o último campo é o total de votos, como define o Leia-me do mesmo arquivo",
+        "evidencia": "Lula (PT), candidato a governador, não eleito, com 1.144.648 votos; Montoro (PMDB) eleito, com 5.209.952; os votos dos outros três candidatos."
+      },
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Oitavo parágrafo da biografia",
+        "evidencia": "Em 1982, Lula liderou a organização do partido e disputou o governo de São Paulo."
+      },
+      {
+        "fonteId": "arquivo-nacional-biografia-lula",
+        "localizacao": "Terceiro parágrafo",
+        "evidencia": "Em 1982, concorreu ao governo de São Paulo e ficou em quarto lugar."
+      },
+      {
+        "fonteId": "agencia-senado-2002-trajetoria-lula",
+        "localizacao": "Quinto parágrafo",
+        "evidencia": "Em 1982, concorreu ao governo de São Paulo e ficou como quarto colocado."
+      }
+    ],
+    "editorial": {
+      "estado": "rascunho",
+      "pendencias": [
+        "O limite editorial de vinte acontecimentos por pessoa já foi atingido (docs/EDITORIAL.md, regra 2): publicar este registro exige decisão editorial, por ampliar o limite ou por trocar um acontecimento por outro.",
+        "Confirmar a data da votação de 1982 em documento oficial: o arquivo de resultados do TSE não a traz.",
+        "Texto escrito com assistência de IA em 11 de outubro de 2026, com cada frase conferida contra o trecho literal do documento citado; os arquivos do TSE trazem dados pessoais (CPF e título de eleitor), que não foram copiados. Revisão humana pendente."
+      ]
+    }
+  },
+  {
+    "id": "lula-1998-derrota-na-eleicao-presidencial",
+    "slug": "lula-1998-derrota-na-eleicao-presidencial",
+    "pessoaIds": [
+      "lula"
+    ],
+    "titulo": "Lula perde a terceira disputa pela Presidência",
+    "data": {
+      "valor": "1998-10-04",
+      "precisao": "dia"
+    },
+    "categoria": "eleicoes",
+    "resumo": "Em 4 de outubro de 1998, Lula disputou a Presidência da República pela terceira vez e não foi eleito. Fernando Henrique Cardoso, que já o tinha vencido em 1994, foi eleito no primeiro turno.",
+    "contexto": "Lula concorreu pelo PT, com o número 13, na coligação União do Povo Muda Brasil, formada por PDT e PT, segundo o arquivo de candidatos do TSE. O candidato a vice-presidente na coligação foi Leonel de Moura Brizola. O arquivo de candidatos não traz o número de votos, e esta edição não localizou documento oficial com o total já somado.",
+    "localizacao": {
+      "tipo": "nacional"
+    },
+    "imagemId": null,
+    "fontes": [
+      {
+        "fonteId": "tse-candidatos-1998",
+        "localizacao": "Arquivo consulta_cand_1998_BR.csv, linhas dos candidatos a presidente de números 13 e 45 e do candidato a vice-presidente de número 121",
+        "evidencia": "Eleição de 4 de outubro de 1998, turno 1; Lula, número 13, candidato a presidente pelo PT, na coligação União do Povo Muda Brasil (PDT / PT), não eleito; Fernando Henrique Cardoso eleito; Leonel de Moura Brizola candidato a vice-presidente."
+      },
+      {
+        "fonteId": "planalto-biografia-lula",
+        "localizacao": "Nono parágrafo da biografia",
+        "evidencia": "Em 1994 e 1998, Lula voltou a se candidatar a presidente e foi derrotado por Fernando Henrique Cardoso."
+      },
+      {
+        "fonteId": "agencia-senado-2002-trajetoria-lula",
+        "localizacao": "Sexto parágrafo",
+        "evidencia": "Derrota no primeiro turno para Fernando Henrique Cardoso em 1994, repetida em 1998."
+      }
+    ],
+    "editorial": {
+      "estado": "rascunho",
+      "pendencias": [
+        "O limite editorial de vinte acontecimentos por pessoa já foi atingido (docs/EDITORIAL.md, regra 2): publicar este registro exige decisão editorial, por ampliar o limite ou por trocar um acontecimento por outro.",
+        "Localizar documento oficial com o total de votos da eleição de 1998.",
+        "A eleição de 1998 já aparece no contexto do acontecimento de 1994: decidir se ela ganha registro próprio.",
+        "Texto escrito com assistência de IA em 11 de outubro de 2026, com cada frase conferida contra o trecho literal do documento citado; os arquivos do TSE trazem dados pessoais (CPF e título de eleitor), que não foram copiados. Revisão humana pendente."
       ]
     }
   }

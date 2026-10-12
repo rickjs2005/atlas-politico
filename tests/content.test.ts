@@ -233,8 +233,12 @@ describe("conteúdo do repositório", () => {
         ...conjunto.votacoes,
         ...conjunto.votos,
         ...conjunto.atosExecutivos,
+        ...conjunto.atuacoesLegislativas,
         ...conjunto.coberturaPolitica,
         ...conjunto.identidadesInstitucionais,
+        ...conjunto.propostasEleitorais,
+        ...conjunto.fatosBiograficos,
+        ...conjunto.conceitos,
       ]
         .flatMap((registro) => registro.fontes)
         .map((citacao) => citacao.fonteId),

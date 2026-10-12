@@ -266,8 +266,8 @@
     "periodo": {
       "inicio": {
         "tipo": "data",
-        "valor": "2003",
-        "precisao": "ano"
+        "valor": "2003-02-01",
+        "precisao": "dia"
       },
       "fim": {
         "tipo": "data",
@@ -290,6 +290,11 @@
         "fonteId": "tse-candidatos-2002",
         "localizacao": "Arquivo consulta_cand_2002_RJ.csv, linha do candidato de número 11120",
         "evidencia": "Eleito deputado estadual em 2002."
+      },
+      {
+        "fonteId": "alerj-8a-legislatura",
+        "localizacao": "Cabeçalho do documento e item 32 da lista de deputados",
+        "evidencia": "Posse da legislatura de 2003 a 2007 em 1º de fevereiro de 2003; o deputado Flávio Bolsonaro consta da lista."
       }
     ],
     "editorial": {
@@ -297,8 +302,8 @@
       "revisao": {
         "tipo": "assistida-por-ia",
         "revisadoPor": "Claude, modelo de IA da Anthropic",
-        "revisadoEm": "2026-10-09",
-        "observacoes": "Terceira conferência, feita em 9 de outubro de 2026: as fontes foram abertas de novo e o texto foi relido contra os documentos, com assistência de IA. Revisão humana pendente. Casa declarada em 10 de outubro de 2026, pela instituição já documentada no registro."
+        "revisadoEm": "2026-10-11",
+        "observacoes": "Início do mandato precisado em 11 de outubro de 2026, com assistência de IA: a data é a da posse da legislatura de 2003 a 2007, informada pela Alerj no documento que lista os deputados dela, entre eles Flávio Bolsonaro; o documento não traz termo de posse individual. Os demais campos são os da conferência de 9 de outubro de 2026, com a casa declarada em 10 de outubro de 2026 pela instituição já documentada no registro, e não foram relidos nesta passagem. Revisão humana pendente."
       }
     }
   },

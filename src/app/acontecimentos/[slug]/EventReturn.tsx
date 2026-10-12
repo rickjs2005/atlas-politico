@@ -34,8 +34,10 @@ const carried = "text-xs font-normal text-ink-soft";
 export function EventReturn({ event, people, escala }: EventReturnProps) {
   const search = useOwnSearch(`/acontecimentos/${event.slug}`);
   const comparacao = comparisonReturn(search, escala);
-  // Quem abriu a ficha de dentro do jogo volta ao capítulo em que estava; o
-  // progresso fica no navegador, e abrir esta página não o altera.
+  // Quem abriu a ficha de dentro do jogo volta à trajetória da pessoa, na fase
+  // da retomada (a primeira ainda não concluída a partir de onde estava), e
+  // não ao aprofundamento, se veio de um. O progresso fica no navegador, e
+  // abrir esta página não o altera.
   const jogo = gameReturn(search, people);
 
   return (
