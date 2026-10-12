@@ -11,7 +11,7 @@ Capturas reais do atlas, tiradas do servidor de desenvolvimento com os dados ger
 | `fase-8/` | O acabamento: abertura, exploração, comparação e leitura, na saída estática. Em `fase-8/antes/`, as mesmas telas antes da fase | `npm run build` e `npm run capture:finish` | `tests/export/acabamento.capture.ts` |
 | `jogo-etapa-1/` | O jogo na etapa 1, na saída estática: entrada do atlas com o acesso, escolha de personagem, os dois capítulos de cada personagem, registro, tarefa de ordem, painel, guia, fim da etapa, celular, rodapé e a volta da ficha. Guardadas como história; o roteiro passou a gravar em `jogo-lancamento/` | (roteiro da etapa 1) | |
 | `jogo-lancamento/` | O jogo anterior, na versão de lançamento de 10 de outubro de 2026, na saída estática: os onze capítulos, as quatro tarefas, a ficha judicial, as figuras por época, o painel, o fim da trajetória, celular em pé e deitado, guia, saída fechada, rodapé e a volta da ficha. Guardadas como história: o roteiro que as fazia foi reescrito para a trilha e passou a gravar em `jogo-trilha/` | (roteiro do jogo anterior) | |
-| `jogo-trilha/` | **O jogo em vigor,** a trilha simples, na saída estática com a edição 0.3.0: as entradas, o ciclo de uma fase para os dois personagens, as nove cenas de cada trajetória, as fases de processos e de 2026, os aprofundamentos, os registros, a lista de fases, o resumo, a retomada, a leitura sem o cenário, as falhas, o celular em pé, estreito e deitado, e o resumo e as propostas na comparação | `npm run build` e `npm run capture:game` | `tests/export/jogo.capture.ts` |
+| `jogo-trilha/` | **O jogo em vigor,** a trilha simples, na saída estática com a edição 0.3.0: as entradas, o ciclo de uma fase para os dois personagens, as nove cenas de cada trajetória, as fases de processos e de 2026, os aprofundamentos, os registros, a lista de fases, o resumo, a retomada, a leitura sem o cenário, as falhas, o celular em pé, estreito e deitado, e o resumo e as propostas na comparação. São anteriores ao passaporte do Escrivão, que está no roteiro e ainda não foi capturado para esta pasta | `npm run build` e `npm run capture:game` | `tests/export/jogo.capture.ts` |
 | `fase-9/` | As oito telas da conferência final, nas quatro larguras, com a edição 0.1.1; o relatório da passagem de acessibilidade; e a linha do tempo antes e depois da correção da hachura | `npm run build` e `npm run audit:a11y -- --saida docs/capturas/fase-9` | `scripts/audit-a11y.mjs` |
 | `jogo-salas/` | A entrega P1 do jogo, na saída estática com a edição 0.2.0: a entrada com as salas temáticas, a missão da sala Histórico passo a passo (a decisão no cenário, o cartão, a evidência errada e certa com o Escrivão, a interpretação, a saída aberta), o painel com as preferências, a sala Economia (cena, painel e fim), as decisões na página da pessoa e na comparação por tema, e o celular na sala Segurança pública. Refeitas em 11 de outubro de 2026, com a edição 0.2.1: os cartões dizem quando o texto de referência não está ligado, a lista longa de dispositivos vem dobrada, e os capítulos de contexto sensível aparecem sem a fala de humor | (roteiro do jogo anterior, que não existe mais) | |
 
@@ -31,7 +31,7 @@ As imagens de `fase-4/` e de `fase-5/` são as de cada fase e não foram refeita
 
 ## Jogo, trilha simples
 
-Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o conteúdo da edição 0.3.0, em `jogo-trilha/`. São 114 imagens. O computador é 1440×900. O celular é emulado, com toque e movimento reduzido: 390×844 em pé, 360×640 (a tela mais estreita e baixa que o projeto confere) e 844×390 deitado. As fases avançadas são abertas pelo endereço (`?fase=N`): nenhuma fase segura a seguinte, e o roteiro não precisa de progresso salvo para chegar a elas. O roteiro recusa captura com a página rolada, fora as que rolam de propósito.
+Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o conteúdo da edição 0.3.0, em `jogo-trilha/`. São 114 imagens, anteriores ao passaporte do Escrivão (abaixo). O computador é 1440×900. O celular é emulado, com toque e movimento reduzido: 390×844 em pé, 360×640 (a tela mais estreita e baixa que o projeto confere) e 844×390 deitado. As fases avançadas são abertas pelo endereço (`?fase=N`): nenhuma fase segura a seguinte, e o roteiro não precisa de progresso salvo para chegar a elas. O roteiro recusa captura com a página rolada, fora as que rolam de propósito.
 
 | Arquivo | O que mostra |
 | --- | --- |
@@ -57,6 +57,16 @@ Tiradas da saída estática, pelo roteiro `tests/export/jogo.capture.ts`, com o 
 | `58` e `59` | Celular deitado: a cena e a explicação |
 | `60` e `61`, em computador e em celular | A comparação: a primeira tela, com as faixas e o atalho, e o resumo por cargo e por área |
 | `62` e `63`, em computador | A comparação: as propostas por área e o grupo "Outros assuntos" das decisões |
+
+**As imagens desta pasta são anteriores ao passaporte do Escrivão** (12 de outubro de 2026, D-150). Nelas o cartão da fase aparece sem a faixa **Meu passaporte**, a fase concluída aparece sem o carimbo e sem o bloco **A seguir**, e, depois de um erro, o botão ainda é "Continuar: fase N". O roteiro já foi ampliado, e a rodada que refaz a pasta ficou para depois: a verificação da entrega foi interrompida por falta de memória na máquina ([STATUS.md](../STATUS.md), seção Passaporte do Escrivão). Quando `npm run capture:game` rodar, a pasta passa a ter 131 imagens, com estas dezessete a mais:
+
+| Arquivo, ainda não tirado | O que mostra |
+| --- | --- |
+| `64` a `69` | O passaporte do Escrivão, em computador: o carimbo novo com a fase seguinte, a faixa no cartão da fase, o selo novo (em uma fase de contexto sensível, com a confirmação sóbria e sem humor), a caderneta, os selos e uma fase já carimbada aberta de novo |
+| `70` a `74` | O fim das trajetórias: uma percorrida, com o convite para a outra, na fase e no resumo; as duas percorridas, com a comparação e os aprofundamentos; a caderneta completa e os selos |
+| `75` a `80` | O passaporte em celular: o carimbo novo, a fase seguinte e a caderneta, em 390×844; a faixa no cartão da fase, a caderneta e os selos, em 360×640 |
+
+Oito das dezessete partem de um progresso posto no navegador, no formato que o jogo grava: as do fim das trajetórias e as do celular estreito.
 
 Nenhuma pessoa conferiu estas capturas, e nenhuma foi tirada em aparelho real. O que uma IA olhou nelas, e quando, está em [STATUS.md](../STATUS.md), seção Trilha simples do jogo.
 

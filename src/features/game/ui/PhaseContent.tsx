@@ -9,6 +9,11 @@
 // Todo texto vem do conteúdo publicado: a explicação e a atividade são da
 // fase; as datas, os títulos e as fontes são dos registros que ela aponta.
 // Aqui só há rótulos de interface.
+//
+// Com a fase concluída, a tela mostra o carimbo dela no passaporte (D-150),
+// apresenta a fase seguinte pelo objetivo que o roteiro publicado lhe dá e,
+// no fim de uma trajetória, convida para a outra. O botão de continuar fica
+// na própria fase: nada disso abre outra janela.
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -18,6 +23,7 @@ import { describePrecision, formatDate } from "@/lib/domain/dates";
 import { TEMA_LABELS } from "@/lib/domain/decisions";
 import type { FalaDita } from "@/lib/game/escrivao";
 import { JUDICIAL_KIND_LABEL, JUDICIAL_NOTICE, judicialOf } from "@/lib/game/judicial";
+import { stampAnnouncement, type DeepDive, type TrailOutcome } from "@/lib/game/passport";
 import { periodLabel, roomLabel, type RoomSpec } from "@/lib/game/rooms";
 import { displayOrder, isResolved, orderDates, orderingDisplay, phaseStatus, refDate, refKey, refTitle } from "@/lib/game/trail";
 import type { GameContent, GameSource, PhaseProgress, PhaseRef, PhaseSpec } from "@/lib/game/types";
@@ -25,6 +31,7 @@ import { comparisonHref } from "@/lib/state/links";
 
 import { primaryButton, quietButton, revealInDialog, secondaryButton } from "./Dialog";
 import { EscrivaoSays } from "./EscrivaoSays";
+import { NextPhasePreview, StampNote, TrailEnd, type StampNotice } from "./Passport";
 import { ConceptNote } from "./RecordCard";
 import { SourceList } from "./SourceList";
 
@@ -45,16 +52,24 @@ interface PhaseContentProps {
   proxima: PhaseSpec | null;
   /** Mostra o cabeçalho da fase (posição, período, título): em "Ler sem o cenário". Na janela, o cabeçalho é o dela. */
   cabecalho: boolean;
-  /** O que o Escrivão diz da conclusão desta fase, quando ela acabou de ser concluída. */
+  /** O que o Escrivão diz de uma fase que já estava concluída. */
   falasDaConclusao: readonly FalaDita[];
+  /** A fase recebeu o carimbo nesta visita: a confirmação, os selos que vieram e o que o Escrivão diz. `null` nas outras. */
+  carimbo: StampNotice | null;
+  /** Na trajetória, como ela e as outras estão: é o que a última fase mostra no lugar da fase seguinte. `null` nos aprofundamentos. */
+  desfecho: TrailOutcome | null;
+  /** Os aprofundamentos das trajetórias, para quem percorreu todas. */
+  aprofundamentos: readonly DeepDive[];
   onAnswerQuestion(opcaoId: string): AnswerFeedback;
   onAnswerOrder(chaves: readonly string[]): AnswerFeedback;
-  /** "Ver a explicação e continuar": conclui a fase sem resposta. */
+  /** "Ver a explicação e continuar", antes de responder ou depois de um erro: conclui a fase pela leitura, e ela continua na tela. */
   onSkip(): void;
   /** Abre um registro do período, opcional. */
   onOpenRecord(referencia: PhaseRef): void;
   /** Vai à fase seguinte, ou ao resumo na última. */
   onContinue(): void;
+  /** Abre o passaporte, por cima da fase. */
+  onOpenPassport(): void;
 }
 
 /** As fontes do registro apontado, como ele as cita. */
@@ -134,7 +149,25 @@ function supportingRefs(fase: PhaseSpec): PhaseRef[] {
   return lista;
 }
 
-export function PhaseContent({ fase, total, sala, content, estado, proxima, cabecalho, falasDaConclusao, onAnswerQuestion, onAnswerOrder, onSkip, onOpenRecord, onContinue }: PhaseContentProps) {
+export function PhaseContent({
+  fase,
+  total,
+  sala,
+  content,
+  estado,
+  proxima,
+  cabecalho,
+  falasDaConclusao,
+  carimbo,
+  desfecho,
+  aprofundamentos,
+  onAnswerQuestion,
+  onAnswerOrder,
+  onSkip,
+  onOpenRecord,
+  onContinue,
+  onOpenPassport,
+}: PhaseContentProps) {
   const [escolha, setEscolha] = useState<string | null>(null);
   const [ordem, setOrdem] = useState<readonly string[]>([]);
   // O que a última ação desta visita mostrou: nada, um erro, um acerto ou a explicação lida no lugar da resposta.
@@ -170,6 +203,9 @@ export function PhaseContent({ fase, total, sala, content, estado, proxima, cabe
   const rotuloDeContinuar = proxima === null ? "Ver o resumo" : `Continuar: fase ${proxima.numero}`;
   // A explicação da resposta aparece depois de responder, de pedir a explicação, ou em uma fase já concluída.
   const mostraExplicacao = resultado !== null || concluida;
+  // O carimbo é novo nesta tela quando a conclusão aconteceu aqui, nesta visita. Depois de recarregar a página, ou de
+  // sair da fase e voltar, ele já estava no passaporte: a tela diz isso em uma linha, sem comemorar de novo.
+  const carimboNovo = concluida && resultado !== null && resultado.tipo !== "errado" ? carimbo : null;
 
   const responder = () => {
     if (atividade.tipo === "pergunta") {
@@ -190,17 +226,17 @@ export function PhaseContent({ fase, total, sala, content, estado, proxima, cabe
     setOrdem([]);
     setResultado(null);
   };
+  // "Ver a explicação e continuar" existe antes de responder e, depois de um erro, ao lado de "Tentar de novo". Nos dois
+  // casos a fase é concluída pela leitura e fica na tela, com a opção certa marcada, o carimbo e a fase seguinte. Nenhuma
+  // via conclui a fase tirando-a da tela na mesma hora: o carimbo é sempre confirmado onde a pessoa está olhando.
   const verExplicacao = () => {
     onSkip();
     focoPendente.current = true;
+    // A escolha feita antes sai: uma opção marcada sem ter sido respondida, ou a resposta errada, ficaria em destaque ao lado
+    // da certa, sem nada que dissesse que era a escolha da pessoa. A fase concluída pela leitura mostra só a resposta certa.
+    setEscolha(null);
+    setOrdem([]);
     setResultado({ tipo: "explicacao", falas: [] });
-  };
-  // Depois de um erro, a explicação já está à vista: seguir conclui a fase pela leitura. Na leitura sem o cenário, a última
-  // fase continua na página quando o resumo abre: o veredito passa a ser o da explicação lida, e não o do erro.
-  const seguirDepoisDoErro = () => {
-    onSkip();
-    setResultado({ tipo: "explicacao", falas: [] });
-    onContinue();
   };
   const alternarOrdem = (chave: string) => setOrdem((atual) => (atual.includes(chave) ? atual.filter((item) => item !== chave) : [...atual, chave]));
 
@@ -374,28 +410,39 @@ export function PhaseContent({ fase, total, sala, content, estado, proxima, cabe
         )}
 
         {mostraExplicacao && (
-          <div
-            role="status"
-            className={`space-y-2 border px-3 py-3 text-base ${resultado?.tipo === "errado" ? "border-line-strong bg-notice" : "border-ink bg-raised"}`}
-            data-resultado={resultado?.tipo ?? "concluida"}
-          >
-            <p className="font-medium" data-veredito>
-              {resultado?.tipo === "certo" ? "Certo." : resultado?.tipo === "errado" ? "Ainda não." : resultado?.tipo === "explicacao" ? "A explicação:" : "Você já concluiu esta fase. A explicação:"}
-            </p>
-            <p data-explicacao-da-resposta>{atividade.explicacao}</p>
-            {atividade.tipo === "ordem" && (
-              <ol className="space-y-0.5 text-sm" data-ordem-certa>
-                {orderDates(atividade, content).map((item) => (
-                  <li key={item.chave}>
-                    <span className="numerals font-semibold">{item.data}</span> · {item.titulo}
-                  </li>
-                ))}
-              </ol>
-            )}
-            {resultado?.tipo === "errado" && <EscrivaoSays falas={resultado.falas} evento="erro" />}
-            {resultado?.tipo !== "errado" && falasDaConclusao.length > 0 && <EscrivaoSays falas={falasDaConclusao} evento="conclusao" />}
+          <div className={`space-y-2 border px-3 py-3 text-base ${resultado?.tipo === "errado" ? "border-line-strong bg-notice" : "border-ink bg-raised"}`} data-resultado={resultado?.tipo ?? "concluida"}>
+            {/* O que se anuncia como resultado é o veredito, com a explicação da resposta. O carimbo tem a linha de aviso dele, logo abaixo desta caixa, e o botão do passaporte fica fora das duas. */}
+            <div role="status" className="space-y-2" data-resultado-anunciado>
+              <p className="font-medium" data-veredito>
+                {resultado?.tipo === "certo" ? "Certo." : resultado?.tipo === "errado" ? "Ainda não." : resultado?.tipo === "explicacao" ? "A explicação:" : "Você já concluiu esta fase. A explicação:"}
+              </p>
+              <p data-explicacao-da-resposta>{atividade.explicacao}</p>
+              {atividade.tipo === "ordem" && (
+                <ol className="space-y-0.5 text-sm" data-ordem-certa>
+                  {orderDates(atividade, content).map((item) => (
+                    <li key={item.chave}>
+                      <span className="numerals font-semibold">{item.data}</span> · {item.titulo}
+                    </li>
+                  ))}
+                </ol>
+              )}
+              {resultado?.tipo === "errado" && <EscrivaoSays falas={resultado.falas} evento="erro" />}
+            </div>
+            {concluida && <StampNote fase={fase} aviso={carimboNovo} onOpenPassport={onOpenPassport} />}
+            {/* O carimbo e a conclusão são o mesmo lugar em horas diferentes: o Escrivão fala de um ou da outra, nunca dos dois. A fala do carimbo é texto comum: quem anuncia o carimbo é a linha de aviso abaixo. */}
+            {carimboNovo !== null && <EscrivaoSays falas={carimboNovo.falas} evento="carimbo" anunciar={false} />}
+            {carimboNovo === null && resultado?.tipo !== "errado" && falasDaConclusao.length > 0 && <EscrivaoSays falas={falasDaConclusao} evento="conclusao" />}
           </div>
         )}
+
+        {/* A linha de aviso do carimbo. Está na tela desde que a fase abre, vazia: quando um carimbo entra, o texto muda uma vez, e é essa mudança que um leitor de tela anuncia. A fase aberta de novo já concluída a encontra vazia. */}
+        <p className="sr-only" role="status" data-anuncio-do-carimbo>
+          {carimboNovo === null ? "" : stampAnnouncement(fase.titulo, carimboNovo.confirmacao, carimboNovo.selos)}
+        </p>
+
+        {/* Depois da explicação da resposta: o que vem em seguida, com o botão de continuar logo abaixo. */}
+        {concluida && proxima !== null && <NextPhasePreview proxima={proxima} total={total} />}
+        {concluida && proxima === null && desfecho !== null && <TrailEnd nome={content.personagem.nome} desfecho={desfecho} aprofundamentos={aprofundamentos} />}
 
         <div className="flex flex-wrap items-center justify-end gap-2" data-acoes-da-atividade>
           {respondendo && (
@@ -416,8 +463,8 @@ export function PhaseContent({ fase, total, sala, content, estado, proxima, cabe
           )}
           {resultado?.tipo === "errado" && !concluida && (
             <>
-              <button type="button" className={secondaryButton} onClick={seguirDepoisDoErro} data-seguir-sem-responder>
-                {rotuloDeContinuar}
+              <button type="button" className={secondaryButton} onClick={verExplicacao} data-ver-explicacao data-depois-do-erro>
+                Ver a explicação e continuar
               </button>
               <button type="button" className={primaryButton} onClick={tentarDeNovo} data-tentar-de-novo>
                 Tentar de novo

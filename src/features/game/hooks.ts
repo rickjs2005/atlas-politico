@@ -9,6 +9,7 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 
 import type { ProgressKeys } from "@/lib/game/content";
+import type { ProgressByCharacter } from "@/lib/game/passport";
 import { DEFAULT_PREFERENCES, PREFERENCES_KEY, parsePreferences, serializePreferences, type GamePreferences } from "@/lib/game/preferences";
 import { initialProgress } from "@/lib/game/progress";
 import { PHASE_PARAM, READING_PARAM, isGamePath, parseGameQuery, type GameQuery } from "@/lib/game/query";
@@ -93,6 +94,37 @@ export function useGameProgress(personagem: PersonagemSlug, chaves: ProgressKeys
   );
   const reset = useCallback(() => state.reset(), [state]);
   return { ...snapshot, update, reset };
+}
+
+const SEM_PROGRESSO: ProgressByCharacter = {};
+const semAssinantes = () => () => {};
+
+/**
+ * O progresso guardado de outros personagens, só para leitura: é o que o
+ * passaporte mostra nas páginas deles (src/lib/game/passport.ts). É lido uma
+ * vez por página, pelas mesmas regras do progresso do personagem aberto, e
+ * nada é gravado: quem nunca jogou com um deles fica sem entrada. O HTML do
+ * build sai sem nada.
+ */
+export function useStoredProgress(chaves: Readonly<Partial<Record<PersonagemSlug, ProgressKeys>>>): ProgressByCharacter {
+  const ler = useMemo(() => createStoredProgressReader(chaves), [chaves]);
+  return useSyncExternalStore(semAssinantes, ler, () => SEM_PROGRESSO);
+}
+
+/** Lê o progresso guardado de cada personagem na primeira consulta, e devolve sempre o mesmo objeto depois. */
+function createStoredProgressReader(chaves: Readonly<Partial<Record<PersonagemSlug, ProgressKeys>>>) {
+  let lido: ProgressByCharacter | null = null;
+  return (): ProgressByCharacter => {
+    if (lido !== null) return lido;
+    const entradas: [PersonagemSlug, PlayerProgress][] = [];
+    for (const [personagem, chave] of Object.entries(chaves) as [PersonagemSlug, ProgressKeys | undefined][]) {
+      if (chave === undefined) continue;
+      const salvo = createProgressStore(personagem, chave.fases, chave.assinaturas).load();
+      if (salvo !== null) entradas.push([personagem, salvo]);
+    }
+    lido = Object.fromEntries(entradas);
+    return lido;
+  };
 }
 
 // ---------------------------------------------------------------------------

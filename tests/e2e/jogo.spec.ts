@@ -6,8 +6,9 @@
 // leitura da explicação basta para avançar, e os registros opcionais não
 // seguram a fase; o erro não tira acesso e vem com explicação; o progresso
 // antigo migra sem virar aprendizado; o humor respeita o contexto e a
-// preferência; e a leitura sem o cenário funciona pelo teclado e quando o
-// canvas falha.
+// preferência; a leitura sem o cenário funciona pelo teclado e quando o
+// canvas falha; e o passaporte (D-150) dá um carimbo por fase concluída, uma
+// vez só, pela resposta ou pela leitura, separado por pessoa, sem virar nota.
 //
 // Os valores esperados saem do conteúdo publicado (tests/e2e/jogo-apoio.ts).
 // As jornadas rodam para as duas pessoas, e nenhuma aceita erro não tratado
@@ -33,6 +34,7 @@ import {
   dialogo,
   fasesDe,
   focoDentroDe,
+  humorDe,
   instrucaoDe,
   janela,
   jogo,
@@ -41,11 +43,14 @@ import {
   opcoesDe,
   ordemDe,
   posicaoDe,
+  progressoCom,
   progressoSalvo,
   pronto,
   refKey,
   responder,
+  responderCerto,
   rota,
+  semear,
   sobraHorizontal,
   storageKey,
   tabAte,
@@ -62,6 +67,14 @@ test.afterEach(() => {
 });
 
 const cartaoDaFase = (page: Page) => page.locator("[data-fase-cartao]");
+/** A faixa do passaporte, no cartão da fase ou na página da leitura sem o cenário, e a contagem que ela mostra. */
+const faixa = (page: Page) => page.locator("[data-abrir-passaporte]");
+const contagemDe = (feitas: number, total: number) => `Concluídas: ${feitas} de ${total} · ${total - feitas === 1 ? "falta 1" : `faltam ${total - feitas}`}`;
+/** Abre a caderneta pela faixa do cartão (ou da página, na leitura sem o cenário). */
+async function abrirPassaporte(page: Page): Promise<Locator> {
+  await faixa(page).click();
+  return janela(page, "passaporte");
+}
 const marcoDe = (slug: Slug, numero: number) => {
   const content = conteudoDe(slug);
   const fase = content.fases[numero - 1]!;
@@ -235,7 +248,10 @@ test.describe("o ciclo de uma fase", () => {
       // A instrução do primeiro erro, como está no catálogo do Escrivão: diz o que fazer, e não tira nada.
       await expect(fase.locator('[data-escrivao="erro"] [data-camada="instrucao"]')).toContainText(instrucaoDe("erro", 0));
       await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "vista");
-      await expect(fase.locator("[data-seguir-sem-responder]")).toHaveText(`Continuar: fase ${segunda.numero}`);
+      // Os dois caminhos: tentar de novo, ou o mesmo botão de antes de responder, que conclui pela leitura sem tirar a fase da tela.
+      await expect(fase.locator("[data-ver-explicacao][data-depois-do-erro]")).toHaveText("Ver a explicação e continuar");
+      await expect(fase.locator("[data-tentar-de-novo]")).toHaveText("Tentar de novo");
+      await expect(fase.locator("[data-continuar]")).toHaveCount(0);
       expect((await progressoSalvo(page, slug))!.fases[primeira.id]).toEqual({ vista: true, tentativas: 1 });
 
       await fase.locator("[data-tentar-de-novo]").click();
@@ -279,13 +295,21 @@ test.describe("o ciclo de uma fase", () => {
     await fase.locator("[data-continuar]").click();
     await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
 
-    // Na fase seguinte, errar e seguir adiante também conclui pela leitura: a explicação já estava à vista.
+    // Na fase seguinte, errar e pedir a explicação também conclui pela leitura. A fase fica na tela, com a ordem certa e o botão de continuar.
     const ordem = ordemDe(segunda!, conteudoDe(slug));
     const outra = await abrirMarco(page);
     for (const chave of [...ordem].reverse()) await outra.locator(`[data-ordem-item="${chave}"]`).click();
     await outra.locator("[data-responder]").click();
     await expect(outra.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
-    await outra.locator("[data-seguir-sem-responder]").click();
+    await outra.locator("[data-ver-explicacao]").click();
+    await expect(outra.locator("[data-resultado]")).toHaveAttribute("data-resultado", "explicacao");
+    await expect(outra.locator("[data-veredito]")).toHaveText("A explicação:");
+    await expect(outra.locator("[data-ordem-certa] li")).toHaveCount(ordem.length);
+    // A ordem tentada, que estava errada, sai dos itens: fica só a ordem certa, na explicação.
+    await expect(outra.locator("[data-ordem-item][data-ordem-posicao]")).toHaveCount(0);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await expect(outra.locator(`[data-continuar="${terceira!.id}"]`)).toBeFocused();
+    await outra.locator("[data-continuar]").click();
     await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira!.id);
 
     const salvo = (await progressoSalvo(page, slug))!;
@@ -916,9 +940,22 @@ test.describe("fases, retomada e progresso", () => {
       await expect(lista.locator(`[data-fase-item="${id}"] [data-situacao-texto]`)).toHaveText("período visto na versão anterior");
     }
     await expect(lista.locator('[data-fase-item][data-situacao="concluida"]')).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await expect(dialogo(page, "fases")).toHaveCount(0);
+
+    // O passaporte segue a mesma regra: o período visto na versão anterior não é carimbo nem selo, e a caderneta diz o que ele é.
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(0, fases.length));
+    const passaporte = await abrirPassaporte(page);
+    await expect(passaporte.locator(`[data-passaporte-pagina="${slug}"]`)).toHaveAttribute("data-carimbos", "0");
+    for (const id of cobertas) {
+      await expect(passaporte.locator(`[data-carimbo-fase="${id}"]`)).toHaveAttribute("data-carimbada", "nao");
+      await expect(passaporte.locator(`[data-abrir-fase="${id}"]`)).toHaveAttribute("aria-label", /Sem carimbo: período visto na versão anterior\./);
+    }
+    await expect(passaporte.locator('[data-selo][data-obtido="sim"]')).toHaveCount(0);
+    await passaporte.locator("[data-fechar-passaporte]").click();
+    await expect(dialogo(page, "passaporte")).toHaveCount(0);
 
     // Quem chega direto ao jogo, sem passar pela entrada dele, cai na mesma fase da retomada, e a tela diz que o jogo mudou e oferece a origem.
-    await page.keyboard.press("Escape");
     await page.goto(rota(slug));
     await pronto(page);
     await expect(jogo(page)).toHaveAttribute("data-fase-aberta", destino.id);
@@ -1160,7 +1197,7 @@ test.describe("ler sem o cenário", () => {
     expect((await progressoSalvo(page, slug))!.fases[primeira!.id]!.concluida).toBe("resposta");
   });
 
-  test("na última fase, errar e ver o resumo deixa a fase com a explicação, e não com o aviso do erro; e a ajuda não fala em pasta", async ({ page }) => {
+  test("na última fase, errar, pedir a explicação e ver o resumo deixa a fase com a explicação, e o foco volta ao botão do resumo; e a ajuda não fala em pasta", async ({ page }) => {
     const slug = "flavio-bolsonaro";
     const [fase] = fasesDe(slug, "economia");
     await page.goto(`${rota(slug, "economia")}?leitura=1`);
@@ -1174,23 +1211,27 @@ test.describe("ler sem o cenário", () => {
     await expect(ajuda.locator("[data-passo-de-continuar]")).toHaveText("Use Continuar para ir à próxima fase. Os outros registros são opcionais.");
     await page.keyboard.press("Escape");
 
-    // O aprofundamento tem uma fase só: depois do erro, seguir abre o resumo, e a fase continua na página.
+    // O aprofundamento tem uma fase só. Depois do erro, pedir a explicação conclui a fase pela leitura, e ela continua na página:
+    // o veredito passa a ser o da explicação, sem a fala de tentar de novo, e o botão do resumo recebe o foco.
     const leitura = page.locator("[data-leitura-da-fase]");
     await responder(leitura, opcoesDe(fase!).errada);
     await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
-    await expect(leitura.locator("[data-seguir-sem-responder]")).toHaveText("Ver o resumo");
-    await leitura.locator("[data-seguir-sem-responder]").click();
-    const resumo = await janela(page, "resumo");
-    await resumo.locator("[data-fechar-resumo]").click();
-    await expect(dialogo(page, "resumo")).toHaveCount(0);
-
-    // A fase foi concluída pela leitura: o veredito é o da explicação, sem a fala de tentar de novo.
+    await expect(leitura.locator("[data-ver-explicacao][data-depois-do-erro]")).toHaveText("Ver a explicação e continuar");
+    await leitura.locator("[data-ver-explicacao]").click();
     await expect(jogo(page)).toHaveAttribute("data-fase-situacao", "concluida");
     await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "explicacao");
     await expect(leitura.locator("[data-veredito]")).toHaveText("A explicação:");
     await expect(leitura.locator("[data-tentar-de-novo]")).toHaveCount(0);
-    await expect(leitura.locator('[data-continuar="resumo"]')).toBeVisible();
-    // O botão que abriu o resumo saiu da tela: o foco vai para o de continuar, e não se perde no corpo da página.
+    await expect(leitura.locator('[data-escrivao="erro"]')).toHaveCount(0);
+    await expect(leitura.locator('[data-continuar="resumo"]')).toHaveText(/Ver o resumo/);
+    await expect(leitura.locator('[data-continuar="resumo"]')).toBeFocused();
+
+    // O resumo abre por cima, e fechar devolve o foco ao botão que o abriu: a fase continua como estava.
+    await leitura.locator('[data-continuar="resumo"]').click();
+    const resumo = await janela(page, "resumo");
+    await resumo.locator("[data-fechar-resumo]").click();
+    await expect(dialogo(page, "resumo")).toHaveCount(0);
+    await expect(leitura.locator("[data-resultado]")).toHaveAttribute("data-resultado", "explicacao");
     await expect(leitura.locator('[data-continuar="resumo"]')).toBeFocused();
     await expect(leitura.locator(`[data-opcao="${opcoesDe(fase!).certa}"]`)).toHaveAttribute("data-certa", "sim");
     expect((await progressoSalvo(page, slug))!.fases[fase!.id]).toMatchObject({ concluida: "explicacao", tentativas: 1 });
@@ -1306,8 +1347,16 @@ test.describe("Escrivão", () => {
       for (const chave of ordem) await aberta.locator(`[data-ordem-item="${chave}"]`).click();
       await aberta.locator("[data-responder]").click();
       await expect(aberta.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
-      await expect(aberta.locator('[data-escrivao="conclusao"] [data-camada="humor"]')).toHaveCount(0);
-      await expect(aberta.locator('[data-escrivao="conclusao"] [data-camada="instrucao"]')).toBeVisible();
+      // A fase acabou de ser concluída: quem fala é o Escrivão do carimbo, só com a instrução.
+      await expect(aberta.locator('[data-escrivao="carimbo"] [data-camada="humor"]')).toHaveCount(0);
+      await expect(aberta.locator('[data-escrivao="carimbo"] [data-camada="instrucao"]')).toBeVisible();
+      await expect(aberta.locator('[data-escrivao="conclusao"]')).toHaveCount(0);
+      // O carimbo entra do mesmo jeito, com o mesmo desenho das outras fases. O que muda é o texto: uma confirmação sóbria sobre o progresso.
+      const carimbo = aberta.locator('[data-carimbo="novo"]');
+      await expect(carimbo).toHaveAttribute("data-carimbo-sobrio", "sim");
+      await expect(carimbo.locator("[data-carimbo-confirmacao]")).toHaveText(`Fase registrada no seu passaporte. Concluídas: 1 de ${content.fases.length}.`);
+      await expect(carimbo.locator("[data-carimbo-desenho]")).toHaveAttribute("data-carimbo-desenho", "novo");
+      await expect(carimbo.locator("[data-carimbo-desenho]")).toContainText(fase.titulo);
     });
   }
 });
@@ -1731,4 +1780,674 @@ test.describe("o boneco", () => {
     await expect(dialogo(page, "fase")).toBeVisible();
     await expect(page.locator("[data-palco]")).toHaveAttribute("data-andando", "nao");
   });
+});
+
+// ---------------------------------------------------------------------------
+// Passaporte do Escrivão (D-150): carimbos e selos derivados do progresso
+// ---------------------------------------------------------------------------
+
+/** As palavras que nenhuma tela do passaporte usa: ele reconhece o caminho, e não dá nota nem prêmio. */
+const PALAVRAS_DE_PREMIO = ["parabéns", "troféu", "medalha", "pontos", "pontuação", "ranking", "vencedor", "venceu o jogo", "nota final", "melhor candidato", "você acertou", "inteligente"];
+
+
+
+test.describe("passaporte do Escrivão", () => {
+  for (const slug of PERSONAGENS) {
+    test(`${slug}: concluir pela resposta dá um carimbo com o título da fase, confirma o primeiro marco, atualiza a contagem e deixa Continuar na própria fase`, async ({ page }) => {
+      const content = conteudoDe(slug);
+      const fases = content.fases;
+      const [primeira, segunda] = fases;
+      await abrir(page, slug, 1);
+
+      // Antes de qualquer coisa: nenhuma concluída, e a fase aberta é a primeira. Estar em uma fase não é tê-la concluído.
+      await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(0, fases.length));
+      await expect(faixa(page)).toHaveAttribute("aria-label", `Meu passaporte. Concluídas: 0 de ${fases.length}, faltam ${fases.length}.`);
+      await expect(faixa(page).locator("[data-marcador-de-fase]")).toHaveCount(fases.length);
+      await expect(faixa(page).locator('[data-marcador-de-fase][data-aberta="sim"]')).toHaveAttribute("data-marcador-de-fase", primeira!.id);
+      await expect(faixa(page).locator('[data-marcador-de-fase][data-carimbada="sim"]')).toHaveCount(0);
+
+      // Abrir a explicação não dá carimbo. A linha de aviso do carimbo já está na fase, vazia: é a mudança do texto dela que se anuncia.
+      const fase = await abrirMarco(page);
+      await expect(fase.locator("[data-carimbo]")).toHaveCount(0);
+      await expect(fase.locator("[data-proxima-fase]")).toHaveCount(0);
+      await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveAttribute("role", "status");
+      await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText("");
+      expect((await progressoSalvo(page, slug))!.fases[primeira!.id]!.concluida).toBeUndefined();
+
+      await responderCerto(fase, primeira!, content);
+      await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "certo");
+      const carimbo = fase.locator('[data-carimbo="novo"]');
+      await expect(carimbo.locator("[data-carimbo-confirmacao]")).toHaveText("Primeiro marco registrado.");
+      await expect(carimbo.locator("[data-carimbo-desenho]")).toContainText(primeira!.titulo);
+      // Quem ouve a página recebe o carimbo uma vez, pela linha de aviso: a fase, com o título, e a confirmação. O desenho e o texto
+      // ao lado dele são para quem vê, e ficam fora da árvore de acessibilidade; o botão do passaporte fica fora de toda região de aviso.
+      await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText(`Carimbo no passaporte: ${primeira!.titulo}. Primeiro marco registrado.`);
+      // Uma região de aviso só fala do carimbo. A fala do Escrivão sobre ele é texto comum, e a caixa do resultado não o repete:
+      // se uma das duas voltasse a ser região de aviso com o carimbo dentro, quem ouve a página o receberia duas vezes.
+      const avisos = await fase.locator('[role="status"]').evaluateAll((nos) => nos.map((no) => (no.textContent ?? "").trim()));
+      expect(avisos.filter((texto) => /carimbo|passaporte|selo/i.test(texto))).toEqual([`Carimbo no passaporte: ${primeira!.titulo}. Primeiro marco registrado.`]);
+      await expect(fase.locator('[data-escrivao="carimbo"] [role="status"]')).toHaveCount(0);
+      await expect(fase.locator('[aria-hidden="true"] [data-carimbo-confirmacao]')).toHaveCount(1);
+      await expect(carimbo.locator("[data-carimbo-desenho]")).toHaveAttribute("aria-hidden", "true");
+      await expect(fase.locator('[role="status"] button, [aria-hidden="true"] button')).toHaveCount(0);
+      await expect(carimbo.locator("[data-ver-passaporte]")).toHaveAccessibleName("Ver o passaporte");
+      // O resultado da atividade continua anunciado à parte: o veredito e a explicação da resposta.
+      await expect(fase.locator('[data-resultado] [role="status"] [data-veredito]')).toHaveText("Certo.");
+      // Quem fala é o Escrivão do carimbo: uma instrução e, no máximo, uma fala de humor. A fala de conclusão não vem junto.
+      await expect(fase.locator('[data-escrivao="carimbo"] [data-camada="instrucao"]')).toContainText(instrucaoDe("carimbo", 0));
+      // É o primeiro carimbo da pessoa, em uma fase sem contexto sensível: a fala de humor é a da vez zero, que não diz "mais um".
+      expect(primeira!.sensivel).toBe(false);
+      await expect(fase.locator('[data-escrivao="carimbo"] [data-camada]')).toHaveCount(2);
+      await expect(fase.locator('[data-escrivao="carimbo"] [data-camada="humor"]')).toContainText(humorDe("carimbo", 0));
+      await expect(fase.locator('[data-escrivao="conclusao"]')).toHaveCount(0);
+
+      // A fase seguinte: a posição, o período, o título e o objetivo dela, como o conteúdo publicado o escreve.
+      const aSeguir = fase.locator(`[data-proxima-fase="${segunda!.id}"]`);
+      await expect(aSeguir.locator("[data-proxima-posicao]")).toHaveText(`A seguir · fase ${segunda!.numero} de ${fases.length} · ${segunda!.periodo.de === segunda!.periodo.ate ? segunda!.periodo.de : `${segunda!.periodo.de} a ${segunda!.periodo.ate}`}`);
+      await expect(aSeguir.locator("[data-proxima-titulo]")).toHaveText(segunda!.titulo);
+      await expect(aSeguir.locator("[data-proxima-frase]")).toHaveText(`Na próxima fase, você vai ${segunda!.objetivo}`);
+
+      // Continuar está na própria fase, com o foco, e nenhuma outra janela abriu por cima.
+      await expect(fase.locator(`[data-continuar="${segunda!.id}"]`)).toBeFocused();
+      await expect(jogo(page)).toHaveAttribute("data-vista", "fase");
+      expect((await progressoSalvo(page, slug))!.fases[primeira!.id]!.concluida).toBe("resposta");
+
+      await fase.locator("[data-continuar]").click();
+      await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+      // A faixa: uma concluída, a primeira; a aberta é a segunda, que não tem carimbo.
+      await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(1, fases.length));
+      await expect(faixa(page).locator(`[data-marcador-de-fase="${primeira!.id}"]`)).toHaveAttribute("data-carimbada", "sim");
+      await expect(faixa(page).locator(`[data-marcador-de-fase="${segunda!.id}"]`)).toHaveAttribute("data-carimbada", "nao");
+      await expect(faixa(page).locator(`[data-marcador-de-fase="${segunda!.id}"]`)).toHaveAttribute("data-aberta", "sim");
+    });
+  }
+
+  test("ler a explicação no lugar de responder dá o mesmo carimbo, e errar antes não dá nenhum", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const fases = fasesDe(slug);
+    const alvo = fases.find((fase, indice) => indice > 0 && fase.atividade.tipo === "pergunta")!;
+    await abrir(page, slug, alvo.numero);
+    const fase = await abrirMarco(page);
+    await responder(fase, opcoesDe(alvo).errada);
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+    await expect(fase.locator("[data-carimbo]")).toHaveCount(0);
+    await expect(fase.locator("[data-proxima-fase]")).toHaveCount(0);
+    await expect(faixa(page)).toHaveAttribute("data-concluidas", "0");
+
+    await fase.locator("[data-tentar-de-novo]").click();
+    await fase.locator("[data-ver-explicacao]").click();
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "explicacao");
+    // O mesmo carimbo de quem responde certo: a confirmação fala do caminho, e não da resposta.
+    await expect(fase.locator('[data-carimbo="novo"] [data-carimbo-confirmacao]')).toHaveText("Primeiro marco registrado.");
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText(`Carimbo no passaporte: ${alvo.titulo}. Primeiro marco registrado.`);
+    await expect(faixa(page)).toHaveAttribute("data-concluidas", "1");
+    expect((await progressoSalvo(page, slug))!.fases[alvo.id]!.concluida).toBe("explicacao");
+  });
+
+  test("abrir uma fase, pelo endereço ou pela caderneta, não dá carimbo", async ({ page }) => {
+    const slug = "lula";
+    const fases = fasesDe(slug);
+    const quarta = fases[3]!;
+    const sexta = fases[5]!;
+    await abrir(page, slug, quarta.numero);
+    const fase = await abrirMarco(page);
+    await fase.locator("[data-fechar-fase]").click();
+    await expect(dialogo(page, "fase")).toHaveCount(0);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(0, fases.length));
+
+    const passaporte = await abrirPassaporte(page);
+    const pagina = passaporte.locator(`[data-passaporte-pagina="${slug}"]`);
+    await expect(pagina).toHaveAttribute("data-carimbos", "0");
+    await expect(pagina.locator('[data-carimbada="sim"]')).toHaveCount(0);
+    // A fase em que a pessoa está aparece como tal, sem carimbo: foi aberta, e só. A caderneta não a chama de "explicação lida",
+    // porque ali Ver a explicação e continuar é o nome de um dos caminhos para o carimbo.
+    await expect(pagina.locator(`[data-carimbo-fase="${quarta.id}"]`)).toHaveAttribute("aria-current", "step");
+    await expect(pagina.locator(`[data-carimbo-fase="${quarta.id}"] [data-abrir-fase]`)).toHaveAccessibleName(new RegExp(`^Fase ${quarta.numero}: .*Sem carimbo: aberta, ainda não concluída\\. Você está aqui\\. Abrir a fase\\.$`));
+    await expect(pagina.locator(`[data-carimbo-fase="${quarta.id}"]`)).toContainText("sem carimbo · aberta, ainda não concluída");
+    await expect(passaporte.locator("[data-passaporte-regra]")).toContainText("Responder certo e usar Ver a explicação e continuar valem o mesmo carimbo");
+
+    // Abrir uma fase pela caderneta é navegação: muda a fase aberta, e nada é concluído.
+    await pagina.locator(`[data-abrir-fase="${sexta.id}"]`).click();
+    await expect(dialogo(page, "passaporte")).toHaveCount(0);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", sexta.id);
+    await expect(faixa(page)).toHaveAttribute("data-concluidas", "0");
+    const salvo = (await progressoSalvo(page, slug))!;
+    expect(Object.values(salvo.fases).some((estado) => estado.concluida !== undefined)).toBe(false);
+  });
+
+  test("o carimbo é um só: recarregar, voltar à fase e revê-la não repetem a confirmação nem mudam a contagem", async ({ page }) => {
+    const slug = "lula";
+    const fases = fasesDe(slug);
+    const [primeira, segunda] = fases;
+    await abrir(page, slug, 1);
+    let fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    await expect(fase.locator('[data-carimbo="novo"]')).toBeVisible();
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).not.toHaveText("");
+    const guardado = await progressoSalvo(page, slug);
+
+    // Na mesma visita, sem recarregar: seguir, voltar pela lista e rever. É o caso em que a casca ainda lembra o carimbo desta
+    // visita, e só a fase, aberta de novo, sabe que a conclusão não aconteceu agora: uma linha, sem comemorar outra vez.
+    await fase.locator("[data-continuar]").click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await page.locator("[data-abrir-fases]").click();
+    await (await janela(page, "fases")).locator(`[data-abrir-fase="${primeira!.id}"]`).click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await page.locator("[data-abrir-marco]").click();
+    fase = await janela(page, "fase");
+    await expect(fase.locator('[data-carimbo="registrado"]')).toContainText("Esta fase já tem carimbo no seu passaporte.");
+    await expect(fase.locator('[data-carimbo="novo"]')).toHaveCount(0);
+    await expect(fase.locator('[data-escrivao="carimbo"]')).toHaveCount(0);
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText("");
+    await expect(fase.locator('[data-escrivao="conclusao"] [data-camada="instrucao"]')).toBeVisible();
+    // A atividade já foi concluída: não há o que responder de novo.
+    await expect(fase.locator("[data-responder], [data-ver-explicacao]")).toHaveCount(0);
+    await fase.locator("[data-fechar-fase]").click();
+
+    // Recarregar: o carimbo continua no passaporte, e a fase diz o mesmo, em uma linha.
+    await page.reload();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(1, fases.length));
+    await page.locator("[data-abrir-marco]").click();
+    fase = await janela(page, "fase");
+    await expect(fase.locator('[data-carimbo="registrado"]')).toBeVisible();
+    await expect(fase.locator('[data-carimbo="novo"]')).toHaveCount(0);
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText("");
+    await fase.locator("[data-fechar-fase]").click();
+
+    const passaporte = await abrirPassaporte(page);
+    await expect(passaporte.locator(`[data-passaporte-pagina="${slug}"]`)).toHaveAttribute("data-carimbos", "1");
+    await expect(passaporte.locator(`[data-passaporte-pagina="${slug}"] [data-carimbada="sim"]`)).toHaveCount(1);
+    await expect(passaporte.locator(`[data-carimbo-fase="${primeira!.id}"]`)).toHaveAttribute("data-carimbada", "sim");
+    // O carimbo é desenho: quem ouve a página sabe dele pelo nome do espaço, que diz a fase, o período e que ela está carimbada.
+    await expect(passaporte.locator(`[data-carimbo-fase="${primeira!.id}"] [data-abrir-fase]`)).toHaveAccessibleName(
+      new RegExp(`^Fase ${primeira!.numero}: ${primeira!.titulo}, .*\\. Carimbada\\. Você está aqui\\. Rever a fase\\.$`),
+    );
+    await expect(passaporte.locator(`[data-carimbo-fase="${primeira!.id}"] [data-carimbo-desenho]`)).toHaveAttribute("aria-hidden", "true");
+    // Só a posição mudou no que está guardado: as fases são as mesmas.
+    expect((await progressoSalvo(page, slug))!.fases[primeira!.id]).toEqual(guardado!.fases[primeira!.id]);
+  });
+
+  test("os carimbos ficam separados por pessoa, e a caderneta mostra as duas páginas, a de quem está em jogo primeiro, com as mesmas peças", async ({ page }) => {
+    const [slug, outro] = PERSONAGENS;
+    const fases = fasesDe(slug);
+    const outras = fasesDe(outro);
+    await abrir(page, slug, 1);
+    const fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    await expect(fase.locator('[data-carimbo="novo"]')).toBeVisible();
+
+    // Pela fase, a caderneta abre por cima dela, que fica como estava.
+    await fase.locator("[data-ver-passaporte]").click();
+    let passaporte = await janela(page, "passaporte");
+    await expect(dialogo(page, "fase")).toHaveAttribute("data-encoberta", "sim");
+    await expect(passaporte.locator("[data-passaporte-pagina]")).toHaveCount(PERSONAGENS.length);
+    // A página de quem está em jogo vem primeiro, e a regra vale para as duas pessoas: é conferida de novo, mais abaixo, na página da outra.
+    const ordemDasPaginas = (janelaDoPassaporte: Locator) => janelaDoPassaporte.locator("[data-passaporte-pagina]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-passaporte-pagina")));
+    expect(await ordemDasPaginas(passaporte)).toEqual([slug, outro]);
+    // O texto que diz o que o carimbo é está à vista ao abrir, antes de qualquer rolagem.
+    await expect(passaporte.locator("[data-passaporte-regra]")).toBeInViewport();
+    for (const pessoa of PERSONAGENS) {
+      const pagina = passaporte.locator(`[data-passaporte-pagina="${pessoa}"]`);
+      await expect(pagina.getByRole("heading", { level: 3 })).toHaveText(`Trajetória de ${nomeDe(pessoa)}`);
+      // Um espaço por fase publicada, da trajetória e dos aprofundamentos: o total sai do conteúdo.
+      const todas = [...fasesDe(pessoa), ...fasesDe(pessoa, "economia"), ...fasesDe(pessoa, "seguranca-publica")];
+      await expect(pagina.locator("[data-carimbo-fase]")).toHaveCount(todas.length);
+      await expect(pagina.locator("[data-passaporte-pagina-contagem]")).toHaveText(contagemDe(pessoa === slug ? 1 : 0, fasesDe(pessoa).length));
+    }
+    await expect(passaporte.locator(`[data-passaporte-pagina="${slug}"]`)).toHaveAttribute("data-carimbos", "1");
+    await expect(passaporte.locator(`[data-passaporte-pagina="${outro}"]`)).toHaveAttribute("data-carimbos", "0");
+    await expect(passaporte.locator(`[data-passaporte-pagina="${outro}"] [data-carimbada="sim"]`)).toHaveCount(0);
+    // O texto diz o que o carimbo é, e não usa palavra de prêmio.
+    await expect(passaporte.locator("[data-passaporte-regra]")).toContainText("Responder certo e usar Ver a explicação e continuar valem o mesmo carimbo");
+    await expect(passaporte.locator("[data-passaporte-regra]")).toContainText("não dá nota");
+    const texto = ((await passaporte.getByRole("dialog").textContent()) ?? "").toLowerCase();
+    for (const palavra of PALAVRAS_DE_PREMIO) expect(texto, palavra).not.toContain(palavra);
+    // Fechar volta à fase, com o foco no botão que abriu.
+    await passaporte.locator("[data-fechar-passaporte]").click();
+    await expect(dialogo(page, "passaporte")).toHaveCount(0);
+    await expect(fase.locator("[data-ver-passaporte]")).toBeFocused();
+    expect(await progressoSalvo(page, outro)).toBeNull();
+
+    // As fases da outra pessoa são caminhos para a página dela: abrir uma não conclui nada, lá ou aqui.
+    await fase.locator("[data-fechar-fase]").click();
+    passaporte = await abrirPassaporte(page);
+    const primeiraDaOutra = passaporte.locator(`[data-passaporte-pagina="${outro}"] [data-abrir-fase="${outras[0]!.id}"]`);
+    await expect(primeiraDaOutra).toHaveAttribute("href", `${rota(outro)}?fase=1`);
+    await primeiraDaOutra.click();
+    await pronto(page);
+    await expect(jogo(page)).toHaveAttribute("data-jogo", outro);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", outras[0]!.id);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(0, outras.length));
+    // Na página da outra pessoa, a caderneta continua mostrando o carimbo da primeira, lido do que está guardado.
+    passaporte = await abrirPassaporte(page);
+    await expect(passaporte.locator(`[data-passaporte-pagina="${slug}"]`)).toHaveAttribute("data-carimbos", "1");
+    await expect(passaporte.locator(`[data-passaporte-pagina="${outro}"]`)).toHaveAttribute("data-carimbos", "0");
+    // Aqui a ordem se inverte: a página de quem está em jogo agora é a da outra pessoa.
+    expect(await ordemDasPaginas(passaporte)).toEqual([outro, slug]);
+    expect((await progressoSalvo(page, slug))!.fases[fases[0]!.id]!.concluida).toBe("explicacao");
+  });
+
+  test("quem chega com fases concluídas antes do passaporte existir encontra os carimbos delas, sem comemoração", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const fases = fasesDe(slug);
+    const feitas = fases.slice(0, 3).map((fase) => fase.id);
+    const salvo = progressoCom(slug, feitas, "resposta");
+    await semear(page, slug, salvo);
+    await page.goto(`${rota(slug)}?fase=1`);
+    await pronto(page);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(3, fases.length));
+    await expect(faixa(page).locator('[data-marcador-de-fase][data-carimbada="sim"]')).toHaveCount(3);
+
+    const passaporte = await abrirPassaporte(page);
+    for (const id of feitas) await expect(passaporte.locator(`[data-carimbo-fase="${id}"]`)).toHaveAttribute("data-carimbada", "sim");
+    await expect(passaporte.locator(`[data-carimbo-fase="${fases[3]!.id}"]`)).toHaveAttribute("data-carimbada", "nao");
+    // O selo sai da contagem: três fases concluídas já são os primeiros passos.
+    await expect(passaporte.locator('[data-selo="primeiros-passos"]')).toHaveAttribute("data-obtido", "sim");
+    await expect(passaporte.locator('[data-selo="trajetoria-percorrida"]')).toHaveAttribute("data-obtido", "nao");
+    await expect(passaporte.locator('[data-selo="duas-trajetorias"]')).toHaveAttribute("data-obtido", "nao");
+    await passaporte.locator("[data-fechar-passaporte]").click();
+
+    const fase = await abrirMarco(page);
+    await expect(fase.locator('[data-carimbo="registrado"]')).toBeVisible();
+    await expect(fase.locator('[data-carimbo="novo"], [data-selo-novo]')).toHaveCount(0);
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText("");
+    // Ler o que estava guardado não o reescreve com outra coisa: as três fases continuam como estavam.
+    const depois = (await progressoSalvo(page, slug))!;
+    for (const id of feitas) expect(depois.fases[id]).toEqual(salvo.fases[id]);
+  });
+
+  test("sem armazenamento, o carimbo entra do mesmo jeito, vale enquanto a página estiver aberta, e a caderneta avisa", async ({ page }) => {
+    await page.addInitScript(() => {
+      const gravar = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (chave: string, valor: string) {
+        if (String(chave).startsWith("atlas-politico:jogo")) throw new DOMException("bloqueado", "QuotaExceededError");
+        gravar.call(this, chave, valor);
+      };
+    });
+    const slug = "lula";
+    const fases = fasesDe(slug);
+    await abrir(page, slug, 1);
+    const fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    await expect(fase.locator('[data-carimbo="novo"] [data-carimbo-confirmacao]')).toHaveText("Primeiro marco registrado.");
+    await fase.locator("[data-continuar]").click();
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(1, fases.length));
+    const passaporte = await abrirPassaporte(page);
+    await expect(passaporte.locator("[data-passaporte-duravel]")).toHaveAttribute("data-passaporte-duravel", "nao");
+    await expect(passaporte.locator("[data-passaporte-duravel]")).toContainText("os carimbos valem enquanto esta página estiver aberta");
+    await expect(passaporte.locator(`[data-carimbo-fase="${fases[0]!.id}"]`)).toHaveAttribute("data-carimbada", "sim");
+    expect(await progressoSalvo(page, slug)).toBeNull();
+  });
+
+  test("com o humor desligado o carimbo vem só com a instrução, e com movimento reduzido ele aparece parado", async ({ page }) => {
+    await page.addInitScript((chave) => window.localStorage.setItem(chave, JSON.stringify({ humor: false, cenario: true })), PREFERENCES_KEY);
+    const slug = "flavio-bolsonaro";
+    await abrir(page, slug, 1);
+    await expect(jogo(page)).toHaveAttribute("data-humor", "desligado");
+    await expect(jogo(page)).toHaveAttribute("data-movimento", "reduzido");
+    const fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    const carimbo = fase.locator('[data-carimbo="novo"]');
+    await expect(carimbo).toBeVisible();
+    await expect(fase.locator('[data-escrivao="carimbo"] [data-camada]')).toHaveCount(1);
+    await expect(fase.locator('[data-escrivao="carimbo"] [data-camada="instrucao"]')).toBeVisible();
+    // A batida do carimbo é enfeite: com movimento reduzido, nenhuma animação roda nele.
+    await expect(carimbo.locator("[data-carimbo-desenho]")).toHaveAttribute("data-carimbo-desenho", "novo");
+    expect(await carimbo.locator("[data-carimbo-desenho]").evaluate((no) => getComputedStyle(no).animationName)).toBe("none");
+  });
+
+  test("com movimento, o carimbo novo bate uma vez, igual em fase comum e em fase de contexto sensível, que muda só o texto", async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ baseURL, viewport: { width: 1280, height: 800 }, reducedMotion: "no-preference" });
+    const page = await context.newPage();
+    const errosComMovimento = vigiar(page);
+    const slug = "lula";
+    const sensivel = fasesDe(slug).find((fase) => fase.sensivel)!;
+    const comum = fasesDe(slug).find((fase) => !fase.sensivel)!;
+
+    await page.goto(`${rota(slug)}?fase=${comum.numero}&leitura=1`);
+    await pronto(page, false);
+    await page.locator("[data-ver-explicacao]").click();
+    const novo = page.locator('[data-carimbo="novo"] [data-carimbo-desenho]');
+    await expect(novo).toHaveAttribute("data-carimbo-desenho", "novo");
+    expect(await novo.evaluate((no) => getComputedStyle(no).animationName)).toBe("jogo-carimbo");
+
+    await page.goto(`${rota(slug)}?fase=${sensivel.numero}&leitura=1`);
+    await pronto(page, false);
+    await page.locator("[data-ver-explicacao]").click();
+    // A fase de contexto sensível tem o mesmo carimbo, com a mesma batida: as duas trajetórias recebem o mesmo desenho em toda
+    // fase. O que muda é o texto: a confirmação sóbria, e o Escrivão sem humor.
+    const sobrio = page.locator('[data-carimbo="novo"]');
+    await expect(sobrio).toHaveAttribute("data-carimbo-sobrio", "sim");
+    await expect(sobrio.locator("[data-carimbo-desenho]")).toHaveAttribute("data-carimbo-desenho", "novo");
+    expect(await sobrio.locator("[data-carimbo-desenho]").evaluate((no) => getComputedStyle(no).animationName)).toBe("jogo-carimbo");
+    await expect(sobrio.locator("[data-carimbo-confirmacao]")).toHaveText(/^Fase registrada no seu passaporte\. Concluídas: \d+ de \d+\.$/);
+    await expect(page.locator('[data-escrivao="carimbo"] [data-camada="humor"]')).toHaveCount(0);
+    // Parado, o desenho é o de sempre: a animação termina no estado final, sem deixar o carimbo torto ou transparente.
+    await expect.poll(async () => sobrio.locator("[data-carimbo-desenho]").evaluate((no) => no.getAnimations().every((animacao) => animacao.playState === "finished"))).toBe(true);
+    expect(await sobrio.locator("[data-carimbo-desenho]").evaluate((no) => getComputedStyle(no).opacity)).toBe("1");
+    expect(errosComMovimento, "erros não tratados na página").toEqual([]);
+    await context.close();
+  });
+
+  test("três fases concluídas dão o selo dos primeiros passos, dito uma vez, junto do carimbo que o trouxe", async ({ page }) => {
+    const slug = "lula";
+    const fases = fasesDe(slug);
+    await abrir(page, slug, 1);
+    await lerESeguir(page);
+    await lerESeguir(page);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fases[2]!.id);
+    let fase = await abrirMarco(page);
+    await expect(fase.locator("[data-selo-novo]")).toHaveCount(0);
+    await fase.locator("[data-ver-explicacao]").click();
+    await expect(fase.locator('[data-carimbo="novo"] [data-selo-novo="primeiros-passos"]')).toHaveText("Selo novo no passaporte: Primeiros passos.");
+    await expect(fase.locator("[data-selo-novo]")).toHaveCount(1);
+    // Para quem ouve a página, o selo vem na mesma linha de aviso do carimbo que o trouxe, uma vez.
+    const terceira = fases[2]!;
+    const confirmacaoDaTerceira = terceira.sensivel ? `Fase registrada no seu passaporte. Concluídas: 3 de ${fases.length}.` : `Marco registrado: 3 de ${fases.length}.`;
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText(`Carimbo no passaporte: ${terceira.titulo}. ${confirmacaoDaTerceira} Selo novo no passaporte: Primeiros passos.`);
+
+    await fase.locator("[data-ver-passaporte]").click();
+    const passaporte = await janela(page, "passaporte");
+    await expect(passaporte.locator("[data-selo]")).toHaveCount(3);
+    await expect(passaporte.locator('[data-selo="primeiros-passos"]')).toHaveAttribute("data-obtido", "sim");
+    await expect(passaporte.locator('[data-selo="primeiros-passos"] [data-selo-situacao]')).toHaveText("no passaporte");
+    await expect(passaporte.locator('[data-selo="trajetoria-percorrida"] [data-selo-situacao]')).toHaveText("ainda não");
+    await expect(passaporte.locator('[data-selo="duas-trajetorias"] [data-selo-situacao]')).toHaveText("ainda não");
+    await passaporte.locator("[data-fechar-passaporte]").click();
+
+    // A quarta fase traz o carimbo dela, e nenhum selo: o primeiro já foi dito.
+    await (await janela(page, "fase")).locator("[data-continuar]").click();
+    fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    await expect(fase.locator('[data-carimbo="novo"] [data-carimbo-confirmacao]')).toHaveText(`Marco registrado: 4 de ${fases.length}.`);
+    await expect(fase.locator("[data-selo-novo]")).toHaveCount(0);
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText(`Carimbo no passaporte: ${fases[3]!.titulo}. Marco registrado: 4 de ${fases.length}.`);
+
+    // De volta à fase que trouxe o selo, na mesma visita: o carimbo dela já estava lá, e o selo não é dito de novo.
+    await fase.locator("[data-fechar-fase]").click();
+    await page.locator("[data-abrir-fases]").click();
+    await (await janela(page, "fases")).locator(`[data-abrir-fase="${terceira.id}"]`).click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", terceira.id);
+    fase = await abrirMarco(page);
+    await expect(fase.locator('[data-carimbo="registrado"]')).toBeVisible();
+    await expect(fase.locator('[data-carimbo="novo"], [data-selo-novo]')).toHaveCount(0);
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText("");
+  });
+
+  test("percorrer uma trajetória dá o selo dela e convida, com clareza, para a outra", async ({ page }) => {
+    const [slug, outro] = PERSONAGENS;
+    const fases = fasesDe(slug);
+    const ultima = fases.at(-1)!;
+    await semear(page, slug, progressoCom(slug, fases.slice(0, -1).map((fase) => fase.id)));
+    await abrir(page, slug, ultima.numero);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(fases.length - 1, fases.length));
+    const fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    const carimbo = fase.locator('[data-carimbo="novo"]');
+    await expect(carimbo.locator("[data-carimbo-confirmacao]")).toHaveText("Trajetória percorrida: todos os marcos registrados.");
+    await expect(carimbo.locator('[data-selo-novo="trajetoria-percorrida"]')).toHaveText("Selo novo no passaporte: Trajetória percorrida.");
+    await expect(carimbo.locator('[data-selo-novo="duas-trajetorias"]')).toHaveCount(0);
+
+    // No lugar da fase seguinte, o fim da trajetória: o convite para a outra, com as mesmas regras.
+    await expect(fase.locator("[data-proxima-fase]")).toHaveCount(0);
+    const fim = fase.locator("[data-fim-da-trajetoria]");
+    await expect(fim).toHaveAttribute("data-fim-da-trajetoria", "percorrida");
+    await expect(fim.locator("[data-fim-situacao]")).toHaveText(`Trajetória de ${nomeDe(slug)} percorrida.`);
+    await expect(fim).toContainText(`A trajetória de ${nomeDe(outro)} segue as mesmas regras`);
+    await expect(fim.locator(`[data-convite-outra-trajetoria="${outro}"]`)).toHaveAttribute("href", rota(outro));
+    await expect(fim.locator(`[data-convite-outra-trajetoria="${outro}"]`)).toContainText(`Conhecer a trajetória de ${nomeDe(outro)}`);
+
+    // O resumo repete o convite, no alto, e continua sem palavra de prêmio.
+    await fase.locator('[data-continuar="resumo"]').click();
+    const resumo = await janela(page, "resumo");
+    await expect(resumo.locator('[data-fim-da-trajetoria="percorrida"] [data-convite-outra-trajetoria]')).toHaveAttribute("href", rota(outro));
+    const texto = ((await resumo.getByRole("dialog").textContent()) ?? "").toLowerCase();
+    for (const palavra of PALAVRAS_DE_PREMIO) expect(texto, palavra).not.toContain(palavra);
+    await resumo.locator("[data-fechar-resumo]").click();
+
+    const passaporte = await abrirPassaporte(page);
+    await expect(passaporte.locator('[data-selo="trajetoria-percorrida"]')).toHaveAttribute("data-obtido", "sim");
+    await expect(passaporte.locator('[data-selo="duas-trajetorias"]')).toHaveAttribute("data-obtido", "nao");
+    await expect(passaporte.locator("[data-passaporte-comparar]")).toHaveCount(0);
+  });
+
+  test("com as duas trajetórias percorridas, a tela oferece a comparação e os aprofundamentos das duas pessoas", async ({ page }) => {
+    const [outro, slug] = PERSONAGENS;
+    const fases = fasesDe(slug);
+    const ultima = fases.at(-1)!;
+    await semear(page, outro, progressoCom(outro, fasesDe(outro).map((fase) => fase.id), "resposta"));
+    await semear(page, slug, progressoCom(slug, fases.slice(0, -1).map((fase) => fase.id)));
+    await abrir(page, slug, ultima.numero);
+    const fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    const carimbo = fase.locator('[data-carimbo="novo"]');
+    // O selo de uma trajetória percorrida já estava no passaporte, pela outra pessoa: este carimbo traz só o das duas.
+    await expect(carimbo.locator("[data-carimbo-confirmacao]")).toHaveText("Trajetória percorrida: todos os marcos registrados.");
+    await expect(carimbo.locator('[data-selo-novo="duas-trajetorias"]')).toHaveText("Selo novo no passaporte: Duas trajetórias.");
+    await expect(carimbo.locator("[data-selo-novo]")).toHaveCount(1);
+
+    const fim = fase.locator("[data-fim-da-trajetoria]");
+    await expect(fim).toHaveAttribute("data-fim-da-trajetoria", "todas");
+    await expect(fim).toContainText("As duas trajetórias estão percorridas.");
+    await expect(fim.locator("[data-convite-comparar]")).toHaveAttribute("href", "/comparar/");
+    // Os aprofundamentos das duas pessoas, na ordem dos perfis: os mesmos assuntos para as duas.
+    const aprofundamentos = PERSONAGENS.flatMap((pessoa) => (["economia", "seguranca-publica"] as const).map((sala) => `${pessoa}:${sala}`));
+    expect(await fim.locator("[data-convite-aprofundamento]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-convite-aprofundamento")))).toEqual(aprofundamentos);
+    await expect(fim.locator(`[data-convite-aprofundamento="${outro}:economia"]`)).toHaveAttribute("href", rota(outro, "economia"));
+    await expect(fim.locator("[data-convite-outra-trajetoria]")).toHaveCount(0);
+
+    await fase.locator("[data-ver-passaporte]").click();
+    const passaporte = await janela(page, "passaporte");
+    await expect(passaporte.locator('[data-selo][data-obtido="sim"]')).toHaveCount(3);
+    await expect(passaporte.locator("[data-passaporte-comparar]")).toHaveAttribute("href", "/comparar/");
+    for (const pessoa of PERSONAGENS) await expect(passaporte.locator(`[data-passaporte-pagina="${pessoa}"] [data-passaporte-pagina-contagem]`)).toHaveText(contagemDe(fasesDe(pessoa).length, fasesDe(pessoa).length));
+  });
+
+  test("chegar ao fim com fases por concluir diz quantas faltam, sem cobrar, e mantém o convite para a outra trajetória", async ({ page }) => {
+    const [outro, slug] = PERSONAGENS;
+    const fases = fasesDe(slug);
+    await abrir(page, slug, fases.length);
+    const fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    const fim = fase.locator("[data-fim-da-trajetoria]");
+    await expect(fim).toHaveAttribute("data-fim-da-trajetoria", "incompleta");
+    await expect(fim.locator("[data-fim-situacao]")).toHaveText(`Você chegou ao fim da trajetória de ${nomeDe(slug)}. Faltam ${fases.length - 1} fases para percorrê-la inteira: a lista de fases abre qualquer uma.`);
+    await expect(fim.locator(`[data-convite-outra-trajetoria="${outro}"]`)).toHaveAttribute("href", rota(outro));
+    await expect(fase.locator('[data-carimbo="novo"] [data-selo-novo]')).toHaveCount(0);
+  });
+
+  test("depois de um erro, Ver a explicação e continuar conclui na própria fase: o carimbo, o selo e a fase seguinte aparecem ali, com a mesma confirmação de quem acertou", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const content = conteudoDe(slug);
+    const fases = content.fases;
+    // Duas fases já concluídas: a terceira traz o selo dos primeiros passos. É o carimbo que mais importa confirmar para quem errou.
+    const alvo = fases[2]!;
+    const seguinte = fases[3]!;
+    expect(alvo.atividade.tipo).toBe("pergunta");
+    expect(alvo.sensivel).toBe(false);
+    await semear(page, slug, progressoCom(slug, fases.slice(0, 2).map((fase) => fase.id)));
+    await abrir(page, slug, alvo.numero);
+    const fase = await abrirMarco(page);
+    await responder(fase, opcoesDe(alvo).errada);
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "errado");
+    // Errar não dá carimbo, nem mostra a fase seguinte: a fase ainda não foi concluída.
+    await expect(fase.locator("[data-carimbo], [data-proxima-fase]")).toHaveCount(0);
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText("");
+    await expect(faixa(page)).toHaveAttribute("data-concluidas", "2");
+
+    await fase.locator("[data-ver-explicacao][data-depois-do-erro]").click();
+    // A fase não sai da tela: o resultado passa a ser o da explicação lida, com a opção certa marcada.
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", alvo.id);
+    await expect(jogo(page)).toHaveAttribute("data-vista", "fase");
+    await expect(fase.locator("[data-resultado]")).toHaveAttribute("data-resultado", "explicacao");
+    await expect(fase.locator(`[data-opcao="${opcoesDe(alvo).certa}"]`)).toHaveAttribute("data-certa", "sim");
+    await expect(fase.locator('[data-escrivao="erro"]')).toHaveCount(0);
+    // A resposta errada deixa de estar marcada: nenhuma opção fica em destaque ao lado da certa.
+    await expect(fase.locator('[data-opcao][aria-pressed="true"]')).toHaveCount(0);
+    // O mesmo carimbo, com a mesma confirmação, o selo que veio com ele e a fase seguinte.
+    const carimbo = fase.locator('[data-carimbo="novo"]');
+    await expect(carimbo.locator("[data-carimbo-confirmacao]")).toHaveText(`Marco registrado: 3 de ${fases.length}.`);
+    await expect(carimbo.locator("[data-carimbo-desenho]")).toContainText(alvo.titulo);
+    await expect(carimbo.locator('[data-selo-novo="primeiros-passos"]')).toHaveText("Selo novo no passaporte: Primeiros passos.");
+    await expect(fase.locator("[data-anuncio-do-carimbo]")).toHaveText(`Carimbo no passaporte: ${alvo.titulo}. Marco registrado: 3 de ${fases.length}. Selo novo no passaporte: Primeiros passos.`);
+    await expect(fase.locator('[data-escrivao="carimbo"] [data-camada="instrucao"]')).toBeVisible();
+    // É o terceiro carimbo da pessoa, contando os dois de antes: a fala de humor é a da vez dois, e não a da posição da fase na tela.
+    await expect(fase.locator('[data-escrivao="carimbo"] [data-camada="humor"]')).toContainText(humorDe("carimbo", 2));
+    await expect(fase.locator(`[data-proxima-fase="${seguinte.id}"] [data-proxima-frase]`)).toHaveText(`Na próxima fase, você vai ${seguinte.objetivo}`);
+    await expect(fase.locator(`[data-continuar="${seguinte.id}"]`)).toBeFocused();
+    await expect(faixa(page)).toHaveAttribute("data-concluidas", "3");
+    expect((await progressoSalvo(page, slug))!.fases[alvo.id]).toMatchObject({ concluida: "explicacao", tentativas: 1 });
+
+    await fase.locator("[data-continuar]").click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", seguinte.id);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(3, fases.length));
+    await expect(faixa(page)).toHaveAttribute("aria-label", `Meu passaporte. Concluídas: 3 de ${fases.length}, faltam ${fases.length - 3}.`);
+  });
+
+  test("só com o teclado: a faixa abre a caderneta, o foco fica nela, Esc fecha e devolve o foco, e um espaço abre a fase dele", async ({ page }) => {
+    const slug = "lula";
+    const fases = fasesDe(slug);
+    const quinta = fases[4]!;
+    await abrir(page, slug, 2);
+    await tabAte(page, "[data-abrir-passaporte]");
+    await page.keyboard.press("Enter");
+    const passaporte = await janela(page, "passaporte");
+    await expect(passaporte.locator("[data-fechar-passaporte]")).toBeFocused();
+    // A caderneta abre na página de quem está em jogo, que vem primeiro.
+    await expect(passaporte.locator(`[data-passaporte-pagina="${slug}"]`)).toBeInViewport();
+    await expect(passaporte.locator("[data-passaporte-pagina]").first()).toHaveAttribute("data-passaporte-pagina", slug);
+    // O foco não sai da janela: do último controle, Tab volta ao primeiro.
+    await page.keyboard.press("Tab");
+    expect(await focoDentroDe(page, '[data-dialogo="passaporte"]')).toBe(true);
+    await page.keyboard.press("Shift+Tab");
+    await expect(passaporte.locator("[data-fechar-passaporte]")).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(dialogo(page, "passaporte")).toHaveCount(0);
+    await expect(faixa(page)).toBeFocused();
+
+    await page.keyboard.press("Enter");
+    await janela(page, "passaporte");
+    await tabAte(page, `[data-dialogo="passaporte"] [data-abrir-fase="${quinta.id}"]`, 60);
+    await page.keyboard.press("Enter");
+    await expect(dialogo(page, "passaporte")).toHaveCount(0);
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", quinta.id);
+    expect(await progressoSalvo(page, slug)).toBeNull();
+  });
+
+  test("na leitura sem o cenário, a faixa, o carimbo, a fase seguinte e a caderneta estão na página, com as mesmas regras", async ({ page }) => {
+    const slug = "flavio-bolsonaro";
+    const content = conteudoDe(slug);
+    const [primeira, segunda] = content.fases;
+    await page.goto(`${rota(slug)}?fase=1&leitura=1`);
+    await pronto(page, false);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(0, content.fases.length));
+    const leitura = page.locator("[data-leitura-da-fase]");
+    // Na leitura, abrir a página da fase é ler a explicação: ela fica vista, e não concluída.
+    await expect(leitura.locator("[data-carimbo]")).toHaveCount(0);
+    await responderCerto(leitura, primeira!, content);
+    await expect(leitura.locator('[data-carimbo="novo"] [data-carimbo-confirmacao]')).toHaveText("Primeiro marco registrado.");
+    await expect(leitura.locator(`[data-proxima-fase="${segunda!.id}"] [data-proxima-frase]`)).toHaveText(`Na próxima fase, você vai ${segunda!.objetivo}`);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(1, content.fases.length));
+
+    await leitura.locator("[data-ver-passaporte]").click();
+    const passaporte = await janela(page, "passaporte");
+    await expect(passaporte.locator(`[data-carimbo-fase="${primeira!.id}"]`)).toHaveAttribute("data-carimbada", "sim");
+    await expect(passaporte.locator("[data-fechar-passaporte]")).toHaveText("Voltar à leitura");
+    await passaporte.locator("[data-fechar-passaporte]").click();
+    await expect(leitura.locator("[data-ver-passaporte]")).toBeFocused();
+    await leitura.locator("[data-continuar]").click();
+    await expect(jogo(page)).toHaveAttribute("data-fase-aberta", segunda!.id);
+    await expect(faixa(page).locator(`[data-marcador-de-fase="${primeira!.id}"]`)).toHaveAttribute("data-carimbada", "sim");
+  });
+
+  test("em um aprofundamento, a contagem é a da sala, o carimbo dele entra na página da pessoa, à parte da trajetória, e a fala conta os carimbos de todas as salas", async ({ page }) => {
+    const slug = "lula";
+    const sala = "economia" as const;
+    const fases = fasesDe(slug, sala);
+    expect(fases[0]!.sensivel).toBe(false);
+    // A pessoa já tem um carimbo, da trajetória: o do aprofundamento é o segundo dela.
+    const daTrajetoria = fasesDe(slug)[0]!;
+    await semear(page, slug, progressoCom(slug, [daTrajetoria.id]));
+    await page.goto(rota(slug, sala));
+    await pronto(page);
+    await expect(faixa(page).locator("[data-passaporte-contagem]")).toHaveText(contagemDe(0, fases.length));
+    const fase = await abrirMarco(page);
+    await fase.locator("[data-ver-explicacao]").click();
+    await expect(fase.locator('[data-carimbo="novo"] [data-carimbo-confirmacao]')).toHaveText(fases.length === 1 ? "Aprofundamento percorrido: marco registrado." : "Primeiro marco registrado.");
+    // A fala de humor é a do segundo carimbo da pessoa: contar só a sala daria sempre a primeira, e todo aprofundamento diria a mesma.
+    await expect(fase.locator('[data-escrivao="carimbo"] [data-camada="humor"]')).toContainText(humorDe("carimbo", 1, sala));
+    expect(humorDe("carimbo", 1, sala)).not.toBe(humorDe("carimbo", 0, sala));
+    // O fim de um aprofundamento não é o fim de uma trajetória: não há convite aqui, e o resumo dele leva de volta.
+    await expect(fase.locator("[data-fim-da-trajetoria]")).toHaveCount(0);
+    await fase.locator("[data-ver-passaporte]").click();
+    const passaporte = await janela(page, "passaporte");
+    const pagina = passaporte.locator(`[data-passaporte-pagina="${slug}"]`);
+    await expect(pagina.locator(`[data-carimbo-fase="${fases[0]!.id}"]`)).toHaveAttribute("data-carimbada", "sim");
+    // A contagem da página é a da trajetória, que continua com o carimbo de antes; o selo da trajetória não vem de um aprofundamento.
+    await expect(pagina.locator("[data-passaporte-pagina-contagem]")).toHaveText(contagemDe(1, fasesDe(slug).length));
+    await expect(passaporte.locator('[data-selo="trajetoria-percorrida"]')).toHaveAttribute("data-obtido", "nao");
+    // As fases da trajetória, daqui, são caminhos para a página dela.
+    await expect(pagina.locator(`[data-abrir-fase="${fasesDe(slug)[0]!.id}"]`)).toHaveAttribute("href", `${rota(slug)}?fase=1`);
+  });
+
+  for (const viewport of [
+    { width: 360, height: 640 },
+    { width: 390, height: 844 },
+  ]) {
+    test(`${viewport.width} por ${viewport.height}: a faixa cabe no cartão em uma linha, a caderneta cabe na tela e nada dela tem menos de 44 pixels`, async ({ browser, baseURL }) => {
+      const context = await browser.newContext({ baseURL, viewport, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+      const page = await context.newPage();
+      const errosDoCelular = vigiar(page);
+      const slug = "lula";
+      const fases = fasesDe(slug);
+      await page.goto(`${rota(slug)}?fase=1`);
+      await pronto(page);
+      // A faixa fica dentro do cartão da fase, com a contagem em uma linha só, e o cartão não cobre o botão principal.
+      const cartao = (await page.locator("[data-fase-cartao]").boundingBox())!;
+      const tira = (await faixa(page).boundingBox())!;
+      expect(tira.y).toBeGreaterThanOrEqual(cartao.y);
+      expect(tira.y + tira.height).toBeLessThanOrEqual(cartao.y + cartao.height + 1);
+      expect(tira.height).toBeGreaterThanOrEqual(44);
+      expect((await faixa(page).locator("[data-passaporte-contagem]").boundingBox())!.height, "a contagem em uma linha").toBeLessThan(22);
+      const principal = (await page.locator("[data-abrir-marco]").boundingBox())!;
+      expect(cartao.y + cartao.height).toBeLessThanOrEqual(principal.y);
+      // A pasta do marco continua inteira entre o cartão e o botão principal.
+      const marco = (await page.locator('[data-marcador="marco"]').boundingBox())!;
+      expect(marco.y).toBeGreaterThanOrEqual(cartao.y + cartao.height - 1);
+      expect(marco.y + marco.height).toBeLessThanOrEqual(principal.y + 1);
+
+      // O carimbo novo e a fase seguinte, dentro da janela da fase.
+      await page.locator("[data-abrir-marco]").tap();
+      const fase = await janela(page, "fase");
+      await fase.locator("[data-ver-explicacao]").tap();
+      await expect(fase.locator('[data-carimbo="novo"]')).toBeVisible();
+      expect(await alvosPequenos(fase), "fase, com o carimbo novo").toEqual([]);
+      expect(await sobraHorizontal(page), "fase, com o carimbo novo").toBeLessThanOrEqual(0);
+      // O carimbo é girado: mesmo assim, não sai da área da janela.
+      expect(await fase.locator("[data-janela-corpo]").evaluate((corpo) => corpo.scrollWidth - corpo.clientWidth), "a janela da fase não rola de lado").toBeLessThanOrEqual(0);
+
+      // A caderneta, por cima da fase.
+      await fase.locator("[data-ver-passaporte]").tap();
+      const passaporte = await janela(page, "passaporte");
+      const caixa = (await passaporte.getByRole("dialog").boundingBox())!;
+      expect(caixa.x).toBeGreaterThanOrEqual(0);
+      expect(caixa.x + caixa.width).toBeLessThanOrEqual(viewport.width);
+      expect(caixa.y + caixa.height).toBeLessThanOrEqual(viewport.height);
+      expect(await alvosPequenos(passaporte), "caderneta").toEqual([]);
+      expect(await passaporte.locator("[data-janela-corpo]").evaluate((corpo) => corpo.scrollWidth - corpo.clientWidth), "a caderneta não rola de lado").toBeLessThanOrEqual(0);
+      await expect(passaporte.locator(`[data-carimbo-fase="${fases[0]!.id}"]`)).toHaveAttribute("data-carimbada", "sim");
+      await passaporte.locator("[data-fechar-passaporte]").tap();
+      await expect(dialogo(page, "passaporte")).toHaveCount(0);
+
+      // Na leitura sem o cenário, a faixa e a página também não passam da largura.
+      await page.goto(`${rota(slug)}?fase=1&leitura=1`);
+      await pronto(page, false);
+      expect(await sobraHorizontal(page), "leitura sem o cenário").toBeLessThanOrEqual(0);
+      expect((await faixa(page).boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      expect(errosDoCelular, "erros não tratados na página").toEqual([]);
+      await context.close();
+    });
+  }
 });

@@ -13,6 +13,11 @@
 // janela; em "Ler sem o cenário", ela está na página, sem o palco. O segundo
 // é também o caminho de quem não tem o canvas.
 //
+// O passaporte (D-150) sai do mesmo progresso: uma fase concluída é um
+// carimbo, e os selos vêm da contagem dos carimbos das duas pessoas. A casca
+// percebe o carimbo que entra comparando o progresso antes e depois de cada
+// ação, e a tela o confirma uma vez; nada disso é guardado à parte.
+//
 // O HTML do build sai com a primeira fase da sala, sem a cena (o palco é
 // carregado só no navegador); a fase pedida pelo endereço e o progresso
 // guardado entram depois da hidratação. Em uma navegação interna, o endereço
@@ -27,21 +32,36 @@ import { PATH_LINK } from "@/components/touch";
 import type { ProgressKeys } from "@/lib/game/content";
 import { selectLines, type EscrivaoEvent, type FalaDita } from "@/lib/game/escrivao";
 import { relatedRecords } from "@/lib/game/judicial";
+import {
+  countStamps,
+  deepDivesOf,
+  earnedBetween,
+  sealsOf,
+  stampConfirmation,
+  stampTurn,
+  trailMarkers,
+  trailOutcome,
+  type PassportPage,
+  type ProgressByCharacter,
+  type Seal,
+  type StampCount,
+} from "@/lib/game/passport";
 import { hasNewStart, nextPhase, openPhase, phaseProgressOf, resumePhase, withPhase, withPosition } from "@/lib/game/progress";
 import { NO_QUERY } from "@/lib/game/query";
 import { roomLabel, roomOf } from "@/lib/game/rooms";
 import { getScene } from "@/lib/game/scenes";
 import { isSensitive } from "@/lib/game/sensitivity";
-import { answerOrder, answerQuestion, concludeByExplanation, isResolved, phaseStatus, refKey, refShortLabel, refTitle } from "@/lib/game/trail";
-import type { GameContent, PhaseRef, PhaseSpec, SceneMarker } from "@/lib/game/types";
+import { answerOrder, answerQuestion, concludeByExplanation, isPhaseDone, isResolved, phaseStatus, refKey, refShortLabel, refTitle } from "@/lib/game/trail";
+import type { GameContent, PersonagemSlug, PhaseRef, PhaseSpec, PlayerProgress, SceneMarker } from "@/lib/game/types";
 import { NO_INSETS, type StageInsets } from "@/lib/game/world/camera";
 import { gameHref } from "@/lib/state/links";
 
 import type { GameStageHandle } from "./GameStage";
-import { useGameAddress, useGamePreferences, useGameProgress, useMotion, useWindowActive, writePhaseToUrl } from "./hooks";
+import { useGameAddress, useGamePreferences, useGameProgress, useMotion, useStoredProgress, useWindowActive, writePhaseToUrl } from "./hooks";
 import { primaryButton, quietButton, secondaryButton } from "./ui/Dialog";
 import { ConfirmResetDialog, HelpDialog, PhaseDialog, PhaseListDialog, RecordDialog, SummaryDialog } from "./ui/dialogs";
 import { Hud, ResumeNotice, type ResumeInfo } from "./ui/Hud";
+import { PassportDialog, PassportStrip, type StampNotice } from "./ui/Passport";
 import { PhaseContent, type AnswerFeedback } from "./ui/PhaseContent";
 import { StageBoundary } from "./ui/StageBoundary";
 
@@ -94,7 +114,18 @@ type Vista =
   | { tipo: "fases" }
   | { tipo: "ajuda" }
   | { tipo: "apagar" }
-  | { tipo: "resumo" };
+  | { tipo: "resumo" }
+  /** A caderneta de carimbos: aberta da base, ou por cima da fase, que fica como estava. */
+  | { tipo: "passaporte"; de: "base" | "fase" };
+
+/** O carimbo que entrou nesta visita: a fase, a contagem da sala depois dele, a vez da fala do Escrivão e os selos que ele trouxe. */
+interface NewStamp {
+  faseId: string;
+  contagem: StampCount;
+  /** A ordem deste carimbo entre os da pessoa em jogo, em todas as salas, a partir de zero (`stampTurn`). */
+  vez: number;
+  selos: readonly Seal[];
+}
 
 interface GameShellProps {
   content: GameContent;
@@ -102,9 +133,13 @@ interface GameShellProps {
   chaves: ProgressKeys;
   /** A outra trajetória do atlas, para o caminho até ela no resumo. */
   outraPessoa: { slug: string; nome: string } | null;
+  /** As páginas do passaporte: uma por pessoa, na ordem dos perfis, com as fases de todas as salas. */
+  passaporte: readonly PassportPage[];
+  /** O que a leitura do progresso das outras pessoas precisa: é o que as páginas delas no passaporte mostram. */
+  outrasChaves: Readonly<Partial<Record<PersonagemSlug, ProgressKeys>>>;
 }
 
-export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
+export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChaves }: GameShellProps) {
   const slug = content.personagem.slug;
   const { sala, fases } = content;
   const salaSpec = roomOf(sala);
@@ -129,6 +164,8 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
   const [leituraDaVisita, setLeituraDaVisita] = useState(false);
   // Quantas vezes o progresso foi apagado nesta visita: remonta a fase que a leitura sem o cenário mantém na página.
   const [reinicios, setReinicios] = useState(0);
+  // O último carimbo desta visita. Não é guardado: ao recarregar, ele já está no passaporte, e nada é comemorado de novo.
+  const [carimbo, setCarimbo] = useState<NewStamp | null>(null);
 
   const pedida = consulta.fase === null ? undefined : fases[consulta.fase - 1];
   const fase: PhaseSpec = fases.find((item) => item.id === escolhida) ?? pedida ?? (pronto ? resumePhase(progresso, fases) : null) ?? fases[0]!;
@@ -145,6 +182,29 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
       : null;
 
   // -------------------------------------------------------------------------
+  // O passaporte: tudo sai do progresso. O desta pessoa é o que o jogo acabou
+  // de gravar; o das outras é lido uma vez, só para as páginas delas na
+  // caderneta e para os selos.
+  // -------------------------------------------------------------------------
+  const outros = useStoredProgress(outrasChaves);
+  const progressos = useMemo<ProgressByCharacter>(() => ({ ...outros, [slug]: progresso }), [outros, slug, progresso]);
+  const selos = useMemo(() => sealsOf(passaporte, progressos), [passaporte, progressos]);
+  const contagem = useMemo(() => countStamps(fases, progresso), [fases, progresso]);
+  const marcadoresDaTrilha = useMemo(() => trailMarkers(fases, progresso, fase.id), [fases, progresso, fase.id]);
+  const aprofundamentos = useMemo(() => deepDivesOf(passaporte), [passaporte]);
+  const desfecho = useMemo(() => (salaSpec.natureza === "trajetoria" ? trailOutcome(passaporte, progressos, slug) : null), [salaSpec.natureza, passaporte, progressos, slug]);
+  /** Compara o progresso antes e depois de uma ação: se a fase aberta passou a concluída, um carimbo entrou. */
+  const carimboEntre = useCallback(
+    (antes: PlayerProgress, depois: PlayerProgress): NewStamp | null => {
+      if (isPhaseDone(antes.fases[fase.id]) || !isPhaseDone(depois.fases[fase.id])) return null;
+      const antesDele = sealsOf(passaporte, { ...outros, [slug]: antes });
+      const depoisDele = sealsOf(passaporte, { ...outros, [slug]: depois });
+      return { faseId: fase.id, contagem: countStamps(fases, depois), vez: stampTurn(chaves.fases, depois), selos: earnedBetween(antesDele, depoisDele) };
+    },
+    [fase.id, fases, chaves.fases, passaporte, outros, slug],
+  );
+
+  // -------------------------------------------------------------------------
   // O Escrivão: as falas de cada momento, sem estado: uma instrução e, no
   // máximo, uma fala de humor. A vez de cada fala vem da posição da fase, ou
   // do número da tentativa; em fase ou registro de contexto sensível (D-129),
@@ -155,6 +215,16 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
   const falasDaEntrada = useMemo(() => falar("entrada", fase.numero - 1, fase.sensivel), [falar, fase]);
   const falasDaConclusao = useMemo(() => (concluida ? falar("conclusao", fase.numero - 1, fase.sensivel) : []), [falar, fase, concluida]);
   const falasDaAjuda = useMemo(() => falar("ajuda", fase.numero - 1, fase.sensivel), [falar, fase]);
+  // A fase aberta recebeu o carimbo nesta visita: a confirmação curta, os selos que vieram com ele e a fala do Escrivão, que roda pela ordem do carimbo entre os da pessoa, em todas as salas: dois aprofundamentos seguidos não repetem a mesma fala.
+  const avisoDoCarimbo = useMemo<StampNotice | null>(() => {
+    if (carimbo === null || carimbo.faseId !== fase.id) return null;
+    return {
+      confirmacao: stampConfirmation(salaSpec.natureza, carimbo.contagem, fase.sensivel),
+      selos: carimbo.selos,
+      falas: falar("carimbo", carimbo.vez, fase.sensivel),
+      sobrio: fase.sensivel,
+    };
+  }, [carimbo, fase, salaSpec.natureza, falar]);
 
   // -------------------------------------------------------------------------
   // As pastas da fase no cenário: a do marco e as dos registros para explorar
@@ -200,7 +270,7 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
     if (pendente === null || caixa === null) return;
     if (pendente === "de-cima") {
       // A janela de cima fechou: o foco volta ao botão que a abriu, dentro da de baixo, sem rolar nada.
-      if (vista.tipo === "registro" || vista.tipo === "apagar") return;
+      if (vista.tipo === "registro" || vista.tipo === "apagar" || vista.tipo === "passaporte") return;
       focoPendente.current = null;
       const alvo = abridorDeCima.current;
       abridorDeCima.current = null;
@@ -346,21 +416,32 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
     (avaliar: (atual: ReturnType<typeof phaseProgressOf>) => { estado: ReturnType<typeof phaseProgressOf>; certo: boolean }): AnswerFeedback => {
       let certo = false;
       let tentativas = 0;
+      const saida: { carimbo: NewStamp | null } = { carimbo: null };
       update((atual) => {
         const avaliacao = avaliar(phaseProgressOf(atual, fase.id));
         certo = avaliacao.certo;
         tentativas = avaliacao.estado.tentativas;
-        return withPosition(withPhase(atual, fase.id, avaliacao.estado), fase);
+        const proximo = withPosition(withPhase(atual, fase.id, avaliacao.estado), fase);
+        saida.carimbo = carimboEntre(atual, proximo);
+        return proximo;
       });
+      if (saida.carimbo !== null) setCarimbo(saida.carimbo);
       return { certo, falas: certo ? [] : falar("erro", tentativas - 1, fase.sensivel) };
     },
-    [update, fase, falar],
+    [update, fase, falar, carimboEntre],
   );
   const responderPergunta = useCallback((opcaoId: string) => responder((atual) => answerQuestion(fase, atual, opcaoId, content)), [responder, fase, content]);
   const responderOrdem = useCallback((chavesDaOrdem: readonly string[]) => responder((atual) => answerOrder(fase, atual, chavesDaOrdem, content)), [responder, fase, content]);
+  /** "Ver a explicação e continuar", antes de responder ou depois de um erro: conclui a fase pela leitura. O carimbo que entra é o mesmo de quem respondeu certo, e a fase continua na tela para confirmá-lo. */
   const lerEContinuar = useCallback(() => {
-    update((atual) => withPosition(withPhase(atual, fase.id, concludeByExplanation(fase, phaseProgressOf(atual, fase.id), content)), fase));
-  }, [update, fase, content]);
+    const saida: { carimbo: NewStamp | null } = { carimbo: null };
+    update((atual) => {
+      const proximo = withPosition(withPhase(atual, fase.id, concludeByExplanation(fase, phaseProgressOf(atual, fase.id), content)), fase);
+      saida.carimbo = carimboEntre(atual, proximo);
+      return proximo;
+    });
+    if (saida.carimbo !== null) setCarimbo(saida.carimbo);
+  }, [update, fase, content, carimboEntre]);
 
   /** Ir a uma fase é navegação: não conclui nem apaga nada. */
   const irPara = useCallback(
@@ -380,8 +461,11 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
     else setVista({ tipo: "resumo" });
   }, [proxima, irPara, vista.tipo, abrirDaBase]);
 
+
   const apagar = useCallback(() => {
     reset();
+    // Os carimbos saem com o progresso: o que a tela ainda dizia deles também.
+    setCarimbo(null);
     setEscolhida(fases[0]!.id);
     // Na leitura sem o cenário a fase fica montada sob as janelas: sem remontar, a resposta dada antes continuaria na tela, sem botão para responder de novo.
     setReinicios((vezes) => vezes + 1);
@@ -423,9 +507,9 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
   const janelas = (
     <>
       {/* A fase continua montada sob o registro aberto de dentro dela: a escolha feita e o lugar da leitura não se perdem. */}
-      {(vista.tipo === "fase" || (vista.tipo === "registro" && vista.de === "fase")) && (
+      {(vista.tipo === "fase" || ((vista.tipo === "registro" || vista.tipo === "passaporte") && vista.de === "fase")) && (
         <PhaseDialog
-          encoberta={vista.tipo === "registro"}
+          encoberta={vista.tipo !== "fase"}
           fase={fase}
           total={fases.length}
           sala={salaSpec}
@@ -433,11 +517,15 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
           estado={estado}
           proxima={proxima}
           falasDaConclusao={falasDaConclusao}
+          carimbo={avisoDoCarimbo}
+          desfecho={desfecho}
+          aprofundamentos={aprofundamentos}
           onAnswerQuestion={responderPergunta}
           onAnswerOrder={responderOrdem}
           onSkip={lerEContinuar}
           onOpenRecord={(referencia) => abrirRegistro(referencia, "fase")}
           onContinue={continuar}
+          onOpenPassport={() => abrirPorCima({ tipo: "passaporte", de: "fase" })}
           onClose={voltarParaBase}
         />
       )}
@@ -471,7 +559,23 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
       )}
       {vista.tipo === "ajuda" && <HelpDialog sala={salaSpec} falas={falasDaAjuda} humor={preferencias.humor} leitura={leitura} onToggleHumor={alternarHumor} onClose={voltarParaBase} />}
       {vista.tipo === "apagar" && <ConfirmResetDialog nome={content.personagem.nome} onConfirm={apagar} onClose={() => voltarParaDeBaixo({ tipo: "fases" })} />}
-      {vista.tipo === "resumo" && <SummaryDialog content={content} sala={salaSpec} progresso={progresso} outraPessoa={outraPessoa} onOpenPhase={irPara} onClose={voltarParaBase} />}
+      {vista.tipo === "resumo" && (
+        <SummaryDialog content={content} sala={salaSpec} progresso={progresso} outraPessoa={outraPessoa} desfecho={desfecho} aprofundamentos={aprofundamentos} onOpenPhase={irPara} onClose={voltarParaBase} />
+      )}
+      {vista.tipo === "passaporte" && (
+        <PassportDialog
+          paginas={passaporte}
+          progressos={progressos}
+          personagem={slug}
+          sala={sala}
+          abertaId={fase.id}
+          selos={selos}
+          duravel={duravel}
+          voltar={vista.de === "fase" ? "Voltar à fase" : leitura ? "Voltar à leitura" : "Voltar ao cenário"}
+          onOpenPhase={irPara}
+          onClose={() => (vista.de === "fase" ? voltarParaDeBaixo({ tipo: "fase" }) : voltarParaBase())}
+        />
+      )}
     </>
   );
 
@@ -489,6 +593,7 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
     "data-movimento": movimento ? "ligado" : "reduzido",
     "data-humor": preferencias.humor ? "ligado" : "desligado",
   };
+  const faixaDoPassaporte = { marcadores: marcadoresDaTrilha, contagem, carregado: pronto };
 
   // -------------------------------------------------------------------------
   // Ler sem o cenário: a fase na página, com as mesmas ações.
@@ -516,6 +621,7 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
             </button>
           </div>
         </nav>
+        <PassportStrip {...faixaDoPassaporte} onOpen={() => abrirDaBase({ tipo: "passaporte", de: "base" })} className="max-w-md" />
         {retomada !== null && <ResumeNotice retomada={retomada} className="text-sm" onGoToStart={irParaOInicio} />}
         {salaSpec.natureza === "aprofundamento" && (
           <p className="text-sm" data-aviso-aprofundamento>
@@ -536,11 +642,15 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
             proxima={proxima}
             cabecalho
             falasDaConclusao={falasDaConclusao}
+            carimbo={avisoDoCarimbo}
+            desfecho={desfecho}
+            aprofundamentos={aprofundamentos}
             onAnswerQuestion={responderPergunta}
             onAnswerOrder={responderOrdem}
             onSkip={lerEContinuar}
             onOpenRecord={(referencia) => abrirRegistro(referencia, "base")}
             onContinue={continuar}
+            onOpenPassport={() => abrirDaBase({ tipo: "passaporte", de: "base" })}
           />
         </article>
         <nav aria-label="Fase anterior e fase seguinte" className="flex max-w-3xl flex-wrap items-center justify-between gap-2 border-t border-line pt-4" inert={vista.tipo !== "base"}>
@@ -614,12 +724,14 @@ export function GameShell({ content, chaves, outraPessoa }: GameShellProps) {
             proxima={proxima}
             falas={falasDaEntrada}
             retomada={retomada}
+            passaporte={faixaDoPassaporte}
             onGoToStart={irParaOInicio}
             onOpenMarker={abrirMarco}
             onContinue={continuar}
             onOpenPhases={() => abrirDaBase({ tipo: "fases" })}
             onOpenHelp={() => abrirDaBase({ tipo: "ajuda" })}
             onReadWithoutScene={lerSemCenario}
+            onOpenPassport={() => abrirDaBase({ tipo: "passaporte", de: "base" })}
           />
         )}
       </div>

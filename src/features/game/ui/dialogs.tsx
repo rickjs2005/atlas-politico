@@ -13,15 +13,18 @@ import { PATH_LINK } from "@/components/touch";
 import { DecisionCard } from "@/features/decisions/DecisionCard";
 import { ESCRIVAO_NOME, ESCRIVAO_ROTULO, type FalaDita } from "@/lib/game/escrivao";
 import type { RelatedRecord } from "@/lib/game/judicial";
+import type { DeepDive, TrailOutcome } from "@/lib/game/passport";
 import { periodLabel, roomLabel, roomOf, type RoomSpec } from "@/lib/game/rooms";
-import { phaseStatus, type PhaseStatus } from "@/lib/game/trail";
+import { phaseStatus } from "@/lib/game/trail";
 import type { GameContent, PhaseProgress, PhaseRef, PhaseSpec, PlayerProgress } from "@/lib/game/types";
 import { comparisonHref, decisionHref, explorationHref, gameHref } from "@/lib/state/links";
 
 import { Dialog, primaryButton, quietButton, secondaryButton } from "./Dialog";
 import { EscrivaoSays } from "./EscrivaoSays";
+import { TrailEnd, type StampNotice } from "./Passport";
 import { PhaseContent, type AnswerFeedback } from "./PhaseContent";
 import { FactCard, PositionCard, ProposalCard, RecordCard } from "./RecordCard";
+import { statusText } from "./status";
 
 // ---------------------------------------------------------------------------
 // A fase
@@ -35,11 +38,15 @@ export function PhaseDialog({
   estado,
   proxima,
   falasDaConclusao,
+  carimbo,
+  desfecho,
+  aprofundamentos,
   onAnswerQuestion,
   onAnswerOrder,
   onSkip,
   onOpenRecord,
   onContinue,
+  onOpenPassport,
   onClose,
   encoberta = false,
 }: {
@@ -50,13 +57,17 @@ export function PhaseDialog({
   estado: PhaseProgress;
   proxima: PhaseSpec | null;
   falasDaConclusao: readonly FalaDita[];
+  carimbo: StampNotice | null;
+  desfecho: TrailOutcome | null;
+  aprofundamentos: readonly DeepDive[];
   onAnswerQuestion(opcaoId: string): AnswerFeedback;
   onAnswerOrder(chaves: readonly string[]): AnswerFeedback;
   onSkip(): void;
   onOpenRecord(referencia: PhaseRef): void;
   onContinue(): void;
+  onOpenPassport(): void;
   onClose(): void;
-  /** Um registro está aberto por cima: a fase continua montada, com a escolha e a rolagem como estavam. */
+  /** Um registro ou o passaporte está aberto por cima: a fase continua montada, com a escolha e a rolagem como estavam. */
   encoberta?: boolean;
 }) {
   return (
@@ -91,11 +102,15 @@ export function PhaseDialog({
         proxima={proxima}
         cabecalho={false}
         falasDaConclusao={falasDaConclusao}
+        carimbo={carimbo}
+        desfecho={desfecho}
+        aprofundamentos={aprofundamentos}
         onAnswerQuestion={onAnswerQuestion}
         onAnswerOrder={onAnswerOrder}
         onSkip={onSkip}
         onOpenRecord={onOpenRecord}
         onContinue={onContinue}
+        onOpenPassport={onOpenPassport}
       />
     </Dialog>
   );
@@ -166,16 +181,6 @@ export function RecordDialog({
 // ---------------------------------------------------------------------------
 // A lista de fases, as preferências e o progresso
 // ---------------------------------------------------------------------------
-
-const STATUS_LABEL: Record<PhaseStatus, string> = { nova: "ainda não aberta", vista: "explicação lida", concluida: "concluída" };
-
-/** A situação de uma fase em palavras: a marca de um formato anterior entra enquanto a fase nova não foi concluída. */
-export function statusText(estado: PhaseProgress | undefined): string {
-  const status = phaseStatus(estado);
-  if (status !== "concluida" && estado?.anterior === true) return "período visto na versão anterior";
-  if (status !== "concluida" && estado?.reaberta === true) return "resposta reaberta por correção";
-  return STATUS_LABEL[status];
-}
 
 export function PhaseListDialog({
   content,
@@ -364,8 +369,11 @@ export function HelpDialog({
         <ol className="list-decimal space-y-1 pl-5">
           <li data-passo-de-abrir>{leitura ? "Sem o cenário, a fase já está aberta na página." : "Toque na pasta em destaque, ou no botão Abrir o marco."}</li>
           <li>Leia a explicação curta. As fontes e os termos explicados abrem no próprio texto.</li>
-          <li>Responda a atividade, ou peça a explicação e siga. Errar não tira nada.</li>
+          <li>Responda a atividade, ou use Ver a explicação e continuar. Errar não tira nada: dá para tentar de novo ou seguir pela explicação.</li>
           <li data-passo-de-continuar>Use Continuar para ir à próxima fase. {leitura ? "Os outros registros são opcionais." : "As outras pastas são opcionais."}</li>
+          <li data-passo-do-passaporte>
+            Cada fase concluída deixa um carimbo no seu passaporte, pela resposta certa ou por Ver a explicação e continuar. Ele registra o caminho percorrido: não é nota.
+          </li>
         </ol>
         <EscrivaoSays falas={falas} evento="ajuda" />
         {sala.natureza === "aprofundamento" && (
@@ -421,18 +429,25 @@ export function ConfirmResetDialog({ nome, onConfirm, onClose }: { nome: string;
 /**
  * O que a pessoa viu na sala, o que a edição não pesquisou e para onde ir. Sem
  * troféu e sem juízo: é uma lista. Serve à janela sobre o cenário e à leitura
- * sem o cenário.
+ * sem o cenário. No resumo de uma trajetória, o alto traz o convite para a
+ * outra e, com as duas percorridas, a comparação e os aprofundamentos (D-150).
  */
 export function SummaryContent({
   content,
   sala,
   progresso,
   outraPessoa,
+  desfecho,
+  aprofundamentos,
   onOpenPhase,
 }: {
   content: GameContent;
   sala: RoomSpec;
   progresso: PlayerProgress;
+  /** Na trajetória, como ela e as outras estão. `null` nos aprofundamentos. */
+  desfecho: TrailOutcome | null;
+  /** Os aprofundamentos das trajetórias, para quem percorreu todas. */
+  aprofundamentos: readonly DeepDive[];
   /** A outra trajetória do atlas, para o caminho até ela. */
   outraPessoa: { slug: string; nome: string } | null;
   onOpenPhase(id: string): void;
@@ -452,6 +467,8 @@ export function SummaryContent({
           São marcos documentados, e não a vida inteira nem tudo o que a pessoa fez.
         </p>
       </div>
+
+      {desfecho !== null && <TrailEnd nome={personagem.nome} desfecho={desfecho} aprofundamentos={aprofundamentos} />}
 
       <section aria-labelledby="resumo-fases" className="space-y-2">
         <h3 id="resumo-fases" className="eyebrow text-ink-soft">

@@ -7,14 +7,34 @@
 // estreita e baixa que o projeto confere) e 844×390 deitado. As fases
 // avançadas são abertas pelo endereço (`?fase=N`): nenhuma fase segura a
 // seguinte, e por isso o roteiro não precisa de progresso salvo para chegar a
-// elas.
+// elas. Só no passaporte há capturas que partem de um progresso posto no
+// navegador, no formato que o jogo grava: as do fim das trajetórias e as do
+// celular estreito.
 
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 
 import { expect, test, type Browser, type Locator, type Page } from "@playwright/test";
 
-import { PERSONAGENS, abrir, abrirMarco, conteudoDe, fasesDe, janela, jogo, lerESeguir, opcoesDe, ordemDe, pronto, refKey, responder, rota, type Slug } from "../e2e/jogo-apoio";
+import {
+  PERSONAGENS,
+  abrir,
+  abrirMarco,
+  conteudoDe,
+  fasesDe,
+  janela,
+  jogo,
+  lerESeguir,
+  opcoesDe,
+  ordemDe,
+  progressoCom,
+  pronto,
+  refKey,
+  responder,
+  rota,
+  semear,
+  type Slug,
+} from "../e2e/jogo-apoio";
 
 const OUT = process.env.GAME_CAPTURE_DIR ?? "docs/capturas/jogo-trilha";
 const COMPUTADOR = { width: 1440, height: 900 };
@@ -381,6 +401,118 @@ test("celular: em pé, estreito e deitado", async ({ browser }) => {
   await janela(page, "fase");
   await shot(page, "59-celular-deitado-explicacao");
   await deitado.context.close();
+});
+
+test("o passaporte do Escrivão: o carimbo, a faixa, a caderneta, os selos e o fim das trajetórias", async ({ page, browser }) => {
+  await page.setViewportSize(COMPUTADOR);
+  const slug: Slug = "lula";
+  const outro: Slug = "flavio-bolsonaro";
+  const fases = fasesDe(slug);
+  const ultima = fases.at(-1)!;
+  const ids = (lista: readonly { id: string }[]) => lista.map((item) => item.id);
+
+  // A primeira fase concluída: o carimbo novo, a confirmação e, logo abaixo, a fase seguinte e o botão de continuar.
+  await abrir(page, slug, 1);
+  let fase = await abrirMarco(page);
+  await fase.locator("[data-ver-explicacao]").click();
+  await expect(fase.locator('[data-carimbo="novo"]')).toBeVisible();
+  await mostrar(fase, "[data-resultado]");
+  await shot(page, "64-passaporte-carimbo-novo-e-fase-seguinte");
+  await fase.locator("[data-continuar]").click();
+  await expect(jogo(page)).toHaveAttribute("data-fase-aberta", fases[1]!.id);
+  await page.waitForTimeout(400);
+  // A faixa do cartão da fase: o que foi concluído, o que falta e a fase aberta.
+  await shot(page, "65-passaporte-faixa-no-cartao-da-fase");
+
+  // A terceira fase concluída traz o primeiro selo.
+  await lerESeguir(page);
+  fase = await abrirMarco(page);
+  await fase.locator("[data-ver-explicacao]").click();
+  await expect(fase.locator("[data-selo-novo]")).toBeVisible();
+  await mostrar(fase, "[data-resultado]");
+  await shot(page, "66-passaporte-selo-novo");
+  // A caderneta, aberta de dentro da fase: uma página por pessoa, e os selos.
+  await fase.locator("[data-ver-passaporte]").click();
+  let passaporte = await janela(page, "passaporte");
+  await shot(page, "67-passaporte-caderneta");
+  await mostrar(passaporte, "[data-selos]");
+  await shot(page, "68-passaporte-selos");
+  await passaporte.locator("[data-fechar-passaporte]").click();
+  await expect(page.locator('[data-dialogo="passaporte"]')).toHaveCount(0);
+  // Uma fase já concluída, aberta de novo: a linha do carimbo, sem comemorar outra vez.
+  await page.keyboard.press("Escape");
+  await expect(jogo(page)).toHaveAttribute("data-vista", "base");
+  await abrir(page, slug, 1);
+  fase = await abrirMarco(page);
+  await mostrar(fase, "[data-resultado]");
+  await shot(page, "69-passaporte-fase-ja-carimbada");
+
+  // Uma trajetória percorrida, com a outra por fazer: o convite, na fase e no resumo.
+  const umaPercorrida = await browser.newContext({ baseURL: ORIGEM, viewport: COMPUTADOR, reducedMotion: "reduce" });
+  let pagina = await umaPercorrida.newPage();
+  await semear(pagina, slug, progressoCom(slug, ids(fases.slice(0, -1))));
+  await pagina.goto(`${rota(slug)}?fase=${ultima.numero}`);
+  await pronto(pagina);
+  fase = await abrirMarco(pagina);
+  await fase.locator("[data-ver-explicacao]").click();
+  await expect(fase.locator('[data-fim-da-trajetoria="percorrida"]')).toBeVisible();
+  await mostrar(fase, "[data-resultado]");
+  await shot(pagina, "70-passaporte-trajetoria-percorrida");
+  await fase.locator("[data-continuar]").click();
+  await janela(pagina, "resumo");
+  await shot(pagina, "71-passaporte-resumo-com-o-convite");
+  await umaPercorrida.close();
+
+  // As duas percorridas: a comparação e os aprofundamentos, e a caderneta completa.
+  const asDuas = await browser.newContext({ baseURL: ORIGEM, viewport: COMPUTADOR, reducedMotion: "reduce" });
+  pagina = await asDuas.newPage();
+  await semear(pagina, outro, progressoCom(outro, ids(fasesDe(outro)), "resposta"));
+  await semear(pagina, slug, progressoCom(slug, ids(fases.slice(0, -1))));
+  await pagina.goto(`${rota(slug)}?fase=${ultima.numero}`);
+  await pronto(pagina);
+  fase = await abrirMarco(pagina);
+  await fase.locator("[data-ver-explicacao]").click();
+  await expect(fase.locator('[data-fim-da-trajetoria="todas"]')).toBeVisible();
+  await mostrar(fase, "[data-resultado]");
+  await shot(pagina, "72-passaporte-duas-trajetorias-percorridas");
+  await fase.locator("[data-ver-passaporte]").click();
+  passaporte = await janela(pagina, "passaporte");
+  await shot(pagina, "73-passaporte-caderneta-completa");
+  await mostrar(passaporte, "[data-selos]");
+  await shot(pagina, "74-passaporte-selos-completos");
+  await asDuas.close();
+
+  // Em celular: o carimbo novo, a caderneta e os selos.
+  const movel = await celular(browser, CELULAR);
+  pagina = movel.page;
+  await pagina.goto(`${rota(slug)}?fase=1`);
+  await pronto(pagina);
+  await pagina.locator("[data-abrir-marco]").tap();
+  fase = await janela(pagina, "fase");
+  await fase.locator("[data-ver-explicacao]").tap();
+  await expect(fase.locator('[data-carimbo="novo"]')).toBeVisible();
+  await mostrar(fase, "[data-resultado]");
+  await shot(pagina, "75-celular-passaporte-carimbo-novo");
+  await mostrar(fase, "[data-proxima-fase]");
+  await shot(pagina, "76-celular-passaporte-fase-seguinte");
+  await fase.locator("[data-ver-passaporte]").tap();
+  passaporte = await janela(pagina, "passaporte");
+  await shot(pagina, "77-celular-passaporte-caderneta");
+  await movel.context.close();
+
+  // A tela mais estreita e baixa, com três carimbos de uma visita anterior: a faixa no cartão, a caderneta e os selos.
+  const estreito = await celular(browser, CELULAR_ESTREITO);
+  pagina = estreito.page;
+  await semear(pagina, slug, progressoCom(slug, ids(fases.slice(0, 3))));
+  await pagina.goto(`${rota(slug)}?fase=4`);
+  await pronto(pagina);
+  await shot(pagina, "78-celular-estreito-passaporte-faixa");
+  await pagina.locator("[data-abrir-passaporte]").tap();
+  passaporte = await janela(pagina, "passaporte");
+  await shot(pagina, "79-celular-estreito-passaporte-caderneta");
+  await mostrar(passaporte, "[data-selos]");
+  await shot(pagina, "80-celular-estreito-passaporte-selos");
+  await estreito.context.close();
 });
 
 test("a comparação curta e as propostas por área", async ({ page, browser }) => {

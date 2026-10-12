@@ -18,7 +18,7 @@ import { getAtlasData } from "@/lib/content/published";
 import { findPersonBySlug } from "@/lib/data/queries";
 import { formatDate } from "@/lib/domain/dates";
 import { PROFILES, type ProfileSlug } from "@/lib/domain/profiles";
-import { buildGameContent, buildProgressKeys } from "@/lib/game/content";
+import { buildGameContent, buildPassportPages, buildProgressKeys, type ProgressKeys } from "@/lib/game/content";
 import { periodLabel, roomLabel, roomOf } from "@/lib/game/rooms";
 import { orderDates } from "@/lib/game/trail";
 import type { GameContent, RoomId } from "@/lib/game/types";
@@ -110,6 +110,14 @@ export function GamePage({ perfil, sala }: { perfil: { slug: ProfileSlug; nome: 
   const outro = PROFILES.find((item) => item.slug !== perfil.slug && (buildGameContent(data, item.slug, "historico")?.fases.length ?? 0) > 0);
   const outraPessoa = outro === undefined ? null : { slug: outro.slug, nome: findPersonBySlug(data, outro.slug)?.nome ?? outro.nome };
 
+  // O passaporte tem uma página por pessoa: a casca recebe as fases de todas e o que precisa para ler, só para leitura,
+  // o progresso guardado das outras. Os totais de carimbos saem daqui, das fases publicadas.
+  const passaporte = buildPassportPages(data);
+  const outrasChaves: Partial<Record<ProfileSlug, ProgressKeys>> = {};
+  for (const pagina of passaporte) {
+    if (pagina.personagem !== perfil.slug) outrasChaves[pagina.personagem] = buildProgressKeys(data, pagina.personagem);
+  }
+
   // A mesma frase da entrada do atlas: o jogo usa o mesmo conteúdo.
   const { edicao } = data.conjunto;
   const notaDeRevisao =
@@ -123,7 +131,7 @@ export function GamePage({ perfil, sala }: { perfil: { slug: ProfileSlug; nome: 
       <h1 className="sr-only">
         Jogo · {content.personagem.nome} · {roomLabel(salaSpec)}
       </h1>
-      <GameShell content={content} chaves={buildProgressKeys(data, perfil.slug)} outraPessoa={outraPessoa} />
+      <GameShell content={content} chaves={buildProgressKeys(data, perfil.slug)} outraPessoa={outraPessoa} passaporte={passaporte} outrasChaves={outrasChaves} />
       <noscript>
         <style>{".jogo-palco{display:none}"}</style>
         <PhasesAsText content={content} />
@@ -143,7 +151,7 @@ export function GamePage({ perfil, sala }: { perfil: { slug: ProfileSlug; nome: 
           </p>
         )}
         <p data-revisao>{notaDeRevisao}</p>
-        <p>O que você lê e responde fica guardado neste navegador, quando o armazenamento está disponível.</p>
+        <p>O que você lê e responde fica guardado neste navegador, quando o armazenamento está disponível. Os carimbos do passaporte reconhecem as fases concluídas: não são nota.</p>
         <p>
           <Link href={gameHref()} prefetch={false} className={PATH_LINK}>
             Escolher a outra trajetória

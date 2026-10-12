@@ -98,7 +98,7 @@ const ERRO: Fala[] = [
   fala("erro-todas-instrucao-1", "todas", "erro", "instrucao", "Não era essa. Leia a explicação acima e tente de novo, ou siga adiante: errar não tira nada."),
   fala("erro-todas-humor-1", "todas", "erro", "humor", "Eu já arquivei um processo inteiro na gaveta errada. Levou um ano. Você errou uma vez; estamos longe do meu recorde."),
   fala("erro-todas-humor-2", "todas", "erro", "humor", "Errar e tentar de novo é o método do arquivo. O meu método, pelo menos."),
-  fala("erro-todas-humor-3", "todas", "erro", "humor", "Nenhum carimbo foi gasto com esse erro. Eu guardo os carimbos para os acertos."),
+  fala("erro-todas-humor-3", "todas", "erro", "humor", "Nenhum carimbo se perde com um erro. A almofada de tinta continua cheia, à espera do fim da fase."),
 
   fala("erro-historico-instrucao-1", "historico", "erro", "instrucao", "Não era essa. A explicação acima diz o porquê, com o que a fase acabou de contar. Tente de novo ou siga adiante."),
   fala("erro-historico-humor-1", "historico", "erro", "humor", "Errar de gaveta faz parte do ofício. Eu leio a etiqueta com calma e, mesmo assim, abro a do lado."),
@@ -117,7 +117,7 @@ const ERRO: Fala[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Conclusão: a fase terminou
+// Conclusão: a pessoa revê uma fase que já estava concluída
 // ---------------------------------------------------------------------------
 
 const CONCLUSAO: Fala[] = [
@@ -142,4 +142,26 @@ const CONCLUSAO: Fala[] = [
   fala("conclusao-seguranca-publica-humor-3", "seguranca-publica", "conclusao", "humor", "Protocolo cumprido e cadeado fechado. O cadeado é de enfeite, mas o protocolo não."),
 ];
 
-export const CATALOGO: readonly Fala[] = [...ENTRADA, ...AJUDA, ...EXPLORAR, ...ERRO, ...CONCLUSAO];
+// ---------------------------------------------------------------------------
+// Carimbo: a fase acabou de ser concluída, e o carimbo dela entrou no passaporte
+// ---------------------------------------------------------------------------
+//
+// Poucas falas, de propósito (D-150). A instrução confirma o registro, sem
+// elogio e sem nota, e é a mesma em contexto sensível; o humor é sobre o
+// carimbo e a caderneta, e nunca sobre o que a fase contou. As salas usam o
+// humor de reserva, que roda pela ordem do carimbo entre os da pessoa: a
+// primeira fala não conta carimbos, porque é a do primeiro, e "Mais um" fica
+// para o terceiro.
+
+const CARIMBO: Fala[] = [
+  fala("carimbo-todas-instrucao-1", "todas", "carimbo", "instrucao", "Fase concluída: o carimbo dela está no seu passaporte. Use Continuar para ir à próxima, ou explore os outros registros do período."),
+  fala("carimbo-todas-humor-1", "todas", "carimbo", "humor", "Carimbei com capricho. A almofada de tinta é nova; o carimbo, nem tanto."),
+  fala("carimbo-todas-humor-2", "todas", "carimbo", "humor", "Página carimbada. Soprei a tinta para secar, como manda o regulamento que eu mesmo escrevi."),
+  fala("carimbo-todas-humor-3", "todas", "carimbo", "humor", "Mais um carimbo. Esta caderneta está ficando mais organizada que a minha mesa."),
+
+  fala("carimbo-historico-instrucao-1", "historico", "carimbo", "instrucao", "Fase concluída: o carimbo dela está no seu passaporte. Continuar leva ao período seguinte da trajetória, ou ao resumo."),
+  fala("carimbo-economia-instrucao-1", "economia", "carimbo", "instrucao", "Fase concluída: o carimbo dela está no seu passaporte. O botão abaixo leva à fase seguinte deste aprofundamento ou, no fim dele, ao resumo."),
+  fala("carimbo-seguranca-publica-instrucao-1", "seguranca-publica", "carimbo", "instrucao", "Fase concluída: o carimbo dela está no seu passaporte. O botão abaixo leva à fase seguinte deste aprofundamento ou, no fim dele, ao resumo."),
+];
+
+export const CATALOGO: readonly Fala[] = [...ENTRADA, ...AJUDA, ...EXPLORAR, ...ERRO, ...CONCLUSAO, ...CARIMBO];

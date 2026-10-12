@@ -13,8 +13,10 @@ import type { AtlasData } from "@/lib/data/types";
 import { formatPeriod } from "@/lib/domain/dates";
 import { SALAS_DO_JOGO } from "@/lib/domain/game";
 import { findUndeterminedOrder } from "@/lib/domain/order";
+import { PROFILES } from "@/lib/domain/profiles";
 import type { Citacao, FaseDoJogo } from "@/lib/domain/types";
 
+import type { PassportPage } from "./passport";
 import { presentationOf } from "./presentation";
 import type { PhaseKey } from "./progress";
 import { isSensitivePhase } from "./sensitivity";
@@ -212,6 +214,24 @@ export function buildProgressKeys(data: AtlasData, personagem: PersonagemSlug): 
     Object.assign(assinaturas, signaturesOf(content.fases, content));
   }
   return { fases, assinaturas };
+}
+
+/**
+ * As páginas do passaporte (src/lib/game/passport.ts): uma por pessoa com
+ * trajetória publicada, na ordem dos perfis, com as fases de todas as salas
+ * dela. Vai só o que um carimbo precisa: o identificador, a sala, a posição,
+ * o título e o período. O total de carimbos de cada página sai daqui, e não
+ * de um número escrito no código.
+ */
+export function buildPassportPages(data: AtlasData): PassportPage[] {
+  return PROFILES.flatMap((perfil) => {
+    const pessoa = findPersonBySlug(data, perfil.slug);
+    if (pessoa === null) return [];
+    const fases = SALAS_DO_JOGO.flatMap((sala) =>
+      publishedPhases(data, pessoa.id, sala).map((fase) => ({ id: fase.id, sala: fase.sala, numero: fase.ordem, titulo: fase.titulo, periodo: fase.periodo })),
+    );
+    return fases.some((fase) => fase.sala === "historico") ? [{ personagem: perfil.slug, nome: pessoa.nome, fases }] : [];
+  });
 }
 
 /** Quantas fases a trajetória de um personagem tem na edição: é o que a entrada do atlas diz. */

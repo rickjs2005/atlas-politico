@@ -219,7 +219,7 @@ Regras, com teste (`tests/e2e/acabamento.spec.ts`):
 
 Não há rolagem com efeito nem paralaxe. O único movimento contínuo é o traço do aviso de carregamento do mapa.
 
-**Movimento reduzido.** Com `prefers-reduced-motion: reduce`, as animações e transições de CSS caem para 0,01 ms, o traço do carregamento fica parado, a rolagem da lista e da linha do tempo é imediata e o MapLibre troca o movimento de câmera por um salto. As mudanças de estado são as mesmas. As duas regras do link com consulta, que usam uma animação como relógio para revelar a tela se o código não chegar, ficam fora dessa redução. Os testes de navegador rodam nesse modo; os de transição ligam o movimento de propósito.
+**Movimento reduzido.** Com `prefers-reduced-motion: reduce`, as animações e transições de CSS caem para 0,01 ms, o traço do carregamento fica parado, a rolagem da lista e da linha do tempo é imediata e o MapLibre troca o movimento de câmera por um salto. As mudanças de estado são as mesmas. As duas regras do link com consulta, que usam uma animação como relógio para revelar a tela se o código não chegar, ficam fora dessa redução. Os testes de navegador rodam nesse modo; os de transição ligam o movimento de propósito. Uma consequência dessa redução foi medida em 12 de outubro de 2026 e não está corrigida: a área de um link com consulta muda um nível da página por quadro, ao aparecer e ao ser encoberta, e não de uma vez ([STATUS.md](STATUS.md), seção Depois do envio).
 
 ## Em demonstração
 

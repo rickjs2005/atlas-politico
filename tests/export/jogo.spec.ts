@@ -185,6 +185,10 @@ test.describe("páginas do jogo", () => {
       expect(html, slug).toContain(fases[0]!.titulo);
       expect(html, slug).toContain(periodLabel(fases[0]!.periodo));
       expect(html, slug).toContain("Abrir o marco");
+      // A faixa do passaporte já ocupa o lugar dela no cartão; a contagem entra quando o navegador lê o progresso.
+      expect(html, slug).toContain("Meu passaporte");
+      expect(html, slug).not.toContain("Concluídas:");
+      expect(html, slug).toContain("Os carimbos do passaporte reconhecem as fases concluídas: não são nota.");
       expect(html, slug).toContain("Ler sem o cenário");
       expect(html, slug).toContain("Como funciona");
       expect(html, slug).toContain("Escolher a outra trajetória");

@@ -226,6 +226,7 @@ export function CharacterSelect({ opcoes, notaDeRevisao }: CharacterSelectProps)
           <li>Toque na pasta em destaque no cenário, ou no botão Abrir o marco.</li>
           <li>Leia a explicação curta. As fontes e os termos explicados abrem no próprio texto.</li>
           <li>Responda a pergunta, ou peça a explicação, e siga para a fase seguinte. Errar não tira nada.</li>
+          <li data-passo-do-passaporte>Cada fase concluída deixa um carimbo no Passaporte do {ESCRIVAO_NOME}. Ele registra o caminho percorrido: não é nota.</li>
         </ol>
         <p className="text-ink-soft" data-avisos-do-jogo>
           São marcos documentados de cada trajetória, e não a vida inteira. O jogo não dá nota, não aponta vencedor e não recomenda voto. Os cenários e os

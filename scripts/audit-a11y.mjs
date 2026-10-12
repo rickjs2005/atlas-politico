@@ -14,16 +14,31 @@
 //   --saida <caminho>    pasta das capturas e do relatório (test-results/a11y)
 //
 // Sai com código 1 quando encontra texto abaixo do contraste mínimo, rolagem
-// lateral, resposta inesperada ou parada de foco que não dá para ver.
+// lateral, resposta inesperada ou parada de foco que não dá para ver. Reprova
+// também a tela que não parou de mudar antes da medição, a parada de teclado
+// lida com o foco ainda em transição e, nas telas do jogo que declaram o que
+// tem de estar na página (`presente`), a que não é a preparada. As telas com
+// mapa não declaram: em tela estreita o mapa não é montado, e a espera por ele
+// termina sem acusar.
+//
+// A passagem roda com movimento reduzido. Antes de medir, e depois de cada
+// Tab, espera a tela assentar: em um link com consulta, a área que vai mudar
+// fica encoberta até o endereço ser lido e, com movimento reduzido, aparece
+// aos poucos; e o controle que cresce com o foco só chega ao tamanho final
+// depois da transição (`untilStill`).
 //
 // As telas do jogo cobrem os dois personagens, a trajetória e os
 // aprofundamentos, e os estados de uma fase: a cena, a ajuda com o humor
 // desligado, a fase aberta, a resposta errada e a certa, a ordenação, a fase de
 // processos, um registro, uma decisão, a lista de fases, o resumo, a leitura
-// sem o cenário e a retomada. As janelas são abertas pela interface, e a
-// preferência é semeada no navegador, no formato que o jogo grava. Roda com o
-// gancho de módulos do projeto (package.json), que resolve os módulos do jogo
-// em TypeScript.
+// sem o cenário e a retomada; e o passaporte (D-150): a caderneta com três
+// carimbos, o carimbo que traz um selo e o fim das duas trajetórias. As
+// janelas são abertas pela interface, e a preferência é semeada no navegador,
+// no formato que o jogo grava. O progresso de quem percorreu as duas
+// trajetórias também é do jogo: a passagem percorre as duas uma vez, pela
+// interface, guarda o que ficou no navegador e devolve esse registro nas
+// vezes seguintes. Roda com o gancho de módulos do projeto (package.json),
+// que resolve os módulos do jogo em TypeScript.
 //
 // O que a passagem não vê: uma camada posta por cima do texto, como uma
 // hachura, não entra na conta do contraste. As capturas existem para isso, e
@@ -36,6 +51,7 @@ import path from "node:path";
 import { chromium } from "@playwright/test";
 
 import { DEFAULT_PREFERENCES, PREFERENCES_KEY, serializePreferences } from "@/lib/game/preferences";
+import { storageKey } from "@/lib/game/storage";
 
 const args = new Map();
 for (let i = 2; i < process.argv.length; i += 2) args.set(process.argv[i], process.argv[i + 1]);
@@ -44,6 +60,8 @@ const OUT_DIR = path.resolve(args.get("--pasta") ?? "out");
 const REPORT_DIR = path.resolve(args.get("--saida") ?? "test-results/a11y");
 const PORT = 4318;
 const BASE = `http://localhost:${PORT}`;
+// Um arquivo de texto da mesma origem, sem o código do jogo: é nele que o armazenamento do navegador é limpo entre as telas.
+const DOCUMENTO_SEM_JOGO = "/robots.txt";
 
 if (!existsSync(OUT_DIR)) {
   console.error(`Pasta ${path.relative(process.cwd(), OUT_DIR) || OUT_DIR} não encontrada. Rode \`npm run build\` antes.`);
@@ -90,6 +108,8 @@ const ERRADA = ORIGEM.atividade.opcoes.find((opcao) => opcao.id !== CERTA).id;
 
 // As janelas do jogo ignoram ponteiro por 350 ms ao abrir (D-107): os passos esperam a janela aceitar o clique.
 const GUARDA = 450;
+// O erro de uma tela que não parou de mudar no prazo (`untilStill`).
+const NAO_ASSENTOU = "A tela não assentou antes da medição: continuou encoberta à espera da consulta do endereço, ou com transição em andamento.";
 const janela = (page, nome) => page.waitForSelector(`[data-dialogo="${nome}"] [role="dialog"][data-aceita-ponteiro="sim"]`);
 async function abrirFase(page) {
   await page.locator("[data-abrir-marco]").click();
@@ -106,6 +126,22 @@ async function lerESeguir(page) {
   await page.locator('[data-dialogo="fase"] [data-continuar]').click();
 }
 
+// O que o jogo gravou no navegador para quem percorreu as duas trajetórias: pares de chave e valor, como estavam no
+// armazenamento. Fica vazio até a passagem percorrer as duas pela interface, na primeira vez que a tela é aberta.
+const PERSONAGENS = ["flavio-bolsonaro", "lula"];
+let duasTrajetorias = null;
+async function percorrerAsDuas(page) {
+  for (const slug of PERSONAGENS) {
+    await page.goto(`${BASE}/jogo/${slug}/?fase=1`);
+    await settle(page, { jogo: true });
+    for (let fase = 0; fase < trajetoriaDe(slug).length; fase += 1) await lerESeguir(page);
+    // Depois da última fase vem o resumo: é o sinal de que a trajetória foi até o fim.
+    await janela(page, "resumo");
+  }
+  duasTrajetorias = await page.evaluate((chaves) => chaves.map((chave) => [chave, window.localStorage.getItem(chave)]), PERSONAGENS.map(storageKey));
+  if (duasTrajetorias.some(([, valor]) => valor === null)) throw new Error("O jogo não gravou o progresso das duas trajetórias.");
+}
+
 const SCREENS = [
   { nome: "01-entrada", url: "/" },
   { nome: "02-exploracao-lula", url: "/politicos/lula/", mapa: true },
@@ -116,10 +152,10 @@ const SCREENS = [
   { nome: "07-metodologia", url: "/metodologia/" },
   { nome: "08-pagina-nao-encontrada", url: "/endereco-que-nao-existe/", status: 404 },
   { nome: "09-jogo-entrada", url: "/jogo/" },
-  { nome: "10-jogo-cena", url: "/jogo/lula/?fase=1", jogo: true },
-  { nome: "11-jogo-cena-flavio-bolsonaro", url: "/jogo/flavio-bolsonaro/?fase=1", jogo: true },
-  { nome: "12-jogo-aprofundamento-economia", url: "/jogo/lula/economia/", jogo: true },
-  { nome: "13-jogo-aprofundamento-seguranca", url: "/jogo/flavio-bolsonaro/seguranca-publica/", jogo: true },
+  { nome: "10-jogo-cena", url: "/jogo/lula/?fase=1", jogo: true, presente: '[data-palco="pronto"]' },
+  { nome: "11-jogo-cena-flavio-bolsonaro", url: "/jogo/flavio-bolsonaro/?fase=1", jogo: true, presente: '[data-palco="pronto"]' },
+  { nome: "12-jogo-aprofundamento-economia", url: "/jogo/lula/economia/", jogo: true, presente: '[data-palco="pronto"]' },
+  { nome: "13-jogo-aprofundamento-seguranca", url: "/jogo/flavio-bolsonaro/seguranca-publica/", jogo: true, presente: '[data-palco="pronto"]' },
   {
     nome: "14-jogo-ajuda-sem-humor",
     url: "/jogo/lula/?fase=1",
@@ -191,6 +227,51 @@ const SCREENS = [
       await lerESeguir(page);
       await page.goto(`${BASE}/jogo/lula/`);
       await settle(page, { jogo: true });
+    },
+  },
+  {
+    nome: "26-jogo-passaporte",
+    url: "/jogo/lula/?fase=1",
+    jogo: true,
+    presente: '[data-dialogo="passaporte"] [data-selo="primeiros-passos"][data-obtido="sim"]',
+    // Três fases concluídas pela leitura, e a caderneta aberta pela faixa do cartão: carimbos, espaços vazios e o primeiro selo.
+    preparar: async (page) => {
+      for (let fase = 0; fase < 3; fase += 1) await lerESeguir(page);
+      await page.locator("[data-abrir-passaporte]").click();
+      await janela(page, "passaporte");
+    },
+  },
+  {
+    nome: "27-jogo-carimbo-com-selo",
+    url: "/jogo/lula/?fase=1",
+    jogo: true,
+    presente: '[data-dialogo="fase"] [data-carimbo="novo"] [data-selo-novo]',
+    // A terceira fase concluída, ainda aberta: o carimbo novo, o selo que ele trouxe e a apresentação da fase seguinte.
+    preparar: async (page) => {
+      await lerESeguir(page);
+      await lerESeguir(page);
+      await abrirFase(page);
+      await page.locator('[data-dialogo="fase"] [data-ver-explicacao]').click();
+    },
+  },
+  {
+    nome: "28-jogo-fim-das-trajetorias",
+    url: `/jogo/lula/?fase=${ULTIMA.ordem}`,
+    jogo: true,
+    presente: '[data-dialogo="resumo"] [data-fim-da-trajetoria="todas"]',
+    // O registro das duas trajetórias percorridas, quando a passagem já o tem.
+    progresso: () => duasTrajetorias ?? [],
+    // Na primeira vez, as duas trajetórias são percorridas pela interface, e a tela é aberta de novo com o que o jogo
+    // gravou. Daí em diante o caminho é o mesmo: a última fase, já concluída, e o resumo, com a comparação e os aprofundamentos.
+    preparar: async (page) => {
+      if (duasTrajetorias === null) {
+        await percorrerAsDuas(page);
+        await page.goto(`${BASE}/jogo/lula/?fase=${ULTIMA.ordem}`);
+        await settle(page, { jogo: true });
+      }
+      await abrirFase(page);
+      await page.locator('[data-dialogo="fase"] [data-continuar]').click();
+      await janela(page, "resumo");
     },
   },
 ];
@@ -370,33 +451,85 @@ async function waitForServer() {
 }
 
 /**
- * Abre uma tela: nas do jogo, limpa o que ficou no navegador da tela anterior
- * (o progresso e as preferências) e semeia a preferência pedida antes de
- * recarregar. Depois espera o mapa ou a cena e roda o passo da tela.
+ * Abre uma tela: nas do jogo, limpa antes o que ficou no navegador da tela
+ * anterior (o progresso e as preferências) e semeia a preferência pedida e,
+ * na tela que pede, o progresso que o jogo gravou antes. Depois espera o mapa
+ * ou a cena e roda o passo da tela.
+ *
+ * A limpeza é feita em um documento da mesma origem que não roda o jogo, e a
+ * tela é aberta uma vez só. Limpar com a tela já aberta e recarregar apagava
+ * também o que ela tinha acabado de gravar: o pedido de leitura que vem pelo
+ * endereço vira a preferência guardada e sai do endereço e, sem a preferência,
+ * o recarregamento abria a cena, conforme a página terminasse antes ou depois
+ * da limpeza. Foi o que reprovou a tela da leitura na verificação contínua do
+ * commit f2efc28.
  */
 async function open(page, screen) {
-  let resposta = await page.goto(BASE + screen.url);
   if (screen.jogo) {
+    await page.goto(`${BASE}${DOCUMENTO_SEM_JOGO}`);
     await page.evaluate(
-      ({ prefixo, chaveDasPreferencias, preferencias }) => {
+      ({ prefixo, chaveDasPreferencias, preferencias, progresso }) => {
         for (const chave of Object.keys(window.localStorage)) if (chave.startsWith(prefixo)) window.localStorage.removeItem(chave);
         if (preferencias) window.localStorage.setItem(chaveDasPreferencias, preferencias);
+        for (const [chave, valor] of progresso) window.localStorage.setItem(chave, valor);
       },
       {
         prefixo: "atlas-politico:jogo",
         chaveDasPreferencias: PREFERENCES_KEY,
         // A preferência vai no formato que o jogo grava.
         preferencias: screen.preferencias ? serializePreferences(screen.preferencias) : null,
+        // O progresso, quando a tela pede, é o que o próprio jogo gravou antes, nesta passagem.
+        progresso: screen.progresso ? screen.progresso() : [],
       },
     );
-    resposta = await page.reload();
   }
+  const resposta = await page.goto(BASE + screen.url);
   await settle(page, screen);
   if (screen.preparar) {
     await screen.preparar(page);
     await page.waitForTimeout(GUARDA);
   }
-  return resposta;
+  // Por último, a tela tem de parar de mudar sozinha: medir antes disso é medir parte dela.
+  const { parou: assentou, ms: espera } = await page.evaluate(untilStill, { quadros: 5, prazo: 15_000 });
+  return { resposta, assentou, espera };
+}
+
+/**
+ * Roda na página: espera a tela parar de mudar por conta própria. Devolve se
+ * ela parou dentro do prazo e quantos milissegundos a espera levou.
+ *
+ * Duas coisas mudam a tela depois de carregada. Em um link com consulta, a
+ * área que vai mudar fica encoberta até o endereço ser lido (globals.css,
+ * `data-consulta`). E a passagem roda com movimento reduzido: nesse modo a
+ * regra do site põe uma transição de 0,01 ms em todo elemento, e uma
+ * propriedade herdada que entra em transição, como `visibility`, chega aos
+ * descendentes um nível por quadro. A comparação com período aparecia aos
+ * poucos, em cerca de 15 quadros, e a medição feita logo depois do
+ * carregamento pegava de 17 a 1.541 textos, conforme a largura e o instante.
+ * O mesmo vale para o foco: o tamanho de um controle que cresce ao receber o
+ * foco só é o final depois da transição.
+ */
+function untilStill({ quadros, prazo }) {
+  return new Promise((resolve) => {
+    const inicio = performance.now();
+    let parados = 0;
+    const responder = (parou) => {
+      clearTimeout(reserva);
+      resolve({ parou, ms: Math.round(performance.now() - inicio) });
+    };
+    // Se os quadros pararem de chegar, o prazo ainda vale: sem isto, a espera não terminaria nunca.
+    const reserva = setTimeout(() => responder(false), prazo + 2_000);
+    const passo = () => {
+      const encoberta = document.documentElement.hasAttribute("data-consulta");
+      // Transição ou animação com fim, ainda em andamento. `getAnimations` atualiza o estilo antes de responder, e por isso enxerga a do quadro.
+      const mudando = document.getAnimations().some((animacao) => animacao.playState === "running" && animacao.effect?.getComputedTiming().endTime !== Infinity);
+      parados = encoberta || mudando ? 0 : parados + 1;
+      if (parados >= quadros) responder(true);
+      else if (performance.now() - inicio > prazo) responder(false);
+      else requestAnimationFrame(passo);
+    };
+    requestAnimationFrame(passo);
+  });
 }
 
 async function settle(page, screen) {
@@ -449,7 +582,7 @@ for (const viewport of VIEWPORTS) {
   });
   for (const screen of SCREENS) {
     erros.length = 0;
-    const resposta = await open(page, screen);
+    const { resposta, assentou, espera } = await open(page, screen);
     const medidas = await page.evaluate(measurePage);
     await page.screenshot({ path: path.join(REPORT_DIR, `${screen.nome}--${viewport.sufixo}.png`) });
     // A tela preparada tem de continuar na página até o fim da medição e da captura: medir a tela seguinte sem
@@ -457,12 +590,16 @@ for (const viewport of VIEWPORTS) {
     if (screen.presente && (await page.locator(screen.presente).count()) === 0) {
       erros.push(`A tela preparada saiu antes do fim da medição (${screen.presente}).`);
     }
+    // Pelo mesmo motivo, uma tela que não assentou reprova: a medição seria a de parte dela.
+    if (!assentou) erros.push(NAO_ASSENTOU);
     report.telas.push({
       tela: screen.nome,
       url: screen.url,
       largura: `${viewport.width}×${viewport.height}`,
       status: resposta.status(),
       statusEsperado: screen.status ?? 200,
+      // Quanto a tela levou para parar de mudar, em milissegundos: uma demora nova aparece aqui antes de estourar o prazo.
+      assentouEm: espera,
       // O pedido de uma página que não existe aparece no console como erro: é o esperado.
       erros: erros.filter((erro) => !(screen.status === 404 && erro.includes("404"))),
       ...medidas,
@@ -479,10 +616,14 @@ for (const viewport of VIEWPORTS) {
 for (const screen of SCREENS) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
   const page = await context.newPage();
-  await open(page, screen);
+  const { assentou } = await open(page, screen);
   const paradas = [];
+  // Paradas lidas com o foco ainda em transição: o tamanho anotado não seria o final.
+  let inquietas = 0;
   for (let passo = 0; passo < 300; passo += 1) {
     await page.keyboard.press("Tab");
+    // O controle que cresce ao receber o foco (o link de pular para o conteúdo) só tem o tamanho final depois da transição.
+    if (!(await page.evaluate(untilStill, { quadros: 2, prazo: 2_000 })).parou) inquietas += 1;
     const atual = await page.evaluate(describeFocus);
     // Fim da página (o foco sai para o navegador) ou volta a um controle já visitado (uma janela aberta prende o foco).
     if (atual === null || atual.repetido) break;
@@ -490,7 +631,7 @@ for (const screen of SCREENS) {
   }
   // A mesma conferência da medição: a passagem do teclado tem de ser a da tela preparada.
   const mudou = Boolean(screen.presente) && (await page.locator(screen.presente).count()) === 0;
-  report.teclado.push({ tela: screen.nome, url: screen.url, paradas, mudou });
+  report.teclado.push({ tela: screen.nome, url: screen.url, paradas, mudou, assentou, inquietas });
   await context.close();
 }
 
@@ -512,10 +653,10 @@ for (const item of report.telas) {
 }
 for (const item of report.teclado) {
   const ruins = item.paradas.filter((parada) => !parada.visivel || !parada.naTela || !parada.indicador);
-  const ruim = ruins.length > 0 || item.paradas.length === 0 || item.mudou;
+  const ruim = ruins.length > 0 || item.paradas.length === 0 || item.mudou || !item.assentou || item.inquietas > 0;
   if (ruim) problemas += 1;
   console.log(
-    `${ruim ? "FALHA" : "ok   "} ${item.tela.padEnd(31)} teclado: ${item.paradas.length} paradas, ${ruins.length} sem foco visível${item.mudou ? ", a tela preparada saiu durante a passagem" : ""}`,
+    `${ruim ? "FALHA" : "ok   "} ${item.tela.padEnd(31)} teclado: ${item.paradas.length} paradas, ${ruins.length} sem foco visível${item.mudou ? ", a tela preparada saiu durante a passagem" : ""}${item.assentou ? "" : ", a tela não assentou antes da passagem"}${item.inquietas > 0 ? `, ${item.inquietas} parada(s) lida(s) com o foco ainda em transição` : ""}`,
   );
 }
 console.log(`Capturas e relatório em ${path.relative(process.cwd(), REPORT_DIR)}.`);

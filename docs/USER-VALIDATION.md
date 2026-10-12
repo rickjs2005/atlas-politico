@@ -1,6 +1,6 @@
 # Validação com pessoas
 
-**Situação: pendente.** Até 11 de outubro de 2026, nenhuma sessão foi feita, com ninguém. Este documento traz o roteiro pronto e as fichas em branco. Os resultados entram aqui só depois de sessões reais, com as palavras de quem participou. A trilha simples do jogo ([GAME-TRAIL.md](GAME-TRAIL.md)) trocou a tarefa 5 e as perguntas do jogo, que agora são as de 12 a 19, e o roteiro de celular real do fim deste documento.
+**Situação: pendente.** Até 12 de outubro de 2026, nenhuma sessão foi feita, com ninguém. Este documento traz o roteiro pronto e as fichas em branco. Os resultados entram aqui só depois de sessões reais, com as palavras de quem participou. A trilha simples do jogo ([GAME-TRAIL.md](GAME-TRAIL.md)) trocou a tarefa 5 e as perguntas do jogo, que agora são as de 12 a 19, e o roteiro de celular real do fim deste documento. O passaporte do Escrivão (D-150) acrescentou a pergunta 20 e o passo 16 desse roteiro.
 
 O que a validação responde: uma pessoa que nunca viu o atlas consegue, sem ajuda, encontrar um episódio, chegar à fonte, comparar as duas trajetórias e mandar o resultado para alguém? E uma pessoa que conhece pouco de política consegue seguir o jogo sozinha e sair dele sabendo dizer de onde a pessoa veio, que cargos teve e o que um desses cargos faz? Os testes automáticos de [QA.md](QA.md) mostram que as telas funcionam. Eles não mostram se uma pessoa entende o que vê.
 
@@ -85,7 +85,7 @@ Não leia para o participante. Os dados são os da edição 0.3.0; os acontecime
 | 2 | Abrir um documento da lista de fontes do registro e dizer algo que esteja no campo "O que sustenta" daquela fonte | A pessoa acha as fontes sem ajuda? Lê "Onde" e "O que sustenta"? Volta ao atlas depois de abrir o documento? Nas fichas do TSE, a página demora e é de outro site: anote a reação |
 | 3 | Chegar a uma tela com as duas pessoas no período de 2019 a 2022. Nesse recorte, o atlas tem 8 registros de Flávio Bolsonaro e 3 de Lula | A leitura esperada é que a quantidade mostra o que o atlas registrou, e não quem fez mais. Anote a frase exata que a pessoa usou para explicar a diferença |
 | 4 | Produzir um link que, aberto em outro lugar, mostra o mesmo período e as mesmas duas pessoas | A pessoa usa o botão de copiar ou a barra de endereço? Os dois valem. Se o link aberto não mostrar o mesmo recorte, anote como defeito |
-| 5 | Terminar a terceira fase da trajetória escolhida sem ajuda e responder às perguntas 1 e 2 com o que as fases dizem (abaixo). Responder à pergunta 3 com algo próximo da definição que a fase traz | A pessoa descobre sozinha que é para tocar na pasta ou no botão **Abrir o marco**? Lê a explicação ou vai direto à pergunta? Abre algum termo explicado? Abre **Ver fontes**? Quando erra, lê a explicação e tenta de novo, ou usa o botão de seguir? Usa **Ver a explicação e continuar**? Abre alguma pasta opcional? Percebe o aviso "Ainda não pesquisado nesta edição"? Em celular: os botões respondem, a pasta do marco fica à vista, a cena ficou fluida? Anote o tempo das três fases e as frases exatas das respostas |
+| 5 | Terminar a terceira fase da trajetória escolhida sem ajuda e responder às perguntas 1 e 2 com o que as fases dizem (abaixo). Responder à pergunta 3 com algo próximo da definição que a fase traz | A pessoa descobre sozinha que é para tocar na pasta ou no botão **Abrir o marco**? Lê a explicação ou vai direto à pergunta? Abre algum termo explicado? Abre **Ver fontes**? Quando erra, lê a explicação e tenta de novo, ou usa **Ver a explicação e continuar**? Usa esse botão antes de responder? Abre alguma pasta opcional? Percebe o aviso "Ainda não pesquisado nesta edição"? Em celular: os botões respondem, a pasta do marco fica à vista, a cena ficou fluida? Anote o tempo das três fases e as frases exatas das respostas |
 
 O que as três primeiras fases dizem, para conferir as respostas da tarefa 5:
 
@@ -128,6 +128,7 @@ Faça depois das cinco tarefas. Anote a resposta como foi dita.
 17. Se você viu a fase sobre processos na Justiça: o que aconteceu, e em que ordem? O jogo pediu para você julgar alguém?
 18. Se você viu a fase da eleição de 2026: o que é uma proposta de governo? Ela é algo que a pessoa fez?
 19. Em celular: os botões foram fáceis de tocar? A cena travou em algum momento? Você tentou "Ler sem o cenário"?
+20. Ao terminar uma fase aparece um carimbo, e o cartão da fase tem **Meu passaporte**. O que você entendeu que o carimbo é? Ele deu vontade de seguir para a fase seguinte, atrapalhou ou passou despercebido? Pareceu uma nota?
 
 **Geral**
 
@@ -156,7 +157,7 @@ Uma por participante. Não registre nome completo, contato nem posição políti
 | 4. Compartilhar | | | | |
 | 5. Seguir três fases do jogo, com o tempo gasto | | | | |
 
-Respostas às perguntas do fim: (a preencher, numeradas de 1 a 19)
+Respostas às perguntas do fim: (a preencher, numeradas de 1 a 20)
 
 ### Participante 2
 
@@ -176,7 +177,7 @@ Respostas às perguntas do fim: (a preencher, numeradas de 1 a 19)
 | 4. Compartilhar | | | | |
 | 5. Seguir três fases do jogo, com o tempo gasto | | | | |
 
-Respostas às perguntas do fim: (a preencher, numeradas de 1 a 19)
+Respostas às perguntas do fim: (a preencher, numeradas de 1 a 20)
 
 ### Participante 3
 
@@ -196,7 +197,7 @@ Respostas às perguntas do fim: (a preencher, numeradas de 1 a 19)
 | 4. Compartilhar | | | | |
 | 5. Seguir três fases do jogo, com o tempo gasto | | | | |
 
-Respostas às perguntas do fim: (a preencher, numeradas de 1 a 19)
+Respostas às perguntas do fim: (a preencher, numeradas de 1 a 20)
 
 ## Depois das sessões
 
@@ -212,13 +213,13 @@ Respostas às perguntas do fim: (a preencher, numeradas de 1 a 19)
 
 ## A trilha em celular real
 
-Roteiro curto para o responsável pelo projeto executar em um celular de verdade. A trilha só foi conferida em emulação. Leva uns quinze minutos. Anote o aparelho, o navegador e o que aconteceu em cada passo.
+Roteiro curto para o responsável pelo projeto executar em um celular de verdade. A trilha só foi conferida em emulação. Leva de quinze a vinte minutos. Anote o aparelho, o navegador e o que aconteceu em cada passo.
 
 1. Abra `/jogo/` no celular, em pé. Confira: os dois cartões cabem na tela sem rolagem lateral; em cada um, o nome e o botão **Começar do início**, com o ano, aparecem antes da prévia do cenário; **Ler sem o cenário** está logo abaixo.
 2. Toque em **Começar do início** em uma das trajetórias. Confira: o cartão da fase vai de um lado ao outro e diz "Trajetória · Fase 1 de 9", o período e o título; a sala aparece inteira entre o cartão e o botão **Abrir o marco**; a pasta do marco está à vista, com o rótulo "Abrir".
 3. Toque na pasta. Confira: o boneco anda até ela e a explicação abre; a janela não fecha sozinha com um segundo toque dado por reflexo; dá para rolar o texto inteiro dentro da janela.
 4. Abra um termo explicado e **Ver fontes**. Confira: abrem no lugar, sem trocar de tela, e o link de um documento abre em outra aba.
-5. Erre a pergunta de propósito. Confira: aparece "Ainda não." com a explicação, sem a resposta certa marcada, e os botões **Tentar de novo** e de seguir ficam à vista. Tente de novo e acerte: aparece "Certo." e o botão **Continuar: fase 2**.
+5. Erre a pergunta de propósito. Confira: aparece "Ainda não." com a explicação, sem a resposta certa marcada, e os botões **Tentar de novo** e **Ver a explicação e continuar** ficam à vista. Tente de novo e acerte: aparece "Certo." e o botão **Continuar: fase 2**.
 6. Na fase 2 de Lula, ou na 6 de Flávio Bolsonaro, faça a ordenação: toque nos três registros na ordem. Confira que o número de cada um aparece e que dá para desfazer um toque.
 7. Em uma fase que tenha pasta com o sinal de mais (a fase 1 de Lula tem uma; na trajetória de Flávio Bolsonaro, a partir da fase 2), toque nela. Confira: o registro abre em uma janela; **Voltar ao cenário** devolve a cena como estava.
 8. Abra **Fases**. Confira: a lista mostra a situação de cada fase; abra a última e volte à primeira, sem que nada apareça como perdido. Desligue o humor ali e confira que, em uma fase ainda não concluída, a fala em itálico do cartão da fase some na hora.
@@ -229,6 +230,7 @@ Roteiro curto para o responsável pelo projeto executar em um celular de verdade
 13. Abra a fase 9 pela lista, conclua a atividade e use **Ver o resumo**. Diga se o resumo se entende sem ajuda e se os caminhos do fim fazem sentido.
 14. Nas fases de processos (a 7 de Lula e a 6 de Flávio Bolsonaro), o Escrivão não faz humor, mesmo com o humor ligado. Diga se o tom está certo, e se alguma outra fase deveria ficar sem humor.
 15. Abra `/comparar/` e toque em **Para começar: resumo por cargo e por área**. Diga se o resumo se entende sem ajuda. Role até **O que cada documento propõe** e confira que as três frases de cada área cabem na largura da tela.
+16. Conclua uma fase e olhe o carimbo. Confira: ele aparece com o título da fase e uma confirmação curta; logo abaixo vêm **A seguir**, com a fase seguinte, e o botão **Continuar**, sem precisar fechar nada. De volta à cena, toque em **Meu passaporte**, no cartão da fase. Confira: a linha "Concluídas" mudou; a caderneta cabe na tela, os espaços são fáceis de tocar, e fechar volta à cena. Diga se o carimbo cobre algum texto ou botão, e se o tom está certo.
 
 Registre aqui o resultado:
 

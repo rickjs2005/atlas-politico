@@ -2,9 +2,9 @@
 
 O atlas é um site estático (`next build` com `output: "export"` gera `out/`). Nenhuma parte precisa de servidor de aplicação, banco, login ou serviço pago: a hospedagem é de arquivos. **A publicação só acontece com autorização expressa do responsável pelo projeto.** Nenhum comando de deploy roda por conta do código deste repositório.
 
-## Situação em 11 de outubro de 2026
+## Situação em 12 de outubro de 2026
 
-**O site está no ar em um endereço provisório, e um push na `main` pode publicar.** Leia esta seção antes de enviar qualquer commit.
+**O site está no ar em um endereço provisório, e um push na `main` publica.** Leia esta seção antes de enviar qualquer commit.
 
 | Fato | Como foi conferido |
 | --- | --- |
@@ -13,13 +13,17 @@ O atlas é um site estático (`next build` com `output: "export"` gera `out/`). 
 | O jogo que estava no ar era o anterior | Nos mesmos pedidos: `/jogo/lula/` trazia o painel **Capítulos e tarefas**, que a trilha não tem |
 | O projeto na Vercel foi criado pela importação do repositório do GitHub, ramo `main`, e a primeira versão publicada foi a do commit `f084733` | Consulta ao projeto na Vercel, no mesmo dia, depois de o responsável pedir a publicação |
 | O que estava no ar era igual à saída local daquele commit | Conferência do mesmo dia: o texto de cada página, os arquivos de nome fixo, a página 404 do atlas e a ausência de pedidos a outros domínios |
-| Um push na `main` publica em produção | **Não tinha sido observado quando esta seção foi escrita:** nenhum push tinha acontecido depois da importação. É o comportamento padrão da Vercel para um projeto ligado a um repositório. O envio da trilha simples e da edição 0.3.0 é o primeiro. Para saber o que está no ar, abra a metodologia no endereço e leia a edição |
+| Um push na `main` publica em produção | **Observado em 12 de outubro de 2026,** no primeiro push depois da importação: o commit `f2efc28`, com a trilha simples e a edição 0.3.0, foi enviado à 1h30, a publicação ficou pronta à 1h31, e à 1h32 a metodologia do endereço já trazia a edição 0.3.0, com as páginas ainda sem indexação. Para saber o que está no ar, abra a metodologia no endereço e leia a edição |
+| Na madrugada de 12 de outubro de 2026, a publicação de produção era a do commit `f2efc28` | Consulta ao projeto na Vercel nessa madrugada: a publicação ligada ao endereço veio do Git, do ramo `main` e desse commit, foi criada à 1h30 e ficou pronta à 1h31 |
+| A publicação não espera a verificação contínua do GitHub | No mesmo envio: a publicação ficou pronta à 1h31, pelo registro da Vercel, e a verificação do commit terminou à 1h44, vermelha em um passo ([STATUS.md](STATUS.md), seção Depois do envio) |
 
 O que isso muda:
 
-- **Todo push na `main` deve ser tratado como publicação,** até alguém conferir no painel da Vercel ou desligar a publicação automática. A regra da MilWeb continua: commit e push só com pedido do responsável. O que muda é a consequência do push.
-- **A versão publicada pode não ser a deste repositório.** Até o envio da trilha simples, o endereço mostrava a edição 0.2.1, com o jogo de exploração. A trilha e a edição 0.3.0 vão ao ar se o push publicar, ou por uma publicação manual. A edição escrita na metodologia do endereço diz qual das duas está lá.
-- **O build desta versão na Vercel não tinha sido testado quando esta seção foi escrita.** Pelo padrão dela para um projeto com script de build, a Vercel roda `npm run build`, que gera os dados, confere as imagens, monta o site e ajusta a saída; a configuração não foi conferida no painel. A publicação do commit `f084733` funcionou.
+- **Todo push na `main` é uma publicação,** enquanto a publicação automática estiver ligada no projeto da Vercel. A regra da MilWeb continua: commit e push só com pedido do responsável. O que muda é a consequência do push.
+- **O que está no ar.** Até o envio da trilha simples, o endereço mostrava a edição 0.2.1, com o jogo de exploração; desde 12 de outubro de 2026, mostra a trilha e a edição 0.3.0. O envio seguinte, pedido no mesmo dia, acrescenta ao jogo o Passaporte do Escrivão, sem mudar a edição do conteúdo. A edição escrita na metodologia do endereço diz que conteúdo está lá; para saber de que commit é a publicação, consulte o projeto na Vercel.
+- **O build da trilha, no commit `f2efc28`, rodou na Vercel e foi ao ar.** Pelo padrão dela para um projeto com script de build, a Vercel roda `npm run build`, que gera os dados, confere as imagens, monta o site e ajusta a saída; a configuração não foi conferida no painel, e o registro do build não foi lido. As publicações dos commits `f084733` e `f2efc28` funcionaram.
+- **O commit `f2efc28` ficou no ar com a verificação contínua vermelha em um passo.** A passagem de acessibilidade reprovou a tela da leitura sem o cenário no GitHub, por um defeito do roteiro de medição, e não do site; o roteiro foi corrigido depois ([STATUS.md](STATUS.md), seção Depois do envio). O passo 4, abaixo, pede a verificação verde no commit publicado: no `f2efc28`, ela não ficou.
+- **O envio seguinte foi pedido com a verificação na máquina incompleta.** Ele traz a correção do roteiro e o Passaporte do Escrivão. As suítes de navegador não terminaram na máquina, por falta de memória, e a passagem de acessibilidade não rodou com as telas novas ([STATUS.md](STATUS.md), seção Passaporte do Escrivão). O resultado da verificação contínua desse commit não é conhecido quando este texto é escrito: leia-o no GitHub antes de confiar no que está no ar.
 - **A publicação aconteceu antes da revisão humana e da validação com pessoas,** por decisão do responsável pelo projeto (D-147). A barreira do passo 2, abaixo, continua recusando, e as telas dizem "Revisão humana pendente". Nenhum documento do projeto diz que a revisão ou a validação aconteceram.
 - **O endereço `*.vercel.app` não é o domínio do atlas.** Só passa a ser se o responsável decidir, e então entra em `publicUrl`.
 
@@ -44,8 +48,8 @@ A publicação da edição final depende de um comando: `npm run release:check`,
 1. Conteúdo: a edição a publicar está em `content/`, com `alteracoes` registradas, e a revisão humana feita ([HUMAN-REVIEW.md](HUMAN-REVIEW.md)). O código nunca registra revisão como humana.
 2. `npm run verify:release`: a barreira de release (`src/lib/editorial/release.ts`). Recusa a publicação, com o diagnóstico, enquanto houver registro sem revisão humana, ou domínio e canal de correção sem valor em `src/lib/site.ts`; avisa, sem recusar, quando a indexação está desligada e quando não há arquivo LICENSE. É uma régua diferente da do build: `npm run check` continua passando com o conteúdo em conferência, de propósito, para o desenvolvimento não parar. Publicar com a barreira recusando é uma mudança de política, que precisa ficar escrita em [EDITORIAL.md](EDITORIAL.md) e nas telas.
 3. `npm run check`: lint, tipos, testes, build e verificação da exportação, tudo verde.
-4. `npm run test:export` e `npm run test:journeys` sobre o `out/` recém-gerado, e `npm run test:e2e`. A verificação contínua do GitHub (`.github/workflows/verificacao.yml`) roda o mesmo a cada push na `main` e a cada pull request, e tem de estar verde no commit publicado.
-5. `npm run audit:a11y` (as oito telas do atlas e dezessete do jogo, com o ciclo de uma fase, a leitura sem o cenário e a retomada) e `npm run measure -- --rotulo <data>` e `npm run measure:game -- --rotulo <data>` (a entrada do jogo, a primeira fase de cada trajetória, uma fase pedida pelo endereço, um aprofundamento de cada personagem e a leitura sem o cenário): registrar os números em [PERFORMANCE.md](PERFORMANCE.md) e em [STATUS.md](STATUS.md).
+4. `npm run test:export` e `npm run test:journeys` sobre o `out/` recém-gerado, e `npm run test:e2e`. A verificação contínua do GitHub (`.github/workflows/verificacao.yml`) roda o mesmo a cada push na `main` e a cada pull request, e tem de estar verde no commit publicado. Com a publicação a cada push, a Vercel publica sem esperar por ela: o que protege a publicação são as suítes rodadas na máquina antes do push, e a verificação é conferida depois.
+5. `npm run audit:a11y` (as oito telas do atlas e vinte do jogo, com o ciclo de uma fase, a leitura sem o cenário, a retomada e o passaporte) e `npm run measure -- --rotulo <data>` e `npm run measure:game -- --rotulo <data>` (a entrada do jogo, a primeira fase de cada trajetória, uma fase pedida pelo endereço, um aprofundamento de cada personagem e a leitura sem o cenário): registrar os números em [PERFORMANCE.md](PERFORMANCE.md) e em [STATUS.md](STATUS.md).
 6. Capturas: `npm run capture:game` e as demais, para a conferência visual da versão candidata.
 7. Conferir a primeira dobra em celular real, em pé e deitado, e o jogo em aparelho real ([USER-VALIDATION.md](USER-VALIDATION.md)).
 

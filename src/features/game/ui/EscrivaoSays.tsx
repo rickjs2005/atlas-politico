@@ -6,13 +6,15 @@
 // armazenamento que o botão de desligar escreve: desligar tira o humor de
 // toda fala já escolhida, na hora, em todas as telas (D-127). Só a instrução
 // é anunciada como estado para quem ouve a página; o humor fica como texto
-// comum, para o leitor de tela não repetir tudo a cada atualização.
+// comum, para o leitor de tela não repetir tudo a cada atualização. Quem já
+// anuncia o mesmo momento por outra linha (o carimbo, na fase) pede a
+// instrução como texto comum, com `anunciar={false}`.
 
 import { CAMADA_LABELS, ESCRIVAO_NOME, falasVisiveis, type FalaDita } from "@/lib/game/escrivao";
 
 import { useGamePreferences } from "../hooks";
 
-export function EscrivaoSays({ falas, evento, className = "" }: { falas: readonly FalaDita[]; evento: string; className?: string }) {
+export function EscrivaoSays({ falas, evento, anunciar = true, className = "" }: { falas: readonly FalaDita[]; evento: string; anunciar?: boolean; className?: string }) {
   const { preferencias } = useGamePreferences();
   const visiveis = falasVisiveis(falas, preferencias.humor);
   if (visiveis.length === 0) return null;
@@ -23,7 +25,7 @@ export function EscrivaoSays({ falas, evento, className = "" }: { falas: readonl
         <p
           key={fala.id}
           className={`text-sm ${fala.camada === "humor" ? "italic text-ink-soft" : "font-medium"}`}
-          role={fala.camada === "instrucao" ? "status" : undefined}
+          role={anunciar && fala.camada === "instrucao" ? "status" : undefined}
           data-fala={fala.id}
           data-camada={fala.camada}
         >

@@ -368,6 +368,57 @@ html[data-consulta] [data-consulta-aviso] {
   }
 }
 
+/*
+  O Passaporte do Escrivão (docs/GAMEPLAY.md, D-150). O carimbo de uma fase
+  concluída é uma moldura de tinta, levemente girada, com o título da fase
+  dentro: papel e tinta, sem imagem. As cores são os tokens do atlas, as mesmas
+  para as duas pessoas. O giro vem de `--giro`, que a tela escolhe pela posição
+  da fase.
+
+  O carimbo que acabou de entrar bate uma vez, na fase, igual em toda fase.
+  Com movimento reduzido, aparece parado. O marcador da faixa do cartão não
+  tem animação: só muda de cor.
+*/
+.jogo-carimbo {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  max-width: 100%;
+  border: 2px solid var(--atlas-accent);
+  border-radius: 0.25rem;
+  outline: 1px solid var(--atlas-accent);
+  outline-offset: 2px;
+  padding: 0.375rem 0.625rem;
+  color: var(--atlas-ink);
+  text-align: left;
+  transform: rotate(var(--giro, -2deg));
+}
+
+.jogo-carimbo-novo {
+  animation: jogo-carimbo 420ms var(--atlas-ease) both;
+}
+
+@keyframes jogo-carimbo {
+  0% {
+    opacity: 0;
+    transform: scale(1.45) rotate(calc(var(--giro, 0deg) - 6deg));
+  }
+  55% {
+    opacity: 1;
+    transform: scale(0.96) rotate(var(--giro, 0deg));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(var(--giro, 0deg));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jogo-carimbo-novo {
+    animation: none;
+  }
+}
+
 /* Janela baixa (celular deitado): o que fica sobre a cena encolhe. */
 @custom-variant janela-baixa (@media (max-height: 30rem));
 /* Janela curta (celular pequeno em pé): o que é enfeite sai de cima da cena. */

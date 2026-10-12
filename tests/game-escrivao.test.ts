@@ -140,7 +140,7 @@ describe("o Escrivão nas fases publicadas", () => {
         for (const fase of buildGameContent(data, perfil.slug, sala)!.fases) {
           if (!fase.sensivel) continue;
           sensiveis.push(fase.id);
-          for (const evento of ["entrada", "erro", "conclusao"] as const) {
+          for (const evento of ["entrada", "erro", "conclusao", "carimbo"] as const) {
             expect(selectLines({ sala, evento, humor: true, vez: fase.numero - 1, sensivel: fase.sensivel }).some((item) => item.camada === "humor"), `${fase.id} ${evento}`).toBe(false);
           }
         }

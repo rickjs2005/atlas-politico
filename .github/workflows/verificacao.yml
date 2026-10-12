@@ -1,8 +1,8 @@
 # Verificação contínua (docs/QA.md): o que `npm run check` e as suítes sobre a
 # exportação conferem na máquina, repetido a cada push na `main` e a cada pull
 # request. Este fluxo não publica nada. A publicação não passa por ele: o
-# projeto na Vercel está ligado ao repositório, e um push na `main` pode
-# publicar por lá, com este fluxo verde ou não (docs/DEPLOY.md).
+# projeto na Vercel está ligado ao repositório, e um push na `main` publica
+# por lá, sem esperar este fluxo, verde ou não (docs/DEPLOY.md).
 name: Verificação
 
 on:

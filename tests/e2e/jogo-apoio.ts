@@ -6,15 +6,53 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
 import { readSources, resolvePaths } from "@/lib/content/sources";
-import { buildGameContent } from "@/lib/game/content";
+import type { AtlasData } from "@/lib/data/types";
+import { buildGameContent, buildProgressKeys, type ProgressKeys } from "@/lib/game/content";
 import { selectLines, type EscrivaoEvent } from "@/lib/game/escrivao";
 import { periodLabel, roomLabel, roomOf } from "@/lib/game/rooms";
 import { storageKey } from "@/lib/game/storage";
 import { correctOrder, refKey } from "@/lib/game/trail";
-import type { GameContent, PersonagemSlug, PhaseSpec, PlayerProgress, RoomId } from "@/lib/game/types";
+import { PROGRESS_VERSION, type GameContent, type PersonagemSlug, type PhaseSpec, type PlayerProgress, type RoomId } from "@/lib/game/types";
 import { buildAtlasData } from "@/lib/publication/build";
+import { canonicalJson } from "@/lib/publication/stable-json";
 
 export const data = buildAtlasData(readSources(resolvePaths())).data!;
+
+/**
+ * As chaves do progresso de um personagem como a página as recebe. O build lê
+ * os dados gerados, que são gravados com as chaves em ordem alfabética
+ * (src/lib/publication/stable-json.ts), e a assinatura de uma ordenação resume
+ * as datas dos registros como objetos: a ordem das chaves entra no resumo. Um
+ * progresso montado pelo teste só é aceito pela página com as assinaturas
+ * tiradas da mesma forma dos dados.
+ */
+export function chavesDoBuild(slug: Slug): ProgressKeys {
+  return buildProgressKeys(JSON.parse(canonicalJson(data)) as AtlasData, slug);
+}
+
+/** Um progresso no formato atual, como o jogo o grava, com as fases dadas concluídas: é quem chega com carimbos de uma visita anterior. */
+export function progressoCom(slug: Slug, ids: readonly string[], como: "resposta" | "explicacao" = "explicacao") {
+  const { assinaturas } = chavesDoBuild(slug);
+  return {
+    versao: PROGRESS_VERSION,
+    personagem: slug,
+    fases: Object.fromEntries(ids.map((id) => [id, { vista: true, tentativas: como === "resposta" ? 1 : 0, concluida: como, assinatura: assinaturas[id] }])),
+    posicao: {},
+  };
+}
+
+/** Põe um progresso no navegador antes de a página ler o armazenamento, e só uma vez: depois, quem escreve é o jogo. */
+export async function semear(page: Page, slug: Slug, progresso: unknown) {
+  await page.addInitScript(
+    ([chave, valor]) => {
+      const marca = `semeado:${chave}`;
+      if (window.sessionStorage.getItem(marca) !== null) return;
+      window.localStorage.setItem(chave!, valor!);
+      window.sessionStorage.setItem(marca, "1");
+    },
+    [storageKey(slug), JSON.stringify(progresso)],
+  );
+}
 
 export const PERSONAGENS = ["flavio-bolsonaro", "lula"] as const satisfies readonly PersonagemSlug[];
 export type Slug = (typeof PERSONAGENS)[number];
@@ -51,6 +89,11 @@ export function ordemDe(fase: PhaseSpec, content: GameContent): string[] {
 /** A instrução que o Escrivão dá em um momento: a mesma que a tela escolhe, tirada do catálogo. */
 export function instrucaoDe(evento: EscrivaoEvent, vez: number, sala: RoomId = "historico"): string {
   return selectLines({ sala, evento, humor: false, vez }).find((fala) => fala.camada === "instrucao")!.texto;
+}
+
+/** A fala de humor de um momento, fora de contexto sensível: a mesma que a tela escolhe, tirada do catálogo. */
+export function humorDe(evento: EscrivaoEvent, vez: number, sala: RoomId = "historico"): string {
+  return selectLines({ sala, evento, humor: true, vez, sensivel: false }).find((fala) => fala.camada === "humor")!.texto;
 }
 
 export { refKey, storageKey };
@@ -97,6 +140,16 @@ export async function abrirMarco(page: Page): Promise<Locator> {
 /** Responde a pergunta da fase aberta com a opção dada. `onde` é a janela da fase ou a página, na leitura sem o cenário. */
 export async function responder(onde: Locator | Page, opcaoId: string) {
   await onde.locator(`[data-opcao="${opcaoId}"]`).click();
+  await onde.locator("[data-responder]").click();
+}
+
+/** Responde certo a atividade da fase aberta, seja pergunta ou ordenação. `onde` é a janela da fase ou a página, na leitura sem o cenário. */
+export async function responderCerto(onde: Locator | Page, fase: PhaseSpec, content: GameContent) {
+  if (fase.atividade.tipo === "pergunta") {
+    await responder(onde, fase.atividade.correta);
+    return;
+  }
+  for (const chave of correctOrder(fase.atividade, content)) await onde.locator(`[data-ordem-item="${chave}"]`).click();
   await onde.locator("[data-responder]").click();
 }
 

@@ -15,11 +15,14 @@ import type { RoomId } from "../types";
 /**
  * Quando o Escrivão fala: ao abrir uma fase (`entrada`), em "Como funciona"
  * (`ajuda`), ao abrir um registro opcional do período (`explorar`), depois
- * de uma resposta errada (`erro`) e quando a fase termina (`conclusao`).
+ * de uma resposta errada (`erro`), quando a fase acaba de ser concluída e o
+ * carimbo dela entra no passaporte (`carimbo`, D-150) e ao rever uma fase que
+ * já estava concluída (`conclusao`). O carimbo e a conclusão são o mesmo
+ * lugar da tela em horas diferentes: nunca aparecem juntos.
  */
-export type EscrivaoEvent = "entrada" | "ajuda" | "explorar" | "erro" | "conclusao";
+export type EscrivaoEvent = "entrada" | "ajuda" | "explorar" | "erro" | "conclusao" | "carimbo";
 
-export const ESCRIVAO_EVENTS: readonly EscrivaoEvent[] = ["entrada", "ajuda", "explorar", "erro", "conclusao"];
+export const ESCRIVAO_EVENTS: readonly EscrivaoEvent[] = ["entrada", "ajuda", "explorar", "erro", "conclusao", "carimbo"];
 
 export type Camada = "instrucao" | "humor";
 

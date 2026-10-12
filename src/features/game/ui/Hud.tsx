@@ -9,6 +9,11 @@
 // Nada do guia cobre o caminho do boneco nem o botão principal: a instrução é
 // uma linha dentro do cartão da fase (D-133).
 //
+// O progresso fica à vista no mesmo cartão, em uma faixa só (D-150): o que foi
+// concluído, o que falta, um marcador por fase e o botão do passaporte. A
+// posição ("Fase 4 de 9") e a contagem ("Concluídas: 2 de 9") são linhas
+// diferentes: estar em uma fase não é tê-la concluído.
+//
 // Quem chega sem pedir fase cai onde tinha parado: o cartão diz isso e
 // oferece o começo, com o ano (ResumeNotice).
 //
@@ -22,6 +27,7 @@ import Link from "next/link";
 
 import { PATH_LINK } from "@/components/touch";
 import { falasVisiveis, type FalaDita } from "@/lib/game/escrivao";
+import type { StampCount, TrailMarker } from "@/lib/game/passport";
 import { periodLabel, roomLabel, type RoomSpec } from "@/lib/game/rooms";
 import type { PhaseSpec } from "@/lib/game/types";
 import { gameHref } from "@/lib/state/links";
@@ -29,6 +35,7 @@ import { gameHref } from "@/lib/state/links";
 import { useGamePreferences } from "../hooks";
 
 import { primaryButton, secondaryButton } from "./Dialog";
+import { PassportStrip } from "./Passport";
 
 /** O que a tela diz a quem caiu onde tinha parado, sem ter escolhido a fase. */
 export interface ResumeInfo {
@@ -67,6 +74,8 @@ interface HudProps {
   falas: readonly FalaDita[];
   /** A pessoa caiu nesta fase pela retomada, sem tê-la escolhido: o cartão diz isso e oferece o começo. */
   retomada: ResumeInfo | null;
+  /** O progresso da sala aberta, para a faixa do passaporte: os marcadores, a contagem e se o salvo já foi lido. */
+  passaporte: { marcadores: readonly TrailMarker[]; contagem: StampCount; carregado: boolean };
   onGoToStart(): void;
   /** A cena está pronta para o toque: antes disso, o botão principal abre a explicação direto. */
   onOpenMarker(): void;
@@ -74,9 +83,10 @@ interface HudProps {
   onOpenPhases(): void;
   onOpenHelp(): void;
   onReadWithoutScene(): void;
+  onOpenPassport(): void;
 }
 
-export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retomada, onGoToStart, onOpenMarker, onContinue, onOpenPhases, onOpenHelp, onReadWithoutScene }: HudProps) {
+export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retomada, passaporte, onGoToStart, onOpenMarker, onContinue, onOpenPhases, onOpenHelp, onReadWithoutScene, onOpenPassport }: HudProps) {
   const { preferencias } = useGamePreferences();
   const visiveis = falasVisiveis(falas, preferencias.humor);
   const instrucao = visiveis.find((fala) => fala.camada === "instrucao");
@@ -117,6 +127,7 @@ export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retom
               </Link>
             </p>
           )}
+          <PassportStrip {...passaporte} onOpen={onOpenPassport} className="mt-1.5" />
         </div>
         <div className="pointer-events-auto flex flex-wrap justify-end gap-2 max-sm:justify-stretch" data-caminhos-do-jogo>
           <button type="button" className={`${secondaryButton} max-sm:flex-auto max-sm:px-2.5 max-sm:text-[0.8125rem]`} onClick={onReadWithoutScene} data-ler-sem-cenario>
