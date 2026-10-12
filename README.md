@@ -1,137 +1,148 @@
+**English** | [Português](README.pt-BR.md)
+
 # Atlas Político
 
-Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa, acontecimentos acompanhados das fontes que os sustentam e por um jogo que segue as duas trajetórias em fases curtas, da origem à data de corte. Projeto de portfólio da MilWeb.
+Working title. An atlas (in Brazilian Portuguese) for following the public careers of Lula and Flávio Bolsonaro through a timeline, a map, events backed by the sources that support them, and a game that walks through both careers in short stages, from their origins to the cut-off date. A MilWeb portfolio project.
 
-> **Projeto em desenvolvimento. Não use como fonte.** O conteúdo trata de duas pessoas públicas e foi conferido só com assistência de IA: nenhuma pessoa refez a revisão do conjunto, e a validação com leitores está pendente. Desde 11 de outubro de 2026 o site responde em um endereço provisório da Vercel, sem indexação: as páginas levam `noindex`, e o que está lá pode não ser igual a este repositório: a situação conferida está em [docs/DEPLOY.md](docs/DEPLOY.md). Cada registro traz as fontes que o sustentam; em caso de dúvida, vale o documento citado.
+> **Type:** MilWeb portfolio project, in development. It is not an official site of either person portrayed, of any party or of any public body. There is no definitive public address yet: the provisional Vercel address and the publication status are documented in [docs/DEPLOY.md](docs/DEPLOY.md).
 
-**Estágio atual:** fases 1 a 8 de 10 concluídas (fundação, primeiro conjunto de conteúdo, camada de dados, experiência e direção visual, aplicação com linha do tempo, mapa sincronizado, comparação, páginas e fontes, e acabamento visual e desempenho). A fase 9 está com a parte editorial e técnica feita e com a validação com pessoas pendente. O atlas tem a edição 0.3.0 do conteúdo, com data de corte em 8 de outubro de 2026: 39 acontecimentos, com fontes, para os dois perfis, uma amostra de decisões documentadas (votos, atos do Executivo e atuação legislativa), as propostas que cada candidatura registrou no TSE e o conteúdo da trilha do jogo. Um pipeline local valida o conteúdo, seleciona o que foi revisado e gera os dados, os índices e o GeoJSON que as páginas leem. A fase 4 entregou a direção visual e as quatro telas (entrada, exploração, acontecimento e comparação), em computador, tablet e celular. A fase 5 tornou a exploração navegável no tempo: escolher a pessoa, consultar um ano ou um intervalo, filtrar categorias, abrir um acontecimento e ler os detalhes, com a consulta inteira no endereço. A fase 6 ligou o mapa a esse recorte: um marcador por lugar documentado, seleção nos dois sentidos, lista para os acontecimentos que dividem um lugar e leitura preservada quando o mapa falha. A fase 7 pôs a comparação no mesmo recorte para as duas pessoas, com a consulta no endereço; completou o perfil e a página de cada acontecimento, com fontes, créditos, revisão e edição; acrescentou **Copiar link** e o retorno com o recorte de antes; e escreveu a metodologia pública. A fase 8 fez o acabamento: retratos em versões locais do tamanho de cada tela, mapa carregado só quando vai ser usado, transições curtas que acompanham a seleção, abertura e leitura com a hierarquia revista, e o desempenho medido antes e depois ([docs/PERFORMANCE.md](docs/PERFORMANCE.md)). A fase 9 abriu de novo as 60 fontes, releu cada registro contra os documentos, corrigiu o que encontrou e testou as jornadas sobre a exportação estática ([docs/EDITORIAL-REVIEW.md](docs/EDITORIAL-REVIEW.md) e [docs/QA.md](docs/QA.md)); o roteiro da validação com três pessoas está pronto e ainda não foi aplicado ([docs/USER-VALIDATION.md](docs/USER-VALIDATION.md)). Depois da fase 9 entrou o **jogo**, refeito em 11 de outubro de 2026 como uma trilha simples: o visitante escolhe uma das duas pessoas e segue a vida dela em nove fases curtas, da origem à eleição de 2026. Cada fase tem um marco, uma explicação de 60 a 100 palavras, com os termos explicados e as fontes, e uma atividade: uma pergunta ou uma ordenação. Errar não tira nada, ler a explicação no lugar de responder também conclui a fase, e nenhuma fase segura a seguinte. Economia e Segurança pública são aprofundamentos opcionais. O mesmo conteúdo pode ser lido sem o cenário, e os episódios de processo trazem uma ficha judicial com a natureza da decisão e as decisões relacionadas, com data ([docs/GAMEPLAY.md](docs/GAMEPLAY.md), [docs/GAME-TRAIL.md](docs/GAME-TRAIL.md)). Toda a conferência do conteúdo foi assistida por IA, e a revisão humana está pendente ([docs/HUMAN-REVIEW.md](docs/HUMAN-REVIEW.md)); por isso a barreira de publicação continua recusando ([docs/DEPLOY.md](docs/DEPLOY.md)). Um push na `main` publica no endereço provisório: leia esse documento antes de enviar um commit. O que está pronto, o que ainda é demonstração e o que falta está em [docs/STATUS.md](docs/STATUS.md).
+> **Project in development. Do not use it as a source.** The content is about two public figures and was checked only with AI assistance: no person has redone the review of the whole set, and validation with readers is pending. Since October 11, 2026 the site answers at a provisional, non-indexed Vercel address: every page carries `noindex`, and what is there may differ from this repository; the verified status is in [docs/DEPLOY.md](docs/DEPLOY.md). Every record lists the sources that support it; when in doubt, the cited document prevails.
 
-## Requisitos
+![Atlas Político home page on desktop, with the notice that human review is pending](docs/screenshots/home.webp)
 
-| Item | Versão |
+**Current stage:** phases 1 to 8 of 10 are done (foundation, first content set, data layer, experience and visual direction, timeline app, synchronized map, comparison, pages and sources, visual finish and performance). Phase 9 has its editorial and technical work done; validation with people is pending. The atlas ships content edition 0.3.0, with a cut-off date of October 8, 2026: 39 sourced events for the two profiles, a sample of documented decisions (votes, Executive acts and legislative work), the platforms each candidacy registered with the electoral court (TSE), and the game trail content. A local pipeline validates the content, selects what has been reviewed and generates the data, indexes and GeoJSON the pages read.
+
+What each phase delivered, in short:
+
+- **Phase 4:** visual direction and the four screens (home, exploration, event and comparison) on desktop, tablet and phone.
+- **Phase 5:** time navigation: pick a person, query a year or a range, filter categories, open an event and read the details, with the whole query in the URL.
+- **Phase 6:** the map follows that selection: one marker per documented place, two-way selection, a list for events that share a place, and reading preserved when the map fails.
+- **Phase 7:** comparison of both people over the same range, with the query in the URL; complete profile and event pages with sources, credits, review and edition; **Copiar link** (copy link) and return to the previous selection; public methodology.
+- **Phase 8:** finish: portraits in local versions sized for each screen, map loaded only when used, short transitions, revised hierarchy, and performance measured before and after ([docs/PERFORMANCE.md](docs/PERFORMANCE.md)).
+- **Phase 9:** reopened all 60 sources, re-read each record against the documents, fixed what was found and tested the journeys on the static export ([docs/EDITORIAL-REVIEW.md](docs/EDITORIAL-REVIEW.md), [docs/QA.md](docs/QA.md)); the script for validation with three people is ready but has not been applied ([docs/USER-VALIDATION.md](docs/USER-VALIDATION.md)).
+- **Game:** rebuilt on October 11, 2026 as a simple trail. The visitor picks one of the two people and follows their life in nine short stages, from origin to the 2026 election. Each stage has a milestone, a 60 to 100 word explanation with terms explained and sources, and an activity (a question or an ordering task). Mistakes cost nothing, reading the explanation instead of answering also completes a stage, and no stage blocks the next. Economy and Public Security are optional deep dives. The same content can be read without the scenery, and court-case episodes include a case card with the nature of the decision and related dated decisions ([docs/GAMEPLAY.md](docs/GAMEPLAY.md), [docs/GAME-TRAIL.md](docs/GAME-TRAIL.md)).
+
+All content checking was AI-assisted and human review is pending ([docs/HUMAN-REVIEW.md](docs/HUMAN-REVIEW.md)); for that reason the publication gate still refuses ([docs/DEPLOY.md](docs/DEPLOY.md)). A push to `main` publishes to the provisional address: read that document before pushing a commit. What is ready, what is still a demo and what is missing is in [docs/STATUS.md](docs/STATUS.md).
+
+The interface and the content are in Brazilian Portuguese; most project documentation in `docs/` is in Portuguese too.
+
+## Requirements
+
+| Item | Version |
 |---|---|
-| Node.js | 22.18 ou superior, ou 24 (desenvolvido e verificado no 24.15.0) |
-| npm | 11 (o lock do projeto é o `package-lock.json`; não misture com pnpm ou yarn) |
-| Navegador | Com WebGL 2 para ver o mapa. Sem ele o atlas mostra os lugares em lista, e o resto funciona igual |
-| Chromium do Playwright | Só para `npm run test:e2e`. Em máquina nova: `npx playwright install chromium` |
+| Node.js | 22.18 or newer, or 24 (developed and verified on 24.15.0) |
+| npm | 11 (the project lock is `package-lock.json`; do not mix with pnpm or yarn) |
+| Browser | WebGL 2 to see the map. Without it the atlas shows the places as a list and everything else works the same |
+| Playwright Chromium | Only for the browser test suites. On a new machine: `npx playwright install chromium` |
 
-Nenhum serviço externo, conta ou variável de ambiente. Tudo roda com os arquivos do projeto. Há uma configuração pendente, que não impede nada: o canal público de correção, em `src/lib/site.ts` (docs/PAGES.md, seção Configuração pendente).
+No external service, account or environment variable. Everything runs from the project files. One configuration is pending and blocks nothing: the public correction channel in `src/lib/site.ts` (docs/PAGES.md, section "Configuração pendente").
 
-O Node 22.18 é o mínimo porque os comandos de dados rodam o TypeScript do projeto direto no Node, sem compilar.
+Node 22.18 is the minimum because the data commands run the project's TypeScript directly in Node, without compiling.
 
-### Versões instaladas
+### Installed versions
 
-| Pacote | Versão | Uso |
+| Package | Version | Used for |
 |---|---|---|
-| next | 16.4.0 | Aplicação, rotas e exportação estática (Turbopack) |
+| next | 16.4.0 | App, routes and static export (Turbopack) |
 | react, react-dom | 19.3.0 | Interface |
-| typescript | 5.9.3 | Modo `strict`, mais `noUncheckedIndexedAccess` e `erasableSyntaxOnly` |
-| tailwindcss, @tailwindcss/turbopack | 4.3.3 | Estilo, sobre variáveis CSS |
-| maplibre-gl | 6.13.0 | Mapa |
-| zod | 4.6.5 | Schemas do conteúdo |
-| server-only | 0.0.1 | Impede que a leitura de conteúdo vá para o navegador |
-| vitest | 5.0.3 | Testes das regras de dados, do pipeline e de estado |
-| @playwright/test | 1.63.0 | Testes de navegador e capturas da prévia |
-| eslint, eslint-config-next | 9.39.5, 16.4.0 | Lint e fronteiras entre camadas |
-| sharp | 0.35.5 | Só em desenvolvimento: prepara as versões dos retratos (`npm run images`). Não vai para o site |
+| typescript | 5.9.3 | `strict` mode plus `noUncheckedIndexedAccess` and `erasableSyntaxOnly` |
+| tailwindcss, @tailwindcss/turbopack | 4.3.3 | Styling, on top of CSS variables |
+| maplibre-gl | 6.13.0 | Map |
+| zod | 4.6.5 | Content schemas |
+| server-only | 0.0.1 | Keeps content reading out of the browser |
+| vitest | 5.0.3 | Tests for data rules, pipeline and state |
+| @playwright/test | 1.63.0 | Browser tests and preview captures |
+| eslint, eslint-config-next | 9.39.5, 16.4.0 | Lint and layer boundaries |
+| sharp | 0.35.5 | Development only: prepares portrait versions (`npm run images`). Not shipped to the site |
 
-As fases 3 a 7 não acrescentaram nenhuma dependência. A fase 8 declarou uma, de desenvolvimento: o `sharp`, que já vinha instalado como parte do Next e passou a ser usado para preparar os retratos. As fontes tipográficas (`src/app/fonts/`) e os contornos do mapa (`src/features/map/base/`) são arquivos do projeto, com a licença de cada um descrita na própria pasta. O mapa não usa tiles, chave de API nem serviço de terceiros.
+The typefaces (`src/app/fonts/`) and the map outlines (`src/features/map/base/`) are project files, with each license described in its own folder. The map uses no tiles, API key or third-party service.
 
-## Instalação
+## Installation
 
 ```bash
-npm install
+npm install   # or `npm ci` for a clean install from the lockfile
 ```
 
-## Execução local
+## Running locally
 
 ```bash
 npm run dev
 ```
 
-Gera os dados e abre em http://localhost:3000. Com erro no conteúdo, o comando para antes de subir o servidor e mostra o que corrigir.
+Generates the data and opens http://localhost:3000. If the content has an error, the command stops before starting the server and shows what to fix. With the server running, editing a file in `content/` and reloading the page is enough: the data is regenerated, and errors are shown on the page.
 
-Com o servidor aberto, editar um arquivo de `content/` e recarregar a página basta: os dados são gerados de novo. Se a edição tiver erro, a página mostra os diagnósticos.
+Screens (docs/UX.md):
 
-As telas (docs/UX.md):
-
-| Tela | Endereço |
+| Screen | URL |
 |---|---|
-| Entrada | http://localhost:3000/ |
-| Exploração | http://localhost:3000/politicos/lula/ e http://localhost:3000/politicos/flavio-bolsonaro/ |
-| Acontecimento | http://localhost:3000/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/ |
-| Comparação | http://localhost:3000/comparar/ |
-| Metodologia | http://localhost:3000/metodologia/ |
-| Jogo: as duas trajetórias | http://localhost:3000/jogo/ |
-| Jogo: a trajetória de cada personagem | http://localhost:3000/jogo/lula/ e http://localhost:3000/jogo/flavio-bolsonaro/ (com `?fase=3`, a fase 3; com `&leitura=1`, sem o cenário) |
-| Jogo: os aprofundamentos, com as decisões documentadas de um tema | http://localhost:3000/jogo/lula/economia/, http://localhost:3000/jogo/lula/seguranca-publica/ e os mesmos de `flavio-bolsonaro` |
-| Guia de estados, só em desenvolvimento | http://localhost:3000/dev/previa/ |
-| Galeria da arte do jogo, só em desenvolvimento | http://localhost:3000/dev/jogo-arte/ |
+| Home | http://localhost:3000/ |
+| Exploration | http://localhost:3000/politicos/lula/ and http://localhost:3000/politicos/flavio-bolsonaro/ |
+| Event | http://localhost:3000/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/ |
+| Comparison | http://localhost:3000/comparar/ |
+| Methodology | http://localhost:3000/metodologia/ |
+| Game: both careers | http://localhost:3000/jogo/ |
+| Game: one character's career | http://localhost:3000/jogo/lula/ and http://localhost:3000/jogo/flavio-bolsonaro/ (`?fase=3` opens stage 3; `&leitura=1` removes the scenery) |
+| Game: deep dives with the documented decisions on a topic | http://localhost:3000/jogo/lula/economia/, http://localhost:3000/jogo/lula/seguranca-publica/ and the same for `flavio-bolsonaro` |
+| State guide, development only | http://localhost:3000/dev/previa/ |
+| Game art gallery, development only | http://localhost:3000/dev/jogo-arte/ |
 
-Na exploração, o período, as categorias e o acontecimento aberto ficam no endereço. O que está na tela pode ser recarregado, enviado por link e percorrido com voltar e avançar (docs/TIMELINE.md):
+In exploration, the period, categories and open event live in the URL, so the view can be reloaded, shared and navigated with back and forward (docs/TIMELINE.md). Parameters: `de` and `ate` (four-digit year), `categorias` (comma-separated identifiers) and `acontecimento` (slug). An invalid parameter is dropped and the URL is corrected in place. Examples:
 
-| Consulta | Endereço |
+| Query | URL |
 |---|---|
-| Um ano | http://localhost:3000/politicos/lula/?de=2018&ate=2018 |
-| Um intervalo e duas categorias | http://localhost:3000/politicos/lula/?de=2016&ate=2022&categorias=eleicoes,marcos-historicos |
-| Um acontecimento aberto, dentro de um intervalo | http://localhost:3000/politicos/lula/?de=2016&ate=2019&acontecimento=lula-2018-prisao-em-curitiba |
-| Um ano com mudança de partido | http://localhost:3000/politicos/flavio-bolsonaro/?de=2021&ate=2021 |
-| Um período sem registros | http://localhost:3000/politicos/lula/?de=1996&ate=2001 |
+| One year | http://localhost:3000/politicos/lula/?de=2018&ate=2018 |
+| A range and two categories | http://localhost:3000/politicos/lula/?de=2016&ate=2022&categorias=eleicoes,marcos-historicos |
+| An event open inside a range | http://localhost:3000/politicos/lula/?de=2016&ate=2019&acontecimento=lula-2018-prisao-em-curitiba |
+| A year with a party change | http://localhost:3000/politicos/flavio-bolsonaro/?de=2021&ate=2021 |
+| A period with no records | http://localhost:3000/politicos/lula/?de=1996&ate=2001 |
 
-Parâmetros: `de` e `ate` (ano com quatro dígitos), `categorias` (identificadores separados por vírgula) e `acontecimento` (slug). Um parâmetro inválido é descartado sozinho, e o endereço é corrigido no lugar.
+The map follows the same query (docs/MAP.md):
 
-O mapa acompanha a mesma consulta (docs/MAP.md):
-
-| Estado do mapa | Endereço |
+| Map state | URL |
 |---|---|
-| Um acontecimento com dois lugares, os dois destacados | http://localhost:3000/politicos/lula/?acontecimento=lula-2023-intervencao-federal-no-distrito-federal |
-| Um acontecimento de abrangência nacional, sem ponto | http://localhost:3000/politicos/lula/?acontecimento=lula-2002-eleito-presidente |
-| Um recorte sem nenhum ponto | http://localhost:3000/politicos/flavio-bolsonaro/?de=2021&ate=2021 |
+| An event with two places, both highlighted | http://localhost:3000/politicos/lula/?acontecimento=lula-2023-intervencao-federal-no-distrito-federal |
+| A nationwide event, with no point | http://localhost:3000/politicos/lula/?acontecimento=lula-2002-eleito-presidente |
+| A selection with no points | http://localhost:3000/politicos/flavio-bolsonaro/?de=2021&ate=2021 |
 
-Em tela estreita, o mapa fica na vista **Mapa**. Para ver a lista de lugares que assume quando o mapa falha, abra http://localhost:3000/dev/prova/ e ligue **Simular navegador sem WebGL**.
+On narrow screens the map is in the **Mapa** view. To see the list of places that takes over when the map fails, open http://localhost:3000/dev/prova/ and turn on **Simular navegador sem WebGL**.
 
-A comparação guarda o período e as categorias no endereço, e as páginas abrem por link direto (docs/COMPARISON.md e docs/PAGES.md):
+Comparison keeps the period and categories in the URL, and pages open by direct link (docs/COMPARISON.md and docs/PAGES.md):
 
-| O que abre | Endereço |
+| What opens | URL |
 |---|---|
-| As duas trajetórias em um intervalo, com uma categoria | http://localhost:3000/comparar/?de=2016&ate=2022&categorias=eleicoes |
-| Um período em que uma trajetória está fora da cobertura | http://localhost:3000/comparar/?de=1996&ate=2001 |
-| O perfil, com cargos, partidos, fontes e edição | http://localhost:3000/politicos/flavio-bolsonaro/ (em tela estreita, na vista **Perfil**) |
-| A página de um acontecimento, por link direto | http://localhost:3000/acontecimentos/lula-2018-prisao-em-curitiba/ |
-| A mesma página, vinda de uma consulta: o retorno devolve o recorte | http://localhost:3000/acontecimentos/lula-2018-prisao-em-curitiba/?de=2016&ate=2019&categorias=marcos-historicos |
-| O modelo de correção, já com o registro | http://localhost:3000/metodologia/?acontecimento=lula-2018-prisao-em-curitiba#correcao |
+| Both careers over a range, with one category | http://localhost:3000/comparar/?de=2016&ate=2022&categorias=eleicoes |
+| A period where one career is outside coverage | http://localhost:3000/comparar/?de=1996&ate=2001 |
+| The profile, with offices, parties, sources and edition | http://localhost:3000/politicos/flavio-bolsonaro/ (on narrow screens, in the **Perfil** view) |
+| An event page by direct link | http://localhost:3000/acontecimentos/lula-2018-prisao-em-curitiba/ |
+| The same page coming from a query: going back restores the selection | http://localhost:3000/acontecimentos/lula-2018-prisao-em-curitiba/?de=2016&ate=2019&categorias=marcos-historicos |
+| The correction template, prefilled with the record | http://localhost:3000/metodologia/?acontecimento=lula-2018-prisao-em-curitiba#correcao |
 
-No jogo (docs/GAMEPLAY.md): toque na pasta em destaque, ou no botão **Abrir o marco**, leia a explicação, responda a atividade ou peça a explicação dela, e use **Continuar**. Ninguém dirige o boneco: as pastas são botões da página, alcançáveis pelo teclado. **Fases** abre qualquer fase, e **Ler sem o cenário** traz o mesmo conteúdo sem a cena. O progresso fica no navegador, separado por personagem, e não vai ao endereço.
+In the game (docs/GAMEPLAY.md): tap the highlighted folder, or the **Abrir o marco** button, read the explanation, answer the activity or ask for its explanation, and use **Continuar**. Nobody steers the character: the folders are page buttons reachable by keyboard. **Fases** opens any stage, and **Ler sem o cenário** shows the same content without the scene. Progress is stored in the browser, per character, and is not put in the URL.
 
-**Copiar link** copia o endereço em que o atlas está aberto. Em uma página servida por `http` fora do próprio computador, o navegador não deixa copiar, e o link aparece em um campo.
+**Copiar link** copies the current atlas URL. On a page served over plain `http` from another machine, the browser does not allow copying, so the link appears in a field.
 
-Telas de prova técnica, que só existem com `npm run dev` e não entram no build de produção:
+Technical proof screens that only exist under `npm run dev` and are not part of the production build:
 
-| Endereço | Dados | Para quê |
+| URL | Data | Purpose |
 |---|---|---|
-| http://localhost:3000/dev/dados/ | Os da edição, lidos de `generated/` | Ver o caminho inteiro com conteúdo real: gerador, leitor, lista, mapa e painel |
-| http://localhost:3000/dev/prova/ | Sintéticos, das fixtures de teste | Exercitar os casos de borda: datas parciais, dois lugares, sem lugar, falha do mapa |
+| http://localhost:3000/dev/dados/ | The edition's own, read from `generated/` | See the whole path with real content: generator, reader, list, map and panel |
+| http://localhost:3000/dev/prova/ | Synthetic, from the test fixtures | Exercise edge cases: partial dates, two places, no place, map failure |
 
-Nas duas dá para:
+On both you can select an event in the list and watch the map and panel follow; click a map marker and watch the list and panel follow (a numbered marker first opens the list of events at that place); switch person and see list, map and panel show the same selection; and turn on "Simular navegador sem WebGL" to see the places list replace the map.
 
-- selecionar um acontecimento pela lista e ver o mapa e o painel acompanharem;
-- clicar em um marcador do mapa e ver a lista e o painel acompanharem (o marcador com número abre antes a lista dos acontecimentos daquele lugar);
-- trocar a pessoa e ver lista, mapa e painel mostrarem o mesmo recorte;
-- ligar "Simular navegador sem WebGL" e ver a lista de lugares assumir o lugar do mapa.
+## Data
 
-## Dados
+The content is JSON in `content/`, maintained directly in the repository and not generated by any command. Pages do not read that folder: they read `generated/`, which a command produces after validating everything. The full process is in [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
 
-O conteúdo fica em JSON, em `content/`, mantido direto no repositório, e não é gerado por comando. As páginas não leem essa pasta: leem `generated/`, que um comando produz depois de validar tudo. O funcionamento completo está em [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md).
-
-| Comando | O que faz |
+| Command | What it does |
 |---|---|
-| `npm run data:validate` | Confere o conteúdo e mostra erros, pendências e avisos. Não grava nada |
-| `npm run data:build` | Valida e gera `generated/`: conjunto publicado, índices e GeoJSON |
-| `npm run data:report` | Cobertura por pessoa, período e categoria, pontos no mapa e pendências, em Markdown |
-| `npm run data:import -- <arquivo.json>` | Importa um pacote JSON para `content/drafts/`, como rascunho. Com `--dry-run`, só mostra o resultado |
-| `npm run data:query -- [filtros]` | Consulta os dados gerados: `--pessoa`, `--de`, `--ate`, `--categorias`, `--lugar`, `--acontecimento` |
+| `npm run data:validate` | Checks the content and shows errors, pending items and warnings. Writes nothing |
+| `npm run data:build` | Validates and generates `generated/`: published set, indexes and GeoJSON |
+| `npm run data:report` | Coverage by person, period and category, map points and pending items, in Markdown |
+| `npm run data:import -- <file.json>` | Imports a JSON package into `content/drafts/` as a draft. With `--dry-run`, only shows the result |
+| `npm run data:query -- [filters]` | Queries the generated data: `--pessoa`, `--de`, `--ate`, `--categorias`, `--lugar`, `--acontecimento` |
 
-Exemplos:
+Examples:
 
 ```bash
 npm run data:query -- --pessoa lula --de 2016 --ate 2019
@@ -139,132 +150,130 @@ npm run data:import -- pesquisa/pacote.json --source "Planilha de outubro" --dry
 npm run data:report -- --out docs/DATA-REPORT.md
 ```
 
-`npm run dev` e `npm run build` já geram os dados. Conteúdo com erro interrompe os dois.
+`npm run dev` and `npm run build` already generate the data. Invalid content stops both.
 
-## Build estático
-
-```bash
-npm run build     # gera os dados, confere os retratos, gera a pasta out/ e a ajusta
-npm run preview   # serve out/ em http://localhost:4311
-```
-
-`out/` é um site de arquivos estáticos: pode ser servido por qualquer hospedagem, sem Node.js em produção. `next start` não se aplica a este projeto.
-
-`npm run build` faz quatro coisas, nesta ordem: gera os dados (`data:build`), confere se as versões dos retratos estão em dia (`images:check`), roda o `next build` e ajusta a saída (`scripts/finalize-export.mjs`). O ajuste devolve os arquivos de navegação ao nome que o navegador pede, retira os arquivos do MapLibre que ninguém pede e completa o pré-carregamento das fontes nas páginas de acontecimento. O motivo de cada passo está em [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
-
-`npm run preview` responde como uma hospedagem comum: compressão gzip, `ETag` e cache longo para os arquivos de `/_next/static/`.
-
-### Retratos
-
-As páginas não pedem o arquivo original de um retrato: pedem versões menores, já recortadas para cada moldura. Ao trocar um retrato em `public/media/retratos/`, ou o enquadramento em `scripts/images.config.json`:
+## Static build
 
 ```bash
-npm run images         # gera public/media/derivados/ e o manifesto
-npm run images:check   # só confere; é o que `dev` e `build` rodam
+npm run build     # generates the data, checks the portraits, builds out/ and adjusts it
+npm run preview   # serves out/ at http://localhost:4311
 ```
 
-Confira o resultado antes de continuar: o enquadramento é o mesmo critério para os dois perfis (linha dos olhos na mesma altura, rosto do mesmo tamanho).
+`out/` is a static site: any host can serve it, with no Node.js in production. `next start` does not apply to this project.
 
-## Verificação
+`npm run build` does four things, in order: generates the data (`data:build`), checks that the portrait versions are up to date (`images:check`), runs `next build` and adjusts the output (`scripts/finalize-export.mjs`). The adjustment restores navigation files to the name the browser requests, removes unused MapLibre files and completes font preloading on event pages. The reason for each step is in [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
 
-| Comando | O que confere |
+`npm run preview` behaves like a regular host: gzip compression, `ETag` and long caching for `/_next/static/` files.
+
+### Portraits
+
+Pages never request a portrait's original file: they request smaller versions already cropped for each frame. When replacing a portrait in `public/media/retratos/`, or the framing in `scripts/images.config.json`:
+
+```bash
+npm run images         # generates public/media/derivados/ and the manifest
+npm run images:check   # only checks; this is what `dev` and `build` run
+```
+
+Check the result before continuing: framing follows the same rule for both profiles (eye line at the same height, face at the same size).
+
+## Verification
+
+| Command | What it checks |
 |---|---|
-| `npm run lint` | ESLint, incluindo as fronteiras entre camadas |
-| `npm run typecheck` | Gera os tipos de rota e roda o `tsc` |
-| `npm run test` | Datas, schemas, integridade, pipeline, consultas, geração, importação, comandos, estado, endereço e histórico, comparação, endereços entre telas e retorno, versões dos retratos, pontos, lugares e câmera do mapa, linha do tempo, lista cronológica, cobertura, base visual, com o contraste das cores, o cartão de decisão, o resumo da comparação, as propostas e o jogo: regras da trilha, progresso com a migração, armazenamento, endereço, cenas, caminho e câmera, Escrivão, contexto sensível, ficha judicial e as fases contra o conteúdo (Vitest) |
-| `npm run build` | Gera os dados e o site. Falha se o conteúdo estiver inválido |
-| `npm run verify:export` | Confere `out/`: páginas previstas, uma página por acontecimento publicado e nenhuma por rascunho, nenhuma rota de desenvolvimento, nenhum dado sintético, versões dos retratos publicadas, arquivos de navegação no lugar, nenhum arquivo do MapLibre sem uso e o pré-carregamento da fonte em todas as páginas |
-| `npm run check` | Os cinco acima, em sequência |
-| `npm run test:e2e` | As telas de prova, as quatro telas, a navegação temporal com o endereço, o mapa sincronizado, a comparação, as páginas de perfil, de acontecimento e de metodologia, o acabamento (quatro larguras, transições, link com consulta e a jornada principal) e o jogo (a entrada, o ciclo de uma fase com erro e nova tentativa, a ordenação, os registros opcionais, o teclado e o foco, a lista de fases, a retomada, a migração do progresso, os aprofundamentos, a leitura sem o cenário, o celular em pé e deitado e os avisos editoriais), em um Chromium real (Playwright), em computador, tablet e celular. Sobe o próprio servidor na porta 4310 |
-| `npm run test:export` | Sobre a saída estática, depois de `npm run build`: o que cada página pede e quando, o mapa carregado só quando vai ser usado, as versões dos retratos, a navegação pré-carregada e o palco do jogo em pacote à parte, pedido só na página do jogo com o cenário, com a leitura que não o baixa, a página sem JavaScript e a falha de um pacote. Sobe o próprio servidor na porta 4311 |
-| `npm run test:journeys` | As jornadas de `npm run test:e2e` com dados reais, rodadas sobre a saída estática, depois de `npm run build`. É o que mostra defeitos que o servidor de desenvolvimento esconde ([docs/QA.md](docs/QA.md)) |
-| `npm run audit:a11y` | Passagem de acessibilidade sobre a saída estática: contraste do texto desenhado, rolagem lateral, alvos e ordem de foco, em vinte e oito telas (as oito do atlas e vinte do jogo: a entrada, a cena dos dois personagens, os aprofundamentos, o ciclo de uma fase, a ordenação, a fase de processos, um registro, uma decisão, a lista de fases, o resumo, a leitura sem o cenário, a retomada e três do passaporte) e quatro larguras. Grava capturas e um relatório em `test-results/a11y/` |
-| `npm run capturas:verificar` | Confere as capturas brutas dos acervos em `research/capturas/`: resumo SHA-256, tamanho e resposta contra o corpo original. Reprova captura alterada ou sem o corpo |
-| `npm run verify:release` | A barreira de publicação: recusa enquanto houver registro sem revisão humana, ou domínio e canal de correção por definir. Não faz parte de `check`: o desenvolvimento não para por ela |
-| `npm run release:check` | A régua de publicação em um comando: `check`, `capturas:verificar` e `verify:release`, nesta ordem ([docs/DEPLOY.md](docs/DEPLOY.md)) |
-| `npm run measure -- --rotulo <nome>` | Mede carregamento, estabilidade visual, peso e resposta das interações sobre a saída estática, e grava `docs/desempenho/<nome>.json`. Com `--contra <nome>=<pasta>`, mede dois builds alternando as execuções |
-| `npm run capture:game` | Refaz as capturas de `docs/capturas/jogo-trilha/`, tiradas da saída estática. Só registra as telas do jogo; a única conferência é que a página não esteja rolada na captura |
-| `npm run measure:game -- --rotulo <nome>` | Medições de laboratório das páginas do jogo sobre a saída estática: carregamento, palco pronto, rede e cadência de quadros com a cena parada, durante a caminhada do boneco e com a janela da fase aberta; grava `docs/desempenho/jogo-<nome>.json` |
-| `npm run game:coverage` | Regrava `docs/GAME-COVERAGE.md`, a matriz de cobertura do jogo (as fases de cada pessoa e em que fase aparece cada acontecimento, decisão, fato biográfico e proposta), a partir dos dados; com `-- --check`, só confere |
-| `npm run review:human` | Regrava `docs/HUMAN-REVIEW.md`, a lista do que precisa de revisão humana, trecho a trecho, a partir dos dados; com `-- --check`, só confere |
-| `npm run verify:release` | A barreira de release: recusa a publicação, com o diagnóstico, enquanto houver registro sem revisão humana ou domínio e canal de correção sem valor; avisa sobre indexação desligada e falta de licença. Não é o build: `npm run check` continua passando com o conteúdo em conferência ([docs/DEPLOY.md](docs/DEPLOY.md)) |
-| `npm run importar:decisoes -- <senado\|camara> …` | Captura votações e votos dos acervos oficiais (Senado, Câmara), normaliza e importa tudo como rascunho em `content/drafts/`, com as capturas brutas em `research/`. Único comando que consulta a rede; `--dry-run` não grava nada ([docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md), seção Importação de decisões) |
-| `node scripts/capture-art.mjs --saida <pasta>` | Com `npm run dev` rodando, captura a galeria da arte do jogo (cenas, peças e as figuras por época) como PNG |
-| `node scripts/share-image.mjs` | Regrava `public/share/atlas.png`, a imagem da prévia de compartilhamento |
-| `npm run capture:finish` | Refaz as capturas de `docs/capturas/fase-8/`, tiradas da saída estática |
-| `npm run capture:pages` | Refaz as capturas de `docs/capturas/fase-7/`. Não confere nada: só registra as telas |
-| `npm run capture:map` | Refaz as capturas de `docs/capturas/fase-6/`. Não confere nada: só registra as telas |
-| `npm run capture:timeline` | Refaz as capturas de `docs/capturas/fase-5/` com a interface atual |
-| `npm run capture:preview` | Refaz as capturas de `docs/capturas/fase-4/` com a interface atual |
+| `npm run lint` | ESLint, including the boundaries between layers |
+| `npm run typecheck` | Generates route types and runs `tsc` |
+| `npm run test` | Vitest suites: dates, schemas, integrity, pipeline, queries, generation, import, commands, state, URL and history, comparison, cross-screen links and return, portrait versions, map points, places and camera, timeline, chronological list, coverage, visual base (including color contrast), decision card, comparison summary, platforms, and the game (trail rules, progress and its migration, storage, URL, scenes, path and camera, the "Escrivão" guide, sensitive context, case card and the stages against the content) |
+| `npm run build` | Generates the data and the site. Fails on invalid content |
+| `npm run verify:export` | Checks `out/`: expected pages, one page per published event and none per draft, no development routes, no synthetic data, portrait versions published, navigation files in place, no unused MapLibre files and font preload on every page |
+| `npm run check` | The five above, in sequence |
+| `npm run test:e2e` | Proof screens, the four screens, time navigation with the URL, synchronized map, comparison, profile, event and methodology pages, the finish (four widths, transitions, link with query and the main journey) and the game, in a real Chromium (Playwright) on desktop, tablet and phone. Starts its own server on port 4310 |
+| `npm run test:export` | On the static output, after `npm run build`: what each page requests and when, map loaded only when used, portrait versions, prefetched navigation, and the game stage in a separate bundle requested only on the game page with scenery. Starts its own server on port 4311 |
+| `npm run test:journeys` | The `test:e2e` journeys with real data, run on the static output after `npm run build`. This is what reveals defects the dev server hides ([docs/QA.md](docs/QA.md)) |
+| `npm run audit:a11y` | Accessibility pass on the static output: contrast of rendered text, horizontal scroll, targets and focus order, on twenty-eight screens and four widths. Writes captures and a report to `test-results/a11y/` |
+| `npm run capturas:verificar` | Checks the raw archive captures in `research/capturas/`: SHA-256 digest, size and response against the original body |
+| `npm run verify:release` | The publication gate: refuses while any record lacks human review, or while the domain and correction channel are undefined; warns about disabled indexing and the missing license. Not part of `check`, so development is not blocked by it ([docs/DEPLOY.md](docs/DEPLOY.md)) |
+| `npm run release:check` | The publication bar in one command: `check`, `capturas:verificar` and `verify:release`, in this order |
+| `npm run measure -- --rotulo <name>` | Measures loading, visual stability, weight and interaction response on the static output and writes `docs/desempenho/<name>.json`. With `--contra <name>=<folder>`, compares two builds |
+| `npm run measure:game -- --rotulo <name>` | Lab measurements of the game pages on the static output; writes `docs/desempenho/jogo-<name>.json` |
+| `npm run game:coverage` | Rewrites `docs/GAME-COVERAGE.md`, the game coverage matrix, from the data; with `-- --check`, only checks |
+| `npm run review:human` | Rewrites `docs/HUMAN-REVIEW.md`, the list of what needs human review, from the data; with `-- --check`, only checks |
+| `npm run importar:decisoes -- <senado\|camara> …` | Captures votes from the official archives (Senate, Chamber), normalizes them and imports everything as drafts in `content/drafts/`, with raw captures in `research/`. The only command that uses the network; `--dry-run` writes nothing ([docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md)) |
+| `npm run capture:game`, `capture:finish`, `capture:pages`, `capture:map`, `capture:timeline`, `capture:preview` | Redo the screenshots in `docs/capturas/` (game trail, phases 8, 7, 6, 5 and 4). They only record screens |
+| `node scripts/capture-art.mjs --saida <folder>` | With `npm run dev` running, captures the game art gallery as PNG |
+| `node scripts/share-image.mjs` | Rewrites `public/share/atlas.png`, the share preview image |
 
-Antes de qualquer entrega: `npm run check`, `npm run test:journeys`, `npm run test:export` e `npm run test:e2e`, um de cada vez. O GitHub repete tudo isso a cada push na `main` e a cada pull request (`.github/workflows/verificacao.yml`: um trabalho com `check`, as suítes sobre a exportação, a passagem de acessibilidade e a conferência da matriz e da lista de revisão; outro com as jornadas no servidor de desenvolvimento), guardando os resultados dos testes quando algo falha. Nada ali publica.
+Before any delivery: `npm run check`, `npm run test:journeys`, `npm run test:export` and `npm run test:e2e`, one at a time. GitHub Actions repeats this on every push to `main` and every pull request (`.github/workflows/verificacao.yml`: one job with `check`, the export suites, the accessibility pass and the coverage/review checks; another with the journeys on the dev server), keeping test results when something fails. Nothing there publishes.
 
-## Estrutura
+## Structure
 
 ```
 content/
-  published/     a edição: registros no estado `revisado` (conferência assistida por IA)
-  drafts/        pesquisa em andamento e importações
-generated/       dados gerados por `npm run data:build` (fora do Git)
-docs/            arquitetura, dados, experiência, desempenho, decisões, status e capturas
-  desempenho/    resultado bruto das medições (JSON)
+  published/     the edition: records in the `revisado` state (AI-assisted checking)
+  drafts/        research in progress and imports
+generated/       data generated by `npm run data:build` (not in Git)
+docs/            architecture, data, experience, performance, decisions, status and captures
+  desempenho/    raw measurement results (JSON)
+  screenshots/   the image used in this README
 public/
-  media/         retratos e imagens, como cadastrados
-    derivados/   versões dos retratos que as páginas pedem (geradas por `npm run images`)
-research/        capturas brutas dos acervos oficiais e pacotes de importação de decisões (nunca lidos pelo pipeline)
-scripts/         comandos de dados, preparo dos retratos, ajuste, conferência, pré-visualização e medição da saída
+  media/         portraits and images, as registered
+    derivados/   portrait versions the pages request (generated by `npm run images`)
+research/        raw captures from official archives and decision import packages (never read by the pipeline)
+scripts/         data commands, portrait preparation, output adjustment, checks, preview and measurement
 src/
-  app/           rotas e páginas; fontes tipográficas em app/fonts/
-  components/    base visual: retrato, data, categoria, fontes, perfil, cópia de link, troca de pessoa, peças da linha do tempo
+  app/           routes and pages; typefaces in app/fonts/
+  components/    visual base: portrait, date, category, sources, profile, copy link, person switch, timeline pieces
   features/
-    events/      lista cronológica, lacunas e leitura de acontecimentos
-    map/         mapa, marcadores, seletor de lugares, câmera e contornos da base
-    timeline/    linha do tempo, período, categorias e cargos e partidos do período
-    comparison/  trajetórias na mesma escala
-    game/        o jogo: casca, palco, desenho (draw/), motor (engine/) e interface (ui/)
+    events/      chronological list, gaps and event reading
+    map/         map, markers, place picker, camera and base outlines
+    timeline/    timeline, period, categories, offices and parties for the period
+    comparison/  careers on the same scale
+    game/        the game: shell, stage, drawing (draw/), engine (engine/) and interface (ui/)
   lib/
-    domain/      regras e contratos de dados, sem I/O
-    data/        formato dos dados públicos, índices, pontos e consultas
-    game/        regras do jogo, sem interface: trilha, progresso, endereço, salas, apresentação, cenários, mundo, Escrivão e ficha judicial
-    media/       molduras, larguras e nomes das versões dos retratos
-    publication/ validação, elegibilidade, relatório e importação, sem I/O
-    content/     leitura de content/ e leitura e gravação de generated/
-    state/       estado compartilhado, seletores, endereço, histórico e endereços entre telas
-    site.ts      configuração que depende de decisão do responsável (canal de correção)
+    domain/      data rules and contracts, no I/O
+    data/        public data format, indexes, points and queries
+    game/        game rules without UI: trail, progress, URL, rooms, presentation, scenery, world, Escrivão and case card
+    media/       frames, widths and names of the portrait versions
+    publication/ validation, eligibility, report and import, no I/O
+    content/     reading content/ and reading/writing generated/
+    state/       shared state, selectors, URL, history and cross-screen links
+    site.ts      configuration that depends on the owner's decision (correction channel, domain, indexing)
 tests/
-  fixtures/sintetico/   dados de teste, todos marcados como sintéticos
-  e2e/                  testes de navegador, sobre o servidor de desenvolvimento
-  export/               testes e capturas sobre a saída estática
+  fixtures/sintetico/   test data, all marked as synthetic
+  e2e/                  browser tests on the dev server
+  export/               tests and captures on the static output
 ```
 
-## Documentação
+## Documentation
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): camadas, fluxo de dados, rotas e estado.
-- [docs/DATA_MODEL.md](docs/DATA_MODEL.md): entidades, relacionamentos e regras de datas, lugares e revisão.
-- [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md): validação, elegibilidade, dados gerados, consultas, importação e como atualizar o conteúdo.
-- [docs/DATA-REPORT.md](docs/DATA-REPORT.md): relatório de cobertura da edição atual, gerado por `npm run data:report`.
-- [docs/UX.md](docs/UX.md): direção visual, as quatro telas, composição por largura e roteiro de demonstração.
-- [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md): tokens, tipografia, categorias e componentes.
-- [docs/INTERACTIONS.md](docs/INTERACTIONS.md): seleção, teclado, estados, movimento e o que ainda é demonstração.
-- [docs/TIMELINE.md](docs/TIMELINE.md): navegação temporal: troca de pessoa, filtros, datas, seleção, endereço, histórico e o contrato com o mapa.
-- [docs/MAP.md](docs/MAP.md): mapa: base e recursos locais, recorte, seleção, pontos sobrepostos, câmera, precisão, falhas e conferência.
-- [docs/COMPARISON.md](docs/COMPARISON.md): comparação: mesmo recorte e mesma escala, estado e endereço, datas e intervalos, linguagem e limites.
-- [docs/GAMEPLAY.md](docs/GAMEPLAY.md): o jogo em vigor, a trilha simples: o ciclo de uma fase, a trajetória e os aprofundamentos, as fases, a atividade, a leitura sem o cenário, a ficha judicial, o Escrivão, regras editoriais, controles, acessibilidade, progresso com migração, arquitetura, direção visual e o que falta.
-- [docs/GAME-TRAIL.md](docs/GAME-TRAIL.md): o redesenho de 11 de outubro de 2026: o que mudou e por quê, onde o texto educativo mora, a migração do progresso e o relato de "entrar em 2025".
-- [docs/GAME-COVERAGE.md](docs/GAME-COVERAGE.md): a matriz de cobertura do jogo, gerada dos dados: as fases, e onde aparece cada acontecimento, decisão, fato biográfico e proposta.
-- [docs/VOTOS-E-ESCRIVAO.md](docs/VOTOS-E-ESCRIVAO.md): o histórico de decisões e o Escrivão: o que o relatório pediu, o que a pesquisa dos acervos mostrou e as entregas P0 e P1. Histórico, no que diz do jogo.
-- [docs/GAME-RELEASE.md](docs/GAME-RELEASE.md): o plano do jogo anterior até a versão de lançamento, com as pendências humanas. Histórico.
-- [docs/HUMAN-REVIEW.md](docs/HUMAN-REVIEW.md): a lista do que precisa de revisão humana, trecho a trecho, gerada dos dados.
-- [docs/DEPLOY.md](docs/DEPLOY.md): a situação da publicação (o endereço provisório, e o push que publica), o procedimento e o que depende de decisão.
-- [docs/PAGES.md](docs/PAGES.md): perfis, página do acontecimento, fontes e créditos, copiar link, retorno, metodologia e configuração pendente.
-- [docs/PERFORMANCE.md](docs/PERFORMANCE.md): condições e resultados das medições antes e depois da fase 8, o que cada página carrega, imagens, fontes, mapa e limitações.
-- [docs/capturas/](docs/capturas/README.md): capturas reais das telas, por fase.
-- [docs/DECISIONS.md](docs/DECISIONS.md): decisões adotadas e seus motivos.
-- [docs/STATUS.md](docs/STATUS.md): situação de cada fase, limitações e preparação para a próxima.
-- [docs/SOURCES.md](docs/SOURCES.md): catálogo das fontes e critérios de uso.
-- [docs/EDITORIAL.md](docs/EDITORIAL.md): critérios de seleção, redação, revisão e correção.
-- [docs/CONTENT-REVIEW.md](docs/CONTENT-REVIEW.md): itens conferidos, divergências e pendências da pesquisa.
-- [docs/EDITORIAL-REVIEW.md](docs/EDITORIAL-REVIEW.md): revisão editorial da fase 9: conjunto revisado, conferência fonte por fonte, correções, pendências e roteiro da revisão humana.
-- [docs/QA.md](docs/QA.md): conferência técnica da fase 9: ambiente, regras de dados, jornadas, acessibilidade, falhas corrigidas e o que não foi verificado.
-- [docs/USER-VALIDATION.md](docs/USER-VALIDATION.md): roteiro e fichas da validação com três pessoas. Ainda não aplicado.
-- [content/README.md](content/README.md): contrato dos arquivos de conteúdo e como editar.
+Project documentation is in Portuguese, in [docs/](docs/). Main entry points:
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): layers, data flow, routes and state.
+- [docs/DATA_MODEL.md](docs/DATA_MODEL.md) and [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md): entities, rules, validation, generated data, queries and import.
+- [docs/DATA-REPORT.md](docs/DATA-REPORT.md): coverage report for the current edition.
+- [docs/UX.md](docs/UX.md), [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md), [docs/INTERACTIONS.md](docs/INTERACTIONS.md): visual direction, tokens, components and interactions.
+- [docs/TIMELINE.md](docs/TIMELINE.md), [docs/MAP.md](docs/MAP.md), [docs/COMPARISON.md](docs/COMPARISON.md), [docs/PAGES.md](docs/PAGES.md): each part of the atlas.
+- [docs/GAMEPLAY.md](docs/GAMEPLAY.md), [docs/GAME-TRAIL.md](docs/GAME-TRAIL.md), [docs/GAME-COVERAGE.md](docs/GAME-COVERAGE.md): the current game. [docs/VOTOS-E-ESCRIVAO.md](docs/VOTOS-E-ESCRIVAO.md) and [docs/GAME-RELEASE.md](docs/GAME-RELEASE.md) are historical.
+- [docs/EDITORIAL.md](docs/EDITORIAL.md), [docs/SOURCES.md](docs/SOURCES.md), [docs/CONTENT-REVIEW.md](docs/CONTENT-REVIEW.md), [docs/EDITORIAL-REVIEW.md](docs/EDITORIAL-REVIEW.md), [docs/HUMAN-REVIEW.md](docs/HUMAN-REVIEW.md): editorial criteria, sources, reviews and the pending human review.
+- [docs/QA.md](docs/QA.md), [docs/PERFORMANCE.md](docs/PERFORMANCE.md), [docs/USER-VALIDATION.md](docs/USER-VALIDATION.md): technical checks, measurements and the (not yet applied) user validation script.
+- [docs/DEPLOY.md](docs/DEPLOY.md): publication status, procedure and what depends on a decision.
+- [docs/DECISIONS.md](docs/DECISIONS.md) and [docs/STATUS.md](docs/STATUS.md): decisions and status of each phase.
+- [docs/capturas/](docs/capturas/README.md): real screenshots, by phase.
+- [content/README.md](content/README.md): content file contract and how to edit.
+
+## Limitations
+
+- Content was checked with AI assistance only; human review and reader validation are pending, and the publication gate (`npm run verify:release`) refuses on purpose.
+- No public domain, correction channel or indexing has been decided yet (`src/lib/site.ts`).
+- The interface and the documentation in `docs/` are in Portuguese only.
+
+## Media credits
+
+Portraits (`public/media/retratos/`) have their credit, origin and terms of use recorded in `content/published/imagens.json` and shown on the pages. Typefaces (`src/app/fonts/`) and map outlines (`src/features/map/base/`) carry their own licenses in their folders. The screenshot above comes from `docs/capturas/jogo-trilha/`.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) to report vulnerabilities privately. To contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+No license has been chosen yet; all rights reserved by the author. Portraits, typefaces and map outlines follow their own licenses cited above.
