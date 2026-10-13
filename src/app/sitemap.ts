@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const caminhos = [
     "/",
     "/jogo/",
+    "/mundo/",
     "/comparar/",
     "/metodologia/",
     ...PROFILES.flatMap((perfil) => [`/politicos/${perfil.slug}/`, `/jogo/${perfil.slug}/`]),
