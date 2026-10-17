@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const caminhos = [
     "/",
     "/jogo/",
+    "/praca/",
     "/mundo/",
     "/comparar/",
     "/metodologia/",

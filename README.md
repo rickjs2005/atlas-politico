@@ -4,7 +4,7 @@
 
 Working title. An atlas (in Brazilian Portuguese) for following the public careers of Lula and Flávio Bolsonaro through a timeline, a map, events backed by the sources that support them, and a game that walks through both careers in short stages, from their origins to the cut-off date. A MilWeb portfolio project.
 
-Since October 17, 2026 (content edition 0.4.0) the game also has an investigation mission, "O documento diz o quê?" (what does the document say?): the Escrivão hands out index cards, the player opens real records from the drawer, builds a dossier, matches each card to the record that supports it and points to the field that supports the highlighted passage ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md), in Portuguese). The Cidade do Voto prototype had its scene lifecycle fixed and gained two more choices ([docs/MUNDO.md](docs/MUNDO.md)).
+Since October 17, 2026 (content edition 0.4.0) the game also has an investigation mission, "O documento diz o quê?" (what does the document say?): the Escrivão hands out index cards, the player opens real records from the drawer, builds a dossier, matches each card to the record that supports it and points to the field that supports the highlighted passage ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md), in Portuguese). The Cidade do Voto prototype had its scene lifecycle fixed and gained two more choices ([docs/MUNDO.md](docs/MUNDO.md)). A newer direction, the Praça do Mural (`/praca/`), is an investigation adventure in a compact Brazilian town square: residents pin questions on a board, and the player, the new reporter of the community radio, finds in the archive the record that answers each one ([docs/PRACA.md](docs/PRACA.md), in Portuguese).
 
 > **Type:** MilWeb portfolio project, in development. It is not an official site of either person portrayed, of any party or of any public body. There is no definitive public address yet: the provisional Vercel address and the publication status are documented in [docs/DEPLOY.md](docs/DEPLOY.md).
 
@@ -234,6 +234,7 @@ src/
     domain/      data rules and contracts, no I/O
     data/        public data format, indexes, points and queries
     game/        game rules without UI: trail, progress, URL, rooms, presentation, scenery, world, Escrivão and case card
+    praca/       Praça do Mural rules without UI: sessions, places, residents, board questions, drawers, the note, the council minutes and saved progress
     media/       frames, widths and names of the portrait versions
     publication/ validation, eligibility, report and import, no I/O
     content/     reading content/ and reading/writing generated/

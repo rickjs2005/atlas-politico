@@ -2,6 +2,8 @@
 
 Protótipo de um mundo aberto em `/mundo`, pedido em 13 de outubro de 2026 para tornar o atlas mais visual e prender a atenção de quem ainda não decidiu o voto. É um caminho a mais: o jogo em trilha (`/jogo`), o atlas e a comparação continuam iguais.
 
+> Em 17 de outubro de 2026 a direção do jogo passou para a **Praça do Mural** (`/praca/`, [PRACA.md](PRACA.md), D-153), que reaproveita o motor desta cena (laço, entrada, colisão, câmera, joystick) em uma praça com lugares de funções diferentes. A Cidade do Voto continua no ar e no menu como está; levar os programas às cegas para um lugar da praça, ou tirar a cidade do menu, é a tarefa T-26.
+
 ## Como funciona
 
 1. **Entrada.** Uma página curta explica as regras e oferece a comparação com os nomes para quem preferir.

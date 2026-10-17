@@ -4,7 +4,7 @@
 
 Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa, acontecimentos acompanhados das fontes que os sustentam e por um jogo que segue as duas trajetórias em fases curtas, da origem à data de corte. Projeto de portfólio da MilWeb.
 
-Desde 17 de outubro de 2026 (edição 0.4.0 do conteúdo) o jogo tem também uma missão de investigação, "O documento diz o quê?": o Escrivão entrega fichas, a pessoa abre registros reais na gaveta, monta um dossiê, relaciona cada ficha ao documento que a sustenta e aponta o campo que sustenta o trecho destacado ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md)). O protótipo da Cidade do Voto teve o ciclo de vida da cena corrigido e ganhou duas escolhas ([docs/MUNDO.md](docs/MUNDO.md)).
+Desde 17 de outubro de 2026 (edição 0.4.0 do conteúdo) o jogo tem também uma missão de investigação, "O documento diz o quê?": o Escrivão entrega fichas, a pessoa abre registros reais na gaveta, monta um dossiê, relaciona cada ficha ao documento que a sustenta e aponta o campo que sustenta o trecho destacado ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md)). O protótipo da Cidade do Voto teve o ciclo de vida da cena corrigido e ganhou duas escolhas ([docs/MUNDO.md](docs/MUNDO.md)). A direção mais nova é a Praça do Mural (`/praca/`): uma aventura de investigação em uma praça brasileira compacta, em que os moradores pregam perguntas no mural e a pessoa, repórter nova da rádio comunitária, acha no arquivo o documento que responde cada uma ([docs/PRACA.md](docs/PRACA.md)).
 
 > **Tipo:** projeto de portfólio da MilWeb, em desenvolvimento. Não é site oficial de nenhuma das pessoas retratadas, de partido ou de órgão público. Ainda não há endereço público definitivo: o endereço provisório da Vercel e a situação da publicação estão em [docs/DEPLOY.md](docs/DEPLOY.md).
 
@@ -235,6 +235,7 @@ src/
     domain/      regras e contratos de dados, sem I/O
     data/        formato dos dados públicos, índices, pontos e consultas
     game/        regras do jogo, sem interface: trilha, progresso, endereço, salas, apresentação, cenários, mundo, Escrivão e ficha judicial
+    praca/       regras da Praça do Mural, sem interface: sessões, lugares, moradores, pautas, gavetas, a nota, a ata da Câmara e o progresso salvo
     media/       molduras, larguras e nomes das versões dos retratos
     publication/ validação, elegibilidade, relatório e importação, sem I/O
     content/     leitura de content/ e leitura e gravação de generated/

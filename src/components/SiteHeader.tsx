@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   ...PROFILES.map((perfil) => ({ href: `/politicos/${perfil.slug}`, label: perfil.nome })),
   { href: "/comparar", label: "Comparar" },
   { href: "/jogo", label: "Jogo" },
+  { href: "/praca", label: "Praça" },
   { href: "/mundo", label: "Cidade do Voto" },
   { href: "/metodologia", label: "Metodologia" },
 ];

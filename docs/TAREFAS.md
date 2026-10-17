@@ -36,9 +36,21 @@ Prioridade: **P1** afeta a experiência entregue agora; **P2** melhora o que exi
 
 | Nº | P | Problema | Solução | Dependências | Critério de aceitação | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
-| T-19 | P2 | A jornada com a cena anda segurando a tecla até o botão aparecer: funciona com WebGL por software, mas depende do laço andar | Expor a posição do personagem em atributo e esperar por ela | Nenhuma | A jornada espera um sinal, nunca um tempo | **Pendente** |
+| T-19 | P2 | A jornada com a cena anda segurando a tecla até o botão aparecer: funciona com WebGL por software, mas depende do laço andar | Expor a posição do personagem em atributo e esperar por ela | Nenhuma | A jornada espera um sinal, nunca um tempo | **Feita na praça** (`data-posicao` no canvas, D-153); pendente na cidade |
 | T-20 | P2 | O joystick e a cena no toque não foram conferidos em aparelho real | Testar em celular | Aparelho | Andar, entrar e revelar no toque | **Pendente, depende de aparelho** |
 | T-21 | P3 | A revelação mostra o documento e a página, mas não a frase original do documento | Decidir se a edição passa a guardar o trecho literal, ou manter o resumo com o documento | Decisão editorial | Decisão registrada | **Não iniciada** |
+
+## Praça do Mural (D-153, 17 de outubro de 2026)
+
+| Nº | P | Problema | Solução | Dependências | Critério de aceitação | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| T-22 | P1 | A Câmara anunciava a sessão de votação, que não existia; 22 das 24 gavetas não tinham pauta | Construir a segunda sessão: uma matéria que passou pelas duas pessoas lado a lado, mais duas pautas por pessoa tiradas das gavetas; generalizar o portão (um item por sessão) | Nenhuma | A Câmara abre em uma janela com conteúdo e a praça tem ao menos quatro pautas publicáveis | **Feita** em 17/10/2026 (D-154, [PRACA.md](PRACA.md), seção 9): a Lourdes, a credencial, a matéria da Lei de Execução Penal lado a lado, seis pautas no total, `Sessao` com portão; 18 testes de regra, 6 jornadas, 48 capturas. Commitada e enviada à `main` no mesmo dia, a pedido |
+| T-23 | P1 | Ninguém jogou a praça; as metas dos cinco minutos são de projeto | Três pessoas jogando a primeira sessão com os tempos anotados ([USER-VALIDATION.md](USER-VALIDATION.md)) | Pessoas | Tempo até a primeira ação, a primeira descoberta e a Câmara anotados para cada pessoa | **Pendente, depende de pessoas** |
+| T-24 | P1 | A praça só foi vista em Chromium emulado com WebGL por software; não há número de desempenho de usuário | Android e iPhone reais: joystick, janelas, retomada, taxa de quadros | Aparelho | Andar, falar, abrir gaveta e fixar nota no toque, com a taxa de quadros anotada | **Pendente, depende de aparelho** |
+| T-25 | P2 | As falas, as perguntas e a entrada da praça não passaram por revisão humana; a passagem de acessibilidade não cobre as telas | Revisão humana de `src/lib/praca/praca.ts`; incluir `/praca/` em `scripts/audit-a11y.mjs` | Pessoa | Textos aprovados; passagem sem falha nas janelas da praça | **Pendente** |
+| T-26 | P2 | A Cidade do Voto e as salas do jogo seguem separadas da praça | Levar os programas às cegas para um lugar da praça (ou tirar a cidade do menu) e ligar a entrada do jogo à praça | T-22 | Uma entrada só no menu para jogar | **Não iniciada** |
+| T-27 | P3 | A gaveta do Planalto de 2023 mostra o decreto da intervenção sem o aviso de contexto sensível que o jogo dá | Decidir se a gaveta avisa como o jogo avisa (`REGISTROS_SENSIVEIS`) | Decisão editorial | Decisão registrada | **Não iniciada** |
+| T-28 | P2 | Depois da segunda sessão, 15 das 24 gavetas continuam sem motivo, e três matérias que passaram pelas duas pessoas (regime fiscal 2023, IBS e CBS 2024 e 2025, crime organizado 2025 e 2026) estão nas gavetas sem mesa | A terceira sessão: uma matéria por vez, escolhida na mesa; pautas para as gavetas da Alerj e do Planalto de 2003 a 2010. É escrever uma entrada em `SESSOES`, as pautas e as matérias, sem tocar na tela | T-23 (saber primeiro se a segunda sessão é jogada até o fim) | Toda gaveta tem ao menos um motivo; a mesa tem mais de uma matéria | **Não iniciada** |
 
 ## Riscos encontrados no código, sem reprodução
 
