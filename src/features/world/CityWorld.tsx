@@ -8,15 +8,20 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { Tema } from "@/lib/domain/decisions";
-import { assignSides, programOnSide, reveal, type Choice, type Side } from "@/lib/world/blind";
+import { CHOICES, CHOICE_LABELS, assignSides, programOnSide, reveal, revealSentence, rowLabel, type Choice, type Side } from "@/lib/world/blind";
 import type { WorldContent, WorldTheme } from "@/lib/world/content";
 
 import type { WorldHandle } from "./scene";
 
 type Etapa = "entrada" | "jogando" | "revelacao";
 
+/**
+ * O que cada frase é: um resumo editorial de uma frase do documento, com a
+ * mesma regra para as duas candidaturas (docs/EDITORIAL.md, regra 10), e não
+ * uma citação literal. O documento e a página aparecem na revelação.
+ */
 const AVISO_PISTAS =
-  "As frases são as dos documentos, sem edição. Algumas dão pistas de quem é quem, como citar o governo atual: o modo às cegas esconde o nome, não o conteúdo.";
+  "Cada frase é um resumo editorial de uma frase do documento, escrito com a mesma regra para as duas candidaturas: não é citação literal. O documento e a página de cada frase aparecem na revelação. Algumas frases dão pistas de quem é quem, como citar o governo atual: o modo às cegas esconde o nome, não o conteúdo.";
 
 const AVISO_AMOSTRA =
   "Cada programa aparece com três frases por área, tiradas do documento que a candidatura registrou no TSE. Não é o documento inteiro, e proposta é intenção: não é ato nem resultado.";
@@ -38,21 +43,37 @@ export function CityWorld({ content }: { content: WorldContent }) {
   const visitados = Object.keys(escolhas).length;
   const total = content.temas.length;
 
-  // A cena: carregada quando a pessoa entra na cidade, com o pacote do three.js à parte.
+  // A situação da cena, para a tela e para os testes: quantas vezes foi criada nesta visita e se está desenhando agora.
+  const [cena, setCena] = useState<{ situacao: "carregando" | "pronta" | "parada"; instancias: number }>({ situacao: "carregando", instancias: 0 });
+  // Onde o personagem parou e o que já foi visitado, para a cena recriada depois da revelação começar do mesmo lugar.
+  const posicao = useRef<{ x: number; z: number } | undefined>(undefined);
+  const escolhasRef = useRef(escolhas);
   useEffect(() => {
-    if (etapa !== "jogando" || semCena || canvas.current === null || mundo.current !== null) return;
+    escolhasRef.current = escolhas;
+  });
+
+  // A cena vive enquanto a praça está na tela. A revelação desmonta o canvas; ao voltar, o canvas é outro elemento, e a cena é
+  // criada de novo nele, no lugar em que o personagem parou, com as bandeiras já visitadas no alto. A cena antiga é descartada
+  // (laço parado, recursos da placa soltos) quando a praça sai da tela, e nunca fica ligada a um canvas que não existe mais.
+  useEffect(() => {
+    if (etapa !== "jogando" || semCena) return;
+    const alvo = canvas.current;
+    if (alvo === null) return;
     let cancelado = false;
+    let instancia: WorldHandle | null = null;
     const reduzir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     import("./scene")
       .then(({ createWorld }) => {
-        if (cancelado || canvas.current === null) return;
+        if (cancelado) return;
         try {
-          mundo.current = createWorld(
-            canvas.current,
+          instancia = createWorld(
+            alvo,
             content.temas.map((tema) => ({ id: tema.tema, rotulo: tema.rotulo })),
             { onNear: (id) => setPerto(id as Tema | null) },
-            { reduzirMovimento: reduzir },
+            { reduzirMovimento: reduzir, posicaoInicial: posicao.current, visitados: Object.keys(escolhasRef.current) },
           );
+          mundo.current = instancia;
+          setCena((atual) => ({ situacao: "pronta", instancias: atual.instancias + 1 }));
         } catch {
           setSemCena(true);
         }
@@ -60,16 +81,15 @@ export function CityWorld({ content }: { content: WorldContent }) {
       .catch(() => setSemCena(true));
     return () => {
       cancelado = true;
+      if (instancia !== null) {
+        posicao.current = instancia.getPosition();
+        instancia.dispose();
+      }
+      if (mundo.current === instancia) mundo.current = null;
+      setPerto(null);
+      setCena((atual) => ({ situacao: "parada", instancias: atual.instancias }));
     };
   }, [etapa, semCena, content.temas]);
-
-  useEffect(
-    () => () => {
-      mundo.current?.dispose();
-      mundo.current = null;
-    },
-    [],
-  );
 
   useEffect(() => {
     mundo.current?.setPaused(aberto !== null || etapa !== "jogando");
@@ -102,7 +122,12 @@ export function CityWorld({ content }: { content: WorldContent }) {
   }
 
   return (
-    <div className="relative h-[calc(100dvh-var(--atlas-header-h))] min-h-[480px] w-full overflow-hidden bg-[#f4ecd9]">
+    <div
+      className="relative h-[calc(100dvh-var(--atlas-header-h))] min-h-[480px] w-full overflow-hidden bg-[#f4ecd9]"
+      data-mundo={semCena ? "lista" : "cena"}
+      data-cena={semCena ? "lista" : cena.situacao}
+      data-cena-instancias={cena.instancias}
+    >
       {semCena ? (
         <ListaDePredios temas={content.temas} escolhas={escolhas} onAbrir={abrir} />
       ) : (
@@ -114,7 +139,9 @@ export function CityWorld({ content }: { content: WorldContent }) {
           <p className="font-medium">
             Temas visitados: {visitados} de {total}
           </p>
-          <p className="text-ink-soft">Ande até a porta de um prédio.</p>
+          <p className="text-ink-soft" data-instrucao-da-praca>
+            {semCena ? "Toque em um prédio da lista para abrir os dois programas." : "Ande até a porta de um prédio."}
+          </p>
         </div>
         <button
           type="button"
@@ -179,7 +206,7 @@ function Entrada({ total, eleicao, onComecar }: { total: number; eleicao: number
           Prefiro a comparação com os nomes
         </Link>
       </div>
-      <p className="text-sm text-ink-soft">No computador: setas ou W A S D para andar, E para entrar. No celular: o joystick no canto da tela.</p>
+      <p className="text-sm text-ink-soft">No computador: setas ou W A S D para andar, E para entrar. No celular: o joystick no canto da tela. Sem a cena 3D, os prédios aparecem em lista, com o mesmo conteúdo.</p>
     </div>
   );
 }
@@ -244,16 +271,18 @@ function Predio({
         </div>
 
         <p className="mt-4 font-medium">Qual combina mais com você?</p>
-        <div className="mt-2 grid grid-cols-3 gap-2">
-          {(["A", "B", "nenhum"] as const).map((opcao) => (
+        {/* Cinco escolhas, cada uma contada à parte na revelação: as três últimas não apontam lado e não entram na conta de ninguém. */}
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {CHOICES.map((opcao) => (
             <button
               key={opcao}
               type="button"
               onClick={() => onEscolher(opcao)}
               aria-pressed={escolhaAtual === opcao}
-              className={`rounded-md border-2 px-2 py-3 text-sm font-semibold ${escolhaAtual === opcao ? "border-ink bg-ink text-paper" : "border-line-strong bg-raised"}`}
+              data-escolha={opcao}
+              className={`min-h-11 rounded-md border-2 px-2 py-3 text-sm font-semibold ${escolhaAtual === opcao ? "border-ink bg-ink text-paper" : "border-line-strong bg-raised"}`}
             >
-              {opcao === "nenhum" ? "Nenhum dos dois" : `Programa ${opcao}`}
+              {CHOICE_LABELS[opcao]}
             </button>
           ))}
         </div>
@@ -348,28 +377,15 @@ function Revelacao({
 
       <ul className="space-y-2" aria-label="Escolhas por tema">
         {resumo.linhas.map((linha) => (
-          <li key={linha.tema} className="flex flex-wrap items-baseline justify-between gap-2 rounded-md border border-line bg-raised px-4 py-3">
+          <li key={linha.tema} className="flex flex-wrap items-baseline justify-between gap-2 rounded-md border border-line bg-raised px-4 py-3" data-revelacao-tema={linha.tema} data-revelacao-escolha={linha.escolha ?? "nao-visitado"}>
             <span className="font-medium">{linha.rotulo}</span>
-            <span className="text-ink-soft">
-              {linha.escolha === null ? "não visitado" : linha.escolha === "nenhum" ? "nenhum dos dois" : `Programa ${linha.escolha}: ${linha.nome}`}
-            </span>
+            <span className="text-ink-soft">{rowLabel(linha)}</span>
           </li>
         ))}
       </ul>
 
-      <p>
-        Você marcou{" "}
-        {resumo.contagem.map((linha, indice) => (
-          <span key={linha.nome}>
-            {indice > 0 ? " e " : ""}
-            <strong>
-              {linha.temas} {linha.temas === 1 ? "tema" : "temas"} com o programa de {linha.nome}
-            </strong>
-          </span>
-        ))}
-        {resumo.nenhum > 0 ? `, e ${resumo.nenhum} sem nenhum dos dois` : ""}
-        {resumo.naoVisitados > 0 ? `. Faltam ${resumo.naoVisitados} prédios.` : "."}
-      </p>
+      {/* A frase conta cada tipo de escolha à parte: nada soma lados, e "partes dos dois" e "ainda não sei" não contam para ninguém. */}
+      <p data-revelacao-resumo>{revealSentence(resumo)}</p>
 
       <details className="rounded-md border border-line bg-raised p-4">
         <summary className="cursor-pointer font-medium">Ver as frases com nomes e fontes</summary>
@@ -402,7 +418,7 @@ function Revelacao({
       </details>
 
       <div className="flex flex-wrap gap-3">
-        <button type="button" onClick={onVoltar} className="rounded-md bg-ink px-6 py-3 font-semibold text-paper">
+        <button type="button" onClick={onVoltar} className="rounded-md bg-ink px-6 py-3 font-semibold text-paper" data-voltar-a-cidade>
           Voltar à cidade
         </button>
         <Link href="/comparar/" className="rounded-md border border-line-strong px-6 py-3">

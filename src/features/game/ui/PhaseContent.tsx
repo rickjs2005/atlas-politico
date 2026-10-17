@@ -25,7 +25,7 @@ import type { FalaDita } from "@/lib/game/escrivao";
 import { JUDICIAL_KIND_LABEL, JUDICIAL_NOTICE, judicialOf } from "@/lib/game/judicial";
 import { stampAnnouncement, type DeepDive, type TrailOutcome } from "@/lib/game/passport";
 import { periodLabel, roomLabel, type RoomSpec } from "@/lib/game/rooms";
-import { displayOrder, isResolved, orderDates, orderingDisplay, phaseStatus, refDate, refKey, refTitle } from "@/lib/game/trail";
+import { activityRefs, displayOrder, isResolved, orderDates, orderingDisplay, phaseStatus, refDate, refKey, refTitle } from "@/lib/game/trail";
 import type { GameContent, GameSource, PhaseProgress, PhaseRef, PhaseSpec } from "@/lib/game/types";
 import { comparisonHref } from "@/lib/state/links";
 
@@ -140,7 +140,7 @@ function DecisionSubject({ referencia, content }: { referencia: PhaseRef; conten
 function supportingRefs(fase: PhaseSpec): PhaseRef[] {
   const vistos = new Set<string>();
   const lista: PhaseRef[] = [];
-  const todos = [fase.marco, ...fase.explicacao.flatMap((bloco) => bloco.referencias), ...(fase.atividade.tipo === "pergunta" ? fase.atividade.referencias : fase.atividade.itens)];
+  const todos = [fase.marco, ...fase.explicacao.flatMap((bloco) => bloco.referencias), ...activityRefs(fase.atividade)];
   for (const referencia of todos) {
     if (referencia.tipo === "conceito" || vistos.has(refKey(referencia))) continue;
     vistos.add(refKey(referencia));
@@ -191,6 +191,8 @@ export function PhaseContent({
   }, [resultado]);
 
   const { atividade } = fase;
+  // O dossiê da missão de investigação tem a própria tela (ui/Dossier.tsx): esta é a da pergunta e da ordenação.
+  if (atividade.tipo === "dossie") throw new Error("A missão de investigação é mostrada por DossierPhase, e não por PhaseContent.");
   const concluida = estado.concluida !== undefined;
   const apoio = supportingRefs(fase).filter((referencia) => isResolved(referencia, content));
   const explorar = fase.explorar.filter((referencia) => isResolved(referencia, content));

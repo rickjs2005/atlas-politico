@@ -6,10 +6,30 @@
 /**
  * As salas do jogo. `historico` é a trajetória, da origem à data de corte;
  * `economia` e `seguranca-publica` são aprofundamentos sobre decisões
- * documentadas de um assunto. Os identificadores estão nos endereços (`/jogo/<pessoa>/<sala>/`).
+ * documentadas de um assunto; `investigacao` é a missão de investigação
+ * documental ("O documento diz o quê?", D-151). Os identificadores estão nos
+ * endereços (`/jogo/<pessoa>/<sala>/`).
  */
-export const SALAS_DO_JOGO = ["historico", "economia", "seguranca-publica"] as const;
+export const SALAS_DO_JOGO = ["historico", "economia", "seguranca-publica", "investigacao"] as const;
 export type SalaDoJogo = (typeof SALAS_DO_JOGO)[number];
+
+/**
+ * Os cinco campos de um documento que a missão de investigação pede para
+ * ler (D-151): a data, a instituição, o cargo pelo qual a pessoa agiu, o
+ * objeto (o que foi votado, o ato, a matéria) e a ação (a manifestação, o
+ * tipo do ato, a autoria ou a relatoria). São os campos do cartão de decisão
+ * do atlas, e não uma classificação nova.
+ */
+export const CAMPOS_DO_DOCUMENTO = ["data", "instituicao", "cargo", "objeto", "acao"] as const;
+export type CampoDoDocumento = (typeof CAMPOS_DO_DOCUMENTO)[number];
+
+export const CAMPO_LABELS: Record<CampoDoDocumento, string> = {
+  data: "Data",
+  instituicao: "Instituição",
+  cargo: "Cargo",
+  objeto: "Objeto",
+  acao: "Ação",
+};
 
 /** O que um fato biográfico registra. Não é categoria da linha do tempo: esses fatos são anteriores à vida pública, ou paralelos a ela. */
 export const TIPOS_DE_FATO_BIOGRAFICO = ["nascimento", "familia", "migracao", "formacao", "trabalho", "atuacao-sindical", "outro"] as const;
@@ -51,6 +71,13 @@ export const LIMITES_DA_FASE = {
   palavrasDoConceito: 45,
   /** Palavras no texto de uma proposta eleitoral: uma frase, e não um parágrafo. */
   palavrasDaProposta: 45,
+  /** Fichas de um dossiê, no mínimo e no máximo: a missão é curta (D-151). */
+  fichasMinimasDoDossie: 2,
+  fichasDoDossie: 4,
+  /** Documentos na gaveta de um dossiê (evidências e distratores): cabem em uma tela de celular, um por linha. */
+  documentosDoDossie: 8,
+  /** Palavras em uma ficha: uma frase, que resume um documento. */
+  palavrasDaFicha: 30,
 } as const;
 
 /** Como começa o texto de toda proposta eleitoral: quem propõe é o documento registrado, e proposta não é ato nem resultado. */

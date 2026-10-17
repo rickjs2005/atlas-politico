@@ -230,8 +230,8 @@ export function GameStage(props: GameStageProps) {
             personagem: p.personagem,
             epoca: p.epoca,
             player: playerRef.current,
-            // A pasta sem botão também não é desenhada: o que aparece na cena é o que responde ao toque.
-            pastas: p.marcadores.filter((marcador) => visiveisRef.current.has(marcador.chave)).map((marcador) => ({ x: marcador.x, y: marcador.y, destaque: marcador.natureza === "marco" })),
+            // A pasta sem botão também não é desenhada: o que aparece na cena é o que responde ao toque. Os objetos da missão de investigação não são pastas: o móvel da cena já está desenhado, e o botão fica sobre ele.
+            pastas: p.marcadores.filter((marcador) => marcador.natureza !== "objeto" && visiveisRef.current.has(marcador.chave)).map((marcador) => ({ x: marcador.x, y: marcador.y, destaque: marcador.natureza === "marco" })),
             abertura: aberturaRef.current,
             camera: cameraRef.current,
             tempo: tempoRef.current,
@@ -276,14 +276,14 @@ export function GameStage(props: GameStageProps) {
             if (elemento === null) botoesRef.current.delete(marcador.chave);
             else botoesRef.current.set(marcador.chave, elemento);
           }}
-          className={`jogo-marcador ${marcador.natureza === "marco" ? "jogo-marcador-marco" : "jogo-marcador-explorar"}`}
-          aria-label={marcador.natureza === "marco" ? `Abrir o marco: ${marcador.rotulo}` : `Explorar: ${marcador.rotulo}`}
+          className={`jogo-marcador jogo-marcador-${marcador.natureza}`}
+          aria-label={marcador.natureza === "marco" ? `Abrir o marco: ${marcador.rotulo}` : marcador.natureza === "objeto" ? `Investigar: ${marcador.rotulo}` : `Explorar: ${marcador.rotulo}`}
           data-marcador={marcador.chave}
           data-natureza={marcador.natureza}
           onClick={() => props.handle.current?.open(marcador.chave)}
         >
           <span className="jogo-marcador-rotulo" aria-hidden="true">
-            {marcador.natureza === "marco" ? "Abrir" : "+"}
+            {marcador.natureza === "marco" ? "Abrir" : marcador.natureza === "objeto" ? marcador.rotulo : "+"}
           </span>
         </button>
       ))}

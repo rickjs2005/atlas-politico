@@ -19,8 +19,9 @@ import { findPersonBySlug } from "@/lib/data/queries";
 import { formatDate } from "@/lib/domain/dates";
 import { PROFILES, type ProfileSlug } from "@/lib/domain/profiles";
 import { buildGameContent, buildPassportPages, buildProgressKeys, type ProgressKeys } from "@/lib/game/content";
+import { CAMPO_LABELS } from "@/lib/domain/game";
 import { periodLabel, roomLabel, roomOf } from "@/lib/game/rooms";
-import { orderDates } from "@/lib/game/trail";
+import { orderDates, refTitle } from "@/lib/game/trail";
 import type { GameContent, RoomId } from "@/lib/game/types";
 import { gameHref } from "@/lib/state/links";
 
@@ -68,6 +69,15 @@ function PhasesAsText({ content }: { content: GameContent }) {
               <span className="font-medium">Atividade: </span>
               {atividade.enunciado}
             </p>
+            {atividade.tipo === "dossie" && (
+              <ul className="list-disc space-y-1 pl-5 text-sm" data-fichas-em-texto>
+                {atividade.fichas.map((ficha) => (
+                  <li key={ficha.id}>
+                    {ficha.texto} <span className="text-ink-soft">Documento: {refTitle(ficha.evidencia, content) ?? ficha.evidencia.id}. Campo do trecho destacado: {CAMPO_LABELS[ficha.destaque.campo]}.</span>
+                  </li>
+                ))}
+              </ul>
+            )}
             <p className="text-sm">
               <span className="font-medium">Resposta: </span>
               {certa !== undefined && `${certa.texto} `}
@@ -146,8 +156,9 @@ export function GamePage({ perfil, sala }: { perfil: { slug: ProfileSlug; nome: 
         </p>
         {sala !== "historico" && (
           <p data-aviso-amostra>
-            As decisões deste aprofundamento são uma amostra documentada da edição, e não o histórico completo: a regra de escolha de cada parte da amostra está
-            na metodologia. Um voto e um ato do Executivo são coisas diferentes: cada registro diz o cargo, a instituição e o objeto.
+            {salaSpec.natureza === "investigacao"
+              ? "Os documentos desta missão são uma amostra documentada da edição, e não o histórico completo: cada um é um registro do atlas, com as fontes, e as fichas dizem só o que o documento registra. Um voto, um ato do Executivo e a autoria de uma lei são coisas diferentes: cada documento diz o cargo, a instituição, o objeto e a ação."
+              : "As decisões deste aprofundamento são uma amostra documentada da edição, e não o histórico completo: a regra de escolha de cada parte da amostra está na metodologia. Um voto e um ato do Executivo são coisas diferentes: cada registro diz o cargo, a instituição e o objeto."}
           </p>
         )}
         <p data-revisao>{notaDeRevisao}</p>

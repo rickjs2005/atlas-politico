@@ -149,6 +149,7 @@ export async function responderCerto(onde: Locator | Page, fase: PhaseSpec, cont
     await responder(onde, fase.atividade.correta);
     return;
   }
+  if (fase.atividade.tipo === "dossie") throw new Error(`${fase.id} é um dossiê: use as jornadas de investigacao.spec.ts.`);
   for (const chave of correctOrder(fase.atividade, content)) await onde.locator(`[data-ordem-item="${chave}"]`).click();
   await onde.locator("[data-responder]").click();
 }

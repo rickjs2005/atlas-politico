@@ -849,7 +849,10 @@ export function validateSources(sources: Sources, options: ValidationOptions = {
     }
 
     const { atividade } = dados;
-    if (atividade.tipo === "pergunta") {
+    if (atividade.tipo === "dossie") {
+      atividade.fichas.forEach((ficha, indice) => checkPhaseReference(ficha.evidencia, `atividade.fichas[${indice}].evidencia`));
+      atividade.distratores.forEach((referencia, indice) => checkPhaseReference(referencia, `atividade.distratores[${indice}]`));
+    } else if (atividade.tipo === "pergunta") {
       atividade.referencias.forEach((referencia, indice) => checkPhaseReference(referencia, `atividade.referencias[${indice}]`));
     } else {
       atividade.itens.forEach((referencia, indice) => checkPhaseReference(referencia, `atividade.itens[${indice}]`));

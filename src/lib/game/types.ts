@@ -62,7 +62,9 @@ export type SceneId =
   | "arquivo-economia-a"
   | "arquivo-economia-b"
   | "arquivo-seguranca-a"
-  | "arquivo-seguranca-b";
+  | "arquivo-seguranca-b"
+  | "arquivo-investigacao-a"
+  | "arquivo-investigacao-b";
 
 /**
  * A época da figura do personagem na fase: variações estilizadas de cabelo,
@@ -161,6 +163,24 @@ export interface PhaseProgress {
    * a fase é concluída de novo.
    */
   reaberta?: true;
+  /**
+   * O andamento do dossiê de uma missão de investigação (D-151): os
+   * documentos recolhidos da gaveta, a ficha relacionada a cada documento e as
+   * fichas conferidas. Só existe em fase com atividade `dossie`; a conclusão
+   * continua sendo `concluida`, como nas outras fases. O formato 6 não mudou
+   * de número: o campo é opcional, e um salvo sem ele é lido como antes.
+   */
+  dossie?: DossierProgress;
+}
+
+/** O andamento de um dossiê, por chaves de registro (`tipo:id`) e identificadores de ficha. */
+export interface DossierProgress {
+  /** Os documentos da gaveta que a pessoa guardou no dossiê, na ordem em que guardou. */
+  recolhidos: string[];
+  /** Por ficha, a chave do documento a que ela foi relacionada, quando a relação está certa. */
+  relacionadas: Record<string, string>;
+  /** As fichas em que a pessoa também apontou o campo que sustenta o trecho destacado. */
+  conferidas: string[];
 }
 
 export interface PlayerProgress {
@@ -410,15 +430,20 @@ export interface PlayerState {
 /**
  * Uma pasta no cenário: o marco da fase, em destaque, ou um registro para
  * explorar. É um botão da página, posto sobre o desenho; a cena só diz onde
- * ele fica.
+ * ele fica. Na missão de investigação (D-151), os marcadores são objetos da
+ * sala (`objeto`): o Escrivão, a gaveta, a mesa das fichas e o quadro; cada
+ * um abre uma parte do dossiê, e nenhum é pasta.
  */
 export interface SceneMarker {
-  /** `marco`, ou a chave do registro (`tipo:id`). */
+  /** `marco`, a chave do registro (`tipo:id`) ou `objeto:<nome>`. */
   chave: string;
-  natureza: "marco" | "explorar";
+  natureza: "marco" | "explorar" | "objeto";
   /** O que o botão diz. */
   rotulo: string;
   /** A célula da pasta. */
   x: number;
   y: number;
 }
+
+/** As partes da sala de investigação que um objeto abre (D-151). */
+export type DossierSection = "escrivao" | "gaveta" | "fichas" | "quadro";

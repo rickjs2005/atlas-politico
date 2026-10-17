@@ -1991,8 +1991,8 @@ test.describe("passaporte do Escrivão", () => {
     for (const pessoa of PERSONAGENS) {
       const pagina = passaporte.locator(`[data-passaporte-pagina="${pessoa}"]`);
       await expect(pagina.getByRole("heading", { level: 3 })).toHaveText(`Trajetória de ${nomeDe(pessoa)}`);
-      // Um espaço por fase publicada, da trajetória e dos aprofundamentos: o total sai do conteúdo.
-      const todas = [...fasesDe(pessoa), ...fasesDe(pessoa, "economia"), ...fasesDe(pessoa, "seguranca-publica")];
+      // Um espaço por fase publicada, da trajetória, dos aprofundamentos e da missão de investigação: o total sai do conteúdo.
+      const todas = [...fasesDe(pessoa), ...fasesDe(pessoa, "economia"), ...fasesDe(pessoa, "seguranca-publica"), ...fasesDe(pessoa, "investigacao")];
       await expect(pagina.locator("[data-carimbo-fase]")).toHaveCount(todas.length);
       await expect(pagina.locator("[data-passaporte-pagina-contagem]")).toHaveText(contagemDe(pessoa === slug ? 1 : 0, fasesDe(pessoa).length));
     }
@@ -2232,8 +2232,8 @@ test.describe("passaporte do Escrivão", () => {
     await expect(fim).toHaveAttribute("data-fim-da-trajetoria", "todas");
     await expect(fim).toContainText("As duas trajetórias estão percorridas.");
     await expect(fim.locator("[data-convite-comparar]")).toHaveAttribute("href", "/comparar/");
-    // Os aprofundamentos das duas pessoas, na ordem dos perfis: os mesmos assuntos para as duas.
-    const aprofundamentos = PERSONAGENS.flatMap((pessoa) => (["economia", "seguranca-publica"] as const).map((sala) => `${pessoa}:${sala}`));
+    // Os aprofundamentos e a missão das duas pessoas, na ordem dos perfis: os mesmos assuntos para as duas.
+    const aprofundamentos = PERSONAGENS.flatMap((pessoa) => (["economia", "seguranca-publica", "investigacao"] as const).map((sala) => `${pessoa}:${sala}`));
     expect(await fim.locator("[data-convite-aprofundamento]").evaluateAll((nos) => nos.map((no) => no.getAttribute("data-convite-aprofundamento")))).toEqual(aprofundamentos);
     await expect(fim.locator(`[data-convite-aprofundamento="${outro}:economia"]`)).toHaveAttribute("href", rota(outro, "economia"));
     await expect(fim.locator("[data-convite-outra-trajetoria]")).toHaveCount(0);

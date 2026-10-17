@@ -7,4 +7,6 @@ export { CATALOGO } from "./catalogo";
 export { candidatas, daVez, falasVisiveis, selectLines } from "./selecao";
 export type { AlcanceDaFala, Camada, EscrivaoEvent, Fala, FalaDita, Momento } from "./types";
 export { CAMADAS, CAMADA_LABELS, ESCRIVAO_EVENTS } from "./types";
-export { INSTRUCAO_MAXIMA, MINIMO_DE_HUMOR, validateCatalog } from "./validacao";
+export { INSTRUCAO_MAXIMA, MINIMO_DE_HUMOR, validateCatalog, validateLine } from "./validacao";
+export { BRIEFING_INVESTIGACAO, chooseIn, currentNode, isDialogOver, nodeText, startDialog, validateDialog } from "./dialogo";
+export type { DialogChoice, DialogGraph, DialogNode, DialogState } from "./dialogo";

@@ -1,0 +1,47 @@
+# Tarefas: evolução do jogo para exploração e investigação
+
+Lista priorizada, aberta em 17 de outubro de 2026, a partir da análise do estado do projeto e das pistas de uma análise anterior. Cada tarefa diz o problema, a solução, as dependências, o critério de aceitação e o estado real. "Feita" quer dizer implementada e verificada por teste nesta máquina; o que depende de pessoa, aparelho ou decisão está dito como pendente.
+
+Prioridade: **P1** afeta a experiência entregue agora; **P2** melhora o que existe; **P3** fica para depois da validação do primeiro ciclo.
+
+## Achados investigados
+
+| Nº | P | Problema | Solução | Dependências | Critério de aceitação | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| T-01 | P1 | (A) A Cidade do Voto dizia que as frases eram "dos documentos, sem edição"; a comparação diz que são resumos | Trocar o aviso: cada frase é um resumo editorial de uma frase do documento, com a mesma regra para as duas candidaturas; o documento e a página aparecem na revelação | docs/EDITORIAL.md, regra 10 | A praça e a janela do prédio não dizem "sem edição" e dizem "resumo editorial"; jornada confere | **Feita** (`CityWorld.tsx`, `tests/e2e/mundo.spec.ts`) |
+| T-02 | P1 | (B) A revelação desmontava o canvas e mantinha a cena: ao voltar, o canvas novo ficava sem cena (300×150, em branco) e o laço antigo desenhava em um elemento fora da tela | A cena vive com a praça: criada ao entrar, descartada ao sair (laço parado, recursos soltos, contexto perdido), recriada no canvas novo com a posição e as bandeiras guardadas | three.js 0.180 (`dispose`, `forceContextLoss`) | Entrar, escolher, revelar e voltar duas vezes sem canvas vazio nem cena duplicada; o canvas novo tem o tamanho da tela; o personagem continua na porta | **Feita e reproduzida** (o defeito foi reproduzido no código antigo antes da correção: canvas 300×150 depois de voltar; `tests/e2e/mundo.spec.ts`) |
+| T-03 | P1 | (C) Sem a cena, a praça dizia "Ande até a porta de um prédio" | Instrução própria para a lista | Nenhuma | Sem WebGL, a praça diz para tocar em um prédio da lista, e não para andar | **Feita** (jornada sem WebGL) |
+| T-04 | P2 | (D) Os filtros de período da comparação não se aplicam às seções de decisões e de propostas | Conferir se a interface diz isso | Nenhuma | A tela diz, em cada seção, que ela não segue o recorte de anos | **Não reproduzida como defeito:** as duas seções já dizem "Esta seção não segue o recorte de anos acima" (`src/app/comparar/Comparison.tsx`, `docs/COMPARISON.md`). Fechada sem mudança |
+| T-05 | P1 | (E) A trajetória depende do ciclo "abrir pasta, ler, responder" | Uma missão em que a cena participa: objetos com função, documentos a abrir, dossiê, relação ficha-documento e campo apontado | Conteúdo publicado (decisões), passaporte, progresso | Missão jogável do começo ao fim, para as duas pessoas, com erro explicado, nova tentativa, carimbo e resumo | **Feita** para a missão (T-07). Na trilha, as fases continuam como estavam: levar o gesto de apontar o campo às fases de decisão da trilha é T-14 |
+| T-06 | P2 | (F) A Cidade do Voto oferecia só A, B e nenhum | Acrescentar "Concordo com partes dos dois" e "Ainda não sei" como escolhas próprias, contadas à parte, sem mudar "nenhum" nem as contagens por pessoa | Nenhuma | Cinco escolhas no prédio; a revelação lista cada uma como é e a frase do resumo as conta à parte, sem somar nem apontar vencedor | **Feita** (`blind.ts`, `tests/world.test.ts`, jornada sem WebGL) |
+
+## A missão
+
+| Nº | P | Problema | Solução | Dependências | Critério de aceitação | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| T-07 | P1 | Não havia missão de investigação | Sala `investigacao`, atividade `dossie`, regras puras, diálogo ramificado, cena com quatro objetos, duas variantes (Lula: três atos; Flávio Bolsonaro: três votos) | T-05; o conteúdo da edição 0.3.0 | Os oito passos do fluxo pedido, com objetivo visível, diálogo ramificado, exploração, atividade além de múltipla escolha, erro explicado, nova tentativa, conclusão no passaporte; toque, teclado e arraste | **Feita e verificada** (regras, fases, cena, catálogo; jornadas nas duas pessoas, recarregar, leitura sem o cenário pelo teclado, celular emulado). Ver [MISSAO-INVESTIGACAO.md](MISSAO-INVESTIGACAO.md) |
+| T-08 | P1 | As fichas e as explicações novas não passaram por pessoa | Revisão humana das duas fases, com [HUMAN-REVIEW.md](HUMAN-REVIEW.md) | Uma pessoa | Cada ficha conferida contra os campos do cartão; a observação da revisão passa a humana só quando alguém revisar | **Pendente, depende de pessoa** |
+| T-09 | P1 | A duração de 5 a 10 minutos é hipótese | Sessão com três pessoas, tempo medido, com o roteiro de [USER-VALIDATION.md](USER-VALIDATION.md) ampliado para a missão | T-08 opcional; pessoas | Três tempos registrados e as dúvidas anotadas | **Pendente, depende de pessoas** |
+| T-10 | P1 | Celular real e leitor de tela não foram usados | Testar em aparelho real (toque nos objetos, janela embaixo, relacionar e apontar) e com um leitor de tela | Aparelho | Fluxo inteiro em um aparelho, sem alvo perdido; as regiões de aviso lidas uma vez | **Pendente, depende de aparelho** |
+| T-11 | P2 | A passagem de acessibilidade (`npm run audit:a11y`) não cobre as telas da missão | Acrescentar ao roteiro a sala, a conversa, a gaveta com um documento aberto, as fichas (erro e conferida), a explicação e a leitura sem o cenário | `scripts/audit-a11y.mjs` | As telas novas entram nas quatro larguras, sem falha de contraste, alvo ou ordem de foco | **Pendente** |
+| T-12 | P2 | O arrastar e soltar é o do navegador (mouse); no toque e no teclado valem os botões | Avaliar um arraste por ponteiro para o toque, mantendo os botões | Validação com pessoas (T-09) | Se as pessoas sentirem falta, implementar; senão, fechar | **Pendente, aguarda T-09** |
+| T-13 | P2 | A conversa com o Escrivão não persiste entre visitas: ao recarregar, o botão principal volta a "Falar com o Escrivão" | Guardar a marca da conversa no progresso da fase, ou derivar "conversa feita" de `vista` | Decidir se vale uma chave a mais no progresso (o passaporte não quis) | Recarregar com o dossiê começado mantém o botão em "Abrir o dossiê" | **Pendente** |
+| T-14 | P2 | As fases de decisão da trilha continuam só com pergunta | Levar a mecânica de apontar o campo às fases cujo marco é uma decisão, como atividade opcional | T-09 (validar o primeiro ciclo antes de espalhar) | Uma fase da trilha com o gesto, sem mudar as outras | **Não iniciada, de propósito:** validar a missão antes de expandir |
+| T-15 | P3 | A missão tem três fichas por variante; as regras aceitam de duas a quatro | Uma segunda missão por pessoa com outros documentos (Segurança pública), ou quatro fichas | Conteúdo: escolher documentos que façam sentido juntos | Segunda fase na sala, com as mesmas regras | **Não iniciada** |
+| T-16 | P3 | Pedidos laterais e gavetas liberadas por contagem (A Short Hike) não entraram | Avaliar depois da validação; o jogo não segura nada | T-09 | Decisão registrada | **Não iniciada** |
+| T-17 | P2 | A página da missão não foi medida (`npm run measure:game`) | Medir a entrada da missão e a janela da gaveta aberta, em laboratório | Build | Números em [PERFORMANCE.md](PERFORMANCE.md) | **Pendente** |
+| T-18 | P2 | As capturas da missão não existem no repositório | Roteiro de captura (`tests/export/missao.capture.ts`) para `docs/capturas/jogo-missao/`, nas larguras do projeto | Build | Pasta com as telas e o README | **Pendente** |
+
+## Cidade do Voto, além dos achados
+
+| Nº | P | Problema | Solução | Dependências | Critério de aceitação | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| T-19 | P2 | A jornada com a cena anda segurando a tecla até o botão aparecer: funciona com WebGL por software, mas depende do laço andar | Expor a posição do personagem em atributo e esperar por ela | Nenhuma | A jornada espera um sinal, nunca um tempo | **Pendente** |
+| T-20 | P2 | O joystick e a cena no toque não foram conferidos em aparelho real | Testar em celular | Aparelho | Andar, entrar e revelar no toque | **Pendente, depende de aparelho** |
+| T-21 | P3 | A revelação mostra o documento e a página, mas não a frase original do documento | Decidir se a edição passa a guardar o trecho literal, ou manter o resumo com o documento | Decisão editorial | Decisão registrada | **Não iniciada** |
+
+## Riscos encontrados no código, sem reprodução
+
+- `CityWorld.tsx`: o efeito que pausa a cena roda antes de a cena existir quando a praça abre; hoje não há como abrir um prédio antes de a cena nascer, então não há efeito. Se um dia a janela abrir antes, a cena nasce sem pausa.
+- `scene.ts`: `hardwareConcurrency` e `pointer: coarse` decidem sombras e antialias; em aparelho fraco com mais de quatro núcleos as sombras ficam ligadas. Só medição em aparelho real diz se pesa (T-20).
+- `Dossier.tsx`: o arraste usa o `dataTransfer` do navegador; em navegadores sem arraste nativo em toque, valem os botões, que são o caminho principal.

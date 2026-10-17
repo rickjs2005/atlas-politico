@@ -30,7 +30,18 @@ export interface WorldHandle {
   markVisited: (id: string) => void;
   /** Pausa o laço (janela aberta) ou retoma. */
   setPaused: (pausado: boolean) => void;
+  /** Onde o personagem está, no plano do chão: serve para recriar a cena no mesmo lugar depois da revelação. */
+  getPosition: () => { x: number; z: number };
+  /** Para o laço, solta os recursos da placa e perde o contexto: a cena não pode ser usada depois, e um canvas novo pede uma cena nova. */
   dispose: () => void;
+}
+
+export interface WorldOptions {
+  reduzirMovimento: boolean;
+  /** Onde o personagem começa; sem isso, no centro da praça. */
+  posicaoInicial?: { x: number; z: number };
+  /** Os prédios já visitados, com a bandeira no alto desde o primeiro quadro. */
+  visitados?: readonly string[];
 }
 
 // Cores neutras, uma por prédio, sem vermelho nem verde-amarelo.
@@ -214,7 +225,7 @@ function makeTrees(cena: THREE.Scene, sorteio: () => number, evitar: readonly TH
 }
 
 /** Monta o mundo no canvas e começa o laço. Devolve os controles e a limpeza. */
-export function createWorld(canvas: HTMLCanvasElement, predios: readonly BuildingSpec[], callbacks: WorldCallbacks, opcoes: { reduzirMovimento: boolean }): WorldHandle {
+export function createWorld(canvas: HTMLCanvasElement, predios: readonly BuildingSpec[], callbacks: WorldCallbacks, opcoes: WorldOptions): WorldHandle {
   const fraco = window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency ?? 8) <= 4;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: !fraco, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, fraco ? 1.5 : 2));
@@ -268,8 +279,14 @@ export function createWorld(canvas: HTMLCanvasElement, predios: readonly Buildin
   makeTrees(cena, seededRandom(11), edificios.map((e) => e.caixa));
 
   const { grupo: jogador, pernas } = makePlayer();
-  jogador.position.set(0, 0, 0);
+  jogador.position.set(opcoes.posicaoInicial?.x ?? 0, 0, opcoes.posicaoInicial?.z ?? 0);
   cena.add(jogador);
+  // Quem volta da revelação encontra as bandeiras dos prédios visitados já no alto.
+  for (const e of edificios) {
+    if (opcoes.visitados?.includes(e.id) !== true) continue;
+    e.visitado = true;
+    e.bandeira.position.y = e.mastroTopo;
+  }
 
   const sombraFalsa = new THREE.Mesh(new THREE.CircleGeometry(0.45, 20), new THREE.MeshBasicMaterial({ color: "#000", transparent: true, opacity: fraco ? 0.18 : 0 }));
   sombraFalsa.rotation.x = -Math.PI / 2;
@@ -397,6 +414,7 @@ export function createWorld(canvas: HTMLCanvasElement, predios: readonly Buildin
         teclas.clear();
       }
     },
+    getPosition: () => ({ x: jogador.position.x, z: jogador.position.z }),
     dispose: () => {
       renderer.setAnimationLoop(null);
       observador.disconnect();
@@ -414,6 +432,8 @@ export function createWorld(canvas: HTMLCanvasElement, predios: readonly Buildin
         }
       });
       renderer.dispose();
+      // O contexto WebGL do canvas antigo é solto na hora, e não quando o coletor passar: a cidade é criada e descartada a cada ida à revelação.
+      renderer.forceContextLoss();
     },
   };
 }

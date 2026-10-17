@@ -62,6 +62,17 @@ export function isResolved(referencia: PhaseRef, conteudo: TrailContent): boolea
   return refTitle(referencia, conteudo) !== null;
 }
 
+/**
+ * Os registros que a atividade aponta: na pergunta, os que sustentam a
+ * resposta; na ordenação, os itens; no dossiê, os documentos das fichas e os
+ * distratores, nesta ordem.
+ */
+export function activityRefs(atividade: PhaseActivity): PhaseRef[] {
+  if (atividade.tipo === "pergunta") return [...atividade.referencias];
+  if (atividade.tipo === "ordem") return [...atividade.itens];
+  return [...atividade.fichas.map((ficha) => ficha.evidencia), ...atividade.distratores];
+}
+
 /** Todos os registros que a fase aponta, sem repetição, na ordem em que aparecem: marco, explicação, atividade, explorar. */
 export function phaseRefs(fase: Pick<PhaseSpec, "marco" | "explicacao" | "atividade" | "explorar">): PhaseRef[] {
   const vistos = new Set<string>();
@@ -74,8 +85,7 @@ export function phaseRefs(fase: Pick<PhaseSpec, "marco" | "explicacao" | "ativid
   };
   entrar(fase.marco);
   for (const bloco of fase.explicacao) bloco.referencias.forEach(entrar);
-  if (fase.atividade.tipo === "pergunta") fase.atividade.referencias.forEach(entrar);
-  else fase.atividade.itens.forEach(entrar);
+  activityRefs(fase.atividade).forEach(entrar);
   fase.explorar.forEach(entrar);
   return lista;
 }
@@ -135,6 +145,10 @@ export function decisiveData(atividade: PhaseActivity, conteudo: TrailContent): 
   if (atividade.tipo === "pergunta") {
     return { opcoes: atividade.opcoes.map((opcao) => opcao.id).sort(), correta: atividade.correta };
   }
+  if (atividade.tipo === "dossie") {
+    // O que decide o dossiê: cada ficha, o documento que a sustenta e o campo do trecho destacado. A gaveta (os distratores) e os textos não entram.
+    return atividade.fichas.map((ficha) => [ficha.id, refKey(ficha.evidencia), ficha.destaque.campo] as const).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+  }
   // Pela chave, e não na ordem em que a fase escreve os itens: essa ordem não decide a resposta, e trocá-la no conteúdo não pode reabrir a resposta de ninguém.
   return atividade.itens
     .map((item) => [refKey(item), refDate(item, conteudo)] as const)
@@ -166,7 +180,8 @@ export interface Attempt {
   certo: boolean;
 }
 
-function conclude(fase: Pick<PhaseSpec, "id" | "atividade">, estado: PhaseProgress, como: ActivityOutcome, conteudo: TrailContent): PhaseProgress {
+/** Conclui a fase, pela resposta ou pela explicação, com a assinatura de hoje. Serve também ao dossiê (src/lib/game/dossier.ts). */
+export function conclude(fase: Pick<PhaseSpec, "id" | "atividade">, estado: PhaseProgress, como: ActivityOutcome, conteudo: TrailContent): PhaseProgress {
   const proximo: PhaseProgress = { ...estado, vista: true, concluida: como, assinatura: activitySignature(fase, conteudo) };
   delete proximo.reaberta;
   return proximo;

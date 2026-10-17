@@ -16,10 +16,11 @@ import type { RelatedRecord } from "@/lib/game/judicial";
 import type { DeepDive, TrailOutcome } from "@/lib/game/passport";
 import { periodLabel, roomLabel, roomOf, type RoomSpec } from "@/lib/game/rooms";
 import { phaseStatus } from "@/lib/game/trail";
-import type { GameContent, PhaseProgress, PhaseRef, PhaseSpec, PlayerProgress } from "@/lib/game/types";
+import type { DossierSection, GameContent, PhaseProgress, PhaseRef, PhaseSpec, PlayerProgress } from "@/lib/game/types";
 import { comparisonHref, decisionHref, explorationHref, gameHref } from "@/lib/state/links";
 
 import { Dialog, primaryButton, quietButton, secondaryButton } from "./Dialog";
+import { DossierPhase, type DossierBindings } from "./Dossier";
 import { EscrivaoSays } from "./EscrivaoSays";
 import { TrailEnd, type StampNotice } from "./Passport";
 import { PhaseContent, type AnswerFeedback } from "./PhaseContent";
@@ -49,6 +50,8 @@ export function PhaseDialog({
   onOpenPassport,
   onClose,
   encoberta = false,
+  dossie,
+  secao = null,
 }: {
   fase: PhaseSpec;
   total: number;
@@ -69,28 +72,37 @@ export function PhaseDialog({
   onClose(): void;
   /** Um registro ou o passaporte está aberto por cima: a fase continua montada, com a escolha e a rolagem como estavam. */
   encoberta?: boolean;
+  /** Na missão de investigação (D-151): o dossiê e a conversa com o Escrivão, e a parte da sala que o objeto tocado abre. */
+  dossie?: DossierBindings;
+  secao?: DossierSection | null;
 }) {
-  return (
-    <Dialog
-      nome="fase"
-      eyebrow={
-        <span data-fase-posicao>
-          {roomLabel(sala)} · Fase {fase.numero} de {total} · {periodLabel(fase.periodo)}
-        </span>
-      }
-      titulo={<span data-fase-titulo>{fase.titulo}</span>}
-      tamanho="largo"
-      // A leitura começa no topo, e cada fase que entra na janela também.
-      focoInicial="inicio"
-      focoChave={fase.id}
-      encoberta={encoberta}
-      onClose={onClose}
-      acoes={
-        <button type="button" className={quietButton} onClick={onClose} data-fechar-fase>
-          Voltar ao cenário
-        </button>
-      }
-    >
+  const conteudo =
+    fase.atividade.tipo === "dossie" && dossie !== undefined ? (
+      <DossierPhase
+        key={fase.id}
+        fase={fase}
+        total={total}
+        sala={sala}
+        content={content}
+        estado={estado}
+        proxima={proxima}
+        cabecalho={false}
+        falasDaConclusao={falasDaConclusao}
+        carimbo={carimbo}
+        desfecho={desfecho}
+        aprofundamentos={aprofundamentos}
+        dialogo={dossie.dialogo}
+        secao={secao}
+        onCollect={dossie.onCollect}
+        onRemove={dossie.onRemove}
+        onMatch={dossie.onMatch}
+        onInspect={dossie.onInspect}
+        onSkip={onSkip}
+        onOpenRecord={onOpenRecord}
+        onContinue={onContinue}
+        onOpenPassport={onOpenPassport}
+      />
+    ) : (
       <PhaseContent
         // Cada fase começa com a atividade em branco: o que foi escolhido em uma não passa para a outra.
         key={fase.id}
@@ -112,6 +124,29 @@ export function PhaseDialog({
         onContinue={onContinue}
         onOpenPassport={onOpenPassport}
       />
+    );
+  return (
+    <Dialog
+      nome="fase"
+      eyebrow={
+        <span data-fase-posicao>
+          {roomLabel(sala)} · Fase {fase.numero} de {total} · {periodLabel(fase.periodo)}
+        </span>
+      }
+      titulo={<span data-fase-titulo>{fase.titulo}</span>}
+      tamanho="largo"
+      // A leitura começa no topo, e cada fase que entra na janela também.
+      focoInicial="inicio"
+      focoChave={fase.id}
+      encoberta={encoberta}
+      onClose={onClose}
+      acoes={
+        <button type="button" className={quietButton} onClick={onClose} data-fechar-fase>
+          Voltar ao cenário
+        </button>
+      }
+    >
+      {conteudo}
     </Dialog>
   );
 }
@@ -366,20 +401,36 @@ export function HelpDialog({
       }
     >
       <div className="space-y-3 text-base">
-        <ol className="list-decimal space-y-1 pl-5">
-          <li data-passo-de-abrir>{leitura ? "Sem o cenário, a fase já está aberta na página." : "Toque na pasta em destaque, ou no botão Abrir o marco."}</li>
-          <li>Leia a explicação curta. As fontes e os termos explicados abrem no próprio texto.</li>
-          <li>Responda a atividade, ou use Ver a explicação e continuar. Errar não tira nada: dá para tentar de novo ou seguir pela explicação.</li>
-          <li data-passo-de-continuar>Use Continuar para ir à próxima fase. {leitura ? "Os outros registros são opcionais." : "As outras pastas são opcionais."}</li>
-          <li data-passo-do-passaporte>
-            Cada fase concluída deixa um carimbo no seu passaporte, pela resposta certa ou por Ver a explicação e continuar. Ele registra o caminho percorrido: não é nota.
-          </li>
-        </ol>
+        {sala.natureza === "investigacao" ? (
+          <ol className="list-decimal space-y-1 pl-5" data-passos-da-missao>
+            <li data-passo-de-abrir>{leitura ? "Sem o cenário, a missão já está aberta na página, com as quatro partes em sequência." : "Toque nos objetos da sala: o Escrivão, a gaveta, a mesa das fichas e o quadro. O botão principal leva ao próximo passo."}</li>
+            <li>Fale com o Escrivão para receber as fichas. Cada ficha resume um documento em uma frase.</li>
+            <li>Abra os documentos da gaveta, leia os cinco campos (data, instituição, cargo, objeto e ação) e guarde no dossiê os que achar úteis.</li>
+            <li>Na mesa, relacione cada ficha ao documento que a sustenta e aponte o campo que sustenta o trecho destacado. Errar não tira nada: a tela diz em que campo o documento não bate, e dá para tentar de novo ou seguir pela explicação.</li>
+            <li data-passo-do-passaporte>Com as fichas conferidas, a missão deixa um carimbo no seu passaporte. Ele registra o caminho percorrido: não é nota.</li>
+          </ol>
+        ) : (
+          <ol className="list-decimal space-y-1 pl-5">
+            <li data-passo-de-abrir>{leitura ? "Sem o cenário, a fase já está aberta na página." : "Toque na pasta em destaque, ou no botão Abrir o marco."}</li>
+            <li>Leia a explicação curta. As fontes e os termos explicados abrem no próprio texto.</li>
+            <li>Responda a atividade, ou use Ver a explicação e continuar. Errar não tira nada: dá para tentar de novo ou seguir pela explicação.</li>
+            <li data-passo-de-continuar>Use Continuar para ir à próxima fase. {leitura ? "Os outros registros são opcionais." : "As outras pastas são opcionais."}</li>
+            <li data-passo-do-passaporte>
+              Cada fase concluída deixa um carimbo no seu passaporte, pela resposta certa ou por Ver a explicação e continuar. Ele registra o caminho percorrido: não é nota.
+            </li>
+          </ol>
+        )}
         <EscrivaoSays falas={falas} evento="ajuda" />
         {sala.natureza === "aprofundamento" && (
           <p className="text-sm" data-aviso-aprofundamento>
             Esta sala é um aprofundamento sobre um assunto, e não o começo da trajetória. As decisões são uma amostra documentada da edição, e não o
             histórico completo.
+          </p>
+        )}
+        {sala.natureza === "investigacao" && (
+          <p className="text-sm" data-aviso-missao>
+            Esta sala é uma missão sobre documentos, e não o começo da trajetória. Os documentos são registros do atlas, com as fontes; as fichas dizem só o que
+            cada documento registra. A gaveta é uma amostra, e não a lista do que a pessoa decidiu.
           </p>
         )}
         <p className="text-sm text-ink-soft" data-aviso-cenario>
@@ -463,7 +514,9 @@ export function SummaryContent({
         <p className="reading" data-resumo-contagem>
           {trajetoria
             ? `A trajetória de ${personagem.nome} tem ${fases.length} fases nesta edição, com marcos documentados de ${fases[0]?.periodo.de} a ${fases.at(-1)?.periodo.ate}. Você concluiu ${concluidas} de ${fases.length}.`
-            : `Este aprofundamento tem ${fases.length === 1 ? "uma fase" : `${fases.length} fases`} sobre decisões documentadas de ${personagem.nome} no tema ${sala.nome}, de ${fases[0]?.periodo.de} a ${fases.at(-1)?.periodo.ate}. Você concluiu ${concluidas} de ${fases.length}.`}{" "}
+            : sala.natureza === "investigacao"
+              ? `Esta missão tem ${fases.length === 1 ? "uma fase" : `${fases.length} fases`} sobre documentos de ${personagem.nome} registrados no atlas, de ${fases[0]?.periodo.de} a ${fases.at(-1)?.periodo.ate}. Você concluiu ${concluidas} de ${fases.length}.`
+              : `Este aprofundamento tem ${fases.length === 1 ? "uma fase" : `${fases.length} fases`} sobre decisões documentadas de ${personagem.nome} no tema ${sala.nome}, de ${fases[0]?.periodo.de} a ${fases.at(-1)?.periodo.ate}. Você concluiu ${concluidas} de ${fases.length}.`}{" "}
           São marcos documentados, e não a vida inteira nem tudo o que a pessoa fez.
         </p>
       </div>
@@ -521,6 +574,13 @@ export function SummaryContent({
               </Link>
             </li>
           )}
+          {outraPessoa !== null && sala.natureza === "investigacao" && (
+            <li>
+              <Link href={gameHref(outraPessoa.slug, sala.id)} prefetch={false} className={PATH_LINK} data-outra-missao={outraPessoa.slug}>
+                A mesma missão com os documentos de {outraPessoa.nome}
+              </Link>
+            </li>
+          )}
           {outraPessoa !== null && (
             <li>
               <Link href={gameHref(outraPessoa.slug)} prefetch={false} className={PATH_LINK} data-outra-trajetoria={outraPessoa.slug}>
@@ -546,7 +606,7 @@ export function SummaryContent({
                 <Link href={gameHref(personagem.slug, outra.id)} prefetch={false} className={PATH_LINK} data-ir-para-sala={outra.id}>
                   {roomLabel(spec)} de {personagem.nome}
                 </Link>
-                <span className="text-ink-soft"> · decisões de {periodLabel(outra.periodo)}</span>
+                <span className="text-ink-soft"> · {spec.natureza === "investigacao" ? "documentos" : "decisões"} de {periodLabel(outra.periodo)}</span>
               </li>
             );
           })}
@@ -567,7 +627,7 @@ export function SummaryDialog(props: Parameters<typeof SummaryContent>[0] & { on
     <Dialog
       nome="resumo"
       eyebrow={`${content.personagem.nome} · ${roomLabel(sala)}`}
-      titulo={sala.natureza === "trajetoria" ? "Resumo da trajetória" : "Resumo do aprofundamento"}
+      titulo={sala.natureza === "trajetoria" ? "Resumo da trajetória" : sala.natureza === "investigacao" ? "Resumo da missão" : "Resumo do aprofundamento"}
       tamanho="largo"
       onClose={onClose}
       acoes={

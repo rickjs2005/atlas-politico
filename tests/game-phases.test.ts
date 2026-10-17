@@ -14,7 +14,7 @@ import { PROFILES } from "@/lib/domain/profiles";
 import { buildGameContent, buildProgressKeys, countTrailPhases, roomSummaries } from "@/lib/game/content";
 import { judicialOf } from "@/lib/game/judicial";
 import { ROOM_IDS } from "@/lib/game/rooms";
-import { activitySignature, correctOrder, displayOrder, isResolved, orderingDisplay, phaseRefs, refDate, refKey } from "@/lib/game/trail";
+import { activityRefs, activitySignature, correctOrder, displayOrder, isResolved, orderingDisplay, phaseRefs, refDate, refKey } from "@/lib/game/trail";
 import type { GameContent, PersonagemSlug, PhaseRef, PhaseSpec } from "@/lib/game/types";
 import { buildAtlasData } from "@/lib/publication/build";
 
@@ -28,9 +28,13 @@ const TODAS: { fase: PhaseSpec; content: GameContent }[] = SLUGS.flatMap((slug) 
 const trilhaDe = (slug: PersonagemSlug) => conteudoDe(slug, "historico").fases;
 
 const textoDaExplicacao = (fase: PhaseSpec) => fase.explicacao.map((bloco) => bloco.texto).join(" ");
-const refsDaAtividade = (fase: PhaseSpec): readonly PhaseRef[] => (fase.atividade.tipo === "pergunta" ? fase.atividade.referencias : fase.atividade.itens);
-/** Os textos que a pessoa lê na atividade: o enunciado, as opções e a explicação da resposta. */
-const textosDaAtividade = (fase: PhaseSpec): string[] => [fase.atividade.enunciado, ...(fase.atividade.tipo === "pergunta" ? fase.atividade.opcoes.map((opcao) => opcao.texto) : []), fase.atividade.explicacao];
+const refsDaAtividade = (fase: PhaseSpec): readonly PhaseRef[] => activityRefs(fase.atividade);
+/** Os textos que a pessoa lê na atividade: o enunciado, as opções (ou as fichas) e a explicação da resposta. */
+const textosDaAtividade = (fase: PhaseSpec): string[] => [
+  fase.atividade.enunciado,
+  ...(fase.atividade.tipo === "pergunta" ? fase.atividade.opcoes.map((opcao) => opcao.texto) : fase.atividade.tipo === "dossie" ? fase.atividade.fichas.map((ficha) => ficha.texto) : []),
+  fase.atividade.explicacao,
+];
 
 /** O que um registro apontado diz, sem as fontes e sem a nota de revisão (que trazem datas de acesso e de conferência). */
 function textoDoRegistro(referencia: PhaseRef, content: GameContent): string {
@@ -44,19 +48,19 @@ function textoDoRegistro(referencia: PhaseRef, content: GameContent): string {
 const anosDe = (texto: string) => [...new Set(texto.match(/\b(?:1[89]\d{2}|20\d{2})\b/g) ?? [])];
 
 describe("a forma da trilha, igual para as duas pessoas", () => {
-  it("cada trajetória tem de sete a nove fases, e cada aprofundamento, uma: a mesma contagem para as duas", () => {
+  it("cada trajetória tem de sete a nove fases, e cada aprofundamento e a missão, uma: a mesma contagem para as duas", () => {
     const contagens = SLUGS.map((slug) => ROOM_IDS.map((sala) => conteudoDe(slug, sala).fases.length));
-    for (const [historico, economia, seguranca] of contagens) {
+    for (const [historico, economia, seguranca, investigacao] of contagens) {
       expect(historico).toBeGreaterThanOrEqual(7);
       expect(historico).toBeLessThanOrEqual(9);
-      expect([economia, seguranca]).toEqual([1, 1]);
+      expect([economia, seguranca, investigacao]).toEqual([1, 1, 1]);
     }
     expect(contagens[0]).toEqual(contagens[1]);
     for (const slug of SLUGS) {
       expect(countTrailPhases(data, slug), slug).toBe(trilhaDe(slug).length);
       const pessoa = findPersonBySlug(data, slug)!;
-      expect(roomSummaries(data, pessoa.id).map((sala) => [sala.id, sala.fases]), slug).toEqual([["historico", 9], ["economia", 1], ["seguranca-publica", 1]]);
-      expect(buildProgressKeys(data, slug).fases).toHaveLength(11);
+      expect(roomSummaries(data, pessoa.id).map((sala) => [sala.id, sala.fases]), slug).toEqual([["historico", 9], ["economia", 1], ["seguranca-publica", 1], ["investigacao", 1]]);
+      expect(buildProgressKeys(data, slug).fases).toHaveLength(12);
     }
   });
 
@@ -159,17 +163,31 @@ describe("leitura curta", () => {
         expect(atividade.opcoes.map((opcao) => opcao.id), fase.id).toContain(atividade.correta);
         for (const opcao of atividade.opcoes) expect(countWords(opcao.texto), `${fase.id} ${opcao.id}`).toBeLessThanOrEqual(LIMITES_DA_FASE.palavrasDaOpcao);
         expect(atividade.referencias.length, fase.id).toBeGreaterThan(0);
-      } else {
+      } else if (atividade.tipo === "ordem") {
         expect(atividade.itens, fase.id).toHaveLength(3);
         const datas = atividade.itens.map((item) => refDate(item, content));
         for (const data of datas) expect(data, fase.id).not.toBeNull();
         // Os anos são diferentes: a ordem não depende de dia nem de mês.
         expect(new Set(datas.map((data) => yearOf(data!))).size, fase.id).toBe(3);
         expect(correctOrder(atividade, content), fase.id).toHaveLength(3);
+      } else {
+        // O dossiê (D-151): três fichas, cada uma com um documento próprio e um trecho destacado que está no texto, e três distratores da mesma pessoa.
+        expect(atividade.fichas, fase.id).toHaveLength(3);
+        expect(atividade.distratores, fase.id).toHaveLength(3);
+        expect(new Set(atividade.fichas.map((ficha) => refKey(ficha.evidencia))).size, fase.id).toBe(3);
+        for (const ficha of atividade.fichas) {
+          expect(countWords(ficha.texto), `${fase.id} ${ficha.id}`).toBeLessThanOrEqual(LIMITES_DA_FASE.palavrasDaFicha);
+          expect(ficha.texto.includes(ficha.destaque.trecho), `${fase.id} ${ficha.id}`).toBe(true);
+          expect(content.decisoes[ficha.evidencia.id]?.pessoaId, `${fase.id} ${ficha.id}`).toBe(findPersonBySlug(data, fase.personagem)!.id);
+        }
+        for (const distrator of atividade.distratores) expect(content.decisoes[distrator.id]?.pessoaId, `${fase.id} ${distrator.id}`).toBe(findPersonBySlug(data, fase.personagem)!.id);
+        // Os trechos destacados pedem campos diferentes: a missão ensina mais de um campo.
+        expect(new Set(atividade.fichas.map((ficha) => ficha.destaque.campo)).size, fase.id).toBeGreaterThanOrEqual(2);
       }
     }
-    // A ordenação é a exceção: a maioria das fases é pergunta.
+    // A ordenação é a exceção: a maioria das fases é pergunta. O dossiê é só a missão de investigação, uma por pessoa.
     expect(TODAS.filter(({ fase }) => fase.atividade.tipo === "ordem").length).toBeLessThanOrEqual(4);
+    expect(TODAS.filter(({ fase }) => fase.atividade.tipo === "dossie").map(({ fase }) => fase.id).sort()).toEqual(["flavio-bolsonaro-investigacao", "lula-investigacao"]);
   });
 
   it("a opção certa não fica sempre na mesma posição da tela", () => {
@@ -236,6 +254,20 @@ describe("o texto da fase diz só o que os registros apontados dizem", () => {
       const apoio = refsDaAtividade(fase).map((referencia) => textoDoRegistro(referencia, content)).join(" ");
       const certa = fase.atividade.tipo === "pergunta" ? fase.atividade.opcoes.find((opcao) => opcao.id === (fase.atividade as { correta: string }).correta)!.texto : "";
       for (const ano of anosDe([fase.atividade.enunciado, certa, fase.atividade.explicacao].join(" "))) expect(apoio.includes(ano), `${fase.id}: o ano ${ano} da atividade não está nos registros que ela aponta`).toBe(true);
+    }
+  });
+
+  it("toda ficha de um dossiê diz só o que o próprio documento dela registra: os anos e os meses da ficha estão nele", () => {
+    const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+    for (const { fase, content } of TODAS) {
+      if (fase.atividade.tipo !== "dossie") continue;
+      for (const ficha of fase.atividade.fichas) {
+        const documento = content.decisoes[ficha.evidencia.id]!;
+        const texto = textoDoRegistro(ficha.evidencia, content);
+        for (const ano of anosDe(ficha.texto)) expect(texto.includes(ano), `${fase.id} ${ficha.id}: o ano ${ano} não está no documento`).toBe(true);
+        const mes = MESES.findIndex((nome) => ficha.texto.toLowerCase().includes(`${nome} de `));
+        if (mes >= 0) expect(Number(documento.data.valor.slice(5, 7)), `${fase.id} ${ficha.id}: o mês da ficha não é o do documento`).toBe(mes + 1);
+      }
     }
   });
 
@@ -335,9 +367,9 @@ describe("termos definidos na primeira vez em que aparecem", () => {
     }
   });
 
-  it("no aprofundamento, que pode ser aberto direto, o termo é definido na própria fase", () => {
+  it("no aprofundamento e na missão, que podem ser abertos direto, o termo é definido na própria fase", () => {
     for (const slug of SLUGS) {
-      for (const sala of ["economia", "seguranca-publica"] as const) {
+      for (const sala of ["economia", "seguranca-publica", "investigacao"] as const) {
         for (const fase of conteudoDe(slug, sala).fases) {
           for (const conceito of usadosEm(fase)) expect(fase.conceitos, `${fase.id} usa "${conceito}" sem defini-lo`).toContain(conceito);
         }
@@ -388,7 +420,7 @@ describe("o que cada tipo de registro é", () => {
 
   it("nas fases de voto, o texto separa o voto da pessoa do resultado da votação", () => {
     const deVotos = TODAS.filter(({ fase, content }) => content.decisoes[fase.marco.id]?.natureza === "voto").map(({ fase }) => fase);
-    expect(deVotos.map((fase) => fase.id).sort()).toEqual(["flavio-bolsonaro-decisoes-no-senado", "flavio-bolsonaro-economia", "flavio-bolsonaro-seguranca-publica"]);
+    expect(deVotos.map((fase) => fase.id).sort()).toEqual(["flavio-bolsonaro-decisoes-no-senado", "flavio-bolsonaro-economia", "flavio-bolsonaro-investigacao", "flavio-bolsonaro-seguranca-publica"]);
     for (const fase of deVotos) expect(textoDaExplicacao(fase), fase.id).toMatch(/votou (não|sim)[^.]*[;,.] (o projeto|a proposta|as duas propostas|as seis propostas)?[^.]*aprovad/i);
   });
 

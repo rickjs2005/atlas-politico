@@ -1,11 +1,11 @@
 {
-  "versao": "0.3.0",
+  "versao": "0.4.0",
   "dataDeCorte": "2026-10-08",
   "revisao": {
     "tipo": "assistida-por-ia",
     "revisadoPor": "Claude, modelo de IA da Anthropic",
-    "revisadoEm": "2026-10-11",
-    "observacoes": "Edição 0.3.0, de 11 de outubro de 2026: os registros novos (fatos biográficos, conceitos, fases do jogo, propostas eleitorais, atuações legislativas e atos de 2003 a 2010) foram escritos e conferidos, com assistência de IA, contra os documentos baixados nesse dia; os registros das edições anteriores não foram relidos nesta passagem. A data de corte não mudou. Revisão humana pendente."
+    "revisadoEm": "2026-10-17",
+    "observacoes": "Edição 0.4.0, de 17 de outubro de 2026: as duas fases da missão de investigação do jogo foram escritas e conferidas, com assistência de IA, contra os registros que apontam; nenhum registro factual foi acrescentado ou alterado, e a data de corte não mudou. Os registros das edições anteriores não foram relidos nesta passagem. Revisão humana pendente."
   },
   "cobertura": [
     {
@@ -1300,6 +1300,20 @@
         {
           "entidade": "fonte",
           "id": "tse-proposta-de-governo-flavio-bolsonaro-2026"
+        }
+      ]
+    },
+    {
+      "data": "2026-10-17",
+      "descricao": "Edição 0.4.0: a missão de investigação do jogo, \"O documento diz o quê?\", uma fase por pessoa, na sala nova investigacao. Cada fase traz três fichas, cada uma sustentada por uma decisão já publicada (atos do Executivo de Lula; votos de Flávio Bolsonaro no Senado), e três documentos distratores da mesma pessoa. Nenhum registro factual novo, nenhuma fonte nova e a mesma data de corte. Conferência assistida por IA; revisão humana pendente.",
+      "itens": [
+        {
+          "entidade": "fase-do-jogo",
+          "id": "lula-investigacao"
+        },
+        {
+          "entidade": "fase-do-jogo",
+          "id": "flavio-bolsonaro-investigacao"
         }
       ]
     }

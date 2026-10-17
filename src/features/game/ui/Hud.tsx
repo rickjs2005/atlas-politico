@@ -76,6 +76,10 @@ interface HudProps {
   retomada: ResumeInfo | null;
   /** O progresso da sala aberta, para a faixa do passaporte: os marcadores, a contagem e se o salvo já foi lido. */
   passaporte: { marcadores: readonly TrailMarker[]; contagem: StampCount; carregado: boolean };
+  /** Na missão de investigação (D-151): o rótulo do botão principal, que leva ao próximo objeto; `null` nas outras fases. */
+  principal: string | null;
+  /** Na missão de investigação: o andamento do dossiê, em uma linha; `null` nas outras fases. */
+  andamento: string | null;
   onGoToStart(): void;
   /** A cena está pronta para o toque: antes disso, o botão principal abre a explicação direto. */
   onOpenMarker(): void;
@@ -86,7 +90,7 @@ interface HudProps {
   onOpenPassport(): void;
 }
 
-export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retomada, passaporte, onGoToStart, onOpenMarker, onContinue, onOpenPhases, onOpenHelp, onReadWithoutScene, onOpenPassport }: HudProps) {
+export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retomada, passaporte, principal, andamento, onGoToStart, onOpenMarker, onContinue, onOpenPhases, onOpenHelp, onReadWithoutScene, onOpenPassport }: HudProps) {
   const { preferencias } = useGamePreferences();
   const visiveis = falasVisiveis(falas, preferencias.humor);
   const instrucao = visiveis.find((fala) => fala.camada === "instrucao");
@@ -110,6 +114,11 @@ export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retom
           <p className="text-sm janela-baixa:text-xs" role="status" data-proximo-passo>
             {proximoPasso}
           </p>
+          {andamento !== null && (
+            <p className="numerals text-xs font-medium janela-baixa:hidden" data-dossie-andamento>
+              {andamento}
+            </p>
+          )}
           {/* O aviso de retomada ocupa o lugar do humor: o cartão não cresce a ponto de cobrir a cena. */}
           {retomada !== null && <ResumeNotice retomada={retomada} className="text-xs janela-baixa:hidden" onGoToStart={onGoToStart} />}
           {!concluida && retomada === null && humor !== undefined && (
@@ -118,10 +127,10 @@ export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retom
               {humor.texto}
             </p>
           )}
-          {sala.natureza === "aprofundamento" && (
-            <p className="text-xs janela-baixa:hidden" data-aviso-aprofundamento>
+          {sala.natureza !== "trajetoria" && (
+            <p className="text-xs janela-baixa:hidden" data-aviso-aprofundamento={sala.natureza}>
               {/* Em tela estreita a instrução acima já diz que é um aprofundamento: aqui fica só o caminho, com a área de toque inteira. */}
-              <span className="max-sm:sr-only">Aprofundamento sobre um assunto, e não o começo da trajetória. </span>
+              <span className="max-sm:sr-only">{sala.natureza === "investigacao" ? "Missão sobre documentos do atlas, e não o começo da trajetória. " : "Aprofundamento sobre um assunto, e não o começo da trajetória. "}</span>
               <Link href={`${gameHref(fase.personagem)}?fase=1`} prefetch={false} className={PATH_LINK} data-ir-para-o-inicio>
                 Ir para o início da vida
               </Link>
@@ -147,7 +156,7 @@ export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retom
         {concluida ? (
           <>
             <button type="button" className={`${secondaryButton} pointer-events-auto`} onClick={onOpenMarker} data-abrir-marco>
-              Reabrir o marco
+              {principal === null ? "Reabrir o marco" : "Rever o dossiê"}
             </button>
             <button type="button" className={`${primaryButton} pointer-events-auto min-h-12 gap-1.5 px-5 text-base`} onClick={onContinue} data-continuar={proxima?.id ?? "resumo"}>
               {proxima === null ? "Ver o resumo" : `Continuar: fase ${proxima.numero}`}
@@ -156,8 +165,8 @@ export function Hud({ fase, total, sala, marco, concluida, proxima, falas, retom
             </button>
           </>
         ) : (
-          <button type="button" className={`${primaryButton} pointer-events-auto min-h-12 px-5 text-base`} onClick={onOpenMarker} data-abrir-marco aria-label={`Abrir o marco: ${marco}`}>
-            Abrir o marco
+          <button type="button" className={`${primaryButton} pointer-events-auto min-h-12 px-5 text-base`} onClick={onOpenMarker} data-abrir-marco aria-label={principal ?? `Abrir o marco: ${marco}`}>
+            {principal ?? "Abrir o marco"}
           </button>
         )}
       </div>

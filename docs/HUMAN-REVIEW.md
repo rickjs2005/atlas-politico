@@ -1,6 +1,6 @@
 # Revisão humana: o que conferir, trecho a trecho
 
-Gerado por `npm run review:human` a partir dos dados publicados (edição 0.3.0, data de corte 2026-10-08). Não edite à mão: o teste `tests/human-review.test.ts` confere que este arquivo está em dia. A conferência registrada no conteúdo é toda assistida por IA (0 registros com revisão humana); a política editorial ([EDITORIAL.md](EDITORIAL.md)) condiciona a publicação à revisão por uma pessoa, e a lista abaixo é o roteiro dela.
+Gerado por `npm run review:human` a partir dos dados publicados (edição 0.4.0, data de corte 2026-10-08). Não edite à mão: o teste `tests/human-review.test.ts` confere que este arquivo está em dia. A conferência registrada no conteúdo é toda assistida por IA (0 registros com revisão humana); a política editorial ([EDITORIAL.md](EDITORIAL.md)) condiciona a publicação à revisão por uma pessoa, e a lista abaixo é o roteiro dela.
 
 ## Como usar
 
@@ -9,7 +9,7 @@ Gerado por `npm run review:human` a partir dos dados publicados (edição 0.3.0,
 3. Só depois da leitura real, a pessoa que conferiu registra a revisão como humana no conteúdo (`revisao.tipo: "humana"`, com nome e data). O código e os scripts nunca fazem isso sozinhos.
 4. Marque a caixa de cada item com o nome e a data. O arquivo gerado é regravado pelo comando; guarde as marcações em cópia própria ou no controle de versão da edição.
 
-Resumo: 39 acontecimentos (10 judiciais, 16 eleitorais, 4 de partidos, 3 de mandatos e funções, 6 demais), 8 filiações, 15 mandatos, 32 decisões políticas (6 votos, 17 atos do Executivo e 9 atuações legislativas; 15 proposições), 7 declarações de cobertura da pesquisa, 1 identidades institucionais, 42 propostas eleitorais, 22 fases do jogo, 14 fatos biográficos, 26 conceitos, 152 fontes.
+Resumo: 39 acontecimentos (10 judiciais, 16 eleitorais, 4 de partidos, 3 de mandatos e funções, 6 demais), 8 filiações, 15 mandatos, 32 decisões políticas (6 votos, 17 atos do Executivo e 9 atuações legislativas; 15 proposições), 7 declarações de cobertura da pesquisa, 1 identidades institucionais, 42 propostas eleitorais, 24 fases do jogo, 14 fatos biográficos, 26 conceitos, 152 fontes.
 
 ## 1. Episódios judiciais (10 acontecimentos)
 
@@ -1596,7 +1596,7 @@ Cada texto resume um trecho do documento que a candidatura registrou no Tribunal
   - [DivulgaCandContas: candidatura de Lula a presidente em 2026](https://divulgacandcontas.tse.jus.br/divulga/#/candidato/BRASIL/BR/20322002026/280002542548/2026/BR), Tribunal Superior Eleitoral. Onde olhar: Lista de arquivos da ficha da candidatura, item de codTipo 5. Sustenta: O arquivo é o único documento do tipo proposta de governo na lista de arquivos da candidatura. A lista foi consultada em 11 de outubro de 2026, depois do acesso à ficha registrado nesta fonte.
 - [ ] Conferido por: ______ em ____/____/______
 
-## 8. Conteúdo educativo do jogo: fases, fatos biográficos e conceitos (22 fases, 14 fatos biográficos e 26 conceitos)
+## 8. Conteúdo educativo do jogo: fases, fatos biográficos e conceitos (24 fases, 14 fatos biográficos e 26 conceitos)
 
 O texto de cada fase é explicação nova, escrita para quem conhece pouco de política. Conferir, em cada bloco: se ele diz só o que os registros apontados sustentam, se a simplificação não muda o sentido e se nenhum adjetivo entrou. Na atividade: se a pergunta só usa o que a explicação acabou de dizer, se a opção certa está certa e se as erradas não são certas por outro caminho. Nos episódios judiciais, a leitura curta precisa trazer juntos a acusação, a defesa, a decisão e o desfecho na data de corte. Nos fatos biográficos: datas, lugares e nomes contra o documento, e as divergências entre documentos. Nos conceitos: se a definição simples é fiel ao texto oficial citado e se o aviso de simplificação basta.
 
@@ -1786,6 +1786,24 @@ O texto de cada fase é explicação nova, escrita para quem conhece pouco de po
 - Para explorar no período (opcional no jogo): `acontecimento:flavio-bolsonaro-2025-indicacao-para-a-presidencia`, `proposta:proposta-flavio-bolsonaro-2026-economia-1`, `proposta:proposta-flavio-bolsonaro-2026-seguranca-publica-1`, `proposta:proposta-flavio-bolsonaro-2026-saude-1`, `proposta:proposta-flavio-bolsonaro-2026-educacao-1`, `proposta:proposta-flavio-bolsonaro-2026-reforma-do-estado-1`, `proposta:proposta-flavio-bolsonaro-2026-meio-ambiente-1`, `proposta:proposta-flavio-bolsonaro-2026-direitos-das-mulheres-1`
 - Lacuna declarada: O atlas registra três frases por área de cada documento. O documento inteiro tem outras propostas e capítulos fora das sete áreas.
 - Lacuna declarada: O segundo turno ficou marcado para depois da data de corte desta edição.
+- [ ] Conferido por: ______ em ____/____/______
+
+### Flávio Bolsonaro · Missão: O documento diz o quê? · Fase 1: O documento diz o quê? Três votos no Senado (2007 a 2024)
+
+- Identificador: `flavio-bolsonaro-investigacao` · Marco: `decisao:senado-voto-6777-5894` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-17; observações: Fase da missão de investigação, escrita em 17 de outubro de 2026, com assistência de IA. Cada ficha e cada bloco foram conferidos contra os campos dos registros que apontam (data, instituição, cargo, objeto e ação): nada diz o que os registros não dizem. A escolha dos documentos, dos distratores e dos trechos destacados é decisão editorial. Revisão humana pendente.
+- **Objetivo a conferir:** ler três documentos, montar um dossiê e relacionar cada ficha ao documento que a sustenta.
+- **Explicação a conferir** (93 palavras):
+  1. Nos três documentos das fichas, Flávio Bolsonaro votou como senador: votou não, em segundo turno, na PEC que altera o sistema tributário, em 2023; votou sim no projeto de lei sobre a execução penal, em 2024; e votou não no substitutivo ao projeto de lei complementar dos tributos IBS, CBS e Imposto Seletivo, em 2024, e os três textos foram aprovados. Aponta: `decisao:senado-voto-6777-5894`, `decisao:senado-voto-6818-5894`, `decisao:senado-voto-6899-5894`.
+  2. O voto vale para o objeto votado, e não para um tema. A ficha só vale com o documento que a sustenta: a data, o objeto e a manifestação distinguem registros parecidos. Aponta: `decisao:senado-voto-6777-5894`, `decisao:senado-voto-6818-5894`, `decisao:senado-voto-6899-5894`.
+- Conceitos definidos nesta fase: `senador`, `pec`, `projeto-de-lei`, `lei-complementar`
+- **Dossiê a conferir:** Relacione cada ficha ao documento que a sustenta e aponte, no documento, o campo que sustenta o trecho destacado. Cada ficha diz só o que o documento apontado registra; conferir o texto contra os campos do cartão (data, instituição, cargo, objeto e ação) e se o trecho destacado é sustentado pelo campo dito.
+  - Ficha `pec-tributaria`: Em novembro de 2023, no Senado, voto não, em segundo turno, na PEC que altera o sistema tributário. Documento: `decisao:senado-voto-6777-5894`. Trecho destacado: "em segundo turno" (campo: objeto).
+  - Ficha `execucao-penal`: Em fevereiro de 2024, voto sim no projeto de lei sobre a execução penal, que extingue a saída temporária. Documento: `decisao:senado-voto-6818-5894`. Trecho destacado: "voto sim" (campo: acao).
+  - Ficha `ibs-cbs`: Em dezembro de 2024, voto não no substitutivo ao projeto de lei complementar que institui o IBS, a CBS e o Imposto Seletivo. Documento: `decisao:senado-voto-6899-5894`. Trecho destacado: "dezembro de 2024" (campo: data).
+  - Documentos da gaveta que não sustentam ficha (distratores): `decisao:senado-voto-6714-5894`, `decisao:senado-voto-6825-5894`, `decisao:alerj-lei-5019-2007-autoria`.
+- **Explicação da resposta a conferir:** Cada ficha se sustenta em um só registro de votação, e a data, o objeto e a manifestação distinguem os parecidos: um substitutivo é um texto que substitui o projeto. Os outros documentos da gaveta são o voto de junho de 2023 no projeto do regime fiscal, o voto de abril de 2024 em outra PEC, também em segundo turno, e a autoria de uma lei estadual na Alerj, em 2007, que não é voto.
+- Lacuna declarada: É uma amostra de cinco votações no Senado e uma lei estadual, e não a lista de como ele votou.
+- Lacuna declarada: O registro do voto não diz, sozinho, o motivo do voto, e o atlas não o pesquisou.
 - [ ] Conferido por: ______ em ____/____/______
 
 ### Flávio Bolsonaro · Aprofundamento: Segurança pública · Fase 1: Segurança pública: três votos de Flávio Bolsonaro no Senado (2024 a 2026)
@@ -1988,6 +2006,24 @@ O texto de cada fase é explicação nova, escrita para quem conhece pouco de po
 - Para explorar no período (opcional no jogo): `proposta:proposta-lula-2026-economia-1`, `proposta:proposta-lula-2026-seguranca-publica-1`, `proposta:proposta-lula-2026-saude-1`, `proposta:proposta-lula-2026-educacao-1`, `proposta:proposta-lula-2026-reforma-do-estado-1`, `proposta:proposta-lula-2026-meio-ambiente-1`, `proposta:proposta-lula-2026-direitos-das-mulheres-1`
 - Lacuna declarada: O atlas registra três frases por área de cada documento. O documento inteiro tem outras propostas e capítulos fora das sete áreas.
 - Lacuna declarada: O segundo turno ficou marcado para depois da data de corte desta edição.
+- [ ] Conferido por: ______ em ____/____/______
+
+### Lula · Missão: O documento diz o quê? · Fase 1: O documento diz o quê? Três atos na Presidência (2007 a 2025)
+
+- Identificador: `lula-investigacao` · Marco: `decisao:planalto-lei-complementar-200-2023-regime-fiscal` · Revisão: conferência assistida por IA, por Claude, modelo de IA da Anthropic, em 2026-10-17; observações: Fase da missão de investigação, escrita em 17 de outubro de 2026, com assistência de IA. Cada ficha e cada bloco foram conferidos contra os campos dos registros que apontam (data, instituição, cargo, objeto e ação): nada diz o que os registros não dizem. A escolha dos documentos, dos distratores e dos trechos destacados é decisão editorial. Revisão humana pendente.
+- **Objetivo a conferir:** ler três documentos, montar um dossiê e relacionar cada ficha ao documento que a sustenta.
+- **Explicação a conferir** (99 palavras):
+  1. Um ato do Executivo tem data, instituição, cargo, objeto e tipo. Nos três documentos das fichas, Lula agiu como presidente da República: sancionou com veto parcial duas leis complementares, a do regime fiscal, em 2023, e a dos tributos IBS, CBS e Imposto Seletivo, em 2025, e sancionou, com sanção expressa, em 2025, a lei que reduz o imposto de renda. Aponta: `decisao:planalto-lei-complementar-200-2023-regime-fiscal`, `decisao:planalto-lei-complementar-214-2025-ibs-cbs`, `decisao:planalto-lei-15270-2025-imposto-de-renda`.
+  2. Veto parcial e sanção expressa são tipos de ato diferentes, e a data distingue duas leis complementares vetadas em parte. A ficha só vale com o documento que a sustenta: a gaveta tem mais documentos do que fichas. Aponta: `decisao:planalto-lei-complementar-200-2023-regime-fiscal`, `decisao:planalto-lei-complementar-214-2025-ibs-cbs`, `decisao:planalto-lei-15270-2025-imposto-de-renda`, `conceito:veto`, `conceito:sancao`.
+- Conceitos definidos nesta fase: `veto`, `sancao`, `lei-complementar`
+- **Dossiê a conferir:** Relacione cada ficha ao documento que a sustenta e aponte, no documento, o campo que sustenta o trecho destacado. Cada ficha diz só o que o documento apontado registra; conferir o texto contra os campos do cartão (data, instituição, cargo, objeto e ação) e se o trecho destacado é sustentado pelo campo dito.
+  - Ficha `regime-fiscal`: Em agosto de 2023, na Presidência da República, veto parcial à lei complementar do regime fiscal sustentável. Documento: `decisao:planalto-lei-complementar-200-2023-regime-fiscal`. Trecho destacado: "lei complementar do regime fiscal sustentável" (campo: objeto).
+  - Ficha `ibs-cbs`: Em janeiro de 2025, veto parcial à lei complementar que institui o IBS, a CBS e o Imposto Seletivo. Documento: `decisao:planalto-lei-complementar-214-2025-ibs-cbs`. Trecho destacado: "janeiro de 2025" (campo: data).
+  - Ficha `imposto-de-renda`: Em novembro de 2025, sanção expressa da lei que reduz o imposto de renda. Documento: `decisao:planalto-lei-15270-2025-imposto-de-renda`. Trecho destacado: "sanção expressa" (campo: acao).
+  - Documentos da gaveta que não sustentam ficha (distratores): `decisao:planalto-decreto-6025-2007-pac`, `decisao:planalto-lei-12351-2010-partilha-do-pre-sal`, `decisao:planalto-lei-14843-2024-saidas-temporarias`.
+- **Explicação da resposta a conferir:** Cada ficha se sustenta em um só documento. A Lei Complementar 200, de 2023, e a Lei Complementar 214, de 2025, foram sancionadas com veto parcial, e a data as distingue; a Lei 15.270, de 2025, teve sanção expressa. Os outros três documentos da gaveta são de 2007, 2010 e 2024, ou tratam de outro assunto.
+- Lacuna declarada: É uma amostra de seis atos do Executivo, e não a lista do que a Presidência decidiu.
+- Lacuna declarada: O atlas não registra o que cada lei produziu depois de sancionada, nem se o Congresso derrubou algum veto.
 - [ ] Conferido por: ______ em ____/____/______
 
 ### Lula · Aprofundamento: Segurança pública · Fase 1: Segurança pública: cinco atos de Lula na Presidência (2003 a 2026)

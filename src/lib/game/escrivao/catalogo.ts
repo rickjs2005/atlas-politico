@@ -164,4 +164,42 @@ const CARIMBO: Fala[] = [
   fala("carimbo-seguranca-publica-instrucao-1", "seguranca-publica", "carimbo", "instrucao", "Fase concluída: o carimbo dela está no seu passaporte. O botão abaixo leva à fase seguinte deste aprofundamento ou, no fim dele, ao resumo."),
 ];
 
-export const CATALOGO: readonly Fala[] = [...ENTRADA, ...AJUDA, ...EXPLORAR, ...ERRO, ...CONCLUSAO, ...CARIMBO];
+// ---------------------------------------------------------------------------
+// Missão de investigação (D-151): a sala "O documento diz o quê?"
+// ---------------------------------------------------------------------------
+//
+// A instrução de cada momento diz o passo da missão: falar com o Escrivão,
+// abrir a gaveta, montar o dossiê, relacionar as fichas. O humor é sobre
+// fichas, grampos e gavetas, como nas outras salas. A conversa que abre a
+// missão, com as escolhas da pessoa, fica em dialogo.ts.
+
+const INVESTIGACAO: Fala[] = [
+  fala("entrada-investigacao-instrucao-1", "investigacao", "entrada", "instrucao", "Esta é uma missão de investigação. Fale com o Escrivão, ou toque no botão abaixo, para receber as fichas e saber o que conferir."),
+  fala("entrada-investigacao-humor-1", "investigacao", "entrada", "humor", "Recebi as fichas em um envelope sem remetente. O envelope eu guardei; a dúvida, eu passo adiante."),
+  fala("entrada-investigacao-humor-2", "investigacao", "entrada", "humor", "A gaveta de hoje range mais que as outras. Não é mau sinal: é só mais papel."),
+  fala("entrada-investigacao-humor-3", "investigacao", "entrada", "humor", "Grampeador novo, grampo velho. Cada ficha vai receber o documento dela, se alguém encontrar o documento."),
+
+  fala("ajuda-investigacao-instrucao-1", "investigacao", "ajuda", "instrucao", "Fale com o Escrivão, abra a gaveta e guarde no dossiê os documentos úteis. Na mesa, relacione cada ficha ao documento que a sustenta e aponte o campo do trecho destacado."),
+  fala("ajuda-investigacao-humor-1", "investigacao", "ajuda", "humor", "O quadro na parede tem os cinco campos. Eu escrevi a lista três vezes; na quarta, plastifiquei."),
+  fala("ajuda-investigacao-humor-2", "investigacao", "ajuda", "humor", "Dossiê é só uma pasta mais gorda. O nome é para o carimbo caber."),
+  fala("ajuda-investigacao-humor-3", "investigacao", "ajuda", "humor", "Guardar documento demais no dossiê não é erro. Eu guardo até o recibo do café."),
+
+  fala("explorar-investigacao-instrucao-1", "investigacao", "explorar", "instrucao", "Este documento é da gaveta. Leia os campos: a data, a instituição, o cargo, o objeto e a ação. Se parecer útil, guarde no dossiê."),
+  fala("explorar-investigacao-humor-1", "investigacao", "explorar", "humor", "Tirei esta pasta de baixo de outras quatro. As outras quatro voltaram para o lugar, mais ou menos."),
+  fala("explorar-investigacao-humor-2", "investigacao", "explorar", "humor", "Papel timbrado, carimbo e data. Se tivesse cheiro de café, era a minha mesa."),
+  fala("explorar-investigacao-humor-3", "investigacao", "explorar", "humor", "Leio um campo de cada vez. Quando leio dois, troco a data pela instituição e preciso recomeçar."),
+
+  fala("erro-investigacao-instrucao-1", "investigacao", "erro", "instrucao", "Não era esse. O aviso acima diz em que campos o documento escolhido não bate com a ficha. Confira outro documento do dossiê, ou siga pela explicação."),
+  fala("erro-investigacao-humor-1", "investigacao", "erro", "humor", "Já grampeei o documento errado atrás de uma ficha. O grampo saiu; a vergonha ficou no arquivo."),
+  fala("erro-investigacao-humor-2", "investigacao", "erro", "humor", "Dois documentos parecidos são a especialidade desta gaveta. A diferença está em um campo, sempre."),
+  fala("erro-investigacao-humor-3", "investigacao", "erro", "humor", "Confira de novo. O dossiê não cobra tentativa, e eu não cobro hora extra."),
+
+  fala("conclusao-investigacao-instrucao-1", "investigacao", "conclusao", "instrucao", "Missão concluída. As fichas estão conferidas, com o documento de cada uma. Use o botão abaixo para ver o resumo."),
+  fala("conclusao-investigacao-humor-1", "investigacao", "conclusao", "humor", "Fichas grampeadas, dossiê fechado. Agora eu procuro onde deixei o grampeador."),
+  fala("conclusao-investigacao-humor-2", "investigacao", "conclusao", "humor", "Dossiê arquivado na gaveta certa. Foi na primeira tentativa, o que é raro por aqui."),
+  fala("conclusao-investigacao-humor-3", "investigacao", "conclusao", "humor", "Caso encerrado. O próximo envelope já está na mesa; o café, ainda não."),
+
+  fala("carimbo-investigacao-instrucao-1", "investigacao", "carimbo", "instrucao", "Missão concluída: o carimbo dela está no seu passaporte. O botão abaixo leva ao resumo, com a explicação e as fontes de cada documento."),
+];
+
+export const CATALOGO: readonly Fala[] = [...ENTRADA, ...AJUDA, ...EXPLORAR, ...ERRO, ...CONCLUSAO, ...CARIMBO, ...INVESTIGACAO];

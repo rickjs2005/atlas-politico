@@ -29,7 +29,7 @@ import {
   TEMAS_DE_COBERTURA,
   TIPOS_DE_ATUACAO,
 } from "./decisions";
-import { INICIO_DA_PROPOSTA, LIMITES_DA_FASE, SALAS_DO_JOGO, TIPOS_DE_FATO_BIOGRAFICO, TIPOS_DE_REFERENCIA_DE_FASE, countWords } from "./game";
+import { CAMPOS_DO_DOCUMENTO, INICIO_DA_PROPOSTA, LIMITES_DA_FASE, SALAS_DO_JOGO, TIPOS_DE_FATO_BIOGRAFICO, TIPOS_DE_REFERENCIA_DE_FASE, countWords } from "./game";
 import { PRECISOES_GEOGRAFICAS, isInsideBrazilBox } from "./geo";
 
 // Mensagens do próprio Zod em português, para quem lê o erro de validação.
@@ -739,6 +739,19 @@ const opcaoDeAtividadeSchema = z.strictObject({ id: idSchema, texto: texto });
  * conjunto confere). `explicacao` é o que a pessoa lê depois de responder, ou
  * no lugar de responder.
  */
+/**
+ * Uma ficha do dossiê (D-151): uma afirmação em uma frase, escrita só com o
+ * que o documento apontado registra, e o trecho dela que a pessoa tem de
+ * localizar no documento, com o campo que o sustenta.
+ */
+const fichaDoDossieSchema = z.strictObject({
+  id: idSchema,
+  texto: texto,
+  /** O registro que sustenta a ficha: uma decisão (voto, ato do Executivo ou atuação legislativa). */
+  evidencia: referenciaDeFaseSchema,
+  destaque: z.strictObject({ trecho: texto, campo: z.enum(CAMPOS_DO_DOCUMENTO) }),
+});
+
 const atividadeSchema = z.discriminatedUnion("tipo", [
   z.strictObject({
     tipo: z.literal("pergunta"),
@@ -754,6 +767,19 @@ const atividadeSchema = z.discriminatedUnion("tipo", [
     enunciado: texto,
     /** Os registros a pôr em ordem cronológica: acontecimentos, decisões ou fatos com data. */
     itens: z.array(referenciaDeFaseSchema).min(2).max(3),
+    explicacao: texto,
+  }),
+  /**
+   * O dossiê (D-151): a pessoa abre os documentos da gaveta, guarda os que
+   * achar úteis e relaciona cada ficha ao documento que a sustenta. Os
+   * distratores são documentos da mesma pessoa que não sustentam ficha
+   * nenhuma: estão na gaveta para a leitura decidir, e não para enganar.
+   */
+  z.strictObject({
+    tipo: z.literal("dossie"),
+    enunciado: texto,
+    fichas: z.array(fichaDoDossieSchema).min(LIMITES_DA_FASE.fichasMinimasDoDossie).max(LIMITES_DA_FASE.fichasDoDossie),
+    distratores: z.array(referenciaDeFaseSchema),
     explicacao: texto,
   }),
 ]);
@@ -831,6 +857,41 @@ export const faseDoJogoSchema = z
           ctx.addIssue({ code: "custom", message: `A opção tem mais de ${LIMITES_DA_FASE.palavrasDaOpcao} palavras.`, path: ["atividade", "opcoes", indice, "texto"] });
         }
       });
+    } else if (atividade.tipo === "dossie") {
+      const ids = atividade.fichas.map((ficha) => ficha.id);
+      if (new Set(ids).size !== ids.length) {
+        ctx.addIssue({ code: "custom", message: "Duas fichas têm o mesmo identificador.", path: ["atividade", "fichas"] });
+      }
+      const evidencias = atividade.fichas.map((ficha) => `${ficha.evidencia.tipo}:${ficha.evidencia.id}`);
+      if (new Set(evidencias).size !== evidencias.length) {
+        ctx.addIssue({ code: "custom", message: "Duas fichas apontam o mesmo documento: cada ficha tem o seu.", path: ["atividade", "fichas"] });
+      }
+      atividade.fichas.forEach((ficha, indice) => {
+        if (ficha.evidencia.tipo !== "decisao") {
+          ctx.addIssue({ code: "custom", message: "O documento de uma ficha é uma decisão: um voto, um ato do Executivo ou uma atuação legislativa.", path: ["atividade", "fichas", indice, "evidencia", "tipo"] });
+        }
+        if (!ficha.texto.includes(ficha.destaque.trecho)) {
+          ctx.addIssue({ code: "custom", message: "O trecho destacado tem de estar, igual, no texto da ficha.", path: ["atividade", "fichas", indice, "destaque", "trecho"] });
+        }
+        if (countWords(ficha.texto) > LIMITES_DA_FASE.palavrasDaFicha) {
+          ctx.addIssue({ code: "custom", message: `A ficha tem mais de ${LIMITES_DA_FASE.palavrasDaFicha} palavras.`, path: ["atividade", "fichas", indice, "texto"] });
+        }
+      });
+      const distratores = atividade.distratores.map((item) => `${item.tipo}:${item.id}`);
+      if (new Set(distratores).size !== distratores.length) {
+        ctx.addIssue({ code: "custom", message: "O mesmo documento aparece mais de uma vez entre os distratores.", path: ["atividade", "distratores"] });
+      }
+      atividade.distratores.forEach((item, indice) => {
+        if (item.tipo !== "decisao") {
+          ctx.addIssue({ code: "custom", message: "Um distrator é uma decisão, como os documentos das fichas.", path: ["atividade", "distratores", indice, "tipo"] });
+        }
+        if (evidencias.includes(`${item.tipo}:${item.id}`)) {
+          ctx.addIssue({ code: "custom", message: `O documento "${item.id}" sustenta uma ficha e não pode ser distrator.`, path: ["atividade", "distratores", indice] });
+        }
+      });
+      if (evidencias.length + distratores.length > LIMITES_DA_FASE.documentosDoDossie) {
+        ctx.addIssue({ code: "custom", message: `A gaveta tem mais de ${LIMITES_DA_FASE.documentosDoDossie} documentos.`, path: ["atividade", "distratores"] });
+      }
     } else {
       const itens = atividade.itens.map((item) => `${item.tipo}:${item.id}`);
       if (new Set(itens).size !== itens.length) {

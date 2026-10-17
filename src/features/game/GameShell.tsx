@@ -29,8 +29,10 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { PATH_LINK } from "@/components/touch";
+import type { CampoDoDocumento } from "@/lib/domain/game";
 import type { ProgressKeys } from "@/lib/game/content";
-import { selectLines, type EscrivaoEvent, type FalaDita } from "@/lib/game/escrivao";
+import { collectDocument, dossierLine, dossierSummary, inspectField, matchFicha, removeDocument } from "@/lib/game/dossier";
+import { chooseIn, isDialogOver, selectLines, startDialog, type DialogState, type EscrivaoEvent, type FalaDita } from "@/lib/game/escrivao";
 import { relatedRecords } from "@/lib/game/judicial";
 import {
   countStamps,
@@ -52,13 +54,14 @@ import { roomLabel, roomOf } from "@/lib/game/rooms";
 import { getScene } from "@/lib/game/scenes";
 import { isSensitive } from "@/lib/game/sensitivity";
 import { answerOrder, answerQuestion, concludeByExplanation, isPhaseDone, isResolved, phaseStatus, refKey, refShortLabel, refTitle } from "@/lib/game/trail";
-import type { GameContent, PersonagemSlug, PhaseRef, PhaseSpec, PlayerProgress, SceneMarker } from "@/lib/game/types";
+import type { DossierSection, GameContent, PersonagemSlug, PhaseRef, PhaseSpec, PlayerProgress, SceneMarker } from "@/lib/game/types";
 import { NO_INSETS, type StageInsets } from "@/lib/game/world/camera";
 import { gameHref } from "@/lib/state/links";
 
 import type { GameStageHandle } from "./GameStage";
 import { useGameAddress, useGamePreferences, useGameProgress, useMotion, useStoredProgress, useWindowActive, writePhaseToUrl } from "./hooks";
 import { primaryButton, quietButton, secondaryButton } from "./ui/Dialog";
+import { DossierPhase, type DossierBindings, type InspectFeedback, type MatchFeedback } from "./ui/Dossier";
 import { ConfirmResetDialog, HelpDialog, PhaseDialog, PhaseListDialog, RecordDialog, SummaryDialog } from "./ui/dialogs";
 import { Hud, ResumeNotice, type ResumeInfo } from "./ui/Hud";
 import { PassportDialog, PassportStrip, type StampNotice } from "./ui/Passport";
@@ -109,7 +112,8 @@ function StageMissing({ motivo, onRead }: { motivo: "sem-canvas" | "falhou"; onR
 
 type Vista =
   | { tipo: "base" }
-  | { tipo: "fase" }
+  /** A fase aberta; na missão de investigação, a parte da sala que o objeto tocado abre (D-151). */
+  | { tipo: "fase"; secao?: DossierSection }
   | { tipo: "registro"; referencia: PhaseRef; de: "base" | "fase" }
   | { tipo: "fases" }
   | { tipo: "ajuda" }
@@ -166,12 +170,23 @@ export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChav
   const [reinicios, setReinicios] = useState(0);
   // O último carimbo desta visita. Não é guardado: ao recarregar, ele já está no passaporte, e nada é comemorado de novo.
   const [carimbo, setCarimbo] = useState<NewStamp | null>(null);
+  // A conversa com o Escrivão na missão de investigação (D-151): guardada por fase enquanto a página está aberta, e nunca gravada.
+  const [conversa, setConversa] = useState<{ faseId: string; estado: DialogState }>(() => ({ faseId: "", estado: startDialog() }));
 
   const pedida = consulta.fase === null ? undefined : fases[consulta.fase - 1];
   const fase: PhaseSpec = fases.find((item) => item.id === escolhida) ?? pedida ?? (pronto ? resumePhase(progresso, fases) : null) ?? fases[0]!;
   const proxima = nextPhase(fases, fase.id);
   const estado = phaseProgressOf(progresso, fase.id);
   const concluida = estado.concluida !== undefined;
+  // A fase é a missão de investigação: os objetos da sala substituem as pastas, e a fase abre na parte que o objeto tocado pede.
+  const missao = fase.atividade.tipo === "dossie";
+  const dialogo = useMemo(() => (conversa.faseId === fase.id ? conversa.estado : startDialog()), [conversa, fase.id]);
+  const conversaAcabou = isDialogOver(dialogo);
+  // O objeto que o botão principal abre na missão: o Escrivão, até a conversa acabar; depois, a mesa das fichas.
+  const principal = useMemo<{ chave: string; rotulo: string; secao: DossierSection } | null>(() => {
+    if (!missao) return null;
+    return conversaAcabou ? { chave: "objeto:fichas", rotulo: "Abrir o dossiê", secao: "fichas" } : { chave: "objeto:escrivao", rotulo: "Falar com o Escrivão", secao: "escrivao" };
+  }, [missao, conversaAcabou]);
   const cena = getScene(fase.cena);
   const leitura = pronto && (!preferencias.cenario || consulta.leitura || leituraDaVisita);
   const marcoTitulo = refTitle(fase.marco, content) ?? fase.titulo;
@@ -231,6 +246,19 @@ export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChav
   // que couberem nas posições da cena. O que não couber fica só na lista.
   // -------------------------------------------------------------------------
   const marcadores = useMemo<SceneMarker[]>(() => {
+    if (fase.atividade.tipo === "dossie") {
+      // Os objetos da sala de investigação, na ordem das posições da cena (D-151): nenhum é pasta, e cada um abre uma parte do dossiê.
+      const objetos: { secao: DossierSection; rotulo: string }[] = [
+        { secao: "escrivao", rotulo: "Escrivão" },
+        { secao: "gaveta", rotulo: "Gaveta" },
+        { secao: "fichas", rotulo: "Fichas" },
+        { secao: "quadro", rotulo: "Quadro" },
+      ];
+      return objetos.flatMap((objeto, indice) => {
+        const posicao = cena.registros[indice];
+        return posicao === undefined ? [] : [{ chave: `objeto:${objeto.secao}`, natureza: "objeto" as const, rotulo: objeto.rotulo, x: posicao.x, y: posicao.y }];
+      });
+    }
     const [doMarco, ...demais] = cena.registros;
     const lista: SceneMarker[] = [];
     if (doMarco !== undefined) lista.push({ chave: "marco", natureza: "marco", rotulo: marcoTitulo, x: doMarco.x, y: doMarco.y });
@@ -386,11 +414,21 @@ export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChav
     abrirDaBase({ tipo: "fase" });
   }, [update, fase, abrirDaBase]);
 
-  /** O botão principal e a pasta em destaque: com a cena pronta, o boneco anda até a pasta antes; sem ela, a explicação abre direto. */
+  /** Abre a fase na parte da sala que um objeto da missão pede (D-151): a conversa, a gaveta, as fichas ou o quadro. A fase fica vista. */
+  const abrirSecao = useCallback(
+    (secao: DossierSection) => {
+      update((atual) => openPhase(atual, fase));
+      abrirDaBase({ tipo: "fase", secao });
+    },
+    [update, fase, abrirDaBase],
+  );
+
+  /** O botão principal e a pasta em destaque: com a cena pronta, o boneco anda até a pasta (ou o objeto) antes; sem ela, a explicação abre direto. */
   const abrirMarco = useCallback(() => {
-    if (handle.current !== null) handle.current.open("marco");
+    if (handle.current !== null) handle.current.open(principal?.chave ?? "marco");
+    else if (principal !== null) abrirSecao(principal.secao);
     else abrirFase();
-  }, [abrirFase]);
+  }, [abrirFase, abrirSecao, principal]);
 
   /** Abre um registro: da base (a pasta do cenário, ou a lista da leitura sem o cenário) ou por cima da janela da fase. */
   const abrirRegistro = useCallback(
@@ -405,10 +443,14 @@ export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChav
         abrirFase();
         return;
       }
+      if (chave.startsWith("objeto:")) {
+        abrirSecao(chave.slice("objeto:".length) as DossierSection);
+        return;
+      }
       const referencia = fase.explorar.find((item) => refKey(item) === chave);
       if (referencia !== undefined) abrirRegistro(referencia, "base");
     },
-    [abrirFase, abrirRegistro, fase],
+    [abrirFase, abrirSecao, abrirRegistro, fase],
   );
 
   /** Aplica uma resposta ao progresso e devolve o que a tela mostra: se acertou e, no erro, a fala do Escrivão. */
@@ -442,6 +484,58 @@ export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChav
     });
     if (saida.carimbo !== null) setCarimbo(saida.carimbo);
   }, [update, fase, content, carimboEntre]);
+
+  // -------------------------------------------------------------------------
+  // Missão de investigação (D-151): as ações do dossiê, aplicadas ao progresso
+  // como as respostas, e a conversa com o Escrivão, que fica só nesta visita.
+  // -------------------------------------------------------------------------
+  const recolher = useCallback((chave: string) => update((atual) => withPosition(withPhase(atual, fase.id, collectDocument(fase, phaseProgressOf(atual, fase.id), chave)), fase)), [update, fase]);
+  const tirar = useCallback((chave: string) => update((atual) => withPhase(atual, fase.id, removeDocument(phaseProgressOf(atual, fase.id), chave))), [update, fase]);
+  const relacionar = useCallback(
+    (fichaId: string, chave: string): MatchFeedback => {
+      let certo = false;
+      let divergencias: MatchFeedback["divergencias"] = [];
+      let tentativas = 0;
+      update((atual) => {
+        const resultado = matchFicha(fase, phaseProgressOf(atual, fase.id), fichaId, chave, content);
+        certo = resultado.certo;
+        divergencias = resultado.divergencias;
+        tentativas = resultado.estado.tentativas;
+        return withPosition(withPhase(atual, fase.id, resultado.estado), fase);
+      });
+      return { certo, divergencias, falas: certo ? [] : falar("erro", Math.max(0, tentativas - 1), fase.sensivel) };
+    },
+    [update, fase, content, falar],
+  );
+  const conferir = useCallback(
+    (fichaId: string, campo: CampoDoDocumento): InspectFeedback => {
+      let certo = false;
+      let apontado: InspectFeedback["campo"] = null;
+      let concluiu = false;
+      let tentativas = 0;
+      const saida: { carimbo: NewStamp | null } = { carimbo: null };
+      update((atual) => {
+        const resultado = inspectField(fase, phaseProgressOf(atual, fase.id), fichaId, campo, content);
+        certo = resultado.certo;
+        apontado = resultado.campo;
+        concluiu = resultado.concluiu;
+        tentativas = resultado.estado.tentativas;
+        const proximo = withPosition(withPhase(atual, fase.id, resultado.estado), fase);
+        saida.carimbo = carimboEntre(atual, proximo);
+        return proximo;
+      });
+      if (saida.carimbo !== null) setCarimbo(saida.carimbo);
+      return { certo, campo: apontado, concluiu, falas: certo ? [] : falar("erro", Math.max(0, tentativas - 1), fase.sensivel) };
+    },
+    [update, fase, content, falar, carimboEntre],
+  );
+  const escolherNaConversa = useCallback((escolhaId: string) => setConversa((atual) => ({ faseId: fase.id, estado: chooseIn(atual.faseId === fase.id ? atual.estado : startDialog(), escolhaId) })), [fase.id]);
+  const reiniciarConversa = useCallback(() => setConversa({ faseId: fase.id, estado: startDialog() }), [fase.id]);
+  const dossie = useMemo<DossierBindings>(
+    () => ({ dialogo: { estado: dialogo, onChoose: escolherNaConversa, onRestart: reiniciarConversa }, onCollect: recolher, onRemove: tirar, onMatch: relacionar, onInspect: conferir }),
+    [dialogo, escolherNaConversa, reiniciarConversa, recolher, tirar, relacionar, conferir],
+  );
+  const andamento = missao ? dossierLine(dossierSummary(fase, estado)) : null;
 
   /** Ir a uma fase é navegação: não conclui nem apaga nada. */
   const irPara = useCallback(
@@ -520,6 +614,8 @@ export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChav
           carimbo={avisoDoCarimbo}
           desfecho={desfecho}
           aprofundamentos={aprofundamentos}
+          dossie={missao ? dossie : undefined}
+          secao={vista.tipo === "fase" ? (vista.secao ?? null) : null}
           onAnswerQuestion={responderPergunta}
           onAnswerOrder={responderOrdem}
           onSkip={lerEContinuar}
@@ -623,35 +719,62 @@ export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChav
         </nav>
         <PassportStrip {...faixaDoPassaporte} onOpen={() => abrirDaBase({ tipo: "passaporte", de: "base" })} className="max-w-md" />
         {retomada !== null && <ResumeNotice retomada={retomada} className="text-sm" onGoToStart={irParaOInicio} />}
-        {salaSpec.natureza === "aprofundamento" && (
-          <p className="text-sm" data-aviso-aprofundamento>
-            {roomLabel(salaSpec)}: decisões documentadas sobre um assunto, e não o começo da trajetória.{" "}
+        {salaSpec.natureza !== "trajetoria" && (
+          <p className="text-sm" data-aviso-aprofundamento={salaSpec.natureza}>
+            {roomLabel(salaSpec)}: {salaSpec.natureza === "investigacao" ? "uma missão sobre documentos do atlas, e não o começo da trajetória." : "decisões documentadas sobre um assunto, e não o começo da trajetória."}{" "}
             <Link href={`${gameHref(slug)}?fase=1`} prefetch={false} className={PATH_LINK} data-ir-para-o-inicio>
               Ir para o início da vida
             </Link>
           </p>
         )}
         <article className="max-w-3xl" inert={vista.tipo !== "base"} data-leitura-da-fase>
-          <PhaseContent
-            key={`${fase.id}:${reinicios}`}
-            fase={fase}
-            total={fases.length}
-            sala={salaSpec}
-            content={content}
-            estado={estado}
-            proxima={proxima}
-            cabecalho
-            falasDaConclusao={falasDaConclusao}
-            carimbo={avisoDoCarimbo}
-            desfecho={desfecho}
-            aprofundamentos={aprofundamentos}
-            onAnswerQuestion={responderPergunta}
-            onAnswerOrder={responderOrdem}
-            onSkip={lerEContinuar}
-            onOpenRecord={(referencia) => abrirRegistro(referencia, "base")}
-            onContinue={continuar}
-            onOpenPassport={() => abrirDaBase({ tipo: "passaporte", de: "base" })}
-          />
+          {missao ? (
+            <DossierPhase
+              key={`${fase.id}:${reinicios}`}
+              fase={fase}
+              total={fases.length}
+              sala={salaSpec}
+              content={content}
+              estado={estado}
+              proxima={proxima}
+              cabecalho
+              falasDaConclusao={falasDaConclusao}
+              carimbo={avisoDoCarimbo}
+              desfecho={desfecho}
+              aprofundamentos={aprofundamentos}
+              dialogo={dossie.dialogo}
+              secao={null}
+              onCollect={dossie.onCollect}
+              onRemove={dossie.onRemove}
+              onMatch={dossie.onMatch}
+              onInspect={dossie.onInspect}
+              onSkip={lerEContinuar}
+              onOpenRecord={(referencia) => abrirRegistro(referencia, "base")}
+              onContinue={continuar}
+              onOpenPassport={() => abrirDaBase({ tipo: "passaporte", de: "base" })}
+            />
+          ) : (
+            <PhaseContent
+              key={`${fase.id}:${reinicios}`}
+              fase={fase}
+              total={fases.length}
+              sala={salaSpec}
+              content={content}
+              estado={estado}
+              proxima={proxima}
+              cabecalho
+              falasDaConclusao={falasDaConclusao}
+              carimbo={avisoDoCarimbo}
+              desfecho={desfecho}
+              aprofundamentos={aprofundamentos}
+              onAnswerQuestion={responderPergunta}
+              onAnswerOrder={responderOrdem}
+              onSkip={lerEContinuar}
+              onOpenRecord={(referencia) => abrirRegistro(referencia, "base")}
+              onContinue={continuar}
+              onOpenPassport={() => abrirDaBase({ tipo: "passaporte", de: "base" })}
+            />
+          )}
         </article>
         <nav aria-label="Fase anterior e fase seguinte" className="flex max-w-3xl flex-wrap items-center justify-between gap-2 border-t border-line pt-4" inert={vista.tipo !== "base"}>
           {anterior === null ? (
@@ -725,6 +848,8 @@ export function GameShell({ content, chaves, outraPessoa, passaporte, outrasChav
             falas={falasDaEntrada}
             retomada={retomada}
             passaporte={faixaDoPassaporte}
+            principal={principal?.rotulo ?? null}
+            andamento={andamento}
             onGoToStart={irParaOInicio}
             onOpenMarker={abrirMarco}
             onContinue={continuar}

@@ -25,7 +25,7 @@ import { publishedPhases } from "./content";
 import { presentationOf } from "./presentation";
 import { ROOMS, periodLabel, roomLabel } from "./rooms";
 import { SCENES } from "./scenes";
-import { refKey } from "./trail";
+import { activityRefs, refKey } from "./trail";
 import { EPOCA_LABEL, type PersonagemSlug } from "./types";
 
 /**
@@ -64,8 +64,7 @@ export function appearancesOf(fases: readonly FaseDoJogo[], chave: string): Phas
     const como: Appearance[] = [];
     if (refKey(fase.marco) === chave) como.push("marco");
     if (fase.explicacao.some((bloco) => bloco.referencias.some((referencia) => refKey(referencia) === chave))) como.push("explicacao");
-    const daAtividade = fase.atividade.tipo === "pergunta" ? fase.atividade.referencias : fase.atividade.itens;
-    if (daAtividade.some((referencia) => refKey(referencia) === chave)) como.push("atividade");
+    if (activityRefs(fase.atividade).some((referencia) => refKey(referencia) === chave)) como.push("atividade");
     if (fase.explorar.some((referencia) => refKey(referencia) === chave)) como.push("explorar");
     return como.length === 0 ? [] : [{ fase, como }];
   });
@@ -225,7 +224,12 @@ export function renderCoverage(data: AtlasData): string {
         const scene = SCENES[cena];
         const apontados = new Set([refKey(fase.marco), ...fase.explicacao.flatMap((bloco) => bloco.referencias.map(refKey)), ...fase.explorar.map(refKey)]);
         const palavras = fase.explicacao.reduce((soma, bloco) => soma + countWords(bloco.texto), 0);
-        const atividade = fase.atividade.tipo === "pergunta" ? `pergunta, ${fase.atividade.opcoes.length} opções` : `ordenação, ${fase.atividade.itens.length} registros`;
+        const atividade =
+          fase.atividade.tipo === "pergunta"
+            ? `pergunta, ${fase.atividade.opcoes.length} opções`
+            : fase.atividade.tipo === "ordem"
+              ? `ordenação, ${fase.atividade.itens.length} registros`
+              : `dossiê, ${fase.atividade.fichas.length} fichas e ${fase.atividade.fichas.length + fase.atividade.distratores.length} documentos`;
         linhas.push(
           `| ${fase.ordem} | ${fase.titulo} (\`${fase.id}\`) | ${periodLabel(fase.periodo)} | ${fase.objetivo} | \`${refKey(fase.marco)}\` | ${apontados.size} (${fase.explorar.length} em Explorar) | ${atividade} | ${palavras} | ${scene.nome} (\`${scene.id}\`); ${EPOCA_LABEL[epoca]} | ${reviewLabel(fase)} |`,
         );

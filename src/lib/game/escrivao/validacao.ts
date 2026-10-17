@@ -32,6 +32,26 @@ export const INSTRUCAO_MAXIMA = 200;
 /** Quantas falas de humor, no mínimo, cada evento precisa ter no reserva para a rotação não repetir na hora. */
 export const MINIMO_DE_HUMOR = 3;
 
+/**
+ * As regras de uma fala, uma por uma: valem para o catálogo e para o diálogo
+ * ramificado da missão de investigação (dialogo.ts). Devolve os problemas do
+ * texto dado, vazio quando ele passa.
+ */
+export function validateLine(texto: string, camada: Fala["camada"]): string[] {
+  const problemas: string[] = [];
+  if (texto.trim().length === 0) problemas.push("texto vazio.");
+  if (PESSOAS_E_PARTIDOS.test(texto)) problemas.push("cita pessoa, partido ou lado; o Escrivão não fala das pessoas retratadas.");
+  if (FALA_ATRIBUIDA.test(texto)) problemas.push("atribui fala a alguém.");
+  if (JUIZO.test(texto)) problemas.push("traz juízo de valor.");
+  if (camada === "humor" && TERCEIROS.test(texto)) problemas.push("piada com outra pessoa; o humor é sobre a papelada e sobre o próprio Escrivão.");
+  if (camada === "humor" && NASCIMENTO.test(texto)) problemas.push("piada com nascimento ou aniversário; conforme a fase, vira comentário sobre a pessoa retratada.");
+  if (texto.includes("—") || texto.includes("–")) problemas.push("travessão ou meia-risca; o projeto não os usa.");
+  if (/\{[a-zA-Z]+\}/.test(texto)) problemas.push("campo a preencher; o Escrivão não repete dado do registro.");
+  if (ANO.test(texto)) problemas.push("ano ou data; o Escrivão não escreve fato.");
+  if (camada === "humor" && /\?$/.test(texto.trim()) === false && texto.trim().length > 220) problemas.push("fala de humor longa demais (mais de 220 caracteres).");
+  return problemas;
+}
+
 export function validateCatalog(catalogo: readonly Fala[]): string[] {
   const problemas: string[] = [];
   const ids = new Set<string>();
@@ -40,19 +60,10 @@ export function validateCatalog(catalogo: readonly Fala[]): string[] {
     const onde = `fala ${fala.id}`;
     if (ids.has(fala.id)) problemas.push(`${onde}: identificador repetido.`);
     ids.add(fala.id);
-    if (fala.texto.trim().length === 0) problemas.push(`${onde}: texto vazio.`);
     if (!ESCRIVAO_EVENTS.includes(fala.evento)) problemas.push(`${onde}: evento desconhecido (${fala.evento}).`);
     if (!CAMADAS.includes(fala.camada)) problemas.push(`${onde}: camada desconhecida (${fala.camada}).`);
     if (fala.sala !== "todas" && !ROOM_IDS.includes(fala.sala)) problemas.push(`${onde}: sala desconhecida (${fala.sala}).`);
-    if (PESSOAS_E_PARTIDOS.test(fala.texto)) problemas.push(`${onde}: cita pessoa, partido ou lado; o Escrivão não fala das pessoas retratadas.`);
-    if (FALA_ATRIBUIDA.test(fala.texto)) problemas.push(`${onde}: atribui fala a alguém.`);
-    if (JUIZO.test(fala.texto)) problemas.push(`${onde}: traz juízo de valor.`);
-    if (fala.camada === "humor" && TERCEIROS.test(fala.texto)) problemas.push(`${onde}: piada com outra pessoa; o humor é sobre a papelada e sobre o próprio Escrivão.`);
-    if (fala.camada === "humor" && NASCIMENTO.test(fala.texto)) problemas.push(`${onde}: piada com nascimento ou aniversário; conforme a fase, vira comentário sobre a pessoa retratada.`);
-    if (fala.texto.includes("—") || fala.texto.includes("–")) problemas.push(`${onde}: travessão ou meia-risca; o projeto não os usa.`);
-    if (/\{[a-zA-Z]+\}/.test(fala.texto)) problemas.push(`${onde}: campo a preencher; o Escrivão não repete dado do registro.`);
-    if (ANO.test(fala.texto)) problemas.push(`${onde}: ano ou data; o Escrivão não escreve fato.`);
-    if (fala.camada === "humor" && /\?$/.test(fala.texto.trim()) === false && fala.texto.trim().length > 220) problemas.push(`${onde}: fala de humor longa demais (mais de 220 caracteres).`);
+    for (const problema of validateLine(fala.texto, fala.camada)) problemas.push(`${onde}: ${problema}`);
   }
 
   // A instrução é uma frase curta sobre a ação de agora: um bloco longo do guia tiraria a atenção do marco e do botão de avanço (D-133).

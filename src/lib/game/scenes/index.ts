@@ -20,6 +20,7 @@ import type { SceneId, SceneSpec } from "../types";
 import { alerj } from "./alerj";
 import { arquivoOrigemA, arquivoOrigemB } from "./arquivo-origem";
 import { arquivoEconomiaA, arquivoEconomiaB } from "./arquivo-economia";
+import { arquivoInvestigacaoA, arquivoInvestigacaoB } from "./arquivo-investigacao";
 import { arquivoSegurancaA, arquivoSegurancaB } from "./arquivo-seguranca";
 import { comissao } from "./comissao";
 import { comite } from "./comite";
@@ -50,6 +51,8 @@ export const SCENES: Record<SceneId, SceneSpec> = {
   "arquivo-economia-b": arquivoEconomiaB,
   "arquivo-seguranca-a": arquivoSegurancaA,
   "arquivo-seguranca-b": arquivoSegurancaB,
+  "arquivo-investigacao-a": arquivoInvestigacaoA,
+  "arquivo-investigacao-b": arquivoInvestigacaoB,
 };
 
 export function getScene(id: SceneId): SceneSpec {

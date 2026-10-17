@@ -40,12 +40,15 @@ export const PHASE_PRESENTATION: Readonly<Record<string, PhasePresentation>> = {
   "lula-seguranca-publica": { cena: "arquivo-seguranca-a", epoca: "atual" },
   "flavio-bolsonaro-economia": { cena: "arquivo-economia-b", epoca: "atual" },
   "flavio-bolsonaro-seguranca-publica": { cena: "arquivo-seguranca-b", epoca: "atual" },
+  // Missão de investigação (D-151): a sala de investigação de cada personagem.
+  "lula-investigacao": { cena: "arquivo-investigacao-a", epoca: "atual" },
+  "flavio-bolsonaro-investigacao": { cena: "arquivo-investigacao-b", epoca: "atual" },
 };
 
 /** A apresentação de reserva, para uma fase que o conteúdo publicou e o código ainda não conhece: a sala de arquivo do personagem. */
 const RESERVA: Record<PersonagemSlug, Record<RoomId, SceneId>> = {
-  lula: { historico: "arquivo-origem-a", economia: "arquivo-economia-a", "seguranca-publica": "arquivo-seguranca-a" },
-  "flavio-bolsonaro": { historico: "arquivo-origem-b", economia: "arquivo-economia-b", "seguranca-publica": "arquivo-seguranca-b" },
+  lula: { historico: "arquivo-origem-a", economia: "arquivo-economia-a", "seguranca-publica": "arquivo-seguranca-a", investigacao: "arquivo-investigacao-a" },
+  "flavio-bolsonaro": { historico: "arquivo-origem-b", economia: "arquivo-economia-b", "seguranca-publica": "arquivo-seguranca-b", investigacao: "arquivo-investigacao-b" },
 };
 
 /** O cenário e a figura de uma fase. Sem linha própria, a sala de arquivo do personagem, com a figura dos anos recentes. */

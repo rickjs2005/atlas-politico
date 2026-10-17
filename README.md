@@ -4,6 +4,8 @@
 
 Working title. An atlas (in Brazilian Portuguese) for following the public careers of Lula and Flávio Bolsonaro through a timeline, a map, events backed by the sources that support them, and a game that walks through both careers in short stages, from their origins to the cut-off date. A MilWeb portfolio project.
 
+Since October 17, 2026 (content edition 0.4.0) the game also has an investigation mission, "O documento diz o quê?" (what does the document say?): the Escrivão hands out index cards, the player opens real records from the drawer, builds a dossier, matches each card to the record that supports it and points to the field that supports the highlighted passage ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md), in Portuguese). The Cidade do Voto prototype had its scene lifecycle fixed and gained two more choices ([docs/MUNDO.md](docs/MUNDO.md)).
+
 > **Type:** MilWeb portfolio project, in development. It is not an official site of either person portrayed, of any party or of any public body. There is no definitive public address yet: the provisional Vercel address and the publication status are documented in [docs/DEPLOY.md](docs/DEPLOY.md).
 
 > **Project in development. Do not use it as a source.** The content is about two public figures and was checked only with AI assistance: no person has redone the review of the whole set, and validation with readers is pending. Since October 11, 2026 the site answers at a provisional, non-indexed Vercel address: every page carries `noindex`, and what is there may differ from this repository; the verified status is in [docs/DEPLOY.md](docs/DEPLOY.md). Every record lists the sources that support it; when in doubt, the cited document prevails.

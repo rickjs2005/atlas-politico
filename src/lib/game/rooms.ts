@@ -12,8 +12,13 @@ export interface RoomSpec {
   id: RoomId;
   /** O nome visível. */
   nome: string;
-  /** `trajetoria`: a trilha da vida, da origem à data de corte; `aprofundamento`: decisões documentadas de um tema, com os anos ditos. */
-  natureza: "trajetoria" | "aprofundamento";
+  /**
+   * `trajetoria`: a trilha da vida, da origem à data de corte;
+   * `aprofundamento`: decisões documentadas de um tema, com os anos ditos;
+   * `investigacao`: a missão documental, em que a pessoa monta um dossiê e
+   * relaciona cada ficha ao documento que a sustenta (D-151).
+   */
+  natureza: "trajetoria" | "aprofundamento" | "investigacao";
   /** O tema das decisões, nos aprofundamentos. */
   tema: Tema | null;
   /** O que a sala reúne, para a entrada do jogo. Não afirma fato sobre as pessoas. */
@@ -42,6 +47,13 @@ export const ROOMS: readonly RoomSpec[] = [
     tema: "seguranca-publica",
     descricao: "Decisões documentadas no tema Segurança pública: votos registrados e atos do Executivo, com o cargo e a instituição de cada uma.",
   },
+  {
+    id: "investigacao",
+    nome: "O documento diz o quê?",
+    natureza: "investigacao",
+    tema: null,
+    descricao: "Uma missão de investigação: o Escrivão entrega fichas, a pessoa abre os documentos da gaveta, monta um dossiê e relaciona cada ficha ao documento que a sustenta.",
+  },
 ];
 
 export const DEFAULT_ROOM: RoomId = "historico";
@@ -61,9 +73,10 @@ export function phasesInRoom<T extends { sala: RoomId }>(fases: readonly T[], sa
   return fases.filter((fase) => fase.sala === sala);
 }
 
-/** Como a sala se apresenta em uma frase curta: "Trajetória" ou "Aprofundamento: Economia". */
+/** Como a sala se apresenta em uma frase curta: "Trajetória", "Aprofundamento: Economia" ou "Missão: O documento diz o quê?". */
 export function roomLabel(sala: RoomSpec): string {
-  return sala.natureza === "trajetoria" ? sala.nome : `Aprofundamento: ${sala.nome}`;
+  if (sala.natureza === "trajetoria") return sala.nome;
+  return sala.natureza === "investigacao" ? `Missão: ${sala.nome}` : `Aprofundamento: ${sala.nome}`;
 }
 
 /** O período de uma sala, por extenso: "1945 a 2026", ou o ano só. */

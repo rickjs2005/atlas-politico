@@ -181,7 +181,12 @@ function supportBlocks(data: AtlasData): string[] {
   return linhas;
 }
 
-const SALA_LABELS: Record<FaseDoJogo["sala"], string> = { historico: "Trajetória", economia: "Aprofundamento: Economia", "seguranca-publica": "Aprofundamento: Segurança pública" };
+const SALA_LABELS: Record<FaseDoJogo["sala"], string> = {
+  historico: "Trajetória",
+  economia: "Aprofundamento: Economia",
+  "seguranca-publica": "Aprofundamento: Segurança pública",
+  investigacao: "Missão: O documento diz o quê?",
+};
 
 const refLine = (referencias: readonly ReferenciaDeFase[]) => referencias.map((referencia) => `\`${referencia.tipo}:${referencia.id}\``).join(", ");
 
@@ -199,8 +204,13 @@ function phaseBlock(data: AtlasData, fase: FaseDoJogo): string[] {
     linhas.push(`- **Pergunta a conferir:** ${atividade.enunciado}`);
     for (const opcao of atividade.opcoes) linhas.push(`  - ${opcao.id === atividade.correta ? "(certa) " : ""}${opcao.texto}`);
     linhas.push(`- **Explicação da resposta a conferir:** ${atividade.explicacao} Aponta: ${refLine(atividade.referencias)}.`);
-  } else {
+  } else if (atividade.tipo === "ordem") {
     linhas.push(`- **Ordenação a conferir:** ${atividade.enunciado} Registros: ${refLine(atividade.itens)}. A ordem certa é a das datas dos registros.`);
+    linhas.push(`- **Explicação da resposta a conferir:** ${atividade.explicacao}`);
+  } else {
+    linhas.push(`- **Dossiê a conferir:** ${atividade.enunciado} Cada ficha diz só o que o documento apontado registra; conferir o texto contra os campos do cartão (data, instituição, cargo, objeto e ação) e se o trecho destacado é sustentado pelo campo dito.`);
+    for (const ficha of atividade.fichas) linhas.push(`  - Ficha \`${ficha.id}\`: ${ficha.texto} Documento: ${refLine([ficha.evidencia])}. Trecho destacado: "${ficha.destaque.trecho}" (campo: ${ficha.destaque.campo}).`);
+    if (atividade.distratores.length > 0) linhas.push(`  - Documentos da gaveta que não sustentam ficha (distratores): ${refLine(atividade.distratores)}.`);
     linhas.push(`- **Explicação da resposta a conferir:** ${atividade.explicacao}`);
   }
   if (fase.explorar.length > 0) linhas.push(`- Para explorar no período (opcional no jogo): ${refLine(fase.explorar)}`);

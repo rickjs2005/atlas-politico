@@ -11,7 +11,7 @@
 
 import { phasesOfLegacy, readLegacy } from "./legacy";
 import { initialPhaseProgress, isPhaseDone, markSeen } from "./trail";
-import { PROGRESS_VERSION, type ActivityOutcome, type PersonagemSlug, type PhaseProgress, type PhaseSpec, type PlayerProgress, type RoomId } from "./types";
+import { PROGRESS_VERSION, type ActivityOutcome, type DossierProgress, type PersonagemSlug, type PhaseProgress, type PhaseSpec, type PlayerProgress, type RoomId } from "./types";
 
 /** O que a leitura do progresso precisa saber de uma fase. */
 export type PhaseKey = Pick<PhaseSpec, "id" | "sala">;
@@ -114,6 +114,22 @@ function isRecord(valor: unknown): valor is Record<string, unknown> {
 
 const OUTCOMES: readonly ActivityOutcome[] = ["resposta", "explicacao"];
 
+const isStringList = (valor: unknown): valor is string[] => Array.isArray(valor) && valor.every((item) => typeof item === "string");
+
+/**
+ * Lê o andamento de um dossiê (D-151). `undefined` quando o salvo não tem o
+ * campo (as fases sem dossiê, e os salvos de antes da missão); `null` quando
+ * o campo existe e não tem a forma esperada.
+ */
+function parseDossier(valor: unknown): DossierProgress | null | undefined {
+  if (valor === undefined) return undefined;
+  if (!isRecord(valor)) return null;
+  const { recolhidos, relacionadas, conferidas } = valor;
+  if (!isStringList(recolhidos) || !isStringList(conferidas) || !isRecord(relacionadas)) return null;
+  if (!Object.values(relacionadas).every((chave) => typeof chave === "string")) return null;
+  return { recolhidos: [...recolhidos], relacionadas: { ...(relacionadas as Record<string, string>) }, conferidas: [...conferidas] };
+}
+
 /**
  * Lê o estado de uma fase. A conclusão só vale com a assinatura da atividade
  * de hoje: se uma correção no conteúdo mudou o que decide a resposta, a fase
@@ -129,8 +145,11 @@ function parsePhase(valor: unknown, assinaturaAtual: string | undefined): PhaseP
   if (assinatura !== undefined && typeof assinatura !== "string") return null;
   if (anterior !== undefined && typeof anterior !== "boolean") return null;
   if (reaberta !== undefined && typeof reaberta !== "boolean") return null;
+  const dossie = parseDossier(valor.dossie);
+  if (dossie === null) return null;
   const lida: PhaseProgress = { vista, tentativas };
   if (anterior === true) lida.anterior = true;
+  if (dossie !== undefined) lida.dossie = dossie;
   if (concluida !== undefined) {
     if (assinaturaAtual !== undefined && assinatura === assinaturaAtual) {
       lida.concluida = concluida as ActivityOutcome;

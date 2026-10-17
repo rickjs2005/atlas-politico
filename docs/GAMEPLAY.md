@@ -65,8 +65,11 @@ Não há fase bloqueada. **Fases**, no alto da cena, abre a lista com a situaç�
 | Trajetória (`historico`) | trajetória | Da origem à data de corte, em nove fases por pessoa | `/jogo/<personagem>/` |
 | Economia | aprofundamento | Decisões documentadas no tema, em uma fase | `/jogo/<personagem>/economia/` |
 | Segurança pública | aprofundamento | Decisões documentadas no tema, em uma fase | `/jogo/<personagem>/seguranca-publica/` |
+| O documento diz o quê? (`investigacao`) | investigação (D-151) | A missão de investigação: fichas, gaveta, dossiê e o campo apontado, em uma fase ([MISSAO-INVESTIGACAO.md](MISSAO-INVESTIGACAO.md)) | `/jogo/<personagem>/investigacao/` |
 
-A sala (`RoomId`, `src/lib/game/rooms.ts`) é o que agrupa as fases. Não é a cena (`SceneId`, o cenário de uma fase) nem uma categoria do atlas. A entrada começa pela trajetória; os aprofundamentos ficam abaixo, sob "Aprofundamento por assunto", com os anos e a frase "Para depois da trajetória. Não é o começo da vida de ninguém". Quem chega direto a um aprofundamento lê, no cartão da fase e em **Como funciona**, que é um aprofundamento sobre um assunto, e não o começo da trajetória, com o caminho **Ir para o início da vida**. As decisões de um aprofundamento são amostra da edição, e a tela diz.
+A sala (`RoomId`, `src/lib/game/rooms.ts`) é o que agrupa as fases. Não é a cena (`SceneId`, o cenário de uma fase) nem uma categoria do atlas. A entrada começa pela trajetória; os aprofundamentos ficam abaixo, sob "Aprofundamento por assunto", com os anos e a frase "Para depois da trajetória. Não é o começo da vida de ninguém", e a missão, sob "Missão de investigação". Quem chega direto a um aprofundamento ou à missão lê, no cartão da fase e em **Como funciona**, que não é o começo da trajetória, com o caminho **Ir para o início da vida**. As decisões de um aprofundamento e os documentos da missão são amostra da edição, e a tela diz.
+
+Na missão, os marcadores da cena não são pastas: são quatro objetos com função (o Escrivão, a gaveta, a mesa das fichas e o quadro), e o botão principal diz o próximo passo ("Falar com o Escrivão", depois "Abrir o dossiê"). O cartão da fase traz o andamento em uma linha ("Dossiê: 2 de 6 documentos · fichas conferidas: 1 de 3").
 
 ## Fases
 
@@ -130,6 +133,9 @@ As regras estão em `src/lib/game/trail.ts`, puras.
 | --- | --- | --- |
 | `pergunta` | Escolher uma entre três opções | A opção marcada como certa no conteúdo da fase |
 | `ordem` | Tocar em três registros na ordem em que aconteceram | As datas dos registros apontados, e não a ordem em que a fase os escreveu |
+| `dossie` (D-151) | Guardar documentos da gaveta no dossiê, relacionar cada ficha ao documento que a sustenta e apontar, no documento, o campo que sustenta o trecho destacado | A decisão que cada ficha aponta e o campo dito no conteúdo da fase; os campos do documento são os do cartão de decisão (`src/lib/game/dossier.ts`) |
+
+- **O dossiê é relação, e não escolha de alternativa.** Relacionar vale por toque, teclado ou arraste (no mouse); apontar o campo é um botão por campo. O documento errado conta a tentativa e explica em que campos ele difere do que a ficha pede, com os valores dele, sem dizer o certo; o campo errado diz o que ele registra. A última ficha conferida conclui a fase pela resposta; "Ver a explicação e continuar" conclui pela leitura e mostra a solução de cada ficha. O que decide a resposta, para a assinatura, são as fichas, os documentos delas e os campos: a gaveta e os textos não entram.
 
 - **A pergunta só usa o que a explicação acabou de dizer.** Um teste confere que todo ano citado no enunciado, na opção certa e na explicação da resposta está em um registro que a atividade aponta. Nenhuma pergunta pede opinião nem juízo sobre as pessoas.
 - **A ordenação só existe quando as datas decidem a ordem.** Os intervalos de cálculo dos registros não podem se cruzar: um ano inteiro não vem antes nem depois de um dia do mesmo ano. O conjunto recusa uma ordenação assim.

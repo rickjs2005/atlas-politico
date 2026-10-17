@@ -390,7 +390,10 @@ export function checkIntegrity(conjunto: Conjunto): IntegrityIssue[] {
     }
 
     const { atividade } = fase;
-    if (atividade.tipo === "pergunta") {
+    if (atividade.tipo === "dossie") {
+      atividade.fichas.forEach((ficha, indice) => checkRef(ficha.evidencia, `atividade.fichas[${indice}].evidencia`));
+      atividade.distratores.forEach((referencia, indice) => checkRef(referencia, `atividade.distratores[${indice}]`));
+    } else if (atividade.tipo === "pergunta") {
       atividade.referencias.forEach((referencia, indice) => checkRef(referencia, `atividade.referencias[${indice}]`));
     } else {
       atividade.itens.forEach((referencia, indice) => checkRef(referencia, `atividade.itens[${indice}]`));

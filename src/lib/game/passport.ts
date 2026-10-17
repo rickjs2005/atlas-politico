@@ -172,10 +172,13 @@ export function earnedBetween(antes: readonly Seal[], depois: readonly Seal[]): 
  * é a mesma para quem acertou e para quem leu a explicação. Em fase de
  * contexto sensível (D-129), é uma linha sóbria sobre o progresso.
  */
-export function stampConfirmation(natureza: "trajetoria" | "aprofundamento", contagem: StampCount, sensivel: boolean): string {
+export function stampConfirmation(natureza: "trajetoria" | "aprofundamento" | "investigacao", contagem: StampCount, sensivel: boolean): string {
   const { carimbadas, total, faltam } = contagem;
   if (sensivel) return `Fase registrada no seu passaporte. Concluídas: ${carimbadas} de ${total}.`;
-  if (faltam === 0) return natureza === "trajetoria" ? "Trajetória percorrida: todos os marcos registrados." : "Aprofundamento percorrido: marco registrado.";
+  if (faltam === 0) {
+    if (natureza === "trajetoria") return "Trajetória percorrida: todos os marcos registrados.";
+    return natureza === "investigacao" ? "Missão concluída: dossiê registrado." : "Aprofundamento percorrido: marco registrado.";
+  }
   if (carimbadas === 1) return "Primeiro marco registrado.";
   return `Marco registrado: ${carimbadas} de ${total}.`;
 }

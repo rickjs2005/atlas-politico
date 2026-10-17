@@ -221,7 +221,7 @@ function DeepDiveItem({ aprofundamento }: { aprofundamento: DeepDive }) {
       <Link href={gameHref(aprofundamento.personagem, aprofundamento.sala)} prefetch={false} className={PATH_LINK} data-convite-aprofundamento={`${aprofundamento.personagem}:${aprofundamento.sala}`}>
         {roomLabel(roomOf(aprofundamento.sala))} de {aprofundamento.nome}
       </Link>
-      <span className="numerals text-ink-soft"> · decisões de {periodLabel(aprofundamento.periodo)}</span>
+      <span className="numerals text-ink-soft"> · {roomOf(aprofundamento.sala).natureza === "investigacao" ? "documentos" : "decisões"} de {periodLabel(aprofundamento.periodo)}</span>
     </li>
   );
 }
@@ -427,8 +427,8 @@ export function PassportDialog({ paginas, progressos, personagem, sala, abertaId
               </ol>
               {outrasSalas.length > 0 && (
                 <div className="space-y-2 border-t border-line pt-3">
-                  <h4 className="eyebrow text-ink-soft">Aprofundamentos por assunto · opcionais</h4>
-                  <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3" aria-label={`Carimbos dos aprofundamentos de ${pagina.nome}`}>
+                  <h4 className="eyebrow text-ink-soft">{outrasSalas.some((item) => roomOf(item).natureza === "investigacao") ? "Aprofundamentos por assunto e missão · opcionais" : "Aprofundamentos por assunto · opcionais"}</h4>
+                  <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3" aria-label={`Carimbos dos aprofundamentos e da missão de ${pagina.nome}`}>
                     {outrasSalas.flatMap((item) => stampSlots(pagePhases(pagina, item), progresso)).map(espaco)}
                   </ol>
                 </div>

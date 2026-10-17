@@ -285,7 +285,7 @@ Um marco, uma explicação curta, uma atividade e o que mais há para explorar n
 | Campo | Tipo | Regra |
 | --- | --- | --- |
 | `id`, `pessoaId` | ids | A pessoa precisa existir |
-| `sala` | `historico`, `economia` ou `seguranca-publica` | A trajetória ou um aprofundamento |
+| `sala` | `historico`, `economia`, `seguranca-publica` ou `investigacao` | A trajetória, um aprofundamento ou a missão de investigação (D-151) |
 | `ordem` | inteiro a partir de 1 | A posição na sala. Em cada sala de cada pessoa, as posições vão de 1 em sequência, sem repetição |
 | `titulo`, `objetivo` | textos | O objetivo é o que a pessoa sabe ao terminar a fase, em uma frase |
 | `periodo` | `{ de, ate }`, em anos | `de` não pode ser maior que `ate` |
@@ -299,12 +299,13 @@ Um marco, uma explicação curta, uma atividade e o que mais há para explorar n
 
 Uma **referência** é `{ tipo, id }`, com `tipo` em `acontecimento`, `decisao` (um voto, um ato do Executivo ou uma atuação legislativa), `fato`, `mandato`, `filiacao`, `proposta` ou `conceito`. O registro apontado precisa existir e ser da mesma pessoa; um acontecimento compartilhado serve às duas. Fase revisada só aponta o que entra na publicação.
 
-A **atividade** é uma de duas:
+A **atividade** é uma de três:
 
 | Tipo | Campos | Regra |
 | --- | --- | --- |
 | `pergunta` | `enunciado`, `opcoes` (duas ou três, `{ id, texto }`), `correta`, `explicacao`, `referencias` | Enunciado com até 40 palavras e opção com até 24. `correta` é o `id` de uma das opções |
 | `ordem` | `enunciado`, `itens` (duas ou três referências), `explicacao` | Só acontecimento, decisão e fato com data. As datas têm de decidir a ordem: os intervalos de cálculo não se cruzam |
+| `dossie` (D-151) | `enunciado`, `fichas` (de duas a quatro, `{ id, texto, evidencia, destaque: { trecho, campo } }`), `distratores` (referências), `explicacao` | Cada ficha tem até 30 palavras e aponta uma decisão (`evidencia.tipo` é `decisao`), distinta das outras fichas; `destaque.trecho` está, igual, em `texto`, e `destaque.campo` é um de `data`, `instituicao`, `cargo`, `objeto` ou `acao`. Os distratores são decisões, sem repetição, e nenhum sustenta ficha. A gaveta (fichas mais distratores) tem até oito documentos |
 
 O piso de 60 palavras da explicação e as regras de redação (todo ano escrito em um bloco está em um registro que ele aponta; cada termo é definido na primeira fase em que aparece) são conferidos por teste sobre o conteúdo publicado, em `tests/game-phases.test.ts`. O cenário e a figura de cada fase não são conteúdo: ficam em `src/lib/game/presentation.ts`, por `id` da fase.
 

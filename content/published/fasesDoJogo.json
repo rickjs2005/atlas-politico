@@ -2514,5 +2514,270 @@
         "observacoes": "Texto da fase escrito em 11 de outubro de 2026, com assistência de IA, para leitura por quem conhece pouco de política. Cada bloco foi conferido contra os registros que aponta: datas, números, nomes e a ordem dos fatos são os dos registros, e o que eles não dizem ficou de fora. A escolha do marco e a redação são decisões editoriais. Revisão humana pendente."
       }
     }
+  },
+  {
+    "id": "lula-investigacao",
+    "pessoaId": "lula",
+    "sala": "investigacao",
+    "ordem": 1,
+    "titulo": "O documento diz o quê? Três atos na Presidência",
+    "objetivo": "ler três documentos, montar um dossiê e relacionar cada ficha ao documento que a sustenta.",
+    "periodo": {
+      "de": 2007,
+      "ate": 2025
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+    },
+    "explicacao": [
+      {
+        "texto": "Um ato do Executivo tem data, instituição, cargo, objeto e tipo. Nos três documentos das fichas, Lula agiu como presidente da República: sancionou com veto parcial duas leis complementares, a do regime fiscal, em 2023, e a dos tributos IBS, CBS e Imposto Seletivo, em 2025, e sancionou, com sanção expressa, em 2025, a lei que reduz o imposto de renda.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-214-2025-ibs-cbs"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-15270-2025-imposto-de-renda"
+          }
+        ]
+      },
+      {
+        "texto": "Veto parcial e sanção expressa são tipos de ato diferentes, e a data distingue duas leis complementares vetadas em parte. A ficha só vale com o documento que a sustenta: a gaveta tem mais documentos do que fichas.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-214-2025-ibs-cbs"
+          },
+          {
+            "tipo": "decisao",
+            "id": "planalto-lei-15270-2025-imposto-de-renda"
+          },
+          {
+            "tipo": "conceito",
+            "id": "veto"
+          },
+          {
+            "tipo": "conceito",
+            "id": "sancao"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "veto",
+      "sancao",
+      "lei-complementar"
+    ],
+    "atividade": {
+      "tipo": "dossie",
+      "enunciado": "Relacione cada ficha ao documento que a sustenta e aponte, no documento, o campo que sustenta o trecho destacado.",
+      "fichas": [
+        {
+          "id": "regime-fiscal",
+          "texto": "Em agosto de 2023, na Presidência da República, veto parcial à lei complementar do regime fiscal sustentável.",
+          "evidencia": {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-200-2023-regime-fiscal"
+          },
+          "destaque": {
+            "trecho": "lei complementar do regime fiscal sustentável",
+            "campo": "objeto"
+          }
+        },
+        {
+          "id": "ibs-cbs",
+          "texto": "Em janeiro de 2025, veto parcial à lei complementar que institui o IBS, a CBS e o Imposto Seletivo.",
+          "evidencia": {
+            "tipo": "decisao",
+            "id": "planalto-lei-complementar-214-2025-ibs-cbs"
+          },
+          "destaque": {
+            "trecho": "janeiro de 2025",
+            "campo": "data"
+          }
+        },
+        {
+          "id": "imposto-de-renda",
+          "texto": "Em novembro de 2025, sanção expressa da lei que reduz o imposto de renda.",
+          "evidencia": {
+            "tipo": "decisao",
+            "id": "planalto-lei-15270-2025-imposto-de-renda"
+          },
+          "destaque": {
+            "trecho": "sanção expressa",
+            "campo": "acao"
+          }
+        }
+      ],
+      "distratores": [
+        {
+          "tipo": "decisao",
+          "id": "planalto-decreto-6025-2007-pac"
+        },
+        {
+          "tipo": "decisao",
+          "id": "planalto-lei-12351-2010-partilha-do-pre-sal"
+        },
+        {
+          "tipo": "decisao",
+          "id": "planalto-lei-14843-2024-saidas-temporarias"
+        }
+      ],
+      "explicacao": "Cada ficha se sustenta em um só documento. A Lei Complementar 200, de 2023, e a Lei Complementar 214, de 2025, foram sancionadas com veto parcial, e a data as distingue; a Lei 15.270, de 2025, teve sanção expressa. Os outros três documentos da gaveta são de 2007, 2010 e 2024, ou tratam de outro assunto."
+    },
+    "explorar": [],
+    "lacunas": [
+      "É uma amostra de seis atos do Executivo, e não a lista do que a Presidência decidiu.",
+      "O atlas não registra o que cada lei produziu depois de sancionada, nem se o Congresso derrubou algum veto."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-17",
+        "observacoes": "Fase da missão de investigação, escrita em 17 de outubro de 2026, com assistência de IA. Cada ficha e cada bloco foram conferidos contra os campos dos registros que apontam (data, instituição, cargo, objeto e ação): nada diz o que os registros não dizem. A escolha dos documentos, dos distratores e dos trechos destacados é decisão editorial. Revisão humana pendente."
+      }
+    }
+  },
+  {
+    "id": "flavio-bolsonaro-investigacao",
+    "pessoaId": "flavio-bolsonaro",
+    "sala": "investigacao",
+    "ordem": 1,
+    "titulo": "O documento diz o quê? Três votos no Senado",
+    "objetivo": "ler três documentos, montar um dossiê e relacionar cada ficha ao documento que a sustenta.",
+    "periodo": {
+      "de": 2007,
+      "ate": 2024
+    },
+    "marco": {
+      "tipo": "decisao",
+      "id": "senado-voto-6777-5894"
+    },
+    "explicacao": [
+      {
+        "texto": "Nos três documentos das fichas, Flávio Bolsonaro votou como senador: votou não, em segundo turno, na PEC que altera o sistema tributário, em 2023; votou sim no projeto de lei sobre a execução penal, em 2024; e votou não no substitutivo ao projeto de lei complementar dos tributos IBS, CBS e Imposto Seletivo, em 2024, e os três textos foram aprovados.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6777-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6818-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6899-5894"
+          }
+        ]
+      },
+      {
+        "texto": "O voto vale para o objeto votado, e não para um tema. A ficha só vale com o documento que a sustenta: a data, o objeto e a manifestação distinguem registros parecidos.",
+        "referencias": [
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6777-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6818-5894"
+          },
+          {
+            "tipo": "decisao",
+            "id": "senado-voto-6899-5894"
+          }
+        ]
+      }
+    ],
+    "conceitos": [
+      "senador",
+      "pec",
+      "projeto-de-lei",
+      "lei-complementar"
+    ],
+    "atividade": {
+      "tipo": "dossie",
+      "enunciado": "Relacione cada ficha ao documento que a sustenta e aponte, no documento, o campo que sustenta o trecho destacado.",
+      "fichas": [
+        {
+          "id": "pec-tributaria",
+          "texto": "Em novembro de 2023, no Senado, voto não, em segundo turno, na PEC que altera o sistema tributário.",
+          "evidencia": {
+            "tipo": "decisao",
+            "id": "senado-voto-6777-5894"
+          },
+          "destaque": {
+            "trecho": "em segundo turno",
+            "campo": "objeto"
+          }
+        },
+        {
+          "id": "execucao-penal",
+          "texto": "Em fevereiro de 2024, voto sim no projeto de lei sobre a execução penal, que extingue a saída temporária.",
+          "evidencia": {
+            "tipo": "decisao",
+            "id": "senado-voto-6818-5894"
+          },
+          "destaque": {
+            "trecho": "voto sim",
+            "campo": "acao"
+          }
+        },
+        {
+          "id": "ibs-cbs",
+          "texto": "Em dezembro de 2024, voto não no substitutivo ao projeto de lei complementar que institui o IBS, a CBS e o Imposto Seletivo.",
+          "evidencia": {
+            "tipo": "decisao",
+            "id": "senado-voto-6899-5894"
+          },
+          "destaque": {
+            "trecho": "dezembro de 2024",
+            "campo": "data"
+          }
+        }
+      ],
+      "distratores": [
+        {
+          "tipo": "decisao",
+          "id": "senado-voto-6714-5894"
+        },
+        {
+          "tipo": "decisao",
+          "id": "senado-voto-6825-5894"
+        },
+        {
+          "tipo": "decisao",
+          "id": "alerj-lei-5019-2007-autoria"
+        }
+      ],
+      "explicacao": "Cada ficha se sustenta em um só registro de votação, e a data, o objeto e a manifestação distinguem os parecidos: um substitutivo é um texto que substitui o projeto. Os outros documentos da gaveta são o voto de junho de 2023 no projeto do regime fiscal, o voto de abril de 2024 em outra PEC, também em segundo turno, e a autoria de uma lei estadual na Alerj, em 2007, que não é voto."
+    },
+    "explorar": [],
+    "lacunas": [
+      "É uma amostra de cinco votações no Senado e uma lei estadual, e não a lista de como ele votou.",
+      "O registro do voto não diz, sozinho, o motivo do voto, e o atlas não o pesquisou."
+    ],
+    "editorial": {
+      "estado": "revisado",
+      "revisao": {
+        "tipo": "assistida-por-ia",
+        "revisadoPor": "Claude, modelo de IA da Anthropic",
+        "revisadoEm": "2026-10-17",
+        "observacoes": "Fase da missão de investigação, escrita em 17 de outubro de 2026, com assistência de IA. Cada ficha e cada bloco foram conferidos contra os campos dos registros que apontam (data, instituição, cargo, objeto e ação): nada diz o que os registros não dizem. A escolha dos documentos, dos distratores e dos trechos destacados é decisão editorial. Revisão humana pendente."
+      }
+    }
   }
 ]

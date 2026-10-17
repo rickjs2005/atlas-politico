@@ -1,14 +1,14 @@
 # Jogo: matriz de cobertura
 
-Gerado por `npm run game:coverage` a partir dos dados publicados (edição 0.3.0, data de corte 2026-10-08): as fases vêm de `content/published/fasesDoJogo.json`, e o cenário de cada uma, de `src/lib/game/presentation.ts`. Não edite à mão: o teste `tests/game-coverage.test.ts` confere que este arquivo está em dia e que nenhum acontecimento e nenhuma decisão publicados ficaram fora das fases sem justificativa.
+Gerado por `npm run game:coverage` a partir dos dados publicados (edição 0.4.0, data de corte 2026-10-08): as fases vêm de `content/published/fasesDoJogo.json`, e o cenário de cada uma, de `src/lib/game/presentation.ts`. Não edite à mão: o teste `tests/game-coverage.test.ts` confere que este arquivo está em dia e que nenhum acontecimento e nenhuma decisão publicados ficaram fora das fases sem justificativa.
 
 Duas coisas diferentes: **acessível no jogo** quer dizer que o registro aparece em alguma fase, como marco, na explicação, na atividade ou em Explorar este período; **obrigatório para avançar** não existe: nenhuma fase segura a seguinte, e a atividade pode ser respondida ou lida. A pesquisa do conteúdo, com o que foi conferido, o que entrou e o que ficou de fora, está em `research/trilha-2026-10.md`. O motivo da escolha de cada marco não foi registrado: os marcos foram escolhidos na redação das fases.
 
-Na edição: 22 fases, 14 fatos biográficos, 26 conceitos, 39 acontecimentos, 32 decisões (votos vigentes, atos do Executivo e atuações legislativas) e 42 propostas eleitorais. O primeiro turno de 2026 pertence às duas pessoas e aparece na trilha de cada uma.
+Na edição: 24 fases, 14 fatos biográficos, 26 conceitos, 39 acontecimentos, 32 decisões (votos vigentes, atos do Executivo e atuações legislativas) e 42 propostas eleitorais. O primeiro turno de 2026 pertence às duas pessoas e aparece na trilha de cada uma.
 
 ## Flávio Bolsonaro
 
-11 fases, 20 acontecimentos publicados (20 acessíveis no jogo), 15 decisões publicadas (15 acessíveis no jogo).
+12 fases, 20 acontecimentos publicados (20 acessíveis no jogo), 15 decisões publicadas (15 acessíveis no jogo).
 
 ### Trajetória
 
@@ -70,6 +70,17 @@ Lacunas declaradas, por fase:
 - Fase 1: Os votos dele na Alerj, de 2003 a 2018, não foram pesquisados.
 - Fase 1: É uma amostra de três votações: não é a lista de como ele votou na área.
 
+### Missão: O documento diz o quê?
+
+| Nº | Fase | Período | Objetivo | Marco | Registros apontados | Atividade | Palavras | Cenário e figura | Revisão |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | O documento diz o quê? Três votos no Senado (`flavio-bolsonaro-investigacao`) | 2007 a 2024 | ler três documentos, montar um dossiê e relacionar cada ficha ao documento que a sustenta. | `decisao:senado-voto-6777-5894` | 3 (0 em Explorar) | dossiê, 3 fichas e 6 documentos | 93 | Sala de investigação (`arquivo-investigacao-b`); figura dos anos recentes | assistida por IA; humana pendente |
+
+Lacunas declaradas, por fase:
+
+- Fase 1: É uma amostra de cinco votações no Senado e uma lei estadual, e não a lista de como ele votou.
+- Fase 1: O registro do voto não diz, sozinho, o motivo do voto, e o atlas não o pesquisou.
+
 ### Acontecimento → fases
 
 | Data | Acontecimento | Identificador | Onde aparece |
@@ -101,18 +112,18 @@ Lacunas declaradas, por fase:
 | --- | --- | --- | --- | --- | --- |
 | 29 de dezembro de 2003 | Autoria da Lei estadual 4.250/2003, sobre ingresso no serviço público | atuação legislativa | sem tema | `alerj-lei-4250-2003-autoria` | Trajetória, fase 3 (marco, na explicação, na atividade) |
 | 8 de dezembro de 2006 | Autoria da Lei estadual 4.916/2006, sobre laqueadura e vasectomia gratuitas | atuação legislativa | Saúde | `alerj-lei-4916-2006-autoria` | Trajetória, fase 3 (na explicação) |
-| 19 de abril de 2007 | Autoria da Lei estadual 5.019/2007, sobre policiais e bombeiros militares em serviço na Alerj e no Tribunal de Justiça | atuação legislativa | Segurança pública | `alerj-lei-5019-2007-autoria` | Trajetória, fase 3 (em Explorar este período) |
+| 19 de abril de 2007 | Autoria da Lei estadual 5.019/2007, sobre policiais e bombeiros militares em serviço na Alerj e no Tribunal de Justiça | atuação legislativa | Segurança pública | `alerj-lei-5019-2007-autoria` | Trajetória, fase 3 (em Explorar este período); Missão: O documento diz o quê?, fase 1 (na atividade) |
 | 15 de janeiro de 2010 | Autoria da Lei estadual 5.646/2010, sobre o Ano do Planejamento Familiar | atuação legislativa | Saúde | `alerj-lei-5646-2010-autoria` | Trajetória, fase 3 (em Explorar este período) |
 | 4 de abril de 2011 | Autoria da Lei estadual 5.938/2011, sobre exame psicológico em concursos públicos | atuação legislativa | sem tema | `alerj-lei-5938-2011-autoria` | Trajetória, fase 4 (marco, na explicação) |
 | 22 de maio de 2014 | Autoria da Lei estadual 6.785/2014, sobre condenados por abuso sexual contra menor em cargos públicos | atuação legislativa | sem tema | `alerj-lei-6785-2014-autoria` | Trajetória, fase 4 (em Explorar este período) |
 | 19 de maio de 2015 | Autoria da Lei estadual 7.008/2015, sobre mensagens de texto de utilidade pública | atuação legislativa | sem tema | `alerj-lei-7008-2015-autoria` | Trajetória, fase 4 (em Explorar este período) |
 | 2 de março de 2018 | Autoria da Lei estadual 7.877/2018, sobre recifes artificiais | atuação legislativa | Meio ambiente | `alerj-lei-7877-2018-autoria` | Trajetória, fase 4 (na explicação) |
 | 2019 | Relatoria da Medida Provisória 866/2018, sobre a criação da NAV Brasil | atuação legislativa | Reforma do Estado | `congresso-mpv-866-2018-relatoria` | Trajetória, fase 5 (na explicação) |
-| 21 de junho de 2023 | Votação: PLP 93/2023, texto principal | voto | Economia | `senado-voto-6714-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Economia, fase 1 (marco, na explicação, na atividade) |
-| 8 de novembro de 2023 | Votação: PEC 45/2019, texto principal | voto | Economia | `senado-voto-6777-5894` | Trajetória, fase 8 (marco, na explicação, na atividade); Aprofundamento: Economia, fase 1 (na explicação, na atividade) |
-| 20 de fevereiro de 2024 | Votação: PL 2253/2022, texto principal | voto | Segurança pública | `senado-voto-6818-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Segurança pública, fase 1 (marco, na explicação, na atividade) |
-| 16 de abril de 2024 | Votação: PEC 45/2023, texto principal | voto | Segurança pública | `senado-voto-6825-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Segurança pública, fase 1 (na explicação) |
-| 12 de dezembro de 2024 | Votação: PLP 68/2024, substitutivo | voto | Economia | `senado-voto-6899-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Economia, fase 1 (na explicação, na atividade) |
+| 21 de junho de 2023 | Votação: PLP 93/2023, texto principal | voto | Economia | `senado-voto-6714-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Economia, fase 1 (marco, na explicação, na atividade); Missão: O documento diz o quê?, fase 1 (na atividade) |
+| 8 de novembro de 2023 | Votação: PEC 45/2019, texto principal | voto | Economia | `senado-voto-6777-5894` | Trajetória, fase 8 (marco, na explicação, na atividade); Aprofundamento: Economia, fase 1 (na explicação, na atividade); Missão: O documento diz o quê?, fase 1 (marco, na explicação, na atividade) |
+| 20 de fevereiro de 2024 | Votação: PL 2253/2022, texto principal | voto | Segurança pública | `senado-voto-6818-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Segurança pública, fase 1 (marco, na explicação, na atividade); Missão: O documento diz o quê?, fase 1 (na explicação, na atividade) |
+| 16 de abril de 2024 | Votação: PEC 45/2023, texto principal | voto | Segurança pública | `senado-voto-6825-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Segurança pública, fase 1 (na explicação); Missão: O documento diz o quê?, fase 1 (na atividade) |
+| 12 de dezembro de 2024 | Votação: PLP 68/2024, substitutivo | voto | Economia | `senado-voto-6899-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Economia, fase 1 (na explicação, na atividade); Missão: O documento diz o quê?, fase 1 (na explicação, na atividade) |
 | 10 de dezembro de 2025 | Votação: PL 5582/2025, substitutivo | voto | Segurança pública | `senado-voto-7037-5894` | Trajetória, fase 8 (na explicação, em Explorar este período); Aprofundamento: Segurança pública, fase 1 (na explicação) |
 
 ### Fato biográfico → fases
@@ -155,7 +166,7 @@ Lacunas declaradas, por fase:
 
 ## Lula
 
-11 fases, 20 acontecimentos publicados (20 acessíveis no jogo), 17 decisões publicadas (17 acessíveis no jogo).
+12 fases, 20 acontecimentos publicados (20 acessíveis no jogo), 17 decisões publicadas (17 acessíveis no jogo).
 
 ### Trajetória
 
@@ -217,6 +228,17 @@ Lacunas declaradas, por fase:
 - Fase 1: Os atos de segurança pública de 2007 a 2010 conferidos na pesquisa não entraram na amostra desta edição.
 - Fase 1: É uma amostra de cinco atos: não é a lista do que o governo decidiu na área.
 
+### Missão: O documento diz o quê?
+
+| Nº | Fase | Período | Objetivo | Marco | Registros apontados | Atividade | Palavras | Cenário e figura | Revisão |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | O documento diz o quê? Três atos na Presidência (`lula-investigacao`) | 2007 a 2025 | ler três documentos, montar um dossiê e relacionar cada ficha ao documento que a sustenta. | `decisao:planalto-lei-complementar-200-2023-regime-fiscal` | 5 (0 em Explorar) | dossiê, 3 fichas e 6 documentos | 99 | Sala de investigação (`arquivo-investigacao-a`); figura dos anos recentes | assistida por IA; humana pendente |
+
+Lacunas declaradas, por fase:
+
+- Fase 1: É uma amostra de seis atos do Executivo, e não a lista do que a Presidência decidiu.
+- Fase 1: O atlas não registra o que cada lei produziu depois de sancionada, nem se o Congresso derrubou algum veto.
+
 ### Acontecimento → fases
 
 | Data | Acontecimento | Identificador | Onde aparece |
@@ -253,15 +275,15 @@ Lacunas declaradas, por fase:
 | 20 de maio de 2004 | Decreto nº 5.090, de 20 de maio de 2004 | ato do Executivo | Saúde | `planalto-decreto-5090-2004-farmacia-popular` | Trajetória, fase 5 (em Explorar este período) |
 | 13 de janeiro de 2005 | Lei nº 11.096, de 13 de janeiro de 2005 | ato do Executivo | Educação | `planalto-lei-11096-2005-prouni` | Trajetória, fase 5 (em Explorar este período) |
 | 7 de agosto de 2006 | Lei nº 11.340, de 7 de agosto de 2006 | ato do Executivo | Direitos das mulheres, Segurança pública | `planalto-lei-11340-2006-violencia-contra-a-mulher` | Trajetória, fase 5 (em Explorar este período); Aprofundamento: Segurança pública, fase 1 (na explicação) |
-| 22 de janeiro de 2007 | Decreto nº 6.025, de 22 de janeiro de 2007 | ato do Executivo | Economia | `planalto-decreto-6025-2007-pac` | Trajetória, fase 6 (em Explorar este período); Aprofundamento: Economia, fase 1 (na explicação, na atividade) |
+| 22 de janeiro de 2007 | Decreto nº 6.025, de 22 de janeiro de 2007 | ato do Executivo | Economia | `planalto-decreto-6025-2007-pac` | Trajetória, fase 6 (em Explorar este período); Aprofundamento: Economia, fase 1 (na explicação, na atividade); Missão: O documento diz o quê?, fase 1 (na atividade) |
 | 16 de julho de 2008 | Lei nº 11.738, de 16 de julho de 2008 | ato do Executivo | Educação | `planalto-lei-11738-2008-piso-do-magisterio` | Trajetória, fase 6 (marco, na explicação, na atividade) |
 | 29 de dezembro de 2009 | Lei nº 12.187, de 29 de dezembro de 2009 | ato do Executivo | Meio ambiente | `planalto-lei-12187-2009-mudanca-do-clima` | Trajetória, fase 6 (em Explorar este período) |
-| 22 de dezembro de 2010 | Lei nº 12.351, de 22 de dezembro de 2010 | ato do Executivo | Economia | `planalto-lei-12351-2010-partilha-do-pre-sal` | Trajetória, fase 6 (em Explorar este período); Aprofundamento: Economia, fase 1 (na explicação) |
+| 22 de dezembro de 2010 | Lei nº 12.351, de 22 de dezembro de 2010 | ato do Executivo | Economia | `planalto-lei-12351-2010-partilha-do-pre-sal` | Trajetória, fase 6 (em Explorar este período); Aprofundamento: Economia, fase 1 (na explicação); Missão: O documento diz o quê?, fase 1 (na atividade) |
 | 8 de janeiro de 2023 | Decreto nº 11.377, de 8 de janeiro de 2023 | ato do Executivo | Segurança pública | `planalto-decreto-11377-2023-intervencao-df` | Trajetória, fase 8 (na explicação, na atividade); Aprofundamento: Segurança pública, fase 1 (na explicação) |
-| 30 de agosto de 2023 | Lei Complementar nº 200, de 30 de agosto de 2023 | ato do Executivo | Economia | `planalto-lei-complementar-200-2023-regime-fiscal` | Trajetória, fase 8 (na explicação); Aprofundamento: Economia, fase 1 (marco, na explicação) |
-| 11 de abril de 2024 | Lei nº 14.843, de 11 de abril de 2024 | ato do Executivo | Segurança pública | `planalto-lei-14843-2024-saidas-temporarias` | Trajetória, fase 8 (na explicação); Aprofundamento: Segurança pública, fase 1 (marco, na explicação, na atividade) |
-| 16 de janeiro de 2025 | Lei Complementar nº 214, de 16 de janeiro de 2025 | ato do Executivo | Economia | `planalto-lei-complementar-214-2025-ibs-cbs` | Trajetória, fase 8 (em Explorar este período); Aprofundamento: Economia, fase 1 (na explicação) |
-| 26 de novembro de 2025 | Lei nº 15.270, de 26 de novembro de 2025 | ato do Executivo | Economia | `planalto-lei-15270-2025-imposto-de-renda` | Trajetória, fase 8 (na explicação); Aprofundamento: Economia, fase 1 (na explicação) |
+| 30 de agosto de 2023 | Lei Complementar nº 200, de 30 de agosto de 2023 | ato do Executivo | Economia | `planalto-lei-complementar-200-2023-regime-fiscal` | Trajetória, fase 8 (na explicação); Aprofundamento: Economia, fase 1 (marco, na explicação); Missão: O documento diz o quê?, fase 1 (marco, na explicação, na atividade) |
+| 11 de abril de 2024 | Lei nº 14.843, de 11 de abril de 2024 | ato do Executivo | Segurança pública | `planalto-lei-14843-2024-saidas-temporarias` | Trajetória, fase 8 (na explicação); Aprofundamento: Segurança pública, fase 1 (marco, na explicação, na atividade); Missão: O documento diz o quê?, fase 1 (na atividade) |
+| 16 de janeiro de 2025 | Lei Complementar nº 214, de 16 de janeiro de 2025 | ato do Executivo | Economia | `planalto-lei-complementar-214-2025-ibs-cbs` | Trajetória, fase 8 (em Explorar este período); Aprofundamento: Economia, fase 1 (na explicação); Missão: O documento diz o quê?, fase 1 (na explicação, na atividade) |
+| 26 de novembro de 2025 | Lei nº 15.270, de 26 de novembro de 2025 | ato do Executivo | Economia | `planalto-lei-15270-2025-imposto-de-renda` | Trajetória, fase 8 (na explicação); Aprofundamento: Economia, fase 1 (na explicação); Missão: O documento diz o quê?, fase 1 (na explicação, na atividade) |
 | 24 de março de 2026 | Lei nº 15.358, de 24 de março de 2026 | ato do Executivo | Segurança pública | `planalto-lei-15358-2026-crime-organizado` | Trajetória, fase 8 (em Explorar este período); Aprofundamento: Segurança pública, fase 1 (na explicação) |
 
 ### Fato biográfico → fases

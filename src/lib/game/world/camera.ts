@@ -135,7 +135,7 @@ export const DISTANCIA_ENTRE_PASTAS = 46;
  * `elevacao` é a altura do centro da pasta acima do chão, em pixels de mundo.
  */
 export function spacedMarkers(
-  marcadores: readonly { chave: string; natureza: "marco" | "explorar"; x: number; y: number }[],
+  marcadores: readonly { chave: string; natureza: "marco" | "explorar" | "objeto"; x: number; y: number }[],
   camera: Camera,
   viewport: Viewport,
   elevacao: number,
@@ -143,11 +143,13 @@ export function spacedMarkers(
 ): Set<string> {
   const postas: { px: number; py: number }[] = [];
   const visiveis = new Set<string>();
-  const emOrdem = [...marcadores.filter((item) => item.natureza === "marco"), ...marcadores.filter((item) => item.natureza !== "marco")];
+  // O marco e os objetos da missão de investigação entram sempre: sem eles a fase não anda. Só as pastas opcionais cedem lugar.
+  const sempre = (natureza: "marco" | "explorar" | "objeto") => natureza !== "explorar";
+  const emOrdem = [...marcadores.filter((item) => sempre(item.natureza)), ...marcadores.filter((item) => !sempre(item.natureza))];
   for (const marcador of emOrdem) {
     const { sx, sy } = toScreen(marcador.x + 0.5, marcador.y + 0.5);
     const ponto = project(camera, viewport, sx, sy - elevacao);
-    if (marcador.natureza !== "marco" && postas.some((outra) => Math.hypot(outra.px - ponto.px, outra.py - ponto.py) < distancia)) continue;
+    if (!sempre(marcador.natureza) && postas.some((outra) => Math.hypot(outra.px - ponto.px, outra.py - ponto.py) < distancia)) continue;
     postas.push(ponto);
     visiveis.add(marcador.chave);
   }

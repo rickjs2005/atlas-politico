@@ -4,6 +4,8 @@
 
 Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa, acontecimentos acompanhados das fontes que os sustentam e por um jogo que segue as duas trajetórias em fases curtas, da origem à data de corte. Projeto de portfólio da MilWeb.
 
+Desde 17 de outubro de 2026 (edição 0.4.0 do conteúdo) o jogo tem também uma missão de investigação, "O documento diz o quê?": o Escrivão entrega fichas, a pessoa abre registros reais na gaveta, monta um dossiê, relaciona cada ficha ao documento que a sustenta e aponta o campo que sustenta o trecho destacado ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md)). O protótipo da Cidade do Voto teve o ciclo de vida da cena corrigido e ganhou duas escolhas ([docs/MUNDO.md](docs/MUNDO.md)).
+
 > **Tipo:** projeto de portfólio da MilWeb, em desenvolvimento. Não é site oficial de nenhuma das pessoas retratadas, de partido ou de órgão público. Ainda não há endereço público definitivo: o endereço provisório da Vercel e a situação da publicação estão em [docs/DEPLOY.md](docs/DEPLOY.md).
 
 > **Projeto em desenvolvimento. Não use como fonte.** O conteúdo trata de duas pessoas públicas e foi conferido só com assistência de IA: nenhuma pessoa refez a revisão do conjunto, e a validação com leitores está pendente. Desde 11 de outubro de 2026 o site responde em um endereço provisório da Vercel, sem indexação: as páginas levam `noindex`, e o que está lá pode não ser igual a este repositório: a situação conferida está em [docs/DEPLOY.md](docs/DEPLOY.md). Cada registro traz as fontes que o sustentam; em caso de dúvida, vale o documento citado.

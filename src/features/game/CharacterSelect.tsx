@@ -88,6 +88,9 @@ function CharacterChoice({ opcao }: { opcao: CharacterOption }) {
   const primeira = fases[0];
   const ultima = fases.at(-1);
   const { estado, continua, situacao } = trailStatus(carregado, progresso, fases);
+  // Os aprofundamentos por assunto e a missão de investigação são salas diferentes, e a entrada os apresenta separados (D-151).
+  const temas = opcao.aprofundamentos.filter((sala) => roomOf(sala.id).natureza === "aprofundamento");
+  const missoes = opcao.aprofundamentos.filter((sala) => roomOf(sala.id).natureza === "investigacao");
   const inicio = `${gameHref(opcao.slug)}${gameQuery(1)}`;
   const destino = continua === null ? inicio : `${gameHref(opcao.slug)}${gameQuery(continua.numero)}`;
 
@@ -158,17 +161,33 @@ function CharacterChoice({ opcao }: { opcao: CharacterOption }) {
             ))}
           </ol>
         </details>
-        {opcao.aprofundamentos.length > 0 && (
+        {temas.length > 0 && (
           <section aria-label={`Aprofundamentos de ${opcao.nome}`} className="space-y-1 border-t border-line pt-3 text-sm" data-aprofundamentos={opcao.slug}>
             <h4 className="eyebrow text-ink-soft">Aprofundamento por assunto</h4>
             <p className="text-xs text-ink-soft">Para depois da trajetória. Não é o começo da vida de ninguém.</p>
             <ul>
-              {opcao.aprofundamentos.map((sala) => (
+              {temas.map((sala) => (
                 <li key={sala.id}>
                   <Link href={gameHref(opcao.slug, sala.id)} prefetch={false} className="inline-flex min-h-11 items-center font-medium underline decoration-line-strong hover:decoration-ink" data-abrir-sala={`${opcao.slug}:${sala.id}`}>
                     {roomOf(sala.id).nome}
                   </Link>
                   <span className="numerals text-ink-soft"> · {periodLabel(sala.periodo)}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+        {missoes.length > 0 && (
+          <section aria-label={`Missões de investigação de ${opcao.nome}`} className="space-y-1 border-t border-line pt-3 text-sm" data-missoes={opcao.slug}>
+            <h4 className="eyebrow text-ink-soft">Missão de investigação</h4>
+            <p className="text-xs text-ink-soft">Documentos do atlas na mão: monte um dossiê e relacione cada ficha ao documento que a sustenta. De 5 a 10 minutos, estimativa não medida.</p>
+            <ul>
+              {missoes.map((sala) => (
+                <li key={sala.id}>
+                  <Link href={gameHref(opcao.slug, sala.id)} prefetch={false} className="inline-flex min-h-11 items-center font-medium underline decoration-line-strong hover:decoration-ink" data-abrir-sala={`${opcao.slug}:${sala.id}`}>
+                    {roomOf(sala.id).nome}
+                  </Link>
+                  <span className="numerals text-ink-soft"> · documentos de {periodLabel(sala.periodo)}</span>
                 </li>
               ))}
             </ul>

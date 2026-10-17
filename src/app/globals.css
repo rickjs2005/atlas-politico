@@ -419,6 +419,75 @@ html[data-consulta] [data-consulta-aviso] {
   }
 }
 
+/*
+  A missão de investigação (D-151). Os objetos da sala (o Escrivão, a gaveta,
+  a mesa das fichas e o quadro) são botões sobre o móvel desenhado, com uma
+  etiqueta sempre à vista e um anel tracejado: reconhecíveis sem serem pastas.
+  No dossiê, o documento que acaba de entrar bate uma vez; a ficha conferida
+  recebe um carimbo pequeno, com a mesma batida do passaporte. Com movimento
+  reduzido, tudo aparece parado.
+*/
+.jogo-marcador-objeto::before {
+  content: "";
+  position: absolute;
+  inset: 0.5rem;
+  border: 2px dashed var(--atlas-ink);
+  border-radius: 9999px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.jogo-marcador-objeto .jogo-marcador-rotulo {
+  border-radius: 0.125rem;
+  background-color: var(--atlas-paper);
+}
+
+.jogo-marcador-objeto:hover::before,
+.jogo-marcador-objeto:focus-visible::before {
+  border-style: solid;
+  opacity: 1;
+}
+
+.jogo-dossie-item-novo {
+  animation: jogo-dossie-entrada 360ms var(--atlas-ease) both;
+}
+
+@keyframes jogo-dossie-entrada {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.5rem) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.jogo-ficha-carimbo {
+  display: inline-block;
+  border: 2px solid var(--atlas-accent);
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--atlas-accent);
+  transform: rotate(-4deg);
+  --giro: -4deg;
+}
+
+.jogo-ficha-carimbo-novo {
+  animation: jogo-carimbo 420ms var(--atlas-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jogo-dossie-item-novo,
+  .jogo-ficha-carimbo-novo {
+    animation: none;
+  }
+}
+
 /* Janela baixa (celular deitado): o que fica sobre a cena encolhe. */
 @custom-variant janela-baixa (@media (max-height: 30rem));
 /* Janela curta (celular pequeno em pé): o que é enfeite sai de cima da cena. */
