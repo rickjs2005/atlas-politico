@@ -4,7 +4,7 @@
 
 Nome provisório. Um atlas para percorrer a trajetória pública de Lula e de Flávio Bolsonaro por uma linha do tempo, um mapa, acontecimentos acompanhados das fontes que os sustentam e por um jogo que segue as duas trajetórias em fases curtas, da origem à data de corte. Projeto de portfólio da MilWeb.
 
-Desde 17 de outubro de 2026 (edição 0.4.0 do conteúdo) o jogo tem também uma missão de investigação, "O documento diz o quê?": o Escrivão entrega fichas, a pessoa abre registros reais na gaveta, monta um dossiê, relaciona cada ficha ao documento que a sustenta e aponta o campo que sustenta o trecho destacado ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md)). O protótipo da Cidade do Voto teve o ciclo de vida da cena corrigido e ganhou duas escolhas ([docs/MUNDO.md](docs/MUNDO.md)). A direção mais nova é a Praça do Mural (`/praca/`): uma aventura de investigação em uma praça brasileira compacta, em que os moradores pregam perguntas no mural e a pessoa, repórter nova da rádio comunitária, acha no arquivo o documento que responde cada uma ([docs/PRACA.md](docs/PRACA.md)).
+Desde 17 de outubro de 2026 (edição 0.4.0 do conteúdo) o jogo tem também uma missão de investigação, "O documento diz o quê?": o Escrivão entrega fichas, a pessoa abre registros reais na gaveta, monta um dossiê, relaciona cada ficha ao documento que a sustenta e aponta o campo que sustenta o trecho destacado ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md)). O protótipo da Cidade do Voto teve o ciclo de vida da cena corrigido e ganhou duas escolhas ([docs/MUNDO.md](docs/MUNDO.md)). A direção mais nova é a Praça do Mural (`/praca/`): uma aventura de investigação em uma praça brasileira compacta, em que os moradores pregam perguntas no mural e a pessoa, repórter nova da rádio comunitária, acha no arquivo o documento que responde cada uma ([docs/PRACA.md](docs/PRACA.md)). Em 18 de outubro de 2026 o atlas foi redesenhado em volta dela (D-155): o palco escuro com a folha de papel, o menu em quatro entradas (Explorar, Comparar, Jogar, Metodologia), a entrada com **Começar investigação**, o hub `/jogo/` com três caminhos, a comparação em três partes (Trajetória, Decisões, Propostas) e, na praça, o tutorial, as pautas de ordem e de natureza, o passo de agora, as descobertas e os selos.
 
 > **Tipo:** projeto de portfólio da MilWeb, em desenvolvimento. Não é site oficial de nenhuma das pessoas retratadas, de partido ou de órgão público. Ainda não há endereço público definitivo: o endereço provisório da Vercel e a situação da publicação estão em [docs/DEPLOY.md](docs/DEPLOY.md).
 
@@ -66,11 +66,15 @@ As telas (docs/UX.md):
 | Tela | Endereço |
 |---|---|
 | Entrada | http://localhost:3000/ |
+| Explorar: a escolha de trajetória | http://localhost:3000/explorar/ |
 | Exploração | http://localhost:3000/politicos/lula/ e http://localhost:3000/politicos/flavio-bolsonaro/ |
 | Acontecimento | http://localhost:3000/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/ |
-| Comparação | http://localhost:3000/comparar/ |
+| Comparação | http://localhost:3000/comparar/ (com `#decisoes` ou `#propostas`, a parte correspondente) |
 | Metodologia | http://localhost:3000/metodologia/ |
-| Jogo: as duas trajetórias | http://localhost:3000/jogo/ |
+| Jogar: o hub com os três caminhos | http://localhost:3000/jogo/ |
+| Praça do Mural | http://localhost:3000/praca/ |
+| Cidade do Voto | http://localhost:3000/mundo/ |
+| Jogo: as duas trajetórias | http://localhost:3000/jogo/trajetorias/ |
 | Jogo: a trajetória de cada personagem | http://localhost:3000/jogo/lula/ e http://localhost:3000/jogo/flavio-bolsonaro/ (com `?fase=3`, a fase 3; com `&leitura=1`, sem o cenário) |
 | Jogo: os aprofundamentos, com as decisões documentadas de um tema | http://localhost:3000/jogo/lula/economia/, http://localhost:3000/jogo/lula/seguranca-publica/ e os mesmos de `flavio-bolsonaro` |
 | Guia de estados, só em desenvolvimento | http://localhost:3000/dev/previa/ |

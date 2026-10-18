@@ -27,12 +27,17 @@ export const GAME_PERSON_PARAM = "personagem";
 
 const PERSON_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+/** O hub do jogo: investigar na praça, conhecer as trajetórias, explorar as propostas (D-155). */
+export const GAME_HUB = "/jogo/";
+/** A entrada da trilha das trajetórias, com a escolha de pessoa. */
+export const TRAIL_ENTRY = "/jogo/trajetorias/";
+
 /**
- * A entrada do jogo, o jogo de um personagem (a trajetória, em fases) ou um
+ * A entrada da trilha, o jogo de um personagem (a trajetória, em fases) ou um
  * aprofundamento por assunto dele.
  */
 export function gameHref(personagem?: string, sala?: string): string {
-  if (personagem === undefined) return "/jogo/";
+  if (personagem === undefined) return TRAIL_ENTRY;
   return sala === undefined || sala === "historico" ? `/jogo/${personagem}/` : `/jogo/${personagem}/${sala}/`;
 }
 

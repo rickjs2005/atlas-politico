@@ -1,9 +1,15 @@
 // A praça: os lugares, as sessões, as pautas, a matéria da mesa da Câmara, as
-// conversas, o bilhete e a credencial (docs/PRACA.md, D-153 e D-154). Tudo o
-// que é ficção mora aqui, marcado como tal; o que é fato aponta um documento
-// publicado pelo identificador, e um teste confere que cada ano escrito em
-// uma pergunta está no documento apontado, e que os dois documentos de uma
-// matéria citam a mesma proposição.
+// conversas, o bilhete e a credencial (docs/PRACA.md, D-153, D-154 e D-155).
+// Tudo o que é ficção mora aqui, marcado como tal; o que é fato aponta um
+// documento publicado pelo identificador, e um teste confere que cada ano
+// escrito em uma pergunta está no documento apontado, e que os dois documentos
+// de uma matéria citam a mesma proposição.
+//
+// As pautas variam o que se faz com o documento (D-155): a primeira de cada
+// pessoa só pede para conferir a data (o tutorial: uma ação documentada antes
+// de qualquer leitura jurídica); as seguintes pedem a nota de três campos, a
+// natureza da ação entre documentos parecidos, ou a ordem de dois documentos
+// pela data. Sempre uma pauta de cada tipo por pessoa.
 //
 // Regra das falas: ninguém da praça fala das pessoas retratadas, de partido ou
 // de lado, nem escreve ano ou juízo; as conversas passam pela mesma validação
@@ -46,7 +52,7 @@ export const LUGARES: readonly Lugar[] = [
   {
     id: "camara",
     nome: "Câmara",
-    funcao: "Abre quando as duas primeiras pautas estiverem no mural. Dentro, a sessão põe uma matéria na mesa.",
+    funcao: "Abre quando as pautas da primeira sessão estiverem no mural. Dentro, a sessão põe uma matéria na mesa.",
     morador: "lourdes",
     trancado: true,
   },
@@ -100,7 +106,7 @@ export const SESSOES: readonly Sessao[] = [
     titulo: "Sessão 1 · As pautas do mural",
     abreCom: null,
     abreLugar: null,
-    pautas: ["veto-regime-fiscal", "duas-pecs"],
+    pautas: ["primeira-data-estadual", "primeira-data-planalto", "veto-regime-fiscal", "duas-pecs"],
     materia: null,
     portao: { item: "chave-senado", abre: "as gavetas do Senado" },
   },
@@ -116,16 +122,46 @@ export const SESSOES: readonly Sessao[] = [
 ];
 
 /**
- * As pautas do mural, por sessão, com a mesma mecânica. As perguntas são de
- * moradores inventados; o que elas afirmam é só o que o documento apontado
- * registra. Duas por pessoa na segunda sessão, tiradas de gavetas que a
- * primeira não visita.
+ * As pautas do mural, por sessão. As perguntas são de moradores inventados; o
+ * que elas afirmam é só o que o documento apontado registra. Na primeira
+ * sessão, o tutorial (conferir a data de um documento, um por pessoa) e a
+ * nota de três campos (uma por pessoa). Na segunda, uma pauta de natureza e
+ * uma de ordem por pessoa, tiradas de gavetas que a primeira não visita.
  */
 export const PAUTAS: readonly Pauta[] = [
+  {
+    id: "primeira-data-estadual",
+    sessao: "mural",
+    pessoa: "flavio-bolsonaro",
+    tipo: "campo",
+    autor: "Dona Rute, da rádio",
+    pergunta: "Para começar: o deputado estadual é autor de uma lei estadual de 2006, sobre laqueadura e vasectomia gratuitas. Em que data o arquivo registra essa lei? Leve a cópia e confira o campo Data.",
+    objetivo: "Levar do arquivo a cópia da lei estadual de 2006 e conferir no mural a data que o campo Data registra.",
+    resposta: "alerj-lei-4916-2006-autoria",
+    comparar: [],
+    detalhe: "objeto",
+    gaveta: "alerj-2006",
+    reacao: "Dona Rute conferiu a data com o dedo no papel e disse que agora a rádio tem repórter de verdade.",
+  },
+  {
+    id: "primeira-data-planalto",
+    sessao: "mural",
+    pessoa: "lula",
+    tipo: "campo",
+    autor: "Dona Rute, da rádio",
+    pergunta: "Para começar: em 2006 o Planalto sancionou uma lei sobre a violência doméstica e familiar contra a mulher. Em que data o arquivo registra essa lei? Leve a cópia e confira o campo Data.",
+    objetivo: "Levar do arquivo a cópia da lei de 2006 do Planalto e conferir no mural a data que o campo Data registra.",
+    resposta: "planalto-lei-11340-2006-violencia-contra-a-mulher",
+    comparar: [],
+    detalhe: "objeto",
+    gaveta: "planalto-2006",
+    reacao: "Dona Rute guardou a cópia na pasta da rádio e disse que pergunta de morador vem a seguir.",
+  },
   {
     id: "veto-regime-fiscal",
     sessao: "mural",
     pessoa: "lula",
+    tipo: "nota",
     autor: "Seu Nilton, da feira",
     pergunta: "Em 2023, a lei do novo regime fiscal foi sancionada com um veto a uma parte dela. Que documento registra isso, e o que ficou de fora?",
     objetivo: "Achar o ato de 2023 sobre o regime fiscal e fixar no mural o que foi vetado.",
@@ -133,11 +169,13 @@ export const PAUTAS: readonly Pauta[] = [
     comparar: ["planalto-decreto-11377-2023-intervencao-df"],
     detalhe: "dispositivos",
     gaveta: "planalto-2023",
+    reacao: "Seu Nilton leu a lista do que ficou de fora duas vezes e dobrou a nota para levar à feira.",
   },
   {
     id: "duas-pecs",
     sessao: "mural",
     pessoa: "flavio-bolsonaro",
+    tipo: "nota",
     autor: "Dona Márcia, da escola",
     pergunta: "O senador votou em segundo turno em duas propostas de emenda à Constituição, uma em 2023 e outra em 2024. Em qual delas o voto registrado foi contra?",
     objetivo: "Achar os dois votos em segundo turno, de 2023 e de 2024, e fixar no mural o que foi contra.",
@@ -145,54 +183,63 @@ export const PAUTAS: readonly Pauta[] = [
     comparar: ["senado-voto-6825-5894"],
     detalhe: "objeto",
     gaveta: "senado-2023",
+    reacao: "Dona Márcia copiou a etapa e a data no caderno da escola, para mostrar à turma como se lê uma votação.",
   },
   {
     id: "bolsa-familia-medida",
     sessao: "camara",
     pessoa: "lula",
+    tipo: "ordem",
     autor: "Dona Cida, do posto de saúde",
-    pergunta: "O programa Bolsa Família foi criado por uma medida provisória em 2003, e a medida virou lei em 2004. Que documento registra a edição da medida provisória, e não a lei?",
-    objetivo: "Achar a medida provisória de 2003 que criou o programa, e não a lei de 2004, e fixar no mural o que ela registra.",
+    pergunta: "Dois documentos do Planalto tratam do programa Bolsa Família: a medida provisória que o criou e a lei em que a medida se converteu. Qual dos dois foi registrado primeiro? Ache os dois no arquivo e ponha na ordem do campo Data.",
+    objetivo: "Achar no arquivo a medida provisória que criou o programa e a lei em que ela virou, e fixar no mural os dois na ordem da data.",
     resposta: "planalto-mpv-132-2003-bolsa-familia",
-    comparar: ["planalto-lei-10836-2004-bolsa-familia", "planalto-lei-10826-2003-armas-de-fogo", "camara-pec-40-2003-iniciativa"],
+    comparar: ["planalto-lei-10836-2004-bolsa-familia"],
     detalhe: "dispositivos",
     gaveta: "planalto-2003",
+    reacao: "Dona Cida pregou a nota ao lado do cartaz da vacina e disse que agora o posto sabe qual papel veio antes.",
   },
   {
     id: "duas-leis-de-2025",
     sessao: "camara",
     pessoa: "lula",
+    tipo: "natureza",
     autor: "Seu Arlindo, do sindicato",
-    pergunta: "Em 2025, duas leis sobre tributos passaram pelo Planalto: uma instituiu o IBS e a CBS, e a outra instituiu a redução do imposto de renda e uma tributação mínima para altas rendas. Qual das duas foi sancionada sem veto?",
-    objetivo: "Achar as duas leis de 2025 sobre tributos e fixar no mural a que foi sancionada sem veto.",
+    pergunta: "Em 2025, duas leis sobre tributos passaram pelo Planalto: uma instituiu o IBS e a CBS, e a outra instituiu a redução do imposto de renda e uma tributação mínima para altas rendas. Qual das duas foi sancionada sem veto, e o que o campo Ação dela registra?",
+    objetivo: "Achar as duas leis de 2025 sobre tributos e fixar no mural a que foi sancionada sem veto, com a ação que ela registra.",
     resposta: "planalto-lei-15270-2025-imposto-de-renda",
     comparar: ["planalto-lei-complementar-214-2025-ibs-cbs"],
     detalhe: "objeto",
     gaveta: "planalto-2025",
+    reacao: "Seu Arlindo sublinhou a palavra sanção e disse que no sindicato ninguém mais vai confundir com veto.",
   },
   {
     id: "lei-promulgada",
     sessao: "camara",
     pessoa: "flavio-bolsonaro",
+    tipo: "ordem",
     autor: "Dona Nair, da autoescola",
-    pergunta: "O deputado estadual é autor de uma lei de 2003, sobre certidão negativa de proteção ao crédito no ingresso ao serviço público, e de outra, de 2011, sobre os motivos de reprovação em exame psicológico para cargo público. Qual das duas foi promulgada pelo Legislativo, sem sanção do chefe do Executivo?",
-    objetivo: "Achar as duas leis estaduais, de 2003 e de 2011, e fixar no mural a que foi promulgada pelo Legislativo.",
-    resposta: "alerj-lei-5938-2011-autoria",
-    comparar: ["alerj-lei-4250-2003-autoria"],
+    pergunta: "O deputado estadual é autor de duas leis estaduais: uma sobre certidão negativa de proteção ao crédito no ingresso ao serviço público, outra sobre os motivos de reprovação em exame psicológico para cargo público. Qual das duas foi registrada primeiro? Ache as duas no arquivo e ponha na ordem do campo Data.",
+    objetivo: "Achar no arquivo as duas leis estaduais de autoria do deputado e fixar no mural as duas na ordem da data.",
+    resposta: "alerj-lei-4250-2003-autoria",
+    comparar: ["alerj-lei-5938-2011-autoria"],
     detalhe: "objeto",
-    gaveta: "alerj-2011",
+    gaveta: "alerj-2003",
+    reacao: "Dona Nair pediu uma cópia da nota para a parede da autoescola, com as duas datas em letra grande.",
   },
   {
     id: "voto-contra-2024",
     sessao: "camara",
     pessoa: "flavio-bolsonaro",
+    tipo: "natureza",
     autor: "Seu Benedito, da oficina",
-    pergunta: "Em 2024, o senador votou no substitutivo do projeto que instituiu o IBS e a CBS e no projeto que alterou a Lei de Execução Penal, sobre a saída temporária. Em qual dos dois o voto registrado foi contra?",
-    objetivo: "Achar os dois votos de 2024, sobre os tributos e sobre a Lei de Execução Penal, e fixar no mural o que foi contra.",
+    pergunta: "Em 2024, o senador votou no substitutivo do projeto que instituiu o IBS e a CBS e no projeto que alterou a Lei de Execução Penal, sobre a saída temporária. Em qual dos dois o voto registrado foi contra, e o que o campo Ação dele registra?",
+    objetivo: "Achar os dois votos de 2024, sobre os tributos e sobre a Lei de Execução Penal, e fixar no mural o que foi contra, com a ação que ele registra.",
     resposta: "senado-voto-6899-5894",
     comparar: ["senado-voto-6818-5894"],
     detalhe: "objeto",
     gaveta: "senado-2024",
+    reacao: "Seu Benedito limpou as mãos no pano antes de pegar a nota e disse que voto a gente lê no papel, não no boato.",
   },
 ];
 
@@ -234,7 +281,7 @@ export const CONVERSAS: Readonly<Record<string, DialogGraph>> = {
     nos: {
       oi: {
         id: "oi",
-        texto: "Você é da rádio nova? Que bom. O mural ali está cheio de pergunta e ninguém responde. Eu respondo pão de queijo; pergunta de papel não é comigo.",
+        texto: "Você é da rádio nova? Que bom. O mural ali está cheio de pergunta e ninguém responde. Eu respondo pão de queijo; pergunta de papel não é comigo. Comece pelo recado da chefe da rádio: é só conferir uma data.",
         escolhas: [
           { id: "mural", texto: "Que perguntas?", proximo: "mural" },
           {

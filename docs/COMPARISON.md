@@ -29,7 +29,7 @@ Nesta ordem, de cima para baixo:
 | Parte | O que traz |
 | --- | --- |
 | Abertura | O que a tela é: as duas trajetórias no mesmo intervalo, com o que o atlas registra para cada pessoa, e o atalho **Para começar: resumo por cargo e por área** |
-| Recorte | Período (campos **De** e **Até**), categorias, **Limpar filtros** e **Copiar link**. Fica preso ao topo da página |
+| O que comparar e recorte | As três abas **O que comparar** (Trajetória, Decisões, Propostas), a nota que diz o que os filtros afetam e, na Trajetória, o período (campos **De** e **Até**), as categorias, **Limpar filtros** e **Copiar link**. Fica preso ao topo da página (D-155, abaixo) |
 | Linha do tempo das trajetórias | Uma faixa por pessoa sobre o mesmo eixo: marcas dos acontecimentos, cargos e partidos, com o período em claro e o resto hachurado |
 | Como ler esta comparação | Quatro avisos, escritos com os dados do recorte: mesmo recorte, cargos diferentes, cobertura diferente, acervo e não desempenho |
 | Resumo para começar | Os cargos públicos de cada pessoa e o tipo de registro que o atlas tem de cada cargo e de cada área (abaixo). Não segue o recorte de anos |
@@ -69,6 +69,20 @@ Regras, em `src/lib/data/overview.ts`:
 
 Na edição 0.3.0, o resumo de Lula tem atos do Executivo nas sete áreas, e o de Flávio Bolsonaro tem votos ou atuação legislativa em cinco, com Educação e Direitos das mulheres sem decisão publicada. As duas pessoas têm proposta registrada nas sete. A diferença é da pesquisa, e a tela diz.
 
+## Três partes: Trajetória, Decisões e Propostas
+
+Desde 18 de outubro de 2026 (D-155) a tela começa pela escolha do que comparar, e mostra uma parte por vez:
+
+| Parte | Fragmento do endereço | O que mostra | Os filtros valem? |
+| --- | --- | --- | --- |
+| Trajetória | `#trajetoria` (ou nenhum) | As faixas, as notas de leitura, o resumo para começar e as duas colunas | Sim: período e categorias |
+| Decisões | `#decisoes`, ou `#tema-<chave>` para abrir com um tema em foco | A escolha de tema e os cartões de decisão das duas pessoas, por tema | Não: a amostra inteira da edição |
+| Propostas | `#propostas`, ou `#propostas-<area>` | A escolha de área e as frases dos documentos do TSE, por área | Não: a edição inteira |
+
+A parte vem do fragmento (`sectionOfHash`, em `src/features/comparison/sections.ts`, função pura com teste em `tests/comparison-sections.test.ts`), e as abas são links para os fragmentos: recarregar, voltar e avançar e os links antigos (`/comparar/#decisoes`, `/comparar/#tema-economia`) continuam abrindo a parte certa, com o elemento do fragmento rolado para a vista. A consulta (`de`, `ate`, `categorias`) não muda de contrato: é lida pelo mesmo estado compartilhado e só afeta a Trajetória, e a nota de alcance abaixo das abas diz isso. O HTML do build traz a Trajetória; a parte do endereço entra depois da hidratação.
+
+Em cada parte, as duas pessoas têm a mesma hierarquia e a mesma ordem (D-38). Na parte Decisões, cada cartão identifica a pessoa, o cargo, a instituição, a data, o objeto e a natureza da ação (o campo Ação do registro), e um **Ver o registro completo** abre os dispositivos, as fontes e a situação da revisão (`DecisionCard`, modo `expansivel`). Um aviso fixo diz que voto, veto, sanção e proposta são atos de natureza diferente e que a tela não os soma nem os põe em ordem.
+
 ## Decisões por tema e propostas por área
 
 As duas seções ficam depois das colunas e não seguem o recorte de anos: mostram a edição inteira.
@@ -87,6 +101,7 @@ A comparação usa o estado compartilhado da exploração, e não um estado pró
 | `periodo` | `de` e `ate`, como na exploração |
 | `categorias` | `categorias`, como na exploração |
 | `acontecimento` | Sempre `null`: a comparação não abre acontecimento. Cada um tem a própria página |
+| (parte) | Não é campo do estado: a parte da tela (Trajetória, Decisões, Propostas) vem do fragmento do endereço, lido por `SectionTabs` (D-155) |
 
 O provider é o mesmo da exploração, `AtlasUrlStateProvider`, com `pessoa={null}` e `comparar`. O contexto do endereço (`UrlContext`) ganhou esses dois valores; a leitura, a forma canônica e a regra do histórico não mudaram.
 

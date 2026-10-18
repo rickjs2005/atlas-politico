@@ -18,7 +18,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = data.conjunto.edicao?.dataDeCorte;
   const caminhos = [
     "/",
+    "/explorar/",
     "/jogo/",
+    "/jogo/trajetorias/",
     "/praca/",
     "/mundo/",
     "/comparar/",

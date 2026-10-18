@@ -85,7 +85,7 @@ const marcoDe = (slug: Slug, numero: number) => {
 
 test.describe("entrada do jogo", () => {
   test("uma frase simples e duas escolhas com os mesmos campos e o mesmo destaque", async ({ page }) => {
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Conheça as duas trajetórias");
     await expect(page.locator("[data-proposta]")).toContainText("um marco, uma explicação e uma pergunta por fase");
     await expect(page.locator("[data-escolha]")).toHaveCount(2);
@@ -143,7 +143,7 @@ test.describe("entrada do jogo", () => {
       const tela = `${viewport.width}×${viewport.height}`;
       const context = await browser.newContext({ baseURL, viewport, reducedMotion: "reduce" });
       const page = await context.newPage();
-      await page.goto("/jogo/");
+      await page.goto("/jogo/trajetorias/");
       await expect(page.locator('[data-escolha="lula"]')).toHaveAttribute("data-situacao", "inicio");
       await expect(page.locator("[data-previa-mundo]")).toHaveCount(2);
       // Em tela larga, os dois começos estão à vista sem rolar; em celular, o da primeira trajetória (a outra vem logo abaixo).
@@ -165,7 +165,7 @@ test.describe("entrada do jogo", () => {
     const page = await context.newPage();
     await abrir(page, "lula", 1);
     await lerESeguir(page);
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     await expect(page.locator('[data-escolha="lula"]')).toHaveAttribute("data-situacao", "em-andamento");
     await expect(page.locator("[data-previa-mundo]")).toHaveCount(2);
     for (const caminho of ['[data-continuar="lula"]', '[data-ver-desde-o-inicio="lula"]', '[data-comecar="flavio-bolsonaro"]']) {
@@ -183,7 +183,7 @@ test.describe("entrada do jogo", () => {
     test(`${slug}: o visitante novo começa na origem, e a tela diz a pessoa, a fase, o período e o próximo passo`, async ({ page }) => {
       const fases = fasesDe(slug);
       const { fase: primeira, titulo } = marcoDe(slug, 1);
-      await page.goto("/jogo/");
+      await page.goto("/jogo/trajetorias/");
       await page.locator(`[data-comecar="${slug}"]`).click();
       await expect(page).toHaveURL(new RegExp(`/jogo/${slug}/\\?fase=1$`));
       await pronto(page);
@@ -698,7 +698,7 @@ test.describe("fases, retomada e progresso", () => {
     await abrirMarco(page);
     await page.keyboard.press("Escape");
 
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     const cartao = page.locator(`[data-escolha="${slug}"]`);
     await expect(cartao).toHaveAttribute("data-situacao", "em-andamento");
     await expect(cartao.locator("[data-situacao-texto]")).toHaveText(`2 fases concluídas de ${fases.length}.`);
@@ -732,7 +732,7 @@ test.describe("fases, retomada e progresso", () => {
     await page.keyboard.press("Escape");
     const depois = (await progressoSalvo(page, slug))!;
     expect(depois.fases).toEqual(antes!.fases);
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     await expect(page.locator(`[data-continuar="${slug}"]`)).toHaveAttribute("data-destino", terceira!.id);
   });
 
@@ -803,7 +803,7 @@ test.describe("fases, retomada e progresso", () => {
     await expect(resumo.locator('[data-resumo-fase][data-situacao="concluida"]')).toHaveCount(fases.length);
     const antes = await progressoSalvo(page, slug);
 
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     const cartao = page.locator(`[data-escolha="${slug}"]`);
     await expect(cartao).toHaveAttribute("data-situacao", "completa");
     await expect(cartao.locator("[data-situacao-texto]")).toHaveText(`Você concluiu as ${fases.length} fases neste navegador.`);
@@ -832,7 +832,7 @@ test.describe("fases, retomada e progresso", () => {
     await abrir(page, slug, 1);
     await lerESeguir(page);
     await lerESeguir(page);
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     await page.locator(`[data-ver-desde-o-inicio="${slug}"]`).click();
     await pronto(page);
     await expect(jogo(page)).toHaveAttribute("data-fase-aberta", primeira!.id);
@@ -845,7 +845,7 @@ test.describe("fases, retomada e progresso", () => {
 
     // Voltar sai do jogo de uma vez, e a entrada fica com o endereço dela, sem pedido de fase.
     await page.goBack();
-    await expect(page).toHaveURL(/\/jogo\/$/);
+    await expect(page).toHaveURL(/\/jogo\/trajetorias\/$/);
     await expect(page.locator(`[data-escolha="${slug}"]`)).toHaveAttribute("data-situacao", "em-andamento");
     expect(await progressoSalvo(page, slug)).toEqual(antes);
 
@@ -868,7 +868,7 @@ test.describe("fases, retomada e progresso", () => {
     expect(antes.fases[terceira!.id]).toBeUndefined();
 
     // A leitura sem o cenário, escolhida na entrada para a outra pessoa, abre sem a cena e vira a preferência.
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     await page.locator(`[data-ler-sem-cenario="${outro}"]`).click();
     await pronto(page, false);
     await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
@@ -878,7 +878,7 @@ test.describe("fases, retomada e progresso", () => {
 
     // De volta à entrada, por dentro do site: ver desde o início abre a origem, ainda na leitura.
     await page.locator("[data-rodape-do-jogo]").getByRole("link", { name: "Escolher a outra trajetória" }).click();
-    await expect(page).toHaveURL(/\/jogo\/$/);
+    await expect(page).toHaveURL(/\/jogo\/trajetorias\/$/);
     await page.locator(`[data-ver-desde-o-inicio="${slug}"]`).click();
     await pronto(page, false);
     await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
@@ -918,7 +918,7 @@ test.describe("fases, retomada e progresso", () => {
       [storageKey(slug), JSON.stringify(antigo)],
     );
 
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     const cartao = page.locator(`[data-escolha="${slug}"]`);
     await expect(cartao).toHaveAttribute("data-situacao", "em-andamento");
     await expect(cartao.locator("[data-situacao-texto]")).toHaveText(`Nenhuma fase concluída ainda de ${fases.length}. O jogo mudou desde a sua última visita: a trajetória agora começa pela origem.`);
@@ -1477,7 +1477,7 @@ test.describe("celular", () => {
       const slug = "flavio-bolsonaro";
       const terceira = fasesDe(slug)[2]!;
 
-      await page.goto("/jogo/");
+      await page.goto("/jogo/trajetorias/");
       await expect(page.locator(`[data-escolha="${slug}"]`)).toHaveAttribute("data-situacao", "inicio");
       expect(await sobraHorizontal(page), "entrada").toBeLessThanOrEqual(0);
       for (const alvo of await page.locator("[data-comecar], [data-ler-sem-cenario], [data-fases-da-trilha] summary, [data-abrir-sala]").all()) {
@@ -1585,7 +1585,7 @@ test.describe("celular", () => {
       };
 
       // A entrada: os cartões das duas trajetórias, com as fases abertas, e o caminho para a metodologia.
-      await page.goto("/jogo/");
+      await page.goto("/jogo/trajetorias/");
       await expect(page.locator(`[data-escolha="${slug}"]`)).toHaveAttribute("data-situacao", "inicio");
       for (const cartao of await page.locator("[data-escolha]").all()) {
         await abrirTudo(cartao);

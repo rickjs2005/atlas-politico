@@ -85,13 +85,15 @@ export function decisionGroups(colunas: readonly DecisionColumn[]): DecisionGrou
 interface DecisionsByThemeProps {
   colunas: readonly DecisionColumn[];
   headingLevel?: 2 | 3;
+  /** Como cada cartão vem: inteiro (a página da pessoa) ou expansível (a comparação, D-155). */
+  detalhe?: "completo" | "expansivel";
   /** O caminho de cada cartão para a página da pessoa, quando a tela não é ela mesma. */
   hrefOf?: (pessoaSlug: string, decisaoId: string) => string;
   /** O `id` da âncora de cada cartão, na página da pessoa. Uma decisão com dois temas aparece nos dois grupos: a âncora fica no primeiro. */
   anchorOf?: (decisaoId: string) => string;
 }
 
-export function DecisionsByTheme({ colunas, headingLevel = 2, hrefOf, anchorOf }: DecisionsByThemeProps) {
+export function DecisionsByTheme({ colunas, headingLevel = 2, detalhe = "completo", hrefOf, anchorOf }: DecisionsByThemeProps) {
   const grupos = decisionGroups(colunas);
   const compartilhadas = sharedProposicoes(colunas);
   const Title = headingLevel === 2 ? "h2" : "h3";
@@ -146,7 +148,7 @@ export function DecisionsByTheme({ colunas, headingLevel = 2, hrefOf, anchorOf }
                             )}
                             <DecisionCard
                               decisao={decisao}
-                              detalhe="completo"
+                              detalhe={detalhe}
                               headingLevel={nivelDoCartao}
                               anchorId={ancora}
                               link={hrefOf === undefined ? undefined : { href: hrefOf(coluna.pessoa.slug, decisao.id), rotulo: `Ver na trajetória de ${coluna.pessoa.nome}` }}

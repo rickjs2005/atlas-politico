@@ -4,7 +4,7 @@
 
 Working title. An atlas (in Brazilian Portuguese) for following the public careers of Lula and Flávio Bolsonaro through a timeline, a map, events backed by the sources that support them, and a game that walks through both careers in short stages, from their origins to the cut-off date. A MilWeb portfolio project.
 
-Since October 17, 2026 (content edition 0.4.0) the game also has an investigation mission, "O documento diz o quê?" (what does the document say?): the Escrivão hands out index cards, the player opens real records from the drawer, builds a dossier, matches each card to the record that supports it and points to the field that supports the highlighted passage ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md), in Portuguese). The Cidade do Voto prototype had its scene lifecycle fixed and gained two more choices ([docs/MUNDO.md](docs/MUNDO.md)). A newer direction, the Praça do Mural (`/praca/`), is an investigation adventure in a compact Brazilian town square: residents pin questions on a board, and the player, the new reporter of the community radio, finds in the archive the record that answers each one ([docs/PRACA.md](docs/PRACA.md), in Portuguese).
+Since October 17, 2026 (content edition 0.4.0) the game also has an investigation mission, "O documento diz o quê?" (what does the document say?): the Escrivão hands out index cards, the player opens real records from the drawer, builds a dossier, matches each card to the record that supports it and points to the field that supports the highlighted passage ([docs/MISSAO-INVESTIGACAO.md](docs/MISSAO-INVESTIGACAO.md), in Portuguese). The Cidade do Voto prototype had its scene lifecycle fixed and gained two more choices ([docs/MUNDO.md](docs/MUNDO.md)). A newer direction, the Praça do Mural (`/praca/`), is an investigation adventure in a compact Brazilian town square: residents pin questions on a board, and the player, the new reporter of the community radio, finds in the archive the record that answers each one ([docs/PRACA.md](docs/PRACA.md), in Portuguese). On October 18, 2026 the atlas was redesigned around it (D-155): a dark stage around the paper sheet, a four-entry menu (Explore, Compare, Play, Methodology), a home page with **Começar investigação** (start the investigation), a `/jogo/` hub with three paths, a comparison in three parts (career, decisions, proposals) and, in the square, a tutorial, ordering and nature tasks, a current step, discoveries and seals.
 
 > **Type:** MilWeb portfolio project, in development. It is not an official site of either person portrayed, of any party or of any public body. There is no definitive public address yet: the provisional Vercel address and the publication status are documented in [docs/DEPLOY.md](docs/DEPLOY.md).
 
@@ -78,11 +78,15 @@ Screens (docs/UX.md):
 | Screen | URL |
 |---|---|
 | Home | http://localhost:3000/ |
+| Explore: choosing a career | http://localhost:3000/explorar/ |
 | Exploration | http://localhost:3000/politicos/lula/ and http://localhost:3000/politicos/flavio-bolsonaro/ |
 | Event | http://localhost:3000/acontecimentos/lula-2023-intervencao-federal-no-distrito-federal/ |
-| Comparison | http://localhost:3000/comparar/ |
+| Comparison | http://localhost:3000/comparar/ (`#decisoes` or `#propostas` opens that part) |
 | Methodology | http://localhost:3000/metodologia/ |
-| Game: both careers | http://localhost:3000/jogo/ |
+| Play: the hub with three paths | http://localhost:3000/jogo/ |
+| Praça do Mural (town square) | http://localhost:3000/praca/ |
+| Cidade do Voto (city prototype) | http://localhost:3000/mundo/ |
+| Game: both careers | http://localhost:3000/jogo/trajetorias/ |
 | Game: one character's career | http://localhost:3000/jogo/lula/ and http://localhost:3000/jogo/flavio-bolsonaro/ (`?fase=3` opens stage 3; `&leitura=1` removes the scenery) |
 | Game: deep dives with the documented decisions on a topic | http://localhost:3000/jogo/lula/economia/, http://localhost:3000/jogo/lula/seguranca-publica/ and the same for `flavio-bolsonaro` |
 | State guide, development only | http://localhost:3000/dev/previa/ |

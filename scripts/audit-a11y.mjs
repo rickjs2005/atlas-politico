@@ -151,7 +151,22 @@ const SCREENS = [
   { nome: "06-acontecimento", url: `/acontecimentos/${alvo.slug}/` },
   { nome: "07-metodologia", url: "/metodologia/" },
   { nome: "08-pagina-nao-encontrada", url: "/endereco-que-nao-existe/", status: 404 },
-  { nome: "09-jogo-entrada", url: "/jogo/" },
+  { nome: "09-jogo-hub", url: "/jogo/" },
+  { nome: "09b-jogo-trajetorias", url: "/jogo/trajetorias/" },
+  { nome: "09c-explorar", url: "/explorar/" },
+  { nome: "09d-praca-entrada", url: "/praca/", presente: "[data-entrar]" },
+  {
+    // A praça em lista (a mesma que o navegador sem WebGL mostra), com o mural aberto.
+    nome: "09e-praca-em-lista-com-o-mural",
+    url: "/praca/",
+    presente: "[data-abrir-pauta]",
+    preparar: async (page) => {
+      await page.locator("[data-entrar-em-lista]").check();
+      await page.locator("[data-entrar]").click();
+      await page.locator("[data-lugar='mural']").click();
+      await page.locator("[data-abrir-pauta]").first().waitFor();
+    },
+  },
   { nome: "10-jogo-cena", url: "/jogo/lula/?fase=1", jogo: true, presente: '[data-palco="pronto"]' },
   { nome: "11-jogo-cena-flavio-bolsonaro", url: "/jogo/flavio-bolsonaro/?fase=1", jogo: true, presente: '[data-palco="pronto"]' },
   { nome: "12-jogo-aprofundamento-economia", url: "/jogo/lula/economia/", jogo: true, presente: '[data-palco="pronto"]' },

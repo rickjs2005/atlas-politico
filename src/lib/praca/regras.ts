@@ -1,14 +1,15 @@
-// As regras da Praça do Mural (docs/PRACA.md, D-153 e D-154), puras.
+// As regras da Praça do Mural (docs/PRACA.md, D-153, D-154 e D-155), puras.
 //
 // O ciclo: ler uma pergunta no mural, ouvir quem sabe onde procurar, abrir a
-// gaveta certa no arquivo e levar cópias, montar a nota com os campos do
-// documento (qual documento, quando, o que ele registra) e fixá-la no mural.
-// Errar diz, por campo, o que o documento escolhido registra, sem entregar a
-// resposta; a nota certa muda o mural e as conversas. As pautas vêm por
-// sessão: concluir a primeira abre a Câmara, onde a segunda põe uma matéria na
-// mesa, com dois documentos lado a lado, e cada sessão tem um item que abre um
-// lugar (a chave, a credencial). Nada soma, nada dá nota, nada premia
-// preferência.
+// gaveta certa no arquivo e levar cópias, montar a resposta com os campos do
+// documento e fixá-la no mural. Há quatro jeitos de responder (tipos.ts,
+// `TipoDePauta`): conferir um campo, a nota de três campos, a natureza da ação
+// e a ordem de dois documentos. Errar diz, por campo, o que o documento
+// escolhido registra, sem entregar a resposta; a resposta certa muda o mural e
+// as conversas. As pautas vêm por sessão: concluir a primeira abre a Câmara,
+// onde a segunda põe uma matéria na mesa, com dois documentos lado a lado, e
+// cada sessão tem um item que abre um lugar (a chave, a credencial). Nada
+// soma, nada dá nota, nada premia preferência.
 
 import { formatDate, yearOf } from "@/lib/domain/dates";
 import { RESULTADO_LABELS } from "@/lib/domain/decisions";
@@ -16,7 +17,7 @@ import { documentFields, fieldOf } from "@/lib/game/dossier";
 import { chooseIn, currentNode, isDialogOver, startDialog, type DialogGraph, type DialogState } from "@/lib/game/escrivao";
 
 import { CONVERSAS, ITENS_POR_NO, LUGARES, MATERIAS, PAUTAS, SESSOES } from "./praca";
-import type { Ata, ConteudoDaPraca, Documento, Gaveta, ItemId, LugarId, Materia, MoradorId, Nota, Pauta, ProgressoDaPraca, Sessao, SituacaoDaPauta } from "./tipos";
+import type { Ata, ConteudoDaPraca, Documento, Gaveta, ItemId, LugarId, Materia, MoradorId, Nota, Pauta, ProgressoDaPraca, Sessao, SituacaoDaPauta, TipoDePauta } from "./tipos";
 
 /** As sessões, as pautas e as matérias de que as regras precisam; o conteúdo montado no build as filtra pelos documentos que existem. */
 export type Roteiro = Pick<ConteudoDaPraca, "sessoes" | "pautas" | "materias">;
@@ -36,6 +37,7 @@ export function progressoInicial(): ProgressoDaPraca {
 
 const isRecord = (valor: unknown): valor is Record<string, unknown> => typeof valor === "object" && valor !== null && !Array.isArray(valor);
 const isStringList = (valor: unknown): valor is string[] => Array.isArray(valor) && valor.every((item) => typeof item === "string");
+const isStringRecord = (valor: unknown): valor is Record<string, string> => isRecord(valor) && Object.values(valor).every((item) => typeof item === "string");
 const SITUACOES: readonly SituacaoDaPauta[] = ["fechada", "aberta", "publicada"];
 const ITENS_CONHECIDOS: readonly ItemId[] = ["bilhete", "chave-senado", "credencial"];
 
@@ -60,9 +62,8 @@ export function lerProgresso(valor: unknown, conteudo: Pick<ConteudoDaPraca, "pa
     const situacao = lerSituacao(entrada);
     if (situacao === null) return null;
     const nota = (entrada as Record<string, unknown>).nota;
-    if (nota !== undefined && (!isRecord(nota) || typeof nota.documento !== "string" || typeof nota.quando !== "string" || typeof nota.registro !== "string")) return null;
-    const notaLida: Nota | undefined = nota === undefined ? undefined : { documento: nota.documento as string, quando: nota.quando as string, registro: nota.registro as string };
-    lido.pautas[id] = { ...situacao, ...(notaLida === undefined ? {} : { nota: notaLida }) };
+    if (nota !== undefined && !isStringRecord(nota)) return null;
+    lido.pautas[id] = { ...situacao, ...(nota === undefined ? {} : { nota: { ...nota } }) };
   }
   for (const [id, entrada] of Object.entries(valor.atas ?? {})) {
     if (!conteudo.materias.some((materia) => materia.id === id)) continue;
@@ -87,6 +88,16 @@ export function lerProgresso(valor: unknown, conteudo: Pick<ConteudoDaPraca, "pa
 
 export function situacaoDaPauta(progresso: ProgressoDaPraca, pautaId: string): SituacaoDaPauta {
   return progresso.pautas[pautaId]?.situacao ?? "fechada";
+}
+
+/** O jeito de responder uma pauta; sem o campo escrito, é a nota de três campos. */
+export function tipoDaPauta(pauta: Pauta): TipoDePauta {
+  return pauta.tipo ?? "nota";
+}
+
+/** Os documentos que a pauta precisa ter na mão: o pedido e, na ordem, também o segundo. */
+export function documentosDaPauta(pauta: Pauta): string[] {
+  return tipoDaPauta(pauta) === "ordem" ? [pauta.resposta, ...pauta.comparar] : [pauta.resposta];
 }
 
 /** A pauta em andamento: a primeira aberta; sem nenhuma aberta, nenhuma. */
@@ -272,10 +283,10 @@ export function conversar(progresso: ProgressoDaPraca, grafo: DialogGraph, estad
 export { currentNode, isDialogOver, startDialog };
 
 // ---------------------------------------------------------------------------
-// A nota: montar e fixar
+// A resposta de uma pauta: os campos, as opções, a certa e a fixação
 // ---------------------------------------------------------------------------
 
-/** Uma opção de um campo da nota, tirada de um documento levado. */
+/** Uma opção de um campo da resposta, tirada de um documento levado. */
 export interface Opcao {
   chave: string;
   texto: string;
@@ -283,7 +294,7 @@ export interface Opcao {
   documento: string;
 }
 
-/** As opções de cada campo, tiradas só das cópias levadas, sem repetição de texto e em ordem estável. */
+/** As opções de cada campo da nota, tiradas só das cópias levadas, sem repetição de texto e em ordem estável. */
 export function opcoesDaNota(progresso: ProgressoDaPraca, documentos: Record<string, Documento>): { documento: Opcao[]; quando: Opcao[]; registro: Opcao[] } {
   const copias = progresso.copias.flatMap((id) => (documentos[id] === undefined ? [] : [documentos[id]!]));
   const unicas = (lista: Opcao[]) => {
@@ -313,22 +324,63 @@ export function opcoesDaNota(progresso: ProgressoDaPraca, documentos: Record<str
   };
 }
 
-/** A nota certa de uma pauta, nas mesmas chaves das opções. */
+/** Um campo da resposta como a tela o pergunta: a chave, o título e as opções. */
+export interface CampoDaResposta {
+  chave: string;
+  titulo: string;
+  opcoes: Opcao[];
+}
+
+/** Os campos que uma pauta pede, na ordem, com as opções tiradas só das cópias levadas. */
+export function camposDaPauta(pauta: Pauta, progresso: ProgressoDaPraca, documentos: Record<string, Documento>): CampoDaResposta[] {
+  const opcoes = opcoesDaNota(progresso, documentos);
+  switch (tipoDaPauta(pauta)) {
+    case "campo":
+      return [{ chave: "data", titulo: "Que data o campo Data do documento pedido registra?", opcoes: opcoes.quando }];
+    case "natureza":
+      return [
+        { chave: "documento", titulo: "Qual documento é o pedido?", opcoes: opcoes.documento },
+        { chave: "registro", titulo: "O que o campo Ação dele registra?", opcoes: opcoes.registro },
+      ];
+    case "ordem":
+      return [
+        { chave: "primeiro", titulo: "Qual documento foi registrado primeiro?", opcoes: opcoes.documento },
+        { chave: "segundo", titulo: "E qual veio depois?", opcoes: opcoes.documento },
+      ];
+    default:
+      return [
+        { chave: "documento", titulo: "Qual documento responde?", opcoes: opcoes.documento },
+        { chave: "quando", titulo: "Quando?", opcoes: opcoes.quando },
+        { chave: "registro", titulo: "O que ele registra?", opcoes: opcoes.registro },
+      ];
+  }
+}
+
+/** A resposta certa de uma pauta, nas mesmas chaves das opções. */
 export function notaCerta(pauta: Pauta, documentos: Record<string, Documento>): Nota | null {
   const doc = documentos[pauta.resposta];
   if (doc === undefined) return null;
-  return {
-    documento: doc.id,
-    quando: `data:${doc.data.valor}`,
-    registro: `acao:${fieldOf(doc, "acao").valor}`,
-  };
+  switch (tipoDaPauta(pauta)) {
+    case "campo":
+      return { data: `data:${doc.data.valor}` };
+    case "natureza":
+      return { documento: doc.id, registro: `acao:${fieldOf(doc, "acao").valor}` };
+    case "ordem": {
+      const outros = pauta.comparar.flatMap((id) => (documentos[id] === undefined ? [] : [documentos[id]!]));
+      if (outros.length === 0) return null;
+      const ordenados = [doc, ...outros].sort((a, b) => (a.data.valor < b.data.valor ? -1 : a.data.valor > b.data.valor ? 1 : 0));
+      return { primeiro: ordenados[0]!.id, segundo: ordenados[1]!.id };
+    }
+    default:
+      return { documento: doc.id, quando: `data:${doc.data.valor}`, registro: `acao:${fieldOf(doc, "acao").valor}` };
+  }
 }
 
 export interface Fixacao {
   progresso: ProgressoDaPraca;
   certo: boolean;
   /** No erro, uma frase por campo errado, só com o que o documento escolhido registra. */
-  erros: { campo: keyof Nota; mensagem: string }[];
+  erros: { campo: string; mensagem: string }[];
 }
 
 /** A frase de um documento que não é o pedido: o que ele registra, quando e sobre o quê. Não diz o certo. */
@@ -348,41 +400,77 @@ function fraseDaAcaoErrada(escolhido: Documento): string {
   return `O campo Ação do documento que você escolheu diz outra coisa: ${fieldOf(escolhido, "acao").valor}.`;
 }
 
-/**
- * Fixar a nota no mural. Tudo certo publica a pauta; errado conta a tentativa
- * e diz, campo a campo, o que não bate, sem dizer o certo. O documento vem
- * primeiro: com o documento errado, as frases falam dele; com o documento
- * certo, falam dos campos dele.
- */
-export function fixarNota(progresso: ProgressoDaPraca, pauta: Pauta, nota: Nota, documentos: Record<string, Documento>): Fixacao {
-  const certa = notaCerta(pauta, documentos);
-  const escolhido = documentos[nota.documento];
-  const atual = progresso.pautas[pauta.id] ?? {
-    situacao: "aberta" as const,
-    tentativas: 0,
-  };
-  if (certa === null || escolhido === undefined || !progresso.copias.includes(nota.documento)) {
-    return {
-      progresso,
-      certo: false,
-      erros: [
-        {
-          campo: "documento",
-          mensagem: "Escolha um documento que você levou do arquivo.",
-        },
-      ],
-    };
-  }
-  if (atual.situacao === "publicada") return { progresso, certo: true, erros: [] };
+/** O documento de que uma opção de data veio, pela chave: o que a pessoa escolheu de fato. */
+function documentoDaData(chave: string, progresso: ProgressoDaPraca, documentos: Record<string, Documento>): Documento | null {
+  return progresso.copias.map((id) => documentos[id]).find((doc) => doc !== undefined && `data:${doc.data.valor}` === chave) ?? null;
+}
+
+/** Os erros de uma resposta, por tipo de pauta, só com o que os documentos escolhidos registram. */
+function conferir(pauta: Pauta, nota: Nota, certa: Nota, progresso: ProgressoDaPraca, documentos: Record<string, Documento>): Fixacao["erros"] {
   const erros: Fixacao["erros"] = [];
+  const tipo = tipoDaPauta(pauta);
+  if (tipo === "campo") {
+    const chave = nota.data ?? "";
+    if (chave !== certa.data) {
+      const dela = documentoDaData(chave, progresso, documentos);
+      erros.push({
+        campo: "data",
+        mensagem: dela === null ? "Escolha uma data que esteja em uma cópia que você levou." : `Essa data é a do campo Data de "${dela.titulo}". Releia o campo Data do documento que a pergunta pede.`,
+      });
+    }
+    return erros;
+  }
+  if (tipo === "ordem") {
+    if (nota.primeiro !== undefined && nota.primeiro === nota.segundo) return [{ campo: "segundo", mensagem: "Os dois lugares têm o mesmo documento. A pauta pede os dois documentos, um em cada lugar." }];
+    for (const chave of ["primeiro", "segundo"] as const) {
+      const escolhido = documentos[nota[chave] ?? ""];
+      if (escolhido === undefined || !progresso.copias.includes(escolhido.id)) {
+        erros.push({ campo: chave, mensagem: "Escolha um documento que você levou do arquivo." });
+        continue;
+      }
+      if (nota[chave] !== certa[chave]) erros.push({ campo: chave, mensagem: `O campo Data do documento que você pôs em ${chave === "primeiro" ? "primeiro" : "segundo"} lugar diz ${fieldOf(escolhido, "data").valor}. Compare com o campo Data do outro.` });
+    }
+    return erros;
+  }
+  const escolhido = documentos[nota.documento ?? ""];
+  if (escolhido === undefined || !progresso.copias.includes(escolhido.id)) {
+    return [{ campo: "documento", mensagem: "Escolha um documento que você levou do arquivo." }];
+  }
   if (nota.documento !== certa.documento) erros.push({ campo: "documento", mensagem: fraseDoDocumentoErrado(escolhido, "Releia a pergunta: ela pede outra coisa.") });
-  if (nota.quando !== `data:${escolhido.data.valor}`) {
+  if (tipo === "nota" && nota.quando !== `data:${escolhido.data.valor}`) {
     erros.push({
       campo: "quando",
       mensagem: `Essa data não é a do documento que você escolheu. O campo Data dele diz ${fieldOf(escolhido, "data").valor}.`,
     });
   }
   if (nota.registro !== `acao:${fieldOf(escolhido, "acao").valor}`) erros.push({ campo: "registro", mensagem: fraseDaAcaoErrada(escolhido) });
+  return erros;
+}
+
+/**
+ * Fixar a resposta no mural. Tudo certo publica a pauta; errado conta a
+ * tentativa e diz, campo a campo, o que não bate, sem dizer o certo. O
+ * documento vem primeiro: com o documento errado, as frases falam dele; com o
+ * documento certo, falam dos campos dele. A pauta de um campo só exige a
+ * cópia do documento pedido na mão: a data vem dela.
+ */
+export function fixarNota(progresso: ProgressoDaPraca, pauta: Pauta, nota: Nota, documentos: Record<string, Documento>): Fixacao {
+  const certa = notaCerta(pauta, documentos);
+  const atual = progresso.pautas[pauta.id] ?? {
+    situacao: "aberta" as const,
+    tentativas: 0,
+  };
+  if (certa === null) return { progresso, certo: false, erros: [{ campo: "documento", mensagem: "Esta pauta não tem documento publicado nesta edição." }] };
+  if (!documentosDaPauta(pauta).every((id) => progresso.copias.includes(id))) {
+    const gaveta = pauta.gaveta;
+    return {
+      progresso,
+      certo: false,
+      erros: [{ campo: camposDaPauta(pauta, progresso, documentos)[0]!.chave, mensagem: tipoDaPauta(pauta) === "ordem" ? "Leve do arquivo as cópias dos dois documentos que a pergunta nomeia." : `Leve do arquivo a cópia do documento pedido: a gaveta é a ${gaveta.replace("-", " · ")}.` }],
+    };
+  }
+  if (atual.situacao === "publicada") return { progresso, certo: true, erros: [] };
+  const erros = conferir(pauta, nota, certa, progresso, documentos);
   const tentativas = atual.tentativas + 1;
   if (erros.length > 0)
     return {
@@ -443,15 +531,25 @@ export function exporDocumento(documento: Documento, comObjeto: boolean): Docume
   return { documento, linhas, itens, fontes: documento.fontes };
 }
 
-/** O que a nota fixada mostra: os campos do documento e o detalhe que a pauta pede, com a fonte. */
+/** O que a nota fixada mostra: os campos do documento e o detalhe que a pauta pede, com a fonte. Na pauta de ordem, os dois documentos, na ordem. */
 export interface NotaFixada extends DocumentoExposto {
   pauta: Pauta;
+  /** Na pauta de ordem, o segundo documento, exposto do mesmo jeito. */
+  segundo: DocumentoExposto | null;
 }
 
 export function notaFixada(pauta: Pauta, documentos: Record<string, Documento>): NotaFixada | null {
+  const certa = notaCerta(pauta, documentos);
+  if (certa === null) return null;
+  if (tipoDaPauta(pauta) === "ordem") {
+    const primeiro = documentos[certa.primeiro ?? ""];
+    const segundo = documentos[certa.segundo ?? ""];
+    if (primeiro === undefined || segundo === undefined) return null;
+    return { pauta, ...exporDocumento(primeiro, true), segundo: exporDocumento(segundo, true) };
+  }
   const documento = documentos[pauta.resposta];
   if (documento === undefined) return null;
-  return { pauta, ...exporDocumento(documento, pauta.detalhe === "objeto") };
+  return { pauta, ...exporDocumento(documento, pauta.detalhe === "objeto"), segundo: null };
 }
 
 // ---------------------------------------------------------------------------

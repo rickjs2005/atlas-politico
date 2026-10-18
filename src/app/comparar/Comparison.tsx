@@ -1,15 +1,16 @@
 "use client";
 
 // Comparação das trajetórias no mesmo período, com as mesmas categorias e na
-// mesma escala de anos (docs/COMPARISON.md).
-//
-// O recorte fica no endereço, como na exploração: é o mesmo estado, o mesmo
-// contrato de parâmetros e as mesmas regras de histórico, com a rota dizendo
-// que as duas pessoas entram. A consulta é uma só (`selectComparison`), feita
-// uma vez por pessoa.
+// mesma escala de anos (docs/COMPARISON.md), em três partes (D-155): a
+// trajetória, as decisões documentadas por tema e as propostas registradas no
+// TSE por área. A parte aberta vem do fragmento do endereço; o recorte
+// (período e categorias) continua na query string, como na exploração: é o
+// mesmo estado, o mesmo contrato de parâmetros e as mesmas regras de
+// histórico, com a rota dizendo que as duas pessoas entram.
 //
 // A tela mostra o que o atlas registra para cada pessoa. Não soma, não ordena
-// e não conclui nada a partir da quantidade de registros.
+// e não conclui nada a partir da quantidade de registros; e não equipara um
+// voto, um veto, uma sanção e uma proposta: cada registro diz o que é.
 
 import Link from "next/link";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
@@ -19,8 +20,10 @@ import { AffiliationList, MandateList } from "@/components/PeriodRecords";
 import { Portrait } from "@/components/Portrait";
 import { SourceCatalog } from "@/components/SourceList";
 import { ComparisonOverview } from "@/features/comparison/Overview";
+import { SectionTabs, useComparisonSection } from "@/features/comparison/SectionTabs";
 import { TrajectoryLanes } from "@/features/comparison/TrajectoryLanes";
-import { DecisionsByTheme, SAMPLE_NOTICE } from "@/features/decisions/DecisionsByTheme";
+import { COMPARISON_SECTIONS, filterScope } from "@/features/comparison/sections";
+import { DecisionsByTheme, SAMPLE_NOTICE, decisionGroups } from "@/features/decisions/DecisionsByTheme";
 import { EventLinkList } from "@/features/events/EventLinkList";
 import { ProposalsByTheme } from "@/features/proposals/ProposalsByTheme";
 import { clipGaps } from "@/features/events/chronology";
@@ -34,6 +37,7 @@ import { filterEvents, getImage, getSources, listSourcesOf, type Trajectory } fr
 import type { AtlasData } from "@/lib/data/types";
 import { CATEGORIAS, CATEGORY_LABELS, type Categoria } from "@/lib/domain/categories";
 import { formatPeriod, formatYearRange } from "@/lib/domain/dates";
+import { TEMAS, TEMA_LABELS } from "@/lib/domain/decisions";
 import type { Acontecimento } from "@/lib/domain/types";
 import { useAtlas } from "@/lib/state/AtlasStateProvider";
 import { AtlasUrlStateProvider } from "@/lib/state/AtlasUrlStateProvider";
@@ -59,6 +63,7 @@ const PATH = "/comparar";
 const sectionTitle = "eyebrow text-ink-soft";
 const reset = "font-medium text-ink-soft underline decoration-line-strong hover:text-ink";
 const note = "border-l-2 border-ink-faint pl-2 text-ink-soft";
+const chip = "inline-flex min-h-11 items-center border border-line-strong bg-raised px-3 text-sm no-underline hover:border-ink md:min-h-9";
 
 /** Largura da coluna de nomes das faixas em tela estreita (7.5rem). */
 const LANE_LABEL_PX = 120;
@@ -100,6 +105,9 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
   const { state, dispatch, data } = useAtlas();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const lanes = useRef<HTMLDivElement>(null);
+  // A parte aberta: antes da hidratação, `null`, e as três ficam na página.
+  const secao = useComparisonSection();
+  const parte = (id: (typeof COMPARISON_SECTIONS)[number]["id"]) => secao === null || secao === id;
 
   const recorte = useMemo<Recorte>(
     () => ({ periodo: state.periodo, categorias: state.categorias }),
@@ -169,6 +177,8 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
     [data, trajetorias],
   );
   const totalDeDecisoes = colunasDeDecisoes.reduce((soma, coluna) => soma + coluna.decisoes.length, 0);
+  // Os temas com alguma decisão publicada, para a escolha no começo da parte.
+  const gruposDeDecisoes = useMemo(() => decisionGroups(colunasDeDecisoes), [colunasDeDecisoes]);
   // As propostas do documento que cada candidatura registrou no TSE, por área. Também não seguem o recorte de anos.
   const colunasDePropostas = useMemo(
     () => trajetorias.map(({ pessoa }) => ({ pessoa: { id: pessoa.id, slug: pessoa.slug, nome: pessoa.nome }, propostas: listProposals(data, pessoa.id) })),
@@ -182,6 +192,7 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
   );
   // Quem tem a cobertura começando depois do início do período consultado.
   const semCobertura = cobertos.filter(({ coberto }) => coberto !== null && coberto.de > anos.de);
+  const alcance = filterScope(secao ?? "trajetoria");
 
   return (
     <>
@@ -191,10 +202,15 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
           Comparar trajetórias
         </h1>
         <p className="reading max-w-2xl max-md:text-base max-md:leading-relaxed">
-          As duas trajetórias lado a lado, no mesmo intervalo de anos. A tela mostra o que o atlas
-          registra para cada pessoa: acontecimentos, cargos, partidos e as fontes de cada registro.
+          As duas trajetórias lado a lado, em três partes: a linha do tempo com cargos, partidos e acontecimentos no mesmo intervalo de anos; as decisões
+          documentadas, tema a tema; e as propostas registradas no TSE, área a área. A tela mostra o que o atlas registra para cada pessoa, com as fontes
+          de cada registro.
         </p>
-        {/* Para quem está começando: o atalho para a comparação curta, que fica depois das faixas e das notas (D-82). */}
+        <p className="max-w-2xl text-sm text-ink-soft" data-aviso-de-natureza>
+          Um voto, um veto, uma sanção, a autoria de uma lei e uma proposta de campanha são atos diferentes: cada registro diz qual é, por quem, em que
+          cargo e instituição, em que data e sobre o quê. A tela não os equipara.
+        </p>
+        {/* Para quem está começando: o atalho para a comparação curta, que fica na trajetória, depois das faixas e das notas (D-82). */}
         <p className="text-sm">
           <a href="#resumo" className="inline-flex min-h-11 items-center font-medium underline decoration-line-strong hover:decoration-ink md:min-h-0" data-ir-para-o-resumo>
             Para começar: resumo por cargo e por área
@@ -202,70 +218,78 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
         </p>
       </header>
 
-      {/* Recorte: preso ao topo, para os filtros ficarem à mão durante a leitura. */}
+      {/* As partes e o recorte: presos ao topo, para a escolha e os filtros ficarem à mão durante a leitura. */}
       <section aria-label="Recorte" className="sticky top-0 z-20 border-y border-ink bg-paper">
-        <div className="page flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-2.5 xl:items-end xl:py-3">
-          {/* Com os filtros recolhidos, o recorte em vigor fica escrito aqui. */}
-          <p className="numerals min-w-0 flex-1 basis-0 text-sm xl:hidden" data-aguarda-consulta>
-            <span className="eyebrow mr-2 text-ink-soft">Recorte</span>
-            <span className="font-semibold">{periodoTexto}</span> · {categoriasTexto}
-          </p>
-          <button
-            type="button"
-            aria-expanded={filtersOpen}
-            aria-controls="filtros-da-comparacao"
-            onClick={() => setFiltersOpen(!filtersOpen)}
-            className="flex h-11 shrink-0 items-center gap-2 border border-ink-faint px-3 text-sm font-medium aria-expanded:bg-ink aria-expanded:text-paper xl:hidden"
-          >
-            Filtros
-            {filtrado && (
-              <>
-                <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
-                <span className="sr-only">(ativos)</span>
-              </>
-            )}
-          </button>
+        <div className="page space-y-2 py-2.5 xl:py-3">
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+            <SectionTabs secao={secao} haPropostas={haPropostas} />
+            <p className="min-w-0 flex-1 basis-[16rem] text-xs text-ink-soft" data-alcance-do-recorte>
+              {alcance}
+            </p>
+          </div>
+          <div className={`flex flex-wrap items-center justify-between gap-x-6 gap-y-2 xl:items-end ${parte("trajetoria") ? "" : "hidden"}`} data-recorte-da-trajetoria>
+            {/* Com os filtros recolhidos, o recorte em vigor fica escrito aqui. */}
+            <p className="numerals min-w-0 flex-1 basis-0 text-sm xl:hidden" data-aguarda-consulta>
+              <span className="eyebrow mr-2 text-ink-soft">Recorte</span>
+              <span className="font-semibold">{periodoTexto}</span> · {categoriasTexto}
+            </p>
+            <button
+              type="button"
+              aria-expanded={filtersOpen}
+              aria-controls="filtros-da-comparacao"
+              onClick={() => setFiltersOpen(!filtersOpen)}
+              className="flex h-11 shrink-0 items-center gap-2 border border-ink-faint px-3 text-sm font-medium aria-expanded:bg-ink aria-expanded:text-paper xl:hidden"
+            >
+              Filtros
+              {filtrado && (
+                <>
+                  <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
+                  <span className="sr-only">(ativos)</span>
+                </>
+              )}
+            </button>
 
-          <div
-            id="filtros-da-comparacao"
-            data-aguarda-consulta
-            className={`w-full flex-wrap items-end gap-x-8 gap-y-3 xl:flex xl:w-auto ${filtersOpen ? "flex" : "hidden"}`}
-          >
-            <PeriodControl
-              domain={escala}
-              periodo={state.periodo}
-              onChange={(de, ate) => dispatch({ type: "setPeriod", de, ate })}
-            />
-            <CategoryFilter
-              selected={state.categorias}
-              counts={contagem}
-              onToggle={(categoria) => dispatch({ type: "toggleCategory", categoria })}
-              onClear={() => dispatch({ type: "clearCategories" })}
-            />
-            {/* Em tela larga, "Limpar filtros" fica na linha dos rótulos: a barra
-                não muda de altura quando ele aparece. */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 xl:flex-col xl:items-start xl:gap-y-1.5">
-              <span className="hidden h-4 items-center xl:flex">
+            <div
+              id="filtros-da-comparacao"
+              data-aguarda-consulta
+              className={`w-full flex-wrap items-end gap-x-8 gap-y-3 xl:flex xl:w-auto ${filtersOpen ? "flex" : "hidden"}`}
+            >
+              <PeriodControl
+                domain={escala}
+                periodo={state.periodo}
+                onChange={(de, ate) => dispatch({ type: "setPeriod", de, ate })}
+              />
+              <CategoryFilter
+                selected={state.categorias}
+                counts={contagem}
+                onToggle={(categoria) => dispatch({ type: "toggleCategory", categoria })}
+                onClear={() => dispatch({ type: "clearCategories" })}
+              />
+              {/* Em tela larga, "Limpar filtros" fica na linha dos rótulos: a barra
+                  não muda de altura quando ele aparece. */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 xl:flex-col xl:items-start xl:gap-y-1.5">
+                <span className="hidden h-4 items-center xl:flex">
+                  {filtrado && (
+                    <button
+                      type="button"
+                      onClick={() => dispatch({ type: "clearFilters" })}
+                      className={`-my-1 py-1 text-xs ${reset}`}
+                    >
+                      Limpar filtros
+                    </button>
+                  )}
+                </span>
+                <CopyLink path={comparisonHref(recorte)} />
                 {filtrado && (
                   <button
                     type="button"
                     onClick={() => dispatch({ type: "clearFilters" })}
-                    className={`-my-1 py-1 text-xs ${reset}`}
+                    className={`min-h-11 text-sm xl:hidden ${reset}`}
                   >
                     Limpar filtros
                   </button>
                 )}
-              </span>
-              <CopyLink path={comparisonHref(recorte)} />
-              {filtrado && (
-                <button
-                  type="button"
-                  onClick={() => dispatch({ type: "clearFilters" })}
-                  className={`min-h-11 text-sm xl:hidden ${reset}`}
-                >
-                  Limpar filtros
-                </button>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -286,143 +310,174 @@ function ComparisonView({ order, escala, dataDeCorte }: ComparisonViewProps) {
           Abrindo a consulta do endereço…
         </p>
 
-      <div className="page space-y-8 py-6 md:space-y-10 md:py-8" data-aguarda-consulta>
-        <section ref={lanes} aria-labelledby="titulo-faixas" className="space-y-3">
-          <h2 id="titulo-faixas" className="sr-only">
-            Linha do tempo das trajetórias
-          </h2>
-          <TrajectoryLanes
-            domain={escala}
-            dataDeCorte={dataDeCorte}
-            periodo={state.periodo}
-            hrefOf={hrefOf}
-            lanes={cobertos.map(({ trajetoria, coberto }) => {
-              const todos = filterEvents(data, { pessoaIds: [trajetoria.pessoa.id] });
-              const noRecorte = new Set(trajetoria.acontecimentos.map((item) => item.id));
-              return {
-                pessoa: trajetoria.pessoa,
-                acontecimentos: todos,
-                foraDoRecorte: new Set(todos.filter((item) => !noRecorte.has(item.id)).map((item) => item.id)),
-                mandatos: data.conjunto.mandatos.filter((item) => item.pessoaId === trajetoria.pessoa.id),
-                filiacoes: data.conjunto.filiacoes.filter((item) => item.pessoaId === trajetoria.pessoa.id),
-                coberto,
-                lacunas: listGaps(data, trajetoria.pessoa.id),
-              };
-            })}
-          />
-        </section>
+        <div className="page space-y-8 py-6 md:space-y-10 md:py-8">
+          {/* Parte 1: a trajetória, no recorte do endereço. */}
+          <section id="trajetoria" aria-label="Trajetória" className="scroll-mt-24 space-y-8 md:space-y-10" data-parte="trajetoria" hidden={!parte("trajetoria")}>
+            <div className="space-y-8 md:space-y-10" data-aguarda-consulta>
+              <section ref={lanes} aria-labelledby="titulo-faixas" className="space-y-3">
+                <h2 id="titulo-faixas" className="sr-only">
+                  Linha do tempo das trajetórias
+                </h2>
+                <TrajectoryLanes
+                  domain={escala}
+                  dataDeCorte={dataDeCorte}
+                  periodo={state.periodo}
+                  hrefOf={hrefOf}
+                  lanes={cobertos.map(({ trajetoria, coberto }) => {
+                    const todos = filterEvents(data, { pessoaIds: [trajetoria.pessoa.id] });
+                    const noRecorte = new Set(trajetoria.acontecimentos.map((item) => item.id));
+                    return {
+                      pessoa: trajetoria.pessoa,
+                      acontecimentos: todos,
+                      foraDoRecorte: new Set(todos.filter((item) => !noRecorte.has(item.id)).map((item) => item.id)),
+                      mandatos: data.conjunto.mandatos.filter((item) => item.pessoaId === trajetoria.pessoa.id),
+                      filiacoes: data.conjunto.filiacoes.filter((item) => item.pessoaId === trajetoria.pessoa.id),
+                      coberto,
+                      lacunas: listGaps(data, trajetoria.pessoa.id),
+                    };
+                  })}
+                />
+              </section>
 
-        {/* As faixas vêm antes: são a comparação. O que elas não dizem sozinhas fica
-            logo abaixo, antes das colunas de cada pessoa. */}
-        <section aria-labelledby="titulo-leitura" className="max-w-4xl space-y-2 text-sm">
-          <h2 id="titulo-leitura" className={sectionTitle}>
-            Como ler esta comparação
-          </h2>
-          <ul className="grid gap-x-8 gap-y-2 md:grid-cols-2">
-            <li>
-              <strong className="font-semibold">Mesmo recorte.</strong> O período ({periodoTexto}) e as
-              categorias valem para as duas trajetórias, na mesma escala de anos.
-            </li>
-            <li>
-              <strong className="font-semibold">Cargos diferentes.</strong> Cada pessoa aparece com os
-              cargos e as funções que tinha em cada época, com as datas de cada um. A tela não
-              equipara um cargo a outro.
-            </li>
-            <li data-leitura="cobertura">
-              <strong className="font-semibold">Cobertura diferente.</strong> A edição cobre{" "}
-              {cobertos
-                .map(({ trajetoria }) =>
-                  trajetoria.cobertura === null
-                    ? `${trajetoria.pessoa.nome} sem período declarado`
-                    : `${trajetoria.pessoa.nome} ${formatPeriod(trajetoria.cobertura.periodo)}`,
-                )
-                .join(" e ")}
-              .
-              {semCobertura.map(({ trajetoria, coberto }) => (
-                <span key={trajetoria.pessoa.id}>
-                  {" "}
-                  De {anos.de} a {Math.min(anos.ate, coberto!.de - 1)}, a trajetória de{" "}
-                  {trajetoria.pessoa.nome} está fora da cobertura: não foi pesquisada.
-                </span>
-              ))}
-            </li>
-            <li>
-              <strong className="font-semibold">Acervo, e não desempenho.</strong> A quantidade de
-              acontecimentos é a do acervo desta edição, que seleciona de 15 a 20 por pessoa. Ela não
-              mede atividade nem importância, e a tela não soma, não ordena e não dá nota.
-            </li>
-          </ul>
-        </section>
+              {/* As faixas vêm antes: são a comparação. O que elas não dizem sozinhas fica
+                  logo abaixo, antes das colunas de cada pessoa. */}
+              <section aria-labelledby="titulo-leitura" className="max-w-4xl space-y-2 text-sm">
+                <h2 id="titulo-leitura" className={sectionTitle}>
+                  Como ler esta comparação
+                </h2>
+                <ul className="grid gap-x-8 gap-y-2 md:grid-cols-2">
+                  <li>
+                    <strong className="font-semibold">Mesmo recorte.</strong> O período ({periodoTexto}) e as
+                    categorias valem para as duas trajetórias, na mesma escala de anos.
+                  </li>
+                  <li>
+                    <strong className="font-semibold">Cargos diferentes.</strong> Cada pessoa aparece com os
+                    cargos e as funções que tinha em cada época, com as datas de cada um. A tela não
+                    equipara um cargo a outro.
+                  </li>
+                  <li data-leitura="cobertura">
+                    <strong className="font-semibold">Cobertura diferente.</strong> A edição cobre{" "}
+                    {cobertos
+                      .map(({ trajetoria }) =>
+                        trajetoria.cobertura === null
+                          ? `${trajetoria.pessoa.nome} sem período declarado`
+                          : `${trajetoria.pessoa.nome} ${formatPeriod(trajetoria.cobertura.periodo)}`,
+                      )
+                      .join(" e ")}
+                    .
+                    {semCobertura.map(({ trajetoria, coberto }) => (
+                      <span key={trajetoria.pessoa.id}>
+                        {" "}
+                        De {anos.de} a {Math.min(anos.ate, coberto!.de - 1)}, a trajetória de{" "}
+                        {trajetoria.pessoa.nome} está fora da cobertura: não foi pesquisada.
+                      </span>
+                    ))}
+                  </li>
+                  <li>
+                    <strong className="font-semibold">Acervo, e não desempenho.</strong> A quantidade de
+                    acontecimentos é a do acervo desta edição, que seleciona de 15 a 20 por pessoa. Ela não
+                    mede atividade nem importância, e a tela não soma, não ordena e não dá nota.
+                  </li>
+                </ul>
+              </section>
 
-        {/* A comparação curta: os cargos de cada pessoa e o tipo de registro por cargo e por área. Vem depois das notas de leitura e antes das listas. */}
-        <ComparisonOverview colunas={colunasDoResumo} />
+              {/* A comparação curta: os cargos de cada pessoa e o tipo de registro por cargo e por área. Vem depois das notas de leitura e antes das listas. */}
+              <ComparisonOverview colunas={colunasDoResumo} />
 
-        {/* Em tela estreita as colunas ficam uma abaixo da outra: o atalho leva a cada uma. */}
-        <nav aria-label="Trajetórias nesta página" className="lg:hidden">
-          <ul className="flex flex-wrap gap-1.5">
-            {trajetorias.map(({ pessoa }) => (
-              <li key={pessoa.id}>
-                <a
-                  href={`#${columnId(pessoa.slug)}`}
-                  className="flex min-h-11 items-center border border-line-strong bg-raised px-3 text-sm no-underline hover:border-ink"
-                >
-                  {pessoa.nome}
-                  <span aria-hidden="true">&nbsp;↓</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+              {/* Em tela estreita as colunas ficam uma abaixo da outra: o atalho leva a cada uma. */}
+              <nav aria-label="Trajetórias nesta página" className="lg:hidden">
+                <ul className="flex flex-wrap gap-1.5">
+                  {trajetorias.map(({ pessoa }) => (
+                    <li key={pessoa.id}>
+                      <a href={`#${columnId(pessoa.slug)}`} className={chip}>
+                        {pessoa.nome}
+                        <span aria-hidden="true">&nbsp;↓</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
 
-        {/* Uma coluna por pessoa, com as mesmas seções na mesma ordem. Em tela
-            larga as seções das duas ficam na mesma altura, para a leitura paralela. */}
-        <div className="grid gap-x-10 gap-y-12 lg:grid-cols-2 lg:gap-y-7">
-          {cobertos.map(({ trajetoria, coberto, lacunas }) => (
-            <PersonColumn
-              key={trajetoria.pessoa.id}
-              data={data}
-              trajetoria={trajetoria}
-              compartilhados={compartilhados}
-              recorte={recorte}
-              anos={anos}
-              periodoTexto={periodoTexto}
-              coberto={coberto}
-              lacunas={lacunas}
-              hrefOf={hrefOf}
-            />
-          ))}
-        </div>
+              {/* Uma coluna por pessoa, com as mesmas seções na mesma ordem. Em tela
+                  larga as seções das duas ficam na mesma altura, para a leitura paralela. */}
+              <div className="grid gap-x-10 gap-y-12 lg:grid-cols-2 lg:gap-y-7">
+                {cobertos.map(({ trajetoria, coberto, lacunas }) => (
+                  <PersonColumn
+                    key={trajetoria.pessoa.id}
+                    data={data}
+                    trajetoria={trajetoria}
+                    compartilhados={compartilhados}
+                    recorte={recorte}
+                    anos={anos}
+                    periodoTexto={periodoTexto}
+                    coberto={coberto}
+                    lacunas={lacunas}
+                    hrefOf={hrefOf}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
 
-        {/* As decisões por tema: o mesmo tema, lado a lado, com a instituição e o cargo de cada decisão à vista. Não entra no recorte de anos. */}
-        <section id="decisoes" aria-labelledby="titulo-decisoes" className="scroll-mt-24 space-y-5 border-t border-ink pt-8" data-secao="decisoes" data-quantas={totalDeDecisoes}>
-          <div className="max-w-3xl space-y-2">
-            <p className="eyebrow text-ink-soft">Decisões documentadas, por tema</p>
-            <h2 id="titulo-decisoes" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
-              Votos, atos e atuação legislativa no mesmo tema
-            </h2>
-            <p className="text-sm text-ink-soft" data-aviso-amostra>
-              {SAMPLE_NOTICE} Esta seção não segue o recorte de anos acima: mostra a amostra inteira da edição.
-            </p>
-          </div>
-          <DecisionsByTheme colunas={colunasDeDecisoes} headingLevel={3} hrefOf={decisionHref} />
-        </section>
-
-        {/* As propostas por área: o que o documento de cada candidatura diz que pretende fazer. Não é decisão, e fica em seção própria. */}
-        {haPropostas && (
-          <section id="propostas" aria-labelledby="titulo-propostas" className="scroll-mt-24 space-y-5 border-t border-ink pt-8" data-secao="propostas">
+          {/* Parte 2: as decisões por tema, com a instituição e o cargo de cada decisão à vista. Não entra no recorte de anos. */}
+          <section id="decisoes" aria-labelledby="titulo-decisoes" className="scroll-mt-24 space-y-5" data-secao="decisoes" data-quantas={totalDeDecisoes} hidden={!parte("decisoes")}>
             <div className="max-w-3xl space-y-2">
-              <p className="eyebrow text-ink-soft">Propostas registradas no TSE, por área</p>
-              <h2 id="titulo-propostas" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
-                O que cada documento propõe
+              <p className="eyebrow text-ink-soft">Decisões documentadas, por tema</p>
+              <h2 id="titulo-decisoes" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
+                Votos, atos e atuação legislativa no mesmo tema
               </h2>
-              <p className="text-sm text-ink-soft" data-aviso-de-proposta>
-                {PROPOSAL_NOTICE} {PROPOSAL_SAMPLE_NOTICE} Esta seção não segue o recorte de anos acima.
+              <p className="text-sm text-ink-soft" data-aviso-amostra>
+                {SAMPLE_NOTICE} Esta seção não segue o recorte de anos acima: mostra a amostra inteira da edição.
               </p>
             </div>
-            <ProposalsByTheme colunas={colunasDePropostas} headingLevel={3} />
+            {gruposDeDecisoes.length > 0 && (
+              <nav aria-label="Temas das decisões" className="space-y-2" data-escolha-de-tema="decisoes">
+                <p className={sectionTitle}>Comece pelo tema</p>
+                <ul className="flex flex-wrap gap-1.5">
+                  {gruposDeDecisoes.map((grupo) => (
+                    <li key={grupo.chave}>
+                      <a href={`#tema-${grupo.chave}`} className={chip} data-tema-link={grupo.chave}>
+                        {grupo.titulo}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-ink-soft">
+                  Cada cartão traz a pessoa, o cargo e a instituição, a data, o que foi decidido e sobre o quê, e abre no registro completo, com as fontes.
+                </p>
+              </nav>
+            )}
+            <DecisionsByTheme colunas={colunasDeDecisoes} headingLevel={3} detalhe="expansivel" hrefOf={decisionHref} />
           </section>
-        )}
-      </div>
+
+          {/* Parte 3: as propostas por área: o que o documento de cada candidatura diz que pretende fazer. Não é decisão, e fica em parte própria. */}
+          {haPropostas && (
+            <section id="propostas" aria-labelledby="titulo-propostas" className="scroll-mt-24 space-y-5" data-secao="propostas" hidden={!parte("propostas")}>
+              <div className="max-w-3xl space-y-2">
+                <p className="eyebrow text-ink-soft">Propostas registradas no TSE, por área</p>
+                <h2 id="titulo-propostas" className="font-serif text-[2rem] font-medium leading-none tracking-tight md:text-4xl">
+                  O que cada documento propõe
+                </h2>
+                <p className="text-sm text-ink-soft" data-aviso-de-proposta>
+                  {PROPOSAL_NOTICE} {PROPOSAL_SAMPLE_NOTICE} Esta seção não segue o recorte de anos acima.
+                </p>
+              </div>
+              <nav aria-label="Áreas das propostas" className="space-y-2" data-escolha-de-tema="propostas">
+                <p className={sectionTitle}>Comece pela área</p>
+                <ul className="flex flex-wrap gap-1.5">
+                  {TEMAS.map((tema) => (
+                    <li key={tema}>
+                      <a href={`#propostas-${tema}`} className={chip} data-area-link={tema}>
+                        {TEMA_LABELS[tema]}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <ProposalsByTheme colunas={colunasDePropostas} headingLevel={3} />
+            </section>
+          )}
+        </div>
       </div>
     </>
   );

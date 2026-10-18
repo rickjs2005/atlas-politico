@@ -72,7 +72,7 @@ test("entradas: a do atlas e a do jogo, para quem chega e para quem volta", asyn
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await shot(page, "01-entrada-do-atlas--computador");
-  await page.goto("/jogo/");
+  await page.goto("/jogo/trajetorias/");
   await expect(page.locator("[data-previa-mundo]")).toHaveCount(2);
   await page.waitForLoadState("networkidle");
   await shot(page, "02-entrada-do-jogo--computador");
@@ -82,7 +82,7 @@ test("entradas: a do atlas e a do jogo, para quem chega e para quem volta", asyn
   await abrir(page, "lula", 1);
   await lerESeguir(page);
   await lerESeguir(page);
-  await page.goto("/jogo/");
+  await page.goto("/jogo/trajetorias/");
   await expect(page.locator('[data-escolha="lula"]')).toHaveAttribute("data-situacao", "em-andamento");
   await page.waitForLoadState("networkidle");
   await shot(page, "03-entrada-do-jogo-de-quem-volta--computador");
@@ -95,7 +95,7 @@ test("entradas: a do atlas e a do jogo, para quem chega e para quem volta", asyn
   await movel.page.goto("/");
   await movel.page.waitForLoadState("networkidle");
   await shot(movel.page, "01-entrada-do-atlas--celular");
-  await movel.page.goto("/jogo/");
+  await movel.page.goto("/jogo/trajetorias/");
   await expect(movel.page.locator("[data-previa-mundo]")).toHaveCount(2);
   await movel.page.waitForLoadState("networkidle");
   await shot(movel.page, "02-entrada-do-jogo--celular");

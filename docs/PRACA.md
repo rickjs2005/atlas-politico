@@ -196,3 +196,59 @@ Feita em 17 de outubro de 2026, na fase seguinte à primeira sessão, a pedido d
 - Capturas em `docs/capturas/praca/`: 48 imagens da saída estática (15 novas: 25 e 26 refeitas com a Lourdes; 28 a 36 da segunda sessão, com o personagem andando da Câmara à banca, ao arquivo, à Câmara e ao mural; 37 a 40 do fim da edição; 07 e 08 do celular com a ata). Todas foram abertas e conferidas; três foram refeitas depois de dois ajustes de texto vistos nelas ("o voto no senado" com a casa em minúscula; a frase de mudança repetindo "a ata está lavrada").
 
 **Limites, os mesmos da primeira sessão:** nenhum aparelho real, ninguém jogou, nenhum número de desempenho de usuário, sem revisão humana das falas e das perguntas novas, sem passagem de acessibilidade nas telas da praça. A meta de tempo da segunda sessão (dez minutos) é de projeto: ela tem cinco tarefas e três idas ao arquivo. O caminho da credencial é único (só o Teodoro a tem), e o teste e as capturas o percorrem; se uma pessoa não falar com a Lourdes, o cartão diz que a mesa pede a credencial, mas não diz onde ela está: é uma escolha de desenho (a informação só se descobre explorando), a conferir com gente.
+
+## 10. O redesign e a missão com tutorial (D-155)
+
+Em 18 de outubro de 2026 o responsável pediu um redesign do atlas em volta da praça e uma evolução da jogabilidade, com a pilha mantida e sem commit, push ou deploy. A decisão inteira está em [DECISIONS.md](DECISIONS.md), D-155; esta seção diz o que mudou na praça.
+
+### A missão completa, do pedido à mudança
+
+O pedido foi uma missão inteira, em ordem: receber a pergunta, procurar a pista, examinar o documento, apontar a evidência, publicar a resposta e observar a mudança. A praça já tinha esse ciclo; o que faltava era ensinar a ação documentada antes da leitura jurídica, dizer um passo por vez e variar a atividade. O ciclo, como está:
+
+| Etapa | Onde | O que a tela mostra |
+| --- | --- | --- |
+| Receber a pergunta | Mural | A pauta aceita; o cartão passa a dizer o objetivo dela |
+| Procurar a pista | Padaria, banca, bilhete | A Zefa diz a gaveta; os recortes da banca dão a data; o bilhete dá a chave |
+| Examinar o documento | Arquivo | O documento inteiro na gaveta, com os campos nomeados, as fontes e as ressalvas; a cópia vai para o caderno |
+| Apontar a evidência | Mural, montar a nota | Os campos que a pauta pede, preenchidos só com as cópias levadas; o erro diz a inconsistência, campo a campo, e deixa tentar de novo |
+| Publicar a resposta | Mural | O carimbo, a nota fixada com o documento e as fontes, a reação de quem perguntou |
+| Observar a mudança | Praça | Uma nota a mais no mural da cena; a corrente da Câmara cai com a primeira sessão; o selo novo no caderno |
+
+### Os quatro tipos de pauta
+
+`Pauta.tipo` (`src/lib/praca/tipos.ts`), com a conferência de cada um em `regras.ts` (`camposDaPauta`, `notaCerta`, `fixarNota`):
+
+| Tipo | O que pede | Onde está | Para que serve |
+| --- | --- | --- | --- |
+| `campo` | A data do documento, copiada do campo Data | Primeira sessão, uma por pessoa, antes da pauta de nota: a lei estadual de 2006 sobre laqueadura e vasectomia gratuitas (autoria do deputado) e a lei federal de 2006 sobre violência doméstica e familiar contra a mulher (sanção do presidente) | O tutorial: a pessoa aprende a abrir a gaveta, copiar e conferir um campo, sem interpretar nada |
+| `nota` | O documento, quando e o que ele registra | Primeira sessão, uma por pessoa (o veto do regime fiscal; as duas PECs) | A nota de três campos, como em D-153 |
+| `ordem` | Dois documentos na ordem das datas | Segunda sessão, uma por pessoa (a medida provisória de 2003 e a lei de 2004 do Bolsa Família; a lei estadual de 2003 e a de 2011) | Ordenar datas: o erro diz quando os dois lugares têm o mesmo documento, ou qual data o documento posto em primeiro lugar tem |
+| `natureza` | O documento e o que ele registra (voto, veto, sanção, autoria) | Segunda sessão, uma por pessoa (a lei de 2025 sancionada sem veto; o voto contra de 2024) | Distinguir a natureza do ato, com o campo Ação do documento |
+
+Toda pauta tem `reacao`, a fala de quem perguntou quando a nota certa é fixada; as reações passam pela validação do Escrivão como as outras falas, e nenhuma diz o que a pessoa retratada fez. O erro de cada tipo é explicado com o documento ou o campo escolhido, nunca com a resposta certa.
+
+### Um passo por vez, descobertas e selos
+
+- `passos.ts`: `passoDeAgora(progresso, conteudo)` devolve a lista de passos da pauta aberta (aceitar, achar a chave quando a gaveta é do Senado, copiar o documento, montar a nota) ou da matéria (a credencial, as cópias, lavrar a ata), com o índice do passo atual e quem pediu. O cartão da praça (`Hud.tsx`) mostra "Passo n de m" com a instrução, e o caderno lista todos, com os feitos riscados. Uma instrução por vez; o objetivo inteiro continua no caderno.
+- `selos.ts`: `descobertas()` conta gavetas abertas, moradores ouvidos, documentos copiados e notas no mural; `selos()` dá os oito selos (primeira nota, chave de leitura, chave do Senado, mural da primeira sessão, porta da Câmara, credencial, ata lavrada, edição respondida) e `selosNovos()` diz qual acabou de chegar, para a nota fixada o anunciar. Tudo é calculado do progresso: nenhuma chave nova no navegador, nenhuma pontuação, nenhum ranking.
+
+### A cena, o modo leve e a lista
+
+A hora azul (`cores.ts`, `scene.ts`): céu `#1f3038`, luz dos postes `#ffd58a`, névoa de 30 a 60 unidades, grama e calçada mais escuras; oito notas no mural em duas fileiras. A cena fala com a tela só por `PracaEvento` (`perto`, com o lugar), e `useCena.ts` a cria quando a pessoa entra, a para enquanto uma janela está aberta, a descarta ao sair (laço parado, recursos soltos, contexto perdido) e a recria ao voltar, com a posição guardada. O **modo leve** (sem sombras, sem antialias, pixel ratio 1, sem as luzes dos postes, 22 árvores em vez de todas) é uma preferência da entrada e do caderno, e entra sozinho em aparelho com pouca memória ou poucos núcleos (`aparelhoFraco`). A **lista em vez da cena** também é preferência, guardada em `atlas-politico:praca:preferencias`: os mesmos lugares, as mesmas janelas e as mesmas missões, e é o que a praça mostra quando o WebGL falha. O progresso continua em `atlas-politico:praca`, no formato 1.
+
+### Controles
+
+Setas ou W A S D para andar; E ou Enter para agir no lugar próximo; Esc fecha a janela e devolve o foco ao botão de ação; joystick no toque; nada depende de arrastar. A tecla é assinada uma vez e lê o estado de agora de uma referência atualizada antes da pintura (`useLayoutEffect`): com o WebGL por software, um quadro lento atrasava o efeito comum e a tecla caía no vazio logo depois de o botão aparecer, o que a jornada do teclado reproduzia.
+
+### Validação
+
+**Verificado nesta máquina, na árvore final, em 18 de outubro de 2026:**
+
+- `npm run check` (lint, typecheck, `vitest`, build, `verify:export`): sem erro; 48 arquivos e 865 testes de regra, 23 em `tests/praca.test.ts` (as sessões com os quatro tipos, as oito pautas, a conferência do tutorial, da ordem e da natureza, os passos, os selos, o progresso); build com 60 páginas HTML e 360 arquivos.
+- `npm run test:export`: 38 passando, depois de corrigir um endereço do jogo que ainda apontava `/jogo/` como a entrada da trilha.
+- Jornadas sobre a exportação (`--project=jornadas`, um arquivo por vez): 278 passando (praça 7, comparação 25, jogo 72, páginas 30, acabamento 31, prévia 28, investigação 5, cidade 2, linha do tempo 42, mapa 36). A praça também passa no servidor de desenvolvimento (7). As jornadas da abertura foram reescritas para a entrada nova: as duas ações e o começo da prévia na primeira tela nas quatro larguras, sem canvas na entrada; os dois cartões com o mesmo tamanho; em tela estreita as ações antes dos números da edição.
+- `scripts/capturas-redesign.mjs`: 84 capturas em `docs/capturas/redesign/` (18 telas e 3 páginas inteiras em cada uma das larguras 360, 390, 768 e 1440), sem erro de página, sem erro de console e sem rolagem lateral; todas abertas e conferidas em folhas de contato.
+- `tests/export/praca.capture.ts`: a rodada foi interrompida: o Claude Code encerrou os processos por falta de memória na máquina (8 GB), com o primeiro roteiro no meio (18 imagens gravadas e depois restauradas, para a pasta não misturar dois desenhos). As 48 imagens de `docs/capturas/praca/` são as de 17 de outubro, anteriores à hora azul, às oito notas e ao cartão com o passo de agora. Refazer com `npx playwright test -c playwright.export.config.ts --project=capturas praca.capture -g "<nome do teste>"`, um teste por vez, com o servidor de prévia reiniciado depois do build.
+- `npm run audit:a11y`, agora com o hub, a entrada das trajetórias, o Explorar, a entrada da praça e o mural em lista: não rodou nesta rodada, pelo mesmo motivo (a passagem vinha na mesma cadeia). O roteiro ganhou as telas; a medição fica para a próxima rodada ou para a verificação contínua do GitHub, que a roda a cada push. As jornadas da abertura também não foram repetidas no servidor de desenvolvimento (só sobre a exportação).
+
+**Limites, ditos como são:** nenhum aparelho real (o celular é o Chromium emulado, com toque); o 3D só foi visto com WebGL por software, sem placa, e nenhum número de desempenho de usuário existe; ninguém jogou o tutorial, as pautas de ordem e de natureza, os passos e os selos (T-23, T-31); sem revisão humana das perguntas, das reações e dos nomes dos selos (T-25); a passagem de acessibilidade não rodou nesta rodada, e mesmo quando rodar cobre só a entrada da praça e o mural em lista, não a cena nem as outras janelas; `GameShell.tsx` da trilha não foi dividido (T-29); sem áudio (T-30). Nenhum fato, fonte ou revisão humana novos.

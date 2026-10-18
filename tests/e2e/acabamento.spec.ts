@@ -63,39 +63,44 @@ const fontSize = (alvo: Locator) => alvo.evaluate((no) => Number.parseFloat(getC
 
 test.describe("abertura", () => {
   for (const [nome, tela] of Object.entries(TELAS)) {
-    test(`título, proposta e os dois acessos cabem na primeira tela: ${nome}`, async ({ page }) => {
+    test(`convite, as duas ações e o começo da prévia cabem na primeira tela: ${nome}`, async ({ page }) => {
       await page.setViewportSize(tela);
       await page.goto("/");
 
+      // D-155: a entrada abre no palco com o convite, as duas ações e a prévia da praça. As duas ações inteiras na primeira tela, em qualquer largura.
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("Atlas Político");
+      const comecar = page.locator("a[data-comecar-investigacao]");
+      const comparar = page.locator("a[data-comparar-candidatos]");
+      await expect(comecar).toHaveText("Começar investigação");
+      await expect(comecar).toHaveAttribute("href", "/praca/");
+      await expect(comparar).toHaveText("Comparar candidatos");
+      await expect(comparar).toHaveAttribute("href", "/comparar/");
+      for (const caixa of await Promise.all([comecar, comparar].map(async (botao) => (await botao.boundingBox())!))) {
+        expect(caixa.y + caixa.height, "base da ação").toBeLessThanOrEqual(tela.height);
+      }
+      // A prévia começa na primeira tela: é leve (um SVG embutido), e não pede o mundo 3D.
+      const previa = (await page.locator("[data-previa-da-praca]").boundingBox())!;
+      expect(previa.y, "topo da prévia").toBeLessThan(tela.height);
+      expect(await page.locator("canvas").count(), "a entrada não desenha cena").toBe(0);
+
+      // Mais abaixo, na folha, os dois perfis com o mesmo tamanho, lado a lado, cada um com o acesso ao jogo.
       const acessos = page.getByRole("region", { name: "Escolha uma trajetória" });
       const cartoes = acessos.locator("a[data-cartao-perfil]");
       await expect(cartoes).toHaveCount(2);
-      // O jogo é o segundo acesso de cada perfil, logo abaixo do cartão e também na primeira tela.
-      const jogar = acessos.locator("a[data-jogar-entrada]");
-      await expect(jogar).toHaveCount(2);
-      for (const caixa of await Promise.all((await jogar.all()).map(async (botao) => (await botao.boundingBox())!))) {
-        expect(caixa.y + caixa.height, "base do acesso ao jogo").toBeLessThanOrEqual(tela.height);
-      }
-
+      await expect(acessos.locator("a[data-jogar-entrada]")).toHaveCount(2);
       const caixas = await Promise.all((await cartoes.all()).map(async (cartao) => (await cartao.boundingBox())!));
-      for (const caixa of caixas) {
-        // O cartão inteiro, com o nome e a chamada, sem rolar.
-        expect(caixa.y + caixa.height, "base do cartão").toBeLessThanOrEqual(tela.height);
-      }
-      // Os dois perfis com o mesmo tamanho, lado a lado.
       expect(Math.round(caixas[0]!.width)).toBe(Math.round(caixas[1]!.width));
       expect(Math.round(caixas[0]!.height)).toBe(Math.round(caixas[1]!.height));
       expect(Math.round(caixas[0]!.y)).toBe(Math.round(caixas[1]!.y));
     });
   }
 
-  test("em tela estreita os acessos vêm antes dos números da edição", async ({ page }) => {
+  test("em tela estreita as duas ações vêm antes dos números da edição", async ({ page }) => {
     await page.setViewportSize(TELAS.celular);
     await page.goto("/");
-    const cartoes = (await page.getByRole("region", { name: "Escolha uma trajetória" }).boundingBox())!;
+    const acao = (await page.locator("a[data-comecar-investigacao]").boundingBox())!;
     const numeros = (await page.getByText("Recorte", { exact: true }).boundingBox())!;
-    expect(cartoes.y).toBeLessThan(numeros.y);
+    expect(acao.y).toBeLessThan(numeros.y);
   });
 
   test("os dois retratos usam a mesma moldura e versões da mesma largura", async ({ page }) => {

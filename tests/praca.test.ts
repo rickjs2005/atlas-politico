@@ -1,10 +1,10 @@
-// A Praça do Mural (src/lib/praca, D-153 e D-154): o conteúdo das gavetas sai
-// só do conjunto publicado; as perguntas do mural e a matéria da mesa só
-// escrevem anos que estão nos documentos apontados; os dois documentos da
-// matéria citam a mesma proposição; as conversas passam pela validação do
-// Escrivão; e as regras (sessões, gavetas, chave, credencial, cópias, nota
-// montada, erro por campo, ata lado a lado, Câmara, fim da edição, progresso
-// salvo) são puras.
+// A Praça do Mural (src/lib/praca, D-153, D-154 e D-155): o conteúdo das
+// gavetas sai só do conjunto publicado; as perguntas do mural e a matéria da
+// mesa só escrevem anos que estão nos documentos apontados; os dois documentos
+// da matéria citam a mesma proposição; as conversas passam pela validação do
+// Escrivão; e as regras (sessões, gavetas, chave, credencial, cópias, os
+// quatro jeitos de responder com o erro explicado por campo, ata lado a lado,
+// Câmara, fim da edição, passos, selos, progresso salvo) são puras.
 
 import { describe, expect, it } from "vitest";
 
@@ -12,6 +12,7 @@ import { readSources, resolvePaths } from "@/lib/content/sources";
 import { PROFILES } from "@/lib/domain/profiles";
 import { validateDialog } from "@/lib/game/escrivao";
 import { buildPracaContent } from "@/lib/praca/conteudo";
+import { passoDeAgora, passosDaMateria, passosDaPauta } from "@/lib/praca/passos";
 import { BILHETE, CONVERSAS, ITENS, ITENS_POR_NO, LUGARES, MATERIAS, MORADORES, SESSOES } from "@/lib/praca/praca";
 import {
   abrirMateria,
@@ -20,10 +21,12 @@ import {
   ataCerta,
   ataLavrada,
   camaraAberta,
+  camposDaPauta,
   conversaDe,
   conversar,
   currentNode,
   devolverCopia,
+  documentosDaPauta,
   fimDaEdicao,
   fixarNota,
   gavetaAberta,
@@ -46,16 +49,20 @@ import {
   sessaoDeAgora,
   situacaoDaMateria,
   startDialog,
+  tipoDaPauta,
   todasPublicadas,
   type Roteiro,
 } from "@/lib/praca/regras";
-import type { ProgressoDaPraca } from "@/lib/praca/tipos";
+import { descobertas, selos, selosNovos } from "@/lib/praca/selos";
+import type { Pauta, ProgressoDaPraca } from "@/lib/praca/tipos";
 import { buildAtlasData } from "@/lib/publication/build";
 
 const data = buildAtlasData(readSources(resolvePaths())).data!;
 const conteudo = buildPracaContent(data);
 const [sessao1, sessao2] = conteudo.sessoes as [(typeof conteudo.sessoes)[number], (typeof conteudo.sessoes)[number]];
 const materia = conteudo.materias[0]!;
+const pautaDe = (id: string): Pauta => conteudo.pautas.find((pauta) => pauta.id === id)!;
+const gavetaDe = (id: string) => conteudo.gavetas.find((gaveta) => gaveta.id === id)!;
 
 /** Os anos escritos em um texto estão nos documentos apontados (sem as fontes e a situação editorial). */
 function anosNosDocumentos(texto: string, ids: readonly string[], onde: string) {
@@ -66,14 +73,17 @@ function anosNosDocumentos(texto: string, ids: readonly string[], onde: string) 
   for (const ano of anosEm(texto)) expect(docs.includes(ano), `${onde}: o ano ${ano} não está nos documentos apontados`).toBe(true);
 }
 
+/** Responder uma pauta do jeito certo, com as cópias que ela pede. */
+function responder(progresso: ProgressoDaPraca, pauta: Pauta): ProgressoDaPraca {
+  let atual = abrirPauta(progresso, pauta.id);
+  for (const id of documentosDaPauta(pauta)) atual = levarCopia(atual, id, conteudo.gavetas);
+  return fixarNota(atual, pauta, notaCerta(pauta, conteudo.documentos)!, conteudo.documentos).progresso;
+}
+
 /** O progresso com a primeira sessão concluída: a Câmara aberta. */
 function primeiraSessaoConcluida(): ProgressoDaPraca {
   let progresso = pegarItem(pegarItem(progressoInicial(), "bilhete"), "chave-senado");
-  for (const pauta of pautasDaSessao(sessao1, conteudo)) {
-    progresso = abrirPauta(progresso, pauta.id);
-    progresso = levarCopia(progresso, pauta.resposta, conteudo.gavetas);
-    progresso = fixarNota(progresso, pauta, notaCerta(pauta, conteudo.documentos)!, conteudo.documentos).progresso;
-  }
+  for (const pauta of pautasDaSessao(sessao1, conteudo)) progresso = responder(progresso, pauta);
   return progresso;
 }
 
@@ -113,15 +123,19 @@ describe("conteúdo da praça", () => {
     expect(conteudo.recortes.filter((recorte) => recorte.pessoa === "ambas").map((recorte) => recorte.id)).toEqual(["eleicao-2026-primeiro-turno"]);
   });
 
-  it("as sessões: a primeira com uma pauta por pessoa, a segunda com duas por pessoa e a matéria da mesa; toda pauta e matéria escrita existe no conteúdo", () => {
+  it("as sessões: a primeira com o tutorial e a nota, uma de cada por pessoa; a segunda com a natureza e a ordem, uma de cada por pessoa, e a matéria da mesa", () => {
     expect(conteudo.sessoes.map((sessao) => sessao.id)).toEqual(SESSOES.map((sessao) => sessao.id));
     expect(sessao1.abreCom).toBeNull();
     expect(sessao2.abreCom).toBe(sessao1.id);
     expect(sessao2.abreLugar).toBe("camara");
-    expect(pautasDaSessao(sessao1, conteudo).map((pauta) => pauta.pessoa).sort()).toEqual(PROFILES.map((perfil) => perfil.slug).sort());
-    for (const perfil of PROFILES) expect(pautasDaSessao(sessao2, conteudo).filter((pauta) => pauta.pessoa === perfil.slug), perfil.slug).toHaveLength(2);
-    expect(conteudo.pautas).toHaveLength(6);
-    expect(conteudo.pautas.map((pauta) => pauta.sessao)).toEqual(["mural", "mural", "camara", "camara", "camara", "camara"]);
+    for (const perfil of PROFILES) {
+      expect(pautasDaSessao(sessao1, conteudo).filter((pauta) => pauta.pessoa === perfil.slug).map(tipoDaPauta).sort(), perfil.slug).toEqual(["campo", "nota"]);
+      expect(pautasDaSessao(sessao2, conteudo).filter((pauta) => pauta.pessoa === perfil.slug).map(tipoDaPauta).sort(), perfil.slug).toEqual(["natureza", "ordem"]);
+    }
+    // O tutorial vem antes de qualquer pauta de leitura: as duas primeiras do mural só pedem a data.
+    expect(pautasDaSessao(sessao1, conteudo).slice(0, 2).map(tipoDaPauta)).toEqual(["campo", "campo"]);
+    expect(conteudo.pautas).toHaveLength(8);
+    expect(conteudo.pautas.map((pauta) => pauta.sessao)).toEqual(["mural", "mural", "mural", "mural", "camara", "camara", "camara", "camara"]);
     expect(materiaDaSessao(sessao2, conteudo)?.id).toBe(MATERIAS[0]!.id);
     expect(conteudo.materias).toHaveLength(MATERIAS.length);
     // Cada sessão pede um item diferente, e o item existe.
@@ -131,27 +145,38 @@ describe("conteúdo da praça", () => {
     for (const pauta of conteudo.pautas) expect(conteudo.sessoes.some((sessao) => sessao.pautas.includes(pauta.id)), pauta.id).toBe(true);
     const gavetas1 = pautasDaSessao(sessao1, conteudo).map((pauta) => pauta.gaveta);
     for (const pauta of pautasDaSessao(sessao2, conteudo)) expect(gavetas1, pauta.id).not.toContain(pauta.gaveta);
+    // O tutorial não depende de chave: as gavetas dele abrem direto.
+    for (const pauta of conteudo.pautas.filter((item) => tipoDaPauta(item) === "campo")) expect(gavetaDe(pauta.gaveta).precisa, pauta.id).toBeNull();
   });
 
-  it("cada pauta aponta um documento na gaveta da pessoa certa, os anos da pergunta estão nos documentos, e a pergunta não cita nome nem partido", () => {
+  it("cada pauta aponta um documento na gaveta da pessoa certa, os anos da pergunta estão nos documentos, a pergunta não cita nome nem partido, e cada uma tem reação de quem perguntou", () => {
     for (const pauta of conteudo.pautas) {
       const doc = conteudo.documentos[pauta.resposta]!;
       expect(doc, pauta.id).toBeDefined();
-      const gaveta = conteudo.gavetas.find((item) => item.id === pauta.gaveta)!;
+      const gaveta = gavetaDe(pauta.gaveta);
       expect(gaveta.documentos, pauta.id).toContain(pauta.resposta);
       expect(gaveta.pessoa, pauta.id).toBe(pauta.pessoa);
       anosNosDocumentos(`${pauta.pergunta} ${pauta.objetivo}`, [pauta.resposta, ...pauta.comparar], pauta.id);
       for (const id of pauta.comparar) expect(conteudo.documentos[id]?.pessoaId, `${pauta.id} compara ${id}`).toBe(doc.pessoaId);
-      expect(pauta.comparar.length, pauta.id).toBeGreaterThan(0);
-      // A pergunta não cita pessoa, partido nem lado: fala do cargo.
-      expect(pauta.pergunta).not.toMatch(/\b(lula|bolsonaro|fl[aá]vio|pt|pl)\b/i);
-      expect(pauta.pergunta).not.toMatch(/[—–]/);
+      if (tipoDaPauta(pauta) !== "campo") expect(pauta.comparar.length, pauta.id).toBeGreaterThan(0);
+      // A pergunta e a reação não citam pessoa, partido nem lado: falam do cargo e do papel.
+      expect(`${pauta.pergunta} ${pauta.reacao}`).not.toMatch(/\b(lula|bolsonaro|fl[aá]vio|pt|pl)\b/i);
+      expect(`${pauta.pergunta} ${pauta.objetivo} ${pauta.reacao}`).not.toMatch(/[—–]/);
+      expect(pauta.reacao.length, pauta.id).toBeGreaterThan(20);
       if (pauta.detalhe === "dispositivos") expect(doc.natureza, pauta.id).toBe("ato");
-      // A resposta se distingue dos comparados pelo campo Ação ou pela data: a nota tem como errar e como acertar.
+      // A resposta tem como errar e como acertar: a resposta se distingue dos comparados pelo campo Ação ou pela data.
       const certa = notaCerta(pauta, conteudo.documentos)!;
-      for (const id of pauta.comparar) {
-        const outro = conteudo.documentos[id]!;
-        expect(certa.quando !== `data:${outro.data.valor}` || certa.registro !== `acao:${outro.titulo}`, `${pauta.id} x ${id}`).toBe(true);
+      expect(certa, pauta.id).not.toBeNull();
+      if (tipoDaPauta(pauta) === "ordem") {
+        const [primeiro, segundo] = [conteudo.documentos[certa.primeiro!]!, conteudo.documentos[certa.segundo!]!];
+        expect(primeiro.data.valor < segundo.data.valor, pauta.id).toBe(true);
+        expect(new Set([primeiro.id, segundo.id])).toEqual(new Set([pauta.resposta, ...pauta.comparar]));
+      } else if (tipoDaPauta(pauta) !== "campo") {
+        expect(certa.documento).toBe(pauta.resposta);
+        for (const id of pauta.comparar) {
+          const outro = conteudo.documentos[id]!;
+          expect(doc.data.valor !== outro.data.valor || certa.registro !== `acao:${outro.titulo}`, `${pauta.id} x ${id}`).toBe(true);
+        }
       }
     }
   });
@@ -164,7 +189,7 @@ describe("conteúdo da praça", () => {
     for (const [i, lado] of materia.lados.entries()) {
       const doc = docs[i]!;
       expect(doc, lado.id).toBeDefined();
-      const gaveta = conteudo.gavetas.find((item) => item.id === lado.gaveta)!;
+      const gaveta = gavetaDe(lado.gaveta);
       expect(gaveta.documentos, lado.id).toContain(lado.documento);
       expect(gaveta.pessoa, lado.id).toBe(lado.pessoa);
       expect(doc.proposicoes.map((proposicao) => proposicao.id), lado.id).toContain(materia.proposicao);
@@ -190,8 +215,11 @@ describe("conteúdo da praça", () => {
 });
 
 describe("regras da praça", () => {
-  const [pauta1, pauta2] = conteudo.pautas as [(typeof conteudo.pautas)[number], (typeof conteudo.pautas)[number]];
-  const gavetaDe = (id: string) => conteudo.gavetas.find((gaveta) => gaveta.id === id)!;
+  const tutorial = pautaDe("primeira-data-planalto");
+  const pauta1 = pautaDe("veto-regime-fiscal");
+  const pauta2 = pautaDe("duas-pecs");
+  const natureza = pautaDe("duas-leis-de-2025");
+  const ordem = pautaDe("bolsa-familia-medida");
 
   it("começa sem pauta aberta, com o objetivo de ler o mural; abrir uma pauta a torna o objetivo", () => {
     const inicio = progressoInicial();
@@ -237,6 +265,32 @@ describe("regras da praça", () => {
     expect(comLeitura.progresso.marcas).toContain("leitura");
   });
 
+  it("o tutorial: um campo só, a data; sem a cópia não há o que conferir; a data de outra cópia é explicada pelo documento de onde veio", () => {
+    expect(tipoDaPauta(tutorial)).toBe("campo");
+    expect(documentosDaPauta(tutorial)).toEqual([tutorial.resposta]);
+    let progresso = abrirPauta(progressoInicial(), tutorial.id);
+    expect(camposDaPauta(tutorial, progresso, conteudo.documentos).map((campo) => campo.chave)).toEqual(["data"]);
+    // Sem a cópia: o erro manda ao arquivo, com a gaveta.
+    const semCopia = fixarNota(progresso, tutorial, { data: "data:2006-08-07" }, conteudo.documentos);
+    expect(semCopia.certo).toBe(false);
+    expect(semCopia.erros[0]!.mensagem).toContain("Leve do arquivo");
+    expect(semCopia.progresso).toBe(progresso);
+    // Com a cópia do pedido e a de outro documento, a data do outro é explicada pelo título dele.
+    progresso = levarCopia(progresso, tutorial.resposta, conteudo.gavetas);
+    progresso = levarCopia(progresso, pauta1.resposta, conteudo.gavetas);
+    const certa = notaCerta(tutorial, conteudo.documentos)!;
+    expect(camposDaPauta(tutorial, progresso, conteudo.documentos)[0]!.opcoes).toHaveLength(2);
+    const errada = fixarNota(progresso, tutorial, { data: `data:${conteudo.documentos[pauta1.resposta]!.data.valor}` }, conteudo.documentos);
+    expect(errada.certo).toBe(false);
+    expect(errada.erros).toHaveLength(1);
+    expect(errada.erros[0]!.campo).toBe("data");
+    expect(errada.erros[0]!.mensagem).toContain(conteudo.documentos[pauta1.resposta]!.titulo);
+    expect(errada.erros[0]!.mensagem).not.toContain(certa.data!.slice(5));
+    const publicada = fixarNota(errada.progresso, tutorial, certa, conteudo.documentos);
+    expect(publicada.certo).toBe(true);
+    expect(publicada.progresso.pautas[tutorial.id]).toEqual({ situacao: "publicada", tentativas: 2, nota: certa });
+  });
+
   it("a nota certa publica a pauta; a errada conta a tentativa e explica, campo a campo, só com o documento escolhido", () => {
     let progresso = abrirPauta(progressoInicial(), pauta1.id);
     for (const id of gavetaDe("planalto-2023").documentos) progresso = levarCopia(progresso, id, conteudo.gavetas);
@@ -244,8 +298,9 @@ describe("regras da praça", () => {
     const opcoes = opcoesDaNota(progresso, conteudo.documentos);
     expect(opcoes.documento.length).toBe(progresso.copias.length);
     const certa = notaCerta(pauta1, conteudo.documentos)!;
-    expect(opcoes.quando.map((opcao) => opcao.chave)).toContain(certa.quando);
-    expect(opcoes.registro.map((opcao) => opcao.chave)).toContain(certa.registro);
+    expect(opcoes.quando.map((opcao) => opcao.chave)).toContain(certa.quando!);
+    expect(opcoes.registro.map((opcao) => opcao.chave)).toContain(certa.registro!);
+    expect(camposDaPauta(pauta1, progresso, conteudo.documentos).map((campo) => campo.chave)).toEqual(["documento", "quando", "registro"]);
     // O documento errado, com os campos dele: as frases falam dele e não dizem o certo.
     const errado = progresso.copias.find((id) => id !== certa.documento)!;
     const outra = fixarNota(
@@ -254,13 +309,13 @@ describe("regras da praça", () => {
       {
         documento: errado,
         quando: `data:${conteudo.documentos[errado]!.data.valor}`,
-        registro: certa.registro,
+        registro: certa.registro!,
       },
       conteudo.documentos,
     );
     expect(outra.certo).toBe(false);
     expect(outra.erros.map((erro) => erro.campo)).toEqual(["documento", "registro"]);
-    expect(outra.erros[0]!.mensagem).not.toContain(conteudo.documentos[certa.documento]!.titulo);
+    expect(outra.erros[0]!.mensagem).not.toContain(conteudo.documentos[certa.documento!]!.titulo);
     expect(outra.progresso.pautas[pauta1.id]?.tentativas).toBe(1);
     expect(outra.progresso.pautas[pauta1.id]?.situacao).toBe("aberta");
     // O documento certo com a data errada.
@@ -281,23 +336,115 @@ describe("regras da praça", () => {
     expect(fixarNota(progressoInicial(), pauta1, certa, conteudo.documentos).erros[0]!.campo).toBe("documento");
   });
 
+  it("a pauta de natureza pede o documento e a ação: o documento parecido é explicado pelo que registra, e a ação errada pelo campo Ação do escolhido", () => {
+    let progresso = abrirPauta(primeiraSessaoConcluida(), natureza.id);
+    for (const id of [natureza.resposta, ...natureza.comparar]) progresso = levarCopia(progresso, id, conteudo.gavetas);
+    expect(camposDaPauta(natureza, progresso, conteudo.documentos).map((campo) => campo.chave)).toEqual(["documento", "registro"]);
+    const certa = notaCerta(natureza, conteudo.documentos)!;
+    expect(Object.keys(certa).sort()).toEqual(["documento", "registro"]);
+    const outro = natureza.comparar[0]!;
+    const errada = fixarNota(progresso, natureza, { documento: outro, registro: certa.registro! }, conteudo.documentos);
+    expect(errada.certo).toBe(false);
+    expect(errada.erros.map((erro) => erro.campo)).toEqual(["documento", "registro"]);
+    expect(errada.erros[0]!.mensagem).toContain("veto parcial");
+    expect(errada.erros[1]!.mensagem).toContain("O campo Ação do documento que você escolheu");
+    const publicada = fixarNota(errada.progresso, natureza, certa, conteudo.documentos);
+    expect(publicada.certo).toBe(true);
+    expect(notaFixada(natureza, conteudo.documentos)!.linhas.find((linha) => linha.rotulo === "Ação")?.valor).toBe("Sanção expressa");
+  });
+
+  it("a pauta de ordem pede os dois documentos pela data: trocados, cada lugar é explicado pelo campo Data do escolhido; o mesmo documento duas vezes não vale", () => {
+    let progresso = abrirPauta(primeiraSessaoConcluida(), ordem.id);
+    expect(documentosDaPauta(ordem)).toEqual([ordem.resposta, ...ordem.comparar]);
+    // Só uma das duas cópias: a fixação pede as duas.
+    progresso = levarCopia(progresso, ordem.resposta, conteudo.gavetas);
+    expect(fixarNota(progresso, ordem, { primeiro: ordem.resposta, segundo: ordem.resposta }, conteudo.documentos).erros[0]!.mensagem).toContain("cópias dos dois documentos");
+    progresso = levarCopia(progresso, ordem.comparar[0]!, conteudo.gavetas);
+    expect(camposDaPauta(ordem, progresso, conteudo.documentos).map((campo) => campo.chave)).toEqual(["primeiro", "segundo"]);
+    const certa = notaCerta(ordem, conteudo.documentos)!;
+    expect(certa).toEqual({ primeiro: "planalto-mpv-132-2003-bolsa-familia", segundo: "planalto-lei-10836-2004-bolsa-familia" });
+    const trocada = fixarNota(progresso, ordem, { primeiro: certa.segundo!, segundo: certa.primeiro! }, conteudo.documentos);
+    expect(trocada.certo).toBe(false);
+    expect(trocada.erros.map((erro) => erro.campo)).toEqual(["primeiro", "segundo"]);
+    expect(trocada.erros[0]!.mensagem).toContain("O campo Data do documento que você pôs em primeiro lugar diz");
+    const repetida = fixarNota(trocada.progresso, ordem, { primeiro: certa.primeiro!, segundo: certa.primeiro! }, conteudo.documentos);
+    expect(repetida.erros.map((erro) => erro.campo)).toEqual(["segundo"]);
+    expect(repetida.erros[0]!.mensagem).toContain("mesmo documento");
+    const publicada = fixarNota(repetida.progresso, ordem, certa, conteudo.documentos);
+    expect(publicada.certo).toBe(true);
+    expect(publicada.progresso.pautas[ordem.id]?.tentativas).toBe(3);
+    const fixada = notaFixada(ordem, conteudo.documentos)!;
+    expect(fixada.documento.id).toBe(certa.primeiro);
+    expect(fixada.segundo?.documento.id).toBe(certa.segundo);
+  });
+
   it("a nota fixada mostra os campos do documento, o detalhe da natureza dele e as fontes", () => {
     const veto = notaFixada(pauta1, conteudo.documentos)!;
     expect(veto.itens.length).toBeGreaterThan(0);
     expect(veto.linhas.map((linha) => linha.rotulo)).toContain("Ação");
     expect(veto.linhas.map((linha) => linha.rotulo)).not.toContain("Objeto");
     expect(veto.fontes.length).toBeGreaterThan(0);
+    expect(veto.segundo).toBeNull();
     const voto = notaFixada(pauta2, conteudo.documentos)!;
     expect(voto.itens).toEqual([]);
     expect(voto.linhas.map((linha) => linha.rotulo)).toContain("Objeto");
     expect(voto.linhas.map((linha) => linha.rotulo)).toContain("Resultado da votação");
     // Na segunda sessão: um ato com o objeto (a lei sancionada sem veto), e uma atuação com a norma em que deu.
-    const sancao = notaFixada(conteudo.pautas.find((pauta) => pauta.id === "duas-leis-de-2025")!, conteudo.documentos)!;
+    const sancao = notaFixada(natureza, conteudo.documentos)!;
     expect(sancao.linhas.map((linha) => linha.rotulo)).toContain("Objeto");
     expect(sancao.itens).toEqual([]);
-    const autoria = notaFixada(conteudo.pautas.find((pauta) => pauta.id === "lei-promulgada")!, conteudo.documentos)!;
+    const autoria = notaFixada(pautaDe("lei-promulgada"), conteudo.documentos)!;
     expect(autoria.linhas.find((linha) => linha.rotulo === "Norma")?.valor).toMatch(/^Lei estadual/);
-    expect(autoria.linhas.find((linha) => linha.rotulo === "Ação")?.valor).toContain("promulgada pelo Legislativo");
+    expect(autoria.segundo?.linhas.find((linha) => linha.rotulo === "Ação")?.valor).toContain("promulgada pelo Legislativo");
+  });
+
+  it("os passos de uma pauta: aceitar, a chave quando a gaveta é trancada, as cópias e a resposta no mural; o passo de agora é o primeiro por fazer", () => {
+    const inicio = progressoInicial();
+    expect(passoDeAgora(inicio, conteudo)).toBeNull();
+    expect(passosDaPauta(inicio, tutorial, conteudo).map((passo) => [passo.id, passo.feito])).toEqual([
+      ["aceitar", false],
+      ["copiar", false],
+      ["montar", false],
+    ]);
+    expect(passosDaPauta(inicio, tutorial, conteudo)[1]!.texto).toContain("Planalto · 2006");
+    // A pauta do Senado tem o passo da chave até a chave chegar.
+    const aberta = abrirPauta(inicio, pauta2.id);
+    expect(passosDaPauta(aberta, pauta2, conteudo).map((passo) => passo.id)).toEqual(["aceitar", "chave", "copiar", "montar"]);
+    expect(passoDeAgora(aberta, conteudo)).toMatchObject({ indice: 1, de: pauta2.autor });
+    const comChave = pegarItem(aberta, "chave-senado");
+    expect(passosDaPauta(comChave, pauta2, conteudo).map((passo) => passo.feito)).toEqual([true, true, false, false]);
+    expect(passoDeAgora(comChave, conteudo)?.passos[2]!.texto).toContain("Senado · 2023");
+    // A pauta de ordem pede as duas gavetas.
+    const ordemAberta = abrirPauta(primeiraSessaoConcluida(), ordem.id);
+    expect(passosDaPauta(ordemAberta, ordem, conteudo)[1]!.texto).toContain("Planalto · 2003 e Planalto · 2004");
+    expect(passosDaPauta(ordemAberta, ordem, conteudo)[2]!.texto).toContain("ordem do campo Data");
+    // Respondida, todos os passos estão feitos e o passo de agora passa a ser da matéria, quando ela está na pauta.
+    const respondida = responder(primeiraSessaoConcluida(), ordem);
+    expect(passosDaPauta(respondida, ordem, conteudo).every((passo) => passo.feito)).toBe(true);
+    expect(passoDeAgora(respondida, conteudo)).toBeNull();
+    const naMesa = abrirMateria(respondida, materia.id);
+    expect(passoDeAgora(naMesa, conteudo)?.passos.map((passo) => passo.id)).toEqual(["materia", "credencial", "copiar", "lavrar"]);
+    expect(passoDeAgora(naMesa, conteudo)?.indice).toBe(1);
+    expect(passosDaMateria(lavrar(naMesa), materia, conteudo).every((passo) => passo.feito)).toBe(true);
+  });
+
+  it("os selos reconhecem o caminho e nada mais: começam vazios, a primeira nota ganha o primeiro, a edição respondida ganha o último", () => {
+    const inicio = progressoInicial();
+    expect(selos(inicio, conteudo).every((selo) => !selo.ganho)).toBe(true);
+    expect(selos(inicio, conteudo).map((selo) => selo.id)).toEqual(["primeira-nota", "chave-de-leitura", "chave-do-senado", "mural-da-primeira-sessao", "porta-da-camara", "credencial", "ata-lavrada", "edicao-respondida"]);
+    const primeira = responder(inicio, tutorial);
+    expect(selosNovos(inicio, primeira, conteudo).map((selo) => selo.id)).toEqual(["primeira-nota"]);
+    const sessaoFeita = primeiraSessaoConcluida();
+    expect(selos(sessaoFeita, conteudo).filter((selo) => selo.ganho).map((selo) => selo.id)).toEqual(["primeira-nota", "chave-do-senado", "mural-da-primeira-sessao", "porta-da-camara"]);
+    let fim = lavrar(sessaoFeita);
+    expect(selosNovos(sessaoFeita, fim, conteudo).map((selo) => selo.id)).toEqual(["credencial", "ata-lavrada"]);
+    for (const pauta of pautasDaSessao(sessao2, conteudo)) fim = responder(fim, pauta);
+    expect(selos(fim, conteudo).filter((selo) => !selo.ganho).map((selo) => selo.id)).toEqual(["chave-de-leitura"]);
+    expect(selos(fim, conteudo).at(-1)?.descricao).toContain("8 perguntas");
+    // As descobertas contam o que a pessoa leu, com quem falou e o que guardou.
+    expect(descobertas(inicio, conteudo)).toEqual({ documentos: 0, documentosNoArquivo: Object.keys(conteudo.documentos).length, conversas: 0, notas: 0, itens: 0 });
+    const comConversa = { ...fim, marcas: [...fim.marcas, "conversa:zefa-boas-vindas", "conversa:zefa-chave", "conversa:teodoro-recortes"] };
+    expect(descobertas(comConversa, conteudo)).toMatchObject({ conversas: 2, notas: 8, itens: 3 });
   });
 
   it("a primeira sessão concluída abre a Câmara e a segunda sessão: o mural ganha as quatro pautas, e as conversas mudam", () => {
@@ -313,7 +460,7 @@ describe("regras da praça", () => {
     expect(sessaoDeAgora(progresso, conteudo)?.id).toBe(sessao2.id);
     expect(camaraAberta(progresso, conteudo)).toBe(true);
     expect(lugaresDeAgora(progresso, conteudo).find((lugar) => lugar.id === "camara")?.trancado).toBe(false);
-    expect(pautasDisponiveis(progresso, conteudo)).toHaveLength(6);
+    expect(pautasDisponiveis(progresso, conteudo)).toHaveLength(8);
     expect(objetivoDeAgora(progresso, conteudo)).toContain("A Câmara abriu");
     expect(fimDaEdicao(progresso, conteudo)).toBe(false);
     expect(conversaDe("zefa", progresso, conteudo).chave).toBe("zefa-sessao");
@@ -385,15 +532,14 @@ describe("regras da praça", () => {
     for (const lado of ata.lados) expect(lado.fontes.length).toBeGreaterThan(0);
   });
 
-  it("a edição acaba com a ata lavrada e as seis notas no mural: o objetivo e as conversas dizem isso", () => {
+  it("a edição acaba com a ata lavrada e as oito notas no mural: o objetivo e as conversas dizem isso", () => {
     let progresso = lavrar(primeiraSessaoConcluida());
     expect(fimDaEdicao(progresso, conteudo)).toBe(false);
     for (const pauta of pautasDaSessao(sessao2, conteudo)) {
       expect(objetivoDeAgora(progresso, conteudo)).toMatch(/mural/);
       progresso = abrirPauta(progresso, pauta.id);
       expect(objetivoDeAgora(progresso, conteudo)).toBe(pauta.objetivo);
-      progresso = levarCopia(progresso, pauta.resposta, conteudo.gavetas);
-      progresso = fixarNota(progresso, pauta, notaCerta(pauta, conteudo.documentos)!, conteudo.documentos).progresso;
+      progresso = responder(progresso, pauta);
     }
     expect(sessaoConcluida(progresso, sessao2, conteudo)).toBe(true);
     expect(fimDaEdicao(progresso, conteudo)).toBe(true);
@@ -408,10 +554,7 @@ describe("regras da praça", () => {
     const roteiro: Roteiro = { ...conteudo, materias: [] };
     let progresso = primeiraSessaoConcluida();
     expect(sessaoConcluida(progresso, sessao2, roteiro)).toBe(false);
-    for (const pauta of pautasDaSessao(sessao2, roteiro)) {
-      progresso = levarCopia(abrirPauta(progresso, pauta.id), pauta.resposta, conteudo.gavetas);
-      progresso = fixarNota(progresso, pauta, notaCerta(pauta, conteudo.documentos)!, conteudo.documentos).progresso;
-    }
+    for (const pauta of pautasDaSessao(sessao2, roteiro)) progresso = responder(progresso, pauta);
     expect(fimDaEdicao(progresso, roteiro)).toBe(true);
   });
 
@@ -434,6 +577,7 @@ describe("regras da praça", () => {
     expect(lerProgresso({ versao: 2 }, conteudo)).toBeNull();
     expect(lerProgresso({ versao: 1, pautas: {}, itens: "x", copias: [], marcas: [] }, conteudo)).toBeNull();
     expect(lerProgresso({ versao: 1, pautas: {}, atas: [], itens: [], copias: [], marcas: [] }, conteudo)).toBeNull();
+    expect(lerProgresso({ versao: 1, pautas: { [pauta1.id]: { situacao: "publicada", tentativas: 1, nota: { documento: 7 } } }, atas: {}, itens: [], copias: [], marcas: [] }, conteudo)).toBeNull();
     expect(lerProgresso({ versao: 1, pautas: {}, atas: { [materia.id]: { situacao: "publicada", tentativas: 1, ata: { x: 1 } } }, itens: [], copias: [], marcas: [] }, conteudo)).toBeNull();
     const sujo = lerProgresso(
       {

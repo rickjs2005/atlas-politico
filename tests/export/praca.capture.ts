@@ -21,7 +21,9 @@ const OUT = process.env.CAPTURE_DIR ?? "docs/capturas/praca";
 const COMPUTADOR = { width: 1440, height: 900 };
 const CELULAR = { width: 390, height: 844 };
 const conteudo = buildPracaContent(data);
-const [pauta1, pauta2] = conteudo.pautas as [(typeof conteudo.pautas)[number], (typeof conteudo.pautas)[number]];
+// As pautas de três campos da primeira sessão, pelo id: as duas primeiras do mural são o tutorial (D-155).
+const pauta1 = conteudo.pautas.find((pauta) => pauta.id === "veto-regime-fiscal")!;
+const pauta2 = conteudo.pautas.find((pauta) => pauta.id === "duas-pecs")!;
 const [sessao1, sessao2] = conteudo.sessoes as [(typeof conteudo.sessoes)[number], (typeof conteudo.sessoes)[number]];
 const materia = conteudo.materias[0]!;
 const janela = (page: Page, id: string) => page.locator(`[data-janela="${id}"]`);
@@ -69,7 +71,7 @@ async function andar(page: Page, eixo: "x" | "z", alvo: number) {
   }
 }
 
-/** O progresso com as duas pautas da primeira sessão publicadas: a Câmara aberta, para as telas do fim dela e do começo da segunda. */
+/** O progresso com as pautas da primeira sessão publicadas (o tutorial e as notas): a Câmara aberta, para as telas do fim dela e do começo da segunda. */
 function primeiraSessaoConcluida(posicao: { x: number; z: number }): ProgressoDaPraca {
   let progresso = pegarItem(pegarItem(progressoInicial(), "bilhete"), "chave-senado");
   for (const pauta of pautasDaSessao(sessao1, conteudo)) {
@@ -84,7 +86,7 @@ function primeiraSessaoConcluida(posicao: { x: number; z: number }): ProgressoDa
   };
 }
 
-/** O progresso com a edição inteira: a ata lavrada e as seis notas no mural. */
+/** O progresso com a edição inteira: a ata lavrada e as oito notas no mural. */
 function edicaoConcluida(posicao: { x: number; z: number }): ProgressoDaPraca {
   let progresso = pegarItem(primeiraSessaoConcluida(posicao), "credencial");
   progresso = abrirMateria(progresso, materia.id);
@@ -218,7 +220,7 @@ test("a praça em computador", async ({ browser }) => {
   await contexto.close();
 });
 
-test("o fim da primeira sessão em computador: as duas notas e a Câmara aberta", async ({ browser }) => {
+test("o fim da primeira sessão em computador: as notas e a Câmara aberta", async ({ browser }) => {
   test.setTimeout(300_000);
   const contexto = await browser.newContext({
     viewport: COMPUTADOR,
@@ -333,7 +335,7 @@ test("a segunda sessão em computador: a Lourdes, a credencial, a ata lado a lad
   await contexto.close();
 });
 
-test("o fim da edição em computador: as seis notas, a ata e o caderno", async ({ browser }) => {
+test("o fim da edição em computador: as oito notas, a ata e o caderno", async ({ browser }) => {
   test.setTimeout(300_000);
   const contexto = await browser.newContext({
     viewport: COMPUTADOR,
@@ -345,7 +347,7 @@ test("o fim da edição em computador: as seis notas, a ata e o caderno", async 
   await page.reload();
   await entrar(page);
   await expect(page.locator('[data-acao="mural"]')).toBeVisible({ timeout: 30_000 });
-  await shot(page, "37-fim-da-edicao-mural-com-seis-notas--computador");
+  await shot(page, "37-fim-da-edicao-mural-com-oito-notas--computador");
   await page.keyboard.press("e");
   await shot(page, "38-mural-respondido--computador");
   await page.keyboard.press("Escape");

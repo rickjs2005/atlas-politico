@@ -1,23 +1,28 @@
-// A Praça do Mural (src/features/praca, docs/PRACA.md): a jornada inteira sem
-// a cena (entrar, ler o mural, aceitar a pauta, ouvir a Zefa, abrir as
-// gavetas, levar cópias, errar a nota e ser explicado por campo, acertar,
-// achar o bilhete, pegar a chave, abrir o Senado, responder a segunda pauta,
-// ver a Câmara abrir, retomar depois de recarregar e recomeçar); a segunda
-// sessão (a Lourdes, a credencial com o Teodoro, a ata lado a lado com o erro
-// explicado por lado, as quatro pautas novas e o fim da edição); e, com a
-// cena, andar até o mural pelo teclado, agir com E, fechar com Esc, andar pelo
-// joystick no celular emulado e o movimento reduzido.
+// A Praça do Mural (src/features/praca, docs/PRACA.md, D-153 a D-155): a
+// jornada inteira sem a cena (entrar, o tutorial de conferir uma data com o
+// passo a passo no cartão, a nota de três campos com o erro explicado por
+// campo, o bilhete, a chave, o Senado, a Câmara abrindo com as quatro pautas,
+// retomar depois de recarregar e recomeçar); a segunda sessão (a Lourdes, a
+// credencial com o Teodoro, a ata lado a lado com o erro explicado por lado,
+// as pautas de natureza e de ordem, os selos e o fim da edição); e, com a
+// cena, andar até o mural pelo teclado, agir com E, fechar com Esc, o modo
+// leve manual, andar pelo joystick no celular emulado e o movimento reduzido.
 
 import { expect, test, type Page } from "@playwright/test";
 
 import { fieldOf } from "@/lib/game/dossier";
 import { buildPracaContent } from "@/lib/praca/conteudo";
-import { abrirPauta, fixarNota, levarCopia, notaCerta, pautasDaSessao, pegarItem, progressoInicial } from "@/lib/praca/regras";
+import { abrirPauta, documentosDaPauta, fixarNota, levarCopia, notaCerta, pautasDaSessao, pegarItem, progressoInicial, tipoDaPauta } from "@/lib/praca/regras";
+import type { Pauta } from "@/lib/praca/tipos";
 
 import { data } from "./jogo-apoio";
 
 const conteudo = buildPracaContent(data);
-const [pauta1, pauta2] = conteudo.pautas as [(typeof conteudo.pautas)[number], (typeof conteudo.pautas)[number]];
+const pautaDe = (id: string): Pauta => conteudo.pautas.find((pauta) => pauta.id === id)!;
+const tutorial = pautaDe("primeira-data-planalto");
+const tutorialEstadual = pautaDe("primeira-data-estadual");
+const pauta1 = pautaDe("veto-regime-fiscal");
+const pauta2 = pautaDe("duas-pecs");
 const [sessao1, sessao2] = conteudo.sessoes as [(typeof conteudo.sessoes)[number], (typeof conteudo.sessoes)[number]];
 const materia = conteudo.materias[0]!;
 const praca = (page: Page) => page.locator("[data-praca]");
@@ -28,7 +33,7 @@ function primeiraSessaoConcluida() {
   let progresso = pegarItem(pegarItem(progressoInicial(), "bilhete"), "chave-senado");
   for (const pauta of pautasDaSessao(sessao1, conteudo)) {
     progresso = abrirPauta(progresso, pauta.id);
-    for (const id of [pauta.resposta, ...pauta.comparar]) progresso = levarCopia(progresso, id, conteudo.gavetas);
+    for (const id of [...documentosDaPauta(pauta), ...pauta.comparar]) progresso = levarCopia(progresso, id, conteudo.gavetas);
     progresso = fixarNota(progresso, pauta, notaCerta(pauta, conteudo.documentos)!, conteudo.documentos).progresso;
   }
   return { ...progresso, marcas: ["conversa:zefa-boas-vindas", "conversa:teodoro-recortes", "conversa:escrivao-gavetas", "conversa:escrivao-com-chave", "leitura", "etapas"] };
@@ -52,8 +57,8 @@ async function entrar(page: Page) {
   await expect(praca(page)).toBeVisible();
 }
 
-/** Escolhe as três partes da nota pelas chaves das opções e fixa. */
-async function montar(page: Page, nota: { documento: string; quando: string; registro: string }) {
+/** Escolhe as partes da resposta pelas chaves das opções e fixa. */
+async function montar(page: Page, nota: Record<string, string>) {
   const caixa = janela(page, "mural");
   for (const [campo, chave] of Object.entries(nota)) await caixa.locator(`input[data-opcao="${campo}:${chave}"]`).check();
   await caixa.locator("[data-fixar]").click();
@@ -63,33 +68,48 @@ async function montar(page: Page, nota: { documento: string; quando: string; reg
 const dataDe = (id: string) => `data:${conteudo.documentos[id]!.data.valor}`;
 const acaoDe = (id: string) => `acao:${fieldOf(conteudo.documentos[id]!, "acao").valor}`;
 
+/** Leva do arquivo (já aberto na janela) as cópias de uma gaveta, as que faltam. */
+async function levarDaGaveta(page: Page, gavetaId: string, ids: readonly string[]) {
+  const arquivo = janela(page, "arquivo");
+  await arquivo.locator(`[data-gaveta="${gavetaId}"]`).click();
+  await expect(arquivo.locator(`[data-gaveta-aberta="${gavetaId}"]`)).toBeVisible();
+  for (const id of ids) {
+    const documento = arquivo.locator(`[data-documento="${id}"]`);
+    if ((await documento.getAttribute("data-copia")) !== "true") await arquivo.locator(`[data-levar="${id}"]`).click();
+    await expect(documento).toHaveAttribute("data-copia", "true");
+  }
+  await arquivo.locator("[data-voltar-as-gavetas]").click();
+}
+
 test.describe("Praça do Mural sem a cena", () => {
-  test("a jornada inteira: duas pautas, o erro explicado por campo, a chave, a Câmara, a retomada e o recomeço", async ({ page }) => {
-    // A jornada passa por todos os lugares, mais de uma vez: cabe folgado em dois minutos.
-    test.setTimeout(120_000);
+  test("a jornada inteira: o tutorial, duas notas, o erro explicado por campo, a chave, a Câmara, a retomada e o recomeço", async ({ page }) => {
+    // A jornada passa por todos os lugares, mais de uma vez: cabe folgado em três minutos.
+    test.setTimeout(180_000);
     const erros: string[] = [];
     page.on("pageerror", (erro) => erros.push(erro.message));
     await semWebGL(page);
     await entrar(page);
-    await expect(praca(page)).toHaveAttribute("data-praca", "lista", {
-      timeout: 30_000,
-    });
+    await expect(praca(page)).toHaveAttribute("data-praca", "lista", { timeout: 30_000 });
     await expect(page.locator("[data-objetivo]")).toContainText("Vá ao mural");
+    await expect(page.locator("[data-passo-de-agora]")).toHaveCount(0);
     await expect(page.locator("[data-lista-da-praca] [data-lugar]")).toHaveCount(6);
 
-    // 1. O mural: a primeira pergunta vira a pauta; sem cópias, a nota não se monta.
+    // 1. O mural: quatro perguntas, as duas primeiras do tutorial. A primeira do tutorial vira a pauta, e o cartão passa a dizer o passo.
     await page.locator('[data-lugar="mural"]').click();
     await expect(janela(page, "mural")).toBeVisible();
-    await expect(janela(page, "mural").locator("[data-abrir-pauta]")).toHaveCount(2);
-    await janela(page, "mural").locator(`[data-abrir-pauta="${pauta1.id}"]`).click();
-    await expect(janela(page, "mural").locator(`[data-pauta="${pauta1.id}"]`)).toHaveAttribute("data-situacao", "fechada");
+    await expect(janela(page, "mural").locator("[data-abrir-pauta]")).toHaveCount(4);
+    await expect(janela(page, "mural").locator("[data-abrir-pauta]").first()).toHaveAttribute("data-tipo", "campo");
+    await janela(page, "mural").locator(`[data-abrir-pauta="${tutorial.id}"]`).click();
+    await expect(janela(page, "mural").locator(`[data-pauta="${tutorial.id}"]`)).toHaveAttribute("data-situacao", "fechada");
     await janela(page, "mural").locator("[data-aceitar]").click();
-    await expect(janela(page, "mural").locator(`[data-pauta="${pauta1.id}"]`)).toHaveAttribute("data-situacao", "aberta");
+    await expect(janela(page, "mural").locator(`[data-pauta="${tutorial.id}"]`)).toHaveAttribute("data-situacao", "aberta");
     await janela(page, "mural").locator("[data-montar]").click();
-    await expect(janela(page, "mural").locator("[data-sem-copias]")).toBeVisible();
+    await expect(janela(page, "mural").locator("[data-sem-copias]")).toContainText("Planalto · 2006");
     await janela(page, "mural").locator("[data-fechar]").click();
     await expect(janela(page, "mural")).toHaveCount(0);
-    await expect(page.locator("[data-objetivo]")).toHaveText(pauta1.objetivo);
+    await expect(page.locator("[data-objetivo]")).toHaveText(tutorial.objetivo);
+    await expect(page.locator("[data-passo-de-agora]")).toHaveAttribute("data-passo-de-agora", "copiar");
+    await expect(page.locator("[data-passo-de-agora]")).toContainText("Passo 2 de 3");
 
     // 2. A Zefa diz onde procurar.
     await page.locator('[data-lugar="padaria"]').click();
@@ -102,7 +122,7 @@ test.describe("Praça do Mural sem a cena", () => {
     await padaria.locator("[data-encerrar]").click();
     await expect(padaria).toHaveCount(0);
 
-    // 3. O arquivo: o Escrivão, a gaveta do Senado trancada, a gaveta do Planalto de 2023 aberta, os cinco campos, duas cópias.
+    // 3. O arquivo: o Escrivão, a gaveta do Senado trancada, a cópia do tutorial e as duas da gaveta do Planalto de 2023.
     await page.locator('[data-lugar="arquivo"]').click();
     const arquivo = janela(page, "arquivo");
     await expect(arquivo.locator('[data-conversa="escrivao-gavetas"]')).toBeVisible();
@@ -115,53 +135,63 @@ test.describe("Praça do Mural sem a cena", () => {
     await arquivo.locator('[data-gaveta="senado-2023"]').click();
     await expect(arquivo.locator("[data-aviso-da-gaveta]")).toContainText("trancada");
     await expect(arquivo.locator("[data-gaveta-aberta]")).toHaveCount(0);
-    await arquivo.locator(`[data-gaveta="${pauta1.gaveta}"]`).click();
-    await expect(arquivo.locator(`[data-gaveta-aberta="${pauta1.gaveta}"]`)).toBeVisible();
+    await arquivo.locator(`[data-gaveta="${tutorial.gaveta}"]`).click();
+    await expect(arquivo.locator(`[data-gaveta-aberta="${tutorial.gaveta}"]`)).toBeVisible();
+    await arquivo.locator(`[data-abrir-documento="${tutorial.resposta}"]`).click();
+    await expect(arquivo.locator(`[data-documento="${tutorial.resposta}"] [data-campo]`)).toHaveCount(5);
+    await arquivo.locator(`[data-levar="${tutorial.resposta}"]`).click();
+    await expect(arquivo.locator(`[data-documento="${tutorial.resposta}"]`)).toHaveAttribute("data-copia", "true");
+    await arquivo.locator("[data-voltar-as-gavetas]").click();
     const gaveta1 = conteudo.gavetas.find((gaveta) => gaveta.id === pauta1.gaveta)!;
     expect(gaveta1.documentos.length).toBeGreaterThanOrEqual(2);
-    for (const id of gaveta1.documentos) {
-      await arquivo.locator(`[data-abrir-documento="${id}"]`).click();
-      await expect(arquivo.locator(`[data-documento="${id}"] [data-campo]`)).toHaveCount(5);
-      await arquivo.locator(`[data-levar="${id}"]`).click();
-      await expect(arquivo.locator(`[data-documento="${id}"]`)).toHaveAttribute("data-copia", "true");
-    }
+    await levarDaGaveta(page, pauta1.gaveta, gaveta1.documentos);
     await arquivo.locator("[data-fechar]").click();
+    await expect(page.locator("[data-passo-de-agora]")).toHaveAttribute("data-passo-de-agora", "montar");
     await expect(page.locator("[data-instrucao-da-praca]")).toBeVisible();
 
-    // 4. A nota: o documento errado é explicado pelo que ele registra; a data errada, pelo campo Data; e a certa muda o mural.
-    const errado = gaveta1.documentos.find((id) => id !== pauta1.resposta)!;
+    // 4. O tutorial no mural: a data de outra cópia é explicada pelo documento dela; a certa prega a primeira nota, com carimbo, reação e selo.
     await page.locator('[data-lugar="mural"]').click();
+    await janela(page, "mural").locator(`[data-abrir-pauta="${tutorial.id}"]`).click();
+    await janela(page, "mural").locator("[data-montar]").click();
+    const conferir = janela(page, "mural").locator(`[data-montar-nota="${tutorial.id}"]`);
+    await expect(conferir).toHaveAttribute("data-tipo", "campo");
+    await expect(conferir.locator("[data-campo-da-nota]")).toHaveCount(1);
+    await expect(conferir.locator('[data-campo-da-nota="data"] input')).toHaveCount(3);
+    await expect(conferir.locator("[data-copia-a-mao]")).toBeVisible();
+    await montar(page, { data: dataDe(pauta1.resposta) });
+    await expect(conferir.locator('[data-erro-campo="data"]')).toContainText(conteudo.documentos[pauta1.resposta]!.titulo);
+    await montar(page, { data: dataDe(tutorial.resposta) });
+    const primeiraNota = janela(page, "mural").locator(`[data-nota-fixada="${tutorial.id}"]`);
+    await expect(primeiraNota).toBeVisible();
+    await expect(primeiraNota.locator("[data-carimbo]")).toBeVisible();
+    await expect(primeiraNota.locator("[data-reacao]")).toHaveText(tutorial.reacao);
+    await expect(primeiraNota.locator('[data-selo-novo="primeira-nota"]')).toBeVisible();
+    await expect(primeiraNota.locator("[data-mudanca]")).toContainText("ganhou resposta");
+    await primeiraNota.locator("[data-voltar-ao-mural]").click();
+    await expect(janela(page, "mural").locator(`[data-abrir-pauta="${tutorial.id}"]`)).toHaveAttribute("data-situacao", "publicada");
+
+    // 5. A nota de três campos: o documento errado é explicado pelo que ele registra; a data errada, pelo campo Data; e a certa muda o mural.
+    const errado = gaveta1.documentos.find((id) => id !== pauta1.resposta)!;
     await janela(page, "mural").locator(`[data-abrir-pauta="${pauta1.id}"]`).click();
+    await janela(page, "mural").locator("[data-aceitar]").click();
     await janela(page, "mural").locator("[data-montar]").click();
     const montarNota = janela(page, "mural").locator(`[data-montar-nota="${pauta1.id}"]`);
     await expect(montarNota).toBeVisible();
-    await expect(montarNota.locator('[data-campo-da-nota="documento"] input')).toHaveCount(gaveta1.documentos.length);
+    await expect(montarNota.locator('[data-campo-da-nota="documento"] input')).toHaveCount(3);
     await expect(montarNota.locator("[data-fixar]")).toBeDisabled();
     // O documento errado, com a data dele e a ação do certo: só o documento e a ação são apontados, e a frase não entrega o título certo.
-    await montar(page, {
-      documento: errado,
-      quando: dataDe(errado),
-      registro: acaoDe(pauta1.resposta),
-    });
+    await montar(page, { documento: errado, quando: dataDe(errado), registro: acaoDe(pauta1.resposta) });
     await expect(montarNota.locator("[data-nota-recusada]")).toBeVisible();
     await expect(montarNota.locator('[data-erro-campo="documento"]')).toContainText("Esse documento registra");
     await expect(montarNota.locator('[data-erro-campo="documento"]')).not.toContainText(conteudo.documentos[pauta1.resposta]!.titulo);
     await expect(montarNota.locator('[data-erro-campo="quando"]')).toHaveCount(0);
     await expect(montarNota.locator('[data-erro-campo="registro"]')).toHaveCount(acaoDe(errado) === acaoDe(pauta1.resposta) ? 0 : 1);
     // O documento certo com a data do outro: só a data é apontada, pelo campo Data.
-    await montar(page, {
-      documento: pauta1.resposta,
-      quando: dataDe(errado),
-      registro: acaoDe(pauta1.resposta),
-    });
+    await montar(page, { documento: pauta1.resposta, quando: dataDe(errado), registro: acaoDe(pauta1.resposta) });
     await expect(montarNota.locator('[data-erro-campo="documento"]')).toHaveCount(0);
     await expect(montarNota.locator('[data-erro-campo="registro"]')).toHaveCount(0);
     await expect(montarNota.locator('[data-erro-campo="quando"]')).toContainText("O campo Data dele diz");
-    await montar(page, {
-      documento: pauta1.resposta,
-      quando: dataDe(pauta1.resposta),
-      registro: acaoDe(pauta1.resposta),
-    });
+    await montar(page, { documento: pauta1.resposta, quando: dataDe(pauta1.resposta), registro: acaoDe(pauta1.resposta) });
     const fixada = janela(page, "mural").locator(`[data-nota-fixada="${pauta1.id}"]`);
     await expect(fixada).toBeVisible();
     await expect(fixada.locator("[data-dispositivos] li").first()).toBeVisible();
@@ -170,17 +200,20 @@ test.describe("Praça do Mural sem a cena", () => {
     await fixada.locator("[data-voltar-ao-mural]").click();
     await expect(janela(page, "mural").locator(`[data-abrir-pauta="${pauta1.id}"]`)).toHaveAttribute("data-situacao", "publicada");
     await janela(page, "mural").locator("[data-fechar]").click();
-    await expect(praca(page)).toHaveAttribute("data-publicadas", "1");
+    await expect(praca(page)).toHaveAttribute("data-publicadas", "2");
     await expect(page.locator("[data-objetivo]")).toContainText("Volte ao mural");
 
-    // 5. O bilhete no chão, a chave com a Zefa, as gavetas do Senado abertas.
+    // 6. O bilhete no chão, a chave com a Zefa, as gavetas do Senado abertas.
     await page.locator('[data-lugar="bilhete"]').click();
     await expect(janela(page, "bilhete").locator("[data-bilhete]")).toContainText("chave das gavetas do Senado");
     await janela(page, "bilhete").locator("[data-guardar-bilhete]").click();
     await expect(page.locator('[data-lugar="bilhete"]')).toHaveCount(0);
     await page.locator('[data-abrir="caderno"]').click();
     await expect(janela(page, "caderno").locator('[data-caderno-item="bilhete"]')).toBeVisible();
-    await expect(janela(page, "caderno").locator("[data-caderno-copia]")).toHaveCount(gaveta1.documentos.length);
+    await expect(janela(page, "caderno").locator("[data-caderno-copia]")).toHaveCount(gaveta1.documentos.length + 1);
+    await expect(janela(page, "caderno").locator('[data-selo="primeira-nota"]')).toHaveAttribute("data-ganho", "true");
+    await expect(janela(page, "caderno").locator('[data-selo="chave-de-leitura"]')).toHaveAttribute("data-ganho", "true");
+    await expect(janela(page, "caderno").locator("[data-descobertas]")).toContainText("2 moradores ouvidos");
     await janela(page, "caderno").locator("[data-fechar]").click();
     await page.locator('[data-lugar="padaria"]').click();
     await expect(padaria.locator('[data-conversa="zefa-chave"]')).toBeVisible();
@@ -188,7 +221,7 @@ test.describe("Praça do Mural sem a cena", () => {
     await expect(padaria.locator('[data-item-recebido="chave-senado"]')).toBeVisible();
     await padaria.locator("[data-encerrar]").click();
 
-    // 6. A banca: o Teodoro explica os turnos, e os recortes vêm por data, com filtro por pessoa.
+    // 7. A banca: o Teodoro explica os turnos, e os recortes vêm por data, com filtro por pessoa.
     await page.locator('[data-lugar="banca"]').click();
     const banca = janela(page, "banca");
     await expect(banca.locator('[data-conversa="teodoro-recortes"]')).toBeVisible();
@@ -202,62 +235,52 @@ test.describe("Praça do Mural sem a cena", () => {
     await expect(banca.locator("[data-recorte]")).toHaveCount(conteudo.recortes.filter((recorte) => recorte.pessoa === pauta2.pessoa || recorte.pessoa === "ambas").length);
     await banca.locator("[data-fechar]").click();
 
-    // 7. O arquivo de novo: o Escrivão reconhece a chave; as duas gavetas do Senado abrem; duas cópias.
+    // 8. O arquivo de novo: o Escrivão reconhece a chave; as duas gavetas do Senado abrem; a cópia do tutorial estadual.
     await page.locator('[data-lugar="arquivo"]').click();
     await expect(arquivo.locator('[data-conversa="escrivao-com-chave"]')).toBeVisible();
     await arquivo.locator('[data-escolha="abrir"]').click();
     await arquivo.locator("[data-encerrar]").click();
     await expect(arquivo.locator('[data-gaveta="senado-2023"]')).toHaveAttribute("data-trancada", "false");
     const outra = conteudo.gavetas.find((gaveta) => gaveta.documentos.includes(pauta2.comparar[0]!))!;
-    for (const [gavetaId, id] of [
-      [pauta2.gaveta, pauta2.resposta],
-      [outra.id, pauta2.comparar[0]!],
-    ] as const) {
-      await arquivo.locator(`[data-gaveta="${gavetaId}"]`).click();
-      await expect(arquivo.locator(`[data-gaveta-aberta="${gavetaId}"]`)).toBeVisible();
-      await arquivo.locator(`[data-levar="${id}"]`).click();
-      await expect(arquivo.locator(`[data-documento="${id}"]`)).toHaveAttribute("data-copia", "true");
-      await arquivo.locator("[data-voltar-as-gavetas]").click();
-    }
+    await levarDaGaveta(page, pauta2.gaveta, [pauta2.resposta]);
+    await levarDaGaveta(page, outra.id, [pauta2.comparar[0]!]);
+    await levarDaGaveta(page, tutorialEstadual.gaveta, [tutorialEstadual.resposta]);
     await arquivo.locator("[data-fechar]").click();
 
-    // 8. A segunda pauta: o voto de 2024 é o documento errado; o de 2023, contra, é a resposta; e a Câmara abre.
+    // 9. A segunda nota e o tutorial estadual: o voto de 2024 é o documento errado; o de 2023, contra, é a resposta; e a Câmara abre com as quatro.
     await page.locator('[data-lugar="mural"]').click();
     await janela(page, "mural").locator(`[data-abrir-pauta="${pauta2.id}"]`).click();
     await janela(page, "mural").locator("[data-aceitar]").click();
     await janela(page, "mural").locator("[data-montar]").click();
     const montar2 = janela(page, "mural").locator(`[data-montar-nota="${pauta2.id}"]`);
     const comparado = pauta2.comparar[0]!;
-    await montar(page, {
-      documento: comparado,
-      quando: dataDe(comparado),
-      registro: acaoDe(comparado),
-    });
+    await montar(page, { documento: comparado, quando: dataDe(comparado), registro: acaoDe(comparado) });
     await expect(montar2.locator('[data-erro-campo="documento"]')).toContainText("Esse documento registra voto");
     await expect(montar2.locator('[data-erro-campo="registro"]')).toHaveCount(0);
-    await montar(page, {
-      documento: pauta2.resposta,
-      quando: dataDe(pauta2.resposta),
-      registro: acaoDe(pauta2.resposta),
-    });
+    await montar(page, { documento: pauta2.resposta, quando: dataDe(pauta2.resposta), registro: acaoDe(pauta2.resposta) });
     const fixada2 = janela(page, "mural").locator(`[data-nota-fixada="${pauta2.id}"]`);
     await expect(fixada2).toBeVisible();
     await expect(fixada2).toContainText("Resultado da votação");
-    await expect(fixada2.locator("[data-mudanca]")).toContainText("Câmara");
+    await fixada2.locator("[data-voltar-ao-mural]").click();
+    await janela(page, "mural").locator(`[data-abrir-pauta="${tutorialEstadual.id}"]`).click();
+    await janela(page, "mural").locator("[data-aceitar]").click();
+    await janela(page, "mural").locator("[data-montar]").click();
+    await montar(page, { data: dataDe(tutorialEstadual.resposta) });
+    const fixada3 = janela(page, "mural").locator(`[data-nota-fixada="${tutorialEstadual.id}"]`);
+    await expect(fixada3.locator("[data-mudanca]")).toContainText("Câmara");
+    await expect(fixada3.locator('[data-selo-novo="porta-da-camara"]')).toBeVisible();
     await janela(page, "mural").locator("[data-fechar]").click();
-    await expect(praca(page)).toHaveAttribute("data-publicadas", "2");
+    await expect(praca(page)).toHaveAttribute("data-publicadas", "4");
     await expect(page.locator("[data-objetivo]")).toContainText("A Câmara abriu");
     await page.locator('[data-lugar="camara"]').click();
     await expect(janela(page, "camara").locator('[data-camara="aberta"]')).toBeVisible();
     await janela(page, "camara").locator("[data-fechar]").click();
 
-    // 9. Recarregar retoma de onde parou; recomeçar apaga.
+    // 10. Recarregar retoma de onde parou; recomeçar apaga.
     await page.reload();
     await expect(page.locator("[data-entrar]")).toHaveText("Continuar de onde parou");
     await page.locator("[data-entrar]").click();
-    await expect(praca(page)).toHaveAttribute("data-publicadas", "2", {
-      timeout: 30_000,
-    });
+    await expect(praca(page)).toHaveAttribute("data-publicadas", "4", { timeout: 30_000 });
     await expect(page.locator("[data-objetivo]")).toContainText("A Câmara abriu");
     await page.locator('[data-abrir="caderno"]').click();
     await expect(janela(page, "caderno").locator('[data-caderno-item="chave-senado"]')).toBeVisible();
@@ -271,7 +294,7 @@ test.describe("Praça do Mural sem a cena", () => {
 });
 
 test.describe("Praça do Mural, a segunda sessão sem a cena", () => {
-  test("a Lourdes anuncia a sessão, o Teodoro entrega a credencial, a ata é recusada por lado e lavrada, as quatro pautas novas fecham a edição, e tudo volta depois de recarregar", async ({ page }) => {
+  test("a Lourdes anuncia a sessão, o Teodoro entrega a credencial, a ata é recusada por lado e lavrada, as pautas de natureza e de ordem fecham a edição, e tudo volta depois de recarregar", async ({ page }) => {
     test.setTimeout(180_000);
     const erros: string[] = [];
     page.on("pageerror", (erro) => erros.push(erro.message));
@@ -282,18 +305,18 @@ test.describe("Praça do Mural, a segunda sessão sem a cena", () => {
     await expect(page.locator("[data-entrar]")).toHaveText("Continuar de onde parou");
     await page.locator("[data-entrar]").click();
     await expect(praca(page)).toHaveAttribute("data-praca", "lista", { timeout: 30_000 });
-    await expect(praca(page)).toHaveAttribute("data-publicadas", "2");
+    await expect(praca(page)).toHaveAttribute("data-publicadas", "4");
     await expect(praca(page)).toHaveAttribute("data-atas", "0");
     await expect(page.locator("[data-objetivo]")).toContainText("A Câmara abriu");
 
     // 1. O mural amanheceu com as quatro perguntas novas, em duas sessões.
     await page.locator('[data-lugar="mural"]').click();
-    await expect(janela(page, "mural").locator("[data-abrir-pauta]")).toHaveCount(6);
+    await expect(janela(page, "mural").locator("[data-abrir-pauta]")).toHaveCount(8);
     await expect(janela(page, "mural").locator("[data-sessao-do-mural]")).toHaveCount(2);
     await expect(janela(page, "mural").locator("[data-sessao-do-mural]").first()).toHaveAttribute("data-sessao-do-mural", sessao2.id);
     await janela(page, "mural").locator("[data-fechar]").click();
 
-    // 2. A Câmara: a Lourdes anuncia a matéria e diz onde está a credencial; a mesa a pede.
+    // 2. A Câmara: a Lourdes anuncia a matéria e diz onde está a credencial; a mesa a pede, e o cartão diz o passo.
     await page.locator('[data-lugar="camara"]').click();
     const camara = janela(page, "camara");
     await expect(camara.locator('[data-camara="aberta"]')).toBeVisible();
@@ -309,6 +332,7 @@ test.describe("Praça do Mural, a segunda sessão sem a cena", () => {
     await expect(camara.locator("[data-sem-credencial]")).toBeVisible();
     await camara.locator("[data-fechar]").click();
     await expect(page.locator("[data-objetivo]")).toContainText("A mesa pede a credencial");
+    await expect(page.locator("[data-passo-de-agora]")).toHaveAttribute("data-passo-de-agora", "credencial");
 
     // 3. A banca: o Teodoro entrega a credencial.
     await page.locator('[data-lugar="banca"]').click();
@@ -319,6 +343,7 @@ test.describe("Praça do Mural, a segunda sessão sem a cena", () => {
     await banca.locator("[data-encerrar]").click();
     await banca.locator("[data-fechar]").click();
     await expect(page.locator("[data-objetivo]")).toHaveText(materia.objetivo);
+    await expect(page.locator("[data-passo-de-agora]")).toHaveAttribute("data-passo-de-agora", "copiar");
 
     // 4. O arquivo: o Escrivão fala da matéria; as cópias das duas gavetas dela, com os outros votos de 2024 junto.
     await page.locator('[data-lugar="arquivo"]').click();
@@ -328,16 +353,7 @@ test.describe("Praça do Mural, a segunda sessão sem a cena", () => {
     await expect(arquivo.locator("[data-fala]").last()).toContainText("campo Objeto");
     await arquivo.locator('[data-escolha="abrir"]').click();
     await arquivo.locator("[data-encerrar]").click();
-    for (const lado of materia.lados) {
-      await arquivo.locator(`[data-gaveta="${lado.gaveta}"]`).click();
-      await expect(arquivo.locator(`[data-gaveta-aberta="${lado.gaveta}"]`)).toBeVisible();
-      // Um dos votos de 2024 já veio da primeira sessão, como cópia: só o que falta é levado.
-      for (const id of conteudo.gavetas.find((gaveta) => gaveta.id === lado.gaveta)!.documentos) {
-        if ((await arquivo.locator(`[data-documento="${id}"]`).getAttribute("data-copia")) !== "true") await arquivo.locator(`[data-levar="${id}"]`).click();
-        await expect(arquivo.locator(`[data-documento="${id}"]`)).toHaveAttribute("data-copia", "true");
-      }
-      await arquivo.locator("[data-voltar-as-gavetas]").click();
-    }
+    for (const lado of materia.lados) await levarDaGaveta(page, lado.gaveta, conteudo.gavetas.find((gaveta) => gaveta.id === lado.gaveta)!.documentos);
     await arquivo.locator("[data-fechar]").click();
 
     // 5. A mesa: o voto errado no lado do Senado é explicado por lado; a ata certa fica lado a lado.
@@ -376,27 +392,42 @@ test.describe("Praça do Mural, a segunda sessão sem a cena", () => {
     await expect(praca(page)).toHaveAttribute("data-atas", "1");
     await expect(page.locator("[data-objetivo]")).toContainText("mural");
 
-    // 6. As quatro pautas novas, cada uma com a cópia da gaveta dela; a última fecha a edição.
+    // 6. As quatro pautas novas: de natureza (documento e ação) e de ordem (dois documentos pela data), com o erro explicado; a última fecha a edição.
     const novas = pautasDaSessao(sessao2, conteudo);
     for (const [i, pauta] of novas.entries()) {
+      const necessarios = [...documentosDaPauta(pauta), ...pauta.comparar];
       await page.locator('[data-lugar="arquivo"]').click();
-      await arquivo.locator(`[data-gaveta="${pauta.gaveta}"]`).click();
-      await expect(arquivo.locator(`[data-gaveta-aberta="${pauta.gaveta}"]`)).toBeVisible();
-      const documento = arquivo.locator(`[data-documento="${pauta.resposta}"]`);
-      if ((await documento.getAttribute("data-copia")) !== "true") await arquivo.locator(`[data-levar="${pauta.resposta}"]`).click();
-      await expect(documento).toHaveAttribute("data-copia", "true");
+      for (const gaveta of conteudo.gavetas.filter((item) => necessarios.some((id) => item.documentos.includes(id)))) await levarDaGaveta(page, gaveta.id, gaveta.documentos.filter((id) => necessarios.includes(id)));
       await arquivo.locator("[data-fechar]").click();
       await page.locator('[data-lugar="mural"]').click();
       await janela(page, "mural").locator(`[data-abrir-pauta="${pauta.id}"]`).click();
       await janela(page, "mural").locator("[data-aceitar]").click();
       await expect(page.locator("[data-objetivo]")).toHaveText(pauta.objetivo);
       await janela(page, "mural").locator("[data-montar]").click();
-      await montar(page, { documento: pauta.resposta, quando: dataDe(pauta.resposta), registro: acaoDe(pauta.resposta) });
+      const formulario = janela(page, "mural").locator(`[data-montar-nota="${pauta.id}"]`);
+      await expect(formulario).toHaveAttribute("data-tipo", tipoDaPauta(pauta));
+      const certa = notaCerta(pauta, conteudo.documentos)!;
+      if (tipoDaPauta(pauta) === "ordem") {
+        await expect(formulario.locator("[data-campo-da-nota]")).toHaveCount(2);
+        await montar(page, { primeiro: certa.segundo!, segundo: certa.primeiro! });
+        await expect(formulario.locator('[data-erro-campo="primeiro"]')).toContainText("O campo Data do documento que você pôs em primeiro lugar diz");
+        await expect(formulario.locator('[data-erro-campo="segundo"]')).toContainText("O campo Data");
+      } else {
+        await expect(formulario.locator("[data-campo-da-nota]")).toHaveCount(2);
+        const outro = pauta.comparar[0]!;
+        await montar(page, { documento: outro, registro: acaoDe(outro) });
+        await expect(formulario.locator('[data-erro-campo="documento"]')).toContainText("Esse documento registra");
+        await expect(formulario.locator('[data-erro-campo="documento"]')).not.toContainText(conteudo.documentos[pauta.resposta]!.titulo);
+      }
+      await montar(page, certa);
       const fixada = janela(page, "mural").locator(`[data-nota-fixada="${pauta.id}"]`);
       await expect(fixada).toBeVisible();
+      await expect(fixada.locator("[data-reacao]")).toHaveText(pauta.reacao);
+      if (tipoDaPauta(pauta) === "ordem") await expect(fixada.locator("[data-segundo-documento]")).toBeVisible();
       await expect(fixada.locator("[data-mudanca]")).toContainText(i === novas.length - 1 ? "última pergunta desta edição" : "ganhou resposta");
+      if (i === novas.length - 1) await expect(fixada.locator('[data-selo-novo="edicao-respondida"]')).toBeVisible();
       await janela(page, "mural").locator("[data-fechar]").click();
-      await expect(praca(page)).toHaveAttribute("data-publicadas", String(3 + i));
+      await expect(praca(page)).toHaveAttribute("data-publicadas", String(5 + i));
     }
     await expect(page.locator("[data-objetivo]")).toContainText("As pautas desta edição acabaram");
     await page.locator('[data-lugar="padaria"]').click();
@@ -406,14 +437,16 @@ test.describe("Praça do Mural, a segunda sessão sem a cena", () => {
     await expect(camara.locator('[data-conversa="lourdes-fim"]')).toBeVisible();
     await camara.locator("[data-fechar]").click();
 
-    // 7. Recarregar retoma com tudo: seis notas, a ata, a credencial no caderno.
+    // 7. Recarregar retoma com tudo: oito notas, a ata, a credencial e os selos no caderno.
     await page.reload();
     await page.locator("[data-entrar]").click();
-    await expect(praca(page)).toHaveAttribute("data-publicadas", "6", { timeout: 30_000 });
+    await expect(praca(page)).toHaveAttribute("data-publicadas", "8", { timeout: 30_000 });
     await expect(praca(page)).toHaveAttribute("data-atas", "1");
     await page.locator('[data-abrir="caderno"]').click();
     await expect(janela(page, "caderno").locator('[data-caderno-item="credencial"]')).toBeVisible();
     await expect(janela(page, "caderno").locator(`[data-caderno-materia="${materia.id}"]`)).toHaveAttribute("data-situacao", "publicada");
+    // Os oito selos: o progresso semeado já traz a marca da chave de leitura.
+    await expect(janela(page, "caderno").locator('[data-selo][data-ganho="true"]')).toHaveCount(8);
     expect(erros).toEqual([]);
   });
 });
@@ -429,6 +462,20 @@ test.describe("Praça do Mural na entrada", () => {
     await expect(page.locator("[data-entrar]")).toHaveText("Continuar de onde parou");
     expect(await page.evaluate(() => JSON.parse(window.localStorage.getItem("atlas-politico:praca")!).itens)).toEqual(["bilhete"]);
   });
+
+  test("a lista em vez da cena é uma escolha, guardada: marcada na entrada, a praça abre em lista mesmo com WebGL, e o caderno volta para a cena", async ({ page }) => {
+    await page.goto("/praca/");
+    await page.locator("[data-entrar-em-lista]").check();
+    await page.locator("[data-entrar]").click();
+    await expect(praca(page)).toHaveAttribute("data-praca", "lista");
+    await expect(praca(page)).toContainText("como você pediu");
+    expect(await page.evaluate(() => JSON.parse(window.localStorage.getItem("atlas-politico:praca:preferencias")!).lista)).toBe(true);
+    await page.locator('[data-abrir="caderno"]').click();
+    await janela(page, "caderno").locator("[data-alternar-lista]").click();
+    await janela(page, "caderno").locator("[data-fechar]").click();
+    await expect(praca(page)).toHaveAttribute("data-praca", "cena");
+    await expect(praca(page)).toHaveAttribute("data-cena", "pronta", { timeout: 30_000 });
+  });
 });
 
 test.describe("Praça do Mural com a cena", () => {
@@ -438,9 +485,7 @@ test.describe("Praça do Mural com a cena", () => {
     const erros: string[] = [];
     page.on("pageerror", (erro) => erros.push(erro.message));
     await entrar(page);
-    await expect(praca(page)).toHaveAttribute("data-cena", "pronta", {
-      timeout: 30_000,
-    });
+    await expect(praca(page)).toHaveAttribute("data-cena", "pronta", { timeout: 30_000 });
     await expect(praca(page)).toHaveAttribute("data-movimento", "reduzido");
     await expect(page.locator("[data-joystick]")).toBeVisible();
     const canvas = page.locator("canvas");
@@ -454,12 +499,12 @@ test.describe("Praça do Mural com a cena", () => {
     }
     await page.keyboard.down("w");
     try {
-      await expect(page.locator('[data-acao="mural"]')).toBeVisible({
-        timeout: 30_000,
-      });
+      await expect(page.locator('[data-acao="mural"]')).toBeVisible({ timeout: 30_000 });
     } finally {
       await page.keyboard.up("w");
     }
+    // O botão aparece no mesmo quadro em que a interface assina a tecla; um instante antes de teclar evita a corrida.
+    await page.waitForTimeout(200);
     await page.keyboard.press("e");
     await expect(janela(page, "mural")).toBeVisible();
     await expect(janela(page, "mural").getByRole("heading", { name: "Mural da praça" })).toBeFocused();
@@ -469,48 +514,34 @@ test.describe("Praça do Mural com a cena", () => {
     expect(erros).toEqual([]);
   });
 
-  test("sem preferência de movimento reduzido, a cena anima", async ({ browser }) => {
-    const contexto = await browser.newContext({
-      reducedMotion: "no-preference",
-      viewport: { width: 1280, height: 720 },
-    });
+  test("sem preferência de movimento reduzido, a cena anima; o modo leve marcado na entrada vale na cena", async ({ browser }) => {
+    const contexto = await browser.newContext({ reducedMotion: "no-preference", viewport: { width: 1280, height: 720 } });
     const page = await contexto.newPage();
-    await entrar(page);
-    await expect(praca(page)).toHaveAttribute("data-cena", "pronta", {
-      timeout: 30_000,
-    });
+    await page.goto("/praca/");
+    await page.locator("[data-modo-leve]").check();
+    await page.locator("[data-entrar]").click();
+    await expect(praca(page)).toHaveAttribute("data-cena", "pronta", { timeout: 30_000 });
     await expect(praca(page)).toHaveAttribute("data-movimento", "normal");
+    await expect(praca(page)).toHaveAttribute("data-modo-leve", "true");
     await contexto.close();
   });
 
   test("no celular emulado, o joystick leva ao bilhete e o toque o guarda", async ({ browser }) => {
-    const contexto = await browser.newContext({
-      viewport: { width: 390, height: 844 },
-      hasTouch: true,
-      isMobile: true,
-      reducedMotion: "reduce",
-    });
+    const contexto = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, reducedMotion: "reduce" });
     const page = await contexto.newPage();
     const erros: string[] = [];
     page.on("pageerror", (erro) => erros.push(erro.message));
     await entrar(page);
-    await expect(praca(page)).toHaveAttribute("data-cena", "pronta", {
-      timeout: 30_000,
-    });
+    await expect(praca(page)).toHaveAttribute("data-cena", "pronta", { timeout: 30_000 });
     const joystick = page.locator("[data-joystick]");
     const caixa = (await joystick.boundingBox())!;
-    const centro = {
-      x: caixa.x + caixa.width / 2,
-      y: caixa.y + caixa.height / 2,
-    };
+    const centro = { x: caixa.x + caixa.width / 2, y: caixa.y + caixa.height / 2 };
     // O bilhete fica à direita e ao fundo de quem começa: o manche vai para cima e para a direita, e fica lá até o botão aparecer.
     await page.mouse.move(centro.x, centro.y);
     await page.mouse.down();
     await page.mouse.move(centro.x + 34, centro.y - 40, { steps: 4 });
     try {
-      await expect(page.locator('[data-acao="bilhete"]')).toBeVisible({
-        timeout: 30_000,
-      });
+      await expect(page.locator('[data-acao="bilhete"]')).toBeVisible({ timeout: 30_000 });
     } finally {
       await page.mouse.up();
     }

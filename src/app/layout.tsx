@@ -72,16 +72,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // A marca da consulta é posta no `<html>` antes da hidratação.
     <html lang="pt-BR" className={`${newsreader.variable} ${franklin.variable}`} suppressHydrationWarning>
-      <body className="flex min-h-dvh flex-col font-sans antialiased">
+      <body className="palco flex min-h-dvh flex-col font-sans antialiased">
         <a
           href="#conteudo"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-ink focus:px-3 focus:py-2 focus:text-paper"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-action focus:px-3 focus:py-2 focus:text-action-ink"
         >
           Pular para o conteúdo
         </a>
         <SiteHeader />
-        {/* Cada página define a própria largura: a exploração usa a tela toda. */}
-        <main id="conteudo" className="flex flex-1 flex-col">
+        {/* O conteúdo é a folha de papel sobre o palco: todo documento, cartão e leitura fica nela. As telas que são palco (a entrada, o hub do jogo, a praça) cobrem a folha com o próprio fundo. Cada página define a própria largura: a exploração usa a tela toda. */}
+        <main id="conteudo" className="folha flex flex-1 flex-col">
           {children}
         </main>
         <SiteFooter />

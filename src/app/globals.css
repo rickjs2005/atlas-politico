@@ -1,22 +1,39 @@
 @import "tailwindcss";
 
 /*
-  Identidade visual do atlas (fase 4): um atlas editorial em tons de papel, com
-  o grafite como tinta. A descrição de cada escolha está em
-  docs/DESIGN-SYSTEM.md.
+  Identidade visual do atlas: um documentário interativo (D-155). O palco é
+  escuro, verde-noite, e os documentos ficam sobre papel: tudo que é registro,
+  fonte, carta de leitura ou cartão de pessoa fica em uma folha de papel; o
+  que é moldura, convite, hub e praça fica no palco. A descrição de cada
+  escolha está em docs/DESIGN-SYSTEM.md.
 
   As cores do mapa são desenhadas por WebGL, que não lê variáveis CSS. Elas
   repetem estes tokens em src/features/map/palette.ts, e um teste confere que
-  os dois lados continuam iguais (tests/design.test.ts).
+  os dois lados continuam iguais e que cada par de texto e fundo passa no
+  contraste mínimo (tests/design.test.ts).
 */
 :root {
+  /* O palco: fundo escuro, superfície escura, texto claro e as linhas sobre ele */
+  --atlas-stage: #111613;
+  --atlas-stage-raised: #202823;
+  --atlas-stage-ink: #faf8f2;
+  --atlas-stage-ink-soft: #c5cbc2;
+  --atlas-stage-line: #3f4a43;
+
+  /* A ação: um botão por tela, e o que está ativo. Nunca é cor de pessoa. */
+  --atlas-action: #f0c66b;
+  --atlas-action-ink: #1c241e;
+
+  /* O destaque secundário: rótulos de seção no palco, selos e marcas discretas */
+  --atlas-highlight: #b9aedb;
+
   /* Superfícies: papel */
-  --atlas-paper: #f3efe6;
+  --atlas-paper: #f4f0e7;
   --atlas-paper-raised: #fbf9f4;
   --atlas-paper-sunken: #e8e3d6;
 
-  /* Tinta: grafite */
-  --atlas-ink: #1b1c1a;
+  /* Tinta sobre o papel */
+  --atlas-ink: #1c241e;
   --atlas-ink-soft: #4a4c45;
   --atlas-ink-faint: #62645b;
 
@@ -71,6 +88,15 @@
 }
 
 @theme inline {
+  --color-stage: var(--atlas-stage);
+  --color-stage-raised: var(--atlas-stage-raised);
+  --color-stage-ink: var(--atlas-stage-ink);
+  --color-stage-ink-soft: var(--atlas-stage-ink-soft);
+  --color-stage-line: var(--atlas-stage-line);
+  --color-action: var(--atlas-action);
+  --color-action-ink: var(--atlas-action-ink);
+  --color-highlight: var(--atlas-highlight);
+
   --color-paper: var(--atlas-paper);
   --color-raised: var(--atlas-paper-raised);
   --color-sunken: var(--atlas-paper-sunken);
@@ -129,17 +155,23 @@
     scroll-padding-top: 1rem;
   }
 
+  /* O palco é o fundo de tudo; o papel entra onde há documento (`main` e as folhas). */
   body {
-    background-color: var(--atlas-paper);
-    color: var(--atlas-ink);
+    background-color: var(--atlas-stage);
+    color: var(--atlas-stage-ink);
     font-feature-settings: "kern", "liga";
     text-rendering: optimizeLegibility;
   }
 
-  /* Foco sempre visível: anel de tinta, afastado do elemento. */
+  /* Foco sempre visível: anel de tinta sobre o papel, anel de ação sobre o palco. */
   :focus-visible {
     outline: 2px solid var(--atlas-ink);
     outline-offset: 2px;
+  }
+
+  .palco :focus-visible,
+  .palco:focus-visible {
+    outline-color: var(--atlas-action);
   }
 
   /* O canvas do mapa fica dentro de uma moldura que corta o que passa da
@@ -515,6 +547,57 @@ html[data-consulta] [data-consulta-aviso] {
   font-family: var(--font-serif);
   font-size: 1.125rem;
   line-height: 1.65;
+}
+
+/* O palco: fundo escuro e texto claro. Para a moldura do site, a entrada, o hub e a praça. */
+@utility palco {
+  background-color: var(--atlas-stage);
+  color: var(--atlas-stage-ink);
+}
+
+/* A folha: papel e tinta, para tudo que é documento dentro do palco. */
+@utility folha {
+  background-color: var(--atlas-paper);
+  color: var(--atlas-ink);
+}
+
+/* O botão de ação: um por tela, no palco ou na folha. */
+@utility btn-acao {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--atlas-action);
+  background-color: var(--atlas-action);
+  color: var(--atlas-action-ink);
+  padding-inline: 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-acao:hover {
+  background-color: #f6d589;
+  border-color: #f6d589;
+}
+
+/* O botão secundário sobre o palco: contorno claro, sem preenchimento. */
+@utility btn-palco {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--atlas-stage-ink-soft);
+  color: var(--atlas-stage-ink);
+  padding-inline: 1.25rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.btn-palco:hover {
+  border-color: var(--atlas-stage-ink);
+  background-color: var(--atlas-stage-raised);
 }
 
 /* Largura útil das páginas, com a margem lateral do projeto. */

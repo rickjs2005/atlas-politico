@@ -1,37 +1,53 @@
-// A cena 3D da Praça do Mural (docs/PRACA.md, D-153): uma praça brasileira
-// compacta, com coreto, calçada de pedra portuguesa, uma padaria, uma banca
-// de jornal, um sobrado que é o arquivo e a Câmara ao fundo, ainda fechada.
-// Aproveita o motor da Cidade do Voto (src/features/world/scene.ts): o mesmo
-// laço, a mesma entrada por teclado e joystick, a mesma colisão e a mesma
-// câmera que segue. Muda o que está em volta: cada lugar tem uma função, e
-// quem é interativo tem placa e tapete; o cenário de fundo não tem.
+// A cena 3D da Praça do Mural (docs/PRACA.md, D-153 e D-155): uma praça
+// brasileira compacta ao anoitecer, com coreto, calçada de pedra portuguesa,
+// uma padaria, uma banca de jornal, um sobrado que é o arquivo e a Câmara ao
+// fundo, com postes acesos. Aproveita o motor da Cidade do Voto
+// (src/features/world/scene.ts): o mesmo laço, a mesma entrada por teclado e
+// joystick, a mesma colisão e a mesma câmera que segue. Muda o que está em
+// volta: cada lugar tem uma função, e quem é interativo tem placa e tapete; o
+// cenário de fundo não tem.
 //
-// Arte: uma maquete de papel. Formas simples, sombreamento chapado, cores de
-// fachada colonial (ocre, azul-claro, rosa-antigo, pêssego) e nada baixado
+// Arte: uma maquete de papel na hora azul. Formas simples, sombreamento
+// chapado, cores de fachada colonial (ocre, azul-claro, rosa-antigo, pêssego)
+// sob a luz fria do fim de tarde e a luz quente dos postes, e nada baixado
 // além deste código. Nenhum prédio, placa ou pessoa usa cor de partido, e não
 // há figura de nenhuma das pessoas retratadas: a praça é ficção.
 //
+// A cena fala com a interface por eventos tipados (`PracaEvento`), só quando
+// algo muda: chegar perto de um lugar, ou se afastar. A posição do personagem
+// vai para um atributo do canvas, para o diagnóstico e os testes; nada de
+// estado React a cada quadro.
+//
 // A cena muda com o jogo: o bilhete some do chão quando é guardado, as notas
 // aparecem no mural quando uma pauta é publicada, a corrente da Câmara cai
-// quando as duas primeiras pautas estão no mural (e a Lourdes aparece na
+// quando as pautas da primeira sessão estão no mural (e a Lourdes aparece na
 // escadaria), e a ata vai para o quadro de avisos da Câmara quando é lavrada.
+//
+// Modo leve (manual ou por ponteiro grosseiro e poucos núcleos): sem sombras,
+// sem antialias, pixel ratio 1, sem as luzes dos postes e menos árvores.
 
 import * as THREE from "three";
 
 import type { LugarId } from "@/lib/praca/tipos";
 import { seededRandom } from "@/lib/world/blind";
 
+import { COR_CEU } from "./cores";
+
 export type PontoId = LugarId | "bilhete";
 
+/** O que a cena avisa à interface. Nunca a cada quadro: só quando muda. */
+export type PracaEvento = { tipo: "perto"; id: PontoId | null };
+
 export interface PracaCallbacks {
-  /** O personagem chegou perto de um lugar, ou do bilhete, ou se afastou (`null`). */
-  onNear: (id: PontoId | null) => void;
+  onEvento: (evento: PracaEvento) => void;
 }
 
 export interface PracaOptions {
   reduzirMovimento: boolean;
+  /** Pedido pela pessoa, ou decidido pelo aparelho: menos custo de desenho. */
+  modoLeve: boolean;
   posicaoInicial?: { x: number; z: number };
-  /** Quantas notas já estão fixadas no mural (até seis). */
+  /** Quantas notas já estão fixadas no mural (até oito). */
   publicadas: number;
   camaraAberta: boolean;
   /** A ata da sessão está no quadro de avisos da Câmara. */
@@ -51,7 +67,12 @@ export interface PracaHandle {
 }
 
 /** Quantas notas o mural comporta: as pautas das duas sessões. */
-export const NOTAS_NO_MURAL = 6;
+export const NOTAS_NO_MURAL = 8;
+
+/** Decide o modo leve pelo aparelho, quando a pessoa não escolheu. */
+export function aparelhoFraco(): boolean {
+  return window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency ?? 8) <= 4;
+}
 
 /** Onde cada interação acontece, no plano do chão, e a que distância ela acende. */
 const PONTOS: Record<PontoId, { x: number; z: number; raio: number }> = {
@@ -66,7 +87,6 @@ const PONTOS: Record<PontoId, { x: number; z: number; raio: number }> = {
 const LIMITE = { x: 13.2, z: 10.6 };
 const VELOCIDADE = 6;
 const RAIO_PERSONAGEM = 0.45;
-const COR_CEU = "#dcebf3";
 
 const toon = (color: string) => new THREE.MeshToonMaterial({ color });
 const fosco = (color: string) => new THREE.MeshStandardMaterial({ color, roughness: 0.95 });
@@ -386,7 +406,8 @@ function makeBanco(cena: THREE.Scene, x: number, z: number, giro: number): THREE
   return new THREE.Box2(new THREE.Vector2(x - meia.x, z - meia.z), new THREE.Vector2(x + meia.x, z + meia.z));
 }
 
-function makePoste(cena: THREE.Scene, x: number, z: number): THREE.Box2 {
+/** Um poste aceso: o globo brilha sempre; a luz que ele joga no chão só fora do modo leve. */
+function makePoste(cena: THREE.Scene, x: number, z: number, comLuz: boolean): THREE.Box2 {
   const poste = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 3.6, 8), toon("#3a3634"));
   poste.position.set(x, 1.8, z);
   cena.add(poste);
@@ -394,18 +415,22 @@ function makePoste(cena: THREE.Scene, x: number, z: number): THREE.Box2 {
     new THREE.SphereGeometry(0.28, 12, 10),
     new THREE.MeshToonMaterial({
       color: "#fff6d8",
-      emissive: "#ffe9a8",
-      emissiveIntensity: 0.5,
+      emissive: "#ffd87a",
+      emissiveIntensity: 1.1,
     }),
   );
   globo.position.set(x, 3.7, z);
   cena.add(globo);
+  if (comLuz) {
+    const luz = new THREE.PointLight("#ffd58a", 14, 16, 2);
+    luz.position.set(x, 3.5, z);
+    cena.add(luz);
+  }
   return new THREE.Box2(new THREE.Vector2(x - 0.2, z - 0.2), new THREE.Vector2(x + 0.2, z + 0.2));
 }
 
 /** Ipês e árvores comuns em volta da praça, fora de onde se anda. */
-function makeArvores(cena: THREE.Scene, sorteio: () => number) {
-  const quantidade = 44;
+function makeArvores(cena: THREE.Scene, sorteio: () => number, quantidade: number) {
   const troncoGeo = new THREE.CylinderGeometry(0.12, 0.18, 1.4, 6);
   const copaGeo = new THREE.SphereGeometry(1.1, 9, 7);
   const tronco = new THREE.InstancedMesh(troncoGeo, toon("#6e4f3a"), quantidade);
@@ -476,24 +501,25 @@ function makeCasario(cena: THREE.Scene, sorteio: () => number) {
 
 /** Monta a praça no canvas e começa o laço. Devolve os controles e a limpeza. */
 export function createPraca(canvas: HTMLCanvasElement, callbacks: PracaCallbacks, opcoes: PracaOptions): PracaHandle {
-  const fraco = window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency ?? 8) <= 4;
+  const fraco = opcoes.modoLeve;
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !fraco,
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, fraco ? 1.5 : 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, fraco ? 1 : 2));
   renderer.shadowMap.enabled = !fraco;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const cena = new THREE.Scene();
   cena.background = new THREE.Color(COR_CEU);
-  cena.fog = new THREE.Fog(COR_CEU, 34, 64);
+  cena.fog = new THREE.Fog(COR_CEU, 30, 60);
   const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 200);
 
-  cena.add(new THREE.HemisphereLight("#fff8e8", "#a89b85", 1.5));
-  const sol = new THREE.DirectionalLight("#fff4dc", 1.7);
+  // A hora azul: céu frio por cima, chão escuro, e uma "lua" que ainda desenha sombras; os postes trazem o quente.
+  cena.add(new THREE.HemisphereLight("#9fb6d4", "#2f3a33", 1.15));
+  const sol = new THREE.DirectionalLight("#cfdcf0", 1.05);
   sol.position.set(10, 20, 12);
   sol.castShadow = !fraco;
   sol.shadow.mapSize.set(1024, 1024);
@@ -504,11 +530,11 @@ export function createPraca(canvas: HTMLCanvasElement, callbacks: PracaCallbacks
   cena.add(sol, sol.target);
 
   // O chão: grama ao longe, a rua em volta, a calçada de pedra portuguesa na praça e canteiros nos cantos.
-  const grama = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), fosco("#c9d3a9"));
+  const grama = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), fosco("#6f8468"));
   grama.rotation.x = -Math.PI / 2;
   grama.receiveShadow = true;
   cena.add(grama);
-  const rua = new THREE.Mesh(new THREE.PlaneGeometry(38, 32), fosco("#8f8a82"));
+  const rua = new THREE.Mesh(new THREE.PlaneGeometry(38, 32), fosco("#5f615c"));
   rua.rotation.x = -Math.PI / 2;
   rua.position.y = 0.005;
   rua.receiveShadow = true;
@@ -544,7 +570,9 @@ export function createPraca(canvas: HTMLCanvasElement, callbacks: PracaCallbacks
   ];
   makeCoreto(cena);
   obstaculos.push(makeBanco(cena, -5, 5.2, 0), makeBanco(cena, 5, 5.2, 0), makeBanco(cena, -5, -3.6, Math.PI), makeBanco(cena, 5, -3.6, Math.PI));
-  obstaculos.push(makePoste(cena, -12.4, 8.6), makePoste(cena, 12.4, 8.6), makePoste(cena, -12.4, -8.6), makePoste(cena, 12.4, -8.6));
+  obstaculos.push(makePoste(cena, -12.4, 8.6, !fraco), makePoste(cena, 12.4, 8.6, !fraco), makePoste(cena, -12.4, -8.6, !fraco), makePoste(cena, 12.4, -8.6, !fraco));
+  // Um poste a mais junto do mural: é o primeiro lugar da viagem, e fica iluminado de propósito.
+  obstaculos.push(makePoste(cena, -6.2, -8.4, !fraco));
 
   // A Câmara, ao fundo: colunas, frontão, escadaria e a corrente na porta.
   const camaraCor = "#f3ead7";
@@ -711,11 +739,11 @@ export function createPraca(canvas: HTMLCanvasElement, callbacks: PracaCallbacks
   const papeis = ["#fbf6ea", "#fff1b8", "#e8f0f7", "#fbe3d6", "#fbf6ea", "#eef7e0"];
   papeis.forEach((cor, i) => {
     const papel = new THREE.Mesh(papelGeo, new THREE.MeshBasicMaterial({ color: cor }));
-    papel.position.set(-1.9 + i * 0.76, 2.1 + (i % 2) * 0.35 - 0.2, 0.09);
+    papel.position.set(-1.9 + i * 0.76, 2.35 + (i % 2) * 0.25 - 0.1, 0.09);
     papel.rotation.z = (i % 3) * 0.08 - 0.08;
     mural.add(papel);
   });
-  // As notas fixadas, uma por pauta publicada, na fileira de baixo: até seis, com carimbo.
+  // As notas fixadas, uma por pauta publicada, em duas fileiras abaixo das perguntas: até oito, com carimbo.
   const notas: THREE.Group[] = Array.from({ length: NOTAS_NO_MURAL }, (_, i) => {
     const nota = new THREE.Group();
     const folha = new THREE.Mesh(new THREE.PlaneGeometry(0.66, 0.78), new THREE.MeshBasicMaterial({ color: "#ffffff" }));
@@ -728,7 +756,7 @@ export function createPraca(canvas: HTMLCanvasElement, callbacks: PracaCallbacks
       linha.position.set(-0.04, 0.26 - l * 0.12, 0.01);
       nota.add(linha);
     }
-    nota.position.set(-1.9 + i * 0.76, 1.2, 0.1);
+    nota.position.set(-1.6 + (i % 4) * 1.06, i < 4 ? 1.5 : 0.85, 0.1);
     nota.rotation.z = (i % 2 === 0 ? 1 : -1) * 0.04;
     nota.visible = i < opcoes.publicadas;
     mural.add(nota);
@@ -791,7 +819,7 @@ export function createPraca(canvas: HTMLCanvasElement, callbacks: PracaCallbacks
   cena.add(brilhoBilhete);
 
   makeCasario(cena, seededRandom(7));
-  makeArvores(cena, seededRandom(23));
+  makeArvores(cena, seededRandom(23), fraco ? 22 : 44);
 
   const jogador = makeReporter();
   jogador.grupo.position.set(opcoes.posicaoInicial?.x ?? 0, 0, opcoes.posicaoInicial?.z ?? 6.5);
@@ -905,7 +933,7 @@ export function createPraca(canvas: HTMLCanvasElement, callbacks: PracaCallbacks
       }
       if (maisPerto !== perto) {
         perto = maisPerto;
-        callbacks.onNear(perto);
+        callbacks.onEvento({ tipo: "perto", id: perto });
       }
 
       // Vida da praça: os moradores balançam de leve e o bilhete treme no vento. Nada disso com movimento reduzido.

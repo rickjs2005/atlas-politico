@@ -14,6 +14,7 @@ import { ReviewNote } from "@/components/ReviewNote";
 import { PATH_LINK, SOURCE_LINK } from "@/components/touch";
 import type { DecisionView } from "@/lib/data/decisions";
 import { describePrecision, formatDate } from "@/lib/domain/dates";
+import { fieldOf } from "@/lib/game/dossier";
 import {
   DESFECHO_DE_ATUACAO_LABELS,
   INSTITUICAO_LABELS,
@@ -38,8 +39,11 @@ export const ATUACAO_NOTICE =
 
 interface DecisionCardProps {
   decisao: DecisionView;
-  /** `completo`: tudo, com fontes e revisão. `curto`: data, identificação, natureza e cargo. */
-  detalhe: "completo" | "curto";
+  /**
+   * `completo`: tudo, com fontes e revisão. `curto`: data, identificação, natureza e cargo.
+   * `expansivel`: a identificação, o que o documento registra em uma linha, e o resto atrás de "Ver o registro completo" (a comparação, D-155).
+   */
+  detalhe: "completo" | "curto" | "expansivel";
   /** O nível do título dentro do cartão: um abaixo do último título acima dele. Os subtítulos ficam um nível abaixo. */
   headingLevel?: 3 | 4 | 5;
   /** Um caminho para fora do cartão (a página da pessoa no atlas, a partir do jogo), com o rótulo. */
@@ -82,31 +86,10 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
   const Title = `h${headingLevel}` as "h3" | "h4" | "h5";
   const Sub = `h${headingLevel + 1}` as "h4" | "h5" | "h6";
   const precisao = describePrecision(decisao.data);
-  return (
-    <article id={anchorId} className="space-y-3 scroll-mt-24" data-decisao-cartao={decisao.id} data-natureza={decisao.natureza}>
-      <div className="space-y-1">
-        <p className="numerals text-lg font-semibold leading-none tracking-tight">
-          <time dateTime={decisao.data.valor}>{formatDate(decisao.data)}</time>
-        </p>
-        {precisao !== null && <p className="text-xs italic text-ink-soft">{precisao}</p>}
-        <Title className="font-serif text-xl font-medium leading-snug">{decisao.titulo}</Title>
-        <p className="text-xs text-ink-soft" data-natureza-rotulo>
-          {NATUREZA_LABEL[decisao.natureza]} · {INSTITUICAO_LABELS[decisao.instituicao]}
-          {decisao.temas.length > 0 && <span data-temas> · {decisao.temas.map((tema) => TEMA_LABELS[tema]).join(", ")}</span>}
-        </p>
-        <p className="text-sm" data-cargo={decisao.cargo?.mandatoId ?? "nao-publicado"}>
-          {decisao.cargo === null ? (
-            <span className="italic text-ink-soft">Mandato não publicado nesta edição.</span>
-          ) : (
-            <>
-              <span className="font-medium">{decisao.cargo.cargo}</span>
-              <span className="text-ink-soft">, {decisao.cargo.instituicao}</span>
-            </>
-          )}
-        </p>
-      </div>
-
-      {detalhe === "completo" && (
+  // A ação e o objeto em uma linha, como o jogo os lê: o campo Ação e o resumo do campo Objeto.
+  const acao = fieldOf(decisao, "acao");
+  const objeto = fieldOf(decisao, "objeto");
+  const completo = (
         <>
           {decisao.natureza === "voto" && (
             <section aria-label="O que foi votado e o que o registro documenta" className="space-y-2 border-t border-line pt-3 text-sm" data-votacao={decisao.votacao.id}>
@@ -264,6 +247,52 @@ export function DecisionCard({ decisao, detalhe, headingLevel = 3, link, anchorI
               </Link>
             </p>
           )}
+        </>
+  );
+  return (
+    <article id={anchorId} className="space-y-3 scroll-mt-24" data-decisao-cartao={decisao.id} data-natureza={decisao.natureza} data-detalhe={detalhe}>
+      <div className="space-y-1">
+        <p className="numerals text-lg font-semibold leading-none tracking-tight">
+          <time dateTime={decisao.data.valor}>{formatDate(decisao.data)}</time>
+        </p>
+        {precisao !== null && <p className="text-xs italic text-ink-soft">{precisao}</p>}
+        <Title className="font-serif text-xl font-medium leading-snug">{decisao.titulo}</Title>
+        <p className="text-xs text-ink-soft" data-natureza-rotulo>
+          {NATUREZA_LABEL[decisao.natureza]} · {INSTITUICAO_LABELS[decisao.instituicao]}
+          {decisao.temas.length > 0 && <span data-temas> · {decisao.temas.map((tema) => TEMA_LABELS[tema]).join(", ")}</span>}
+        </p>
+        <p className="text-sm" data-cargo={decisao.cargo?.mandatoId ?? "nao-publicado"}>
+          {decisao.cargo === null ? (
+            <span className="italic text-ink-soft">Mandato não publicado nesta edição.</span>
+          ) : (
+            <>
+              <span className="font-medium">{decisao.cargo.cargo}</span>
+              <span className="text-ink-soft">, {decisao.cargo.instituicao}</span>
+            </>
+          )}
+        </p>
+      </div>
+
+      {detalhe === "completo" && completo}
+
+      {detalhe === "expansivel" && (
+        <>
+          {/* A mesma hierarquia nos dois lados: a identificação acima, e o que o documento registra em uma linha, com os termos do próprio registro. */}
+          <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-3 gap-y-0.5 border-t border-line pt-2 text-sm" data-decisao-registra>
+            <dt className="text-ink-soft">Ação</dt>
+            <dd className="font-medium">{acao.valor}</dd>
+            <dt className="text-ink-soft">Sobre</dt>
+            <dd className="text-ink-soft">{objeto.resumo}</dd>
+          </dl>
+          <details className="group/decisao border-t border-line" data-aprofundar={decisao.id}>
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2 text-sm font-medium underline decoration-line-strong hover:decoration-ink [&::-webkit-details-marker]:hidden">
+              Ver o registro completo: objeto, fontes e revisão
+              <span aria-hidden="true" className="shrink-0 text-ink-soft transition-transform duration-[var(--atlas-fast)] group-open/decisao:rotate-180">
+                ▾
+              </span>
+            </summary>
+            <div className="space-y-3 pb-1">{completo}</div>
+          </details>
         </>
       )}
     </article>

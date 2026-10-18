@@ -109,7 +109,7 @@ test.describe("pacotes do jogo", () => {
 test.describe("páginas do jogo", () => {
   test("a escolha de trajetória mostra a prévia do cenário sem o palco e sem o mapa", async ({ page }) => {
     const visto = watch(page);
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     await settle(page);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Conheça as duas trajetórias");
     await expect(page.locator("[data-previa-mundo]")).toHaveCount(2);
@@ -163,7 +163,7 @@ test.describe("páginas do jogo", () => {
     await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
     await settle(page);
     // Pela entrada do jogo, em uma navegação interna, para a outra pessoa.
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     await page.locator('[data-ler-sem-cenario="flavio-bolsonaro"]').click();
     await pronto(page, false);
     await expect(jogo(page)).toHaveAttribute("data-modo", "leitura");
@@ -246,7 +246,7 @@ test.describe("páginas do jogo", () => {
       expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), `${viewport.width}: sobra na largura`).toBeLessThanOrEqual(0);
 
       // A entrada do jogo, sem JavaScript, já tem os dois começos, como links comuns.
-      await page.goto("/jogo/");
+      await page.goto("/jogo/trajetorias/");
       for (const pessoa of PERSONAGENS) {
         const comecar = page.locator(`[data-comecar="${pessoa}"]`);
         await expect(comecar).toBeVisible();
@@ -299,7 +299,7 @@ test.describe("páginas do jogo", () => {
       const caminho = new URL(pedido.url()).pathname;
       if (caminho.startsWith("/_next/static/chunks/") && caminho.endsWith(".js")) daEntrada.add(caminho);
     });
-    await page.goto("/jogo/");
+    await page.goto("/jogo/trajetorias/");
     await settle(page);
     const comDesenho = chunksWith("data-previa-mundo");
     expect(comDesenho.length, "pacotes com a prévia").toBeGreaterThan(0);
@@ -308,7 +308,7 @@ test.describe("páginas do jogo", () => {
     const outra = await page.context().newPage();
     const erros = vigiar(outra);
     await outra.route("**/_next/static/chunks/*.js", (pedido) => (comDesenho.includes(new URL(pedido.request().url()).pathname) ? pedido.abort() : pedido.continue()));
-    await outra.goto("/jogo/");
+    await outra.goto("/jogo/trajetorias/");
     await outra.waitForLoadState("networkidle");
     await expect(outra.getByRole("heading", { level: 1 })).toHaveText("Conheça as duas trajetórias");
     await expect(outra.locator("[data-escolha]")).toHaveCount(2);

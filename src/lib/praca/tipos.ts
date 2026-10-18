@@ -1,5 +1,5 @@
-// Contratos da Praça do Mural (docs/PRACA.md, D-153 e D-154): a aventura de
-// investigação em uma praça brasileira compacta. Só tipos.
+// Contratos da Praça do Mural (docs/PRACA.md, D-153, D-154 e D-155): a
+// aventura de investigação em uma praça brasileira compacta. Só tipos.
 //
 // Três camadas, separadas de propósito:
 //   fato      os documentos: decisões já publicadas no atlas (votos, atos e
@@ -7,12 +7,16 @@
 //             acontecimentos, que a banca mostra como recortes;
 //   ficção    a praça, as pessoas que nela vivem (Zefa, Teodoro, o Escrivão e
 //             a Lourdes), o bilhete no chão, a credencial, as perguntas do
-//             mural e a matéria da mesa da Câmara, que são de moradores
-//             inventados e só perguntam o que um documento publicado responde;
+//             mural, a reação de quem perguntou e a matéria da mesa da
+//             Câmara, que são de moradores inventados e só perguntam o que um
+//             documento publicado responde;
 //   regra     o que o jogo faz com isso: sessões, gavetas por pessoa e ano,
 //             um item por sessão que abre um lugar (a chave, a credencial), a
-//             nota montada com os campos do documento e fixada no mural, e a
-//             ata lavrada com dois documentos lado a lado.
+//             resposta montada com os campos do documento e fixada no mural
+//             (quatro jeitos: conferir um campo, a nota de três campos,
+//             distinguir a natureza da ação, pôr dois documentos em ordem),
+//             a ata lavrada com dois documentos lado a lado, os passos de
+//             cada pauta e os selos, que só reconhecem o caminho percorrido.
 
 import type { DecisionView } from "@/lib/data/decisions";
 import type { DataHistorica } from "@/lib/domain/types";
@@ -62,12 +66,19 @@ export interface Recorte {
   data: DataHistorica;
 }
 
-/** O que a pessoa monta para responder uma pauta: o documento, quando e o que ele registra, pelas chaves das opções. */
-export interface Nota {
-  documento: string;
-  quando: string;
-  registro: string;
-}
+/**
+ * Os quatro jeitos de responder uma pauta, do mais simples ao que pede mais
+ * leitura (D-155):
+ *   campo      conferir um campo (a data) do documento pedido: o tutorial;
+ *   nota       o documento, a data e o que ele registra: a nota de três campos;
+ *   natureza   entre documentos parecidos, dizer qual é o pedido e o que a
+ *              ação dele registra (voto a favor ou contra, sanção, veto, autoria);
+ *   ordem      pôr dois documentos na ordem em que foram registrados, pelo campo Data.
+ */
+export type TipoDePauta = "campo" | "nota" | "natureza" | "ordem";
+
+/** O que a pessoa monta para responder uma pauta: um valor por campo, pelas chaves das opções. */
+export type Nota = Record<string, string>;
 
 /**
  * Uma pauta do mural: a pergunta de um morador inventado, o documento que a
@@ -79,19 +90,23 @@ export interface Pauta {
   /** A sessão em que a pauta é pregada no mural. */
   sessao: string;
   pessoa: PersonagemSlug;
+  /** Como se responde. Sem o campo, é a nota de três campos. */
+  tipo?: TipoDePauta;
   /** Quem pergunta: morador fictício, com o que faz. */
   autor: string;
   pergunta: string;
   /** O objetivo, em uma linha, para o cartão da praça. */
   objetivo: string;
-  /** O documento que responde a pauta. */
+  /** O documento que responde a pauta. Na pauta de ordem, o primeiro dos dois. */
   resposta: string;
-  /** Outros documentos que a pauta pede para comparar: a resposta se distingue deles. */
+  /** Outros documentos que a pauta pede para comparar: a resposta se distingue deles. Na pauta de ordem, o segundo documento. */
   comparar: readonly string[];
   /** O que a nota fixada mostra a mais: os dispositivos vetados de um ato (sem o objeto, que é longo), ou o objeto com a etapa e o resultado. */
   detalhe: "dispositivos" | "objeto";
   /** A gaveta em que o documento está. */
   gaveta: string;
+  /** O que quem perguntou faz quando a nota é fixada. Ficção; não fala das pessoas retratadas. */
+  reacao: string;
 }
 
 /** Um lado da mesa da Câmara: o documento de uma das pessoas sobre a matéria da sessão. */
@@ -147,7 +162,7 @@ export type SituacaoDaPauta = "fechada" | "aberta" | "publicada";
 
 export interface ProgressoDaPraca {
   versao: 1;
-  /** Por pauta: publicada, com a nota montada, ou só aberta, com as tentativas. */
+  /** Por pauta: publicada, com a resposta montada, ou só aberta, com as tentativas. */
   pautas: Record<string, { situacao: SituacaoDaPauta; tentativas: number; nota?: Nota }>;
   /** Por matéria da mesa: lavrada, com a ata, ou só aberta, com as tentativas. Ausente nos progressos gravados antes da segunda sessão. */
   atas: Record<string, { situacao: SituacaoDaPauta; tentativas: number; ata?: Ata }>;

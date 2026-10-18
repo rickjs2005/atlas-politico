@@ -43,6 +43,11 @@ export default function NotFound() {
             </IntentLink>
           </li>
           <li>
+            <IntentLink href="/jogo" className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised">
+              Jogar: investigar na Praça do Mural <span aria-hidden="true">→</span>
+            </IntentLink>
+          </li>
+          <li>
             <IntentLink href="/metodologia" className="flex min-h-12 items-center justify-between gap-4 font-medium no-underline hover:bg-raised">
               Metodologia <span aria-hidden="true">→</span>
             </IntentLink>

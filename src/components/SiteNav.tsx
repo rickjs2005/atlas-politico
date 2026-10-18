@@ -12,6 +12,8 @@ import { IntentLink } from "./IntentLink";
 interface NavItem {
   href: string;
   label: string;
+  /** Outros caminhos que contam como este destino (a página de uma pessoa está dentro de Explorar). */
+  inclui?: readonly string[];
 }
 
 export function SiteNav({ items }: { items: readonly NavItem[] }) {
@@ -35,8 +37,8 @@ export function SiteNav({ items }: { items: readonly NavItem[] }) {
     return () => document.removeEventListener("keydown", close);
   }, [open]);
 
-  const isCurrent = (href: string) =>
-    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+  const cobre = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
+  const isCurrent = (item: NavItem) => cobre(item.href) || (item.inclui ?? []).some(cobre);
 
   const links = (onNavigate?: () => void) =>
     items.map((item) => (
@@ -44,9 +46,9 @@ export function SiteNav({ items }: { items: readonly NavItem[] }) {
         {/* O destino só é adiantado quando a pessoa aponta ou foca o link. */}
         <IntentLink
           href={item.href}
-          aria-current={isCurrent(item.href) ? "page" : undefined}
+          aria-current={isCurrent(item) ? "page" : undefined}
           onClick={onNavigate}
-          className="block py-2 text-sm text-ink-soft underline-offset-[0.4em] hover:text-ink aria-[current=page]:font-semibold aria-[current=page]:text-ink aria-[current=page]:underline md:py-1"
+          className="block py-2 text-sm text-stage-ink-soft no-underline underline-offset-[0.4em] hover:text-stage-ink aria-[current=page]:font-semibold aria-[current=page]:text-action aria-[current=page]:underline aria-[current=page]:decoration-action md:py-1"
         >
           {item.label}
         </IntentLink>
@@ -63,19 +65,19 @@ export function SiteNav({ items }: { items: readonly NavItem[] }) {
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen(!open)}
-          className="-mr-2 flex h-11 items-center gap-2 px-2 text-sm font-medium"
+          className="-mr-2 flex h-11 items-center gap-2 px-2 text-sm font-medium text-stage-ink"
         >
           <span aria-hidden="true" className="flex w-4 flex-col gap-[3px]">
-            <span className="h-px bg-ink" />
-            <span className="h-px bg-ink" />
-            <span className="h-px bg-ink" />
+            <span className="h-px bg-stage-ink" />
+            <span className="h-px bg-stage-ink" />
+            <span className="h-px bg-stage-ink" />
           </span>
           Menu
         </button>
         <ul
           id={panelId}
           hidden={!open}
-          className="absolute inset-x-0 top-full z-40 border-b border-ink bg-raised px-[var(--atlas-gutter)] py-2 shadow-[0_12px_24px_-16px_rgb(0_0_0/0.35)]"
+          className="palco absolute inset-x-0 top-full z-40 border-b border-stage-line bg-stage-raised px-[var(--atlas-gutter)] py-2 shadow-[0_12px_24px_-16px_rgb(0_0_0/0.6)]"
         >
           {links(() => setOpen(false))}
         </ul>

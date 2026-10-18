@@ -233,7 +233,7 @@ describe("ida e volta entre o jogo e a página do acontecimento", () => {
   ];
 
   it("o jogo tem um endereço de entrada, um por personagem (a sala Histórico) e um por sala temática", () => {
-    expect(gameHref()).toBe("/jogo/");
+    expect(gameHref()).toBe("/jogo/trajetorias/");
     expect(gameHref("sintetico-pessoa-a")).toBe("/jogo/sintetico-pessoa-a/");
     expect(gameHref("sintetico-pessoa-a", "historico")).toBe("/jogo/sintetico-pessoa-a/");
     expect(gameHref("sintetico-pessoa-a", "economia")).toBe("/jogo/sintetico-pessoa-a/economia/");

@@ -1,6 +1,6 @@
 # Sistema de design
 
-Fases 4 a 8. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. As fases 5 a 8 não criaram cor nem família tipográfica: acrescentaram componentes sobre a mesma base. A fase 8 afinou a escala da leitura, o enquadramento dos retratos e o movimento. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md).
+Fases 4 a 8. A base visual do atlas: tokens, tipografia, formas e os componentes que as telas reutilizam. As fases 5 a 8 não criaram cor nem família tipográfica: acrescentaram componentes sobre a mesma base. A fase 8 afinou a escala da leitura, o enquadramento dos retratos e o movimento. O motivo de cada escolha de direção está em [UX.md](UX.md); o comportamento, em [INTERACTIONS.md](INTERACTIONS.md). Em 18 de outubro de 2026 o redesign (D-155) acrescentou o palco escuro em volta da folha de papel e os tokens de ação e de destaque, sem trocar as famílias tipográficas.
 
 Regra geral: **os tokens de `src/app/globals.css` são a única origem das cores, das famílias e das medidas de movimento.** Os componentes usam as classes geradas a partir deles (`bg-paper`, `text-ink-soft`, `font-serif`). Cor escrita direto em um componente é erro.
 
@@ -10,14 +10,31 @@ Regra geral: **os tokens de `src/app/globals.css` são a única origem das cores
 
 | Token | Valor | Classe | Uso |
 | --- | --- | --- | --- |
-| `--atlas-paper` | `#f3efe6` | `bg-paper` | Fundo das páginas |
+| `--atlas-paper` | `#f4f0e7` | `bg-paper` | A folha: o fundo do conteúdo (`main`) e das janelas da praça |
 | `--atlas-paper-raised` | `#fbf9f4` | `bg-raised` | Painel de leitura, cartões, campos, linha do tempo |
 | `--atlas-paper-sunken` | `#e8e3d6` | `bg-sunken` | Moldura de retrato, barras de período |
-| `--atlas-ink` | `#1b1c1a` | `text-ink` | Texto principal, réguas fortes, botão invertido |
+| `--atlas-ink` | `#1c241e` | `text-ink` | Texto principal, réguas fortes, botão invertido; é também a tinta sobre a cor de ação |
 | `--atlas-ink-soft` | `#4a4c45` | `text-ink-soft` | Texto secundário, metadados, rótulos de seção |
 | `--atlas-ink-faint` | `#62645b` | `text-ink-faint` | Créditos, numeração das fontes, contorno de campos |
 | `--atlas-line` | `#d6d0c0` | `border-line` | Divisões entre itens |
 | `--atlas-line-strong` | `#b7b09d` | `border-line-strong` | Contorno de botões secundários, sublinhado de links |
+
+### Palco e ação
+
+O palco é o que fica em volta da folha (D-155): o corpo da página, o cabeçalho, o rodapé, a abertura da entrada, o hub do jogo, a entrada da praça e o fundo em volta das janelas da praça. Não é um tema escuro aplicado ao conteúdo: a leitura continua na folha.
+
+| Token | Valor | Classe | Uso |
+| --- | --- | --- | --- |
+| `--atlas-stage` | `#111613` | `bg-stage` | Fundo do palco |
+| `--atlas-stage-raised` | `#202823` | `bg-stage-raised` | Cartões e campos sobre o palco |
+| `--atlas-stage-ink` | `#faf8f2` | `text-stage-ink` | Texto sobre o palco |
+| `--atlas-stage-ink-soft` | `#c5cbc2` | `text-stage-ink-soft` | Texto secundário sobre o palco |
+| `--atlas-stage-line` | `#3f4a43` | `border-stage-line` | Divisões sobre o palco |
+| `--atlas-action` | `#f0c66b` | `bg-action`, `text-action` | A ação principal: o botão de começar, o item atual do menu, o anel de foco sobre o palco, a luz dos postes na prévia |
+| `--atlas-action-ink` | `#1c241e` | `text-action-ink` | Texto sobre a cor de ação |
+| `--atlas-highlight` | `#b9aedb` | `text-highlight` | Destaque secundário, só sobre o palco (rótulos de seção do palco) |
+
+Utilitários: `palco` (fundo e tinta do palco, com o anel de foco na cor de ação), `folha` (fundo e tinta da folha), `btn-acao` (botão na cor de ação) e `btn-palco` (botão contornado sobre o palco). A cor de ação e a de destaque não entram na folha como cor de texto: na folha, seleção continua sendo o acento.
 
 ### Acento, aviso e categorias
 
@@ -60,6 +77,11 @@ Medido pela fórmula da WCAG 2.x, sobre as três superfícies de papel (papel, e
 | Categorias | de 4,4 a 10,2 | 3:1 para marca gráfica |
 | Papel sobre tinta (botão invertido) | 14,9 | 4,5:1 para texto |
 | Papel sobre acento (rótulo do arraste no eixo) | 4,7 | 4,5:1 para texto |
+| Tinta do palco e tinta suave do palco sobre o palco e sobre a superfície elevada | acima de 4,5 em todos os pares | 4,5:1 para texto |
+| Ação e destaque sobre o palco e sobre a superfície elevada | acima de 4,5 | 4,5:1 para texto e para marca |
+| Tinta da ação sobre a ação | acima de 4,5 | 4,5:1 para texto |
+| Tinta sobre o papel | acima de 7 | 7:1, exigência mais alta para a leitura longa |
+| Linha do palco sobre a superfície elevada | 1,5 ou mais | só divisão decorativa |
 
 A tinta tênue estava em `#686a61` e dava 4,29:1 sobre o papel rebaixado. O teste de contraste acusou, e o valor foi escurecido. As cores de categoria e o acento nunca são cor de texto: colorem a forma, e o nome vem escrito em tinta ao lado.
 
@@ -67,7 +89,7 @@ A tinta tênue estava em `#686a61` e dava 4,29:1 sobre o papel rebaixado. O test
 
 ### Tema
 
-Há um tema só, claro. Os retratos são mesclados ao papel por multiplicação, e os pares de contraste foram medidos só nesta combinação. Um tema escuro pede outro tratamento dos retratos e outra medição, e não faz parte desta edição (D-40).
+A folha tem um tema só, claro (D-40): os retratos são mesclados ao papel por multiplicação, e os pares de contraste da folha foram medidos só nesta combinação. O palco escuro (D-155) é a moldura da folha, não um tema aplicado ao conteúdo: nenhum retrato nem texto de leitura longa fica sobre ele, e os pares do palco têm a própria medição, acima. Não há troca de tema pela pessoa.
 
 ## Tipografia
 
@@ -108,6 +130,10 @@ Utilitários próprios, definidos em `globals.css`:
 | `numerals` | Números alinhados e de mesma largura, para anos e datas em coluna |
 | `reading` | Texto de leitura longa, serifado, 18 px com entrelinha 1,65 |
 | `page` | Largura útil das páginas (até 1312 px) com a margem lateral do projeto |
+| `palco` | Fundo e tinta do palco, com o anel de foco na cor de ação (D-155) |
+| `folha` | Fundo e tinta da folha |
+| `btn-acao` | Botão na cor de ação, com a tinta da ação, 44 px de altura mínima |
+| `btn-palco` | Botão contornado sobre o palco |
 
 **Hierarquia da leitura.** O título é a âncora: é o que se lê primeiro no painel e na página do acontecimento. A data vem acima dele, em sem serifa de peso 600 e números de mesma largura, forte e menor. Na fase 4 a data era maior do que o título, e os dois disputavam. Abaixo vêm o resumo, o contexto em tinta suave e, com rótulo próprio, cargos, lugares e fontes.
 

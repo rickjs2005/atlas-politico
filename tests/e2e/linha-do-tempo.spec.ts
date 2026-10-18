@@ -195,7 +195,9 @@ test.describe("entrada e troca de pessoa", () => {
     await page.goto(`${LULA}?de=2016&ate=2019&categorias=marcos-historicos`);
     await expect(itens(page)).toHaveCount(noRecorte(deLula, 2016, 2019, ["marcos-historicos"]).length);
 
-    await page.getByRole("navigation", { name: "Principal" }).getByRole("link", { name: lula.nome }).click();
+    // As pessoas ficam dentro de Explorar (D-155): o menu leva à escolha, e a escolha leva à pessoa.
+    await page.getByRole("navigation", { name: "Principal" }).getByRole("link", { name: "Explorar" }).click();
+    await page.getByRole("region", { name: "Escolha uma trajetória" }).getByRole("link", { name: new RegExp(`^${lula.nome}`) }).click();
     await expectUrl(page, LULA);
     await expect(itens(page)).toHaveCount(deLula.length);
   });

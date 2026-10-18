@@ -93,6 +93,33 @@ describe("contraste", () => {
   });
 });
 
+describe("contraste do palco (D-155)", () => {
+  const PALCO = ["--atlas-stage", "--atlas-stage-raised"];
+
+  it.each(["--atlas-stage-ink", "--atlas-stage-ink-soft", "--atlas-action", "--atlas-highlight"])("%s passa de 4,5:1 sobre as duas superfícies do palco", (cor) => {
+    for (const fundo of PALCO) expect(contrast(token(cor), token(fundo)), fundo).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("o texto do botão de ação passa de 4,5:1 sobre a ação, e a tinta sobre o papel do brief também", () => {
+    expect(contrast(token("--atlas-action-ink"), token("--atlas-action"))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(token("--atlas-ink"), token("--atlas-paper"))).toBeGreaterThanOrEqual(7);
+  });
+
+  it("as linhas do palco se distinguem do fundo o bastante para desenhar divisões (1,5:1)", () => {
+    for (const fundo of PALCO) expect(contrast(token("--atlas-stage-line"), token(fundo)), fundo).toBeGreaterThanOrEqual(1.5);
+  });
+
+  it("os valores do brief estão nos tokens: fundo, superfície, papel, textos, ação e destaque", () => {
+    expect(token("--atlas-stage")).toBe("#111613");
+    expect(token("--atlas-stage-raised")).toBe("#202823");
+    expect(token("--atlas-paper")).toBe("#f4f0e7");
+    expect(token("--atlas-stage-ink")).toBe("#faf8f2");
+    expect(token("--atlas-ink")).toBe("#1c241e");
+    expect(token("--atlas-action")).toBe("#f0c66b");
+    expect(token("--atlas-highlight")).toBe("#b9aedb");
+  });
+});
+
 describe("equivalência dos perfis", () => {
   it("a ordem dos perfis é alfabética, e não escolha editorial", () => {
     const nomes = PROFILES.map((perfil) => perfil.nome);
