@@ -2,9 +2,9 @@
 
 // Vale a Faixa na tela (docs/VALE-A-FAIXA.md): a abertura, a escolha do
 // personagem, a partida contra o computador, a pausa, o resultado e a
-// revanche. O motor (motor.ts), o desenho, o som e a narração entram por
-// `import()` só quando a pessoa chega à escolha: a página informativa do
-// atlas não paga por eles. O estado da partida vive no motor; aqui ficam as
+// revanche. O motor (motor.ts), o desenho e o som entram por `import()` só
+// quando a pessoa chega à escolha: a página informativa do atlas não paga
+// por eles. O estado da partida vive no motor; aqui ficam as
 // telas e o que elas precisam saber (fase, dica, vencedor), publicado só
 // quando muda.
 
@@ -17,7 +17,6 @@ import type { Dica, Entrada, LutadorSlug } from "@/lib/faixa/tipos";
 import { Controles } from "./Controles";
 import type { Audio } from "./audio";
 import type { Motor, Resumo } from "./motor";
-import type { Narracao } from "./narracao";
 import { assinarPreferencias, assinarToque, gravarPreferencias, lerBruto, lerToque, preferenciasDe, type Preferencias } from "./preferencias";
 
 type Tela = "inicio" | "escolha" | "partida";
@@ -73,8 +72,6 @@ export function ValeAFaixa() {
   const [jogador, setJogador] = useState<LutadorSlug>("lula");
   const [semente, setSemente] = useState(0);
   const audio = useRef<Audio | null>(null);
-  const narracao = useRef<Narracao | null>(null);
-  const [vozDisponivel, setVozDisponivel] = useState<boolean | null>(null);
 
   // O que está no navegador, como fonte externa: no servidor, o padrão e sem toque.
   const bruto = useSyncExternalStore(assinarPreferencias, lerBruto, () => null);
@@ -88,39 +85,28 @@ export function ValeAFaixa() {
   useEffect(() => {
     audio.current?.setVolumes(preferencias.volumeEfeitos, preferencias.volumeTorcida);
     audio.current?.setMudo(preferencias.mudo);
-    narracao.current?.setVolume(preferencias.volumeNarracao);
-    narracao.current?.setLigada(preferencias.narracao && !preferencias.mudo);
-  }, [preferencias.volumeEfeitos, preferencias.volumeTorcida, preferencias.volumeNarracao, preferencias.mudo, preferencias.narracao]);
+  }, [preferencias.volumeEfeitos, preferencias.volumeTorcida, preferencias.mudo]);
 
-  // O som e a narração nascem em um gesto da pessoa; os módulos chegam por `import()`.
+  // O som nasce em um gesto da pessoa (a restrição de reprodução automática dos navegadores); o módulo chega por `import()`.
   const ligarSom = useCallback(() => {
     if (audio.current !== null) {
       audio.current.ativar();
       return;
     }
-    void Promise.all([import("./audio"), import("./narracao")]).then(([{ criarAudio }, { criarNarracao }]) => {
+    void import("./audio").then(({ criarAudio }) => {
       if (audio.current !== null) return;
       const criado = criarAudio(preferencias.volumeEfeitos, preferencias.volumeTorcida, preferencias.mudo);
-      if (criado !== null) {
-        audio.current = criado;
-        criado.ativar();
-      }
-      const voz = criarNarracao(preferencias.volumeNarracao, preferencias.narracao && !preferencias.mudo);
-      narracao.current = voz;
-      // As vozes chegam depois em alguns navegadores: confere de novo em seguida.
-      setVozDisponivel(voz.disponivel());
-      window.setTimeout(() => setVozDisponivel(voz.disponivel()), 1200);
+      if (criado === null) return;
+      audio.current = criado;
+      criado.ativar();
     });
-  }, [preferencias.volumeEfeitos, preferencias.volumeTorcida, preferencias.volumeNarracao, preferencias.mudo, preferencias.narracao]);
+  }, [preferencias.volumeEfeitos, preferencias.volumeTorcida, preferencias.mudo]);
 
   useEffect(() => {
     const som = audio;
-    const voz = narracao;
     return () => {
       som.current?.dispose();
       som.current = null;
-      voz.current?.dispose();
-      voz.current = null;
     };
   }, []);
 
@@ -194,8 +180,6 @@ export function ValeAFaixa() {
       semente={semente}
       toque={toque}
       audio={audio}
-      narracao={narracao}
-      vozDisponivel={vozDisponivel}
       preferencias={preferencias}
       onPreferencias={mudarPreferencias}
       onTrocar={() => setTela("escolha")}
@@ -288,8 +272,6 @@ interface RingueProps {
   semente: number;
   toque: boolean;
   audio: React.RefObject<Audio | null>;
-  narracao: React.RefObject<Narracao | null>;
-  vozDisponivel: boolean | null;
   preferencias: Preferencias;
   onPreferencias(mudanca: Partial<Preferencias>): void;
   onTrocar(): void;
@@ -298,7 +280,7 @@ interface RingueProps {
 
 const RESUMO_INICIAL: Resumo = { fase: "contagem", dica: null, vencedor: null, naEscada: false, carregando: false, noAr: false, teclado: true, tempo: 0 };
 
-function Ringue({ jogador, semente, toque, audio, narracao, vozDisponivel, preferencias, onPreferencias, onTrocar, onRevanche }: RingueProps) {
+function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, onTrocar, onRevanche }: RingueProps) {
   const computador = outroDe(jogador);
   const raiz = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -329,7 +311,6 @@ function Ringue({ jogador, semente, toque, audio, narracao, vozDisponivel, prefe
             reduzirMovimento: reduzir,
             toque,
             audio: audio.current,
-            narracao: narracao.current,
             // Só para os testes de navegador: com `?computador=parado`, o adversário não age.
             computadorParado: new URLSearchParams(window.location.search).get("computador") === "parado",
             aoMudar: setResumo,
@@ -352,7 +333,7 @@ function Ringue({ jogador, semente, toque, audio, narracao, vozDisponivel, prefe
     };
     // A semente muda só pela revanche, que reinicia o motor sem recriá-lo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jogador, computador, toque, audio, narracao]);
+  }, [jogador, computador, toque, audio]);
 
   // A partida para enquanto há algo por cima dela; parar solta todos os comandos.
   const parada = tutorial || painel !== null || resumo.fase === "fim";
@@ -497,7 +478,7 @@ function Ringue({ jogador, semente, toque, audio, narracao, vozDisponivel, prefe
               Voltar ao Atlas
             </IntentLink>
           </div>
-          <Som preferencias={preferencias} onPreferencias={onPreferencias} vozDisponivel={vozDisponivel} />
+          <Som preferencias={preferencias} onPreferencias={onPreferencias} />
         </Janela>
       )}
 
@@ -570,7 +551,7 @@ function Deslizante({ rotulo, valor, onChange, dataAttr }: { rotulo: string; val
   );
 }
 
-function Som({ preferencias, onPreferencias, vozDisponivel }: { preferencias: Preferencias; onPreferencias(mudanca: Partial<Preferencias>): void; vozDisponivel: boolean | null }) {
+function Som({ preferencias, onPreferencias }: { preferencias: Preferencias; onPreferencias(mudanca: Partial<Preferencias>): void }) {
   return (
     <fieldset className="space-y-1 border-t border-stage-line pt-3 text-sm">
       <legend className="eyebrow pb-2 text-highlight">Som</legend>
@@ -580,12 +561,6 @@ function Som({ preferencias, onPreferencias, vozDisponivel }: { preferencias: Pr
       </label>
       <Deslizante rotulo="Efeitos" valor={preferencias.volumeEfeitos} onChange={(valor) => onPreferencias({ volumeEfeitos: valor })} dataAttr="data-volume-efeitos" />
       <Deslizante rotulo="Torcida" valor={preferencias.volumeTorcida} onChange={(valor) => onPreferencias({ volumeTorcida: valor })} dataAttr="data-volume-torcida" />
-      <label className="flex min-h-10 items-center gap-2">
-        <input type="checkbox" checked={preferencias.narracao} onChange={(evento) => onPreferencias({ narracao: evento.target.checked })} data-narracao-ligada />
-        Narração por voz
-        {vozDisponivel === false && <span className="text-xs text-stage-ink-soft">(sem voz em português neste navegador)</span>}
-      </label>
-      <Deslizante rotulo="Narração" valor={preferencias.volumeNarracao} onChange={(valor) => onPreferencias({ volumeNarracao: valor })} dataAttr="data-volume-narracao" />
     </fieldset>
   );
 }

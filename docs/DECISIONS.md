@@ -1364,6 +1364,14 @@ A conversa que abre a missão é um grafo pequeno em TypeScript (`src/lib/game/e
 
 **Consequência.** `src/lib/faixa/tipos.ts`, `regras.ts`, `ia.ts`, `falas.ts` (a narração); `src/features/faixa/entrada.ts`, `motor.ts`, `audio.ts`, `narracao.ts` (novo), `preferencias.ts`, `Controles.tsx`, `ValeAFaixa.tsx`, `desenho/hud.ts`, `desenho/lutador.ts`, `desenho/escada.ts`; `tests/faixa.test.ts` e `tests/e2e/vale-a-faixa.spec.ts` refeitos.
 
+## D-159. A torcida em camadas no lugar da narração por voz
+
+**Decisão (19 de outubro de 2026).** A narração por voz (D-158, `speechSynthesis`) sai por completo, com as falas automáticas e as preferências dela; o cartão escrito do narrador fica, porque é visual. A emoção sonora passa a vir de uma torcida que segue o estado real da partida: ambiente contínuo da arena; expectativa que cresce com a subida, com o topo e com o progresso real da captura (palmas ritmadas, "oohs" por quarto da barra, rugido); surpresa (suspiro coletivo) a cada interrupção ou tombo da escada; explosão de comemoração (gritos, aplausos, assobios) só na vitória. Estar no topo sem puxar, ou com a escada balançando, não dispara o máximo. Mesmas regras para os dois. As camadas são sintetizadas grão a grão, com sorteios contínuos, sem laço curto audível, com transições por constante de tempo e teto abaixo dos impactos; o silêncio, a pausa (as camadas descem, as reações param), o reinício e a saída (tudo volta ao silêncio) e a restrição de reprodução automática (o contexto nasce em um gesto) continuam respeitados.
+
+**O que não entrou, e por quê.** Gravações de público: o pedido as preferia, mas não se achou um conjunto com licença CC0 conferida que cobrisse ambiente de arena, expectativa, suspiro e comemoração (o OpenGameArt tem uma ambiência de rua CC0 e aplausos CC-BY); o projeto não traz arquivo sem licença conferida. `torcida.ts` deixa o encaixe (`GRAVACOES`, `public/audio/torcida/`) para quando houver.
+
+**Consequência.** `src/features/faixa/torcida.ts` (novo), `audio.ts`, `motor.ts`, `preferencias.ts`, `ValeAFaixa.tsx`; `narracao.ts` apagado; `src/lib/faixa/falas.ts` sem a tabela da narração; testes e [VALE-A-FAIXA.md](VALE-A-FAIXA.md) ajustados.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |

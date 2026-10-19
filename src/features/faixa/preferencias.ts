@@ -1,7 +1,7 @@
-// As preferências do Vale a Faixa, no navegador: os volumes dos efeitos, da
-// torcida e da narração, o silêncio geral, se a narração está ligada, se o
-// tutorial já foi visto, o último personagem escolhido e o placar da pessoa
-// contra o computador. Nada vai ao endereço nem a servidor algum.
+// As preferências do Vale a Faixa, no navegador: os volumes dos efeitos e da
+// torcida, o silêncio geral, se o tutorial já foi visto, o último personagem
+// escolhido e o placar da pessoa contra o computador. Nada vai ao endereço
+// nem a servidor algum.
 
 import type { LutadorSlug } from "@/lib/faixa/tipos";
 
@@ -10,9 +10,7 @@ export const CHAVE_DAS_PREFERENCIAS = "atlas-politico:faixa:preferencias";
 export interface Preferencias {
   volumeEfeitos: number;
   volumeTorcida: number;
-  volumeNarracao: number;
   mudo: boolean;
-  narracao: boolean;
   tutorialVisto: boolean;
   personagem: LutadorSlug | null;
   partidas: number;
@@ -21,10 +19,8 @@ export interface Preferencias {
 
 export const PREFERENCIAS_PADRAO: Preferencias = {
   volumeEfeitos: 0.7,
-  volumeTorcida: 0.5,
-  volumeNarracao: 0.9,
+  volumeTorcida: 0.6,
   mudo: false,
-  narracao: true,
   tutorialVisto: false,
   personagem: null,
   partidas: 0,
@@ -43,9 +39,7 @@ export function preferenciasDe(bruto: string | null): Preferencias {
     return {
       volumeEfeitos: fracao(lido.volumeEfeitos, antigo),
       volumeTorcida: fracao(lido.volumeTorcida, Math.min(antigo, PREFERENCIAS_PADRAO.volumeTorcida)),
-      volumeNarracao: fracao(lido.volumeNarracao, PREFERENCIAS_PADRAO.volumeNarracao),
       mudo: lido.mudo === true,
-      narracao: lido.narracao !== false,
       tutorialVisto: lido.tutorialVisto === true,
       personagem: lido.personagem === "lula" || lido.personagem === "flavio-bolsonaro" ? lido.personagem : null,
       partidas: contagem(lido.partidas),

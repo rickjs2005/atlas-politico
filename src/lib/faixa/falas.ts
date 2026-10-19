@@ -1,8 +1,8 @@
-// Vale a Faixa: os comentários do narrador, um locutor de luta livre com
-// humor sobre a partida. Nunca atributo, acusação, fato sobre as pessoas nem
-// previsão eleitoral: a faixa é do ringue. Quem mostra (e quem fala, por
-// síntese de voz) decide quando cabe; aqui só se escolhe a frase para um
-// evento, com um sorteio recebido de fora.
+// Vale a Faixa: os comentários escritos do narrador, no cartão sobre a cena,
+// com humor sobre a partida. Nunca atributo, acusação, fato sobre as pessoas
+// nem previsão eleitoral: a faixa é do ringue. Quem mostra decide quando
+// cabe; aqui só se escolhe a frase para um evento, com um sorteio recebido
+// de fora. Não há narração por voz: a emoção sonora vem da torcida.
 
 import type { Evento } from "./tipos";
 
@@ -53,22 +53,3 @@ export const PRIORIDADE_DAS_FALAS: readonly Evento["tipo"][] = [
   "levantou",
   "inicio",
 ];
-
-/**
- * As falas da narração por voz, curtas, com a prioridade de cada uma: a
- * fila descarta as menos importantes quando chegam muitas de uma vez.
- */
-export const NARRACAO: Partial<Record<Evento["tipo"], { prioridade: number; frases: readonly string[] }>> = {
-  inicio: { prioridade: 3, frases: ["Tá valendo a faixa!"] },
-  vitoria: { prioridade: 5, frases: ["Pegou a faixa!", "É dele! Pegou a faixa!"] },
-  faltaPouco: { prioridade: 4, frases: ["Falta pouco!"] },
-  topo: { prioridade: 4, frases: ["Subiu! Agora segura!"] },
-  interrompido: { prioridade: 4, frases: ["Interrompeu!", "Caiu da escada!"] },
-  escadaCaiu: { prioridade: 3, frases: ["Derrubaram a escada!"] },
-  escadaPosta: { prioridade: 3, frases: ["A escada tá no centro!"] },
-  voadora: { prioridade: 2, frases: ["Veio de voadora!"] },
-  queda: { prioridade: 2, frases: ["Foi ao chão!", "Caiu!"] },
-  escadaPega: { prioridade: 1, frases: ["Pegou a escada!"] },
-  subida: { prioridade: 1, frases: ["Tá subindo!"] },
-  levantou: { prioridade: 1, frases: ["Levantou!"] },
-};

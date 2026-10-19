@@ -10,7 +10,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { NARRACAO, PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
+import { PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
 import { criarMemoria, decidir, type EstadoDaIA, type MemoriaDaIA } from "@/lib/faixa/ia";
 import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, golpeDe, naEscada } from "@/lib/faixa/regras";
 import { ENTRADA_VAZIA, type Entrada, type Evento, type Partida } from "@/lib/faixa/tipos";
@@ -630,18 +630,12 @@ describe("o computador", () => {
 });
 
 describe("as falas", () => {
-  it("há uma fala para os eventos marcantes, nenhuma para os de rotina, a prioridade só lista eventos com fala, e a narração não prevê eleição", () => {
+  it("há uma fala para os eventos marcantes, nenhuma para os de rotina, e a prioridade só lista eventos com fala", () => {
     expect(falaPara("queda", 0)).toBe("A governabilidade ficou no chão!");
     expect(falaPara("voadora", 0)).toBe("Veio de voadora!");
     expect(falaPara("faltaPouco", 0)).toBe("Falta pouco!");
     expect(falaPara("golpeNoVazio", 0.5)).toBeNull();
     expect(falaPara("golpe", 0.5)).toBeNull();
     for (const tipo of PRIORIDADE_DAS_FALAS) expect(falaPara(tipo, 0.99), tipo).not.toBeNull();
-    for (const entrada of Object.values(NARRACAO)) {
-      for (const frase of entrada.frases) {
-        expect(frase.length).toBeLessThan(40);
-        expect(frase).not.toMatch(/elei|voto|urna|presidente/i);
-      }
-    }
   });
 });

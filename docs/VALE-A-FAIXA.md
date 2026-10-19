@@ -59,11 +59,14 @@ Canvas 2D, laço de passo fixo (o `createLoop` da trilha), sem biblioteca nova: 
 
 A interface sobre a cena (placas com equilíbrio e situação, medidor da faixa, a dica sobre a cabeça do personagem, a legenda dos comandos, contagem, comentário do narrador) é desenhada no canvas; pausa, tutorial, fim, a apresentação das teclas desenhadas e os botões de toque são React.
 
-## Som e narração (src/features/faixa/audio.ts, narracao.ts)
+## Som (src/features/faixa/audio.ts, torcida.ts)
 
-Sintetizado com a Web Audio API: nenhum arquivo. Socos, chute, golpe forte, voadora, guarda, erro, pulo e aterrissagem, esquiva, queda, escada (pega, passos, posta, chacoalhada, tombo), sino de abertura, torcida contínua que acompanha a intensidade e ganha um pulso de tensão enquanto alguém puxa a faixa, vitória e derrota. Um mesmo som não toca duas vezes em menos de 50 ms, e a torcida é um laço só. Começa só depois de um gesto (o botão **Escolher candidato** ou **Lutar**); os volumes de efeitos, torcida e narração, o silêncio e a narração ligada ficam em Pausa → Som, guardados em `atlas-politico:faixa:preferencias` junto com o tutorial visto, o último personagem e o placar da pessoa.
+Sintetizado com a Web Audio API: nenhum arquivo. Dois canais com volume próprio, em Pausa → Som, mais o silêncio geral (botão **Som** sobre a cena), guardados em `atlas-politico:faixa:preferencias`. Começa só depois de um gesto (o botão **Escolher candidato** ou **Lutar**), pausa com a partida e volta ao silêncio ao reiniciar ou sair.
 
-A narração por voz usa a síntese de voz do navegador (`speechSynthesis`) com uma voz em português, quando existe: frases curtas de locutor ("Tá valendo a faixa!", "Veio de voadora!", "A escada tá no centro!", "Subiu! Agora segura!", "Derrubaram a escada!", "Falta pouco!", "Pegou a faixa!"), em fila curta com prioridade, sem repetir a mesma frase em 8 s, canceladas ao pausar, reiniciar ou sair. Sem voz em português, o painel de som diz isso e o jogo segue com o cartão escrito do narrador. Nenhuma frase apresenta a vitória como previsão eleitoral.
+- **Efeitos**: socos, chute, golpe forte, voadora, guarda, erro, pulo e aterrissagem, esquiva, queda, escada (pega, passos, posta, chacoalhada, tombo), sino de abertura, vitória e derrota. Um mesmo efeito não toca duas vezes em menos de 50 ms.
+- **Torcida** (D-159): camadas que seguem o estado real da partida, iguais para os dois lados. O ambiente da arena é contínuo (ruído rosa em duas fontes filtradas, uma de cada lado, com movimento lento, e vozes curtas esparsas). A expectativa cresce com a subida na escada (o rugido grave entra), com o topo, e principalmente com o progresso real da captura: palmas que ganham ritmo, "oohs" a cada quarto da barra e o rugido mais cheio; estar no topo sem puxar, ou com a escada balançando, não conta. As reações: um grito curto a cada golpe, um maior a cada queda (com assobios e palmas), o suspiro coletivo de surpresa quando a captura é interrompida ou a escada tomba (uma por lance), e a explosão de comemoração só na vitória (gritos em massa, aplausos que se espalham por cinco segundos, assobios). Tudo é gerado grão a grão, com sorteios contínuos: não há laço curto nem a mesma reação repetida igual. Os ganhos mudam por constante de tempo (sobem mais depressa do que descem), e o máximo da torcida fica em 55% do canal, abaixo dos impactos.
+
+Não há narração por voz. O cartão escrito do narrador continua. Gravações de público com licença conferida podem ser listadas em `GRAVACOES` (`torcida.ts`) e colocadas em `public/audio/torcida/`; sem arquivo, nada é pedido à rede. Em 19 de outubro de 2026 não se achou um conjunto CC0 convincente (ambiente de arena, expectativa, suspiro e comemoração), por isso as camadas são sintetizadas.
 
 ## Código
 
@@ -75,7 +78,7 @@ A narração por voz usa a síntese de voz do navegador (`speechSynthesis`) com 
 | `src/features/faixa/motor.ts` | Laço, entrada, IA, desenho, som, eventos; carregado por `import()` |
 | `src/features/faixa/entrada.ts`, `Controles.tsx` | Teclado e toque |
 | `src/features/faixa/desenho/*` | Câmera, arena, lutadores, escada e faixa, efeitos, HUD |
-| `src/features/faixa/audio.ts`, `narracao.ts`, `preferencias.ts` | Som em dois canais, narração por voz e preferências |
+| `src/features/faixa/audio.ts`, `torcida.ts`, `preferencias.ts` | Som em dois canais, a torcida em camadas e as preferências |
 | `tests/faixa.test.ts` | Regras e IA, em simulação |
 | `tests/e2e/vale-a-faixa.spec.ts` | A jornada no navegador, com cada personagem, teclado, toque, pausa, revanche, redimensionamento. Com `?computador=parado` no endereço, o adversário não age: é como o teste dirige a partida inteira pelo teclado |
 | `tests/export/vale-a-faixa.spec.ts` | Sobre a saída estática: o hub, a entrada e as páginas informativas não pedem o motor; ele chega na escolha do personagem |

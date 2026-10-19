@@ -1,16 +1,22 @@
 // O motor do Vale a Faixa: junta as regras (src/lib/faixa), a entrada
-// (entrada.ts), o computador (ia.ts), o desenho (desenho/), o som (audio.ts)
-// e a narração por voz (narracao.ts) em um laço de passo fixo (o mesmo da
-// trilha do jogo). Carregado só quando a partida começa, por `import()`.
+// (entrada.ts), o computador (ia.ts), o desenho (desenho/) e o som
+// (audio.ts, com a torcida de torcida.ts) em um laço de passo fixo (o mesmo
+// da trilha do jogo). Carregado só quando a partida começa, por `import()`.
 // Trata pausa, perda de foco, redimensionamento e descarte ao sair da rota.
+//
+// A torcida recebe, a cada passo, a intensidade da partida e o progresso
+// real da captura da faixa, e reage aos eventos: um grito a cada golpe, um
+// maior a cada queda, o suspiro de surpresa quando a captura é interrompida,
+// e a explosão de comemoração só na vitória. As mesmas regras para os dois.
 
 import { createLoop } from "@/features/game/engine/loop";
-import { NARRACAO, PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
+import { PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
 import { criarMemoria, decidir, type MemoriaDaIA } from "@/lib/faixa/ia";
 import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, naEscada, noAr } from "@/lib/faixa/regras";
 import { ENTRADA_VAZIA, type Dica, type Entrada, type Evento, type FaseDaPartida, type Indice, type Lutador, type LutadorSlug, type Partida } from "@/lib/faixa/tipos";
 
 import type { Audio, Som } from "./audio";
+import type { Reacao } from "./torcida";
 import { criarArena, lerFontes } from "./desenho/arena";
 import { alvoDaCamera, projecao, seguir, type Camera, type Tela } from "./desenho/camera";
 import { anguloDoTombo, desenharEscadaCaida, desenharEscadaCarregada, desenharEscadaEmPe, desenharFaixa, oscilacao } from "./desenho/escada";
@@ -18,7 +24,6 @@ import { criarEfeitos } from "./desenho/efeitos";
 import { ROTULO_DO_BLOQUEIO, desenharHud, type Fala } from "./desenho/hud";
 import { FIGURAS, desenharLutador, desenharSombra, poseDe } from "./desenho/lutador";
 import { criarEntradas } from "./entrada";
-import type { Narracao } from "./narracao";
 
 export interface Resumo {
   fase: FaseDaPartida;
@@ -43,7 +48,6 @@ export interface OpcoesDoMotor {
   /** Em tela de toque, a dica mostra o botão em vez da tecla. */
   toque: boolean;
   audio: Audio | null;
-  narracao: Narracao | null;
   /** O computador não age: para os testes de navegador dirigirem a partida inteira. */
   computadorParado?: boolean;
   aoMudar(resumo: Resumo): void;
@@ -91,6 +95,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   let primeiroQuadro = true;
   let ultimoResumo = "";
   let ultimosEstados = "";
+  let ultimaTorcida = "";
   const passosAnteriores: [number, number] = [0, 0];
   const andando: [boolean, boolean] = [false, false];
   const ritmos: [number, number] = [0, 1.7];
@@ -139,14 +144,39 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     }
   };
 
-  const narrar = (tipo: Evento["tipo"]) => {
-    const entrada = NARRACAO[tipo];
-    if (entrada === undefined || opcoes.narracao === null) return;
-    const frase = entrada.frases[Math.floor(Math.random() * entrada.frases.length)];
-    if (frase !== undefined) opcoes.narracao.falar(frase, entrada.prioridade);
+  const tocar = (som: Som) => opcoes.audio?.tocar(som);
+  let ultimaSurpresa = -10;
+  const torcer = (reacao: Reacao) => {
+    // Uma surpresa por lance: a interrupção, a queda da escada e o tombo chegam juntos.
+    if (reacao === "surpresa") {
+      if (tempo - ultimaSurpresa < 0.8) return;
+      ultimaSurpresa = tempo;
+    }
+    opcoes.audio?.reagirTorcida(reacao);
   };
 
-  const tocar = (som: Som) => opcoes.audio?.tocar(som);
+  /**
+   * A intensidade da torcida pelo estado real: a luta normal, a subida que
+   * agita aos poucos, o topo, e a captura, cujo crescendo acompanha o
+   * progresso de verdade. Estar no topo sem puxar não dispara o máximo; a
+   * explosão só vem com a vitória.
+   */
+  const intensidadeDaTorcida = (): { intensidade: number; captura: number } => {
+    if (partida.fase === "contagem") return { intensidade: 0.25, captura: 0 };
+    if (partida.fase === "fim") return { intensidade: 1, captura: 0 };
+    let intensidade = 0.3 + Math.max(0, partida.torcida - 0.3) * 0.4;
+    let captura = 0;
+    for (const l of partida.lutadores) {
+      if (l.estado === "subindo") intensidade = Math.max(intensidade, 0.42 + l.altura * 0.18);
+      if (l.estado === "noTopo") {
+        const estavel = partida.escada.balanco <= REGRAS.escada.balancoMaximo;
+        intensidade = Math.max(intensidade, l.puxando && estavel ? 0.62 + l.puxada * 0.3 : 0.58);
+        if (l.puxando && estavel) captura = Math.max(captura, l.puxada);
+      }
+      if (l.estado === "caido") intensidade = Math.max(intensidade, 0.45);
+    }
+    return { intensidade: Math.min(0.92, intensidade), captura };
+  };
 
   const reagir = (eventos: readonly Evento[]) => {
     for (const evento of eventos) {
@@ -166,6 +196,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           efeitos.tremer(pesado ? 7 : 3.5);
           paradaDeImpacto = pesado ? PARADA_DE_IMPACTO * 1.7 : PARADA_DE_IMPACTO;
           tocar(evento.golpe === "voadora" ? "voadora" : evento.golpe === "forte" ? "forte" : evento.golpe === "chute" ? "chute" : "soco");
+          torcer("golpe");
           break;
         }
         case "golpeNoVazio":
@@ -197,11 +228,13 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           efeitos.anel(evento.x, 30, "#cfd3d8");
           paradaDeImpacto = PARADA_DE_IMPACTO;
           tocar("escada");
+          if (!evento.tombou) torcer("golpe");
           break;
         case "queda":
           efeitos.poeira(evento.x, 0, evento.longa ? 16 : 12);
           efeitos.tremer(evento.longa ? 9 : 7);
           tocar("queda");
+          torcer("queda");
           break;
         case "cordas":
           efeitos.tremer(4);
@@ -218,11 +251,13 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           tocar("escadaPosta");
           efeitos.anel(evento.x, 10);
           efeitos.poeira(evento.x, 0, 4);
+          torcer("escada");
           break;
         case "escadaCaiu":
           efeitos.poeira(evento.x, 0, 14);
           efeitos.tremer(9);
           tocar("escadaCai");
+          torcer("surpresa");
           break;
         case "subida":
           tocar("subida");
@@ -232,6 +267,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           break;
         case "topo":
           tocar("aviso");
+          torcer("expectativa");
           break;
         case "puxando":
           tocar("puxar");
@@ -239,19 +275,24 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
         case "faltaPouco":
           tocar("aviso");
           for (let i = 0; i < 10; i += 1) efeitos.brilho(partida.escada.x, REGRAS.faixa.altura - 30);
+          torcer("expectativa");
           break;
         case "interrompido":
           efeitos.tremer(5);
+          torcer("surpresa");
+          break;
+        case "caiuDaEscada":
+          torcer("surpresa");
           break;
         case "vitoria": {
           tocar(evento.quem === 0 ? "vitoria" : "derrota");
           for (let i = 0; i < 24; i += 1) efeitos.brilho(partida.escada.x, REGRAS.faixa.altura - 40);
+          torcer("comemoracao");
           break;
         }
         default:
           break;
       }
-      narrar(evento.tipo);
     }
     comentar(eventos);
   };
@@ -297,8 +338,14 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       aviso.t += dt;
       if (aviso.t > 1) aviso = null;
     }
-    const tensao = puxador === undefined ? 0 : 0.4 + puxador.puxada * 0.6;
-    opcoes.audio?.torcida(partida.torcida, partida.fase === "luta" ? tensao : 0);
+    const { intensidade, captura } = intensidadeDaTorcida();
+    opcoes.audio?.torcida(intensidade, captura, dt);
+    // O que a torcida recebe, no canvas, para os testes de navegador conferirem sem ouvir.
+    const torcidaAgora = `${intensidade.toFixed(2)}|${captura.toFixed(2)}`;
+    if (torcidaAgora !== ultimaTorcida) {
+      ultimaTorcida = torcidaAgora;
+      canvas.dataset.torcida = torcidaAgora;
+    }
     seguir(camera, alvoDaCamera(partida, tela), dt, primeiroQuadro);
     primeiroQuadro = false;
     publicarResumo();
@@ -440,12 +487,8 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       pausado = valor;
       loop.setPaused(valor);
       entradas.limpar();
-      if (valor) {
-        opcoes.audio?.suspender();
-        opcoes.narracao?.cancelar();
-      } else {
-        opcoes.audio?.retomar();
-      }
+      if (valor) opcoes.audio?.suspender();
+      else opcoes.audio?.retomar();
     },
     reiniciar(semente) {
       partida = criarPartida(opcoes.jogador, opcoes.computador, semente);
@@ -457,8 +500,9 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       paradaDeImpacto = 0;
       primeiroQuadro = true;
       ultimoResumo = "";
+      ultimaSurpresa = -10;
       entradas.limpar();
-      opcoes.narracao?.cancelar();
+      opcoes.audio?.limpar();
       seguir(camera, alvoDaCamera(partida, tela), 0, true);
       publicarResumo();
     },
@@ -471,8 +515,8 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       window.removeEventListener("resize", redimensionar);
       document.removeEventListener("visibilitychange", aoEsconder);
       window.removeEventListener("blur", aoPerderFoco);
+      opcoes.audio?.limpar();
       opcoes.audio?.suspender();
-      opcoes.narracao?.cancelar();
     },
   };
 }

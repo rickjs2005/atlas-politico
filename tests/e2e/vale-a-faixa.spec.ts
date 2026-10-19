@@ -178,6 +178,60 @@ test.describe("Vale a Faixa", () => {
     expect(erros).toEqual([]);
   });
 
+  test("a torcida acompanha o estado real: sobe com a subida, só cresce com a captura de verdade, cai na interrupção e explode na vitória", async ({ page }) => {
+    test.setTimeout(150_000);
+    const erros = vigiarErros(page);
+    await comecar(page, "lula", false, true);
+    const torcida = async () => (await page.locator("canvas").getAttribute("data-torcida"))!.split("|").map(Number) as [number, number];
+    const dica = () => raiz(page).getAttribute("data-dica");
+    const xDoJogador = async () => Number((await estados(page))[4]);
+    const xDaEscada = async () => Number((await estados(page))[5]);
+    // Na luta normal, o ambiente é presente e sem captura.
+    const [base, capturaBase] = await torcida();
+    expect(base).toBeGreaterThanOrEqual(0.3);
+    expect(base).toBeLessThan(0.45);
+    expect(capturaBase).toBe(0);
+    // Pega e posiciona a escada.
+    const lado = (await xDaEscada()) < (await xDoJogador()) ? "ArrowLeft" : "ArrowRight";
+    await segurarAte(page, lado, async () => (await dica()) === "pegarEscada", 10_000);
+    await page.keyboard.press("c");
+    const paraOCentro = (await xDoJogador()) < 0 ? "ArrowRight" : "ArrowLeft";
+    await segurarAte(page, paraOCentro, async () => (await dica()) === "posicionarEscada", 15_000);
+    await page.keyboard.press("c");
+    await expect.poll(dica).toBe("subir");
+    // Subindo, a agitação cresce; no topo sem puxar, cresce mais, mas a captura segue em zero.
+    await page.keyboard.down("ArrowUp");
+    await expect.poll(async () => (await torcida())[0], { timeout: 3_000 }).toBeGreaterThan(0.42);
+    await expect.poll(() => estadoDoJogador(page), { timeout: 5_000 }).toBe("noTopo");
+    await page.keyboard.up("ArrowUp");
+    await page.waitForTimeout(300);
+    const [noTopo, capturaNoTopo] = await torcida();
+    expect(noTopo).toBeGreaterThan(0.55);
+    expect(noTopo).toBeLessThan(0.62);
+    expect(capturaNoTopo).toBe(0);
+    // Puxando, o crescendo segue o progresso real.
+    await page.keyboard.down("c");
+    await expect.poll(async () => (await torcida())[1], { timeout: 5_000 }).toBeGreaterThan(0.2);
+    const [puxando, capturaPuxando] = await torcida();
+    expect(puxando).toBeGreaterThan(0.62);
+    expect(puxando).toBeLessThan(1);
+    // Descer interrompe a captura: a captura volta a zero e a intensidade cai.
+    await page.keyboard.up("c");
+    await page.keyboard.down("ArrowDown");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 5_000 }).toBe("parado");
+    await page.keyboard.up("ArrowDown");
+    await page.waitForTimeout(200);
+    const [depois, capturaDepois] = await torcida();
+    expect(capturaDepois).toBe(0);
+    expect(depois).toBeLessThan(puxando);
+    expect(capturaPuxando).toBeGreaterThan(0);
+    // Sobe de novo e vai até o fim: na vitória, o máximo.
+    await segurarAte(page, "ArrowUp", async () => (await estadoDoJogador(page)) === "noTopo", 10_000);
+    await segurarAte(page, "c", async () => (await raiz(page).getAttribute("data-fase")) === "fim", 30_000);
+    await expect.poll(async () => (await torcida())[0], { timeout: 3_000 }).toBe(1);
+    expect(erros).toEqual([]);
+  });
+
   test("atacar perto da escada em que o computador sobe chacoalha a escada e pausa a subida dele", async ({ page }) => {
     test.setTimeout(120_000);
     const erros = vigiarErros(page);
@@ -194,7 +248,7 @@ test.describe("Vale a Faixa", () => {
     expect(erros).toEqual([]);
   });
 
-  test("Esc abre a pausa e congela a partida; Esc de novo continua; o painel de som tem três volumes e a narração; Voltar ao Atlas leva ao hub e descarta a cena", async ({ page }) => {
+  test("Esc abre a pausa e congela a partida; Esc de novo continua; o painel de som tem efeitos e torcida, sem narração; Voltar ao Atlas leva ao hub e descarta a cena", async ({ page }) => {
     const erros = vigiarErros(page);
     await comecar(page, "lula");
     await page.keyboard.press("Escape");
@@ -205,8 +259,7 @@ test.describe("Vale a Faixa", () => {
     expect(await estados(page)).toEqual(antes);
     await expect(page.locator("[data-volume-efeitos]")).toBeVisible();
     await expect(page.locator("[data-volume-torcida]")).toBeVisible();
-    await expect(page.locator("[data-volume-narracao]")).toBeVisible();
-    await expect(page.locator("[data-narracao-ligada]")).toBeVisible();
+    await expect(page.locator("[data-volume-narracao]")).toHaveCount(0);
     await page.locator("[data-ver-controles]").click();
     await expect(page.locator('[data-janela="controles"] [data-teclas] kbd')).toHaveText(TECLAS_DESENHADAS);
     await page.getByRole("button", { name: "Voltar" }).click();
@@ -246,7 +299,8 @@ test.describe("Vale a Faixa", () => {
     await page.keyboard.up("ArrowRight");
     expect(await page.locator("#campo-de-prova").inputValue()).toBe("zc v");
     expect(Number((await estados(page))[4])).toBe(x0);
-    expect(await estadoDoJogador(page)).toBe("parado");
+    // O pulo do Espaço de antes termina sozinho; as teclas no campo não disparam nada.
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("parado");
   });
 
   test("no celular emulado: direcional e seis ações sem sobreposição, resposta ao apertar e ao soltar, toque e teclado ao mesmo tempo, e a página não rola", async ({ browser }) => {
