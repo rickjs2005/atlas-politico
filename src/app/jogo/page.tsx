@@ -9,13 +9,27 @@ import { TRAIL_ENTRY } from "@/lib/state/links";
 
 export const metadata: Metadata = {
   title: "Jogar",
-  description: "Três jeitos de jogar com os documentos do atlas: investigar na Praça do Mural, conhecer as trajetórias em fases curtas e explorar as propostas às cegas. Sem nota, sem ranking, sem recomendação de voto.",
+  description:
+    "Quatro jeitos de jogar: investigar na Praça do Mural, conhecer as trajetórias em fases curtas, explorar as propostas às cegas e a sátira Vale a Faixa, uma luta de escadas pela faixa presidencial. Sem nota, sem ranking, sem recomendação de voto.",
 };
 
 // O hub do jogo (D-155): a investigação na praça é a entrada principal; a
 // trilha das trajetórias e a Cidade do Voto continuam no ar, cada uma com a
 // própria entrada. As rotas antigas (/praca/, /mundo/, /jogo/<pessoa>/) seguem
-// valendo por acesso direto.
+// valendo por acesso direto. O Vale a Faixa (D-156) é a quarta entrada: uma
+// sátira interativa, de luta, separada dos documentos e identificada como tal.
+/** A faixa verde e amarela, de enfeite, no canto do cartão da sátira. */
+function FaixaDecorativa() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 120 120" className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 opacity-80">
+      <path d="M-10 70 L80 -20 L104 4 L14 94 Z" fill="#1f8f4a" stroke="#111613" strokeWidth="3" />
+      <path d="M-2 78 L88 -12 L96 -4 L6 86 Z" fill="#f0c66b" />
+      <circle cx="30" cy="66" r="11" fill="#f0c66b" stroke="#111613" strokeWidth="3" />
+      <circle cx="30" cy="66" r="6" fill="#1f8f4a" />
+    </svg>
+  );
+}
+
 export default function GameHubPage() {
   const data = getAtlasData();
   const fases = PROFILES.map((perfil) => countTrailPhases(data, perfil.slug));
@@ -29,10 +43,10 @@ export default function GameHubPage() {
       <div className="page space-y-10 py-8 md:space-y-14 md:py-14">
         <header className="max-w-3xl space-y-4">
           <p className="eyebrow text-highlight">Jogar</p>
-          <h1 className="font-serif text-[2.75rem] font-medium leading-[0.95] tracking-[-0.02em] md:text-6xl">Três jeitos de entrar nos documentos</h1>
+          <h1 className="font-serif text-[2.75rem] font-medium leading-[0.95] tracking-[-0.02em] md:text-6xl">Três jeitos de entrar nos documentos, e uma sátira</h1>
           <p className="max-w-[36rem] font-serif text-xl leading-snug text-stage-ink md:text-2xl">
             Investigue perguntas de uma praça, siga as duas trajetórias em fases curtas ou leia as propostas sem saber de quem são. Tudo vem do atlas, com as
-            fontes.
+            fontes. E, à parte, uma luta de escadas pela faixa.
           </p>
         </header>
 
@@ -62,7 +76,7 @@ export default function GameHubPage() {
             </div>
           </li>
 
-          <li className="flex flex-col gap-4 border border-stage-line bg-stage-raised p-5 md:p-6 lg:col-span-2" data-caminho="trajetorias">
+          <li className="flex flex-col gap-4 border border-stage-line bg-stage-raised p-5 md:p-6" data-caminho="trajetorias">
             <p className="eyebrow text-highlight">Trajetórias</p>
             <h2 className="font-serif text-2xl font-medium leading-tight tracking-tight md:text-3xl">Conhecer trajetórias</h2>
             <p className="text-stage-ink-soft">
@@ -94,6 +108,21 @@ export default function GameHubPage() {
               </IntentLink>
             </div>
           </li>
+
+          <li className="relative flex flex-col gap-4 overflow-hidden border border-stage-line bg-stage-raised p-5 md:p-6" data-caminho="vale-a-faixa">
+            <FaixaDecorativa />
+            <p className="eyebrow text-highlight">Sátira interativa</p>
+            <h2 className="font-serif text-2xl font-medium leading-tight tracking-tight md:text-3xl">Vale a Faixa</h2>
+            <p className="text-stage-ink-soft">
+              Dois candidatos, uma escada, uma faixa. Lula e Flávio Bolsonaro em caricatura disputam, em um ringue montado no palco de um debate, quem sobe e
+              tira a faixa presidencial. Partidas de um a três minutos, contra o computador, no computador ou no celular.
+            </p>
+            <div className="mt-auto pt-2">
+              <IntentLink href="/jogo/vale-a-faixa" className="btn-palco" data-abrir-vale-a-faixa>
+                Jogar Vale a Faixa
+              </IntentLink>
+            </div>
+          </li>
         </ul>
 
         <section aria-labelledby="o-que-o-jogo-nao-e" className="max-w-3xl space-y-2 border-t border-stage-line pt-6 text-sm text-stage-ink-soft">
@@ -101,8 +130,8 @@ export default function GameHubPage() {
             O que o jogo não é
           </h2>
           <p data-avisos-do-jogo>
-            Nenhum modo dá nota, soma pontos, aponta vencedor ou recomenda voto. A praça, os moradores e os cenários são ficção feita para o projeto; os
-            documentos são os registros publicados neste atlas, sem reescrita. {notaDeRevisao}{" "}
+            Nenhum modo dá nota, soma pontos ou recomenda voto; o único vencedor é o da partida do Vale a Faixa, que é sátira e não diz nada sobre as pessoas. A
+            praça, os moradores e os cenários são ficção feita para o projeto; os documentos são os registros publicados neste atlas, sem reescrita. {notaDeRevisao}{" "}
             <IntentLink href="/metodologia" className="text-stage-ink underline decoration-stage-line hover:decoration-stage-ink">
               Metodologia e fontes
             </IntentLink>

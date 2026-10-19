@@ -85,6 +85,7 @@ Screens (docs/UX.md):
 | Methodology | http://localhost:3000/metodologia/ |
 | Play: the hub with three paths | http://localhost:3000/jogo/ |
 | Praça do Mural (town square) | http://localhost:3000/praca/ |
+| Vale a Faixa, the satirical ladder fight | http://localhost:3000/jogo/vale-a-faixa/ |
 | Cidade do Voto (city prototype) | http://localhost:3000/mundo/ |
 | Game: both careers | http://localhost:3000/jogo/trajetorias/ |
 | Game: one character's career | http://localhost:3000/jogo/lula/ and http://localhost:3000/jogo/flavio-bolsonaro/ (`?fase=3` opens stage 3; `&leitura=1` removes the scenery) |

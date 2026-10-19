@@ -22,6 +22,7 @@ const EXPECTED_PAGES = [
   "comparar/index.html",
   "metodologia/index.html",
   "jogo/index.html",
+  "jogo/vale-a-faixa/index.html",
   "jogo/lula/index.html",
   "jogo/flavio-bolsonaro/index.html",
 ];

@@ -73,6 +73,7 @@ As telas (docs/UX.md):
 | Metodologia | http://localhost:3000/metodologia/ |
 | Jogar: o hub com os três caminhos | http://localhost:3000/jogo/ |
 | Praça do Mural | http://localhost:3000/praca/ |
+| Vale a Faixa, a sátira de luta | http://localhost:3000/jogo/vale-a-faixa/ |
 | Cidade do Voto | http://localhost:3000/mundo/ |
 | Jogo: as duas trajetórias | http://localhost:3000/jogo/trajetorias/ |
 | Jogo: a trajetória de cada personagem | http://localhost:3000/jogo/lula/ e http://localhost:3000/jogo/flavio-bolsonaro/ (com `?fase=3`, a fase 3; com `&leitura=1`, sem o cenário) |
