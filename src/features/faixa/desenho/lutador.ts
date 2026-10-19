@@ -12,7 +12,7 @@
 import { FLAVIO_HEAD, LULA_HEAD } from "@/features/game/draw/character-faces";
 import { drawHead, type HeadSpec } from "@/features/game/draw/character-head";
 import { INK } from "@/features/game/draw/kit";
-import { REGRAS, faseDoAtaque } from "@/lib/faixa/regras";
+import { REGRAS, faseDoAtaque, golpeDe } from "@/lib/faixa/regras";
 import type { Lutador, LutadorSlug } from "@/lib/faixa/tipos";
 
 export type Expressao = "neutra" | "raiva" | "dor" | "esforco" | "alegria" | "tonto" | "susto" | "triste";
@@ -145,40 +145,48 @@ export function poseDe(l: Lutador, tempo: number, ritmo: number, movimento: bool
       pose.piscar = piscada;
       break;
     case "golpe": {
-      const r = REGRAS.golpe;
+      // A sequência: o jab com o braço da frente, o direto com o de trás e o forte, de baixo para cima.
+      const r = golpeDe(l);
       const fase = faseDoAtaque(l);
+      const qual = l.golpeDaSequencia;
       pose.expressao = "raiva";
+      // A pose do instante ativo de cada golpe; a antecipação e a recuperação interpolam a partir dela.
+      const ativo: Pick<Pose, "tronco" | "dx" | "bracoF" | "bracoT" | "pernaF" | "pernaT" | "quadrilY"> =
+        qual === 2
+          ? { tronco: 0.46, dx: 10, bracoF: [1.35, 1.6], bracoT: [Math.PI / 2 + 0.1, -0.05], pernaF: [0.6, -0.35], pernaT: [-0.5, 0.1], quadrilY: -M.quadril + 5 }
+          : qual === 3
+            ? { tronco: -0.12, dx: 14, bracoF: [2.25, 0.25], bracoT: [0.7, 1.4], pernaF: [0.45, -0.25], pernaT: [-0.4, 0.05], quadrilY: -M.quadril - 6 }
+            : { tronco: 0.38, dx: 8, bracoF: [Math.PI / 2 + 0.12, -0.05], bracoT: [0.5, 1.6], pernaF: [0.55, -0.35], pernaT: [-0.45, 0.1], quadrilY: -M.quadril + 4 };
+      const preparo: typeof ativo =
+        qual === 2
+          ? { tronco: -0.2, dx: 0, bracoF: [1.3, 1.6], bracoT: [0.2, 1.7], pernaF: [0.3, -0.3], pernaT: [-0.3, 0.2], quadrilY: -M.quadril + 3 }
+          : qual === 3
+            ? { tronco: 0.3, dx: 0, bracoF: [-0.35, 0.5], bracoT: [1.2, 1.4], pernaF: [0.5, -0.7], pernaT: [-0.3, 0.3], quadrilY: -M.quadril + 12 }
+            : { tronco: -0.28, dx: 0, bracoF: [0.35, 1.9], bracoT: [1.2, 1.3], pernaF: [0.3, -0.3], pernaT: [-0.3, 0.2], quadrilY: -M.quadril + 3 };
+      const misturar = (de: typeof ativo, para: typeof ativo, u: number) => {
+        pose.tronco = lerp(de.tronco, para.tronco, u);
+        pose.dx = lerp(de.dx, para.dx, u);
+        pose.bracoF = [lerp(de.bracoF[0], para.bracoF[0], u), lerp(de.bracoF[1], para.bracoF[1], u)];
+        pose.bracoT = [lerp(de.bracoT[0], para.bracoT[0], u), lerp(de.bracoT[1], para.bracoT[1], u)];
+        pose.pernaF = [lerp(de.pernaF[0], para.pernaF[0], u), lerp(de.pernaF[1], para.pernaF[1], u)];
+        pose.pernaT = [lerp(de.pernaT[0], para.pernaT[0], u), lerp(de.pernaT[1], para.pernaT[1], u)];
+        pose.quadrilY = lerp(de.quadrilY, para.quadrilY, u);
+      };
+      const guarda: typeof ativo = { tronco: 0.08, dx: 0, bracoF: GUARDA.bracoF, bracoT: GUARDA.bracoT, pernaF: GUARDA.pernaF, pernaT: GUARDA.pernaT, quadrilY: -M.quadril };
       if (fase === "antecipacao") {
-        const u = easeOut(t / r.antecipacao);
-        pose.tronco = lerp(0.08, -0.28, u);
-        pose.bracoF = [lerp(1.15, 0.35, u), lerp(1.5, 1.9, u)];
-        pose.bracoT = [1.2, 1.3];
-        pose.pernaF = [0.3, -0.3];
-        pose.pernaT = [-0.3, 0.2];
-        pose.quadrilY = -M.quadril + 3 * u;
+        misturar(guarda, preparo, easeOut(t / r.antecipacao));
       } else if (fase === "ativo") {
-        pose.tronco = 0.38;
-        pose.dx = 8;
-        pose.bracoF = [Math.PI / 2 + 0.12, -0.05];
-        pose.bracoT = [0.5, 1.6];
-        pose.pernaF = [0.55, -0.35];
-        pose.pernaT = [-0.45, 0.1];
-        pose.quadrilY = -M.quadril + 4;
+        misturar(preparo, ativo, Math.min(1, (t - r.antecipacao) / (r.ativo * 0.5)));
+        if (qual === 3) pose.suor = 1;
       } else {
         const u = easeOut((t - r.antecipacao - r.ativo) / r.recuperacao);
-        pose.tronco = lerp(0.38, 0.08, u);
-        pose.dx = lerp(8, 0, u);
-        pose.bracoF = [lerp(Math.PI / 2 + 0.12, 1.15, u), lerp(-0.05, 1.5, u)];
-        pose.bracoT = [lerp(0.5, 0.95, u), lerp(1.6, 1.55, u)];
-        pose.pernaF = [lerp(0.55, 0.22, u), lerp(-0.35, -0.18, u)];
-        pose.pernaT = [lerp(-0.45, -0.2, u), lerp(0.1, 0.14, u)];
-        pose.quadrilY = -M.quadril + lerp(4, 0, u);
+        misturar(ativo, guarda, u);
         if (u > 0.6) pose.expressao = "neutra";
       }
       break;
     }
-    case "empurrao": {
-      const r = REGRAS.empurrao;
+    case "derrubada": {
+      const r = REGRAS.derrubada;
       const fase = faseDoAtaque(l);
       pose.expressao = "esforco";
       if (fase === "antecipacao") {
@@ -751,16 +759,17 @@ export function desenharRetrato(canvas: HTMLCanvasElement, slug: LutadorSlug, te
     altura: 0,
     invulneravel: 0,
     recargaGolpe: 0,
-    recargaEmpurrao: 0,
-    sequencia: 0,
-    sequenciaT: 0,
+    recargaDerrubada: 0,
+    golpeDaSequencia: 0,
+    desdeOUltimoGolpe: 10,
+    proximoGolpe: false,
     acertou: false,
     passo: 0,
     puxada: 0,
     puxando: false,
     golpesRecebidos: 0,
     quedas: 0,
-    anterior: { esquerda: false, direita: false, cima: false, baixo: false, golpe: false, defesa: false, empurrao: false, interagir: false },
+    anterior: { esquerda: false, direita: false, cima: false, baixo: false, golpe: false, defesa: false, interagir: false },
   };
   const pose = poseDe(lutador, tempo, slug === "lula" ? 0 : 1.7, true, false, false);
   desenharSombra(g, largura / 2, altura - 10, s, 0, false);

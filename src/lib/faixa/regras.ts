@@ -7,9 +7,23 @@
 // janela para pegar a escada, posicionar sob a faixa, subir e puxar. Cada
 // estado exclui os outros (ninguém ataca caído nem carrega a escada subindo
 // nela), as durações são fixas e a escada nunca se teletransporta: é levada,
-// posta em pé, chacoalhada ou derrubada, sempre a partir de onde está.
+// posta em pé ou derrubada, sempre a partir de onde está.
+//
+// Sete comandos. Atacar é contextual: um golpe na direção em que o lutador
+// olha, em sequência curta de três (o terceiro é o forte); perto da escada
+// em que o adversário está, a tentativa de derrubá-la. Interagir também:
+// pega, posiciona ou larga a escada; no topo, segurado, puxa a faixa. Subir
+// e descer são as setas, com o lutador alinhado à base.
 
 import { ENTRADA_VAZIA, type Dica, type Entrada, type Escada, type Evento, type Indice, type Lutador, type LutadorSlug, type Partida } from "./tipos";
+
+export interface Golpe {
+  antecipacao: number;
+  ativo: number;
+  recuperacao: number;
+  dano: number;
+  recuo: number;
+}
 
 export const REGRAS = {
   /** Meia largura em que os lutadores andam; as cordas ficam logo além. */
@@ -19,7 +33,6 @@ export const REGRAS = {
   velocidadeCarregando: 165,
   /** Distância entre os centros para um golpe pegar: a mesma para os dois. */
   alcance: 78,
-  alcanceEmpurrao: 86,
   /** Largura de um lutador: os dois não se sobrepõem. */
   corpo: 54,
   equilibrio: 100,
@@ -27,10 +40,21 @@ export const REGRAS = {
   recuperacao: 11,
   /** Segundos sem recuperar depois de levar um golpe. */
   pausaDaRecuperacao: 0.9,
-  golpe: { antecipacao: 0.13, ativo: 0.1, recuperacao: 0.24, dano: 24, danoBloqueado: 5, recuo: 190, recarga: 0.08, atordoa: 0.3 },
-  empurrao: { antecipacao: 0.3, ativo: 0.12, recuperacao: 0.42, dano: 10, recuo: 540, recarga: 1.3, atordoa: 0.34 },
-  /** O terceiro golpe seguido afasta mais e dá proteção breve: sem sequência infinita. */
-  sequencia: { maxima: 3, janela: 1.6, recuo: 430, protecao: 0.6 },
+  /** A sequência: jab, direto e o forte, que afasta mais e dá proteção breve (sem sequência infinita). */
+  golpes: [
+    { antecipacao: 0.12, ativo: 0.08, recuperacao: 0.2, dano: 20, recuo: 120 },
+    { antecipacao: 0.1, ativo: 0.08, recuperacao: 0.22, dano: 22, recuo: 140 },
+    { antecipacao: 0.18, ativo: 0.1, recuperacao: 0.42, dano: 30, recuo: 430 },
+  ] as readonly [Golpe, Golpe, Golpe],
+  /** Quanto o lutador avança ao emendar o segundo e o terceiro golpes: a sequência alcança quem recuou. */
+  passoDaSequencia: 12,
+  danoBloqueado: 5,
+  /** Segundos depois de um golpe em que o próximo continua a sequência; passada a janela, volta ao primeiro. */
+  janelaDaSequencia: 0.45,
+  protecaoDoForte: 0.6,
+  recargaDoGolpe: 0.08,
+  /** A derrubada da escada: mais lenta, com recarga. */
+  derrubada: { antecipacao: 0.42, ativo: 0.1, recuperacao: 0.45, recarga: 0.9 },
   caido: 1.8,
   levantando: 0.55,
   /** Proteção ao levantar: cobre o levantar e um pouco depois. */
@@ -40,18 +64,14 @@ export const REGRAS = {
     altura: 200,
     /** Até onde do centro do ringue a escada pode ficar em pé e alcançar a faixa. */
     zona: 64,
-    /** Distância para pegar a escada caída, subir na escada em pé e chacoalhá-la. */
+    /** Distância para pegar a escada caída, subir na escada em pé e tentar derrubá-la. */
     pegar: 90,
     subir: 40,
-    chacoalhar: 96,
+    derrubar: 96,
     /** Velocidade de subida e de descida, em fração da escada por segundo. */
     subida: 0.8,
     descida: 1.4,
-    /** Quanto um golpe na base balança a escada, e acima de quanto ninguém puxa a faixa. */
-    balancoDoGolpe: 0.45,
-    balancoMaximo: 0.4,
     amortecimento: 0.9,
-    danoDoChacoalho: 34,
     /** Segundos do tombo. */
     tombo: 0.55,
     /** Onde ficam os pés de quem está no topo, em fração da altura. */
@@ -84,9 +104,10 @@ function novoLutador(slug: LutadorSlug, x: number, direcao: 1 | -1): Lutador {
     altura: 0,
     invulneravel: 0,
     recargaGolpe: 0,
-    recargaEmpurrao: 0,
-    sequencia: 0,
-    sequenciaT: 0,
+    recargaDerrubada: 0,
+    golpeDaSequencia: 0,
+    desdeOUltimoGolpe: 10,
+    proximoGolpe: false,
     acertou: false,
     passo: 0,
     puxada: 0,
@@ -135,16 +156,35 @@ export const naZona = (x: number): boolean => Math.abs(x) <= REGRAS.escada.zona;
 /** A altura dos pés de quem está na escada, pela posição nela. */
 export const alturaNaEscada = (altura: number): number => altura * REGRAS.escada.altura * REGRAS.escada.topo;
 
-/** O que o comando de interação faz agora para este lutador. */
+/** A escada em pé está na frente do lutador e ao alcance de ser derrubada. */
+export function escadaAoAlcance(p: Partida, l: Lutador): boolean {
+  const esc = p.escada;
+  if (esc.estado !== "emPe") return false;
+  const dx = esc.x - l.x;
+  return Math.abs(dx) <= REGRAS.escada.derrubar && (Math.sign(dx) === l.direcao || Math.abs(dx) < 24);
+}
+
+/** O adversário está na escada em pé, ao alcance: atacar vira a tentativa de derrubá-la. */
+export function podeDerrubar(p: Partida, i: Indice): boolean {
+  return naEscada(p.lutadores[outro(i)]) && escadaAoAlcance(p, p.lutadores[i]);
+}
+
+/** Alinhado à base da escada em pé, com ela livre: a seta para cima começa a subir. */
+export function podeSubir(p: Partida, i: Indice): boolean {
+  const l = p.lutadores[i];
+  return p.escada.estado === "emPe" && Math.abs(l.x - p.escada.x) <= REGRAS.escada.subir && !naEscada(p.lutadores[outro(i)]);
+}
+
+/** O que dá para fazer agora com a escada ou a faixa, para a dica perto do personagem. */
 export function dicaDe(p: Partida, i: Indice): Dica {
   if (p.fase !== "luta") return null;
   const l = p.lutadores[i];
   const esc = p.escada;
   if (l.estado === "carregando") return naZona(l.x) ? "posicionarEscada" : "soltarEscada";
-  if (l.estado === "noTopo") return esc.balanco <= REGRAS.escada.balancoMaximo ? "puxarFaixa" : "foraDoAlcance";
+  if (l.estado === "noTopo") return "puxarFaixa";
   if (!livre(l)) return null;
   if (esc.estado === "caida" && Math.abs(l.x - esc.x) <= REGRAS.escada.pegar) return "pegarEscada";
-  if (esc.estado === "emPe" && Math.abs(l.x - esc.x) <= REGRAS.escada.subir && !naEscada(p.lutadores[outro(i)])) return "subir";
+  if (podeSubir(p, i)) return "subir";
   return null;
 }
 
@@ -157,6 +197,10 @@ function entrar(l: Lutador, estado: Lutador["estado"]): void {
   l.t = 0;
   l.acertou = false;
   if (estado !== "noTopo") l.puxando = false;
+  if (estado !== "golpe") {
+    l.golpeDaSequencia = 0;
+    l.proximoGolpe = false;
+  }
 }
 
 function derrubar(p: Partida, i: Indice, recuo: number): void {
@@ -234,37 +278,29 @@ const clampRingue = (x: number, limite: number): number => Math.max(-limite, Mat
 // Ataques
 // ---------------------------------------------------------------------------
 
-function iniciarAtaque(l: Lutador, tipo: "golpe" | "empurrao"): void {
-  entrar(l, tipo);
+/** O golpe de agora, pela posição na sequência. */
+export function golpeDe(l: Lutador): Golpe {
+  const indice = Math.max(0, Math.min(2, l.golpeDaSequencia - 1));
+  return REGRAS.golpes[indice] ?? REGRAS.golpes[0];
 }
 
-/** O instante ativo de um ataque: tenta acertar uma vez só. */
-function acertar(p: Partida, i: Indice, tipo: "golpe" | "empurrao"): void {
+/** Começa um golpe: o próximo da sequência se o anterior acabou há pouco; senão, o primeiro. */
+function iniciarGolpe(l: Lutador): void {
+  const continua = l.desdeOUltimoGolpe <= REGRAS.janelaDaSequencia && l.golpeDaSequencia > 0 && l.golpeDaSequencia < 3;
+  const proximo = continua ? ((l.golpeDaSequencia + 1) as 2 | 3) : 1;
+  entrar(l, "golpe");
+  l.golpeDaSequencia = proximo;
+  if (continua) l.x += l.direcao * REGRAS.passoDaSequencia;
+}
+
+/** O instante ativo de um golpe: tenta acertar uma vez só. */
+function acertarGolpe(p: Partida, i: Indice): void {
   const l = p.lutadores[i];
   const j = outro(i);
   const alvo = p.lutadores[j];
-  const esc = p.escada;
+  const golpe = golpeDe(l);
+  const forte = l.golpeDaSequencia === 3;
   l.acertou = true;
-
-  // A escada em pé, na frente e ao alcance: um empurrão a derruba; um golpe
-  // a chacoalha, se alguém estiver nela.
-  const escadaNaFrente = esc.estado === "emPe" && Math.abs(esc.x - l.x) <= REGRAS.escada.chacoalhar && (Math.sign(esc.x - l.x) === l.direcao || Math.abs(esc.x - l.x) < 24);
-  if (escadaNaFrente) {
-    if (tipo === "empurrao") {
-      p.eventos.push({ tipo: "empurrao", quem: i, alvo: j, x: esc.x, y: 60 });
-      derrubarEscada(p, l.direcao);
-      return;
-    }
-    if (naEscada(alvo)) {
-      esc.balanco = Math.min(1, esc.balanco + REGRAS.escada.balancoDoGolpe);
-      alvo.equilibrio -= REGRAS.escada.danoDoChacoalho;
-      alvo.semRecuperar = REGRAS.pausaDaRecuperacao;
-      alvo.golpesRecebidos += 1;
-      p.eventos.push({ tipo: "escadaChacoalhada", quem: i, x: esc.x });
-      if (alvo.equilibrio <= 0) cairDaEscada(p, j, l.direcao);
-      return;
-    }
-  }
 
   if (noChao(alvo) || naEscada(alvo) || alvo.estado === "vitoria" || alvo.estado === "derrota") {
     p.eventos.push({ tipo: "golpeNoVazio", quem: i });
@@ -272,89 +308,98 @@ function acertar(p: Partida, i: Indice, tipo: "golpe" | "empurrao"): void {
   }
   const dx = alvo.x - l.x;
   const naFrente = Math.sign(dx) === l.direcao || Math.abs(dx) < 20;
-  const alcance = tipo === "golpe" ? REGRAS.alcance : REGRAS.alcanceEmpurrao;
-  if (!naFrente || Math.abs(dx) > alcance || alvo.invulneravel > 0) {
+  if (!naFrente || Math.abs(dx) > REGRAS.alcance || alvo.invulneravel > 0) {
     p.eventos.push({ tipo: "golpeNoVazio", quem: i });
     return;
   }
 
-  const defendendo = alvo.estado === "defesa";
-  if (tipo === "golpe") {
-    if (defendendo) {
-      alvo.equilibrio = Math.max(0, alvo.equilibrio - REGRAS.golpe.danoBloqueado);
-      alvo.semRecuperar = REGRAS.pausaDaRecuperacao / 2;
-      alvo.vx = l.direcao * REGRAS.golpe.recuo * 0.35;
-      // Bater na guarda deixa quem bateu um pouco mais lento: vantagem de quem defendeu.
-      l.recargaGolpe = REGRAS.golpe.recarga + 0.14;
-      p.eventos.push({ tipo: "golpe", quem: i, alvo: j, bloqueado: true, x: alvo.x - l.direcao * 18, y: 120 });
-      return;
-    }
-    alvo.equilibrio -= REGRAS.golpe.dano;
-    alvo.semRecuperar = REGRAS.pausaDaRecuperacao;
-    alvo.golpesRecebidos += 1;
-    if (alvo.estado === "carregando") soltarEscada(p, j);
-    l.sequencia += 1;
-    l.sequenciaT = 0;
-    let recuo: number = REGRAS.golpe.recuo;
-    if (l.sequencia >= REGRAS.sequencia.maxima) {
-      recuo = REGRAS.sequencia.recuo;
-      alvo.invulneravel = REGRAS.sequencia.protecao;
-      l.sequencia = 0;
-    }
-    p.eventos.push({ tipo: "golpe", quem: i, alvo: j, bloqueado: false, x: alvo.x - l.direcao * 14, y: 140 });
-    if (alvo.equilibrio <= 0) {
-      derrubar(p, j, l.direcao * recuo * 0.8);
-      return;
-    }
-    entrar(alvo, "atingido");
-    alvo.vx = l.direcao * recuo;
-    alvo.direcao = l.direcao === 1 ? -1 : 1;
+  if (alvo.estado === "defesa") {
+    alvo.equilibrio = Math.max(0, alvo.equilibrio - REGRAS.danoBloqueado);
+    alvo.semRecuperar = REGRAS.pausaDaRecuperacao / 2;
+    alvo.vx = l.direcao * golpe.recuo * 0.35;
+    // Bater na guarda deixa quem bateu um pouco mais lento: vantagem de quem defendeu.
+    l.recargaGolpe = REGRAS.recargaDoGolpe + 0.14;
+    p.eventos.push({ tipo: "golpe", quem: i, alvo: j, bloqueado: true, forte, x: alvo.x - l.direcao * 18, y: 120 });
     return;
   }
-
-  // Empurrão: não se bloqueia, afasta muito e tira pouco equilíbrio.
-  alvo.equilibrio -= defendendo ? REGRAS.empurrao.dano / 2 : REGRAS.empurrao.dano;
+  alvo.equilibrio -= golpe.dano;
   alvo.semRecuperar = REGRAS.pausaDaRecuperacao;
+  alvo.golpesRecebidos += 1;
   if (alvo.estado === "carregando") soltarEscada(p, j);
-  p.eventos.push({ tipo: "empurrao", quem: i, alvo: j, x: alvo.x - l.direcao * 16, y: 110 });
+  if (forte) alvo.invulneravel = REGRAS.protecaoDoForte;
+  p.eventos.push({ tipo: "golpe", quem: i, alvo: j, bloqueado: false, forte, x: alvo.x - l.direcao * 14, y: 140 });
   if (alvo.equilibrio <= 0) {
-    derrubar(p, j, l.direcao * REGRAS.empurrao.recuo * 0.6);
+    derrubar(p, j, l.direcao * golpe.recuo * 0.8);
     return;
   }
-  if (!defendendo) {
-    entrar(alvo, "atingido");
-    alvo.direcao = l.direcao === 1 ? -1 : 1;
-  }
-  alvo.vx = l.direcao * REGRAS.empurrao.recuo * (defendendo ? 0.5 : 1);
+  entrar(alvo, "atingido");
+  alvo.vx = l.direcao * golpe.recuo;
+  alvo.direcao = l.direcao === 1 ? -1 : 1;
 }
 
-/** Avança um ataque pelas três fases. Devolve `true` enquanto o ataque dura. */
-function avancarAtaque(p: Partida, i: Indice, tipo: "golpe" | "empurrao"): void {
+/** Avança o golpe pelas três fases; outro aperto durante ele emenda o próximo da sequência. */
+function avancarGolpe(p: Partida, i: Indice, apertouDeNovo: boolean): void {
   const l = p.lutadores[i];
-  const r = REGRAS[tipo];
-  const inicioAtivo = r.antecipacao;
-  const fimAtivo = r.antecipacao + r.ativo;
-  if (l.t >= inicioAtivo && l.t < fimAtivo && !l.acertou) acertar(p, i, tipo);
-  if (l.t >= fimAtivo + r.recuperacao) {
-    if (tipo === "golpe") l.recargaGolpe = Math.max(l.recargaGolpe, r.recarga);
-    else l.recargaEmpurrao = r.recarga;
+  const golpe = golpeDe(l);
+  const inicioAtivo = golpe.antecipacao;
+  const fimAtivo = golpe.antecipacao + golpe.ativo;
+  if (apertouDeNovo && l.t >= inicioAtivo && l.golpeDaSequencia < 3) l.proximoGolpe = true;
+  if (l.t >= inicioAtivo && l.t < fimAtivo && !l.acertou) acertarGolpe(p, i);
+  if (l.t >= fimAtivo + golpe.recuperacao) {
+    const sequencia = l.golpeDaSequencia;
+    const emenda = l.proximoGolpe;
     entrar(l, "parado");
+    l.desdeOUltimoGolpe = 0;
+    l.golpeDaSequencia = sequencia;
+    l.recargaGolpe = Math.max(l.recargaGolpe, REGRAS.recargaDoGolpe);
+    if (emenda) {
+      l.recargaGolpe = 0;
+      iniciarGolpe(l);
+    }
   }
 }
 
-/** A fase de um ataque em andamento, para o desenho. */
+/** A derrubada: na fase ativa, a escada em pé à frente tomba, e quem estava nela cai. */
+function avancarDerrubada(p: Partida, i: Indice): void {
+  const l = p.lutadores[i];
+  const r = REGRAS.derrubada;
+  if (l.t >= r.antecipacao && l.t < r.antecipacao + r.ativo && !l.acertou) {
+    l.acertou = true;
+    if (escadaAoAlcance(p, l)) {
+      p.eventos.push({ tipo: "derrubada", quem: i, x: p.escada.x });
+      derrubarEscada(p, l.direcao);
+    } else {
+      p.eventos.push({ tipo: "golpeNoVazio", quem: i });
+    }
+  }
+  if (l.t >= r.antecipacao + r.ativo + r.recuperacao) {
+    entrar(l, "parado");
+    l.recargaDerrubada = r.recarga;
+  }
+}
+
+/** A fase de um ataque em andamento (golpe ou derrubada), para o desenho. */
 export function faseDoAtaque(l: Lutador): "antecipacao" | "ativo" | "recuperacao" | null {
-  if (l.estado !== "golpe" && l.estado !== "empurrao") return null;
-  const r = REGRAS[l.estado];
-  if (l.t < r.antecipacao) return "antecipacao";
-  if (l.t < r.antecipacao + r.ativo) return "ativo";
-  return "recuperacao";
+  if (l.estado === "golpe") {
+    const g = golpeDe(l);
+    if (l.t < g.antecipacao) return "antecipacao";
+    if (l.t < g.antecipacao + g.ativo) return "ativo";
+    return "recuperacao";
+  }
+  if (l.estado === "derrubada") {
+    const r = REGRAS.derrubada;
+    if (l.t < r.antecipacao) return "antecipacao";
+    if (l.t < r.antecipacao + r.ativo) return "ativo";
+    return "recuperacao";
+  }
+  return null;
 }
 
 // ---------------------------------------------------------------------------
 // Interação com a escada
 // ---------------------------------------------------------------------------
 
+/** O comando de interação, no chão: pega a escada caída. */
 function interagir(p: Partida, i: Indice): void {
   const l = p.lutadores[i];
   const esc = p.escada;
@@ -364,17 +409,20 @@ function interagir(p: Partida, i: Indice): void {
     esc.x = l.x;
     entrar(l, "carregando");
     p.eventos.push({ tipo: "escadaPega", quem: i });
-    return;
   }
-  if (esc.estado === "emPe" && Math.abs(l.x - esc.x) <= REGRAS.escada.subir && !naEscada(p.lutadores[outro(i)])) {
-    const direcao: 1 | -1 = esc.x >= l.x ? 1 : -1;
-    l.direcao = direcao;
-    l.x = esc.x - direcao * 10;
-    l.altura = 0;
-    l.vx = 0;
-    entrar(l, "subindo");
-    p.eventos.push({ tipo: "subida", quem: i });
-  }
+}
+
+/** A seta para cima, alinhado à base da escada em pé: começa a subir. */
+function subir(p: Partida, i: Indice): void {
+  const l = p.lutadores[i];
+  const esc = p.escada;
+  const direcao: 1 | -1 = esc.x >= l.x ? 1 : -1;
+  l.direcao = direcao;
+  l.x = esc.x - direcao * 10;
+  l.altura = 0;
+  l.vx = 0;
+  entrar(l, "subindo");
+  p.eventos.push({ tipo: "subida", quem: i });
 }
 
 function posicionarOuSoltar(p: Partida, i: Indice): void {
@@ -406,10 +454,10 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
   l.t += dt;
   l.invulneravel = Math.max(0, l.invulneravel - dt);
   l.recargaGolpe = Math.max(0, l.recargaGolpe - dt);
-  l.recargaEmpurrao = Math.max(0, l.recargaEmpurrao - dt);
+  l.recargaDerrubada = Math.max(0, l.recargaDerrubada - dt);
   l.semRecuperar = Math.max(0, l.semRecuperar - dt);
-  l.sequenciaT += dt;
-  if (l.sequenciaT > REGRAS.sequencia.janela) l.sequencia = 0;
+  l.desdeOUltimoGolpe += dt;
+  if (l.estado !== "golpe" && l.desdeOUltimoGolpe > REGRAS.janelaDaSequencia) l.golpeDaSequencia = 0;
 
   if (l.semRecuperar === 0 && !noChao(l) && l.estado !== "atingido" && l.estado !== "vitoria" && l.estado !== "derrota") {
     l.equilibrio = Math.min(REGRAS.equilibrio, l.equilibrio + REGRAS.recuperacao * dt);
@@ -429,15 +477,18 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
   switch (l.estado) {
     case "parado":
     case "andando": {
-      if (apertou("golpe") && l.recargaGolpe === 0) {
-        olharParaOAdversario();
-        iniciarAtaque(l, "golpe");
-        break;
-      }
-      if (apertou("empurrao") && l.recargaEmpurrao === 0) {
-        olharParaOAdversario();
-        iniciarAtaque(l, "empurrao");
-        break;
+      if (apertou("golpe")) {
+        if (podeDerrubar(p, i)) {
+          if (l.recargaDerrubada === 0) {
+            l.direcao = p.escada.x >= l.x ? 1 : -1;
+            entrar(l, "derrubada");
+            break;
+          }
+        } else if (l.recargaGolpe === 0) {
+          olharParaOAdversario();
+          iniciarGolpe(l);
+          break;
+        }
       }
       if (e.defesa) {
         olharParaOAdversario();
@@ -447,6 +498,10 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
       if (apertou("interagir")) {
         interagir(p, i);
         if (l.estado !== "parado" && l.estado !== "andando") break;
+      }
+      if (e.cima && podeSubir(p, i)) {
+        subir(p, i);
+        break;
       }
       const dir = (e.direita ? 1 : 0) - (e.esquerda ? 1 : 0);
       if (dir !== 0) {
@@ -465,8 +520,10 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
       break;
     }
     case "golpe":
-    case "empurrao":
-      avancarAtaque(p, i, l.estado);
+      avancarGolpe(p, i, apertou("golpe"));
+      break;
+    case "derrubada":
+      avancarDerrubada(p, i);
       break;
     case "atingido":
       if (l.t >= REGRAS.atingido) entrar(l, "parado");
@@ -502,7 +559,7 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
     }
     case "subindo": {
       if (e.cima) {
-        l.altura = Math.min(1, l.altura + REGRAS.escada.subida * dt * (1 - 0.5 * p.escada.balanco));
+        l.altura = Math.min(1, l.altura + REGRAS.escada.subida * dt);
         if (l.altura >= 1) {
           entrar(l, "noTopo");
           p.eventos.push({ tipo: "topo", quem: i });
@@ -530,11 +587,12 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
       const puxava = l.puxando;
       l.puxando = e.interagir;
       if (l.puxando && !puxava) p.eventos.push({ tipo: "puxando", quem: i, puxada: l.puxada });
-      if (l.puxando && p.escada.balanco <= REGRAS.escada.balancoMaximo) {
+      if (l.puxando) {
         l.puxada = Math.min(1, l.puxada + dt / REGRAS.faixa.puxar);
         p.faixaBalanco = Math.min(1, p.faixaBalanco + dt * 2);
+        p.escada.balanco = Math.min(0.35, p.escada.balanco + dt * 0.5);
         if (l.puxada >= 1) vencer(p, i);
-      } else if (!l.puxando) {
+      } else {
         l.puxada = Math.max(0, l.puxada - REGRAS.faixa.perdaSemPuxar * dt);
       }
       break;
@@ -617,7 +675,7 @@ function atualizarTorcida(p: Partida, dt: number): void {
   }
   if (p.fase === "fim") alvo = 1;
   for (const evento of p.eventos) {
-    if (evento.tipo === "golpe" || evento.tipo === "empurrao" || evento.tipo === "queda" || evento.tipo === "escadaCaiu") p.torcida = Math.min(1, p.torcida + 0.12);
+    if (evento.tipo === "golpe" || evento.tipo === "derrubada" || evento.tipo === "queda" || evento.tipo === "escadaCaiu") p.torcida = Math.min(1, p.torcida + 0.12);
   }
   p.torcida += (alvo - p.torcida) * Math.min(1, dt * 1.6);
 }

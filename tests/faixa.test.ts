@@ -1,15 +1,16 @@
 // Vale a Faixa (src/lib/faixa, docs/VALE-A-FAIXA.md): as regras da partida
 // e o adversário do computador, sem canvas. O ciclo inteiro em simulação:
-// golpes, guarda, sequência limitada, queda e levantar, a escada (pegar,
-// posicionar só na zona, soltar, subir, chacoalhar, derrubar), a faixa
-// puxada com o comando segurado, a vitória que dispara uma vez só, e dois
-// computadores que disputam a faixa até o fim, com vitórias dos dois lados.
+// golpes em sequência, guarda, queda e levantar, a escada (pegar, posicionar
+// só na zona, largar, subir pela seta, derrubar com o ataque contextual), a
+// faixa puxada com o comando segurado, a vitória que dispara uma vez só, e
+// dois computadores que disputam a faixa até o fim, com vitórias dos dois
+// lados.
 
 import { describe, expect, it } from "vitest";
 
 import { PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
 import { criarMemoria, decidir, type EstadoDaIA, type MemoriaDaIA } from "@/lib/faixa/ia";
-import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, naEscada } from "@/lib/faixa/regras";
+import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, golpeDe, naEscada } from "@/lib/faixa/regras";
 import { ENTRADA_VAZIA, type Entrada, type Evento, type Partida } from "@/lib/faixa/tipos";
 
 const DT = 1 / 120;
@@ -41,7 +42,7 @@ function ate(p: Partida, condicao: (p: Partida) => boolean, limite: number, entr
   throw new Error(`A condição não valeu em ${limite} s. Estados: ${p.lutadores.map((l) => l.estado).join(" / ")}, escada ${p.escada.estado}.`);
 }
 
-/** Um toque: pressionado por um passo e solto no seguinte. Os eventos do passo pressionado ficam em `p.eventos`. */
+/** Um toque: pressionado por um passo e solto no seguinte. Os eventos dos dois passos ficam em `p.eventos`. */
 function toque(p: Partida, quem: 0 | 1, tecla: keyof Entrada): void {
   const entradas: [Entrada, Entrada] = [e(), e()];
   entradas[quem] = e({ [tecla]: true });
@@ -58,7 +59,18 @@ function pronta(semente = 0): Partida {
   return p;
 }
 
+/** A escada em pé no centro, com o jogador ao lado e o computador longe. */
+function escadaEmPe(xDoComputador = 300): Partida {
+  const p = pronta();
+  p.escada.estado = "emPe";
+  p.escada.x = 0;
+  p.lutadores[0].x = -20;
+  p.lutadores[1].x = xDoComputador;
+  return p;
+}
+
 const tipos = (eventos: readonly Evento[]) => eventos.map((evento) => evento.tipo);
+const SEGURANDO_CIMA: [Entrada, Entrada] = [e({ cima: true }), e()];
 
 describe("a partida", () => {
   it("começa com os dois afastados, olhando um para o outro, a escada caída em uma lateral e a contagem", () => {
@@ -100,10 +112,10 @@ describe("a partida", () => {
 });
 
 describe("combate", () => {
-  function frenteAFrente(): Partida {
+  function frenteAFrente(distancia = 60): Partida {
     const p = pronta();
-    p.lutadores[0].x = -30;
-    p.lutadores[1].x = 30;
+    p.lutadores[0].x = -distancia / 2;
+    p.lutadores[1].x = distancia / 2;
     return p;
   }
 
@@ -111,9 +123,10 @@ describe("combate", () => {
     const p = frenteAFrente();
     toque(p, 0, "golpe");
     expect(p.lutadores[0].estado).toBe("golpe");
+    expect(p.lutadores[0].golpeDaSequencia).toBe(1);
     const eventos = ate(p, (x) => x.lutadores[1].estado === "atingido", 0.5);
     expect(tipos(eventos)).toContain("golpe");
-    expect(p.lutadores[1].equilibrio).toBeCloseTo(REGRAS.equilibrio - REGRAS.golpe.dano, 0);
+    expect(p.lutadores[1].equilibrio).toBeCloseTo(REGRAS.equilibrio - REGRAS.golpes[0].dano, 0);
     expect(p.lutadores[1].vx).toBeGreaterThan(0);
     ate(p, (x) => x.lutadores[0].estado === "parado" && x.lutadores[1].estado === "parado", 1);
     expect(p.lutadores[1].x).toBeGreaterThan(30);
@@ -121,14 +134,16 @@ describe("combate", () => {
     const q = frenteAFrente();
     correr(q, 0.1, [e(), e({ defesa: true })]);
     expect(q.lutadores[1].estado).toBe("defesa");
-    const entradas: [Entrada, Entrada] = [e({ golpe: true }), e({ defesa: true })];
-    avancar(q, DT, entradas);
+    avancar(q, DT, [e({ golpe: true }), e({ defesa: true })]);
     const bloqueio = correr(q, 0.5, [e(), e({ defesa: true })]);
     const golpe = bloqueio.find((evento) => evento.tipo === "golpe");
     expect(golpe).toMatchObject({ bloqueado: true });
-    expect(q.lutadores[1].equilibrio).toBeGreaterThan(REGRAS.equilibrio - REGRAS.golpe.danoBloqueado - 0.01);
-    expect(q.lutadores[1].equilibrio).toBeLessThan(REGRAS.equilibrio - REGRAS.golpe.danoBloqueado + 2);
+    expect(q.lutadores[1].equilibrio).toBeGreaterThan(REGRAS.equilibrio - REGRAS.danoBloqueado - 0.01);
+    expect(q.lutadores[1].equilibrio).toBeLessThan(REGRAS.equilibrio - REGRAS.danoBloqueado + 2);
     expect(q.lutadores[1].estado).toBe("defesa");
+    // Soltar o comando desfaz a guarda.
+    correr(q, 0.05);
+    expect(q.lutadores[1].estado).toBe("parado");
   });
 
   it("o golpe de costas e o golpe de longe não pegam", () => {
@@ -141,23 +156,38 @@ describe("combate", () => {
     expect(p.lutadores[1].equilibrio).toBe(REGRAS.equilibrio);
   });
 
-  it("o terceiro golpe seguido afasta mais e dá proteção breve: sem sequência infinita", () => {
-    const p = frenteAFrente();
-    let afastamentos: number[] = [];
-    for (let n = 1; n <= 3; n += 1) {
-      p.lutadores[0].x = -30;
-      p.lutadores[1].x = 30;
-      p.lutadores[1].vx = 0;
-      p.lutadores[1].equilibrio = 100;
-      toque(p, 0, "golpe");
-      ate(p, (x) => x.eventos.some((evento) => evento.tipo === "golpe"), 0.5);
-      afastamentos = [...afastamentos, p.lutadores[1].vx];
-      if (n < 3) expect(p.lutadores[1].invulneravel).toBe(0);
-      ate(p, (x) => x.lutadores[0].estado === "parado" && x.lutadores[0].recargaGolpe === 0, 1);
-    }
-    expect(afastamentos[2]!).toBeGreaterThan(afastamentos[0]! * 1.5);
+  it("apertar de novo durante o golpe emenda a sequência de três; o terceiro afasta mais e dá proteção breve", () => {
+    const p = frenteAFrente(REGRAS.corpo + 2);
+    const recuos: number[] = [];
+    let sequencias: number[] = [];
+    toque(p, 0, "golpe");
+    const eventos = ate(
+      p,
+      (x) => x.lutadores[0].estado === "parado" && x.lutadores[0].golpeDaSequencia === 3 && x.lutadores[0].t > 0.01,
+      3,
+      (x) => {
+        const l = x.lutadores[0];
+        for (const evento of x.eventos) {
+          if (evento.tipo === "golpe" && !evento.bloqueado) {
+            recuos.push(x.lutadores[1].vx);
+            sequencias = [...sequencias, l.golpeDaSequencia];
+          }
+        }
+        // Aperta de novo logo depois do instante ativo, uma vez por golpe.
+        const emendar = l.estado === "golpe" && l.t >= golpeDe(l).antecipacao + golpeDe(l).ativo && !l.proximoGolpe && l.golpeDaSequencia < 3 && !l.anterior.golpe;
+        return [e({ golpe: emendar }), e()];
+      },
+    );
+    const acertos = eventos.filter((evento) => evento.tipo === "golpe" && !evento.bloqueado);
+    expect(acertos.map((evento) => (evento.tipo === "golpe" ? evento.forte : null))).toEqual([false, false, true]);
+    expect(sequencias).toEqual([1, 2, 3]);
+    expect(recuos[2]!).toBeGreaterThan(recuos[0]! * 1.5);
     expect(p.lutadores[1].invulneravel).toBeGreaterThan(0);
-    expect(p.lutadores[0].sequencia).toBe(0);
+    // Passada a janela, o próximo golpe volta ao primeiro.
+    correr(p, REGRAS.janelaDaSequencia + 0.1);
+    expect(p.lutadores[0].golpeDaSequencia).toBe(0);
+    toque(p, 0, "golpe");
+    expect(p.lutadores[0].golpeDaSequencia).toBe(1);
   });
 
   it("ao zerar o equilíbrio o lutador cai, não leva golpe no chão, levanta protegido e volta", () => {
@@ -183,21 +213,14 @@ describe("combate", () => {
     expect(tipos(volta)).toContain("levantou");
   });
 
-  it("o empurrão não se bloqueia, afasta muito e tira pouco", () => {
-    const p = frenteAFrente();
-    const eventos = ate(p, (x) => x.eventos.some((evento) => evento.tipo === "empurrao"), 1, (x) => [e({ empurrao: x.lutadores[0].estado === "parado" }), e({ defesa: true })]);
-    expect(tipos(eventos)).toContain("empurrao");
-    expect(p.lutadores[1].equilibrio).toBeCloseTo(REGRAS.equilibrio - REGRAS.empurrao.dano / 2, 0);
-    expect(p.lutadores[1].vx).toBeGreaterThan(REGRAS.golpe.recuo);
-  });
-
   it("quem bate forte nas cordas volta e perde um pouco de equilíbrio", () => {
     const p = pronta();
-    p.lutadores[0].x = REGRAS.ringue - 90;
+    p.lutadores[0].x = REGRAS.ringue - 200;
     p.lutadores[1].x = REGRAS.ringue - 30;
-    const eventos = ate(p, (x) => x.eventos.some((evento) => evento.tipo === "cordas"), 1.5, (x) => [e({ empurrao: x.lutadores[0].estado === "parado" }), e()]);
-    expect(tipos(eventos)).toContain("empurrao");
-    expect(p.lutadores[1].equilibrio).toBeLessThan(REGRAS.equilibrio - REGRAS.empurrao.dano);
+    p.lutadores[1].vx = 700;
+    const eventos = correr(p, 0.5);
+    expect(tipos(eventos)).toContain("cordas");
+    expect(p.lutadores[1].equilibrio).toBeLessThan(REGRAS.equilibrio);
     expect(p.lutadores[1].x).toBeLessThanOrEqual(REGRAS.ringue);
   });
 
@@ -211,7 +234,7 @@ describe("combate", () => {
 });
 
 describe("a escada e a faixa", () => {
-  it("é pega perto dela, fica em pé só na zona sob a faixa e é solta fora dela", () => {
+  it("C pega a escada perto dela; carregando, C posiciona na zona sob a faixa e larga fora dela", () => {
     const p = pronta(0);
     const esc = p.escada;
     expect(dicaDe(p, 0)).toBeNull();
@@ -229,7 +252,7 @@ describe("a escada e a faixa", () => {
     expect(p.lutadores[0].x).toBeCloseTo(-290 + REGRAS.velocidadeCarregando * 0.5, 0);
     expect(esc.x).toBe(p.lutadores[0].x);
 
-    // Fora da zona, o comando solta.
+    // Fora da zona, o comando larga.
     p.lutadores[0].x = -200;
     expect(dicaDe(p, 0)).toBe("soltarEscada");
     toque(p, 0, "interagir");
@@ -250,17 +273,26 @@ describe("a escada e a faixa", () => {
     expect(dicaDe(p, 0)).toBe("subir");
   });
 
-  it("subir até o topo, puxar com o comando segurado e vencer: uma vez só, e nada mais muda depois", () => {
-    const p = pronta();
-    p.escada.estado = "emPe";
-    p.escada.x = 0;
-    p.lutadores[0].x = -20;
-    p.lutadores[1].x = 300;
+  it("a seta para cima começa a subir, alinhado à base; C não sobe", () => {
+    const p = escadaEmPe();
     toque(p, 0, "interagir");
+    expect(p.lutadores[0].estado).toBe("parado");
+    expect(p.lutadores[0].y).toBe(0);
+    // Longe da base, a seta não faz nada.
+    p.lutadores[0].x = -REGRAS.escada.subir - 20;
+    correr(p, 0.1, SEGURANDO_CIMA);
+    expect(p.lutadores[0].estado).toBe("parado");
+    expect(dicaDe(p, 0)).toBeNull();
+    p.lutadores[0].x = -20;
+    expect(dicaDe(p, 0)).toBe("subir");
+    const eventos = correr(p, 0.05, SEGURANDO_CIMA);
     expect(p.lutadores[0].estado).toBe("subindo");
-    expect(tipos(p.eventos)).toContain("subida");
+    expect(tipos(eventos)).toContain("subida");
+  });
 
-    const subida = ate(p, (x) => x.lutadores[0].estado === "noTopo", 2, [e({ cima: true }), e()]);
+  it("subir até o topo, puxar com C segurado e vencer: uma vez só, e nada mais muda depois", () => {
+    const p = escadaEmPe();
+    const subida = ate(p, (x) => x.lutadores[0].estado === "noTopo", 2, SEGURANDO_CIMA);
     expect(tipos(subida)).toContain("topo");
     expect(p.lutadores[0].y).toBeCloseTo(alturaNaEscada(1), 1);
     expect(dicaDe(p, 0)).toBe("puxarFaixa");
@@ -269,15 +301,8 @@ describe("a escada e a faixa", () => {
     correr(p, 0.3);
     expect(p.lutadores[0].puxada).toBe(0);
 
-    // Com a escada balançando, o comando é registrado, mas não avança.
-    p.escada.balanco = 1;
-    const tentativa = correr(p, 0.3, [e({ interagir: true }), e()]);
-    expect(tipos(tentativa)).toContain("puxando");
-    expect(p.lutadores[0].puxada).toBe(0);
-    expect(dicaDe(p, 0)).toBe("foraDoAlcance");
-    p.escada.balanco = 0;
-
     const eventos = correr(p, 2.5, [e({ interagir: true }), e()]);
+    expect(tipos(eventos)).toContain("puxando");
     expect(tipos(eventos).filter((tipo) => tipo === "vitoria")).toHaveLength(1);
     expect(p.fase).toBe("fim");
     expect(p.vencedor).toBe(0);
@@ -291,73 +316,58 @@ describe("a escada e a faixa", () => {
     expect(p.lutadores[1].x).toBe(300);
   });
 
-  it("descer leva de volta ao tapete, e ninguém sobe enquanto o outro está na escada", () => {
-    const p = pronta();
-    p.escada.estado = "emPe";
-    p.escada.x = 0;
-    p.lutadores[0].x = -20;
-    p.lutadores[1].x = 20;
-    toque(p, 0, "interagir");
-    correr(p, 0.5, [e({ cima: true }), e()]);
+  it("soltar C no topo faz o progresso escorrer devagar; descer leva de volta ao tapete, e ninguém sobe enquanto o outro está na escada", () => {
+    const p = escadaEmPe(20);
+    correr(p, 0.5, SEGURANDO_CIMA);
     expect(p.lutadores[0].altura).toBeGreaterThan(0.3);
+    // O computador, alinhado à base, não consegue subir com a escada ocupada.
     expect(dicaDe(p, 1)).toBeNull();
-    toque(p, 1, "interagir");
+    correr(p, 0.1, [e({ cima: true }), e({ cima: true })]);
     expect(p.lutadores[1].estado).toBe("parado");
-    ate(p, (x) => x.lutadores[0].estado === "parado", 1, [e({ baixo: true }), e()]);
+    ate(p, (x) => x.lutadores[0].estado === "noTopo", 2, SEGURANDO_CIMA);
+    correr(p, 0.5, [e({ interagir: true }), e()]);
+    const puxado = p.lutadores[0].puxada;
+    expect(puxado).toBeGreaterThan(0.2);
+    correr(p, 0.5);
+    expect(p.lutadores[0].puxada).toBeLessThan(puxado);
+    expect(p.lutadores[0].puxada).toBeGreaterThan(puxado - 0.1);
+    ate(p, (x) => x.lutadores[0].estado === "parado", 2, [e({ baixo: true }), e()]);
     expect(p.lutadores[0].y).toBe(0);
     expect(dicaDe(p, 1)).toBe("subir");
   });
 
-  it("um empurrão na base derruba a escada: quem sobe cai, perde parte do que puxou, e a escada acaba caída", () => {
-    const p = pronta();
-    p.escada.estado = "emPe";
-    p.escada.x = 0;
-    p.lutadores[0].x = -20;
-    p.lutadores[1].x = 70;
-    toque(p, 0, "interagir");
-    ate(p, (x) => x.lutadores[0].estado === "noTopo", 2, [e({ cima: true }), e()]);
+  it("atacar perto da escada em que o adversário está tenta derrubá-la: a escada tomba, quem sobe cai e perde parte do que puxou", () => {
+    const p = escadaEmPe(70);
+    ate(p, (x) => x.lutadores[0].estado === "noTopo", 2, SEGURANDO_CIMA);
     p.lutadores[0].puxada = 0.5;
 
-    const eventos = ate(p, (x) => x.lutadores[0].estado === "caindoDaEscada", 1, (x) => [e(), e({ empurrao: x.lutadores[1].estado === "parado" })]);
-    expect(tipos(eventos)).toEqual(expect.arrayContaining(["empurrao", "interrompido", "caiuDaEscada"]));
+    const eventos = ate(p, (x) => x.lutadores[0].estado === "caindoDaEscada", 1.5, (x) => [e(), e({ golpe: x.lutadores[1].estado === "parado" && !x.lutadores[1].anterior.golpe })]);
+    expect(p.lutadores[1].estado).toBe("derrubada");
+    expect(tipos(eventos)).toEqual(expect.arrayContaining(["derrubada", "interrompido", "caiuDaEscada"]));
     // Metade puxada, menos o que escorreu enquanto não puxava, menos a perda da queda.
     expect(p.lutadores[0].puxada).toBeLessThanOrEqual(0.5 * (1 - REGRAS.faixa.perdaAoCair) + 1e-6);
-    expect(p.lutadores[0].puxada).toBeGreaterThan(0.45 * (1 - REGRAS.faixa.perdaAoCair));
+    expect(p.lutadores[0].puxada).toBeGreaterThan(0.4 * (1 - REGRAS.faixa.perdaAoCair));
     expect(p.escada.estado).toBe("caindo");
 
     const chao = ate(p, (x) => x.escada.estado === "caida" && x.lutadores[0].estado === "caido", 2);
     expect(tipos(chao)).toContain("escadaCaiu");
     expect(tipos(chao)).toContain("queda");
     expect(p.lutadores[0].y).toBe(0);
-    // A escada tombou para longe de quem empurrou e ficou dentro do alcance de ser pega de novo.
+    // A escada tombou para longe de quem derrubou.
     expect(p.escada.x).toBeLessThan(0);
+    // A derrubada tem recarga: logo depois, o ataque não sai de novo.
+    expect(p.lutadores[1].recargaDerrubada).toBeGreaterThan(0);
     ate(p, (x) => x.lutadores[0].estado === "parado", 3);
   });
 
-  it("três golpes na base chacoalham a escada e derrubam quem está subindo; o que puxou se perde em parte", () => {
-    const p = pronta();
-    p.escada.estado = "emPe";
-    p.escada.x = 0;
-    p.lutadores[0].x = -20;
-    p.lutadores[1].x = 60;
-    toque(p, 0, "interagir");
-    correr(p, 0.6, [e({ cima: true }), e()]);
-    expect(naEscada(p.lutadores[0])).toBe(true);
-    p.lutadores[0].puxada = 0.2;
-
-    let chacoalhadas = 0;
-    const eventos = ate(
-      p,
-      (x) => x.lutadores[0].estado === "caindoDaEscada",
-      4,
-      (x) => [e(), e({ golpe: x.lutadores[1].estado === "parado" && x.lutadores[1].recargaGolpe === 0 })],
-    );
-    chacoalhadas = eventos.filter((evento) => evento.tipo === "escadaChacoalhada").length;
-    expect(chacoalhadas).toBe(3);
-    expect(tipos(eventos)).toContain("interrompido");
-    expect(p.lutadores[0].puxada).toBeCloseTo(0.2 * (1 - REGRAS.faixa.perdaAoCair), 5);
-    // A escada continua em pé: só o empurrão a derruba.
+  it("atacar perto da escada em pé vazia é um golpe comum: a escada fica onde está", () => {
+    const p = escadaEmPe(70);
+    p.lutadores[0].x = -300;
+    toque(p, 1, "golpe");
+    expect(p.lutadores[1].estado).toBe("golpe");
+    correr(p, 1);
     expect(p.escada.estado).toBe("emPe");
+    expect(p.escada.x).toBe(0);
   });
 
   it("um golpe em quem carrega a escada a derruba no lugar", () => {
@@ -366,7 +376,7 @@ describe("a escada e a faixa", () => {
     toque(p, 0, "interagir");
     expect(p.lutadores[0].estado).toBe("carregando");
     p.lutadores[1].x = p.lutadores[0].x + 50;
-    const eventos = ate(p, (x) => x.lutadores[0].estado === "atingido", 1, (x) => [e(), e({ golpe: x.lutadores[1].estado === "parado" })]);
+    const eventos = ate(p, (x) => x.lutadores[0].estado === "atingido", 1, (x) => [e(), e({ golpe: x.lutadores[1].estado === "parado" && !x.lutadores[1].anterior.golpe })]);
     expect(tipos(eventos)).toContain("escadaSolta");
     expect(p.escada.estado).toBe("caida");
     expect(p.escada.portador).toBeNull();
@@ -388,7 +398,7 @@ describe("o computador", () => {
     const memorias: [MemoriaDaIA, MemoriaDaIA] = [criarMemoria(semente * 7919 + 1, descuido), criarMemoria(semente * 104729 + 2, descuido)];
     const estados = new Set<EstadoDaIA>();
     const passos = Math.round(limite / DT);
-    const limites: Partial<Record<Partida["lutadores"][0]["estado"], number>> = { caido: REGRAS.caido + 0.05, atingido: REGRAS.atingido + 0.05, levantando: REGRAS.levantando + 0.05, golpe: 0.5, empurrao: 0.9, caindoDaEscada: 1.5 };
+    const limites: Partial<Record<Partida["lutadores"][0]["estado"], number>> = { caido: REGRAS.caido + 0.05, atingido: REGRAS.atingido + 0.05, levantando: REGRAS.levantando + 0.05, golpe: 0.8, derrubada: 1.05, caindoDaEscada: 1.5 };
     // Os invariantes são conferidos a cada passo sem `expect`, que é caro demais para milhares de passos: a primeira violação derruba o teste.
     const violacoes: string[] = [];
     const conferir = (vale: boolean, mensagem: string) => {
@@ -400,7 +410,7 @@ describe("o computador", () => {
       for (const m of memorias) estados.add(m.estado);
       for (const l of p.lutadores) {
         // Combinações impossíveis.
-        if (l.estado === "carregando" || l.estado === "golpe" || l.estado === "empurrao" || l.estado === "defesa") conferir(l.y === 0, `${l.estado} fora do chão`);
+        if (l.estado === "carregando" || l.estado === "golpe" || l.estado === "derrubada" || l.estado === "defesa") conferir(l.y === 0, `${l.estado} fora do chão`);
         if (l.estado === "caido") conferir(!naEscada(l), "caído na escada");
         const maximo = limites[l.estado];
         if (maximo !== undefined) conferir(l.t <= maximo, `${l.estado} preso há ${l.t.toFixed(2)} s`);
@@ -463,6 +473,7 @@ describe("as falas", () => {
     expect(falaPara("queda", 0)).toBe("A governabilidade ficou no chão!");
     expect(falaPara("subida", 0)).toBe("Está subindo nas pesquisas… e na escada!");
     expect(falaPara("puxando", 0)).toBe("A faixa está por um fio!");
+    expect(falaPara("derrubada", 0.99)).not.toBeNull();
     expect(falaPara("golpeNoVazio", 0.5)).toBeNull();
     expect(falaPara("golpe", 0.5)).toBeNull();
     for (const tipo of PRIORIDADE_DAS_FALAS) expect(falaPara(tipo, 0.99), tipo).not.toBeNull();

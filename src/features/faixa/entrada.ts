@@ -1,15 +1,22 @@
 // A entrada do Vale a Faixa: teclado e toque somados em uma `Entrada`
 // (tipos.ts), a mesma que o computador produz. O teclado é lido na janela; o
 // toque chega dos botões na tela (Controles.tsx). Os dois valem ao mesmo
-// tempo: dá para andar no teclado e bater no toque. As teclas do jogo não
-// rolam a página enquanto a partida está ativa.
+// tempo: dá para andar no toque e bater no teclado.
+//
+// Um esquema só: setas andam e sobem ou descem a escada; Z ataca; X defende
+// enquanto pressionado; C interage com a escada e com a faixa; Esc pausa e
+// continua. As teclas do jogo não rolam a página enquanto a partida está
+// ativa, e nada é capturado quando a pessoa está em um campo de texto.
+//
+// Um toque muito curto (tecla ou botão apertados e soltos entre dois passos
+// da simulação) não se perde: fica guardado até a próxima leitura.
 
 import { ENTRADA_VAZIA, type Entrada } from "@/lib/faixa/tipos";
 
 export interface Entradas {
   ler(): Entrada;
   setToque(parte: Partial<Entrada>): void;
-  /** Solta tudo: ao pausar, ao perder o foco, ao recomeçar. */
+  /** Solta tudo: ao pausar, ao perder o foco, ao recomeçar, ao sair. */
   limpar(): void;
   /** A pessoa já usou o teclado nesta partida. */
   usouTeclado(): boolean;
@@ -17,63 +24,48 @@ export interface Entradas {
   dispose(): void;
 }
 
-const TECLAS: Record<string, keyof Entrada> = {
+/** As teclas do jogo. Só estas: sem atalhos alternativos. */
+export const TECLAS: Readonly<Record<string, keyof Entrada>> = {
   ArrowLeft: "esquerda",
-  a: "esquerda",
-  A: "esquerda",
   ArrowRight: "direita",
-  d: "direita",
-  D: "direita",
   ArrowUp: "cima",
-  w: "cima",
-  W: "cima",
   ArrowDown: "baixo",
-  s: "baixo",
-  S: "baixo",
-  j: "golpe",
-  J: "golpe",
   z: "golpe",
   Z: "golpe",
-  k: "defesa",
-  K: "defesa",
   x: "defesa",
   X: "defesa",
-  l: "empurrao",
-  L: "empurrao",
-  c: "empurrao",
-  C: "empurrao",
-  e: "interagir",
-  E: "interagir",
-  Enter: "interagir",
-  " ": "interagir",
+  c: "interagir",
+  C: "interagir",
 };
 
-const PAUSA = new Set(["Escape", "p", "P"]);
+const TECLA_DE_PAUSA = "Escape";
 
 interface Opcoes {
   /** A partida está recebendo comandos: fora disso, as teclas seguem para a página. */
   ativo(): boolean;
+  /** Esc: pausar ou continuar. Quem decide é a interface. */
   aoPausar(): void;
 }
 
 export function criarEntradas(alvo: Window, opcoes: Opcoes): Entradas {
   const teclado: Entrada = { ...ENTRADA_VAZIA };
   const toque: Entrada = { ...ENTRADA_VAZIA };
+  // Comandos apertados desde a última leitura, para um toque curto não se perder.
+  const pendentes = new Set<keyof Entrada>();
   let teclouAlgo = false;
   let tocouAlgo = false;
 
-  const emCampo = (evento: KeyboardEvent): boolean => {
+  const emCampoDeTexto = (evento: KeyboardEvent): boolean => {
     const no = evento.target;
-    return no instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(no.tagName);
+    if (!(no instanceof HTMLElement)) return false;
+    return /^(INPUT|TEXTAREA|SELECT)$/.test(no.tagName) || no.isContentEditable;
   };
 
   const aoApertar = (evento: KeyboardEvent) => {
-    if (emCampo(evento)) return;
-    if (PAUSA.has(evento.key)) {
-      if (opcoes.ativo()) {
-        evento.preventDefault();
-        opcoes.aoPausar();
-      }
+    if (emCampoDeTexto(evento)) return;
+    if (evento.key === TECLA_DE_PAUSA) {
+      evento.preventDefault();
+      opcoes.aoPausar();
       return;
     }
     const comando = TECLAS[evento.key];
@@ -82,6 +74,7 @@ export function criarEntradas(alvo: Window, opcoes: Opcoes): Entradas {
     evento.preventDefault();
     if (evento.repeat) return;
     teclado[comando] = true;
+    pendentes.add(comando);
     teclouAlgo = true;
   };
   const aoSoltar = (evento: KeyboardEvent) => {
@@ -99,26 +92,31 @@ export function criarEntradas(alvo: Window, opcoes: Opcoes): Entradas {
 
   return {
     ler() {
-      return {
-        esquerda: teclado.esquerda || toque.esquerda,
-        direita: teclado.direita || toque.direita,
-        cima: teclado.cima || toque.cima,
-        baixo: teclado.baixo || toque.baixo,
-        golpe: teclado.golpe || toque.golpe,
-        defesa: teclado.defesa || toque.defesa,
-        empurrao: teclado.empurrao || toque.empurrao,
-        interagir: teclado.interagir || toque.interagir,
+      const lida: Entrada = {
+        esquerda: teclado.esquerda || toque.esquerda || pendentes.has("esquerda"),
+        direita: teclado.direita || toque.direita || pendentes.has("direita"),
+        cima: teclado.cima || toque.cima || pendentes.has("cima"),
+        baixo: teclado.baixo || toque.baixo || pendentes.has("baixo"),
+        golpe: teclado.golpe || toque.golpe || pendentes.has("golpe"),
+        defesa: teclado.defesa || toque.defesa || pendentes.has("defesa"),
+        interagir: teclado.interagir || toque.interagir || pendentes.has("interagir"),
       };
+      pendentes.clear();
+      return lida;
     },
     setToque(parte) {
       for (const [chave, valor] of Object.entries(parte) as [keyof Entrada, boolean][]) {
         toque[chave] = valor;
-        if (valor) tocouAlgo = true;
+        if (valor) {
+          pendentes.add(chave);
+          tocouAlgo = true;
+        }
       }
     },
     limpar() {
       soltarTudo();
       for (const chave of Object.keys(toque) as (keyof Entrada)[]) toque[chave] = false;
+      pendentes.clear();
     },
     usouTeclado: () => teclouAlgo,
     usouToque: () => tocouAlgo,

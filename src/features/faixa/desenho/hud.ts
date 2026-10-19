@@ -1,8 +1,9 @@
 // A interface sobre a cena do Vale a Faixa, desenhada no canvas para andar
 // com os quadros: as placas com nome e barra de equilíbrio, o medidor da
-// faixa quando alguém está no topo, a dica contextual do comando de
-// interação, a contagem de abertura e o comentário do narrador. Pausa, fim e
-// tutorial ficam em React (ValeAFaixa.tsx).
+// faixa quando alguém está no topo, a dica curta perto do personagem quando
+// há o que fazer, a legenda discreta dos comandos, a contagem de abertura e
+// o comentário do narrador. Pausa, fim e tutorial ficam em React
+// (ValeAFaixa.tsx).
 
 import { REGRAS, naEscada } from "@/lib/faixa/regras";
 import type { Dica, Partida } from "@/lib/faixa/tipos";
@@ -24,23 +25,27 @@ export interface Fala {
 export interface EstadoDoHud {
   nomes: readonly [string, string];
   dica: Dica;
-  /** A pessoa usa teclado: a dica mostra a tecla. */
+  /** A pessoa usa teclado: a dica mostra a tecla, e a legenda aparece. */
   teclado: boolean;
   tempo: number;
   fala: Fala | null;
   movimento: boolean;
   /** Em tela estreita, as placas encolhem. */
   compacto: boolean;
+  /** A cabeça do jogador na tela, para a dica ficar perto dele. */
+  cabecaDoJogador: { x: number; y: number } | null;
 }
 
-export const ROTULO_DA_DICA: Record<NonNullable<Dica>, string> = {
-  pegarEscada: "Pegar a escada",
-  posicionarEscada: "Posicionar a escada",
-  soltarEscada: "Soltar a escada",
-  subir: "Subir",
-  puxarFaixa: "Segurar para puxar a faixa",
-  foraDoAlcance: "Escada balançando: espere",
+/** O texto da dica perto do personagem, no teclado e no toque. */
+export const ROTULO_DA_DICA: Record<NonNullable<Dica>, { teclado: string; toque: string }> = {
+  pegarEscada: { teclado: "C — Pegar", toque: "Pegar" },
+  posicionarEscada: { teclado: "C — Posicionar", toque: "Posicionar" },
+  soltarEscada: { teclado: "C — Largar", toque: "Largar" },
+  subir: { teclado: "↑ — Subir", toque: "▲ Subir" },
+  puxarFaixa: { teclado: "Segure C — Pegar faixa", toque: "Segure — Pegar faixa" },
 };
+
+export const LEGENDA = "Setas: mover • Z: atacar • X: defender • C: interagir";
 
 function caixa(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, raio: number): void {
   g.beginPath();
@@ -72,10 +77,11 @@ function placa(g: CanvasRenderingContext2D, p: Partida, i: 0 | 1, estado: Estado
 
   const nome = estado.nomes[i].toUpperCase();
   const noChao = l.estado === "caido" || l.estado === "levantando";
-  const papel = `${i === 0 ? "VOCÊ" : "COMPUTADOR"}${noChao ? " · NO CHÃO" : naEscada(l) ? " · NA ESCADA" : ""}`;
+  const situacao = noChao ? " · NO CHÃO" : naEscada(l) ? " · NA ESCADA" : l.estado === "defesa" ? " · DEFENDENDO" : "";
+  const papel = `${i === 0 ? "VOCÊ" : "COMPUTADOR"}${situacao}`;
   g.textBaseline = "alphabetic";
   g.textAlign = direita ? "right" : "left";
-  g.fillStyle = noChao ? AMARELO : "#b9aedb";
+  g.fillStyle = noChao || l.estado === "defesa" ? AMARELO : "#b9aedb";
   g.font = `600 ${estado.compacto ? 9 : 10}px ${FONTE_SANS}`;
   g.fillText(papel, direita ? x + largura - 10 : x + 10, y + 16);
   g.fillStyle = "#faf8f2";
@@ -122,14 +128,12 @@ function medidorDaFaixa(g: CanvasRenderingContext2D, p: Partida, estado: EstadoD
   g.stroke();
 
   const noTopo = l.estado === "noTopo";
-  const balancando = p.escada.balanco > REGRAS.escada.balancoMaximo;
   let rotulo = l.estado === "subindo" ? `${estado.nomes[i].toUpperCase()} SUBINDO` : `${estado.nomes[i].toUpperCase()} NA FAIXA`;
-  if (noTopo && balancando) rotulo = "ESCADA BALANÇANDO";
-  else if (noTopo && !l.puxando && i === 0) rotulo = estado.teclado ? "SEGURE E PARA PUXAR" : "SEGURE O BOTÃO PARA PUXAR";
+  if (noTopo && !l.puxando && i === 0) rotulo = estado.teclado ? "SEGURE C PARA PUXAR" : "SEGURE O BOTÃO PARA PUXAR";
   if (p.fase === "fim") rotulo = "FAIXA CONQUISTADA";
   g.textAlign = "center";
   g.textBaseline = "alphabetic";
-  g.fillStyle = noTopo && balancando && estado.movimento && Math.sin(estado.tempo * 16) > 0 ? "#fff0c2" : "#faf8f2";
+  g.fillStyle = "#faf8f2";
   g.font = `700 11px ${FONTE_SANS}`;
   g.fillText(rotulo, tela.largura / 2, y + 17);
 
@@ -155,41 +159,60 @@ function medidorDaFaixa(g: CanvasRenderingContext2D, p: Partida, estado: EstadoD
   g.stroke();
 }
 
-function dicaContextual(g: CanvasRenderingContext2D, estado: EstadoDoHud, tela: Tela, p: Partida): void {
-  // No toque, o botão de interação já diz o que faz.
-  if (estado.dica === null || p.fase !== "luta" || !estado.teclado) return;
-  const texto = ROTULO_DA_DICA[estado.dica];
-  const tecla = estado.teclado && estado.dica !== "foraDoAlcance" ? "E" : null;
-  g.font = `600 13px ${FONTE_SANS}`;
-  const larguraDoTexto = g.measureText(texto).width;
-  const largura = larguraDoTexto + 28 + (tecla === null ? 0 : 30);
-  const x = (tela.largura - largura) / 2;
-  const y = tela.altura - 70;
-  const alturaDaDica = 32;
+/** A dica curta sobre a cabeça do jogador, só quando a ação está disponível. */
+function dicaPertoDoPersonagem(g: CanvasRenderingContext2D, estado: EstadoDoHud, tela: Tela, p: Partida): void {
+  if (estado.dica === null || p.fase !== "luta" || estado.cabecaDoJogador === null) return;
+  if (estado.dica === "puxarFaixa" && p.lutadores[0].puxando) return;
+  const texto = estado.teclado ? ROTULO_DA_DICA[estado.dica].teclado : ROTULO_DA_DICA[estado.dica].toque;
+  g.font = `700 12px ${FONTE_SANS}`;
+  const largura = g.measureText(texto).width + 20;
+  const altura = 26;
+  const x = Math.max(8, Math.min(tela.largura - largura - 8, estado.cabecaDoJogador.x - largura / 2));
+  const y = Math.max(8, estado.cabecaDoJogador.y - 34 - altura);
   const destaque = estado.dica === "puxarFaixa" || estado.dica === "posicionarEscada";
   g.fillStyle = destaque ? AMARELO : PAPEL;
-  caixa(g, x, y, largura, alturaDaDica, 16);
+  caixa(g, x, y, largura, altura, 6);
   g.fill();
   g.lineWidth = 1.5;
   g.strokeStyle = TINTA;
   g.stroke();
-  let cursor = x + 14;
-  if (tecla !== null) {
-    g.fillStyle = TINTA;
-    caixa(g, cursor, y + 6, 20, 20, 4);
-    g.fill();
-    g.fillStyle = PAPEL;
-    g.font = `700 12px ${FONTE_SANS}`;
-    g.textAlign = "center";
-    g.textBaseline = "middle";
-    g.fillText(tecla, cursor + 10, y + 16.5);
-    cursor += 30;
-  }
+  // A ponta, apontando para a cabeça.
+  const px = Math.max(x + 10, Math.min(x + largura - 10, estado.cabecaDoJogador.x));
+  g.beginPath();
+  g.moveTo(px - 6, y + altura);
+  g.lineTo(px, y + altura + 7);
+  g.lineTo(px + 6, y + altura);
+  g.closePath();
+  g.fillStyle = destaque ? AMARELO : PAPEL;
+  g.fill();
+  g.lineWidth = 1.5;
+  g.strokeStyle = TINTA;
+  g.stroke();
+  g.fillStyle = destaque ? AMARELO : PAPEL;
+  g.fillRect(px - 5.5, y + altura - 2, 11, 3);
   g.fillStyle = TINTA;
-  g.font = `600 13px ${FONTE_SANS}`;
   g.textAlign = "left";
   g.textBaseline = "middle";
-  g.fillText(texto, cursor, y + 16.5);
+  g.fillText(texto, x + 10, y + altura / 2 + 0.5);
+}
+
+/** A legenda discreta dos comandos, embaixo, só para quem usa teclado. */
+function legenda(g: CanvasRenderingContext2D, estado: EstadoDoHud, tela: Tela, p: Partida): void {
+  if (!estado.teclado || p.fase === "fim") return;
+  g.save();
+  g.globalAlpha = 0.72;
+  g.font = `600 11px ${FONTE_SANS}`;
+  g.textAlign = "center";
+  g.textBaseline = "alphabetic";
+  const largura = g.measureText(LEGENDA).width + 20;
+  const x = (tela.largura - largura) / 2;
+  const y = tela.altura - 26;
+  g.fillStyle = PALCO;
+  caixa(g, x, y, largura, 20, 10);
+  g.fill();
+  g.fillStyle = "#c5cbc2";
+  g.fillText(LEGENDA, tela.largura / 2, y + 14);
+  g.restore();
 }
 
 function contagem(g: CanvasRenderingContext2D, p: Partida, estado: EstadoDoHud, tela: Tela): void {
@@ -268,7 +291,8 @@ export function desenharHud(g: CanvasRenderingContext2D, tela: Tela, p: Partida,
   placa(g, p, 0, estado, tela);
   placa(g, p, 1, estado, tela);
   medidorDaFaixa(g, p, estado, tela);
-  dicaContextual(g, estado, tela, p);
+  dicaPertoDoPersonagem(g, estado, tela, p);
+  legenda(g, estado, tela, p);
   narrador(g, estado, tela);
   contagem(g, p, estado, tela);
   g.restore();

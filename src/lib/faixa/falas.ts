@@ -12,11 +12,11 @@ const FALAS: Partial<Record<Evento["tipo"], readonly string[]>> = {
   escadaPega: ["A escada entrou na pauta!", "Agora a escada também é candidata!"],
   escadaPosta: ["Escada em pé, debaixo da faixa. É agora!", "Posicionou! A faixa está a sete degraus!"],
   escadaCaiu: ["A escada tombou! Recontagem!", "Caiu a escada, caiu a proposta!"],
+  derrubada: ["Derrubou a base! Como numa moção de censura!", "Chacoalhou a base e a escada foi ao chão!"],
   subida: ["Está subindo nas pesquisas… e na escada!", "Degrau por degrau, como numa coalizão!"],
   topo: ["No topo! A faixa está ao alcance!", "Chegou lá em cima. Segura o fôlego, plateia!"],
   puxando: ["A faixa está por um fio!", "Puxa, puxa! A posse está a um fio!"],
   interrompido: ["Interrompido! Como num aparte sem permissão!", "Derrubaram a subida! Vai ter que recomeçar quase do zero."],
-  escadaChacoalhada: ["Chacoalhou a base! A escada reclama!", "Balança a escada, balança a candidatura!"],
   levantou: ["Recuperação em V: de volta pra luta!", "Levantou! Ninguém sai daqui sem réplica!"],
   vitoria: ["Vale a faixa! Posse no ringue!", "É do povo? Não: é da escada! Faixa conquistada!"],
 };
@@ -30,4 +30,4 @@ export function falaPara(tipo: Evento["tipo"], sorteio: number): string | null {
 }
 
 /** Os eventos que têm comentário, na ordem de prioridade: os de cima vencem quando acontecem juntos. */
-export const PRIORIDADE_DAS_FALAS: readonly Evento["tipo"][] = ["vitoria", "interrompido", "topo", "puxando", "escadaCaiu", "queda", "escadaPosta", "subida", "escadaPega", "cordas", "levantou", "escadaChacoalhada", "inicio"];
+export const PRIORIDADE_DAS_FALAS: readonly Evento["tipo"][] = ["vitoria", "interrompido", "topo", "puxando", "escadaCaiu", "derrubada", "queda", "escadaPosta", "subida", "escadaPega", "cordas", "levantou", "inicio"];

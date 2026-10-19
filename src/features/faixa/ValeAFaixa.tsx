@@ -24,15 +24,44 @@ const NOMES: Record<LutadorSlug, string> = Object.fromEntries(PROFILES.map((perf
 const outroDe = (slug: LutadorSlug): LutadorSlug => (slug === "lula" ? "flavio-bolsonaro" : "lula");
 const novaSemente = () => Math.floor(Math.random() * 2 ** 31);
 
-const CONTROLES_DO_TECLADO: readonly [string, string][] = [
-  ["A D ou ← →", "andar"],
-  ["J ou Z", "golpe"],
-  ["K ou X (segurar)", "defender"],
-  ["L ou C", "empurrar"],
-  ["E, Enter ou Espaço", "pegar, posicionar, subir e, no topo, segurar para puxar a faixa"],
-  ["↑ ↓ ou W S", "subir e descer na escada"],
-  ["Esc ou P", "pausa"],
+/** O esquema de teclas, um só: desenhado como teclas, com uma descrição curta cada. */
+const TECLAS: readonly { teclas: readonly string[]; acao: string }[] = [
+  { teclas: ["←", "→"], acao: "andar" },
+  { teclas: ["↑", "↓"], acao: "subir e descer a escada" },
+  { teclas: ["Z"], acao: "atacar" },
+  { teclas: ["X"], acao: "defender (segurar)" },
+  { teclas: ["C"], acao: "interagir" },
+  { teclas: ["Esc"], acao: "pausar e continuar" },
 ];
+
+/** Uma tecla desenhada. */
+function Tecla({ children }: { children: React.ReactNode }) {
+  return (
+    <kbd className="inline-flex h-7 min-w-7 items-center justify-center rounded-md border border-stage-ink-soft/60 bg-stage px-1.5 font-sans text-xs font-bold text-stage-ink shadow-[0_2px_0_rgb(0_0_0/0.55)]">
+      {children}
+    </kbd>
+  );
+}
+
+/** A apresentação compacta dos controles do teclado: teclas desenhadas e descrições curtas. */
+function Teclas({ className = "" }: { className?: string }) {
+  return (
+    <ul className={`flex flex-wrap gap-x-4 gap-y-2 text-sm text-stage-ink-soft ${className}`} data-teclas>
+      {TECLAS.map((item) => (
+        <li key={item.acao} className="inline-flex items-center gap-1.5">
+          <span className="inline-flex gap-1">
+            {item.teclas.map((tecla) => (
+              <Tecla key={tecla}>{tecla}</Tecla>
+            ))}
+          </span>
+          <span>{item.acao}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const TOQUE_RESUMO = "No celular: o direcional à esquerda; à direita, Atacar, Defender e Interagir, que muda de ícone conforme o que dá para fazer.";
 
 export function ValeAFaixa() {
   const [tela, setTela] = useState<Tela>("inicio");
@@ -112,10 +141,7 @@ export function ValeAFaixa() {
                 Voltar ao Jogar
               </IntentLink>
             </div>
-            <p className="text-sm text-stage-ink-soft">
-              {toque ? "No celular: setas de um lado, golpe, defesa, empurrão e o botão de interação do outro." : "No computador: A D ou setas para andar, J golpe, K defesa, L empurrão, E para a escada e a faixa, Esc pausa."}{" "}
-              Partidas curtas, de um a três minutos.
-            </p>
+            {toque ? <p className="text-sm text-stage-ink-soft">{TOQUE_RESUMO} Partidas curtas, de um a três minutos.</p> : <Teclas />}
           </div>
           <aside className="space-y-3 border border-stage-line bg-stage-raised p-5 text-sm text-stage-ink-soft">
             <p className="eyebrow text-highlight">Como vencer</p>
@@ -284,8 +310,10 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
             // Só para os testes de navegador: com `?computador=parado`, o adversário não age.
             computadorParado: new URLSearchParams(window.location.search).get("computador") === "parado",
             aoMudar: setResumo,
-            // Esc, perda de foco e aba escondida: o painel de pausa abre, se nada mais estiver aberto.
+            // Perda de foco e aba escondida: o painel de pausa abre, se nada mais estiver aberto.
             aoPedirPausa: () => setPainel((atual) => atual ?? "pausa"),
+            // Esc: abre a pausa; na pausa, continua; na tela de controles, volta à pausa.
+            aoAlternarPausa: () => setPainel((atual) => (atual === null ? "pausa" : atual === "pausa" ? null : "pausa")),
           });
           motor.current = instancia;
           setPronto(true);
@@ -303,7 +331,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jogador, computador, toque, audio]);
 
-  // A partida para enquanto há algo por cima dela.
+  // A partida para enquanto há algo por cima dela; parar solta todos os comandos.
   const parada = tutorial || painel !== null || resumo.fase === "fim";
   useEffect(() => {
     motor.current?.setPausado(parada);
@@ -380,7 +408,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
         </div>
       )}
 
-      {/* A barra de cima: pausa e som. As placas e barras estão no canvas. */}
+      {/* A barra de cima: pausa e som. As placas, as barras e a legenda estão no canvas. */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-center gap-2 p-2 max-sm:top-[4.25rem] max-sm:p-0">
         <div className="pointer-events-auto flex gap-1 rounded-full border border-stage-line bg-stage/85 p-1">
           <button type="button" onClick={() => setPainel("pausa")} className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-stage-ink hover:bg-stage-raised" data-pausar>
@@ -408,20 +436,18 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
         <Janela titulo="Como se ganha" id="tutorial">
           <ol className="list-decimal space-y-2 pl-5 text-sm">
             <li>
-              <strong>Derrube o adversário.</strong> Golpes tiram equilíbrio; a zero, ele cai e fica fora por alguns segundos. Defender reduz o dano; o empurrão passa pela guarda e
-              afasta.
+              <strong>Derrube o adversário.</strong> Atacar em sequência emenda até três golpes; o terceiro afasta. Golpes tiram equilíbrio e, a zero, ele cai por alguns segundos.
+              Defender reduz o dano enquanto segurado.
             </li>
             <li>
-              <strong>Pegue a escada</strong> caída na lateral e leve-a até a marca amarela sob a faixa. Lá, ponha em pé. Fora da marca, o mesmo comando só a solta.
+              <strong>Pegue a escada</strong> caída na lateral e leve-a até a marca amarela sob a faixa. Lá, posicione; fora da marca, o mesmo comando só a larga.
             </li>
             <li>
-              <strong>Suba e puxe.</strong> No topo, segure o comando de interação até a barra encher. Se chacoalharem ou derrubarem a escada, você cai e perde parte do progresso: dá
-              para tentar de novo.
+              <strong>Suba e puxe.</strong> Alinhado à base, suba com a seta para cima. No topo, segure o comando de interação até a barra encher. Perto da escada em que o adversário
+              sobe, atacar derruba a escada: quem cai perde parte do progresso, não tudo.
             </li>
           </ol>
-          <p className="text-xs text-stage-ink-soft">
-            {toque ? "Setas à esquerda, ações à direita. O botão grande muda de nome conforme o que dá para fazer." : "A D ou setas andam; J golpe; K defesa; L empurrão; E interage; ↑ ↓ na escada; Esc pausa."}
-          </p>
+          {toque ? <p className="text-xs text-stage-ink-soft">{TOQUE_RESUMO}</p> : <Teclas className="text-xs" />}
           <div className="flex flex-wrap gap-2 pt-1">
             <button type="button" onClick={fecharTutorial} className="btn-acao" data-comecar-luta autoFocus>
               Lutar
@@ -455,16 +481,11 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
 
       {painel === "controles" && !tutorial && resumo.fase !== "fim" && (
         <Janela titulo="Controles" id="controles">
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-            {CONTROLES_DO_TECLADO.map(([tecla, acao]) => (
-              <div key={tecla} className="contents">
-                <dt className="numerals font-semibold text-action">{tecla}</dt>
-                <dd className="text-stage-ink-soft">{acao}</dd>
-              </div>
-            ))}
-          </dl>
-          {toque && <p className="text-xs text-stage-ink-soft">No toque: setas à esquerda; à direita, Golpe, Defender, Empurrar e o botão de interação, que muda de nome conforme o contexto.</p>}
-          <p className="text-xs text-stage-ink-soft">Derrubar não vence. Só a faixa vence, e um ataque interrompido no topo tira parte do progresso, não tudo.</p>
+          <Teclas />
+          {toque && <p className="text-xs text-stage-ink-soft">{TOQUE_RESUMO}</p>}
+          <p className="text-xs text-stage-ink-soft">
+            Atacar perto da escada em que o adversário sobe derruba a escada. Derrubar não vence: só a faixa vence, e um ataque interrompido no topo tira parte do progresso, não tudo.
+          </p>
           <button type="button" onClick={() => setPainel("pausa")} className="btn-acao" autoFocus>
             Voltar
           </button>

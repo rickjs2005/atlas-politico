@@ -1344,6 +1344,16 @@ A conversa que abre a missão é um grafo pequeno em TypeScript (`src/lib/game/e
 
 **Consequência.** `src/app/jogo/vale-a-faixa/page.tsx`; `src/lib/faixa/` (tipos, regras, ia, falas); `src/features/faixa/` (ValeAFaixa, Controles, motor, entrada, audio, preferencias e `desenho/`); o cartão no hub `/jogo/`, o sitemap e a lista de páginas de `scripts/check-export.mjs`; `tests/faixa.test.ts` e `tests/e2e/vale-a-faixa.spec.ts`; [VALE-A-FAIXA.md](VALE-A-FAIXA.md), [STATUS.md](STATUS.md) e os READMEs.
 
+## D-157. Controles do Vale a Faixa simplificados: um esquema só, ataque contextual com sequência curta, subida pelas setas
+
+**Decisão (19 de outubro de 2026).** O jogo passa a ter sete comandos e um esquema só de teclas: ← → andam, ↑ ↓ sobem e descem a escada, Z ataca, X defende enquanto pressionado, C interage com a escada e com a faixa, Esc pausa e continua. Os atalhos alternativos (A D, W S, J, K, L, E, Enter, Espaço, P) saem do sistema de entrada e de todas as instruções. O empurrão deixa de ser botão: atacar é contextual (um golpe na direção em que o lutador olha, em sequência de até três quando se aperta de novo durante o golpe, com o terceiro afastando mais; perto da escada em que o adversário está, a tentativa de derrubá-la). C faz uma ação por aperto (pegar; carregando, posicionar ou largar) e, segurado no topo, puxa a faixa; subir é só a seta para cima, com o lutador alinhado à base. No toque: o direcional à esquerda e três botões à direita (Atacar, Defender, Interagir), com ícones, resposta ao apertar, e o Interagir mudando de ícone sem sair do lugar. A dica curta fica sobre a cabeça do personagem, só quando há o que fazer; uma legenda discreta fica embaixo durante a partida; as listas de controles viram teclas desenhadas com descrições curtas. Detalhe em [VALE-A-FAIXA.md](VALE-A-FAIXA.md).
+
+**Também muda a entrada.** Um toque muito curto (tecla ou botão apertados e soltos entre dois passos da simulação) ficava sem efeito, e foi o que derrubou dois testes na verificação do GitHub do commit `fd9c8d1`: o aperto passa a ficar guardado até a próxima leitura. As teclas não são capturadas em campos de texto, e botões e links deixam de bloquear as teclas (sem Enter e Espaço no esquema, não há conflito). Pausar, perder o foco e sair do jogo soltam todos os comandos.
+
+**Motivo.** O pedido do responsável: controles mais simples, sem várias teclas para a mesma ação, sem botão separado de empurrar, com a subida sob controle da pessoa e uma apresentação compacta.
+
+**Consequência.** `src/lib/faixa/tipos.ts`, `regras.ts` (golpes em sequência, derrubada, `podeSubir`, `podeDerrubar`), `ia.ts`, `falas.ts`; `src/features/faixa/entrada.ts`, `motor.ts`, `Controles.tsx`, `ValeAFaixa.tsx`, `desenho/hud.ts`, `desenho/lutador.ts`; `tests/faixa.test.ts` e `tests/e2e/vale-a-faixa.spec.ts` refeitos para o esquema novo.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |

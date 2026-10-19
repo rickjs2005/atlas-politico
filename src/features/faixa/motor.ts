@@ -43,8 +43,10 @@ export interface OpcoesDoMotor {
   /** O computador não age: para os testes de navegador dirigirem a partida inteira. */
   computadorParado?: boolean;
   aoMudar(resumo: Resumo): void;
-  /** A partida pede pausa: perda de foco, aba escondida, Esc. Quem decide é a interface. */
+  /** A partida pede pausa: perda de foco, aba escondida. Quem decide é a interface. */
   aoPedirPausa(): void;
+  /** Esc: pausar ou continuar. */
+  aoAlternarPausa(): void;
 }
 
 export interface Motor {
@@ -89,7 +91,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
 
   const entradas = criarEntradas(window, {
     ativo: () => !pausado && partida.fase !== "fim",
-    aoPausar: () => opcoes.aoPedirPausa(),
+    aoPausar: () => opcoes.aoAlternarPausa(),
   });
 
   const publicarResumo = () => {
@@ -105,7 +107,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     };
     // Os estados de agora vão ao canvas, para os testes de navegador lerem sem mexer no React.
     const l0 = partida.lutadores[0];
-    const estados = `${l0.estado}|${partida.lutadores[1].estado}|${partida.escada.estado}|${l0.puxada.toFixed(2)}|${Math.round(l0.x / 10) * 10}`;
+    const estados = `${l0.estado}|${partida.lutadores[1].estado}|${partida.escada.estado}|${l0.puxada.toFixed(2)}|${Math.round(l0.x / 10) * 10}|${Math.round(partida.escada.x / 10) * 10}`;
     if (estados !== ultimosEstados) {
       ultimosEstados = estados;
       canvas.dataset.estados = estados;
@@ -142,16 +144,16 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
             audio?.tocar("bloqueio");
           } else {
             const alvo = partida.lutadores[evento.alvo];
-            const forte = alvo.estado === "caido" || alvo.invulneravel > 0;
+            const forte = evento.forte || alvo.estado === "caido";
             efeitos.impacto(evento.x, evento.y, forte, partida.lutadores[evento.quem].direcao);
             efeitos.tremer(forte ? 7 : 3.5);
             paradaDeImpacto = forte ? PARADA_DE_IMPACTO * 1.6 : PARADA_DE_IMPACTO;
             audio?.tocar(forte ? "golpeForte" : "golpe");
           }
           break;
-        case "empurrao":
-          efeitos.impacto(evento.x, evento.y, true, partida.lutadores[evento.quem].direcao);
-          efeitos.tremer(5);
+        case "derrubada":
+          efeitos.impacto(evento.x, 60, true, partida.lutadores[evento.quem].direcao);
+          efeitos.tremer(6);
           paradaDeImpacto = PARADA_DE_IMPACTO;
           audio?.tocar("empurrao");
           break;
@@ -173,11 +175,6 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           audio?.tocar("escada");
           efeitos.anel(evento.x, 10);
           efeitos.poeira(evento.x, 0, 4);
-          break;
-        case "escadaChacoalhada":
-          audio?.tocar("escada");
-          efeitos.tremer(3);
-          efeitos.anel(evento.x, 30, "#cfd3d8");
           break;
         case "escadaCaiu":
           efeitos.poeira(evento.x, 0, 14);
@@ -243,6 +240,9 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     publicarResumo();
   };
 
+  /** Onde ficou a cabeça de cada lutador no último quadro, para a dica perto do jogador. */
+  const cabecas: [{ x: number; y: number } | null, { x: number; y: number } | null] = [null, null];
+
   const desenharLutadorNaCena = (l: Lutador, i: Indice, pr: ReturnType<typeof projecao>) => {
     const figura = FIGURAS[l.slug];
     const outro = partida.lutadores[i === 0 ? 1 : 0];
@@ -257,7 +257,26 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     }
     const sx = pr.X(x);
     const sy = pr.Y(y);
-    desenharLutador(g, figura, pose, sx, sy, pr.s, l.direcao, tempo, l.estado === "vitoria");
+    // A guarda: um escudo translúcido na frente de quem defende, para a defesa ser visível de longe.
+    if (l.estado === "defesa") {
+      const u = Math.min(1, l.t / 0.12);
+      g.save();
+      g.globalAlpha = 0.55 * u;
+      g.beginPath();
+      g.arc(sx + l.direcao * 14 * pr.s, sy - 95 * pr.s, 62 * pr.s * (0.85 + 0.15 * u), l.direcao === 1 ? -1.15 : Math.PI - 1.15, l.direcao === 1 ? 1.15 : Math.PI + 1.15);
+      g.lineWidth = Math.max(2, 7 * pr.s);
+      g.lineCap = "round";
+      g.strokeStyle = "#f0c66b";
+      g.stroke();
+      g.globalAlpha = 0.18 * u;
+      g.lineTo(sx + l.direcao * 14 * pr.s, sy - 95 * pr.s);
+      g.closePath();
+      g.fillStyle = "#f0c66b";
+      g.fill();
+      g.restore();
+    }
+    const desenho = desenharLutador(g, figura, pose, sx, sy, pr.s, l.direcao, tempo, l.estado === "vitoria");
+    cabecas[i] = desenho.cabeca;
   };
 
   const desenhar = () => {
@@ -302,6 +321,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       fala,
       movimento,
       compacto: tela.largura < 640,
+      cabecaDoJogador: cabecas[0],
     });
   };
 
