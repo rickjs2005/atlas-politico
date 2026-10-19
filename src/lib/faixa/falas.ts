@@ -1,24 +1,29 @@
-// Vale a Faixa: os comentários ocasionais do narrador. Humor da situação
-// absurda (um debate que virou luta de escadas), nunca atributo, acusação ou
-// fato sobre as pessoas. Quem mostra decide quando cabe; aqui só se escolhe
-// a frase para um evento, com um sorteio recebido de fora.
+// Vale a Faixa: os comentários do narrador, um locutor de luta livre com
+// humor sobre a partida. Nunca atributo, acusação, fato sobre as pessoas nem
+// previsão eleitoral: a faixa é do ringue. Quem mostra (e quem fala, por
+// síntese de voz) decide quando cabe; aqui só se escolhe a frase para um
+// evento, com um sorteio recebido de fora.
 
 import type { Evento } from "./tipos";
 
+/** As falas escritas, no cartão do narrador. */
 const FALAS: Partial<Record<Evento["tipo"], readonly string[]>> = {
-  inicio: ["Debate encerrado. Começou o corpo a corpo!", "Dois candidatos, uma escada, uma faixa. Vale a faixa!", "Sem réplica, sem tréplica: só a escada."],
+  inicio: ["Tá valendo a faixa!", "Debate encerrado. Começou o corpo a corpo!", "Dois candidatos, uma escada, uma faixa. Vale a faixa!"],
+  voadora: ["Veio de voadora!", "Voou! Isso é aparte ou é voadora?"],
   queda: ["A governabilidade ficou no chão!", "Caiu nas pesquisas… e no tapete!", "Tempo de resposta esgotado!", "Isso não estava no programa de governo!"],
   cordas: ["Nas cordas! Alguém chame a mesa diretora!", "As cordas também têm opinião!"],
+  esquiva: ["Escapou!", "Desviou como de pergunta difícil!"],
   escadaPega: ["A escada entrou na pauta!", "Agora a escada também é candidata!"],
-  escadaPosta: ["Escada em pé, debaixo da faixa. É agora!", "Posicionou! A faixa está a sete degraus!"],
-  escadaCaiu: ["A escada tombou! Recontagem!", "Caiu a escada, caiu a proposta!"],
+  escadaPosta: ["A escada tá no centro!", "Escada em pé, debaixo da faixa. É agora!"],
+  escadaCaiu: ["Derrubaram a escada!", "A escada tombou! Recontagem!"],
   derrubada: ["Derrubou a base! Como numa moção de censura!", "Chacoalhou a base e a escada foi ao chão!"],
   subida: ["Está subindo nas pesquisas… e na escada!", "Degrau por degrau, como numa coalizão!"],
-  topo: ["No topo! A faixa está ao alcance!", "Chegou lá em cima. Segura o fôlego, plateia!"],
+  topo: ["Subiu! Agora segura!", "No topo! A faixa está ao alcance!"],
   puxando: ["A faixa está por um fio!", "Puxa, puxa! A posse está a um fio!"],
-  interrompido: ["Interrompido! Como num aparte sem permissão!", "Derrubaram a subida! Vai ter que recomeçar quase do zero."],
+  faltaPouco: ["Falta pouco!", "A faixa balança! Falta pouco!"],
+  interrompido: ["Interrompido! Como num aparte sem permissão!", "Derrubaram a subida! Perdeu parte do caminho."],
   levantou: ["Recuperação em V: de volta pra luta!", "Levantou! Ninguém sai daqui sem réplica!"],
-  vitoria: ["Vale a faixa! Posse no ringue!", "É do povo? Não: é da escada! Faixa conquistada!"],
+  vitoria: ["Pegou a faixa!", "Vale a faixa! Posse no ringue!"],
 };
 
 /** Uma fala para o evento, ou `null` para os que não têm comentário. `sorteio` vai de 0 a 1. */
@@ -30,4 +35,40 @@ export function falaPara(tipo: Evento["tipo"], sorteio: number): string | null {
 }
 
 /** Os eventos que têm comentário, na ordem de prioridade: os de cima vencem quando acontecem juntos. */
-export const PRIORIDADE_DAS_FALAS: readonly Evento["tipo"][] = ["vitoria", "interrompido", "topo", "puxando", "escadaCaiu", "derrubada", "queda", "escadaPosta", "subida", "escadaPega", "cordas", "levantou", "inicio"];
+export const PRIORIDADE_DAS_FALAS: readonly Evento["tipo"][] = [
+  "vitoria",
+  "faltaPouco",
+  "interrompido",
+  "topo",
+  "puxando",
+  "escadaCaiu",
+  "derrubada",
+  "voadora",
+  "queda",
+  "escadaPosta",
+  "subida",
+  "escadaPega",
+  "esquiva",
+  "cordas",
+  "levantou",
+  "inicio",
+];
+
+/**
+ * As falas da narração por voz, curtas, com a prioridade de cada uma: a
+ * fila descarta as menos importantes quando chegam muitas de uma vez.
+ */
+export const NARRACAO: Partial<Record<Evento["tipo"], { prioridade: number; frases: readonly string[] }>> = {
+  inicio: { prioridade: 3, frases: ["Tá valendo a faixa!"] },
+  vitoria: { prioridade: 5, frases: ["Pegou a faixa!", "É dele! Pegou a faixa!"] },
+  faltaPouco: { prioridade: 4, frases: ["Falta pouco!"] },
+  topo: { prioridade: 4, frases: ["Subiu! Agora segura!"] },
+  interrompido: { prioridade: 4, frases: ["Interrompeu!", "Caiu da escada!"] },
+  escadaCaiu: { prioridade: 3, frases: ["Derrubaram a escada!"] },
+  escadaPosta: { prioridade: 3, frases: ["A escada tá no centro!"] },
+  voadora: { prioridade: 2, frases: ["Veio de voadora!"] },
+  queda: { prioridade: 2, frases: ["Foi ao chão!", "Caiu!"] },
+  escadaPega: { prioridade: 1, frases: ["Pegou a escada!"] },
+  subida: { prioridade: 1, frases: ["Tá subindo!"] },
+  levantou: { prioridade: 1, frases: ["Levantou!"] },
+};

@@ -126,13 +126,19 @@ export function desenharEscadaEmPe(g: CanvasRenderingContext2D, pr: Projecao, ba
   g.restore();
 }
 
-/** A escada caída, com o centro em `centroX`, deitada para o lado `direcao`. */
-export function desenharEscadaCaida(g: CanvasRenderingContext2D, pr: Projecao, centroX: number, direcao: 1 | -1): void {
+/**
+ * A escada caída, com o centro em `centroX`, deitada para o lado `direcao`.
+ * `desdeQueCaiu` são os segundos desde que bateu no chão: nos primeiros, ela
+ * quica e assenta, com peso.
+ */
+export function desenharEscadaCaida(g: CanvasRenderingContext2D, pr: Projecao, centroX: number, direcao: 1 | -1, desdeQueCaiu: number, movimento: boolean): void {
   const s = pr.s;
   const h = REGRAS.escada.altura;
+  const quique = movimento && desdeQueCaiu < 0.4 ? Math.abs(Math.sin(desdeQueCaiu * 22)) * 14 * (1 - desdeQueCaiu / 0.4) : 0;
   g.save();
-  g.translate(pr.X(centroX), pr.Y(0));
+  g.translate(pr.X(centroX), pr.Y(quique));
   g.scale(s * direcao, s);
+  if (quique > 0) g.rotate(-0.06 * (1 - desdeQueCaiu / 0.4));
   g.lineCap = "round";
   g.lineJoin = "round";
   // Sombra no tapete.
@@ -179,14 +185,14 @@ export function desenharEscadaCaida(g: CanvasRenderingContext2D, pr: Projecao, c
   g.restore();
 }
 
-/** A escada no ombro de quem a carrega: horizontal, à altura do ombro, balançando com o passo. */
-export function desenharEscadaCarregada(g: CanvasRenderingContext2D, pr: Projecao, x: number, direcao: 1 | -1, bob: number): void {
+/** A escada no ombro de quem a carrega: horizontal, à altura do ombro, balançando com o passo e pendendo com o peso. */
+export function desenharEscadaCarregada(g: CanvasRenderingContext2D, pr: Projecao, x: number, direcao: 1 | -1, bob: number, inclinacao: number): void {
   const s = pr.s;
   const h = REGRAS.escada.altura;
   g.save();
   g.translate(pr.X(x), pr.Y(128 + bob));
   g.scale(s * direcao, s);
-  g.rotate(-0.09);
+  g.rotate(-0.09 + inclinacao);
   g.lineCap = "round";
   g.lineJoin = "round";
   for (const y of [-12, 10]) {

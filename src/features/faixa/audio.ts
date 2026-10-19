@@ -1,18 +1,45 @@
 // O som do Vale a Faixa, sintetizado na hora com a Web Audio API: nenhum
-// arquivo, nenhuma música licenciada. Impactos, guarda, escada, queda, sino,
-// torcida contínua que acompanha a intensidade da partida, vitória e
-// derrota. Só começa depois de um gesto da pessoa (`ativar`), e tem volume e
-// silêncio, guardados em preferencias.ts.
+// arquivo, nenhuma música licenciada. Dois canais com volume próprio: os
+// efeitos (socos, chutes, voadora, guarda, erro, pulo e aterrissagem, escada,
+// queda, sino, vitória, derrota) e a torcida contínua, que acompanha a
+// intensidade da partida e ganha tensão quando alguém puxa a faixa. Só começa
+// depois de um gesto da pessoa (`ativar`), e pausa com a partida. A narração
+// por voz fica em narracao.ts.
+//
+// Um mesmo som não toca duas vezes em menos de 50 ms, para não acumular nem
+// distorcer; a torcida é um laço só, que não reinicia a cada evento.
 
-export type Som = "golpe" | "golpeForte" | "bloqueio" | "empurrao" | "queda" | "escada" | "escadaCai" | "subida" | "sino" | "vitoria" | "derrota" | "puxar" | "aviso" | "cordas";
+export type Som =
+  | "soco"
+  | "chute"
+  | "forte"
+  | "voadora"
+  | "bloqueio"
+  | "erro"
+  | "pulo"
+  | "aterrissagem"
+  | "aterrissagemPesada"
+  | "esquiva"
+  | "queda"
+  | "escada"
+  | "escadaPassos"
+  | "escadaPosta"
+  | "escadaCai"
+  | "subida"
+  | "sino"
+  | "vitoria"
+  | "derrota"
+  | "puxar"
+  | "aviso"
+  | "cordas";
 
 export interface Audio {
   /** Cria ou retoma o contexto; chamar em resposta a um clique ou toque. */
   ativar(): void;
   tocar(som: Som): void;
-  /** A intensidade da torcida, de 0 a 1. */
-  torcida(nivel: number): void;
-  setVolume(volume: number): void;
+  /** A intensidade da torcida, de 0 a 1, e se há tensão (alguém puxando a faixa). */
+  torcida(nivel: number, tensao: number): void;
+  setVolumes(efeitos: number, torcida: number): void;
   setMudo(mudo: boolean): void;
   /** Para a torcida sem fechar o contexto: pausa. */
   suspender(): void;
@@ -20,21 +47,27 @@ export interface Audio {
   dispose(): void;
 }
 
-export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio | null {
+const INTERVALO_MINIMO = 0.05;
+
+export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mudoInicial: boolean): Audio | null {
   if (typeof window === "undefined") return null;
   const Contexto = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (Contexto === undefined) return null;
 
   let contexto: AudioContext | null = null;
   let mestre: GainNode | null = null;
+  let efeitos: GainNode | null = null;
   let torcidaGanho: GainNode | null = null;
   let torcidaFiltro: BiquadFilterNode | null = null;
+  let tensaoGanho: GainNode | null = null;
   let ruido: AudioBuffer | null = null;
-  let volume = volumeInicial;
+  let volumeEfeitos = volumeDeEfeitos;
+  let volumeTorcida = volumeDaTorcida;
   let mudo = mudoInicial;
   let suspenso = false;
+  const ultimo = new Map<Som, number>();
 
-  const ganhoMestre = () => (mudo ? 0 : volume * 0.9);
+  const ganhoMestre = () => (mudo ? 0 : 0.9);
 
   const prepararRuido = (c: AudioContext): AudioBuffer => {
     const tamanho = c.sampleRate * 2;
@@ -60,6 +93,9 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
       mestre = contexto.createGain();
       mestre.gain.value = ganhoMestre();
       mestre.connect(contexto.destination);
+      efeitos = contexto.createGain();
+      efeitos.gain.value = volumeEfeitos;
+      efeitos.connect(mestre);
       ruido = prepararRuido(contexto);
       // A torcida: ruído em laço, filtrado, com ganho que segue a intensidade.
       const fonte = contexto.createBufferSource();
@@ -75,12 +111,32 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
       torcidaFiltro.connect(torcidaGanho);
       torcidaGanho.connect(mestre);
       fonte.start();
+      // A tensão: um pulso grave que entra quando alguém puxa a faixa.
+      const pulso = contexto.createOscillator();
+      pulso.type = "triangle";
+      pulso.frequency.value = 55;
+      const batida = contexto.createOscillator();
+      batida.type = "sine";
+      batida.frequency.value = 2.2;
+      const profundidade = contexto.createGain();
+      profundidade.gain.value = 0.5;
+      const modulado = contexto.createGain();
+      modulado.gain.value = 0.5;
+      batida.connect(profundidade);
+      profundidade.connect(modulado.gain);
+      tensaoGanho = contexto.createGain();
+      tensaoGanho.gain.value = 0;
+      pulso.connect(modulado);
+      modulado.connect(tensaoGanho);
+      tensaoGanho.connect(mestre);
+      pulso.start();
+      batida.start();
     }
     if (contexto.state === "suspended" && !suspenso) void contexto.resume();
   };
 
   const tom = (tipo: OscillatorType, freq: number, freqFinal: number, duracao: number, ganho: number, inicio = 0, filtro?: number) => {
-    if (contexto === null || mestre === null) return;
+    if (contexto === null || efeitos === null) return;
     const agora = contexto.currentTime + inicio;
     const osc = contexto.createOscillator();
     osc.type = tipo;
@@ -96,16 +152,16 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
       lp.type = "lowpass";
       lp.frequency.value = filtro;
       env.connect(lp);
-      lp.connect(mestre);
+      lp.connect(efeitos);
     } else {
-      env.connect(mestre);
+      env.connect(efeitos);
     }
     osc.start(agora);
     osc.stop(agora + duracao + 0.02);
   };
 
   const sopro = (duracao: number, ganho: number, filtroDe: number, filtroAte: number, tipo: BiquadFilterType = "lowpass", inicio = 0) => {
-    if (contexto === null || mestre === null || ruido === null) return;
+    if (contexto === null || efeitos === null || ruido === null) return;
     const agora = contexto.currentTime + inicio;
     const fonte = contexto.createBufferSource();
     fonte.buffer = ruido;
@@ -120,7 +176,7 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
     env.gain.exponentialRampToValueAtTime(0.0001, agora + duracao);
     fonte.connect(filtro);
     filtro.connect(env);
-    env.connect(mestre);
+    env.connect(efeitos);
     fonte.start(agora);
     fonte.stop(agora + duracao + 0.02);
   };
@@ -133,22 +189,46 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
   };
 
   const sons: Record<Som, () => void> = {
-    golpe() {
+    soco() {
       sopro(0.09, 0.9, 1400, 300);
       tom("sine", 130, 55, 0.13, 0.9);
     },
-    golpeForte() {
-      sopro(0.12, 1, 1100, 200);
-      tom("sine", 90, 38, 0.2, 1);
-      tom("triangle", 260, 120, 0.08, 0.3);
+    chute() {
+      sopro(0.12, 1, 1100, 220);
+      tom("sine", 100, 40, 0.18, 1);
+      tom("triangle", 300, 140, 0.07, 0.3);
+    },
+    forte() {
+      sopro(0.14, 1, 900, 160);
+      tom("sine", 80, 32, 0.26, 1);
+      tom("triangle", 220, 90, 0.1, 0.35);
+    },
+    voadora() {
+      sopro(0.16, 0.8, 600, 2200, "bandpass");
+      sopro(0.12, 1, 1000, 200, "lowpass", 0.05);
+      tom("sine", 110, 45, 0.2, 1, 0.05);
     },
     bloqueio() {
       tom("triangle", 820, 700, 0.06, 0.45);
       sopro(0.04, 0.5, 2500, 1200, "highpass");
     },
-    empurrao() {
-      sopro(0.26, 0.7, 320, 1600, "bandpass");
-      tom("sine", 110, 70, 0.18, 0.5);
+    erro() {
+      sopro(0.14, 0.35, 900, 2600, "bandpass");
+    },
+    pulo() {
+      sopro(0.14, 0.3, 400, 1800, "bandpass");
+      tom("sine", 180, 420, 0.14, 0.18);
+    },
+    aterrissagem() {
+      tom("sine", 90, 50, 0.1, 0.5);
+      sopro(0.07, 0.35, 500, 150);
+    },
+    aterrissagemPesada() {
+      tom("sine", 75, 30, 0.25, 0.9);
+      sopro(0.16, 0.7, 500, 120);
+    },
+    esquiva() {
+      sopro(0.12, 0.4, 1800, 600, "bandpass");
     },
     queda() {
       tom("sine", 85, 28, 0.32, 1);
@@ -157,6 +237,13 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
     },
     escada() {
       clank(1);
+    },
+    escadaPassos() {
+      clank(0.3);
+    },
+    escadaPosta() {
+      clank(1);
+      tom("sine", 120, 60, 0.18, 0.5, 0.06);
     },
     escadaCai() {
       clank(1);
@@ -205,17 +292,25 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
     ativar,
     tocar(som) {
       if (contexto === null || suspenso) return;
+      const agora = contexto.currentTime;
+      const anterior = ultimo.get(som);
+      if (anterior !== undefined && agora - anterior < INTERVALO_MINIMO) return;
+      ultimo.set(som, agora);
       sons[som]();
     },
-    torcida(nivel) {
-      if (contexto === null || torcidaGanho === null || torcidaFiltro === null) return;
-      const alvo = suspenso ? 0 : 0.05 + Math.max(0, Math.min(1, nivel)) * 0.3;
+    torcida(nivel, tensao) {
+      if (contexto === null || torcidaGanho === null || torcidaFiltro === null || tensaoGanho === null) return;
+      const n = Math.max(0, Math.min(1, nivel));
+      const alvo = suspenso ? 0 : (0.05 + n * 0.3) * volumeTorcida;
       torcidaGanho.gain.setTargetAtTime(alvo, contexto.currentTime, 0.25);
-      torcidaFiltro.frequency.setTargetAtTime(420 + nivel * 500, contexto.currentTime, 0.4);
+      torcidaFiltro.frequency.setTargetAtTime(420 + n * 500, contexto.currentTime, 0.4);
+      const alvoDaTensao = suspenso ? 0 : Math.max(0, Math.min(1, tensao)) * 0.16 * volumeTorcida;
+      tensaoGanho.gain.setTargetAtTime(alvoDaTensao, contexto.currentTime, 0.3);
     },
-    setVolume(novo) {
-      volume = Math.max(0, Math.min(1, novo));
-      if (contexto !== null && mestre !== null) mestre.gain.setTargetAtTime(ganhoMestre(), contexto.currentTime, 0.05);
+    setVolumes(novoEfeitos, novaTorcida) {
+      volumeEfeitos = Math.max(0, Math.min(1, novoEfeitos));
+      volumeTorcida = Math.max(0, Math.min(1, novaTorcida));
+      if (contexto !== null && efeitos !== null) efeitos.gain.setTargetAtTime(volumeEfeitos, contexto.currentTime, 0.05);
     },
     setMudo(novo) {
       mudo = novo;
@@ -223,7 +318,10 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
     },
     suspender() {
       suspenso = true;
-      if (contexto !== null && torcidaGanho !== null) torcidaGanho.gain.setTargetAtTime(0, contexto.currentTime, 0.1);
+      if (contexto !== null && torcidaGanho !== null && tensaoGanho !== null) {
+        torcidaGanho.gain.setTargetAtTime(0, contexto.currentTime, 0.1);
+        tensaoGanho.gain.setTargetAtTime(0, contexto.currentTime, 0.1);
+      }
     },
     retomar() {
       suspenso = false;
@@ -234,8 +332,10 @@ export function criarAudio(volumeInicial: number, mudoInicial: boolean): Audio |
       if (contexto !== null) void contexto.close();
       contexto = null;
       mestre = null;
+      efeitos = null;
       torcidaGanho = null;
       torcidaFiltro = null;
+      tensaoGanho = null;
     },
   };
 }

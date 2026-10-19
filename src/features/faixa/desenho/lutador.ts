@@ -116,6 +116,21 @@ function neutra(): Pose {
   return { dx: 0, dy: 0, giro: 0, quadrilY: -M.quadril, tronco: 0.08, cabecaGiro: 0, ...GUARDA, expressao: "neutra", piscar: 0, suor: 0, alfa: 1 };
 }
 
+/** O que muda entre as poses de um golpe. */
+type Postura = Pick<Pose, "tronco" | "dx" | "bracoF" | "bracoT" | "pernaF" | "pernaT" | "quadrilY">;
+
+const GUARDA_POSTURA: Postura = { tronco: 0.08, dx: 0, bracoF: GUARDA.bracoF, bracoT: GUARDA.bracoT, pernaF: GUARDA.pernaF, pernaT: GUARDA.pernaT, quadrilY: -M.quadril };
+
+function misturar(pose: Pose, de: Postura, para: Postura, u: number): void {
+  pose.tronco = lerp(de.tronco, para.tronco, u);
+  pose.dx = lerp(de.dx, para.dx, u);
+  pose.bracoF = [lerp(de.bracoF[0], para.bracoF[0], u), lerp(de.bracoF[1], para.bracoF[1], u)];
+  pose.bracoT = [lerp(de.bracoT[0], para.bracoT[0], u), lerp(de.bracoT[1], para.bracoT[1], u)];
+  pose.pernaF = [lerp(de.pernaF[0], para.pernaF[0], u), lerp(de.pernaF[1], para.pernaF[1], u)];
+  pose.pernaT = [lerp(de.pernaT[0], para.pernaT[0], u), lerp(de.pernaT[1], para.pernaT[1], u)];
+  pose.quadrilY = lerp(de.quadrilY, para.quadrilY, u);
+}
+
 /** A pose do lutador pelo estado, o tempo no estado e o relógio da cena. */
 export function poseDe(l: Lutador, tempo: number, ritmo: number, movimento: boolean, andando: boolean, puxandoAlguem: boolean): Pose {
   const pose = neutra();
@@ -138,51 +153,114 @@ export function poseDe(l: Lutador, tempo: number, ritmo: number, movimento: bool
       pose.bracoT = [0.95 - respiro * 0.04, 1.55];
       pose.piscar = piscada;
       break;
-    case "andando":
-      andar(1);
-      pose.bracoF = [1.1 - 0.3 * Math.sin(passo), 1.45];
-      pose.bracoT = [0.95 + 0.3 * Math.sin(passo), 1.5];
+    case "andando": {
+      // A passada acompanha a velocidade; andando de costas, o passo encurta.
+      const amplitude = clamp01(Math.abs(l.vel) / REGRAS.velocidade);
+      andar(0.4 + 0.6 * amplitude);
+      pose.tronco = 0.08 + 0.1 * amplitude * (Math.sign(l.vel) === l.direcao ? 1 : -0.6);
+      pose.bracoF = [1.1 - 0.3 * Math.sin(passo) * amplitude, 1.45];
+      pose.bracoT = [0.95 + 0.3 * Math.sin(passo) * amplitude, 1.5];
       pose.piscar = piscada;
       break;
-    case "golpe": {
-      // A sequência: o jab com o braço da frente, o direto com o de trás e o forte, de baixo para cima.
-      const r = golpeDe(l);
+    }
+    case "golpe":
+    case "forte": {
+      // A sequência: o soco com o braço da frente, o direto com o de trás e o chute, de perna estendida; o forte é um
+      // gancho de preparação longa. A antecipação e a recuperação interpolam a partir da pose do instante ativo.
+      const forte = l.estado === "forte";
+      const r = forte ? REGRAS.forte : golpeDe(l);
       const fase = faseDoAtaque(l);
-      const qual = l.golpeDaSequencia;
+      const qual = forte ? 4 : l.golpeDaSequencia;
       pose.expressao = "raiva";
-      // A pose do instante ativo de cada golpe; a antecipação e a recuperação interpolam a partir dela.
-      const ativo: Pick<Pose, "tronco" | "dx" | "bracoF" | "bracoT" | "pernaF" | "pernaT" | "quadrilY"> =
+      const ativo: Postura =
         qual === 2
           ? { tronco: 0.46, dx: 10, bracoF: [1.35, 1.6], bracoT: [Math.PI / 2 + 0.1, -0.05], pernaF: [0.6, -0.35], pernaT: [-0.5, 0.1], quadrilY: -M.quadril + 5 }
           : qual === 3
-            ? { tronco: -0.12, dx: 14, bracoF: [2.25, 0.25], bracoT: [0.7, 1.4], pernaF: [0.45, -0.25], pernaT: [-0.4, 0.05], quadrilY: -M.quadril - 6 }
-            : { tronco: 0.38, dx: 8, bracoF: [Math.PI / 2 + 0.12, -0.05], bracoT: [0.5, 1.6], pernaF: [0.55, -0.35], pernaT: [-0.45, 0.1], quadrilY: -M.quadril + 4 };
-      const preparo: typeof ativo =
+            ? { tronco: -0.3, dx: 12, bracoF: [0.6, 1.2], bracoT: [-0.6, 0.8], pernaF: [Math.PI / 2 + 0.15, 0.05], pernaT: [-0.3, 0.1], quadrilY: -M.quadril - 2 }
+            : qual === 4
+              ? { tronco: 0.5, dx: 16, bracoF: [Math.PI / 2 + 0.3, -0.1], bracoT: [0.2, 1.2], pernaF: [0.7, -0.4], pernaT: [-0.55, 0.1], quadrilY: -M.quadril + 8 }
+              : { tronco: 0.38, dx: 8, bracoF: [Math.PI / 2 + 0.12, -0.05], bracoT: [0.5, 1.6], pernaF: [0.55, -0.35], pernaT: [-0.45, 0.1], quadrilY: -M.quadril + 4 };
+      const preparo: Postura =
         qual === 2
           ? { tronco: -0.2, dx: 0, bracoF: [1.3, 1.6], bracoT: [0.2, 1.7], pernaF: [0.3, -0.3], pernaT: [-0.3, 0.2], quadrilY: -M.quadril + 3 }
           : qual === 3
-            ? { tronco: 0.3, dx: 0, bracoF: [-0.35, 0.5], bracoT: [1.2, 1.4], pernaF: [0.5, -0.7], pernaT: [-0.3, 0.3], quadrilY: -M.quadril + 12 }
-            : { tronco: -0.28, dx: 0, bracoF: [0.35, 1.9], bracoT: [1.2, 1.3], pernaF: [0.3, -0.3], pernaT: [-0.3, 0.2], quadrilY: -M.quadril + 3 };
-      const misturar = (de: typeof ativo, para: typeof ativo, u: number) => {
-        pose.tronco = lerp(de.tronco, para.tronco, u);
-        pose.dx = lerp(de.dx, para.dx, u);
-        pose.bracoF = [lerp(de.bracoF[0], para.bracoF[0], u), lerp(de.bracoF[1], para.bracoF[1], u)];
-        pose.bracoT = [lerp(de.bracoT[0], para.bracoT[0], u), lerp(de.bracoT[1], para.bracoT[1], u)];
-        pose.pernaF = [lerp(de.pernaF[0], para.pernaF[0], u), lerp(de.pernaF[1], para.pernaF[1], u)];
-        pose.pernaT = [lerp(de.pernaT[0], para.pernaT[0], u), lerp(de.pernaT[1], para.pernaT[1], u)];
-        pose.quadrilY = lerp(de.quadrilY, para.quadrilY, u);
-      };
-      const guarda: typeof ativo = { tronco: 0.08, dx: 0, bracoF: GUARDA.bracoF, bracoT: GUARDA.bracoT, pernaF: GUARDA.pernaF, pernaT: GUARDA.pernaT, quadrilY: -M.quadril };
+            ? { tronco: -0.1, dx: 0, bracoF: [1.0, 1.5], bracoT: [0.6, 1.2], pernaF: [0.9, -1.6], pernaT: [-0.2, 0.1], quadrilY: -M.quadril + 2 }
+            : qual === 4
+              ? { tronco: -0.42, dx: -6, bracoF: [-0.9, 1.1], bracoT: [1.4, 1.4], pernaF: [0.35, -0.5], pernaT: [-0.4, 0.3], quadrilY: -M.quadril + 10 }
+              : { tronco: -0.28, dx: 0, bracoF: [0.35, 1.9], bracoT: [1.2, 1.3], pernaF: [0.3, -0.3], pernaT: [-0.3, 0.2], quadrilY: -M.quadril + 3 };
       if (fase === "antecipacao") {
-        misturar(guarda, preparo, easeOut(t / r.antecipacao));
+        misturar(pose, GUARDA_POSTURA, preparo, easeOut(t / r.antecipacao));
+        if (forte) pose.suor = t / r.antecipacao;
       } else if (fase === "ativo") {
-        misturar(preparo, ativo, Math.min(1, (t - r.antecipacao) / (r.ativo * 0.5)));
-        if (qual === 3) pose.suor = 1;
+        misturar(pose, preparo, ativo, Math.min(1, (t - r.antecipacao) / (r.ativo * 0.5)));
+        if (qual >= 3) pose.suor = 1;
       } else {
         const u = easeOut((t - r.antecipacao - r.ativo) / r.recuperacao);
-        misturar(ativo, guarda, u);
+        misturar(pose, ativo, GUARDA_POSTURA, u);
         if (u > 0.6) pose.expressao = "neutra";
+        if (forte && u < 0.6) pose.expressao = "esforco";
       }
+      break;
+    }
+    case "pulando": {
+      // Pernas recolhidas na subida, esticadas na descida.
+      const subindo = l.vy > 0;
+      const u = clamp01(Math.abs(l.vy) / REGRAS.pulo.impulso);
+      pose.quadrilY = -M.quadril + 6;
+      pose.tronco = 0.12;
+      pose.bracoF = [lerp(1.6, 2.4, subindo ? u : 0.3), 0.6];
+      pose.bracoT = [lerp(0.4, -0.6, subindo ? u : 0.3), 0.5];
+      pose.pernaF = [lerp(0.5, 0.95, subindo ? u : 0.4), lerp(-0.6, -1.5, subindo ? u : 0.5)];
+      pose.pernaT = [lerp(-0.1, 0.3, subindo ? u : 0.3), lerp(-0.2, -1.0, subindo ? u : 0.5)];
+      pose.expressao = "esforco";
+      pose.piscar = piscada;
+      break;
+    }
+    case "voadora": {
+      // O corpo inclinado para trás, a perna da frente estendida, os braços abertos.
+      const u = easeOut(Math.min(1, t / REGRAS.voadora.ativoDe));
+      pose.tronco = lerp(0.1, -0.55, u);
+      pose.dx = 6;
+      pose.quadrilY = -M.quadril + 10;
+      pose.bracoF = [lerp(1.6, 2.6, u), 0.3];
+      pose.bracoT = [lerp(0.4, -0.9, u), 0.5];
+      pose.pernaF = [lerp(0.6, Math.PI / 2 + 0.25, u), lerp(-0.6, 0.05, u)];
+      pose.pernaT = [lerp(-0.1, 0.5, u), lerp(-0.3, -1.4, u)];
+      pose.cabecaGiro = lerp(0, -0.2, u);
+      pose.expressao = "raiva";
+      pose.suor = 1;
+      break;
+    }
+    case "aterrissando": {
+      // Agacha ao tocar o chão, mais fundo depois da voadora, e volta.
+      const pesada = l.tempoDeAterrissagem > REGRAS.pulo.aterrissagem;
+      const u = clamp01(t / l.tempoDeAterrissagem);
+      const fundo = pesada ? 22 : 9;
+      const agacho = Math.sin(Math.min(1, u) * Math.PI) * fundo;
+      pose.quadrilY = -M.quadril + agacho;
+      pose.tronco = 0.08 + (agacho / fundo) * (pesada ? 0.45 : 0.2);
+      pose.pernaF = [0.45, -0.9 * (agacho / fundo) - 0.1];
+      pose.pernaT = [-0.35, 0.5 * (agacho / fundo) + 0.1];
+      pose.bracoF = [lerp(1.15, 0.6, agacho / fundo), 1.3];
+      pose.bracoT = [lerp(0.95, 0.4, agacho / fundo), 1.2];
+      pose.expressao = pesada ? "esforco" : "neutra";
+      pose.suor = pesada ? 0.6 : 0;
+      break;
+    }
+    case "esquiva": {
+      // Um passo rápido, agachado, com o corpo inclinado para onde vai.
+      const u = clamp01(t / REGRAS.esquiva.duracao);
+      const sentido = Math.sign(l.vel) === l.direcao ? 1 : -1;
+      const forca = Math.sin(u * Math.PI);
+      pose.quadrilY = -M.quadril + 12 * forca;
+      pose.tronco = 0.08 + sentido * 0.35 * forca;
+      pose.pernaF = [0.5 * sentido + 0.2, -0.7 * forca - 0.1];
+      pose.pernaT = [-0.5 * sentido - 0.1, 0.4 * forca + 0.1];
+      pose.bracoF = [1.4, 1.7];
+      pose.bracoT = [1.2, 1.7];
+      pose.expressao = "esforco";
+      pose.piscar = 0.6;
+      pose.alfa = 0.85;
       break;
     }
     case "derrubada": {
@@ -360,6 +438,12 @@ export function poseDe(l: Lutador, tempo: number, ritmo: number, movimento: bool
 
   if (l.invulneravel > 0 && (l.estado === "levantando" || l.estado === "parado" || l.estado === "andando" || l.estado === "atingido")) {
     pose.alfa = movimento ? 0.62 + 0.38 * (Math.sin(tempo * 36) > 0 ? 1 : 0) : 0.75;
+  }
+  // A virada de direção: o corpo inclina um instante para o lado novo.
+  if (l.virando > 0 && (l.estado === "parado" || l.estado === "andando" || l.estado === "carregando")) {
+    const u = l.virando / 0.14;
+    pose.tronco += 0.22 * u;
+    pose.cabecaGiro += 0.12 * u;
   }
   if (puxandoAlguem && l.estado === "noTopo") pose.suor = 1;
   return pose;
@@ -750,6 +834,7 @@ export function desenharRetrato(canvas: HTMLCanvasElement, slug: LutadorSlug, te
     x: 0,
     y: 0,
     direcao: 1,
+    vel: 0,
     vx: 0,
     vy: 0,
     estado: "parado",
@@ -759,17 +844,26 @@ export function desenharRetrato(canvas: HTMLCanvasElement, slug: LutadorSlug, te
     altura: 0,
     invulneravel: 0,
     recargaGolpe: 0,
+    recargaForte: 0,
     recargaDerrubada: 0,
+    recargaEsquiva: 0,
     golpeDaSequencia: 0,
     desdeOUltimoGolpe: 10,
     proximoGolpe: false,
+    voadoraUsada: false,
+    tempoCaido: REGRAS.caido,
+    tempoDeAterrissagem: REGRAS.pulo.aterrissagem,
+    guardado: null,
+    guardadoT: 0,
+    virando: 0,
     acertou: false,
     passo: 0,
     puxada: 0,
     puxando: false,
+    avisouFaltaPouco: false,
     golpesRecebidos: 0,
     quedas: 0,
-    anterior: { esquerda: false, direita: false, cima: false, baixo: false, golpe: false, defesa: false, interagir: false },
+    anterior: { esquerda: false, direita: false, cima: false, baixo: false, pulo: false, golpe: false, forte: false, defesa: false, esquiva: false, interagir: false },
   };
   const pose = poseDe(lutador, tempo, slug === "lula" ? 0 : 1.7, true, false, false);
   desenharSombra(g, largura / 2, altura - 10, s, 0, false);

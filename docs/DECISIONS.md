@@ -1354,6 +1354,16 @@ A conversa que abre a missão é um grafo pequeno em TypeScript (`src/lib/game/e
 
 **Consequência.** `src/lib/faixa/tipos.ts`, `regras.ts` (golpes em sequência, derrubada, `podeSubir`, `podeDerrubar`), `ia.ts`, `falas.ts`; `src/features/faixa/entrada.ts`, `motor.ts`, `Controles.tsx`, `ValeAFaixa.tsx`, `desenho/hud.ts`, `desenho/lutador.ts`; `tests/faixa.test.ts` e `tests/e2e/vale-a-faixa.spec.ts` refeitos para o esquema novo.
 
+## D-158. Vale a Faixa, segunda versão: pulo e voadora, golpe forte e esquiva, movimento com aceleração, disputa mais longa pela faixa, narração por voz
+
+**Decisão (19 de outubro de 2026).** O jogo ganha pulo (Espaço) com impulso e gravidade, voadora (Z no ar, uma por salto, de aterrissagem longa), golpe forte (V, lento e arriscado), esquiva curta (Shift, com recarga), caminhada com aceleração e frenagem, tolerância de entrada de 0,16 s que uma queda apaga, e o chute como terceiro golpe da sequência. A disputa pela faixa passa a durar: 9 s de comando segurado no topo, subida de 1,7 s, perda de 25% a cada interrupção, progresso individual visível na placa de cada um, aviso de "falta pouco" a 70%. A derrubada deixa de tombar a escada no primeiro golpe: chacoalha (a puxada para enquanto balança) e tira 45 de equilíbrio de quem está nela; perto de três seguidas derrubam. Sem isso, em simulação, ninguém passava de 16% da faixa em 400 s, porque o interruptor chegava antes de a puxada começar: o ciclo impossível que o pedido mandou evitar. Com isso, doze partidas entre computadores terminam em 87 a 133 s, com vitórias dos dois lados. O computador usa todas as ações novas e obedece às mesmas regras. O som ganha dois canais (efeitos e torcida, com tensão enquanto alguém puxa) e a narração por voz entra por `speechSynthesis`, só com voz em português, em fila curta com prioridade, com volume e ligar/desligar próprios. No toque, o direcional e seis ações (Interagir, Esquiva, Defender, Forte, Pular, Atacar), com resposta ao apertar e ao soltar. Detalhe em [VALE-A-FAIXA.md](VALE-A-FAIXA.md).
+
+**O que não entrou, e por quê.** Voz gravada: não há arquivo com licença adequada no projeto, e o pedido mandou não usar serviço pago; a síntese do navegador atende, e sem ela o jogo segue com o cartão escrito. Níveis de dificuldade: fora do pedido. Nenhuma pessoa jogou: o balanceamento foi medido em simulação e em jornadas de navegador; os números estão em `REGRAS` para ajustar depois de alguém jogar.
+
+**Motivo.** O pedido do responsável: uma evolução perceptível na diversão, com movimento preciso, golpes variados, voadora satisfatória e uma disputa pela faixa com tempo para reagir e virar a partida, só no jogo.
+
+**Consequência.** `src/lib/faixa/tipos.ts`, `regras.ts`, `ia.ts`, `falas.ts` (a narração); `src/features/faixa/entrada.ts`, `motor.ts`, `audio.ts`, `narracao.ts` (novo), `preferencias.ts`, `Controles.tsx`, `ValeAFaixa.tsx`, `desenho/hud.ts`, `desenho/lutador.ts`, `desenho/escada.ts`; `tests/faixa.test.ts` e `tests/e2e/vale-a-faixa.spec.ts` refeitos.
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |

@@ -3,10 +3,12 @@
 // toque chega dos botões na tela (Controles.tsx). Os dois valem ao mesmo
 // tempo: dá para andar no toque e bater no teclado.
 //
-// Um esquema só: setas andam e sobem ou descem a escada; Z ataca; X defende
-// enquanto pressionado; C interage com a escada e com a faixa; Esc pausa e
+// Um esquema só: setas andam e sobem ou descem a escada; Espaço pula; Z
+// ataca (no ar, a voadora); V é o golpe forte; X defende enquanto pressionado;
+// Shift é a esquiva; C interage com a escada e com a faixa; Esc pausa e
 // continua. As teclas do jogo não rolam a página enquanto a partida está
-// ativa, e nada é capturado quando a pessoa está em um campo de texto.
+// ativa, voltam ao normal fora dela, e nada é capturado quando a pessoa está
+// em um campo de texto.
 //
 // Um toque muito curto (tecla ou botão apertados e soltos entre dois passos
 // da simulação) não se perde: fica guardado até a próxima leitura.
@@ -30,10 +32,14 @@ export const TECLAS: Readonly<Record<string, keyof Entrada>> = {
   ArrowRight: "direita",
   ArrowUp: "cima",
   ArrowDown: "baixo",
+  " ": "pulo",
   z: "golpe",
   Z: "golpe",
+  v: "forte",
+  V: "forte",
   x: "defesa",
   X: "defesa",
+  Shift: "esquiva",
   c: "interagir",
   C: "interagir",
 };
@@ -90,16 +96,21 @@ export function criarEntradas(alvo: Window, opcoes: Opcoes): Entradas {
   alvo.addEventListener("keyup", aoSoltar);
   alvo.addEventListener("blur", soltarTudo);
 
+  const ler = (chave: keyof Entrada): boolean => teclado[chave] || toque[chave] || pendentes.has(chave);
+
   return {
     ler() {
       const lida: Entrada = {
-        esquerda: teclado.esquerda || toque.esquerda || pendentes.has("esquerda"),
-        direita: teclado.direita || toque.direita || pendentes.has("direita"),
-        cima: teclado.cima || toque.cima || pendentes.has("cima"),
-        baixo: teclado.baixo || toque.baixo || pendentes.has("baixo"),
-        golpe: teclado.golpe || toque.golpe || pendentes.has("golpe"),
-        defesa: teclado.defesa || toque.defesa || pendentes.has("defesa"),
-        interagir: teclado.interagir || toque.interagir || pendentes.has("interagir"),
+        esquerda: ler("esquerda"),
+        direita: ler("direita"),
+        cima: ler("cima"),
+        baixo: ler("baixo"),
+        pulo: ler("pulo"),
+        golpe: ler("golpe"),
+        forte: ler("forte"),
+        defesa: ler("defesa"),
+        esquiva: ler("esquiva"),
+        interagir: ler("interagir"),
       };
       pendentes.clear();
       return lida;

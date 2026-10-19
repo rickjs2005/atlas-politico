@@ -1,4 +1,5 @@
-// As preferências do Vale a Faixa, no navegador: volume, silêncio, se o
+// As preferências do Vale a Faixa, no navegador: os volumes dos efeitos, da
+// torcida e da narração, o silêncio geral, se a narração está ligada, se o
 // tutorial já foi visto, o último personagem escolhido e o placar da pessoa
 // contra o computador. Nada vai ao endereço nem a servidor algum.
 
@@ -7,28 +8,48 @@ import type { LutadorSlug } from "@/lib/faixa/tipos";
 export const CHAVE_DAS_PREFERENCIAS = "atlas-politico:faixa:preferencias";
 
 export interface Preferencias {
-  volume: number;
+  volumeEfeitos: number;
+  volumeTorcida: number;
+  volumeNarracao: number;
   mudo: boolean;
+  narracao: boolean;
   tutorialVisto: boolean;
   personagem: LutadorSlug | null;
   partidas: number;
   vitorias: number;
 }
 
-export const PREFERENCIAS_PADRAO: Preferencias = { volume: 0.7, mudo: false, tutorialVisto: false, personagem: null, partidas: 0, vitorias: 0 };
+export const PREFERENCIAS_PADRAO: Preferencias = {
+  volumeEfeitos: 0.7,
+  volumeTorcida: 0.5,
+  volumeNarracao: 0.9,
+  mudo: false,
+  narracao: true,
+  tutorialVisto: false,
+  personagem: null,
+  partidas: 0,
+  vitorias: 0,
+};
 
-/** As preferências a partir do texto guardado; qualquer coisa inválida vira o padrão. */
+const fracao = (valor: unknown, padrao: number): number => (typeof valor === "number" && valor >= 0 && valor <= 1 ? valor : padrao);
+const contagem = (valor: unknown): number => (typeof valor === "number" && valor >= 0 ? Math.floor(valor) : 0);
+
+/** As preferências a partir do texto guardado; qualquer coisa inválida vira o padrão. O `volume` antigo vale para efeitos e torcida. */
 export function preferenciasDe(bruto: string | null): Preferencias {
   if (bruto === null) return PREFERENCIAS_PADRAO;
   try {
-    const lido = JSON.parse(bruto) as Partial<Preferencias>;
+    const lido = JSON.parse(bruto) as Partial<Preferencias> & { volume?: unknown };
+    const antigo = fracao(lido.volume, PREFERENCIAS_PADRAO.volumeEfeitos);
     return {
-      volume: typeof lido.volume === "number" && lido.volume >= 0 && lido.volume <= 1 ? lido.volume : PREFERENCIAS_PADRAO.volume,
+      volumeEfeitos: fracao(lido.volumeEfeitos, antigo),
+      volumeTorcida: fracao(lido.volumeTorcida, Math.min(antigo, PREFERENCIAS_PADRAO.volumeTorcida)),
+      volumeNarracao: fracao(lido.volumeNarracao, PREFERENCIAS_PADRAO.volumeNarracao),
       mudo: lido.mudo === true,
+      narracao: lido.narracao !== false,
       tutorialVisto: lido.tutorialVisto === true,
       personagem: lido.personagem === "lula" || lido.personagem === "flavio-bolsonaro" ? lido.personagem : null,
-      partidas: typeof lido.partidas === "number" && lido.partidas >= 0 ? Math.floor(lido.partidas) : 0,
-      vitorias: typeof lido.vitorias === "number" && lido.vitorias >= 0 ? Math.floor(lido.vitorias) : 0,
+      partidas: contagem(lido.partidas),
+      vitorias: contagem(lido.vitorias),
     };
   } catch {
     return PREFERENCIAS_PADRAO;

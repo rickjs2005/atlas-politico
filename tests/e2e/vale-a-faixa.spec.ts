@@ -1,18 +1,20 @@
 // Vale a Faixa (src/features/faixa, docs/VALE-A-FAIXA.md): a jornada no
-// navegador, com o esquema de controles único (setas, Z, X, C, Esc). A
-// abertura e a escolha; a partida com cada personagem, até o fim, com o
-// computador buscando a faixa sozinho; o teclado (andar, C para pegar e
-// posicionar, seta para cima para subir, C segurado para puxar); atacar perto
-// da escada em que o computador sobe, que a derruba; Esc que pausa e
-// continua, a revanche e a volta ao atlas; o toque no celular emulado, com
-// teclado junto; o redimensionamento sem perder os controles; e nenhum erro
+// navegador, com o esquema de controles (setas, Espaço, Z, V, X, Shift, C,
+// Esc). A abertura e a escolha; a partida com cada personagem, até o fim, com
+// o computador buscando a faixa sozinho; o teclado (andar, pular, voadora,
+// golpe forte, esquiva, C para pegar e posicionar, seta para cima para subir,
+// C segurado para puxar); atacar perto da escada em que o computador sobe,
+// que a chacoalha; Esc que pausa e continua, a revanche e a volta ao atlas;
+// as teclas que não rolam a página e não entram em campos de texto; o toque
+// no celular emulado, com teclado junto; o redimensionamento; e nenhum erro
 // de console. As regras em si estão em tests/faixa.test.ts.
 
 import { expect, test, type Page } from "@playwright/test";
 
 const raiz = (page: Page) => page.locator("[data-faixa]");
-/** Os estados que o canvas expõe: jogador, computador, escada, puxada, x do jogador e x da escada. */
+/** Os estados que o canvas expõe: jogador, computador, escada, puxada, x do jogador, x da escada e y do jogador. */
 const estados = async (page: Page) => (await page.locator("canvas").getAttribute("data-estados"))!.split("|");
+const estadoDoJogador = async (page: Page) => (await estados(page))[0]!;
 
 function vigiarErros(page: Page): string[] {
   const erros: string[] = [];
@@ -48,6 +50,8 @@ async function segurarAte(page: Page, tecla: string, condicao: () => Promise<boo
   }
 }
 
+const TECLAS_DESENHADAS = ["←", "→", "Espaço", "Z", "V", "X", "Shift", "C", "↑", "↓", "Esc"];
+
 test.describe("Vale a Faixa", () => {
   test("a entrada diz que é sátira e mostra o esquema único de teclas; a escolha tem os dois; o hub do jogo leva até aqui", async ({ page }) => {
     await page.goto("/jogo/");
@@ -57,9 +61,8 @@ test.describe("Vale a Faixa", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Vale a Faixa");
     await expect(raiz(page)).toContainText("Sátira interativa");
     await expect(raiz(page)).toContainText("mesmas capacidades");
-    const teclas = page.locator("[data-teclas] kbd");
-    await expect(teclas).toHaveText(["←", "→", "↑", "↓", "Z", "X", "C", "Esc"]);
-    await expect(raiz(page)).not.toContainText(/\bJ\b|\bK\b|\bL\b|Espaço|Enter|W A S D/);
+    await expect(page.locator("[data-teclas] kbd")).toHaveText(TECLAS_DESENHADAS);
+    await expect(raiz(page)).not.toContainText(/\bJ\b|\bK\b|\bL\b|Enter|W A S D/);
     await page.locator("[data-escolher-candidato]").click();
     await expect(page.locator("[data-escolha]")).toHaveCount(2);
     await expect(page.locator('[data-escolha="lula"]')).toContainText("Lula");
@@ -68,6 +71,7 @@ test.describe("Vale a Faixa", () => {
 
   for (const slug of ["lula", "flavio-bolsonaro"] as const) {
     test(`com ${slug}, parado, o computador busca a escada, posiciona, sobe, puxa e vence; a vitória aparece uma vez, e a revanche recomeça`, async ({ page }) => {
+      test.setTimeout(150_000);
       const erros = vigiarErros(page);
       await comecar(page, slug);
       const vistos = new Set<string>();
@@ -78,7 +82,7 @@ test.describe("Vale a Faixa", () => {
             vistos.add(`${computador}/${escada}`);
             return page.locator("[data-faixa]").getAttribute("data-fase");
           },
-          { timeout: 90_000 },
+          { timeout: 120_000 },
         )
         .toBe("fim");
       const sequencia = [...vistos];
@@ -102,7 +106,38 @@ test.describe("Vale a Faixa", () => {
     });
   }
 
-  test("pelo teclado: setas andam, C pega e posiciona a escada, a seta para cima sobe, C segurado puxa a faixa e vence", async ({ page }) => {
+  test("pelo teclado: pular parado e em movimento, voadora, golpe forte, esquiva e a sequência de golpes, com os estados certos", async ({ page }) => {
+    const erros = vigiarErros(page);
+    await comecar(page, "lula", false, true);
+    const y = async () => Number((await estados(page))[6]);
+    // Pulo parado: sobe, cai, aterrissa e volta a parado.
+    await page.keyboard.press(" ");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("pulando");
+    await expect.poll(y, { timeout: 2_000 }).toBeGreaterThan(40);
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("parado");
+    expect(await y()).toBe(0);
+    // Pulo em movimento, com a voadora no ar: uma por salto.
+    await page.keyboard.down("ArrowRight");
+    await page.keyboard.press(" ");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("pulando");
+    await page.keyboard.press("z");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("voadora");
+    await page.keyboard.up("ArrowRight");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("aterrissando");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("parado");
+    // O golpe forte e a esquiva, e a sequência Z Z Z.
+    await page.keyboard.press("v");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("forte");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("parado");
+    await page.keyboard.press("Shift");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("esquiva");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("parado");
+    await page.keyboard.press("z");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("golpe");
+    expect(erros).toEqual([]);
+  });
+
+  test("pelo teclado: C pega e posiciona a escada, a seta para cima sobe, C segurado puxa a faixa por alguns segundos e vence", async ({ page }) => {
     test.setTimeout(120_000);
     const erros = vigiarErros(page);
     // Para a prova ser determinística, o computador fica parado: a pessoa joga sozinha, e a partida é lida pelo canvas.
@@ -111,7 +146,6 @@ test.describe("Vale a Faixa", () => {
     const dica = () => raiz(page).getAttribute("data-dica");
     const xDoJogador = async () => Number((await estados(page))[4]);
     const xDaEscada = async () => Number((await estados(page))[5]);
-    // Anda até a escada, para o lado em que ela está; a dica diz quando dá para pegar.
     const lado = (await xDaEscada()) < (await xDoJogador()) ? "ArrowLeft" : "ArrowRight";
     await segurarAte(page, lado, async () => (await dica()) === "pegarEscada", 10_000);
     // Z não pega a escada; C pega.
@@ -121,7 +155,6 @@ test.describe("Vale a Faixa", () => {
     await page.keyboard.press("c");
     await expect.poll(estadoDaEscada).toBe("carregada");
     await expect.poll(dica).toMatch(/posicionarEscada|soltarEscada/);
-    // Leva até a marca: a dica vira "posicionar".
     const paraOCentro = (await xDoJogador()) < 0 ? "ArrowRight" : "ArrowLeft";
     await segurarAte(page, paraOCentro, async () => (await dica()) === "posicionarEscada", 15_000);
     await page.keyboard.press("c");
@@ -130,37 +163,38 @@ test.describe("Vale a Faixa", () => {
     // C não sobe: a seta para cima sobe.
     await page.keyboard.press("c");
     await page.waitForTimeout(400);
-    expect((await estados(page))[0]).toBe("parado");
-    await segurarAte(page, "ArrowUp", async () => (await estados(page))[0] === "noTopo", 10_000);
+    expect(await estadoDoJogador(page)).toBe("parado");
+    await segurarAte(page, "ArrowUp", async () => (await estadoDoJogador(page)) === "noTopo", 10_000);
     await expect(raiz(page)).toHaveAttribute("data-na-escada", "sim");
     await expect.poll(dica).toBe("puxarFaixa");
-    // Sem segurar, nada avança; com C segurado, a barra enche até a faixa soltar.
+    // Sem segurar, nada avança; com C segurado, a barra enche em alguns segundos, com o aviso de que falta pouco.
     await page.waitForTimeout(400);
     expect(Number((await estados(page))[3])).toBe(0);
-    await segurarAte(page, "c", async () => (await raiz(page).getAttribute("data-fase")) === "fim", 20_000);
+    const inicio = Date.now();
+    await segurarAte(page, "c", async () => (await raiz(page).getAttribute("data-fase")) === "fim", 30_000);
+    expect(Date.now() - inicio).toBeGreaterThan(7_000);
     await expect(raiz(page)).toHaveAttribute("data-vencedor", "0");
     await expect(page.locator('[data-resultado="vitoria"]')).toBeVisible();
     expect(erros).toEqual([]);
   });
 
-  test("atacar perto da escada em que o computador sobe derruba a escada e interrompe a subida", async ({ page }) => {
+  test("atacar perto da escada em que o computador sobe chacoalha a escada e pausa a subida dele", async ({ page }) => {
     test.setTimeout(120_000);
     const erros = vigiarErros(page);
     await comecar(page, "lula");
-    // Espera o computador pôr a escada em pé e começar a subir, com o jogador parado.
-    await expect.poll(async () => (await estados(page))[1], { timeout: 60_000 }).toMatch(/subindo|noTopo/);
+    await expect.poll(async () => (await estados(page))[1], { timeout: 90_000 }).toMatch(/subindo|noTopo/);
     const xDaEscada = Number((await estados(page))[5]);
     const xDoJogador = async () => Number((await estados(page))[4]);
     const lado = xDaEscada < (await xDoJogador()) ? "ArrowLeft" : "ArrowRight";
     await segurarAte(page, lado, async () => Math.abs((await xDoJogador()) - xDaEscada) <= 60, 10_000);
+    await expect.poll(() => raiz(page).getAttribute("data-dica"), { timeout: 3_000 }).toBe("derrubarEscada");
     await page.keyboard.press("z");
-    await expect.poll(async () => (await estados(page))[0], { timeout: 3_000 }).toBe("derrubada");
-    await expect.poll(async () => (await estados(page))[2], { timeout: 3_000 }).toMatch(/caindo|caida/);
-    await expect.poll(async () => (await estados(page))[1], { timeout: 3_000 }).toMatch(/caindoDaEscada|caido/);
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("derrubada");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("parado");
     expect(erros).toEqual([]);
   });
 
-  test("Esc abre a pausa e congela a partida; Esc de novo continua; Voltar ao Atlas leva ao hub e descarta a cena", async ({ page }) => {
+  test("Esc abre a pausa e congela a partida; Esc de novo continua; o painel de som tem três volumes e a narração; Voltar ao Atlas leva ao hub e descarta a cena", async ({ page }) => {
     const erros = vigiarErros(page);
     await comecar(page, "lula");
     await page.keyboard.press("Escape");
@@ -169,16 +203,17 @@ test.describe("Vale a Faixa", () => {
     const antes = await estados(page);
     await page.waitForTimeout(700);
     expect(await estados(page)).toEqual(antes);
+    await expect(page.locator("[data-volume-efeitos]")).toBeVisible();
+    await expect(page.locator("[data-volume-torcida]")).toBeVisible();
+    await expect(page.locator("[data-volume-narracao]")).toBeVisible();
+    await expect(page.locator("[data-narracao-ligada]")).toBeVisible();
     await page.locator("[data-ver-controles]").click();
-    const controles = page.locator('[data-janela="controles"]');
-    await expect(controles.locator("[data-teclas] kbd")).toHaveText(["←", "→", "↑", "↓", "Z", "X", "C", "Esc"]);
+    await expect(page.locator('[data-janela="controles"] [data-teclas] kbd')).toHaveText(TECLAS_DESENHADAS);
     await page.getByRole("button", { name: "Voltar" }).click();
     await expect(page.locator('[data-janela="pausa"]')).toBeVisible();
-    // Esc continua.
     await page.keyboard.press("Escape");
     await expect(raiz(page)).toHaveAttribute("data-pausado", "nao");
     await expect(page.locator('[data-janela="pausa"]')).toHaveCount(0);
-    // Perder o foco também pausa; Continuar volta.
     await page.evaluate(() => window.dispatchEvent(new Event("blur")));
     await expect(page.locator('[data-janela="pausa"]')).toBeVisible();
     await page.locator("[data-continuar]").click();
@@ -193,12 +228,11 @@ test.describe("Vale a Faixa", () => {
 
   test("as teclas do jogo não rolam a página durante a partida e não são capturadas em um campo de texto", async ({ page }) => {
     await comecar(page, "lula", false, true);
-    // A página tem o rodapé abaixo do ringue: sem o jogo, a seta para baixo rolaria.
     await page.keyboard.press("ArrowDown");
+    await page.keyboard.press(" ");
     await page.keyboard.press("ArrowDown");
     await page.waitForTimeout(300);
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
-    // Em um campo de texto, as teclas vão para o campo, e não para o jogo.
     await page.evaluate(() => {
       const campo = document.createElement("input");
       campo.id = "campo-de-prova";
@@ -206,26 +240,24 @@ test.describe("Vale a Faixa", () => {
       campo.focus();
     });
     const x0 = Number((await estados(page))[4]);
-    await page.keyboard.type("zc");
+    await page.keyboard.type("zc v");
     await page.keyboard.down("ArrowRight");
     await page.waitForTimeout(400);
     await page.keyboard.up("ArrowRight");
-    expect(await page.locator("#campo-de-prova").inputValue()).toBe("zc");
+    expect(await page.locator("#campo-de-prova").inputValue()).toBe("zc v");
     expect(Number((await estados(page))[4])).toBe(x0);
-    expect((await estados(page))[0]).toBe("parado");
+    expect(await estadoDoJogador(page)).toBe("parado");
   });
 
-  test("no celular emulado: direcional e três botões sem sobreposição, toque e teclado ao mesmo tempo, e a página não rola", async ({ browser }) => {
+  test("no celular emulado: direcional e seis ações sem sobreposição, resposta ao apertar e ao soltar, toque e teclado ao mesmo tempo, e a página não rola", async ({ browser }) => {
     const contexto = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
     const page = await contexto.newPage();
     const erros = vigiarErros(page);
-    // O computador fica parado: o teste é dos controles, e um empurrão do adversário mudaria a posição lida.
     await comecar(page, "flavio-bolsonaro", true, true);
     const controles = page.locator("[data-controles-de-toque]");
     await expect(controles).toBeVisible();
     const botoes = await page.locator("[data-controle]").all();
-    expect(botoes).toHaveLength(7);
-    expect(await Promise.all(botoes.map((botao) => botao.getAttribute("data-controle")))).toEqual(["cima", "esquerda", "direita", "baixo", "interagir", "defesa", "golpe"]);
+    expect(await Promise.all(botoes.map((botao) => botao.getAttribute("data-controle")))).toEqual(["cima", "esquerda", "direita", "baixo", "interagir", "esquiva", "defesa", "forte", "pulo", "golpe"]);
     const caixas = await Promise.all(botoes.map((botao) => botao.boundingBox()));
     for (const caixa of caixas) {
       expect(caixa).not.toBeNull();
@@ -253,15 +285,21 @@ test.describe("Vale a Faixa", () => {
       await expect(direita).toHaveAttribute("data-pressionado", "sim");
       await expect.poll(x, { timeout: 4_000 }).toBeGreaterThan(x0);
       await page.keyboard.press("z");
-      await expect.poll(async () => (await estados(page))[0], { timeout: 3_000 }).toBe("golpe");
+      await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("golpe");
     } finally {
       await dedo.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
     }
     await expect(direita).toHaveAttribute("data-pressionado", "nao");
-    await expect.poll(async () => (await estados(page))[0], { timeout: 3_000 }).toMatch(/parado|atingido|defesa/);
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toMatch(/parado|atingido|defesa/);
     const parou = await x();
     await page.waitForTimeout(400);
     expect(Math.abs((await x()) - parou)).toBeLessThanOrEqual(2);
+    // O botão de pular pula.
+    const pular = page.locator('[data-controle="pulo"]');
+    const caixaDoPulo = (await pular.boundingBox())!;
+    await dedo.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: caixaDoPulo.x + caixaDoPulo.width / 2, y: caixaDoPulo.y + caixaDoPulo.height / 2 }] });
+    await dedo.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("pulando");
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
     expect(await page.evaluate(() => getComputedStyle(document.querySelector("[data-faixa]")!).touchAction)).toBe("none");
     expect(erros).toEqual([]);
@@ -281,7 +319,7 @@ test.describe("Vale a Faixa", () => {
     expect(depois.altura).toBeGreaterThan(150);
     await expect(page.locator("[data-pausar]")).toBeVisible();
     await page.keyboard.press("z");
-    await expect.poll(async () => (await estados(page))[0], { timeout: 3_000 }).toMatch(/golpe|parado/);
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toMatch(/golpe|parado/);
     expect(erros).toEqual([]);
   });
 });

@@ -1,23 +1,24 @@
 // O motor do Vale a Faixa: junta as regras (src/lib/faixa), a entrada
-// (entrada.ts), o computador (ia.ts), o desenho (desenho/) e o som
-// (audio.ts) em um laço de passo fixo (o mesmo da trilha do jogo). Carregado
-// só quando a partida começa, por `import()`. Trata pausa, perda de foco,
-// redimensionamento e descarte ao sair da rota.
+// (entrada.ts), o computador (ia.ts), o desenho (desenho/), o som (audio.ts)
+// e a narração por voz (narracao.ts) em um laço de passo fixo (o mesmo da
+// trilha do jogo). Carregado só quando a partida começa, por `import()`.
+// Trata pausa, perda de foco, redimensionamento e descarte ao sair da rota.
 
 import { createLoop } from "@/features/game/engine/loop";
-import { PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
+import { NARRACAO, PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
 import { criarMemoria, decidir, type MemoriaDaIA } from "@/lib/faixa/ia";
-import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, naEscada } from "@/lib/faixa/regras";
+import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, naEscada, noAr } from "@/lib/faixa/regras";
 import { ENTRADA_VAZIA, type Dica, type Entrada, type Evento, type FaseDaPartida, type Indice, type Lutador, type LutadorSlug, type Partida } from "@/lib/faixa/tipos";
 
-import type { Audio } from "./audio";
+import type { Audio, Som } from "./audio";
 import { criarArena, lerFontes } from "./desenho/arena";
 import { alvoDaCamera, projecao, seguir, type Camera, type Tela } from "./desenho/camera";
 import { anguloDoTombo, desenharEscadaCaida, desenharEscadaCarregada, desenharEscadaEmPe, desenharFaixa, oscilacao } from "./desenho/escada";
 import { criarEfeitos } from "./desenho/efeitos";
-import { desenharHud, type Fala } from "./desenho/hud";
+import { ROTULO_DO_BLOQUEIO, desenharHud, type Fala } from "./desenho/hud";
 import { FIGURAS, desenharLutador, desenharSombra, poseDe } from "./desenho/lutador";
 import { criarEntradas } from "./entrada";
+import type { Narracao } from "./narracao";
 
 export interface Resumo {
   fase: FaseDaPartida;
@@ -26,6 +27,8 @@ export interface Resumo {
   /** O jogador está na escada: os botões de subir e descer entram. */
   naEscada: boolean;
   carregando: boolean;
+  /** O jogador está no ar: pular apaga e atacar vira voadora. */
+  noAr: boolean;
   /** A pessoa usa teclado, e não toque. */
   teclado: boolean;
   tempo: number;
@@ -40,6 +43,7 @@ export interface OpcoesDoMotor {
   /** Em tela de toque, a dica mostra o botão em vez da tecla. */
   toque: boolean;
   audio: Audio | null;
+  narracao: Narracao | null;
   /** O computador não age: para os testes de navegador dirigirem a partida inteira. */
   computadorParado?: boolean;
   aoMudar(resumo: Resumo): void;
@@ -79,8 +83,10 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   let tempo = 0;
   let paradaDeImpacto = 0;
   let fala: Fala | null = null;
+  let aviso: Fala | null = null;
   let ultimaFala = -10;
   let brilhoAcumulado = 0;
+  let passosDaEscada = 0;
   let pausado = false;
   let primeiroQuadro = true;
   let ultimoResumo = "";
@@ -94,6 +100,8 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     aoPausar: () => opcoes.aoAlternarPausa(),
   });
 
+  const usaTeclado = () => !opcoes.toque || (entradas.usouTeclado() && !entradas.usouToque());
+
   const publicarResumo = () => {
     const l = partida.lutadores[0];
     const resumo: Resumo = {
@@ -102,17 +110,17 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       vencedor: partida.vencedor,
       naEscada: naEscada(l),
       carregando: l.estado === "carregando",
-      teclado: !opcoes.toque || (entradas.usouTeclado() && !entradas.usouToque()),
+      noAr: noAr(l),
+      teclado: usaTeclado(),
       tempo: partida.tempo,
     };
     // Os estados de agora vão ao canvas, para os testes de navegador lerem sem mexer no React.
-    const l0 = partida.lutadores[0];
-    const estados = `${l0.estado}|${partida.lutadores[1].estado}|${partida.escada.estado}|${l0.puxada.toFixed(2)}|${Math.round(l0.x / 10) * 10}|${Math.round(partida.escada.x / 10) * 10}`;
+    const estados = `${l.estado}|${partida.lutadores[1].estado}|${partida.escada.estado}|${l.puxada.toFixed(2)}|${Math.round(l.x / 10) * 10}|${Math.round(partida.escada.x / 10) * 10}|${Math.round(l.y / 10) * 10}`;
     if (estados !== ultimosEstados) {
       ultimosEstados = estados;
       canvas.dataset.estados = estados;
     }
-    const chave = `${resumo.fase}|${resumo.dica}|${resumo.vencedor}|${resumo.naEscada}|${resumo.carregando}|${resumo.teclado}`;
+    const chave = `${resumo.fase}|${resumo.dica}|${resumo.vencedor}|${resumo.naEscada}|${resumo.carregando}|${resumo.noAr}|${resumo.teclado}`;
     if (chave === ultimoResumo) return;
     ultimoResumo = chave;
     opcoes.aoMudar(resumo);
@@ -121,7 +129,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   const comentar = (eventos: readonly Evento[]) => {
     for (const tipo of PRIORIDADE_DAS_FALAS) {
       if (!eventos.some((evento) => evento.tipo === tipo)) continue;
-      const urgente = tipo === "vitoria" || tipo === "interrompido" || tipo === "topo" || tipo === "inicio";
+      const urgente = tipo === "vitoria" || tipo === "interrompido" || tipo === "topo" || tipo === "inicio" || tipo === "faltaPouco";
       if (!urgente && tempo - ultimaFala < 3.2) return;
       const texto = falaPara(tipo, Math.random());
       if (texto === null) return;
@@ -131,76 +139,119 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     }
   };
 
+  const narrar = (tipo: Evento["tipo"]) => {
+    const entrada = NARRACAO[tipo];
+    if (entrada === undefined || opcoes.narracao === null) return;
+    const frase = entrada.frases[Math.floor(Math.random() * entrada.frases.length)];
+    if (frase !== undefined) opcoes.narracao.falar(frase, entrada.prioridade);
+  };
+
+  const tocar = (som: Som) => opcoes.audio?.tocar(som);
+
   const reagir = (eventos: readonly Evento[]) => {
-    const audio = opcoes.audio;
     for (const evento of eventos) {
       switch (evento.tipo) {
         case "inicio":
-          audio?.tocar("sino");
+          tocar("sino");
           break;
-        case "golpe":
+        case "golpe": {
+          const direcao = partida.lutadores[evento.quem].direcao;
           if (evento.bloqueado) {
             efeitos.anel(evento.x, evento.y, "#faf8f2");
-            audio?.tocar("bloqueio");
-          } else {
-            const alvo = partida.lutadores[evento.alvo];
-            const forte = evento.forte || alvo.estado === "caido";
-            efeitos.impacto(evento.x, evento.y, forte, partida.lutadores[evento.quem].direcao);
-            efeitos.tremer(forte ? 7 : 3.5);
-            paradaDeImpacto = forte ? PARADA_DE_IMPACTO * 1.6 : PARADA_DE_IMPACTO;
-            audio?.tocar(forte ? "golpeForte" : "golpe");
+            tocar("bloqueio");
+            break;
+          }
+          const pesado = evento.golpe === "chute" || evento.golpe === "forte" || evento.golpe === "voadora";
+          efeitos.impacto(evento.x, evento.y, pesado, direcao);
+          efeitos.tremer(pesado ? 7 : 3.5);
+          paradaDeImpacto = pesado ? PARADA_DE_IMPACTO * 1.7 : PARADA_DE_IMPACTO;
+          tocar(evento.golpe === "voadora" ? "voadora" : evento.golpe === "forte" ? "forte" : evento.golpe === "chute" ? "chute" : "soco");
+          break;
+        }
+        case "golpeNoVazio":
+          tocar("erro");
+          break;
+        case "pulo":
+          tocar("pulo");
+          break;
+        case "voadora":
+          tocar("esquiva");
+          break;
+        case "aterrissagem":
+          tocar(evento.pesada ? "aterrissagemPesada" : "aterrissagem");
+          if (evento.pesada) {
+            efeitos.poeira(evento.x, 0, 8);
+            efeitos.tremer(3);
           }
           break;
+        case "esquiva":
+          tocar("esquiva");
+          efeitos.poeira(partida.lutadores[evento.quem].x, 0, 3);
+          break;
+        case "acaoBloqueada":
+          if (evento.quem === 0 && (aviso === null || aviso.t > 0.5)) aviso = { texto: ROTULO_DO_BLOQUEIO[evento.motivo], t: 0 };
+          break;
         case "derrubada":
-          efeitos.impacto(evento.x, 60, true, partida.lutadores[evento.quem].direcao);
-          efeitos.tremer(6);
+          efeitos.impacto(evento.x, 60, evento.tombou, partida.lutadores[evento.quem].direcao);
+          efeitos.tremer(evento.tombou ? 6 : 3);
+          efeitos.anel(evento.x, 30, "#cfd3d8");
           paradaDeImpacto = PARADA_DE_IMPACTO;
-          audio?.tocar("empurrao");
+          tocar("escada");
           break;
         case "queda":
-          efeitos.poeira(evento.x, 0, 12);
-          efeitos.tremer(8);
-          audio?.tocar("queda");
+          efeitos.poeira(evento.x, 0, evento.longa ? 16 : 12);
+          efeitos.tremer(evento.longa ? 9 : 7);
+          tocar("queda");
           break;
         case "cordas":
           efeitos.tremer(4);
-          audio?.tocar("cordas");
+          tocar("cordas");
           break;
         case "escadaPega":
+          tocar("escada");
+          break;
         case "escadaSolta":
-          audio?.tocar("escada");
-          if (evento.tipo === "escadaSolta") efeitos.poeira(evento.x, 0, 5);
+          tocar("escada");
+          efeitos.poeira(evento.x, 0, 5);
           break;
         case "escadaPosta":
-          audio?.tocar("escada");
+          tocar("escadaPosta");
           efeitos.anel(evento.x, 10);
           efeitos.poeira(evento.x, 0, 4);
           break;
         case "escadaCaiu":
           efeitos.poeira(evento.x, 0, 14);
           efeitos.tremer(9);
-          audio?.tocar("escadaCai");
+          tocar("escadaCai");
           break;
         case "subida":
-          audio?.tocar("subida");
+          tocar("subida");
+          break;
+        case "desceu":
+          tocar("aterrissagem");
           break;
         case "topo":
-          audio?.tocar("aviso");
+          tocar("aviso");
           break;
         case "puxando":
-          audio?.tocar("puxar");
+          tocar("puxar");
+          break;
+        case "faltaPouco":
+          tocar("aviso");
+          for (let i = 0; i < 10; i += 1) efeitos.brilho(partida.escada.x, REGRAS.faixa.altura - 30);
           break;
         case "interrompido":
           efeitos.tremer(5);
           break;
         case "vitoria": {
-          audio?.tocar(evento.quem === 0 ? "vitoria" : "derrota");
+          tocar(evento.quem === 0 ? "vitoria" : "derrota");
           for (let i = 0; i < 24; i += 1) efeitos.brilho(partida.escada.x, REGRAS.faixa.altura - 40);
           break;
         }
         default:
           break;
       }
+      narrar(evento.tipo);
     }
     comentar(eventos);
   };
@@ -220,7 +271,15 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       andando[i] = l.passo !== passosAnteriores[i];
       passosAnteriores[i] = l.passo;
     }
-    // Brilhos na faixa enquanto alguém puxa.
+    // A escada carregada chacoalha a cada passo; brilhos na faixa enquanto alguém puxa.
+    const esc = partida.escada;
+    if (esc.estado === "carregada" && esc.portador !== null && andando[esc.portador]) {
+      passosDaEscada += dt;
+      if (passosDaEscada > 0.42) {
+        passosDaEscada = 0;
+        tocar("escadaPassos");
+      }
+    }
     const puxador = partida.lutadores.find((l) => l.estado === "noTopo" && l.puxando);
     if (puxador !== undefined) {
       brilhoAcumulado += dt * 14;
@@ -234,7 +293,12 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       fala.t += dt;
       if (fala.t > 2.6) fala = null;
     }
-    opcoes.audio?.torcida(partida.torcida);
+    if (aviso !== null) {
+      aviso.t += dt;
+      if (aviso.t > 1) aviso = null;
+    }
+    const tensao = puxador === undefined ? 0 : 0.4 + puxador.puxada * 0.6;
+    opcoes.audio?.torcida(partida.torcida, partida.fase === "luta" ? tensao : 0);
     seguir(camera, alvoDaCamera(partida, tela), dt, primeiroQuadro);
     primeiroQuadro = false;
     publicarResumo();
@@ -290,7 +354,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     // Sombras.
     for (const l of partida.lutadores) desenharSombra(g, pr.X(l.x), pr.Y(0), pr.s, l.y, l.estado === "caido");
     const esc = partida.escada;
-    if (esc.estado === "caida") desenharEscadaCaida(g, pr, esc.x, esc.direcaoDaQueda);
+    if (esc.estado === "caida") desenharEscadaCaida(g, pr, esc.x, esc.direcaoDaQueda, esc.desdeQueCaiu, movimento);
 
     // A escada em pé fica atrás de quem sobe nela.
     if (esc.estado === "emPe") desenharEscadaEmPe(g, pr, esc.x, oscilacao(esc.balanco, tempo, movimento));
@@ -307,7 +371,8 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       desenharLutadorNaCena(l, i, pr);
       if (esc.estado === "carregada" && esc.portador === i) {
         const bob = andando[i] && movimento ? Math.abs(Math.sin(l.passo * Math.PI * 2)) * 3 : 0;
-        desenharEscadaCarregada(g, pr, l.x, l.direcao, bob);
+        const inclinacao = ((l.vel * l.direcao) / REGRAS.velocidadeCarregando) * -0.06;
+        desenharEscadaCarregada(g, pr, l.x, l.direcao, bob, inclinacao);
       }
     }
 
@@ -316,9 +381,10 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     desenharHud(g, tela, partida, {
       nomes: [FIGURAS[partida.lutadores[0].slug].nome, FIGURAS[partida.lutadores[1].slug].nome],
       dica: dicaDe(partida, 0),
-      teclado: !opcoes.toque || (entradas.usouTeclado() && !entradas.usouToque()),
+      teclado: usaTeclado(),
       tempo,
       fala,
+      aviso,
       movimento,
       compacto: tela.largura < 640,
       cabecaDoJogador: cabecas[0],
@@ -328,7 +394,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   const peso = (l: Lutador): number => {
     if (l.estado === "caido" || l.estado === "levantando") return 0;
     if (l.estado === "atingido") return 1;
-    if (naEscada(l)) return 3;
+    if (naEscada(l) || noAr(l)) return 3;
     return 2;
   };
 
@@ -340,7 +406,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     const altura = Math.max(1, Math.round(pai?.clientHeight ?? canvas.clientHeight));
     dpr = Math.min(DPR_MAXIMO, window.devicePixelRatio || 1);
     // Com controles de toque, a cena se enquadra acima deles.
-    const margemInferior = opcoes.toque ? Math.min(205, Math.round(altura * 0.24)) : 0;
+    const margemInferior = opcoes.toque ? Math.min(215, Math.round(altura * 0.25)) : 0;
     tela = { largura, altura, margemInferior };
     canvas.width = Math.round(largura * dpr);
     canvas.height = Math.round(altura * dpr);
@@ -374,19 +440,25 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       pausado = valor;
       loop.setPaused(valor);
       entradas.limpar();
-      if (valor) opcoes.audio?.suspender();
-      else opcoes.audio?.retomar();
+      if (valor) {
+        opcoes.audio?.suspender();
+        opcoes.narracao?.cancelar();
+      } else {
+        opcoes.audio?.retomar();
+      }
     },
     reiniciar(semente) {
       partida = criarPartida(opcoes.jogador, opcoes.computador, semente);
       memoria = criarMemoria(semente * 31 + 7);
       efeitos.limpar();
       fala = null;
+      aviso = null;
       ultimaFala = -10;
       paradaDeImpacto = 0;
       primeiroQuadro = true;
       ultimoResumo = "";
       entradas.limpar();
+      opcoes.narracao?.cancelar();
       seguir(camera, alvoDaCamera(partida, tela), 0, true);
       publicarResumo();
     },
@@ -400,6 +472,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       document.removeEventListener("visibilitychange", aoEsconder);
       window.removeEventListener("blur", aoPerderFoco);
       opcoes.audio?.suspender();
+      opcoes.narracao?.cancelar();
     },
   };
 }

@@ -16,8 +16,9 @@ export type Indice = 0 | 1;
 
 /**
  * Os comandos, iguais para a pessoa e para o computador. Tudo é "está
- * pressionado". Sete comandos: andar, subir e descer, atacar (contextual:
- * golpe ou derrubada da escada), defender e interagir (contextual: pegar,
+ * pressionado". Andar, subir e descer, pular, atacar (contextual: a sequência
+ * de golpes no chão, a voadora no ar, a derrubada perto da escada ocupada),
+ * o golpe forte, defender, a esquiva e interagir (contextual: pegar,
  * posicionar ou largar a escada; no topo, puxar a faixa).
  */
 export interface Entrada {
@@ -25,8 +26,11 @@ export interface Entrada {
   direita: boolean;
   cima: boolean;
   baixo: boolean;
+  pulo: boolean;
   golpe: boolean;
+  forte: boolean;
   defesa: boolean;
+  esquiva: boolean;
   interagir: boolean;
 }
 
@@ -35,8 +39,11 @@ export const ENTRADA_VAZIA: Entrada = {
   direita: false,
   cima: false,
   baixo: false,
+  pulo: false,
   golpe: false,
+  forte: false,
   defesa: false,
+  esquiva: false,
   interagir: false,
 };
 
@@ -47,9 +54,14 @@ export const ENTRADA_VAZIA: Entrada = {
 export type EstadoDoLutador =
   | "parado"
   | "andando"
+  | "pulando"
+  | "voadora"
+  | "aterrissando"
   | "golpe"
+  | "forte"
   | "derrubada"
   | "defesa"
+  | "esquiva"
   | "atingido"
   | "caido"
   | "levantando"
@@ -63,16 +75,24 @@ export type EstadoDoLutador =
 /** As três partes de um ataque: antecipação (o aviso), ativo (acerta) e recuperação (vulnerável). */
 export type FaseDoAtaque = "antecipacao" | "ativo" | "recuperacao";
 
+/** Os ataques, para o som, os efeitos e o desenho. */
+export type TipoDeGolpe = "soco" | "direto" | "chute" | "forte" | "voadora";
+
+/** Um comando guardado por um instante, para sair assim que o lutador ficar livre. */
+export type ComandoGuardado = "golpe" | "pulo" | "forte" | "esquiva";
+
 export interface Lutador {
   slug: LutadorSlug;
   x: number;
-  /** Altura acima do tapete: zero no chão; na escada e na queda dela, acima. */
+  /** Altura acima do tapete: zero no chão; no pulo, na escada e na queda dela, acima. */
   y: number;
   /** Para onde olha: 1 é a direita da tela. */
   direcao: 1 | -1;
+  /** Velocidade de caminhada, com aceleração e frenagem curtas. */
+  vel: number;
   /** Velocidade horizontal de recuo, que decai sozinha. */
   vx: number;
-  /** Velocidade vertical, só na queda da escada. */
+  /** Velocidade vertical: no pulo e na queda da escada. */
   vy: number;
   estado: EstadoDoLutador;
   /** Segundos no estado de agora. */
@@ -86,13 +106,26 @@ export interface Lutador {
   /** Segundos de proteção: golpe nenhum pega. */
   invulneravel: number;
   recargaGolpe: number;
+  recargaForte: number;
   recargaDerrubada: number;
-  /** O golpe da sequência em andamento: 1, 2 ou 3 (o terceiro é o forte). Zero fora de ataque. */
+  recargaEsquiva: number;
+  /** O golpe da sequência em andamento: 1, 2 ou 3 (o terceiro é o chute). Zero fora de ataque. */
   golpeDaSequencia: 0 | 1 | 2 | 3;
   /** Segundos desde o fim do último golpe: passada a janela, a sequência recomeça do 1. */
   desdeOUltimoGolpe: number;
   /** O comando de ataque foi apertado de novo durante o golpe: o próximo da sequência sai em seguida. */
   proximoGolpe: boolean;
+  /** A voadora já saiu neste salto: uma por salto. */
+  voadoraUsada: boolean;
+  /** Quanto tempo fica caído desta vez: mais depois de um golpe forte. */
+  tempoCaido: number;
+  /** Segundos da aterrissagem de agora: curta no pulo, longa depois da voadora. */
+  tempoDeAterrissagem: number;
+  /** O comando guardado por um instante e quando foi guardado. */
+  guardado: ComandoGuardado | null;
+  guardadoT: number;
+  /** Segundos da virada de direção, para o desenho. */
+  virando: number;
   /** O ataque de agora já acertou: um ataque pega uma vez. */
   acertou: boolean;
   /** Fase do ciclo de caminhada, para o desenho. */
@@ -101,6 +134,8 @@ export interface Lutador {
   puxada: number;
   /** Está com o comando de puxar pressionado, no topo. */
   puxando: boolean;
+  /** O aviso de "falta pouco" já saiu nesta subida. */
+  avisouFaltaPouco: boolean;
   /** Golpes recebidos nesta partida, para o placar do fim. */
   golpesRecebidos: number;
   quedas: number;
@@ -121,6 +156,8 @@ export interface Escada {
   queda: number;
   /** Para que lado tomba, e para que lado fica deitada. */
   direcaoDaQueda: 1 | -1;
+  /** Segundos desde que bateu no chão, para o quique do desenho. */
+  desdeQueCaiu: number;
 }
 
 export type FaseDaPartida = "contagem" | "luta" | "fim";
@@ -141,12 +178,20 @@ export interface Partida {
   eventos: Evento[];
 }
 
+/** Por que um comando não saiu: a interface explica. */
+export type MotivoDoBloqueio = "carregando" | "naEscada" | "recarga" | "noAr" | "noChao";
+
 export type Evento =
   | { tipo: "inicio" }
-  | { tipo: "golpe"; quem: Indice; alvo: Indice; bloqueado: boolean; forte: boolean; x: number; y: number }
-  | { tipo: "golpeNoVazio"; quem: Indice }
-  | { tipo: "derrubada"; quem: Indice; x: number }
-  | { tipo: "queda"; quem: Indice; x: number }
+  | { tipo: "golpe"; quem: Indice; alvo: Indice; golpe: TipoDeGolpe; bloqueado: boolean; forte: boolean; x: number; y: number }
+  | { tipo: "golpeNoVazio"; quem: Indice; golpe: TipoDeGolpe }
+  | { tipo: "pulo"; quem: Indice }
+  | { tipo: "voadora"; quem: Indice }
+  | { tipo: "aterrissagem"; quem: Indice; x: number; pesada: boolean }
+  | { tipo: "esquiva"; quem: Indice }
+  | { tipo: "acaoBloqueada"; quem: Indice; motivo: MotivoDoBloqueio }
+  | { tipo: "derrubada"; quem: Indice; x: number; tombou: boolean }
+  | { tipo: "queda"; quem: Indice; x: number; longa: boolean }
   | { tipo: "levantou"; quem: Indice }
   | { tipo: "cordas"; quem: Indice; x: number }
   | { tipo: "escadaPega"; quem: Indice }
@@ -154,8 +199,10 @@ export type Evento =
   | { tipo: "escadaSolta"; quem: Indice; x: number }
   | { tipo: "escadaCaiu"; x: number }
   | { tipo: "subida"; quem: Indice }
+  | { tipo: "desceu"; quem: Indice }
   | { tipo: "topo"; quem: Indice }
   | { tipo: "puxando"; quem: Indice; puxada: number }
+  | { tipo: "faltaPouco"; quem: Indice }
   | { tipo: "interrompido"; quem: Indice; puxada: number }
   | { tipo: "caiuDaEscada"; quem: Indice; x: number }
   | { tipo: "vitoria"; quem: Indice };
@@ -163,6 +210,7 @@ export type Evento =
 /**
  * A dica contextual, perto do personagem: o que dá para fazer agora. Pegar,
  * posicionar e largar são o comando de interação; subir é a seta para cima;
- * puxar é o comando de interação segurado no topo.
+ * puxar é o comando de interação segurado no topo; derrubar é o ataque, perto
+ * da escada em que o adversário está.
  */
-export type Dica = "pegarEscada" | "posicionarEscada" | "soltarEscada" | "subir" | "puxarFaixa" | null;
+export type Dica = "pegarEscada" | "posicionarEscada" | "soltarEscada" | "subir" | "puxarFaixa" | "derrubarEscada" | null;

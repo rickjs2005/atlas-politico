@@ -2,10 +2,11 @@
 
 // Vale a Faixa na tela (docs/VALE-A-FAIXA.md): a abertura, a escolha do
 // personagem, a partida contra o computador, a pausa, o resultado e a
-// revanche. O motor (motor.ts), o desenho e o som entram por `import()` só
-// quando a pessoa chega à escolha: a página informativa do atlas não paga
-// por eles. O estado da partida vive no motor; aqui ficam as telas e o que
-// elas precisam saber (fase, dica, vencedor), publicado só quando muda.
+// revanche. O motor (motor.ts), o desenho, o som e a narração entram por
+// `import()` só quando a pessoa chega à escolha: a página informativa do
+// atlas não paga por eles. O estado da partida vive no motor; aqui ficam as
+// telas e o que elas precisam saber (fase, dica, vencedor), publicado só
+// quando muda.
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
@@ -16,6 +17,7 @@ import type { Dica, Entrada, LutadorSlug } from "@/lib/faixa/tipos";
 import { Controles } from "./Controles";
 import type { Audio } from "./audio";
 import type { Motor, Resumo } from "./motor";
+import type { Narracao } from "./narracao";
 import { assinarPreferencias, assinarToque, gravarPreferencias, lerBruto, lerToque, preferenciasDe, type Preferencias } from "./preferencias";
 
 type Tela = "inicio" | "escolha" | "partida";
@@ -27,11 +29,14 @@ const novaSemente = () => Math.floor(Math.random() * 2 ** 31);
 /** O esquema de teclas, um só: desenhado como teclas, com uma descrição curta cada. */
 const TECLAS: readonly { teclas: readonly string[]; acao: string }[] = [
   { teclas: ["←", "→"], acao: "andar" },
-  { teclas: ["↑", "↓"], acao: "subir e descer a escada" },
-  { teclas: ["Z"], acao: "atacar" },
+  { teclas: ["Espaço"], acao: "pular" },
+  { teclas: ["Z"], acao: "atacar (no ar, voadora)" },
+  { teclas: ["V"], acao: "golpe forte" },
   { teclas: ["X"], acao: "defender (segurar)" },
+  { teclas: ["Shift"], acao: "esquiva" },
   { teclas: ["C"], acao: "interagir" },
-  { teclas: ["Esc"], acao: "pausar e continuar" },
+  { teclas: ["↑", "↓"], acao: "subir e descer a escada" },
+  { teclas: ["Esc"], acao: "pausar" },
 ];
 
 /** Uma tecla desenhada. */
@@ -61,13 +66,15 @@ function Teclas({ className = "" }: { className?: string }) {
   );
 }
 
-const TOQUE_RESUMO = "No celular: o direcional à esquerda; à direita, Atacar, Defender e Interagir, que muda de ícone conforme o que dá para fazer.";
+const TOQUE_RESUMO = "No celular: o direcional à esquerda; à direita, Pular, Atacar, Forte, Defender, Esquiva e Interagir, que muda de ícone conforme o que dá para fazer.";
 
 export function ValeAFaixa() {
   const [tela, setTela] = useState<Tela>("inicio");
   const [jogador, setJogador] = useState<LutadorSlug>("lula");
   const [semente, setSemente] = useState(0);
   const audio = useRef<Audio | null>(null);
+  const narracao = useRef<Narracao | null>(null);
+  const [vozDisponivel, setVozDisponivel] = useState<boolean | null>(null);
 
   // O que está no navegador, como fonte externa: no servidor, o padrão e sem toque.
   const bruto = useSyncExternalStore(assinarPreferencias, lerBruto, () => null);
@@ -79,30 +86,41 @@ export function ValeAFaixa() {
   }, []);
 
   useEffect(() => {
-    audio.current?.setVolume(preferencias.volume);
+    audio.current?.setVolumes(preferencias.volumeEfeitos, preferencias.volumeTorcida);
     audio.current?.setMudo(preferencias.mudo);
-  }, [preferencias.volume, preferencias.mudo]);
+    narracao.current?.setVolume(preferencias.volumeNarracao);
+    narracao.current?.setLigada(preferencias.narracao && !preferencias.mudo);
+  }, [preferencias.volumeEfeitos, preferencias.volumeTorcida, preferencias.volumeNarracao, preferencias.mudo, preferencias.narracao]);
 
-  // O som nasce em um gesto da pessoa; o módulo chega por `import()`.
+  // O som e a narração nascem em um gesto da pessoa; os módulos chegam por `import()`.
   const ligarSom = useCallback(() => {
     if (audio.current !== null) {
       audio.current.ativar();
       return;
     }
-    void import("./audio").then(({ criarAudio }) => {
+    void Promise.all([import("./audio"), import("./narracao")]).then(([{ criarAudio }, { criarNarracao }]) => {
       if (audio.current !== null) return;
-      const criado = criarAudio(preferencias.volume, preferencias.mudo);
-      if (criado === null) return;
-      audio.current = criado;
-      criado.ativar();
+      const criado = criarAudio(preferencias.volumeEfeitos, preferencias.volumeTorcida, preferencias.mudo);
+      if (criado !== null) {
+        audio.current = criado;
+        criado.ativar();
+      }
+      const voz = criarNarracao(preferencias.volumeNarracao, preferencias.narracao && !preferencias.mudo);
+      narracao.current = voz;
+      // As vozes chegam depois em alguns navegadores: confere de novo em seguida.
+      setVozDisponivel(voz.disponivel());
+      window.setTimeout(() => setVozDisponivel(voz.disponivel()), 1200);
     });
-  }, [preferencias.volume, preferencias.mudo]);
+  }, [preferencias.volumeEfeitos, preferencias.volumeTorcida, preferencias.volumeNarracao, preferencias.mudo, preferencias.narracao]);
 
   useEffect(() => {
-    const atual = audio;
+    const som = audio;
+    const voz = narracao;
     return () => {
-      atual.current?.dispose();
-      atual.current = null;
+      som.current?.dispose();
+      som.current = null;
+      voz.current?.dispose();
+      voz.current = null;
     };
   }, []);
 
@@ -131,7 +149,7 @@ export function ValeAFaixa() {
             <p className="font-serif text-2xl leading-snug text-stage-ink md:text-3xl">Dois candidatos. Uma escada. Uma faixa.</p>
             <p className="max-w-[34rem] text-stage-ink-soft">
               O debate acabou em luta livre. A faixa presidencial está pendurada sobre o centro do ringue, e só desce para quem encostar a escada embaixo dela,
-              subir e puxar. Derrubar o adversário não vence a partida: abre a chance de subir.
+              subir e puxar por alguns segundos. Derrubar o adversário não vence a partida: abre a chance de subir.
             </p>
             <div className="flex flex-wrap gap-3">
               <button type="button" onClick={irParaEscolha} className="btn-acao text-base" data-escolher-candidato>
@@ -141,7 +159,7 @@ export function ValeAFaixa() {
                 Voltar ao Jogar
               </IntentLink>
             </div>
-            {toque ? <p className="text-sm text-stage-ink-soft">{TOQUE_RESUMO} Partidas curtas, de um a três minutos.</p> : <Teclas />}
+            {toque ? <p className="text-sm text-stage-ink-soft">{TOQUE_RESUMO} Partidas de dois a quatro minutos.</p> : <Teclas />}
           </div>
           <aside className="space-y-3 border border-stage-line bg-stage-raised p-5 text-sm text-stage-ink-soft">
             <p className="eyebrow text-highlight">Como vencer</p>
@@ -149,7 +167,7 @@ export function ValeAFaixa() {
               <li>Derrube o adversário: golpes tiram equilíbrio, e a zero ele cai.</li>
               <li>Pegue a escada, que começa caída em uma lateral.</li>
               <li>Leve-a até a marca amarela embaixo da faixa e ponha em pé.</li>
-              <li>Suba e, no topo, segure o comando de interação até a faixa soltar.</li>
+              <li>Suba e, no topo, segure o comando de interação até a barra da faixa encher.</li>
             </ol>
             <p className="border-t border-stage-line pt-3">
               Lula e Flávio Bolsonaro aparecem em caricatura, com as mesmas capacidades: mesma velocidade, mesmo alcance, mesma resistência. É ficção sobre uma situação absurda,
@@ -176,6 +194,8 @@ export function ValeAFaixa() {
       semente={semente}
       toque={toque}
       audio={audio}
+      narracao={narracao}
+      vozDisponivel={vozDisponivel}
       preferencias={preferencias}
       onPreferencias={mudarPreferencias}
       onTrocar={() => setTela("escolha")}
@@ -268,15 +288,17 @@ interface RingueProps {
   semente: number;
   toque: boolean;
   audio: React.RefObject<Audio | null>;
+  narracao: React.RefObject<Narracao | null>;
+  vozDisponivel: boolean | null;
   preferencias: Preferencias;
   onPreferencias(mudanca: Partial<Preferencias>): void;
   onTrocar(): void;
   onRevanche(): void;
 }
 
-const RESUMO_INICIAL: Resumo = { fase: "contagem", dica: null, vencedor: null, naEscada: false, carregando: false, teclado: true, tempo: 0 };
+const RESUMO_INICIAL: Resumo = { fase: "contagem", dica: null, vencedor: null, naEscada: false, carregando: false, noAr: false, teclado: true, tempo: 0 };
 
-function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, onTrocar, onRevanche }: RingueProps) {
+function Ringue({ jogador, semente, toque, audio, narracao, vozDisponivel, preferencias, onPreferencias, onTrocar, onRevanche }: RingueProps) {
   const computador = outroDe(jogador);
   const raiz = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -307,6 +329,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
             reduzirMovimento: reduzir,
             toque,
             audio: audio.current,
+            narracao: narracao.current,
             // Só para os testes de navegador: com `?computador=parado`, o adversário não age.
             computadorParado: new URLSearchParams(window.location.search).get("computador") === "parado",
             aoMudar: setResumo,
@@ -329,7 +352,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
     };
     // A semente muda só pela revanche, que reinicia o motor sem recriá-lo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jogador, computador, toque, audio]);
+  }, [jogador, computador, toque, audio, narracao]);
 
   // A partida para enquanto há algo por cima dela; parar solta todos os comandos.
   const parada = tutorial || painel !== null || resumo.fase === "fim";
@@ -409,7 +432,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
       )}
 
       {/* A barra de cima: pausa e som. As placas, as barras e a legenda estão no canvas. */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-center gap-2 p-2 max-sm:top-[4.25rem] max-sm:p-0">
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-center gap-2 p-2 max-sm:top-[5.5rem] max-sm:p-0">
         <div className="pointer-events-auto flex gap-1 rounded-full border border-stage-line bg-stage/85 p-1">
           <button type="button" onClick={() => setPainel("pausa")} className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-stage-ink hover:bg-stage-raised" data-pausar>
             Pausa
@@ -426,7 +449,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
         </div>
       </div>
 
-      {toque && pronto && resumo.fase !== "fim" && <Controles onEntrada={entradaDeToque} dica={dicaParaOsBotoes} naEscada={resumo.naEscada} />}
+      {toque && pronto && resumo.fase !== "fim" && <Controles onEntrada={entradaDeToque} dica={dicaParaOsBotoes} naEscada={resumo.naEscada} noAr={resumo.noAr} />}
 
       <p className="sr-only" aria-live="polite">
         {resumo.fase === "fim" ? (venceu ? "Você tirou a faixa. Vitória." : `${NOMES[computador]} tirou a faixa. Derrota.`) : resumo.dica !== null ? `Agora dá para: ${resumo.dica}.` : ""}
@@ -434,19 +457,18 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
 
       {tutorial && pronto && (
         <Janela titulo="Como se ganha" id="tutorial">
-          <ol className="list-decimal space-y-2 pl-5 text-sm">
+          <ul className="space-y-1.5 text-sm">
             <li>
-              <strong>Derrube o adversário.</strong> Atacar em sequência emenda até três golpes; o terceiro afasta. Golpes tiram equilíbrio e, a zero, ele cai por alguns segundos.
-              Defender reduz o dano enquanto segurado.
+              <strong>Derrube.</strong> Golpes tiram equilíbrio; a zero, o adversário cai. Defender reduz o dano; a esquiva escapa.
             </li>
             <li>
-              <strong>Pegue a escada</strong> caída na lateral e leve-a até a marca amarela sob a faixa. Lá, posicione; fora da marca, o mesmo comando só a larga.
+              <strong>Escada.</strong> Pegue a caída, leve até a marca amarela, posicione, suba pela seta. Atacar a base de uma escada ocupada chacoalha e, três vezes, derruba.
             </li>
             <li>
-              <strong>Suba e puxe.</strong> Alinhado à base, suba com a seta para cima. No topo, segure o comando de interação até a barra encher. Perto da escada em que o adversário
-              sobe, atacar derruba a escada: quem cai perde parte do progresso, não tudo.
+              <strong>Faixa.</strong> No topo, segure o comando de interação por alguns segundos. Cair tira parte do progresso, não tudo: dá para virar.
             </li>
-          </ol>
+          </ul>
+          <p className="text-xs text-stage-ink-soft">As dicas aparecem sobre o personagem quando há o que fazer.</p>
           {toque ? <p className="text-xs text-stage-ink-soft">{TOQUE_RESUMO}</p> : <Teclas className="text-xs" />}
           <div className="flex flex-wrap gap-2 pt-1">
             <button type="button" onClick={fecharTutorial} className="btn-acao" data-comecar-luta autoFocus>
@@ -475,7 +497,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
               Voltar ao Atlas
             </IntentLink>
           </div>
-          <Som preferencias={preferencias} onPreferencias={onPreferencias} />
+          <Som preferencias={preferencias} onPreferencias={onPreferencias} vozDisponivel={vozDisponivel} />
         </Janela>
       )}
 
@@ -484,7 +506,8 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
           <Teclas />
           {toque && <p className="text-xs text-stage-ink-soft">{TOQUE_RESUMO}</p>}
           <p className="text-xs text-stage-ink-soft">
-            Atacar perto da escada em que o adversário sobe derruba a escada. Derrubar não vence: só a faixa vence, e um ataque interrompido no topo tira parte do progresso, não tudo.
+            Z em sequência emenda soco, direto e chute; V é lento e forte; Z no ar é a voadora, uma por salto. Atacar perto da escada em que o adversário sobe chacoalha a escada e,
+            três vezes, derruba. Derrubar não vence: só a faixa vence, e cair tira um quarto do progresso, não tudo.
           </p>
           <button type="button" onClick={() => setPainel("pausa")} className="btn-acao" autoFocus>
             Voltar
@@ -538,18 +561,31 @@ function Janela({ titulo, id, eyebrow, children }: { titulo: string; id: string;
   );
 }
 
-function Som({ preferencias, onPreferencias }: { preferencias: Preferencias; onPreferencias(mudanca: Partial<Preferencias>): void }) {
+function Deslizante({ rotulo, valor, onChange, dataAttr }: { rotulo: string; valor: number; onChange(valor: number): void; dataAttr: string }) {
   return (
-    <fieldset className="space-y-2 border-t border-stage-line pt-3 text-sm">
+    <label className="flex min-h-10 items-center gap-3">
+      <span className="w-20">{rotulo}</span>
+      <input type="range" min={0} max={1} step={0.05} value={valor} onChange={(evento) => onChange(Number(evento.target.value))} className="flex-1 accent-action" {...{ [dataAttr]: "" }} aria-label={`Volume: ${rotulo}`} />
+    </label>
+  );
+}
+
+function Som({ preferencias, onPreferencias, vozDisponivel }: { preferencias: Preferencias; onPreferencias(mudanca: Partial<Preferencias>): void; vozDisponivel: boolean | null }) {
+  return (
+    <fieldset className="space-y-1 border-t border-stage-line pt-3 text-sm">
       <legend className="eyebrow pb-2 text-highlight">Som</legend>
-      <label className="flex min-h-11 items-center gap-2">
+      <label className="flex min-h-10 items-center gap-2">
         <input type="checkbox" checked={!preferencias.mudo} onChange={(evento) => onPreferencias({ mudo: !evento.target.checked })} data-som-ligado />
-        Efeitos e torcida
+        Som ligado
       </label>
-      <label className="flex min-h-11 items-center gap-3">
-        <span className="w-16">Volume</span>
-        <input type="range" min={0} max={1} step={0.05} value={preferencias.volume} onChange={(evento) => onPreferencias({ volume: Number(evento.target.value) })} className="flex-1 accent-action" data-volume />
+      <Deslizante rotulo="Efeitos" valor={preferencias.volumeEfeitos} onChange={(valor) => onPreferencias({ volumeEfeitos: valor })} dataAttr="data-volume-efeitos" />
+      <Deslizante rotulo="Torcida" valor={preferencias.volumeTorcida} onChange={(valor) => onPreferencias({ volumeTorcida: valor })} dataAttr="data-volume-torcida" />
+      <label className="flex min-h-10 items-center gap-2">
+        <input type="checkbox" checked={preferencias.narracao} onChange={(evento) => onPreferencias({ narracao: evento.target.checked })} data-narracao-ligada />
+        Narração por voz
+        {vozDisponivel === false && <span className="text-xs text-stage-ink-soft">(sem voz em português neste navegador)</span>}
       </label>
+      <Deslizante rotulo="Narração" valor={preferencias.volumeNarracao} onChange={(valor) => onPreferencias({ volumeNarracao: valor })} dataAttr="data-volume-narracao" />
     </fieldset>
   );
 }
