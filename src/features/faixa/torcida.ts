@@ -20,8 +20,11 @@
 //
 // Cada reação tem recarga própria e, no total, saem no máximo três reações
 // a cada 1,5 s (a comemoração à parte): nada acumula nem distorce. As
-// transições são suaves (ganhos com constante de tempo), e o volume máximo
-// fica abaixo dos impactos da luta.
+// transições são suaves (ganhos com constante de tempo). Sem gravação, a
+// torcida sintetizada fica em 55% do canal, abaixo dos impactos da luta; com
+// gravação, ocupa o canal inteiro (os grãos sintetizados que seguem por cima
+// descem para 55%), e um limitador no canal segura os laços e as reações
+// que caem juntas, sem distorcer.
 
 export type Reacao = "golpe" | "queda" | "surpresa" | "expectativa" | "escada" | "balanco" | "comemoracao";
 
@@ -161,15 +164,29 @@ function criarLaco(contexto: AudioContext, buffer: AudioBuffer, destino: AudioNo
   };
 }
 
+/** A fração do canal que a torcida inteira sintetizada ocupa; com gravação, o canal inteiro. */
+const ESCALA_SINTETIZADA = 0.55;
+
 export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeInicial: number): Torcida {
+  let volume = volumeInicial;
+  let escala = ESCALA_SINTETIZADA;
+  // Os grãos sintetizados (vozes, palmas, assobios, "oohs") por cima de uma gravação: mais baixos.
+  let sintetico = 1;
   const mestre = contexto.createGain();
-  mestre.gain.value = volumeInicial;
-  mestre.connect(destino);
+  mestre.gain.value = volume * escala;
+  // O limitador do canal da torcida: os laços e várias reações juntas não estouram nem distorcem.
+  const limitador = contexto.createDynamicsCompressor();
+  limitador.threshold.value = -10;
+  limitador.knee.value = 6;
+  limitador.ratio.value = 12;
+  limitador.attack.value = 0.002;
+  limitador.release.value = 0.25;
+  mestre.connect(limitador);
+  limitador.connect(destino);
 
   const rosa = ruidoRosa(contexto, 9);
   const branco = ruidoBranco(contexto, 1);
   let suspenso = false;
-  let volume = volumeInicial;
   let gravacoes: Gravacoes = {};
   // Tudo o que está tocando com fim marcado, para parar na pausa e na limpeza.
   const vivos = new Set<AudioScheduledSourceNode>();
@@ -291,7 +308,7 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
     formante.Q.value = sortear(3, 7);
     const env = contexto.createGain();
     env.gain.setValueAtTime(0.0001, inicio);
-    env.gain.exponentialRampToValueAtTime(ganho, inicio + duracao * 0.25);
+    env.gain.exponentialRampToValueAtTime(ganho * sintetico, inicio + duracao * 0.25);
     env.gain.exponentialRampToValueAtTime(0.0001, inicio + duracao);
     const pan = contexto.createStereoPanner();
     pan.pan.value = sortear(-0.9, 0.9);
@@ -311,7 +328,7 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
     filtro.Q.value = 1.2;
     const env = contexto.createGain();
     const duracao = sortear(0.012, 0.03);
-    env.gain.setValueAtTime(ganho, inicio);
+    env.gain.setValueAtTime(ganho * sintetico, inicio);
     env.gain.exponentialRampToValueAtTime(0.0001, inicio + duracao);
     const pan = contexto.createStereoPanner();
     pan.pan.value = sortear(-1, 1);
@@ -338,7 +355,7 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
     profundidade.connect(osc.frequency);
     const env = contexto.createGain();
     env.gain.setValueAtTime(0.0001, inicio);
-    env.gain.exponentialRampToValueAtTime(ganho, inicio + 0.05);
+    env.gain.exponentialRampToValueAtTime(ganho * sintetico, inicio + 0.05);
     env.gain.exponentialRampToValueAtTime(0.0001, inicio + duracao);
     const pan = contexto.createStereoPanner();
     pan.pan.value = sortear(-0.8, 0.8);
@@ -362,7 +379,7 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
       formante.frequency.value = sortear(500, 900);
       const env = contexto.createGain();
       env.gain.setValueAtTime(0.0001, inicio + i * 0.02);
-      env.gain.exponentialRampToValueAtTime(ganho / 14, inicio + i * 0.02 + duracao * 0.3);
+      env.gain.exponentialRampToValueAtTime((ganho * sintetico) / 14, inicio + i * 0.02 + duracao * 0.3);
       env.gain.exponentialRampToValueAtTime(0.0001, inicio + duracao);
       const pan = contexto.createStereoPanner();
       pan.pan.value = sortear(-0.9, 0.9);
@@ -390,7 +407,7 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
     filtro.frequency.exponentialRampToValueAtTime(5000, t + 0.3);
     const env = contexto.createGain();
     env.gain.setValueAtTime(0.0001, t);
-    env.gain.exponentialRampToValueAtTime(0.16 * forca, t + 0.22);
+    env.gain.exponentialRampToValueAtTime(0.16 * forca * sintetico, t + 0.22);
     env.gain.exponentialRampToValueAtTime(0.0001, t + 0.36);
     fonte.connect(filtro);
     filtro.connect(env);
@@ -404,14 +421,14 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
   const reacoes: Record<Reacao, (forca: number) => void> = {
     golpe(forca) {
       if (gravacoes.golpe !== undefined) {
-        tocarGravacao(gravacoes.golpe, 0.55 * forca);
+        tocarGravacao(gravacoes.golpe, 0.85 * forca);
         return;
       }
       grito(contexto.currentTime + 0.03, 0.09 * forca, Math.round(10 * forca), 0.3);
     },
     queda(forca) {
       if (gravacoes.queda !== undefined) {
-        tocarGravacao(gravacoes.queda, 0.7 * forca, 0.05);
+        tocarGravacao(gravacoes.queda, 1 * forca, 0.05);
         return;
       }
       const t = contexto.currentTime + 0.05;
@@ -421,7 +438,7 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
     },
     surpresa(forca) {
       if (gravacoes.surpresa !== undefined) {
-        tocarGravacao(gravacoes.surpresa, 0.75 * forca);
+        tocarGravacao(gravacoes.surpresa, 0.9 * forca);
         return;
       }
       suspiro(forca);
@@ -429,19 +446,24 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
     balanco(forca) {
       // A escada chacoalhada com alguém em cima: um "ooh" curto, mais baixo do que o da interrupção.
       if (gravacoes.surpresa !== undefined) {
-        tocarGravacao(gravacoes.surpresa, 0.35 * forca);
+        tocarGravacao(gravacoes.surpresa, 0.55 * forca);
         return;
       }
       ooh(contexto.currentTime + 0.02, 0.28 * forca, false, 0.7);
       grito(contexto.currentTime + 0.1, 0.05 * forca, 6, 0.3);
     },
     expectativa(forca) {
+      // O topo, a prorrogação e o "falta pouco": com gravação, a arena cresce de uma vez (a mesma onda do golpe).
+      if (gravacoes.golpe !== undefined) {
+        tocarGravacao(gravacoes.golpe, 0.7 * forca);
+        return;
+      }
       ooh(contexto.currentTime + 0.02, 0.4 * forca, true, 1.4);
       grito(contexto.currentTime + 0.3, 0.06 * forca, 8, 0.6);
     },
     escada(forca) {
       if (gravacoes.golpe !== undefined) {
-        tocarGravacao(gravacoes.golpe, 0.45 * forca);
+        tocarGravacao(gravacoes.golpe, 0.6 * forca);
         return;
       }
       grito(contexto.currentTime + 0.03, 0.08 * forca, 14, 0.5);
@@ -450,7 +472,7 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
     comemoracao(forca) {
       explosao = 1;
       if (gravacoes.comemoracao !== undefined) {
-        tocarGravacao(gravacoes.comemoracao, 0.95 * forca);
+        tocarGravacao(gravacoes.comemoracao, 1 * forca);
         return;
       }
       // A explosão: gritos em massa, aplausos que se espalham, assobios, e a massa segura por alguns segundos.
@@ -479,8 +501,14 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
   const ultimas = new Map<Reacao, number>();
   const recentes: number[] = [];
 
-  const alvoDoAmbiente = (i: number) => 0.12 + i * 0.22;
-  const alvoDoRugido = (i: number, c: number, e: number) => Math.max(0, i - 0.45) * 0.5 + c * 0.45 + (c > 0.7 ? (c - 0.7) * 0.5 : 0) + e * 0.6;
+  // Os alvos dos laços. A gravação tem outro nível que o ruído sintetizado e pede ganhos próprios:
+  // o ambiente gravado fica presente desde a contagem e cresce com a luta; a expectativa gravada
+  // entra com a subida e cresce com a captura, até o canal inteiro no trecho final e na explosão.
+  const alvoDoAmbiente = (i: number, e: number) => (lacoDoAmbiente === null ? 0.12 + i * 0.22 + e * 0.25 : Math.min(1, 0.5 + i * 0.4 + e * 0.2));
+  const alvoDoRugido = (i: number, c: number, e: number) =>
+    lacoDaExpectativa === null
+      ? Math.max(0, i - 0.45) * 0.5 + c * 0.45 + (c > 0.7 ? (c - 0.7) * 0.5 : 0) + e * 0.6
+      : Math.min(1, Math.max(0, i - 0.4) * 0.9 + c * 0.5 + (c > 0.7 ? (c - 0.7) * 0.6 : 0) + e * 0.6);
 
   const pararLacos = () => {
     lacoDoAmbiente?.parar();
@@ -503,7 +531,7 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
       capturaSuave += (capturaAlvo - capturaSuave) * Math.min(1, dt * (capturaAlvo > capturaSuave ? 1.2 : 0.7));
       explosao = Math.max(0, explosao - dt * 0.12);
       const agora = contexto.currentTime;
-      ambiente.gain.setTargetAtTime(alvoDoAmbiente(intensidadeSuave) + explosao * 0.25, agora, 0.4);
+      ambiente.gain.setTargetAtTime(alvoDoAmbiente(intensidadeSuave, explosao), agora, 0.4);
       rugido.gain.setTargetAtTime(alvoDoRugido(intensidadeSuave, capturaSuave, explosao), agora, 0.5);
       lacoDoAmbiente?.atualizar();
       lacoDaExpectativa?.atualizar();
@@ -561,11 +589,16 @@ export function criarTorcida(contexto: AudioContext, destino: AudioNode, volumeI
       ambienteGravado.gain.setTargetAtTime(lacoDoAmbiente === null ? 0 : 1, agora, 0.5);
       rugidoSintetizado.gain.setTargetAtTime(lacoDaExpectativa === null ? 1 : 0, agora, 0.5);
       rugidoGravado.gain.setTargetAtTime(lacoDaExpectativa === null ? 0 : 1, agora, 0.5);
+      // Com alguma gravação, a torcida ocupa o canal inteiro e os grãos sintetizados descem.
+      const temGravacao = CAMADAS.some((camada) => novas[camada] !== undefined);
+      escala = temGravacao ? 1 : ESCALA_SINTETIZADA;
+      sintetico = temGravacao ? ESCALA_SINTETIZADA : 1;
+      mestre.gain.setTargetAtTime(volume * escala, agora, 0.5);
       if (!suspenso) retomarLacos();
     },
     setVolume(novo) {
       volume = Math.max(0, Math.min(1, novo));
-      mestre.gain.setTargetAtTime(volume, contexto.currentTime, 0.05);
+      mestre.gain.setTargetAtTime(volume * escala, contexto.currentTime, 0.05);
     },
     suspender() {
       suspenso = true;

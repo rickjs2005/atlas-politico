@@ -99,6 +99,8 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   let tela: Tela = { largura: 1, altura: 1 };
   let dpr = 1;
   let tempo = 0;
+  /** O instante em que a partida acabou, para a torcida se acalmar depois da comemoração. */
+  let fimEm: number | null = null;
   let paradaDeImpacto = 0;
   let fala: Fala | null = null;
   const avisos: [Fala | null, Fala | null] = [null, null];
@@ -180,11 +182,15 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
    * A intensidade da torcida pelo estado real: a luta normal, a subida que
    * agita aos poucos, o topo, e a captura, cujo crescendo acompanha o
    * progresso de verdade até o clímax do trecho final. Estar no topo sem
-   * puxar não dispara o máximo; a explosão só vem com a vitória.
+   * puxar não dispara o máximo; a explosão só vem com a vitória. Depois dela,
+   * a arena fica no máximo por três segundos e se acalma nos dez seguintes.
    */
   const intensidadeDaTorcida = (): { intensidade: number; captura: number } => {
     if (partida.fase === "contagem") return { intensidade: 0.25, captura: 0 };
-    if (partida.fase === "fim") return { intensidade: 1, captura: 0 };
+    if (partida.fase === "fim") {
+      const desdeOFim = fimEm === null ? 0 : tempo - fimEm;
+      return { intensidade: desdeOFim < 3 ? 1 : Math.max(0.3, 1 - (desdeOFim - 3) / 10), captura: 0 };
+    }
     let intensidade = 0.3 + Math.max(0, partida.torcida - 0.3) * 0.4;
     let captura = 0;
     for (const l of partida.lutadores) {
@@ -361,6 +367,8 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     }
     tempo += dt;
     avancar(partida, dt, [entradaDe(0, dt), entradaDe(1, dt)]);
+    if (partida.fase === "fim") fimEm ??= tempo;
+    else fimEm = null;
     if (partida.eventos.length > 0) reagir(partida.eventos);
     // Um toque a cada número da contagem: 3, 2, 1.
     if (partida.fase === "contagem") {

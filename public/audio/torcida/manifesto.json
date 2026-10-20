@@ -1,5 +1,54 @@
 {
-  "nota": "Gravações de público para a torcida do Vale a Faixa (docs/VALE-A-FAIXA.md, seção Som). Cada camada listada aqui substitui a camada sintetizada correspondente; sem entrada, a torcida é sintetizada. Só entram arquivos com licença conferida, com a origem registrada na própria entrada. Nenhuma gravação de transmissão de luta livre.",
-  "formato": "camadas.<camada> = { arquivo (na mesma pasta, .ogg ou .mp3), origem (endereço), autor, licenca }. Camadas: ambiente (laço, murmúrio contínuo da arena), expectativa (laço, rugido que cresce com a subida e a captura), golpe (reação curta aos golpes fortes), queda (reação às quedas), surpresa (o suspiro coletivo da interrupção), comemoracao (a explosão da vitória).",
-  "camadas": {}
+  "nota": "Gravações de público para a torcida do Vale a Faixa (docs/VALE-A-FAIXA.md, seção Som). Cada camada listada aqui substitui a camada sintetizada correspondente; sem entrada, a torcida é sintetizada. Só entram arquivos com licença conferida, com a origem registrada na própria entrada. Nenhuma gravação de transmissão de luta livre. Os arquivos foram cortados, normalizados em volume (EBU R128) e limitados a -1,5 dBTP com o FFmpeg em 20 de outubro de 2026; o campo `tratamento` diz o que mudou em relação ao original.",
+  "formato": "camadas.<camada> = { arquivo (na mesma pasta, .ogg ou .mp3), titulo, origem (endereço da página de origem), autor, licenca, tratamento }. Camadas: ambiente (laço, murmúrio contínuo da arena), expectativa (laço, rugido que cresce com a subida e a captura), golpe (reação curta aos golpes fortes), queda (reação às quedas), surpresa (o suspiro coletivo da interrupção), comemoracao (a explosão da vitória).",
+  "camadas": {
+    "ambiente": {
+      "arquivo": "ambiente.mp3",
+      "titulo": "Free Crowd Cheering Sounds, faixa 10, Ambience",
+      "origem": "https://opengameart.org/content/free-crowd-cheering-sounds",
+      "autor": "Gregor Quendel (gregorquendel.com)",
+      "licenca": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "tratamento": "Trecho de 1,0 s a 33,0 s (32 s) da faixa de 34 s; sem desvanecimento, porque o jogo emenda o laço; nível ajustado para -17 LUFS."
+    },
+    "expectativa": {
+      "arquivo": "expectativa.mp3",
+      "titulo": "Free Crowd Cheering Sounds, faixa 03, Strong cheering I",
+      "origem": "https://opengameart.org/content/free-crowd-cheering-sounds",
+      "autor": "Gregor Quendel (gregorquendel.com)",
+      "licenca": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+      "tratamento": "Trecho de 0,5 s a 24,5 s (24 s) da faixa de 25 s; sem desvanecimento, porque o jogo emenda o laço; nível ajustado para -15 LUFS."
+    },
+    "golpe": {
+      "arquivo": "golpe.mp3",
+      "titulo": "CRWDReac-SOCCER_Millerntor Stadium Crowd Reaction Excited 01",
+      "origem": "https://freesound.org/s/829453/",
+      "autor": "itmightgetloud (Freesound)",
+      "licenca": "CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)",
+      "tratamento": "Trecho de 0,40 s a 2,30 s (1,9 s) da prévia em MP3 do Freesound; entrada de 15 ms e saída de 0,5 s; nível ajustado para -14 LUFS."
+    },
+    "queda": {
+      "arquivo": "queda.mp3",
+      "titulo": "CRWDReac-SOCCER_Millerntor Stadium Crowd Reaction Excited 01",
+      "origem": "https://freesound.org/s/829453/",
+      "autor": "itmightgetloud (Freesound)",
+      "licenca": "CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)",
+      "tratamento": "Trecho de 19,6 s a 23,4 s (3,8 s) da prévia em MP3 do Freesound; entrada de 15 ms e saída de 0,9 s; nível ajustado para -13 LUFS."
+    },
+    "surpresa": {
+      "arquivo": "surpresa.mp3",
+      "titulo": "small crowd gasp shock surprise",
+      "origem": "https://freesound.org/s/264376/",
+      "autor": "HowardV (Freesound)",
+      "licenca": "CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)",
+      "tratamento": "Trecho de 0,0 s a 2,4 s da prévia em MP3 do Freesound; entrada de 15 ms e saída de 0,6 s; nível ajustado para -14 LUFS."
+    },
+    "comemoracao": {
+      "arquivo": "comemoracao.mp3",
+      "titulo": "Crowd Cheer",
+      "origem": "https://freesound.org/s/397434/",
+      "autor": "FoolBoyMedia (Freesound)",
+      "licenca": "CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)",
+      "tratamento": "Trecho de 0,0 s a 11,0 s da prévia em MP3 do Freesound; entrada de 15 ms e saída de 1,6 s; nível ajustado para -12 LUFS."
+    }
+  }
 }

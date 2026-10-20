@@ -291,7 +291,7 @@ test.describe("Vale a Faixa", () => {
     expect(erros).toEqual([]);
   });
 
-  test("a torcida acompanha o estado real: sobe com a subida, só cresce com a captura de verdade, cai na interrupção e explode na vitória; sem gravação listada, é sintetizada", async ({ page }) => {
+  test("a torcida acompanha o estado real: sobe com a subida, só cresce com a captura de verdade, cai na interrupção e explode na vitória; as seis gravações do manifesto entram", async ({ page }) => {
     test.setTimeout(150_000);
     const erros = vigiarErros(page);
     const pedidos: string[] = [];
@@ -309,10 +309,11 @@ test.describe("Vale a Faixa", () => {
     expect(base).toBeGreaterThanOrEqual(0.3);
     expect(base).toBeLessThan(0.45);
     expect(capturaBase).toBe(0);
-    // Só o manifesto foi pedido; com ele vazio, nenhuma camada vem de gravação.
-    await expect.poll(() => pedidos.length, { timeout: 5_000 }).toBeGreaterThan(0);
-    expect(pedidos).toEqual(["/audio/torcida/manifesto.json"]);
-    expect(await page.locator("canvas").getAttribute("data-gravacoes")).toBe("");
+    // O manifesto e as seis gravações que ele lista foram pedidos, e as seis camadas vêm de gravação (o som em si é conferido em vale-a-faixa-torcida.spec.ts).
+    await expect.poll(() => page.locator("canvas").getAttribute("data-gravacoes"), { timeout: 20_000 }).toBe("ambiente,expectativa,golpe,queda,surpresa,comemoracao");
+    expect([...new Set(pedidos)].sort()).toEqual(
+      ["manifesto.json", "ambiente.mp3", "expectativa.mp3", "golpe.mp3", "queda.mp3", "surpresa.mp3", "comemoracao.mp3"].map((nome) => `/audio/torcida/${nome}`).sort(),
+    );
     // Pega e posiciona a escada.
     const lado = (await xDaEscada()) < (await xDoJogador()) ? "ArrowLeft" : "ArrowRight";
     await segurarAte(page, lado, async () => (await dica()) === "pegarEscada", 10_000);

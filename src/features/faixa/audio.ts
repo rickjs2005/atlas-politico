@@ -174,8 +174,8 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
       efeitos.gain.value = volumeEfeitos;
       efeitos.connect(mestre);
       ruido = prepararRuido(contexto);
-      // A torcida fica abaixo dos impactos: o máximo dela é 55% do canal.
-      torcida = criarTorcida(contexto, mestre, volumeTorcida * 0.55);
+      // O canal da torcida: sintetizada, ela fica em 55% dele; com gravação, no canal inteiro (torcida.ts).
+      torcida = criarTorcida(contexto, mestre, volumeTorcida);
       decodificar();
     }
     if (contexto.state === "suspended" && !suspenso) void contexto.resume();
@@ -376,7 +376,7 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
       volumeEfeitos = Math.max(0, Math.min(1, novoEfeitos));
       volumeTorcida = Math.max(0, Math.min(1, novaTorcida));
       if (contexto !== null && efeitos !== null) efeitos.gain.setTargetAtTime(volumeEfeitos, contexto.currentTime, 0.05);
-      torcida?.setVolume(volumeTorcida * 0.55);
+      torcida?.setVolume(volumeTorcida);
     },
     setMudo(novo) {
       mudo = novo;

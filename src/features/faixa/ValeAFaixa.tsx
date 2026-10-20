@@ -455,9 +455,12 @@ function Ringue({ modo, lados, semente, dificuldade, toque, audio, preferencias,
 
   // A partida para enquanto há algo por cima dela; parar solta todos os comandos.
   const parada = preparacao || painel !== null || resumo.fase === "fim";
+  // O motor pausa na preparação e nos painéis. No fim da partida ele segue, com a entrada já desligada:
+  // a comemoração da torcida toca e se acalma sob a janela de resultado, em vez de ser cortada na pausa.
+  const motorParado = preparacao || painel !== null;
   useEffect(() => {
-    motor.current?.setPausado(parada);
-  }, [parada, pronto]);
+    motor.current?.setPausado(motorParado);
+  }, [motorParado, pronto]);
 
   // O placar é da pessoa contra o computador: a dois, ninguém conta.
   useEffect(() => {

@@ -703,6 +703,17 @@ export default function MethodologyPage() {
                   real em cada data.
                 </li>
                 <li>O Escrivão, que guia o jogo, é um personagem fictício e não retrata ninguém; as falas de humor dele são ficção sobre papelada e sobre ele mesmo, iguais para os dois personagens, e podem ser desligadas.</li>
+                <li data-creditos-torcida>
+                  A torcida do Vale a Faixa usa gravações de público: o ambiente e a expectativa da arena vêm de{" "}
+                  <a href="https://opengameart.org/content/free-crowd-cheering-sounds" target="_blank" rel="noreferrer" className={textLink}>
+                    Free Crowd Cheering Sounds<span className="sr-only"> (abre em nova aba)</span>
+                  </a>
+                  , de Gregor Quendel, sob a licença CC BY 4.0, em trechos cortados e com o volume ajustado; as reações (golpe,
+                  queda, surpresa e comemoração) vêm de gravações em domínio público (CC0) de itmightgetloud, HowardV e
+                  FoolBoyMedia, no Freesound. A lista completa, com o trecho e o tratamento de cada arquivo, está em{" "}
+                  <code>audio/torcida/manifesto.json</code> no próprio site. Os demais sons são sintetizados; não há música nem
+                  narração.
+                </li>
                 <li>
                   O texto das fases (a explicação e a atividade) está no conteúdo publicado e passa pelas mesmas regras dos
                   outros registros. Os fatos, as datas e as fontes são os dos registros que cada fase aponta, e o jogo não
