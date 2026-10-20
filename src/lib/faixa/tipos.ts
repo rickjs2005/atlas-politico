@@ -11,7 +11,7 @@ import type { PersonagemSlug } from "@/lib/game/types";
 
 export type LutadorSlug = PersonagemSlug;
 
-/** Índice de um lutador na partida: o jogador é sempre o 0 e o computador, o 1. */
+/** Índice de um lutador na partida: o jogador é sempre o 0; o 1 é o computador ou, a dois, o jogador 2. */
 export type Indice = 0 | 1;
 
 /**

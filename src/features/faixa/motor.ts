@@ -4,21 +4,26 @@
 // da trilha do jogo). Carregado só quando a partida começa, por `import()`.
 // Trata pausa, perda de foco, redimensionamento e descarte ao sair da rota.
 //
+// Dois modos: sozinho, o lado 1 é o computador (ia.ts); a dois, os dois
+// lados são pessoas no mesmo teclado, cada uma com o seu esquema, lidas ao
+// mesmo tempo, e o computador não existe. As mesmas regras para os dois
+// lados nos dois modos; o nível muda só o perfil do computador.
+//
 // A torcida recebe, a cada passo, a intensidade da partida e o progresso
-// real da captura da faixa, e reage aos eventos: um grito a cada golpe, um
-// maior a cada queda, o suspiro de surpresa quando a captura é interrompida,
-// e a explosão de comemoração só na vitória. Os passos no tapete e os
-// degraus da escada soam pelo movimento real de cada um. As mesmas regras
-// para os dois; o nível muda só o perfil do computador.
+// real da captura da faixa, e reage aos eventos: um grito aos golpes fortes,
+// um maior a cada queda, o "ooh" curto quando a escada chacoalha, o suspiro
+// de surpresa quando a captura é interrompida, e a explosão de comemoração
+// só na vitória. Os passos no tapete e os degraus da escada soam pelo
+// movimento real de cada um.
 
 import { createLoop } from "@/features/game/engine/loop";
 import { PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
 import { criarMemoria, decidir, type Dificuldade, type MemoriaDaIA } from "@/lib/faixa/ia";
-import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, naEscada, noAr } from "@/lib/faixa/regras";
+import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, naEscada, noAr, subirOuPular } from "@/lib/faixa/regras";
 import { ENTRADA_VAZIA, type Dica, type Entrada, type Evento, type FaseDaPartida, type Indice, type Lutador, type LutadorSlug, type Partida } from "@/lib/faixa/tipos";
 
 import type { Audio, Som } from "./audio";
-import type { Reacao } from "./torcida";
+import type { Camada, Reacao } from "./torcida";
 import { criarArena, lerFontes } from "./desenho/arena";
 import { alvoDaCamera, projecao, seguir, type Camera, type Tela } from "./desenho/camera";
 import { anguloDoTombo, desenharEscadaCaida, desenharEscadaCarregada, desenharEscadaEmPe, desenharFaixa, oscilacao } from "./desenho/escada";
@@ -26,15 +31,17 @@ import { criarEfeitos } from "./desenho/efeitos";
 import { ROTULO_DO_BLOQUEIO, desenharHud, type Fala } from "./desenho/hud";
 import { FIGURAS, desenharLutador, desenharSombra, poseDe } from "./desenho/lutador";
 import { criarEntradas } from "./entrada";
+import { esquemasDe, type Esquema, type Modo } from "./esquemas";
 
 export interface Resumo {
   fase: FaseDaPartida;
+  /** A dica do jogador 1, para os botões de toque e o leitor de tela. */
   dica: Dica;
   vencedor: Indice | null;
-  /** O jogador está na escada: os botões de subir e descer entram. */
+  /** O jogador 1 está na escada: os botões de subir e descer entram. */
   naEscada: boolean;
   carregando: boolean;
-  /** O jogador está no ar: pular apaga e atacar vira voadora. */
+  /** O jogador 1 está no ar: pular apaga e atacar vira voadora. */
   noAr: boolean;
   /** A pessoa usa teclado, e não toque. */
   teclado: boolean;
@@ -43,13 +50,15 @@ export interface Resumo {
 
 export interface OpcoesDoMotor {
   canvas: HTMLCanvasElement;
-  jogador: LutadorSlug;
-  computador: LutadorSlug;
+  /** Sozinho contra o computador, ou duas pessoas no mesmo teclado. */
+  modo: Modo;
+  /** Os personagens de cada lado: o jogador 1 à esquerda; à direita, o computador ou o jogador 2. */
+  lados: readonly [LutadorSlug, LutadorSlug];
   semente: number;
   /** O nível do computador: só o perfil muda (reação, erros, cautela, ousadia), nunca as regras. */
   dificuldade: Dificuldade;
   reduzirMovimento: boolean;
-  /** Em tela de toque, a dica mostra o botão em vez da tecla. */
+  /** Em tela de toque, a dica mostra o botão em vez da tecla, e a cena se enquadra acima dos botões. */
   toque: boolean;
   audio: Audio | null;
   /** Só para os testes de navegador: o computador não age (`parado`) ou só defende (`defendendo`), e a pessoa dirige a partida. */
@@ -74,13 +83,14 @@ const DPR_MAXIMO = 2;
 const PARADA_DE_IMPACTO = 0.045;
 
 export function criarMotor(opcoes: OpcoesDoMotor): Motor {
-  const { canvas } = opcoes;
+  const { canvas, modo } = opcoes;
   const contexto = canvas.getContext("2d");
   if (contexto === null) throw new Error("Sem canvas 2D.");
   const g = contexto;
   lerFontes();
 
-  let partida = criarPartida(opcoes.jogador, opcoes.computador, opcoes.semente);
+  let partida = criarPartida(opcoes.lados[0], opcoes.lados[1], opcoes.semente);
+  // O computador só existe sozinho; a dois, a memória fica sem uso.
   let memoria: MemoriaDaIA = criarMemoria(opcoes.semente * 31 + 7, opcoes.dificuldade);
   const movimento = !opcoes.reduzirMovimento;
   const arena = criarArena();
@@ -91,15 +101,17 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   let tempo = 0;
   let paradaDeImpacto = 0;
   let fala: Fala | null = null;
-  let aviso: Fala | null = null;
+  const avisos: [Fala | null, Fala | null] = [null, null];
   let ultimaFala = -10;
   let brilhoAcumulado = 0;
   let passosDaEscada = 0;
+  let numeroDaContagem = 0;
   let pausado = false;
   let primeiroQuadro = true;
   let ultimoResumo = "";
   let ultimosEstados = "";
   let ultimaTorcida = "";
+  let ultimasGravacoes: readonly Camada[] | null = null;
   const passosAnteriores: [number, number] = [0, 0];
   const andando: [boolean, boolean] = [false, false];
   // A última pisada e o último degrau de cada um, para os passos no tapete e os degraus da escada soarem.
@@ -107,16 +119,23 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   const degraus: [number, number] = [0, 0];
   const ritmos: [number, number] = [0, 1.7];
   const ENTRADA_DEFENDENDO: Entrada = { ...ENTRADA_VAZIA, defesa: true };
+  const humanos: readonly [boolean, boolean] = [true, modo === "local"];
+  const papeis: readonly [string, string] = modo === "local" ? ["JOGADOR 1", "JOGADOR 2"] : ["VOCÊ", "COMPUTADOR"];
+  const esquemas = esquemasDe(modo);
 
   const entradas = criarEntradas(window, {
+    esquemas,
     ativo: () => !pausado && partida.fase !== "fim",
     aoPausar: () => opcoes.aoAlternarPausa(),
   });
 
   const usaTeclado = () => !opcoes.toque || (entradas.usouTeclado() && !entradas.usouToque());
+  /** O esquema de cada lado para o HUD: `null` no toque e para o computador. */
+  const esquemaDe = (i: Indice): Esquema | null => (i === 0 ? (usaTeclado() ? esquemas[0] : null) : esquemas[1]);
 
   const publicarResumo = () => {
     const l = partida.lutadores[0];
+    const outro = partida.lutadores[1];
     const resumo: Resumo = {
       fase: partida.fase,
       dica: dicaDe(partida, 0),
@@ -127,8 +146,9 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       teclado: usaTeclado(),
       tempo: partida.tempo,
     };
-    // Os estados de agora vão ao canvas, para os testes de navegador lerem sem mexer no React.
-    const estados = `${l.estado}|${partida.lutadores[1].estado}|${partida.escada.estado}|${l.puxada.toFixed(2)}|${Math.round(l.x / 10) * 10}|${Math.round(partida.escada.x / 10) * 10}|${Math.round(l.y / 10) * 10}`;
+    // Os estados de agora vão ao canvas, para os testes de navegador lerem sem mexer no React:
+    // os dois estados, a escada, a puxada do lado 1, x do lado 1, x da escada, y do lado 1, x e y do lado 2.
+    const estados = `${l.estado}|${outro.estado}|${partida.escada.estado}|${l.puxada.toFixed(2)}|${Math.round(l.x / 10) * 10}|${Math.round(partida.escada.x / 10) * 10}|${Math.round(l.y / 10) * 10}|${Math.round(outro.x / 10) * 10}|${Math.round(outro.y / 10) * 10}`;
     if (estados !== ultimosEstados) {
       ultimosEstados = estados;
       canvas.dataset.estados = estados;
@@ -153,21 +173,14 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   };
 
   const tocar = (som: Som) => opcoes.audio?.tocar(som);
-  let ultimaSurpresa = -10;
-  const torcer = (reacao: Reacao) => {
-    // Uma surpresa por lance: a interrupção, a queda da escada e o tombo chegam juntos.
-    if (reacao === "surpresa") {
-      if (tempo - ultimaSurpresa < 0.8) return;
-      ultimaSurpresa = tempo;
-    }
-    opcoes.audio?.reagirTorcida(reacao);
-  };
+  // As recargas e o teto de reações ficam na torcida: aqui só se pede.
+  const torcer = (reacao: Reacao, forca?: number) => opcoes.audio?.reagirTorcida(reacao, forca);
 
   /**
    * A intensidade da torcida pelo estado real: a luta normal, a subida que
    * agita aos poucos, o topo, e a captura, cujo crescendo acompanha o
-   * progresso de verdade. Estar no topo sem puxar não dispara o máximo; a
-   * explosão só vem com a vitória.
+   * progresso de verdade até o clímax do trecho final. Estar no topo sem
+   * puxar não dispara o máximo; a explosão só vem com a vitória.
    */
   const intensidadeDaTorcida = (): { intensidade: number; captura: number } => {
     if (partida.fase === "contagem") return { intensidade: 0.25, captura: 0 };
@@ -178,12 +191,18 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       if (l.estado === "subindo") intensidade = Math.max(intensidade, 0.42 + l.altura * 0.18);
       if (l.estado === "noTopo") {
         const estavel = partida.escada.balanco <= REGRAS.escada.balancoMaximo;
-        intensidade = Math.max(intensidade, l.puxando && estavel ? 0.62 + l.puxada * 0.3 : 0.58);
+        intensidade = Math.max(intensidade, l.puxando && estavel ? 0.62 + l.puxada * 0.33 : 0.58);
         if (l.puxando && estavel) captura = Math.max(captura, l.puxada);
       }
       if (l.estado === "caido") intensidade = Math.max(intensidade, 0.45);
     }
-    return { intensidade: Math.min(0.92, intensidade), captura };
+    return { intensidade: Math.min(0.95, intensidade), captura };
+  };
+
+  const avisar = (quem: Indice, texto: string) => {
+    if (!humanos[quem]) return;
+    const atual = avisos[quem];
+    if (atual === null || atual.t > 0.5) avisos[quem] = { texto, t: 0 };
   };
 
   const reagir = (eventos: readonly Evento[]) => {
@@ -204,7 +223,8 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           efeitos.tremer(pesado ? 7 : 3.5);
           paradaDeImpacto = pesado ? PARADA_DE_IMPACTO * 1.7 : PARADA_DE_IMPACTO;
           tocar(evento.golpe === "voadora" ? "voadora" : evento.golpe === "forte" ? "forte" : evento.golpe === "chute" ? "chute" : "soco");
-          torcer("golpe");
+          // A torcida grita com os golpes fortes; os leves ficam no murmúrio.
+          if (pesado) torcer("golpe");
           break;
         }
         case "golpeNoVazio":
@@ -230,7 +250,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
         case "agarrou":
           efeitos.anel(evento.x, 100, "#f8e4cf");
           tocar("agarrao");
-          torcer("golpe");
+          torcer("golpe", 0.8);
           break;
         case "arremesso":
           efeitos.impacto(evento.x, 110, true, partida.lutadores[evento.quem].direcao);
@@ -246,7 +266,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           torcer("expectativa");
           break;
         case "acaoBloqueada":
-          if (evento.quem === 0 && (aviso === null || aviso.t > 0.5)) aviso = { texto: ROTULO_DO_BLOQUEIO[evento.motivo], t: 0 };
+          avisar(evento.quem, ROTULO_DO_BLOQUEIO[evento.motivo]);
           break;
         case "derrubada":
           efeitos.impacto(evento.x, 60, evento.tombou, partida.lutadores[evento.quem].direcao);
@@ -254,13 +274,14 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           efeitos.anel(evento.x, 30, "#cfd3d8");
           paradaDeImpacto = PARADA_DE_IMPACTO;
           tocar("escada");
-          if (!evento.tombou) torcer("golpe");
+          // A escada chacoalhada com alguém em cima: o "ooh" curto; o tombo traz a surpresa pelo evento da queda.
+          if (!evento.tombou) torcer("balanco");
           break;
         case "queda":
           efeitos.poeira(evento.x, 0, evento.longa ? 16 : 12);
           efeitos.tremer(evento.longa ? 9 : 7);
           tocar("queda");
-          torcer("queda");
+          torcer("queda", evento.longa ? 1.2 : 1);
           break;
         case "cordas":
           efeitos.tremer(4);
@@ -301,17 +322,18 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
         case "faltaPouco":
           tocar("aviso");
           for (let i = 0; i < 10; i += 1) efeitos.brilho(partida.escada.x, REGRAS.faixa.altura - 30);
-          torcer("expectativa");
+          torcer("expectativa", 1.3);
           break;
         case "interrompido":
           efeitos.tremer(5);
-          torcer("surpresa");
+          // Quanto mais perto do fim a captura estava, maior a surpresa.
+          torcer("surpresa", 0.7 + evento.puxada * 0.8);
           break;
         case "caiuDaEscada":
           torcer("surpresa");
           break;
         case "vitoria": {
-          tocar(evento.quem === 0 ? "vitoria" : "derrota");
+          tocar(humanos[evento.quem] ? "vitoria" : "derrota");
           for (let i = 0; i < 24; i += 1) efeitos.brilho(partida.escada.x, REGRAS.faixa.altura - 40);
           torcer("comemoracao");
           break;
@@ -323,17 +345,31 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     comentar(eventos);
   };
 
+  /** A entrada de cada lado: as pessoas pelo teclado (a dois, a tecla de subir também pula); o computador pela IA. */
+  const entradaDe = (i: Indice, dt: number): Entrada => {
+    if (i === 0) return modo === "local" ? subirOuPular(partida, 0, entradas.ler(0)) : entradas.ler(0);
+    if (modo === "local") return subirOuPular(partida, 1, entradas.ler(1));
+    if (opcoes.computadorDeTeste === "parado") return ENTRADA_VAZIA;
+    if (opcoes.computadorDeTeste === "defendendo") return ENTRADA_DEFENDENDO;
+    return decidir(partida, 1, memoria, dt);
+  };
+
   const atualizar = (dt: number) => {
     if (paradaDeImpacto > 0) {
       paradaDeImpacto -= dt;
       return;
     }
     tempo += dt;
-    const entradaDoJogador = entradas.ler();
-    const entradaDoComputador =
-      opcoes.computadorDeTeste === "parado" ? ENTRADA_VAZIA : opcoes.computadorDeTeste === "defendendo" ? ENTRADA_DEFENDENDO : decidir(partida, 1, memoria, dt);
-    avancar(partida, dt, [entradaDoJogador, entradaDoComputador]);
+    avancar(partida, dt, [entradaDe(0, dt), entradaDe(1, dt)]);
     if (partida.eventos.length > 0) reagir(partida.eventos);
+    // Um toque a cada número da contagem: 3, 2, 1.
+    if (partida.fase === "contagem") {
+      const numero = Math.min(3, Math.floor((REGRAS.contagem - partida.contagem) / (REGRAS.contagem / 3)) + 1);
+      if (numero !== numeroDaContagem) {
+        numeroDaContagem = numero;
+        tocar("contagem");
+      }
+    }
     for (const i of [0, 1] as const) {
       const l = partida.lutadores[i];
       andando[i] = l.passo !== passosAnteriores[i];
@@ -376,24 +412,31 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       fala.t += dt;
       if (fala.t > 2.6) fala = null;
     }
-    if (aviso !== null) {
+    for (const i of [0, 1] as const) {
+      const aviso = avisos[i];
+      if (aviso === null) continue;
       aviso.t += dt;
-      if (aviso.t > 1) aviso = null;
+      if (aviso.t > 1) avisos[i] = null;
     }
     const { intensidade, captura } = intensidadeDaTorcida();
     opcoes.audio?.torcida(intensidade, captura, dt);
-    // O que a torcida recebe, no canvas, para os testes de navegador conferirem sem ouvir.
+    // O que a torcida recebe, e quais camadas vêm de gravação, no canvas, para os testes de navegador conferirem sem ouvir.
     const torcidaAgora = `${intensidade.toFixed(2)}|${captura.toFixed(2)}`;
     if (torcidaAgora !== ultimaTorcida) {
       ultimaTorcida = torcidaAgora;
       canvas.dataset.torcida = torcidaAgora;
+    }
+    const gravacoes = opcoes.audio?.gravacoes() ?? [];
+    if (gravacoes !== ultimasGravacoes) {
+      ultimasGravacoes = gravacoes;
+      canvas.dataset.gravacoes = gravacoes.join(",");
     }
     seguir(camera, alvoDaCamera(partida, tela), dt, primeiroQuadro);
     primeiroQuadro = false;
     publicarResumo();
   };
 
-  /** Onde ficou a cabeça de cada lutador no último quadro, para a dica perto do jogador. */
+  /** Onde ficou a cabeça de cada lutador no último quadro, para a dica perto dele. */
   const cabecas: [{ x: number; y: number } | null, { x: number; y: number } | null] = [null, null];
 
   const desenharLutadorNaCena = (l: Lutador, i: Indice, pr: ReturnType<typeof projecao>) => {
@@ -452,7 +495,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     const puxador = partida.lutadores.find((l) => l.estado === "noTopo");
     desenharFaixa(g, pr, partida, tempo, movimento, puxador?.puxando ? puxador.puxada : 0, partida.fase !== "fim");
 
-    // Quem está no chão ou atingido vai primeiro; o jogador fica por cima em empate.
+    // Quem está no chão ou atingido vai primeiro; o jogador 1 fica por cima em empate.
     const ordem: Indice[] = [1, 0];
     ordem.sort((a, b) => peso(partida.lutadores[a]) - peso(partida.lutadores[b]));
     for (const i of ordem) {
@@ -469,14 +512,16 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     arena.frente(g, pr);
     desenharHud(g, tela, partida, {
       nomes: [FIGURAS[partida.lutadores[0].slug].nome, FIGURAS[partida.lutadores[1].slug].nome],
-      dica: dicaDe(partida, 0),
-      teclado: usaTeclado(),
+      papeis,
+      humanos,
+      dicas: [dicaDe(partida, 0), humanos[1] ? dicaDe(partida, 1) : null],
+      esquemas: [esquemaDe(0), esquemaDe(1)],
       tempo,
       fala,
-      aviso,
+      avisos,
       movimento,
       compacto: tela.largura < 640,
-      cabecaDoJogador: cabecas[0],
+      cabecas,
     });
   };
 
@@ -533,16 +578,17 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
       else opcoes.audio?.retomar();
     },
     reiniciar(semente) {
-      partida = criarPartida(opcoes.jogador, opcoes.computador, semente);
+      partida = criarPartida(opcoes.lados[0], opcoes.lados[1], semente);
       memoria = criarMemoria(semente * 31 + 7, opcoes.dificuldade);
       efeitos.limpar();
       fala = null;
-      aviso = null;
+      avisos[0] = null;
+      avisos[1] = null;
       ultimaFala = -10;
       paradaDeImpacto = 0;
+      numeroDaContagem = 0;
       primeiroQuadro = true;
       ultimoResumo = "";
-      ultimaSurpresa = -10;
       entradas.limpar();
       opcoes.audio?.limpar();
       seguir(camera, alvoDaCamera(partida, tela), 0, true);

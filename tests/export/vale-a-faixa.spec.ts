@@ -1,6 +1,6 @@
 // Vale a Faixa sobre a saída estática: a página de entrada do jogo e o hub
 // não pedem o motor (regras, computador, desenho, som); ele só chega quando a
-// pessoa escolhe o personagem. As páginas informativas continuam sem nada do
+// pessoa escolhe o modo. As páginas informativas continuam sem nada do
 // jogo. Rode com `npm run build` e `npm run test:export`.
 
 import { readFileSync, readdirSync } from "node:fs";
@@ -45,11 +45,11 @@ test.describe("Vale a Faixa na exportação", () => {
     });
   }
 
-  test("o motor chega quando a pessoa vai escolher o personagem, e a partida nasce no build", async ({ page }) => {
+  test("o motor chega quando a pessoa escolhe o modo, e a partida nasce no build", async ({ page }) => {
     const visto = vigiar(page);
     await page.goto("/jogo/vale-a-faixa/");
     await assentar(page);
-    await page.locator("[data-escolher-candidato]").click();
+    await page.locator('[data-modo="solo"]').click();
     await expect.poll(() => visto.doMotor().length, { timeout: 10_000 }).toBeGreaterThan(0);
     await page.locator('[data-escolha="lula"]').click();
     await expect(page.locator("[data-faixa]")).toHaveAttribute("data-pronto", "sim", { timeout: 30_000 });

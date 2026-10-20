@@ -245,6 +245,18 @@ export function podeSubir(p: Partida, i: Indice): boolean {
   return p.escada.estado === "emPe" && Math.abs(l.x - p.escada.x) <= REGRAS.escada.subir && !naEscada(p.lutadores[outro(i)]);
 }
 
+/**
+ * A dois no mesmo teclado, a tecla de subir também pula: vira `pulo` quando
+ * o lutador não está na escada nem alinhado à base de uma escada livre.
+ * Alinhado, é a subida; na escada, continua a subida. Não muda a entrada
+ * recebida: devolve outra quando converte.
+ */
+export function subirOuPular(p: Partida, i: Indice, e: Entrada): Entrada {
+  if (!e.cima) return e;
+  if (naEscada(p.lutadores[i]) || podeSubir(p, i)) return e;
+  return { ...e, cima: false, pulo: true };
+}
+
 /** O adversário defende, colado e à frente: o golpe forte vira o agarrão. */
 export function podeAgarrar(p: Partida, i: Indice): boolean {
   const l = p.lutadores[i];

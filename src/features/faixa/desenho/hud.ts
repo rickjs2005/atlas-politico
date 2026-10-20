@@ -1,14 +1,17 @@
 // A interface sobre a cena do Vale a Faixa, desenhada no canvas para andar
-// com os quadros: as placas com nome, a barra de equilíbrio e a barra da
-// faixa de cada um (identificadas), o medidor grande da faixa quando alguém
-// está na escada, com o aviso de que falta pouco, a dica curta perto do
-// personagem quando há o que fazer, o aviso de comando bloqueado, a legenda
-// discreta dos comandos, a contagem de abertura e o comentário do narrador.
-// Pausa, fim e tutorial ficam em React (ValeAFaixa.tsx).
+// com os quadros: as placas com nome e papel (você e o computador, ou os
+// jogadores 1 e 2), a barra de equilíbrio e a barra da faixa de cada um
+// (identificadas), o medidor grande da faixa quando alguém está na escada,
+// com o aviso de que falta pouco, a dica curta perto de cada pessoa quando
+// há o que fazer (com a tecla do esquema dela), o aviso de comando
+// bloqueado, a legenda discreta dos comandos (uma linha por pessoa), a
+// contagem de abertura (3, 2, 1, LUTEM!) e o comentário do narrador.
+// Pausa, fim e preparação ficam em React (ValeAFaixa.tsx).
 
 import { REGRAS, naEscada } from "@/lib/faixa/regras";
-import type { Dica, MotivoDoBloqueio, Partida } from "@/lib/faixa/tipos";
+import type { Dica, Indice, MotivoDoBloqueio, Partida } from "@/lib/faixa/tipos";
 
+import { rotuloDaDica, type Esquema } from "../esquemas";
 import { FONTE_SANS, FONTE_SERIF } from "./arena";
 import type { Tela } from "./camera";
 import { AMARELO, VERDE } from "./escada";
@@ -26,31 +29,24 @@ export interface Fala {
 
 export interface EstadoDoHud {
   nomes: readonly [string, string];
-  dica: Dica;
-  /** A pessoa usa teclado: a dica mostra a tecla, e a legenda aparece. */
-  teclado: boolean;
+  /** O papel de cada um na placa: "VOCÊ" e "COMPUTADOR", ou "JOGADOR 1" e "JOGADOR 2". */
+  papeis: readonly [string, string];
+  /** Quem é pessoa: só pessoas recebem dica, aviso e o "segure para puxar". */
+  humanos: readonly [boolean, boolean];
+  /** A dica de cada um; `null` quando não há o que fazer ou para o computador. */
+  dicas: readonly [Dica, Dica];
+  /** O esquema de teclas de cada um, para a dica e a legenda; `null` no toque e para o computador. */
+  esquemas: readonly [Esquema | null, Esquema | null];
   tempo: number;
   fala: Fala | null;
-  /** O aviso de um comando que não saiu, e há quanto tempo. */
-  aviso: Fala | null;
+  /** O aviso de um comando que não saiu, para cada um, e há quanto tempo. */
+  avisos: readonly [Fala | null, Fala | null];
   movimento: boolean;
   /** Em tela estreita, as placas encolhem. */
   compacto: boolean;
-  /** A cabeça do jogador na tela, para a dica ficar perto dele. */
-  cabecaDoJogador: { x: number; y: number } | null;
+  /** A cabeça de cada um na tela, para a dica ficar perto dele. */
+  cabecas: readonly [{ x: number; y: number } | null, { x: number; y: number } | null];
 }
-
-/** O texto da dica perto do personagem, no teclado e no toque. */
-export const ROTULO_DA_DICA: Record<NonNullable<Dica>, { teclado: string; toque: string }> = {
-  pegarEscada: { teclado: "C — Pegar escada", toque: "Pegar escada" },
-  posicionarEscada: { teclado: "C — Posicionar escada", toque: "Posicionar escada" },
-  soltarEscada: { teclado: "C — Largar escada", toque: "Largar escada" },
-  subir: { teclado: "↑ — Subir", toque: "▲ Subir" },
-  puxarFaixa: { teclado: "Segure C — Puxar faixa", toque: "Segure — Puxar faixa" },
-  derrubarEscada: { teclado: "Z — Derrubar escada", toque: "Atacar — Derrubar escada" },
-  agarrar: { teclado: "V — Agarrar", toque: "Forte — Agarrar" },
-  escapar: { teclado: "Shift — Escapar!", toque: "Esquiva — Escapar!" },
-};
 
 /** Por que o comando não saiu, em poucas palavras. */
 export const ROTULO_DO_BLOQUEIO: Record<MotivoDoBloqueio, string> = {
@@ -62,8 +58,8 @@ export const ROTULO_DO_BLOQUEIO: Record<MotivoDoBloqueio, string> = {
   agarrado: "Agarrado: só a esquiva escapa",
 };
 
-export const LEGENDA = "Setas: mover • Espaço: pular • Z: atacar • V: forte (colado na guarda, agarrar) • X: defender • Shift: esquiva • C: interagir";
 export const ROTULO_DA_PRORROGACAO = "PRORROGAÇÃO · A FAIXA AFROUXOU";
+export const GRITO_DE_ABERTURA = "LUTEM!";
 
 function caixa(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, raio: number): void {
   g.beginPath();
@@ -95,7 +91,7 @@ function barra(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: 
   g.stroke();
 }
 
-function placa(g: CanvasRenderingContext2D, p: Partida, i: 0 | 1, estado: EstadoDoHud, tela: Tela): void {
+function placa(g: CanvasRenderingContext2D, p: Partida, i: Indice, estado: EstadoDoHud, tela: Tela): void {
   const l = p.lutadores[i];
   const direita = i === 1;
   const largura = estado.compacto ? Math.min(176, tela.largura / 2 - 18) : 240;
@@ -124,7 +120,7 @@ function placa(g: CanvasRenderingContext2D, p: Partida, i: 0 | 1, estado: Estado
             : l.estado === "arremessado"
               ? " · VOANDO"
               : "";
-  const papel = `${i === 0 ? "VOCÊ" : "COMPUTADOR"}${situacao}`;
+  const papel = `${estado.papeis[i]}${situacao}`;
   const bordaInterna = direita ? x + largura - 10 : x + 10;
   g.textBaseline = "alphabetic";
   g.textAlign = direita ? "right" : "left";
@@ -161,7 +157,7 @@ function placa(g: CanvasRenderingContext2D, p: Partida, i: 0 | 1, estado: Estado
 function medidorDaFaixa(g: CanvasRenderingContext2D, p: Partida, estado: EstadoDoHud, tela: Tela): void {
   const quem = p.lutadores.findIndex((l) => naEscada(l) || (l.estado === "caindoDaEscada" && l.puxada > 0));
   if (quem < 0 && p.fase !== "fim") return;
-  const i = (quem < 0 ? p.vencedor ?? 0 : quem) as 0 | 1;
+  const i = (quem < 0 ? (p.vencedor ?? 0) : quem) as Indice;
   const l = p.lutadores[i];
   const largura = Math.min(280, tela.largura - 24);
   const x = (tela.largura - largura) / 2;
@@ -177,10 +173,16 @@ function medidorDaFaixa(g: CanvasRenderingContext2D, p: Partida, estado: EstadoD
   g.stroke();
 
   const nome = estado.nomes[i].toUpperCase();
+  const humano = estado.humanos[i];
+  const esquema = estado.esquemas[i];
+  // Sozinho, o aviso da pessoa dispensa o nome; a dois, o nome diz de quem é a vez.
+  const prefixo = estado.humanos[0] && estado.humanos[1] ? `${nome}: ` : "";
   let rotulo = l.estado === "subindo" ? `${nome} SUBINDO` : `${nome} NA FAIXA`;
   if (balancando) rotulo = "ESCADA BALANÇANDO";
-  else if (l.estado === "noTopo" && !l.puxando && i === 0) rotulo = estado.teclado ? "SEGURE C PARA PUXAR" : "SEGURE O BOTÃO PARA PUXAR";
-  else if (faltaPouco) rotulo = i === 0 ? "FALTA POUCO!" : `${nome}: FALTA POUCO!`;
+  else if (l.estado === "noTopo" && !l.puxando && humano) {
+    const tecla = esquema?.teclas.interagir?.rotulo;
+    rotulo = tecla === undefined ? "SEGURE O BOTÃO PARA PUXAR" : `${prefixo}SEGURE ${tecla} PARA PUXAR`;
+  } else if (faltaPouco) rotulo = humano ? `${prefixo}FALTA POUCO!` : `${nome}: FALTA POUCO!`;
   if (p.fase === "fim") rotulo = "FAIXA CONQUISTADA";
   const piscando = (faltaPouco || balancando) && estado.movimento && Math.sin(estado.tempo * 16) > 0;
   g.textAlign = "center";
@@ -199,7 +201,7 @@ function medidorDaFaixa(g: CanvasRenderingContext2D, p: Partida, estado: EstadoD
   g.fillText(`${Math.round(l.puxada * 100)}%`, x + largura - 12, y + 26);
 }
 
-/** Um balão apontando para a cabeça do jogador. */
+/** Um balão apontando para a cabeça de alguém. */
 function balao(g: CanvasRenderingContext2D, tela: Tela, cabeca: { x: number; y: number }, texto: string, cor: string, desloca: number): void {
   g.font = `700 12px ${FONTE_SANS}`;
   const largura = g.measureText(texto).width + 20;
@@ -231,54 +233,65 @@ function balao(g: CanvasRenderingContext2D, tela: Tela, cabeca: { x: number; y: 
   g.fillText(texto, x + 10, y + altura / 2 + 0.5);
 }
 
-/** A dica curta sobre a cabeça do jogador, só quando a ação está disponível; e o aviso de comando bloqueado. */
+/** A dica curta sobre a cabeça de cada pessoa, só quando a ação está disponível; e o aviso de comando bloqueado. */
 function pertoDoPersonagem(g: CanvasRenderingContext2D, estado: EstadoDoHud, tela: Tela, p: Partida): void {
-  if (p.fase !== "luta" || estado.cabecaDoJogador === null) return;
-  let mostrouDica = false;
-  if (estado.dica !== null && !(estado.dica === "puxarFaixa" && p.lutadores[0].puxando)) {
-    const texto = estado.teclado ? ROTULO_DA_DICA[estado.dica].teclado : ROTULO_DA_DICA[estado.dica].toque;
-    const destaque = estado.dica === "puxarFaixa" || estado.dica === "posicionarEscada" || estado.dica === "derrubarEscada" || estado.dica === "agarrar" || estado.dica === "escapar";
-    balao(g, tela, estado.cabecaDoJogador, texto, destaque ? AMARELO : PAPEL, 0);
-    mostrouDica = true;
-  }
-  if (estado.aviso !== null && estado.aviso.t < 0.9) {
-    g.save();
-    g.globalAlpha = estado.aviso.t > 0.6 ? (0.9 - estado.aviso.t) / 0.3 : 1;
-    balao(g, tela, estado.cabecaDoJogador, estado.aviso.texto, "#f8e4cf", mostrouDica ? 32 : 0);
-    g.restore();
+  if (p.fase !== "luta") return;
+  for (const i of [0, 1] as const) {
+    const cabeca = estado.cabecas[i];
+    if (!estado.humanos[i] || cabeca === null) continue;
+    const dica = estado.dicas[i];
+    let mostrouDica = false;
+    if (dica !== null && !(dica === "puxarFaixa" && p.lutadores[i].puxando)) {
+      const texto = rotuloDaDica(dica, estado.esquemas[i]);
+      const destaque = dica === "puxarFaixa" || dica === "posicionarEscada" || dica === "derrubarEscada" || dica === "agarrar" || dica === "escapar";
+      balao(g, tela, cabeca, texto, destaque ? AMARELO : PAPEL, 0);
+      mostrouDica = true;
+    }
+    const aviso = estado.avisos[i];
+    if (aviso !== null && aviso.t < 0.9) {
+      g.save();
+      g.globalAlpha = aviso.t > 0.6 ? (0.9 - aviso.t) / 0.3 : 1;
+      balao(g, tela, cabeca, aviso.texto, "#f8e4cf", mostrouDica ? 32 : 0);
+      g.restore();
+    }
   }
 }
 
-/** A legenda discreta dos comandos, embaixo, só para quem usa teclado. */
+/** A legenda discreta dos comandos, embaixo, uma linha por pessoa que usa teclado. */
 function legenda(g: CanvasRenderingContext2D, estado: EstadoDoHud, tela: Tela, p: Partida): void {
-  if (!estado.teclado || p.fase === "fim") return;
+  if (p.fase === "fim") return;
+  const linhas = estado.esquemas.filter((esquema): esquema is Esquema => esquema !== null).map((esquema) => esquema.legenda);
+  if (linhas.length === 0) return;
   g.save();
   g.globalAlpha = 0.72;
   g.font = `600 11px ${FONTE_SANS}`;
   g.textAlign = "center";
   g.textBaseline = "alphabetic";
-  const largura = g.measureText(LEGENDA).width + 20;
-  const x = (tela.largura - largura) / 2;
-  const y = tela.altura - 26;
-  g.fillStyle = PALCO;
-  caixa(g, x, y, largura, 20, 10);
-  g.fill();
-  g.fillStyle = "#c5cbc2";
-  g.fillText(LEGENDA, tela.largura / 2, y + 14);
+  linhas.forEach((texto, n) => {
+    const largura = g.measureText(texto).width + 20;
+    const x = (tela.largura - largura) / 2;
+    const y = tela.altura - 26 - (linhas.length - 1 - n) * 22;
+    g.fillStyle = PALCO;
+    caixa(g, x, y, largura, 20, 10);
+    g.fill();
+    g.fillStyle = "#c5cbc2";
+    g.fillText(texto, tela.largura / 2, y + 14);
+  });
   g.restore();
 }
 
+/** A contagem de abertura: 3, 2, 1, e o grito que abre a luta. */
 function contagem(g: CanvasRenderingContext2D, p: Partida, estado: EstadoDoHud, tela: Tela): void {
   let texto: string | null = null;
   let u = 0;
   if (p.fase === "contagem") {
     const decorrido = REGRAS.contagem - p.contagem;
-    const passo = 0.8;
+    const passo = REGRAS.contagem / 3;
     const indice = Math.min(2, Math.floor(decorrido / passo));
     texto = String(3 - indice);
     u = (decorrido - indice * passo) / passo;
   } else if (p.fase === "luta" && p.tempo < REGRAS.contagem + 1) {
-    texto = "VALE A FAIXA!";
+    texto = GRITO_DE_ABERTURA;
     u = (p.tempo - REGRAS.contagem) / 1;
   }
   if (texto === null) return;
@@ -288,7 +301,7 @@ function contagem(g: CanvasRenderingContext2D, p: Partida, estado: EstadoDoHud, 
   g.translate(tela.largura / 2, tela.altura * 0.4);
   g.scale(escala, escala);
   g.globalAlpha = alfa;
-  const tamanho = texto.length > 2 ? Math.min(64, tela.largura / 9) : 110;
+  const tamanho = texto.length > 2 ? Math.min(96, tela.largura / 7) : 110;
   g.font = `800 ${tamanho}px ${FONTE_SANS}`;
   g.textAlign = "center";
   g.textBaseline = "middle";

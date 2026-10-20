@@ -1,16 +1,18 @@
-// O som do Vale a Faixa, sintetizado na hora com a Web Audio API: nenhum
-// arquivo, nenhuma música licenciada. Dois canais com volume próprio: os
-// efeitos (passos, socos, chutes, voadora, agarrão e arremesso, guarda, erro,
-// pulo e aterrissagem, escada e seus degraus, queda, sino, vitória, derrota)
-// e a torcida (torcida.ts), que acompanha o estado real da partida em
-// camadas. Só começa depois de um gesto da pessoa (`ativar`), pausa com a
-// partida e volta ao silêncio ao reiniciar ou sair.
+// O som do Vale a Faixa, com a Web Audio API. Dois canais com volume próprio:
+// os efeitos (passos, socos, chutes, voadora, agarrão e arremesso, guarda,
+// erro, pulo e aterrissagem, escada e seus degraus, queda, contagem, sino,
+// vitória, derrota), sintetizados na hora, e a torcida (torcida.ts), que
+// acompanha o estado real da partida em camadas: sintetizadas, ou gravações
+// de público com licença conferida, listadas em
+// public/audio/torcida/manifesto.json e buscadas uma vez por visita. Só
+// começa depois de um gesto da pessoa (`ativar`), pausa com a partida e
+// volta ao silêncio ao reiniciar ou sair. Nenhuma música licenciada.
 //
 // Um mesmo efeito não toca duas vezes em menos de 50 ms, para não acumular
 // nem distorcer; um compressor no canal mestre segura os picos quando muita
-// coisa toca junto (a queda com a torcida gritando), sem saturar.
+// coisa toca junta (a queda com a torcida gritando), sem saturar.
 
-import { criarTorcida, type Reacao, type Torcida } from "./torcida";
+import { CAMADAS, criarTorcida, type Camada, type Gravacoes, type Reacao, type Torcida } from "./torcida";
 
 export type Som =
   | "passo"
@@ -32,6 +34,7 @@ export type Som =
   | "escadaPosta"
   | "escadaCai"
   | "subida"
+  | "contagem"
   | "sino"
   | "vitoria"
   | "derrota"
@@ -45,7 +48,9 @@ export interface Audio {
   tocar(som: Som): void;
   /** A torcida, a cada passo: a intensidade da partida (0 a 1) e o progresso real da captura (0 a 1). */
   torcida(intensidade: number, captura: number, dt: number): void;
-  reagirTorcida(reacao: Reacao): void;
+  reagirTorcida(reacao: Reacao, forca?: number): void;
+  /** As camadas da torcida que vêm de gravação nesta visita (vazio: tudo sintetizado). A mesma lista até mudar. */
+  gravacoes(): readonly Camada[];
   setVolumes(efeitos: number, torcida: number): void;
   setMudo(mudo: boolean): void;
   /** Pausa: a torcida desce e as reações param; os efeitos não tocam. */
@@ -57,6 +62,40 @@ export interface Audio {
 }
 
 const INTERVALO_MINIMO = 0.05;
+
+/** Onde ficam o manifesto e as gravações da torcida, na saída estática. */
+export const CAMINHO_DAS_GRAVACOES = "/audio/torcida/";
+
+/**
+ * O manifesto lista, por camada, o arquivo (na mesma pasta) e a origem com a
+ * licença. O que não estiver listado, não existir ou falhar fica de fora,
+ * e a camada sintetizada continua. Sem manifesto, nada mais é pedido.
+ */
+async function buscarGravacoes(): Promise<Partial<Record<Camada, ArrayBuffer>>> {
+  const brutas: Partial<Record<Camada, ArrayBuffer>> = {};
+  try {
+    const resposta = await fetch(`${CAMINHO_DAS_GRAVACOES}manifesto.json`);
+    if (!resposta.ok) return brutas;
+    const manifesto = (await resposta.json()) as { camadas?: Record<string, { arquivo?: unknown }> };
+    const camadas = manifesto.camadas ?? {};
+    await Promise.all(
+      CAMADAS.map(async (camada) => {
+        const arquivo = camadas[camada]?.arquivo;
+        // Só um nome de arquivo simples, na própria pasta.
+        if (typeof arquivo !== "string" || !/^[\w][\w.-]*$/.test(arquivo)) return;
+        try {
+          const r = await fetch(`${CAMINHO_DAS_GRAVACOES}${arquivo}`);
+          if (r.ok) brutas[camada] = await r.arrayBuffer();
+        } catch {
+          // Sem rede ou arquivo: fica a camada sintetizada.
+        }
+      }),
+    );
+  } catch {
+    // Sem manifesto legível: tudo sintetizado.
+  }
+  return brutas;
+}
 
 export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mudoInicial: boolean): Audio | null {
   if (typeof window === "undefined") return null;
@@ -73,6 +112,10 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
   let mudo = mudoInicial;
   let suspenso = false;
   const ultimo = new Map<Som, number>();
+  // As gravações da torcida: buscadas já; decodificadas quando o contexto existir.
+  let brutas: Partial<Record<Camada, ArrayBuffer>> | null = null;
+  let decodificando = false;
+  let carregadas: readonly Camada[] = [];
 
   const ganhoMestre = () => (mudo ? 0 : 0.9);
 
@@ -83,6 +126,35 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
     for (let i = 0; i < tamanho; i += 1) dados[i] = Math.random() * 2 - 1;
     return buffer;
   };
+
+  const decodificar = () => {
+    const c = contexto;
+    if (c === null || brutas === null || decodificando) return;
+    decodificando = true;
+    const pares = Object.entries(brutas) as [Camada, ArrayBuffer][];
+    brutas = null;
+    void Promise.all(
+      pares.map(async ([camada, dados]) => {
+        try {
+          return [camada, await c.decodeAudioData(dados)] as const;
+        } catch {
+          // Formato que o navegador não lê: fica a camada sintetizada.
+          return null;
+        }
+      }),
+    ).then((decodificadas) => {
+      if (contexto !== c || torcida === null) return;
+      const gravacoes: Gravacoes = {};
+      for (const par of decodificadas) if (par !== null) gravacoes[par[0]] = par[1];
+      carregadas = CAMADAS.filter((camada) => gravacoes[camada] !== undefined);
+      if (carregadas.length > 0) torcida.usarGravacoes(gravacoes);
+    });
+  };
+
+  void buscarGravacoes().then((resultado) => {
+    brutas = resultado;
+    decodificar();
+  });
 
   const ativar = () => {
     if (contexto === null) {
@@ -104,6 +176,7 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
       ruido = prepararRuido(contexto);
       // A torcida fica abaixo dos impactos: o máximo dela é 55% do canal.
       torcida = criarTorcida(contexto, mestre, volumeTorcida * 0.55);
+      decodificar();
     }
     if (contexto.state === "suspended" && !suspenso) void contexto.resume();
   };
@@ -244,6 +317,11 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
     subida() {
       clank(0.45);
     },
+    contagem() {
+      // Um toque curto a cada número da contagem.
+      tom("sine", 880, 870, 0.12, 0.3);
+      tom("triangle", 1760, 1740, 0.06, 0.08);
+    },
     sino() {
       for (let i = 0; i < 3; i += 1) {
         tom("sine", 1047, 1040, 0.9, 0.5, i * 0.32);
@@ -290,9 +368,10 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
     torcida(intensidade, captura, dt) {
       torcida?.atualizar(intensidade, captura, dt);
     },
-    reagirTorcida(reacao) {
-      torcida?.reagir(reacao);
+    reagirTorcida(reacao, forca) {
+      torcida?.reagir(reacao, forca);
     },
+    gravacoes: () => carregadas,
     setVolumes(novoEfeitos, novaTorcida) {
       volumeEfeitos = Math.max(0, Math.min(1, novoEfeitos));
       volumeTorcida = Math.max(0, Math.min(1, novaTorcida));

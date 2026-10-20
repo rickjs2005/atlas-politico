@@ -4,16 +4,17 @@
 
 ## Como se joga
 
-1. **Entrada** (`/jogo/vale-a-faixa/`): o que é, como se vence, os controles e o aviso de sátira. **Escolher candidato** leva à escolha.
-2. **Escolha**: os dois personagens, desenhados pelo mesmo código da partida, parados e respirando. O outro fica com o computador.
-3. **Partida**: contagem de três segundos, luta, fim. Na primeira vez, um tutorial curto (três passos) antes da contagem; ele não volta, e fica em Pausa → Controles.
-4. **Fim**: vitória ou derrota, o tempo da partida, **Revanche** (mesmos personagens, escada sorteada de novo), **Trocar candidato** e **Voltar ao Atlas**.
+1. **Entrada** (`/jogo/vale-a-faixa/`): o que é, como se vence, os controles de quem joga sozinho e o aviso de sátira. Dois modos, antes de tudo (D-161): **Jogar sozinho** (você contra o computador, em três níveis) e **Jogar com um amigo** (2 jogadores — mesmo teclado; precisa de teclado físico). O último modo fica guardado nas preferências.
+2. **Escolha**: os dois personagens, desenhados pelo mesmo código da partida, parados e respirando. Sozinho, quem escolhe fica com um e o computador com o outro, e o nível do computador se escolhe aqui. A dois, o jogador 1 escolhe primeiro; a tela mostra então os dois lados com o nome de cada jogador, as teclas de cada um, **Trocar de lado** e **Lutar**. Não há nível nem placar a dois.
+3. **Preparação**: antes de toda partida, uma janela com os controles (os dois esquemas, a dois) e, na primeira vez, o "como se ganha" em três passos. **Lutar** fecha a janela e abre a contagem: 3, 2, 1, LUTEM!, com um toque a cada número. Os controles ficam também em Pausa → Controles.
+4. **Partida**: contagem, luta, fim.
+5. **Fim**: a dois, "Jogador N venceu"; sozinho, vitória ou derrota, com o nível. O tempo da partida, **Revanche** (mesmo modo, mesmos personagens, escada sorteada de novo), **Trocar candidato** (volta à escolha, no mesmo modo), **Voltar aos modos** e **Voltar ao Atlas**. Pausa tem as mesmas saídas.
 
 A vitória é só pela faixa. Derrubar o adversário não encerra nada: abre a janela para pegar a escada, levá-la até a marca amarela sob a faixa, pôr em pé, subir e, no topo, segurar o comando de interação até a barra encher. Quem está no topo pode ser interrompido: golpes na base chacoalham a escada (a barra não avança enquanto ela balança, e perto de três golpes derrubam quem sobe). Cair tira um quarto do que foi puxado, não tudo. A guarda não é uma parede: colado em quem defende, o golpe forte vira o agarrão, que segura e arremessa; quem é agarrado escapa com a esquiva. Passados 150 s de luta, a prorrogação: a faixa afrouxa e puxar leva menos, para a partida não se arrastar (D-160).
 
 ### Controles
 
-Um esquema só, sem atalhos alternativos (D-157, D-158):
+Sozinho, um esquema só, sem atalhos alternativos (D-157, D-158):
 
 | Computador | Celular |
 | --- | --- |
@@ -27,9 +28,25 @@ Um esquema só, sem atalhos alternativos (D-157, D-158):
 | ↑ ↓: subir e descer a escada (↑ começa a subir com o lutador alinhado à base; ↓ desiste e desce) | ▲ ▼ do direcional; ▲ acende quando dá para subir |
 | Esc: pausar e continuar | **Pausa**, no alto |
 
-Teclado e toque valem ao mesmo tempo. Perder o foco da janela ou esconder a aba abre a pausa; pausar, perder o foco e sair do jogo soltam todos os comandos. As teclas do jogo (setas e Espaço inclusive) não rolam a página enquanto a partida está ativa, voltam ao normal fora dela, e não são capturadas em campos de texto. Um toque muito curto não se perde: fica guardado até a próxima leitura. Um comando apertado um instante (0,16 s) antes de o lutador ficar livre sai em seguida; uma queda ou um golpe recebido apagam o que estava guardado.
+A dois no mesmo teclado (D-161), dois esquemas sem tecla em comum, o jogador 1 na esquerda do teclado e o 2 nas setas e nas letras da direita (`src/features/faixa/esquemas.ts`):
 
-A dica curta aparece sobre a cabeça do personagem só quando a ação está disponível: "C — Pegar escada", "C — Posicionar escada", "C — Largar escada", "↑ — Subir", "Segure C — Puxar faixa", "Z — Derrubar escada", "V — Agarrar", "Shift — Escapar!" (no toque, com o nome do botão). Um comando que não sai (atacar carregando a escada, pular na escada, esquiva em recarga, segunda voadora no mesmo salto, qualquer coisa que não a esquiva enquanto agarrado) mostra o motivo no mesmo lugar por um instante. Embaixo, para quem usa teclado, a legenda discreta dos comandos. A zona válida da escada fica marcada no tapete e pulsa enquanto alguém a carrega. Na prorrogação, um rótulo discreto sob as placas avisa que a faixa afrouxou.
+| Ação | Jogador 1 | Jogador 2 |
+| --- | --- | --- |
+| Andar | A D | ← → |
+| Pular; alinhado à base da escada livre, subir; na escada, continuar subindo | W | ↑ |
+| Descer da escada | S | ↓ |
+| Atacar (no ar, voadora; perto da escada ocupada, chacoalhar) | F | K |
+| Golpe forte (colado em quem defende, agarrar) | G | L |
+| Defender (segurar) | Q | J |
+| Esquiva (agarrado, escapar) | R | I |
+| Interagir: pegar, posicionar e largar a escada; no topo, segurar para puxar a faixa | E | O |
+| Pausar e continuar, para os dois | Esc | Esc |
+
+Pular não tem tecla própria a dois: a tecla de subir vira pulo quando não há escada para subir (`subirOuPular`, em regras.ts), e volta a ser subida alinhado à base ou já na escada. A dois, o computador não existe (a memória da IA fica sem uso), os botões de toque ficam de fora, e os dois lados obedecem às mesmas regras, com as mesmas possibilidades e a mesma condição de vitória (há teste disso: a rotina da escada vence pelo lado 2 no mesmo tempo que pelo lado 1). O que vale é o estado de cada tecla, lido a cada passo, e não a repetição automática do `keydown`: várias teclas e várias pessoas ao mesmo tempo. Alguns teclados não registram muitas teclas ao mesmo tempo (o limite físico de teclas simultâneas, o "ghosting"); a preparação avisa que, se um comando falhar enquanto o outro segura várias teclas, é o teclado, não o jogo. Não há toque para duas pessoas nem partida entre aparelhos.
+
+Teclado e toque valem ao mesmo tempo (sozinho). Perder o foco da janela ou esconder a aba abre a pausa; pausar, perder o foco e sair do jogo soltam todos os comandos, dos dois lados. As teclas do jogo (setas e Espaço inclusive) não rolam a página enquanto a partida está ativa, voltam ao normal fora dela, não são capturadas em campos de texto, e com Ctrl, Alt ou a tecla do sistema seguem para o navegador (Ctrl+R continua recarregando). Shift e Caps Lock não mudam a letra. Um toque muito curto não se perde: fica guardado até a próxima leitura. Um comando apertado um instante (0,16 s) antes de o lutador ficar livre sai em seguida; uma queda ou um golpe recebido apagam o que estava guardado.
+
+A dica curta aparece sobre a cabeça de cada pessoa só quando a ação está disponível, com a tecla do esquema dela: "C — Pegar escada", "C — Posicionar escada", "C — Largar escada", "↑ — Subir", "Segure C — Puxar faixa", "Z — Derrubar escada", "V — Agarrar", "Shift — Escapar!" (a dois, "E — Pegar escada" e "O — Pegar escada", e assim por diante; no toque, com o nome do botão). Um comando que não sai (atacar carregando a escada, pular na escada, esquiva em recarga, segunda voadora no mesmo salto, qualquer coisa que não a esquiva enquanto agarrado) mostra o motivo no mesmo lugar por um instante, para cada pessoa. Embaixo, para quem usa teclado, a legenda discreta dos comandos, uma linha por pessoa. A zona válida da escada fica marcada no tapete e pulsa enquanto alguém a carrega. Na prorrogação, um rótulo discreto sob as placas avisa que a faixa afrouxou. As placas dizem "VOCÊ" e "COMPUTADOR", ou "JOGADOR 1" e "JOGADOR 2".
 
 ## Regras (src/lib/faixa/regras.ts)
 
@@ -70,16 +87,18 @@ Dois computadores um contra o outro terminam a partida com vitórias dos dois la
 
 Canvas 2D, laço de passo fixo (o `createLoop` da trilha), sem biblioteca nova: o projeto já tinha um kit de arte vetorial com as cabeças em cartum das duas pessoas (`src/features/game/draw`), reaproveitadas aqui em escala maior; o corpo é um boneco articulado de terno, com poses por estado (guarda, caminhada com a passada no ritmo da velocidade e a inclinação da virada, pulo, voadora de corpo inclinado e perna estendida, aterrissagem, soco, direto e chute, o gancho forte, o agarrão em quatro fases para quem segura, o agarrado erguido se debatendo, o arremessado girando no ar, a derrubada, a esquiva, defesa com o escudo translúcido na frente, atingido, caído, levantando, carregando, subindo, no topo, puxando, caindo, vitória, derrota) e expressões por cima do rosto (raiva, dor, esforço, alegria, tonto, susto, triste). A arena: palco de debate escuro com painel de LED, púlpitos, treliça com refletores, público estilizado com bandeiras e flashes, ringue com cordas verdes e amarelas, tapete com a zona marcada, avental. A escada tem quatro desenhos (em pé com oscilação e tombo, caída, carregada); a faixa, verde e amarela com roseta, balança, desce e treme quando puxada, e vai ao peito do vencedor. Efeitos: estrelas de impacto, poeira, brilhos, anéis, pausa de impacto de 45 ms e tremor de câmera curto. A câmera enquadra os dois sempre e aproxima 8% na subida. Com movimento reduzido: sem tremor, sem partículas, sem flashes, público parado.
 
-A interface sobre a cena (placas com equilíbrio e situação, medidor da faixa, a dica sobre a cabeça do personagem, a legenda dos comandos, contagem, comentário do narrador) é desenhada no canvas; pausa, tutorial, fim, a apresentação das teclas desenhadas e os botões de toque são React.
+A interface sobre a cena (placas com papel, equilíbrio e situação, medidor da faixa, a dica sobre a cabeça de cada pessoa, a legenda dos comandos, a contagem 3, 2, 1, LUTEM!, comentário do narrador) é desenhada no canvas; os modos, a escolha, a preparação, pausa, fim, a apresentação das teclas desenhadas e os botões de toque são React.
 
 ## Som (src/features/faixa/audio.ts, torcida.ts)
 
-Sintetizado com a Web Audio API: nenhum arquivo. Dois canais com volume próprio, em Pausa → Som, mais o silêncio geral (botão **Som** sobre a cena), guardados em `atlas-politico:faixa:preferencias`. Começa só depois de um gesto (o botão **Escolher candidato** ou **Lutar**), pausa com a partida e volta ao silêncio ao reiniciar ou sair.
+Web Audio API. Dois canais com volume próprio, em Pausa → Som, mais o silêncio geral (botão **Som** sobre a cena), guardados em `atlas-politico:faixa:preferencias`. Começa só depois de um gesto (o botão do modo ou **Lutar**), pausa com a partida e com a aba escondida, volta ao silêncio ao reiniciar ou sair, e nasce uma vez por visita (não é recriado a cada renderização). Nenhuma música licenciada, nenhuma narração por voz.
 
-- **Efeitos**: passos no tapete (um por pé, pelo ciclo real da caminhada, com o tom variando), socos, chute, golpe forte, agarrão e arremesso, voadora, guarda, erro, pulo e aterrissagem, esquiva, queda, escada (pega, passos de quem a carrega, posta, degraus de quem sobe a cada quinto da subida, chacoalhada, tombo), sino de abertura, aviso da prorrogação, vitória e derrota. Um mesmo efeito não toca duas vezes em menos de 50 ms, e um compressor no canal mestre (limiar −14 dB, razão 4:1, ataque 3 ms) segura os picos quando muita coisa toca junto, sem saturar.
-- **Torcida** (D-159): camadas que seguem o estado real da partida, iguais para os dois lados. O ambiente da arena é contínuo (ruído rosa em duas fontes filtradas, uma de cada lado, com movimento lento, e vozes curtas esparsas). A expectativa cresce com a subida na escada (o rugido grave entra), com o topo, e principalmente com o progresso real da captura: palmas que ganham ritmo, "oohs" a cada quarto da barra e o rugido mais cheio; estar no topo sem puxar, ou com a escada balançando, não conta. As reações: um grito curto a cada golpe, um maior a cada queda (com assobios e palmas), o suspiro coletivo de surpresa quando a captura é interrompida ou a escada tomba (uma por lance), e a explosão de comemoração só na vitória (gritos em massa, aplausos que se espalham por cinco segundos, assobios). Tudo é gerado grão a grão, com sorteios contínuos: não há laço curto nem a mesma reação repetida igual. Os ganhos mudam por constante de tempo (sobem mais depressa do que descem), e o máximo da torcida fica em 55% do canal, abaixo dos impactos.
+- **Efeitos**, sintetizados: passos no tapete (um por pé, pelo ciclo real da caminhada, com o tom variando), socos, chute, golpe forte, agarrão e arremesso, voadora, guarda, erro, pulo e aterrissagem, esquiva, queda, escada (pega, passos de quem a carrega, posta, degraus de quem sobe a cada quinto da subida, chacoalhada, tombo), um toque a cada número da contagem, sino de abertura, aviso da prorrogação, vitória e derrota. Um mesmo efeito não toca duas vezes em menos de 50 ms, e um compressor no canal mestre (limiar −14 dB, razão 4:1, ataque 3 ms) segura os picos quando muita coisa toca junto, sem saturar.
+- **Torcida** (D-159, D-161): camadas que seguem o estado real da partida, iguais para os dois lados. O ambiente da arena é contínuo, em volume moderado durante a luta. A expectativa cresce com a subida na escada (o rugido grave entra), com o topo, e principalmente com o progresso real da captura: palmas que ganham ritmo, "oohs" a cada quarto da barra, o rugido mais cheio e, no trecho final (acima de 70%), o clímax, com a batida mais rápida; estar no topo sem puxar, ou com a escada balançando, não conta. As reações: um grito curto aos golpes fortes (chute, forte, voadora) e ao agarrão, os leves ficam no murmúrio; um grito maior a cada queda (com assobios e palmas; maior na queda longa); um "ooh" curto quando a escada é chacoalhada com alguém em cima; o suspiro coletivo de surpresa quando a captura é interrompida (tanto maior quanto mais perto do fim ela estava) ou a escada tomba; e a explosão de comemoração só na vitória (gritos em massa, aplausos que se espalham por cinco segundos, assobios). Cada reação tem recarga própria (0,4 a 1,2 s; a comemoração, 6 s) e, no total, saem no máximo três reações a cada 1,5 s: nada acumula. Os ganhos mudam por constante de tempo (sobem mais depressa do que descem), e o máximo da torcida fica em 55% do canal, abaixo dos impactos.
 
-Não há narração por voz. O cartão escrito do narrador continua. Gravações de público com licença conferida podem ser listadas em `GRAVACOES` (`torcida.ts`) e colocadas em `public/audio/torcida/`; sem arquivo, nada é pedido à rede. Em 19 de outubro de 2026 não se achou um conjunto CC0 convincente (ambiente de arena, expectativa, suspiro e comemoração), por isso as camadas são sintetizadas.
+**Gravações de público.** A torcida aceita gravações reais no lugar das camadas sintetizadas, listadas em `public/audio/torcida/manifesto.json` e guardadas na mesma pasta: `ambiente` e `expectativa` em laço (tocadas por duas fontes alternadas, com o fim de uma e o começo da seguinte sobrepostos em uma emenda de potência constante, seno e cosseno, de até 1,5 s, agendada com segundos de antecedência pelo relógio do áudio: sem costura audível nem buraco em quadro travado), e `golpe`, `queda`, `surpresa` e `comemoracao` tocadas uma vez por reação, com variação leve de tom e de lado, com as mesmas recargas. Cada entrada do manifesto registra o arquivo, a origem (endereço), o autor e a licença; o código busca o manifesto uma vez por visita, só lê nomes simples de arquivo na própria pasta, ignora o que falhar e mantém a camada sintetizada; sem entrada no manifesto, nada mais é pedido à rede. O caminho é provado em tests/e2e/vale-a-faixa.spec.ts com um manifesto e arquivos WAV servidos só pelo teste; o canvas expõe em `data-gravacoes` as camadas que vieram de gravação.
+
+**O que falta (20 de outubro de 2026).** O manifesto está vazio: nenhuma gravação foi incluída, e a torcida continua inteira sintetizada, como está descrito acima; nada aqui finge ser gravação. Para a torcida real faltam seis arquivos, com licença que permita uso e redistribuição no site (CC0, CC BY com o crédito registrado no manifesto, ou a licença de conteúdo do Pixabay) e sem gravação de transmissão de luta livre: (1) `ambiente`, 30 a 90 s de arena cheia em murmúrio contínuo, com começo e fim parecidos; (2) `expectativa`, 20 a 60 s de público em tensão crescente, sem palmas ritmadas marcantes; (3) `golpe`, 1 a 2 s de grito curto de público; (4) `queda`, 2 a 4 s de grito maior com aplausos; (5) `surpresa`, 1,5 a 3 s de "ohh" coletivo de decepção; (6) `comemoracao`, 6 a 12 s de explosão de comemoração com aplausos que se espalham. Nenhum arquivo foi baixado nesta rodada: baixar e conferir a licença de cada um é uma decisão de quem publica.
 
 ## Código
 
@@ -87,14 +106,15 @@ Não há narração por voz. O cartão escrito do narrador continua. Gravações
 | --- | --- |
 | `src/app/jogo/vale-a-faixa/page.tsx` | Página estática, leve |
 | `src/lib/faixa/tipos.ts`, `regras.ts`, `ia.ts`, `falas.ts` | Dados, regras, computador e comentários, puros |
-| `src/features/faixa/ValeAFaixa.tsx` | Telas: entrada, escolha, partida, pausa, fim, tutorial |
-| `src/features/faixa/motor.ts` | Laço, entrada, IA, desenho, som, eventos; carregado por `import()` |
-| `src/features/faixa/entrada.ts`, `Controles.tsx` | Teclado e toque |
+| `src/features/faixa/ValeAFaixa.tsx` | Telas: entrada com os modos, escolha (sozinho; a dois, em dois passos), partida, preparação, pausa, fim |
+| `src/features/faixa/motor.ts` | Laço, entrada dos dois lados, IA (sozinho), desenho, som, eventos; carregado por `import()` |
+| `src/features/faixa/esquemas.ts`, `entrada.ts`, `Controles.tsx` | Os esquemas de teclas (um sozinho, dois a dois), o teclado lido por estado para os dois lados, e o toque |
 | `src/features/faixa/desenho/*` | Câmera, arena, lutadores, escada e faixa, efeitos, HUD |
-| `src/features/faixa/audio.ts`, `torcida.ts`, `preferencias.ts` | Som em dois canais, a torcida em camadas e as preferências |
-| `tests/faixa.test.ts` | Regras e IA, em simulação |
-| `tests/e2e/vale-a-faixa.spec.ts` | A jornada no navegador, com cada personagem, teclado, toque, pausa, revanche, redimensionamento, o agarrão e os níveis. Com `?computador=parado` no endereço, o adversário não age; com `?computador=defendendo`, só defende: é como o teste dirige a partida pelo teclado |
-| `tests/export/vale-a-faixa.spec.ts` | Sobre a saída estática: o hub, a entrada e as páginas informativas não pedem o motor; ele chega na escolha do personagem |
+| `src/features/faixa/audio.ts`, `torcida.ts`, `preferencias.ts` | Som em dois canais, a torcida em camadas (sintetizadas ou gravadas) e as preferências |
+| `public/audio/torcida/manifesto.json` | As gravações de público, com origem e licença; vazio, a torcida é sintetizada |
+| `tests/faixa.test.ts` | Regras, IA, esquemas, entrada e a simetria dos dois lados, em simulação |
+| `tests/e2e/vale-a-faixa.spec.ts` | A jornada no navegador: modos, cada personagem, teclado, toque, pausa, revanche, redimensionamento, o agarrão, os níveis, a dois no mesmo teclado, as gravações pelo manifesto. Com `?computador=parado` no endereço, o adversário não age; com `?computador=defendendo`, só defende: é como o teste dirige a partida pelo teclado |
+| `tests/export/vale-a-faixa.spec.ts` | Sobre a saída estática: o hub, a entrada e as páginas informativas não pedem o motor; ele chega na escolha do modo |
 
 ## O que veio de fora, e o que é desenho próprio
 
@@ -102,8 +122,8 @@ Em 19 de outubro de 2026 pediu-se uma investigação dos jogos WWE 2K Battlegrou
 
 ## Limitações
 
-- Nenhuma pessoa jogou: o equilíbrio do computador e dos três níveis foi medido só em simulação e em partidas dirigidas por roteiro.
+- Nenhuma pessoa jogou, sozinha nem a dois: o equilíbrio do computador e dos três níveis foi medido só em simulação e em partidas dirigidas por roteiro, e o modo a dois foi provado por roteiro (as duas entradas ao mesmo tempo, o jogador 2 vencendo pela escada), não por duas pessoas.
 - O toque foi visto em celular emulado; aparelho real, Firefox e Safari não foram conferidos.
-- Sem partida entre duas pessoas.
+- A dois, só no mesmo teclado: sem toque para duas pessoas, sem partida entre aparelhos, sem rede. O limite de teclas simultâneas de cada teclado (ghosting) não é contornável pelo jogo; o aviso está na preparação.
 - Os ícones dos botões de toque são SVG simples desenhados para o jogo; não foram vistos em aparelho real.
-- O som é sintetizado e simples; não há música. Ninguém ouviu o resultado: as sondas conferem o grafo de áudio, não o som.
+- O som é sintetizado e simples; não há música. A torcida real depende das gravações que ainda não existem (ver "O que falta" em Som): o caminho está pronto e provado com arquivos de teste, mas o manifesto está vazio. Ninguém ouviu o resultado: as sondas conferem o grafo de áudio, não o som.

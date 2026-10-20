@@ -1,18 +1,24 @@
 // Vale a Faixa (src/features/faixa, docs/VALE-A-FAIXA.md): a jornada no
-// navegador, com o esquema de controles (setas, Espaço, Z, V, X, Shift, C,
-// Esc). A abertura e a escolha; a partida com cada personagem, até o fim, com
-// o computador buscando a faixa sozinho; o teclado (andar, pular, voadora,
-// golpe forte, esquiva, C para pegar e posicionar, seta para cima para subir,
-// C segurado para puxar); atacar perto da escada em que o computador sobe,
-// que a chacoalha; Esc que pausa e continua, a revanche e a volta ao atlas;
-// as teclas que não rolam a página e não entram em campos de texto; o toque
-// no celular emulado, com teclado junto; o redimensionamento; e nenhum erro
-// de console. As regras em si estão em tests/faixa.test.ts.
+// navegador. A abertura com os dois modos; sozinho, o esquema único de
+// controles (setas, Espaço, Z, V, X, Shift, C, Esc), a escolha, a partida com
+// cada personagem até o fim, com o computador buscando a faixa sozinho; o
+// teclado (andar, pular, voadora, golpe forte, esquiva, C para pegar e
+// posicionar, seta para cima para subir, C segurado para puxar); atacar
+// perto da escada em que o computador sobe; a torcida pelo estado real e as
+// gravações pelo manifesto; Esc que pausa e continua, a revanche, a volta aos
+// modos e ao atlas; as teclas que não rolam a página e não entram em campos
+// de texto; o toque no celular emulado, com teclado junto; o
+// redimensionamento. A dois no mesmo teclado: a escolha em dois passos, os
+// controles dos dois antes da luta, a contagem, os dois agindo ao mesmo
+// tempo com o computador desligado, perder o foco que pausa e solta, o
+// jogador 2 vencendo pela escada com as teclas dele, a revanche no mesmo
+// modo e a volta aos modos. E nenhum erro de console. As regras em si estão
+// em tests/faixa.test.ts.
 
 import { expect, test, type Page } from "@playwright/test";
 
 const raiz = (page: Page) => page.locator("[data-faixa]");
-/** Os estados que o canvas expõe: jogador, computador, escada, puxada, x do jogador, x da escada e y do jogador. */
+/** Os estados que o canvas expõe: lado 1, lado 2, escada, puxada do lado 1, x do lado 1, x da escada, y do lado 1, x do lado 2, y do lado 2. */
 const estados = async (page: Page) => (await page.locator("canvas").getAttribute("data-estados"))!.split("|");
 const estadoDoJogador = async (page: Page) => (await estados(page))[0]!;
 
@@ -25,18 +31,18 @@ function vigiarErros(page: Page): string[] {
   return erros;
 }
 
-/** Entra, escolhe e fecha o tutorial: a contagem começa. `semComputador` deixa o adversário parado (`true`) ou só defendendo. */
+/** Entra, escolhe o modo sozinho e o personagem, e fecha a preparação: a contagem começa. `semComputador` deixa o adversário parado (`true`) ou só defendendo. */
 async function comecar(page: Page, slug: "lula" | "flavio-bolsonaro", toque = false, semComputador: boolean | "defendendo" = false) {
   const modo = semComputador === true ? "parado" : semComputador === "defendendo" ? "defendendo" : null;
   await page.goto(modo === null ? "/jogo/vale-a-faixa/" : `/jogo/vale-a-faixa/?computador=${modo}`);
   await expect(raiz(page)).toHaveAttribute("data-faixa", "inicio");
   const acionar = async (seletor: string) => (toque ? page.locator(seletor).tap() : page.locator(seletor).click());
-  await acionar("[data-escolher-candidato]");
+  await acionar('[data-modo="solo"]');
   await expect(raiz(page)).toHaveAttribute("data-faixa", "escolha");
   await acionar(`[data-escolha="${slug}"]`);
   await expect(raiz(page)).toHaveAttribute("data-faixa", "partida");
   await expect(raiz(page)).toHaveAttribute("data-pronto", "sim", { timeout: 30_000 });
-  await expect(page.locator('[data-janela="tutorial"]')).toBeVisible();
+  await expect(page.locator('[data-janela="preparacao"]')).toBeVisible();
   await acionar("[data-comecar-luta]");
   await expect(raiz(page)).toHaveAttribute("data-fase", "luta", { timeout: 15_000 });
 }
@@ -45,7 +51,7 @@ async function comecar(page: Page, slug: "lula" | "flavio-bolsonaro", toque = fa
  * Observa os estados dos dois lutadores de dentro da página, quadro a quadro,
  * por `ms`: um estado curto (a aterrissagem dura 0,1 s) não escapa à
  * amostragem, mesmo com a máquina lenta. Devolve a sequência de estados do
- * jogador e a do computador, e a altura máxima do jogador.
+ * lado 1 e a do lado 2 (o computador, ou o jogador 2), e a altura máxima do lado 1.
  */
 async function observar(page: Page, ms: number): Promise<{ estados: string[]; doComputador: string[]; alturaMaxima: number }> {
   return page.evaluate(
@@ -87,10 +93,34 @@ async function segurarAte(page: Page, tecla: string, condicao: () => Promise<boo
   }
 }
 
+/** Um arquivo WAV curto de ruído baixo, para provar o caminho das gravações sem um arquivo de verdade no repositório. */
+function wav(segundos: number): Buffer {
+  const taxa = 22050;
+  const amostras = segundos * taxa;
+  const b = Buffer.alloc(44 + amostras * 2);
+  b.write("RIFF", 0);
+  b.writeUInt32LE(36 + amostras * 2, 4);
+  b.write("WAVE", 8);
+  b.write("fmt ", 12);
+  b.writeUInt32LE(16, 16);
+  b.writeUInt16LE(1, 20);
+  b.writeUInt16LE(1, 22);
+  b.writeUInt32LE(taxa, 24);
+  b.writeUInt32LE(taxa * 2, 28);
+  b.writeUInt16LE(2, 32);
+  b.writeUInt16LE(16, 34);
+  b.write("data", 36);
+  b.writeUInt32LE(amostras * 2, 40);
+  for (let i = 0; i < amostras; i += 1) b.writeInt16LE(Math.round((Math.random() * 2 - 1) * 0.2 * 32767), 44 + i * 2);
+  return b;
+}
+
 const TECLAS_DESENHADAS = ["←", "→", "Espaço", "Z", "V", "X", "Shift", "C", "↑", "↓", "Esc"];
+const TECLAS_DO_JOGADOR_1 = ["A", "D", "W", "S", "F", "G", "Q", "R", "E", "Esc"];
+const TECLAS_DO_JOGADOR_2 = ["←", "→", "↑", "↓", "K", "L", "J", "I", "O", "Esc"];
 
 test.describe("Vale a Faixa", () => {
-  test("a entrada diz que é sátira e mostra o esquema único de teclas; a escolha tem os dois; o hub do jogo leva até aqui", async ({ page }) => {
+  test("a entrada diz que é sátira, oferece os dois modos e mostra o esquema de quem joga sozinho; a escolha tem os dois; o hub do jogo leva até aqui", async ({ page }) => {
     await page.goto("/jogo/");
     await expect(page.locator('[data-caminho="vale-a-faixa"]')).toContainText("Sátira interativa");
     await page.locator("[data-abrir-vale-a-faixa]").click();
@@ -98,12 +128,17 @@ test.describe("Vale a Faixa", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Vale a Faixa");
     await expect(raiz(page)).toContainText("Sátira interativa");
     await expect(raiz(page)).toContainText("mesmas capacidades");
-    await expect(page.locator("[data-teclas] kbd")).toHaveText(TECLAS_DESENHADAS);
-    await expect(raiz(page)).not.toContainText(/\bJ\b|\bK\b|\bL\b|Enter|W A S D/);
-    await page.locator("[data-escolher-candidato]").click();
+    await expect(page.locator("[data-modo]")).toHaveText(["Jogar sozinhoVocê contra o computador, em três níveis.", /Jogar com um amigo2 jogadores — mesmo teclado/]);
+    await expect(page.locator('[data-teclas="solo"] kbd')).toHaveText(TECLAS_DESENHADAS);
+    // As teclas do segundo jogador só aparecem no modo a dois.
+    await expect(page.locator('[data-teclas="1"], [data-teclas="2"]')).toHaveCount(0);
+    await page.locator('[data-modo="solo"]').click();
+    await expect(raiz(page)).toHaveAttribute("data-modo", "solo");
     await expect(page.locator("[data-escolha]")).toHaveCount(2);
     await expect(page.locator('[data-escolha="lula"]')).toContainText("Lula");
     await expect(page.locator('[data-escolha="flavio-bolsonaro"]')).toContainText("Flávio Bolsonaro");
+    await page.locator("[data-voltar-aos-modos]").click();
+    await expect(raiz(page)).toHaveAttribute("data-faixa", "inicio");
   });
 
   for (const slug of ["lula", "flavio-bolsonaro"] as const) {
@@ -199,7 +234,7 @@ test.describe("Vale a Faixa", () => {
   test("a escolha tem os três níveis do computador; o escolhido vale na partida e fica guardado para a próxima visita", async ({ page }) => {
     const erros = vigiarErros(page);
     await page.goto("/jogo/vale-a-faixa/");
-    await page.locator("[data-escolher-candidato]").click();
+    await page.locator('[data-modo="solo"]').click();
     await expect(page.locator("[data-dificuldade]")).toHaveCount(3);
     await expect(page.locator("[data-dificuldade]")).toHaveText(["Fácil", "Normal", "Difícil"]);
     await expect(page.locator('[data-dificuldade="normal"]')).toHaveAttribute("aria-pressed", "true");
@@ -210,7 +245,7 @@ test.describe("Vale a Faixa", () => {
     await page.locator('[data-escolha="lula"]').click();
     await expect(raiz(page)).toHaveAttribute("data-dificuldade", "dificil");
     await page.reload();
-    await page.locator("[data-escolher-candidato]").click();
+    await page.locator('[data-modo="solo"]').click();
     await expect(page.locator('[data-dificuldade="dificil"]')).toHaveAttribute("aria-pressed", "true");
     expect(erros).toEqual([]);
   });
@@ -256,9 +291,14 @@ test.describe("Vale a Faixa", () => {
     expect(erros).toEqual([]);
   });
 
-  test("a torcida acompanha o estado real: sobe com a subida, só cresce com a captura de verdade, cai na interrupção e explode na vitória", async ({ page }) => {
+  test("a torcida acompanha o estado real: sobe com a subida, só cresce com a captura de verdade, cai na interrupção e explode na vitória; sem gravação listada, é sintetizada", async ({ page }) => {
     test.setTimeout(150_000);
     const erros = vigiarErros(page);
+    const pedidos: string[] = [];
+    page.on("request", (pedido) => {
+      const caminho = new URL(pedido.url()).pathname;
+      if (caminho.startsWith("/audio/")) pedidos.push(caminho);
+    });
     await comecar(page, "lula", false, true);
     const torcida = async () => (await page.locator("canvas").getAttribute("data-torcida"))!.split("|").map(Number) as [number, number];
     const dica = () => raiz(page).getAttribute("data-dica");
@@ -269,6 +309,10 @@ test.describe("Vale a Faixa", () => {
     expect(base).toBeGreaterThanOrEqual(0.3);
     expect(base).toBeLessThan(0.45);
     expect(capturaBase).toBe(0);
+    // Só o manifesto foi pedido; com ele vazio, nenhuma camada vem de gravação.
+    await expect.poll(() => pedidos.length, { timeout: 5_000 }).toBeGreaterThan(0);
+    expect(pedidos).toEqual(["/audio/torcida/manifesto.json"]);
+    expect(await page.locator("canvas").getAttribute("data-gravacoes")).toBe("");
     // Pega e posiciona a escada.
     const lado = (await xDaEscada()) < (await xDoJogador()) ? "ArrowLeft" : "ArrowRight";
     await segurarAte(page, lado, async () => (await dica()) === "pegarEscada", 10_000);
@@ -310,6 +354,38 @@ test.describe("Vale a Faixa", () => {
     expect(erros).toEqual([]);
   });
 
+  test("gravações de público listadas no manifesto entram no lugar das camadas sintetizadas, só as válidas, e seguem depois da pausa", async ({ page }) => {
+    const erros = vigiarErros(page);
+    const pedidos: string[] = [];
+    page.on("request", (pedido) => {
+      const caminho = new URL(pedido.url()).pathname;
+      if (caminho.startsWith("/audio/")) pedidos.push(caminho);
+    });
+    // Um manifesto de prova: duas camadas válidas, uma com caminho inválido (fora da pasta) e uma inexistente.
+    await page.route("**/audio/torcida/manifesto.json", (rota) =>
+      rota.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          camadas: { ambiente: { arquivo: "ambiente.wav" }, comemoracao: { arquivo: "comemoracao.wav" }, golpe: { arquivo: "../fora/golpe.wav" }, queda: { arquivo: 7 } },
+        }),
+      }),
+    );
+    await page.route("**/audio/torcida/*.wav", (rota) => rota.fulfill({ contentType: "audio/wav", body: wav(2) }));
+    await comecar(page, "lula", false, true);
+    await expect.poll(() => page.locator("canvas").getAttribute("data-gravacoes"), { timeout: 10_000 }).toBe("ambiente,comemoracao");
+    expect(pedidos.filter((caminho) => caminho.endsWith(".wav")).sort()).toEqual(["/audio/torcida/ambiente.wav", "/audio/torcida/comemoracao.wav"]);
+    // A partida segue com a gravação em laço; pausar e continuar não quebram nada.
+    await page.keyboard.press("Escape");
+    await expect(page.locator('[data-janela="pausa"]')).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(raiz(page)).toHaveAttribute("data-pausado", "nao");
+    await page.waitForTimeout(800);
+    await page.keyboard.press("z");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toMatch(/golpe|parado/);
+    expect(await page.locator("canvas").getAttribute("data-gravacoes")).toBe("ambiente,comemoracao");
+    expect(erros).toEqual([]);
+  });
+
   test("atacar perto da escada em que o computador sobe chacoalha a escada e pausa a subida dele", async ({ page }) => {
     test.setTimeout(120_000);
     const erros = vigiarErros(page);
@@ -340,8 +416,8 @@ test.describe("Vale a Faixa", () => {
     await expect(page.locator("[data-volume-torcida]")).toBeVisible();
     await expect(page.locator("[data-volume-narracao]")).toHaveCount(0);
     await page.locator("[data-ver-controles]").click();
-    await expect(page.locator('[data-janela="controles"] [data-teclas] kbd')).toHaveText(TECLAS_DESENHADAS);
-    await page.getByRole("button", { name: "Voltar" }).click();
+    await expect(page.locator('[data-janela="controles"] [data-teclas="solo"] kbd')).toHaveText(TECLAS_DESENHADAS);
+    await page.getByRole("button", { name: "Voltar", exact: true }).click();
     await expect(page.locator('[data-janela="pausa"]')).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(raiz(page)).toHaveAttribute("data-pausado", "nao");
@@ -380,6 +456,110 @@ test.describe("Vale a Faixa", () => {
     expect(Number((await estados(page))[4])).toBe(x0);
     // O pulo do Espaço de antes termina sozinho; as teclas no campo não disparam nada.
     await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("parado");
+  });
+
+  test("a dois no mesmo teclado: escolha em dois passos com troca de lado, os controles dos dois antes da luta, a contagem, os dois agindo juntos sem computador, o foco perdido que pausa e solta, o jogador 2 vencendo pela escada, a revanche no mesmo modo e a volta aos modos", async ({ page }) => {
+    test.setTimeout(150_000);
+    const erros = vigiarErros(page);
+    await page.goto("/jogo/vale-a-faixa/");
+    await page.locator('[data-modo="local"]').click();
+    await expect(raiz(page)).toHaveAttribute("data-faixa", "escolha");
+    await expect(raiz(page)).toHaveAttribute("data-modo", "local");
+    await expect(raiz(page)).toContainText("Jogador 1: quem sobe na escada?");
+    // A dois não há computador: nem nível, nem placar.
+    await expect(page.locator("[data-dificuldades]")).toHaveCount(0);
+    await page.locator('[data-escolha="flavio-bolsonaro"]').click();
+    await expect(raiz(page)).toContainText("Jogador 2 fica com Lula");
+    await expect(page.locator('[data-lado="1"]')).toContainText("Flávio Bolsonaro");
+    await expect(page.locator('[data-lado="2"]')).toContainText("Lula");
+    await page.locator("[data-trocar-lados]").click();
+    await expect(page.locator('[data-lado="1"]')).toContainText("Lula");
+    await expect(page.locator('[data-lado="2"]')).toContainText("Flávio Bolsonaro");
+    await expect(page.locator('[data-teclas="1"] kbd')).toHaveText(TECLAS_DO_JOGADOR_1);
+    await expect(page.locator('[data-teclas="2"] kbd')).toHaveText(TECLAS_DO_JOGADOR_2);
+    await page.locator("[data-lutar]").click();
+    await expect(raiz(page)).toHaveAttribute("data-faixa", "partida");
+    await expect(raiz(page)).toHaveAttribute("data-modo", "local");
+    await expect(raiz(page)).toHaveAttribute("data-pronto", "sim", { timeout: 30_000 });
+    // Antes da luta, os controles dos dois, e nenhum botão de toque.
+    const preparacao = page.locator('[data-janela="preparacao"]');
+    await expect(preparacao).toContainText("Dois no mesmo teclado");
+    await expect(preparacao.locator('[data-teclas="1"] kbd')).toHaveText(TECLAS_DO_JOGADOR_1);
+    await expect(preparacao.locator('[data-teclas="2"] kbd')).toHaveText(TECLAS_DO_JOGADOR_2);
+    await expect(page.locator("[data-controles-de-toque]")).toHaveCount(0);
+    await page.locator("[data-comecar-luta]").click();
+    await expect(raiz(page)).toHaveAttribute("data-fase", "contagem");
+    await expect(raiz(page)).toHaveAttribute("data-fase", "luta", { timeout: 15_000 });
+
+    const xs = async () => {
+      const partes = await estados(page);
+      return [Number(partes[4]), Number(partes[7])] as const;
+    };
+    // Sem ninguém apertando nada, ninguém se mexe: o computador está desligado.
+    const antes = await xs();
+    await page.waitForTimeout(1_500);
+    expect((await estados(page)).slice(0, 2)).toEqual(["parado", "parado"]);
+    expect(await xs()).toEqual(antes);
+    // Os dois ao mesmo tempo: J1 anda para a esquerda (A) enquanto J2 anda para a direita (→) e bate (K).
+    await page.keyboard.down("a");
+    await page.keyboard.down("ArrowRight");
+    await expect.poll(async () => (await xs())[0], { timeout: 4_000 }).toBeLessThan(antes[0] - 30);
+    await expect.poll(async () => (await xs())[1], { timeout: 4_000 }).toBeGreaterThan(antes[1] + 30);
+    await page.keyboard.up("a");
+    await page.keyboard.press("k");
+    const golpe = await observar(page, 900);
+    expect(golpe.doComputador).toEqual(expect.arrayContaining(["golpe"]));
+    await page.keyboard.up("ArrowRight");
+    // Longe da escada, a tecla de subir de cada um pula: W e ↑.
+    await page.keyboard.press("w");
+    const pulo1 = await observar(page, 1_200);
+    expect(pulo1.estados).toEqual(expect.arrayContaining(["pulando"]));
+    await page.keyboard.press("ArrowUp");
+    const pulo2 = await observar(page, 1_200);
+    expect(pulo2.doComputador).toEqual(expect.arrayContaining(["pulando"]));
+    // Perder o foco com uma tecla segurada: a pausa abre e a tecla é solta; ao continuar, ninguém anda sozinho.
+    const antesDeAndar = (await xs())[0];
+    await page.keyboard.down("d");
+    await expect.poll(async () => (await xs())[0], { timeout: 4_000 }).toBeGreaterThan(antesDeAndar + 20);
+    await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+    await expect(page.locator('[data-janela="pausa"]')).toBeVisible();
+    await expect(page.locator('[data-janela="pausa"] [data-voltar-aos-modos]')).toBeVisible();
+    await page.keyboard.up("d");
+    await page.locator("[data-continuar]").click();
+    await expect(raiz(page)).toHaveAttribute("data-pausado", "nao");
+    await expect.poll(() => estadoDoJogador(page), { timeout: 3_000 }).toBe("parado");
+    const parou = (await xs())[0];
+    await page.waitForTimeout(500);
+    expect(Math.abs((await xs())[0] - parou)).toBeLessThanOrEqual(2);
+
+    // O jogador 2 vence pela escada com as teclas dele: setas para andar, O para pegar e posicionar, ↑ para subir, O segurado para puxar.
+    const xDaEscada = async () => Number((await estados(page))[5]);
+    const estadoDaEscada = async () => (await estados(page))[2];
+    const estadoDoSegundo = async () => (await estados(page))[1];
+    const lado = (await xDaEscada()) < (await xs())[1] ? "ArrowLeft" : "ArrowRight";
+    await segurarAte(page, lado, async () => Math.abs((await xs())[1] - (await xDaEscada())) <= 60, 12_000);
+    await page.keyboard.press("o");
+    await expect.poll(estadoDaEscada).toBe("carregada");
+    await expect.poll(estadoDoSegundo).toBe("carregando");
+    const paraOCentro = (await xs())[1] < 0 ? "ArrowRight" : "ArrowLeft";
+    await segurarAte(page, paraOCentro, async () => Math.abs((await xs())[1]) <= 40, 15_000);
+    await page.keyboard.press("o");
+    await expect.poll(estadoDaEscada).toBe("emPe");
+    await segurarAte(page, "ArrowUp", async () => (await estadoDoSegundo()) === "noTopo", 10_000);
+    await segurarAte(page, "o", async () => (await raiz(page).getAttribute("data-fase")) === "fim", 30_000);
+    await expect(raiz(page)).toHaveAttribute("data-vencedor", "1");
+    await expect(page.locator('[data-janela="fim"]')).toContainText("Jogador 2 venceu");
+    await expect(page.locator('[data-resultado="jogador-2"]')).toContainText("Flávio Bolsonaro, do jogador 2");
+    // A revanche mantém o modo; Voltar aos modos volta à abertura.
+    await page.locator("[data-revanche]").click();
+    await expect(raiz(page)).toHaveAttribute("data-fase", "contagem");
+    await expect(raiz(page)).toHaveAttribute("data-modo", "local");
+    await expect(raiz(page)).toHaveAttribute("data-fase", "luta", { timeout: 15_000 });
+    await page.keyboard.press("Escape");
+    await page.locator('[data-janela="pausa"] [data-voltar-aos-modos]').click();
+    await expect(raiz(page)).toHaveAttribute("data-faixa", "inicio");
+    await expect(page.locator("canvas")).toHaveCount(0);
+    expect(erros).toEqual([]);
   });
 
   test("no celular emulado: direcional e seis ações sem sobreposição, resposta ao apertar e ao soltar, toque e teclado ao mesmo tempo, e a página não rola", async ({ browser }) => {

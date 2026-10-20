@@ -1,0 +1,5 @@
+{
+  "nota": "Gravações de público para a torcida do Vale a Faixa (docs/VALE-A-FAIXA.md, seção Som). Cada camada listada aqui substitui a camada sintetizada correspondente; sem entrada, a torcida é sintetizada. Só entram arquivos com licença conferida, com a origem registrada na própria entrada. Nenhuma gravação de transmissão de luta livre.",
+  "formato": "camadas.<camada> = { arquivo (na mesma pasta, .ogg ou .mp3), origem (endereço), autor, licenca }. Camadas: ambiente (laço, murmúrio contínuo da arena), expectativa (laço, rugido que cresce com a subida e a captura), golpe (reação curta aos golpes fortes), queda (reação às quedas), surpresa (o suspiro coletivo da interrupção), comemoracao (a explosão da vitória).",
+  "camadas": {}
+}

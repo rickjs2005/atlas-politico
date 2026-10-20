@@ -10,10 +10,12 @@
 
 import { describe, expect, it } from "vitest";
 
+import { criarEntradas, type AlvoDeTeclado } from "@/features/faixa/entrada";
+import { ESQUEMAS_LOCAIS, ESQUEMA_SOLO, esquemasDe, rotuloDaDica } from "@/features/faixa/esquemas";
 import { createLoop } from "@/features/game/engine/loop";
 import { PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
 import { DIFICULDADES, criarMemoria, decidir, type Dificuldade, type EstadoDaIA, type MemoriaDaIA, type PerfilDaIA } from "@/lib/faixa/ia";
-import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, golpeDe, naEscada } from "@/lib/faixa/regras";
+import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, golpeDe, naEscada, subirOuPular } from "@/lib/faixa/regras";
 import { ENTRADA_VAZIA, type Entrada, type Evento, type Partida } from "@/lib/faixa/tipos";
 
 const DT = 1 / 120;
@@ -830,6 +832,140 @@ describe("o laço de passo fixo", () => {
     // Um quadro de 400 ms conta como 100 ms: 12 passos, e não 48.
     const travado = rodar([400]);
     expect(travado.passos).toBe(12);
+  });
+});
+
+describe("a dois no mesmo teclado", () => {
+  it("os dois esquemas não têm tecla em comum e cobrem todos os comandos (pular é a tecla de subir); o solo cobre os dez; as dicas usam a tecla de cada um", () => {
+    const [j1, j2] = ESQUEMAS_LOCAIS;
+    expect(Object.keys(j1.mapa).filter((chave) => chave in j2.mapa)).toEqual([]);
+    for (const esquema of [j1, j2]) {
+      const comandos = new Set(Object.values(esquema.mapa));
+      for (const comando of Object.keys(ENTRADA_VAZIA) as (keyof Entrada)[]) {
+        if (comando !== "pulo") expect(comandos.has(comando), `${esquema.nome}: ${comando}`).toBe(true);
+      }
+      expect(esquema.teclas.pulo).toBeNull();
+      expect(esquema.legenda).toContain("pular ou subir");
+    }
+    expect(new Set(Object.values(ESQUEMA_SOLO.mapa)).size).toBe(10);
+    expect(esquemasDe("solo")).toEqual([ESQUEMA_SOLO, null]);
+    expect(esquemasDe("local")).toBe(ESQUEMAS_LOCAIS);
+    expect(rotuloDaDica("pegarEscada", j2)).toBe("O — Pegar escada");
+    expect(rotuloDaDica("escapar", j1)).toBe("R — Escapar!");
+    expect(rotuloDaDica("subir", j1)).toBe("W — Subir");
+    expect(rotuloDaDica("subir", ESQUEMA_SOLO)).toBe("↑ — Subir");
+    expect(rotuloDaDica("puxarFaixa", ESQUEMA_SOLO)).toBe("Segure C — Puxar faixa");
+    expect(rotuloDaDica("puxarFaixa", null)).toBe("Segure — Puxar faixa");
+  });
+
+  it("a tecla de subir pula fora da escada e sobe alinhado à base ou já na escada, para os dois lados", () => {
+    const p = escadaEmPe();
+    // Alinhado à base: continua subida; longe: vira pulo; sem a tecla, a mesma entrada volta.
+    expect(subirOuPular(p, 0, e({ cima: true }))).toEqual(e({ cima: true }));
+    p.lutadores[0].x = -200;
+    expect(subirOuPular(p, 0, e({ cima: true, direita: true }))).toEqual(e({ pulo: true, direita: true }));
+    const entrada = e({ direita: true });
+    expect(subirOuPular(p, 0, entrada)).toBe(entrada);
+    // Jogando: longe, a tecla pula de verdade; na escada, continua a subida.
+    const eventos = correr(p, 0.3, (x) => [subirOuPular(x, 0, e({ cima: true })), e()]);
+    expect(tipos(eventos)).toContain("pulo");
+    const q = escadaEmPe();
+    ate(q, (x) => x.lutadores[0].estado === "subindo", 1, (x) => [subirOuPular(x, 0, e({ cima: true })), e()]);
+    expect(subirOuPular(q, 0, e({ cima: true })).cima).toBe(true);
+    // O lado 2 obedece à mesma regra.
+    const r = escadaEmPe(20);
+    expect(subirOuPular(r, 1, e({ cima: true })).cima).toBe(true);
+    r.lutadores[1].x = 300;
+    expect(subirOuPular(r, 1, e({ cima: true })).pulo).toBe(true);
+  });
+
+  it("a entrada lê os dois lados ao mesmo tempo pelo estado das teclas, solta ao soltar e ao perder o foco, guarda um toque curto, e deixa Ctrl e a página em paz", () => {
+    const alvo = new EventTarget();
+    let ativo = true;
+    let pausas = 0;
+    const entradas = criarEntradas(alvo as unknown as AlvoDeTeclado, {
+      esquemas: ESQUEMAS_LOCAIS,
+      ativo: () => ativo,
+      aoPausar: () => {
+        pausas += 1;
+      },
+    });
+    const tecla = (tipo: "keydown" | "keyup", key: string, extra: Partial<KeyboardEvent> = {}) => {
+      const evento = Object.assign(new Event(tipo, { cancelable: true }), { key, repeat: false, ctrlKey: false, metaKey: false, altKey: false, ...extra });
+      alvo.dispatchEvent(evento);
+      return evento;
+    };
+    // Os dois ao mesmo tempo: J1 anda para a direita enquanto J2 anda para a esquerda e bate (com Shift ou Caps Lock, a letra é a mesma).
+    tecla("keydown", "d");
+    tecla("keydown", "ArrowLeft");
+    tecla("keydown", "K");
+    expect(entradas.ler(0)).toEqual(e({ direita: true }));
+    expect(entradas.ler(1)).toEqual(e({ esquerda: true, golpe: true }));
+    // Segurando, continua nas leituras seguintes; a repetição automática do keydown não muda nada; soltar solta só aquela tecla.
+    tecla("keydown", "d", { repeat: true });
+    expect(entradas.ler(0).direita).toBe(true);
+    tecla("keyup", "D");
+    expect(entradas.ler(0).direita).toBe(false);
+    expect(entradas.ler(1)).toEqual(e({ esquerda: true, golpe: true }));
+    // Um toque curto entre duas leituras fica guardado para a próxima, e só para ela.
+    tecla("keydown", "f");
+    tecla("keyup", "f");
+    expect(entradas.ler(0).golpe).toBe(true);
+    expect(entradas.ler(0).golpe).toBe(false);
+    // Perder o foco solta tudo, dos dois.
+    alvo.dispatchEvent(new Event("blur"));
+    expect(entradas.ler(1)).toEqual(e());
+    // Ctrl+R é do navegador; fora da partida, as teclas seguem para a página; dentro, não rolam nada.
+    expect(tecla("keydown", "r", { ctrlKey: true }).defaultPrevented).toBe(false);
+    expect(entradas.ler(0).esquiva).toBe(false);
+    ativo = false;
+    expect(tecla("keydown", "a").defaultPrevented).toBe(false);
+    expect(entradas.ler(0).esquerda).toBe(false);
+    ativo = true;
+    expect(tecla("keydown", "a").defaultPrevented).toBe(true);
+    expect(tecla("keydown", "p").defaultPrevented).toBe(false);
+    entradas.limpar();
+    expect(entradas.ler(0)).toEqual(e());
+    // Esc pausa, ativo ou não; depois do descarte, nada mais entra.
+    tecla("keydown", "Escape");
+    ativo = false;
+    tecla("keydown", "Escape");
+    expect(pausas).toBe(2);
+    expect(entradas.usouTeclado()).toBe(true);
+    expect(entradas.usouToque()).toBe(false);
+    ativo = true;
+    entradas.dispose();
+    tecla("keydown", "a");
+    expect(entradas.ler(0).esquerda).toBe(false);
+  });
+
+  it("as mesmas regras para os dois lados: a rotina da escada vence pelo lado 2 no mesmo tempo que pelo lado 1", () => {
+    const jornada = (i: 0 | 1, semente: number): number => {
+      const p = criarPartida("lula", "flavio-bolsonaro", semente);
+      const comando = (parte: Partial<Entrada>): [Entrada, Entrada] => {
+        const par: [Entrada, Entrada] = [e(), e()];
+        par[i] = e(parte);
+        return par;
+      };
+      const paraAEscada = (x: Partida) => comando(x.escada.x > x.lutadores[i].x ? { direita: true } : { esquerda: true });
+      const paraOCentro = (x: Partida) => comando(x.lutadores[i].x < 0 ? { direita: true } : { esquerda: true });
+      ate(p, (x) => x.fase === "luta", 4);
+      ate(p, (x) => dicaDe(x, i) === "pegarEscada", 10, paraAEscada);
+      toque(p, i, "interagir");
+      expect(p.escada.portador).toBe(i);
+      ate(p, (x) => dicaDe(x, i) === "posicionarEscada", 15, paraOCentro);
+      toque(p, i, "interagir");
+      expect(p.escada.estado).toBe("emPe");
+      ate(p, (x) => x.lutadores[i].estado === "noTopo", 5, () => comando({ cima: true }));
+      ate(p, (x) => x.fase === "fim", 15, () => comando({ interagir: true }));
+      expect(p.vencedor).toBe(i);
+      expect(p.lutadores[i === 0 ? 1 : 0].estado).toBe("derrota");
+      return p.tempo;
+    };
+    // Sementes espelhadas: a escada começa do lado de quem a busca, nos dois casos.
+    const peloLado1 = jornada(0, 0);
+    const peloLado2 = jornada(1, 1);
+    expect(Math.abs(peloLado1 - peloLado2)).toBeLessThan(0.5);
   });
 });
 
