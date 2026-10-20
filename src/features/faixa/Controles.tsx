@@ -7,7 +7,8 @@
 // apertou (vários dedos ao mesmo tempo valem: andar e bater juntos). Nada
 // depende de hover. O botão Interagir muda de ícone com o contexto (pegar,
 // posicionar, largar, puxar a faixa) sem sair do lugar; a seta para cima
-// acende quando dá para subir.
+// acende quando dá para subir; Forte acende como Agarrar colado em quem
+// defende, e Esquiva acende como Escapar enquanto se está agarrado.
 
 import { useState } from "react";
 
@@ -155,6 +156,8 @@ function interacao(dica: Dica): { icone: Icone; texto: string; rotulo: string; d
       return { icone: "faixa", texto: "Faixa", rotulo: "Segurar para puxar a faixa", destaque: true };
     case "subir":
     case "derrubarEscada":
+    case "agarrar":
+    case "escapar":
     case null:
       return { icone: "nada", texto: "Interagir", rotulo: "Interagir", destaque: false };
   }
@@ -164,6 +167,8 @@ export function Controles({ onEntrada, dica, naEscada, noAr }: ControlesProps) {
   const interagir = interacao(dica);
   const podeSubir = dica === "subir";
   const derrubar = dica === "derrubarEscada";
+  const agarrar = dica === "agarrar";
+  const escapar = dica === "escapar";
   const tamanho = "size-[3.6rem] janela-baixa:size-11";
   return (
     <div
@@ -186,9 +191,9 @@ export function Controles({ onEntrada, dica, naEscada, noAr }: ControlesProps) {
       {/* As ações, em duas colunas: interagir e esquiva; defender e forte; pular e atacar, sob o polegar. */}
       <div className="grid grid-cols-2 gap-2" aria-label="Ações">
         <Botao comando="interagir" rotulo={interagir.rotulo} icone={interagir.icone} texto={interagir.texto} onEntrada={onEntrada} className={tamanho} destaque={interagir.destaque} apagado={!interagir.destaque && dica !== "soltarEscada"} />
-        <Botao comando="esquiva" rotulo="Esquiva" icone="esquiva" texto="Esquiva" onEntrada={onEntrada} className={tamanho} />
+        <Botao comando="esquiva" rotulo={escapar ? "Esquiva: escapar do agarrão" : "Esquiva"} icone="esquiva" texto={escapar ? "Escapar" : "Esquiva"} onEntrada={onEntrada} className={tamanho} destaque={escapar} />
         <Botao comando="defesa" rotulo="Defender (segurar)" icone="defender" texto="Defender" onEntrada={onEntrada} className={tamanho} />
-        <Botao comando="forte" rotulo="Golpe forte" icone="forte" texto="Forte" onEntrada={onEntrada} className={tamanho} />
+        <Botao comando="forte" rotulo={agarrar ? "Golpe forte: agarrar" : "Golpe forte"} icone="forte" texto={agarrar ? "Agarrar" : "Forte"} onEntrada={onEntrada} className={tamanho} destaque={agarrar} />
         <Botao comando="pulo" rotulo="Pular" icone="pular" texto="Pular" onEntrada={onEntrada} className={tamanho} apagado={noAr} />
         <Botao
           comando="golpe"

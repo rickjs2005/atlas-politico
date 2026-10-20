@@ -10,8 +10,9 @@
 
 import { describe, expect, it } from "vitest";
 
+import { createLoop } from "@/features/game/engine/loop";
 import { PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
-import { criarMemoria, decidir, type EstadoDaIA, type MemoriaDaIA } from "@/lib/faixa/ia";
+import { DIFICULDADES, criarMemoria, decidir, type Dificuldade, type EstadoDaIA, type MemoriaDaIA, type PerfilDaIA } from "@/lib/faixa/ia";
 import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, golpeDe, naEscada } from "@/lib/faixa/regras";
 import { ENTRADA_VAZIA, type Entrada, type Evento, type Partida } from "@/lib/faixa/tipos";
 
@@ -290,8 +291,8 @@ describe("combate", () => {
     expect(p.lutadores[0].estado).toBe("forte");
     ate(p, (x) => x.lutadores[0].estado === "parado", 1);
     expect(p.lutadores[0].recargaForte).toBeGreaterThan(0);
-    // Na guarda, tira mais do que um soco e empurra.
-    const q = frenteAFrente();
+    // Na guarda, de uma distância em que o agarrão não alcança mas o forte sim, tira mais do que um soco e empurra.
+    const q = frenteAFrente(REGRAS.agarrao.alcance + 12);
     correr(q, 0.1, [e(), e({ defesa: true })]);
     avancar(q, DT, [e({ forte: true }), e({ defesa: true })]);
     const bloqueio = correr(q, 0.6, [e(), e({ defesa: true })]);
@@ -368,6 +369,16 @@ describe("combate", () => {
     expect(tipos(volta)).toContain("levantou");
   });
 
+  it("soltar a guarda e apertar uma ação no mesmo instante: a ação sai no passo seguinte, em vez de se perder", () => {
+    const p = frenteAFrente(300);
+    correr(p, 0.1, [e({ defesa: true }), e()]);
+    expect(p.lutadores[0].estado).toBe("defesa");
+    avancar(p, DT, [e({ pulo: true }), e()]);
+    expect(p.lutadores[0].estado).toBe("parado");
+    avancar(p, DT, [e(), e()]);
+    expect(p.lutadores[0].estado).toBe("pulando");
+  });
+
   it("quem bate forte nas cordas volta e perde um pouco de equilíbrio; os dois em pé nunca ocupam o mesmo lugar", () => {
     const p = pronta();
     p.lutadores[0].x = REGRAS.ringue - 200;
@@ -382,6 +393,129 @@ describe("combate", () => {
     q.lutadores[1].x = 10;
     correr(q, 0.1);
     expect(q.lutadores[1].x - q.lutadores[0].x).toBeGreaterThanOrEqual(REGRAS.corpo - 0.01);
+  });
+});
+
+describe("o agarrão", () => {
+  const DEFENDENDO: [Entrada, Entrada] = [e(), e({ defesa: true })];
+
+  /** Os dois colados, o computador defendendo, e o jogador começando o agarrão com V. */
+  function agarrando(): Partida {
+    const p = frenteAFrente(REGRAS.corpo + 2);
+    correr(p, 0.1, DEFENDENDO);
+    expect(p.lutadores[1].estado).toBe("defesa");
+    expect(dicaDe(p, 0)).toBe("agarrar");
+    avancar(p, DT, [e({ forte: true }), e({ defesa: true })]);
+    expect(p.lutadores[0].estado).toBe("agarrando");
+    return p;
+  }
+
+  it("V colado em quem defende agarra, e a guarda não segura: pega depois da preparação, segura um instante, arremessa e derruba por mais tempo", () => {
+    const p = agarrando();
+    const [agarrador, alvo] = p.lutadores;
+    const xAntes = alvo.x;
+    const pegou = ate(p, (x) => x.lutadores[1].estado === "agarrado", REGRAS.agarrao.antecipacao + 0.05, DEFENDENDO);
+    expect(pegou.find((evento) => evento.tipo === "agarrou")).toMatchObject({ quem: 0, alvo: 1 });
+    expect(agarrador.agarrou).toBe(true);
+    expect(dicaDe(p, 1)).toBe("escapar");
+    // Seguro: fica colado ao agarrador, de frente para ele, sem agir.
+    const bloqueios = correr(p, 0.1, [e(), e({ golpe: true })]);
+    expect(bloqueios.some((evento) => evento.tipo === "acaoBloqueada" && evento.motivo === "agarrado")).toBe(true);
+    expect(alvo.estado).toBe("agarrado");
+    expect(Math.abs(alvo.x - agarrador.x)).toBeLessThan(REGRAS.corpo);
+    expect(alvo.direcao).toBe(-agarrador.direcao);
+    const voou = ate(p, (x) => x.lutadores[1].estado === "arremessado", REGRAS.agarrao.seguro + 0.05, DEFENDENDO);
+    expect(voou.find((evento) => evento.tipo === "arremesso")).toMatchObject({ quem: 0, alvo: 1 });
+    let alturaMaxima = 0;
+    const caiu = ate(
+      p,
+      (x) => x.lutadores[1].estado === "caido",
+      1.5,
+      (x) => {
+        alturaMaxima = Math.max(alturaMaxima, x.lutadores[1].y);
+        return DEFENDENDO;
+      },
+    );
+    expect(alturaMaxima).toBeGreaterThan(20);
+    expect(caiu.find((evento) => evento.tipo === "queda")).toMatchObject({ quem: 1, longa: true });
+    expect(alvo.x - xAntes).toBeGreaterThan(80);
+    expect(alvo.y).toBe(0);
+    expect(alvo.equilibrio).toBe(0);
+    // O agarrador volta à guarda e fica em recarga longa: não vira a resposta para tudo.
+    ate(p, (x) => x.lutadores[0].estado === "parado", 1, DEFENDENDO);
+    expect(agarrador.recargaAgarrao).toBeGreaterThan(1);
+    expect(dicaDe(p, 0)).not.toBe("agarrar");
+  });
+
+  it("a esquiva escapa do agarrão durante o seguro e deixa o agarrador lento; em recarga, não escapa e vai ao chão", () => {
+    const p = agarrando();
+    ate(p, (x) => x.lutadores[1].estado === "agarrado", REGRAS.agarrao.antecipacao + 0.05, DEFENDENDO);
+    const eventos = correr(p, 0.1, (x) => [e(), e({ esquiva: x.lutadores[1].t > 0.05 && !x.lutadores[1].anterior.esquiva })]);
+    expect(tipos(eventos)).toEqual(expect.arrayContaining(["escapou", "esquiva"]));
+    expect(tipos(eventos)).not.toContain("arremesso");
+    expect(p.lutadores[1].estado).toBe("esquiva");
+    expect(p.lutadores[1].invulneravel).toBeGreaterThan(0);
+    expect(p.lutadores[0].estado).toBe("parado");
+    expect(p.lutadores[0].recargaAgarrao).toBeGreaterThan(1);
+    expect(p.lutadores[0].recargaGolpe).toBeGreaterThan(0);
+
+    const q = agarrando();
+    q.lutadores[1].recargaEsquiva = 2;
+    ate(q, (x) => x.lutadores[1].estado === "agarrado", REGRAS.agarrao.antecipacao + 0.05, DEFENDENDO);
+    expect(dicaDe(q, 1)).toBeNull();
+    const presa = ate(q, (x) => x.lutadores[1].estado === "caido", 2.5, (x) => [e(), e({ esquiva: !x.lutadores[1].anterior.esquiva })]);
+    expect(presa.some((evento) => evento.tipo === "acaoBloqueada" && evento.motivo === "recarga")).toBe(true);
+    expect(tipos(presa)).toContain("arremesso");
+    expect(tipos(presa)).not.toContain("escapou");
+  });
+
+  it("um golpe na preparação interrompe o agarrão; quem se afasta a tempo deixa o agarrão no vazio, exposto; de longe ou sem guarda, V é o golpe forte", () => {
+    // O defensor solta a guarda e bate: o soco sai antes de o agarrão pegar.
+    const p = agarrando();
+    const eventos = correr(p, 0.5, [e(), e({ golpe: true })]);
+    expect(eventos.find((evento) => evento.tipo === "golpe")).toMatchObject({ quem: 1, alvo: 0, bloqueado: false });
+    expect(tipos(eventos)).not.toContain("agarrou");
+    expect(p.lutadores[0].agarrou).toBe(false);
+    expect(p.lutadores[0].estado).not.toBe("agarrando");
+
+    // O defensor recua: o agarrão fecha no vazio e fica na recuperação.
+    const q = agarrando();
+    const vazio = correr(q, REGRAS.agarrao.antecipacao + 0.05, [e(), e({ esquerda: false, direita: true })]);
+    expect(vazio.find((evento) => evento.tipo === "golpeNoVazio")).toMatchObject({ quem: 0, golpe: "agarrao" });
+    expect(q.lutadores[0].estado).toBe("agarrando");
+    expect(q.lutadores[1].estado).not.toBe("agarrado");
+    ate(q, (x) => x.lutadores[0].estado === "parado", REGRAS.agarrao.recuperacao + 0.1);
+    expect(q.lutadores[0].recargaAgarrao).toBeGreaterThan(0);
+
+    // Sem a guarda do outro, ou longe dela, V é o golpe forte de sempre.
+    const s = frenteAFrente(REGRAS.corpo + 2);
+    toque(s, 0, "forte");
+    expect(s.lutadores[0].estado).toBe("forte");
+    const t = frenteAFrente(REGRAS.agarrao.alcance + 20);
+    correr(t, 0.1, DEFENDENDO);
+    expect(dicaDe(t, 0)).toBeNull();
+    avancar(t, DT, [e({ forte: true }), e({ defesa: true })]);
+    expect(t.lutadores[0].estado).toBe("forte");
+  });
+});
+
+describe("a prorrogação", () => {
+  it("avisa uma vez aos 150 s de luta; a partir dali a faixa afrouxa e, aos 240 s, puxar leva 60% do tempo", () => {
+    const p = pronta();
+    p.tempo = REGRAS.contagem + REGRAS.prorrogacao.aos - 0.1;
+    const aviso = correr(p, 0.3);
+    expect(tipos(aviso).filter((tipo) => tipo === "prorrogacao")).toHaveLength(1);
+    expect(p.prorrogacao).toBe(true);
+    expect(tipos(correr(p, 1))).not.toContain("prorrogacao");
+
+    const q = escadaEmPe();
+    ate(q, (x) => x.lutadores[0].estado === "noTopo", 3, SEGURANDO_CIMA);
+    q.tempo = REGRAS.contagem + REGRAS.prorrogacao.ate;
+    const inicio = q.tempo;
+    ate(q, (x) => x.lutadores[0].puxada >= 0.5, 5, [e({ interagir: true }), e()]);
+    const levou = q.tempo - inicio;
+    expect(levou).toBeGreaterThan((REGRAS.faixa.puxar / 2) * REGRAS.prorrogacao.fator - 0.1);
+    expect(levou).toBeLessThan((REGRAS.faixa.puxar / 2) * REGRAS.prorrogacao.fator + 0.1);
   });
 });
 
@@ -533,10 +667,12 @@ describe("o computador", () => {
     eventos: Set<Evento["tipo"]>;
   }
 
+  type Perfil = Dificuldade | Partial<PerfilDaIA>;
+
   /** Dois computadores, um contra o outro, até o fim ou até `limite` segundos, conferindo os invariantes a cada passo. */
-  function simular(semente: number, limite = 400, descuido = 0.14): Resultado {
+  function simular(semente: number, limite = 400, perfis: [Perfil, Perfil] = ["normal", "normal"]): Resultado {
     const p = criarPartida("lula", "flavio-bolsonaro", semente);
-    const memorias: [MemoriaDaIA, MemoriaDaIA] = [criarMemoria(semente * 7919 + 1, descuido), criarMemoria(semente * 104729 + 2, descuido)];
+    const memorias: [MemoriaDaIA, MemoriaDaIA] = [criarMemoria(semente * 7919 + 1, perfis[0]), criarMemoria(semente * 104729 + 2, perfis[1])];
     const estados = new Set<EstadoDaIA>();
     const eventos = new Set<Evento["tipo"]>();
     const passos = Math.round(limite / DT);
@@ -547,6 +683,9 @@ describe("o computador", () => {
       golpe: 0.8,
       forte: 1.05,
       derrubada: 1.05,
+      agarrando: REGRAS.agarrao.antecipacao + REGRAS.agarrao.seguro + REGRAS.agarrao.arremesso + REGRAS.agarrao.recuperacao + 0.05,
+      agarrado: REGRAS.agarrao.seguro + 0.05,
+      arremessado: 1.5,
       pulando: 1.2,
       voadora: 1.2,
       aterrissando: 0.5,
@@ -564,8 +703,9 @@ describe("o computador", () => {
       for (const m of memorias) estados.add(m.estado);
       for (const evento of p.eventos) eventos.add(evento.tipo);
       for (const l of p.lutadores) {
-        if (l.estado === "carregando" || l.estado === "golpe" || l.estado === "forte" || l.estado === "derrubada" || l.estado === "defesa" || l.estado === "esquiva") conferir(l.y === 0, `${l.estado} fora do chão`);
+        if (l.estado === "carregando" || l.estado === "golpe" || l.estado === "forte" || l.estado === "derrubada" || l.estado === "defesa" || l.estado === "esquiva" || l.estado === "agarrando") conferir(l.y === 0, `${l.estado} fora do chão`);
         if (l.estado === "caido") conferir(!naEscada(l), "caído na escada");
+        if (l.estado === "agarrado") conferir(p.lutadores[l === p.lutadores[0] ? 1 : 0].estado === "agarrando", "agarrado sem ninguém segurando");
         conferir(l.y >= 0, "abaixo do tapete");
         const maximo = limites[l.estado];
         if (maximo !== undefined) conferir(l.t <= maximo, `${l.estado} preso há ${l.t.toFixed(2)} s`);
@@ -605,7 +745,7 @@ describe("o computador", () => {
 
   it("contra quem não faz nada, o computador vence sozinho: busca a escada, posiciona, sobe e puxa", { timeout: 30_000 }, () => {
     const p = criarPartida("lula", "flavio-bolsonaro", 3);
-    const m = criarMemoria(11, 0.14);
+    const m = criarMemoria(11);
     const estados = new Set<EstadoDaIA>();
     ate(
       p,
@@ -626,6 +766,70 @@ describe("o computador", () => {
     const b = simular(5, 120);
     expect(a.vencedor).toBe(b.vencedor);
     expect(a.tempo).toBe(b.tempo);
+  });
+
+  it("os níveis mudam só o perfil (reação, erros, cautela, ousadia, fuga), e o difícil vence o fácil na maioria das partidas", { timeout: 120_000 }, () => {
+    expect(DIFICULDADES.facil.reacao).toBeGreaterThan(DIFICULDADES.normal.reacao);
+    expect(DIFICULDADES.normal.reacao).toBeGreaterThan(DIFICULDADES.dificil.reacao);
+    expect(DIFICULDADES.facil.descuido).toBeGreaterThan(DIFICULDADES.normal.descuido);
+    expect(DIFICULDADES.normal.descuido).toBeGreaterThan(DIFICULDADES.dificil.descuido);
+    expect(criarMemoria(1, "facil").perfil).toEqual(expect.objectContaining({ descuido: DIFICULDADES.facil.descuido, reacao: DIFICULDADES.facil.reacao }));
+    // Com o mesmo perfil dos dois lados, a partida é a de sempre; o fácil e o difícil se alternam de lado para não contar a vantagem da posição.
+    const resultados = Array.from({ length: 8 }, (_, n) => {
+      const dificilNaDireita = n % 2 === 0;
+      const resultado = simular(n + 21, 400, dificilNaDireita ? ["facil", "dificil"] : ["dificil", "facil"]);
+      return { ...resultado, venceuODificil: resultado.vencedor === (dificilNaDireita ? 1 : 0) };
+    });
+    const vitorias = resultados.filter((resultado) => resultado.venceuODificil).length;
+    console.log(`difícil × fácil: ${vitorias} vitórias do difícil em ${resultados.length}; tempos ${resultados.map((resultado) => resultado.tempo.toFixed(0)).join(", ")} s`);
+    expect(vitorias).toBeGreaterThanOrEqual(6);
+    expect(resultados.flatMap((resultado) => [...resultado.eventos])).toEqual(expect.arrayContaining(["agarrou", "arremesso"]));
+  });
+});
+
+describe("o laço de passo fixo", () => {
+  /** Roda o laço com quadros nos intervalos dados (ms) e devolve os passos de simulação e os `dt` recebidos. */
+  function rodar(intervalos: readonly number[]): { passos: number; dts: Set<number> } {
+    const fila: FrameRequestCallback[] = [];
+    const anterior = { pedir: globalThis.requestAnimationFrame, cancelar: globalThis.cancelAnimationFrame };
+    globalThis.requestAnimationFrame = (callback) => {
+      fila.push(callback);
+      return fila.length;
+    };
+    globalThis.cancelAnimationFrame = () => {};
+    const dts = new Set<number>();
+    let passos = 0;
+    const laco = createLoop({
+      update(dt) {
+        passos += 1;
+        dts.add(dt);
+      },
+      render() {},
+    });
+    laco.start();
+    let agora = 0;
+    fila.shift()!(agora);
+    for (const intervalo of intervalos) {
+      agora += intervalo;
+      fila.shift()!(agora);
+    }
+    laco.stop();
+    globalThis.requestAnimationFrame = anterior.pedir;
+    globalThis.cancelAnimationFrame = anterior.cancelar;
+    return { passos, dts };
+  }
+
+  it("a simulação anda os mesmos passos de 1/120 s a 60 e a 30 quadros por segundo, e um quadro travado não dispara uma avalanche", () => {
+    const a60 = rodar(Array.from({ length: 60 }, () => 1000 / 60));
+    const a30 = rodar(Array.from({ length: 30 }, () => 1000 / 30));
+    // Um segundo de quadros dá 120 passos, a menos do resto de arredondamento que fica no acumulador.
+    expect(Math.abs(a60.passos - 120)).toBeLessThanOrEqual(1);
+    expect(Math.abs(a30.passos - 120)).toBeLessThanOrEqual(1);
+    expect(Math.abs(a60.passos - a30.passos)).toBeLessThanOrEqual(1);
+    expect([...a60.dts, ...a30.dts].every((dt) => Math.abs(dt - 1 / 120) < 1e-9)).toBe(true);
+    // Um quadro de 400 ms conta como 100 ms: 12 passos, e não 48.
+    const travado = rodar([400]);
+    expect(travado.passos).toBe(12);
   });
 });
 

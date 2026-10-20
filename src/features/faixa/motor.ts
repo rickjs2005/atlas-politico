@@ -7,11 +7,13 @@
 // A torcida recebe, a cada passo, a intensidade da partida e o progresso
 // real da captura da faixa, e reage aos eventos: um grito a cada golpe, um
 // maior a cada queda, o suspiro de surpresa quando a captura é interrompida,
-// e a explosão de comemoração só na vitória. As mesmas regras para os dois.
+// e a explosão de comemoração só na vitória. Os passos no tapete e os
+// degraus da escada soam pelo movimento real de cada um. As mesmas regras
+// para os dois; o nível muda só o perfil do computador.
 
 import { createLoop } from "@/features/game/engine/loop";
 import { PRIORIDADE_DAS_FALAS, falaPara } from "@/lib/faixa/falas";
-import { criarMemoria, decidir, type MemoriaDaIA } from "@/lib/faixa/ia";
+import { criarMemoria, decidir, type Dificuldade, type MemoriaDaIA } from "@/lib/faixa/ia";
 import { REGRAS, alturaNaEscada, avancar, criarPartida, dicaDe, naEscada, noAr } from "@/lib/faixa/regras";
 import { ENTRADA_VAZIA, type Dica, type Entrada, type Evento, type FaseDaPartida, type Indice, type Lutador, type LutadorSlug, type Partida } from "@/lib/faixa/tipos";
 
@@ -44,12 +46,14 @@ export interface OpcoesDoMotor {
   jogador: LutadorSlug;
   computador: LutadorSlug;
   semente: number;
+  /** O nível do computador: só o perfil muda (reação, erros, cautela, ousadia), nunca as regras. */
+  dificuldade: Dificuldade;
   reduzirMovimento: boolean;
   /** Em tela de toque, a dica mostra o botão em vez da tecla. */
   toque: boolean;
   audio: Audio | null;
-  /** O computador não age: para os testes de navegador dirigirem a partida inteira. */
-  computadorParado?: boolean;
+  /** Só para os testes de navegador: o computador não age (`parado`) ou só defende (`defendendo`), e a pessoa dirige a partida. */
+  computadorDeTeste?: "parado" | "defendendo";
   aoMudar(resumo: Resumo): void;
   /** A partida pede pausa: perda de foco, aba escondida. Quem decide é a interface. */
   aoPedirPausa(): void;
@@ -77,7 +81,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   lerFontes();
 
   let partida = criarPartida(opcoes.jogador, opcoes.computador, opcoes.semente);
-  let memoria: MemoriaDaIA = criarMemoria(opcoes.semente * 31 + 7);
+  let memoria: MemoriaDaIA = criarMemoria(opcoes.semente * 31 + 7, opcoes.dificuldade);
   const movimento = !opcoes.reduzirMovimento;
   const arena = criarArena();
   const efeitos = criarEfeitos(movimento);
@@ -98,7 +102,11 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
   let ultimaTorcida = "";
   const passosAnteriores: [number, number] = [0, 0];
   const andando: [boolean, boolean] = [false, false];
+  // A última pisada e o último degrau de cada um, para os passos no tapete e os degraus da escada soarem.
+  const pisadas: [number, number] = [0, 0];
+  const degraus: [number, number] = [0, 0];
   const ritmos: [number, number] = [0, 1.7];
+  const ENTRADA_DEFENDENDO: Entrada = { ...ENTRADA_VAZIA, defesa: true };
 
   const entradas = criarEntradas(window, {
     ativo: () => !pausado && partida.fase !== "fim",
@@ -219,6 +227,24 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
           tocar("esquiva");
           efeitos.poeira(partida.lutadores[evento.quem].x, 0, 3);
           break;
+        case "agarrou":
+          efeitos.anel(evento.x, 100, "#f8e4cf");
+          tocar("agarrao");
+          torcer("golpe");
+          break;
+        case "arremesso":
+          efeitos.impacto(evento.x, 110, true, partida.lutadores[evento.quem].direcao);
+          efeitos.tremer(4);
+          paradaDeImpacto = PARADA_DE_IMPACTO;
+          tocar("arremesso");
+          break;
+        case "escapou":
+          efeitos.anel(partida.lutadores[evento.quem].x, 90, "#faf8f2");
+          break;
+        case "prorrogacao":
+          tocar("aviso");
+          torcer("expectativa");
+          break;
         case "acaoBloqueada":
           if (evento.quem === 0 && (aviso === null || aviso.t > 0.5)) aviso = { texto: ROTULO_DO_BLOQUEIO[evento.motivo], t: 0 };
           break;
@@ -304,13 +330,29 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     }
     tempo += dt;
     const entradaDoJogador = entradas.ler();
-    const entradaDoComputador = opcoes.computadorParado === true ? ENTRADA_VAZIA : decidir(partida, 1, memoria, dt);
+    const entradaDoComputador =
+      opcoes.computadorDeTeste === "parado" ? ENTRADA_VAZIA : opcoes.computadorDeTeste === "defendendo" ? ENTRADA_DEFENDENDO : decidir(partida, 1, memoria, dt);
     avancar(partida, dt, [entradaDoJogador, entradaDoComputador]);
     if (partida.eventos.length > 0) reagir(partida.eventos);
     for (const i of [0, 1] as const) {
       const l = partida.lutadores[i];
       andando[i] = l.passo !== passosAnteriores[i];
       passosAnteriores[i] = l.passo;
+      // Os passos no tapete, um por pé; os degraus da escada, um a cada quinto da subida.
+      if (l.estado === "andando") {
+        const pisada = Math.floor(l.passo * 2);
+        if (pisada !== pisadas[i]) {
+          pisadas[i] = pisada;
+          tocar("passo");
+        }
+      }
+      if (l.estado === "subindo") {
+        const degrau = Math.floor(l.altura * 5);
+        if (degrau !== degraus[i]) {
+          degraus[i] = degrau;
+          if (degrau > 0) tocar("escadaPassos");
+        }
+      }
     }
     // A escada carregada chacoalha a cada passo; brilhos na faixa enquanto alguém puxa.
     const esc = partida.escada;
@@ -492,7 +534,7 @@ export function criarMotor(opcoes: OpcoesDoMotor): Motor {
     },
     reiniciar(semente) {
       partida = criarPartida(opcoes.jogador, opcoes.computador, semente);
-      memoria = criarMemoria(semente * 31 + 7);
+      memoria = criarMemoria(semente * 31 + 7, opcoes.dificuldade);
       efeitos.limpar();
       fala = null;
       aviso = null;

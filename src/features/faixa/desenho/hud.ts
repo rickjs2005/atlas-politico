@@ -48,6 +48,8 @@ export const ROTULO_DA_DICA: Record<NonNullable<Dica>, { teclado: string; toque:
   subir: { teclado: "↑ — Subir", toque: "▲ Subir" },
   puxarFaixa: { teclado: "Segure C — Puxar faixa", toque: "Segure — Puxar faixa" },
   derrubarEscada: { teclado: "Z — Derrubar escada", toque: "Atacar — Derrubar escada" },
+  agarrar: { teclado: "V — Agarrar", toque: "Forte — Agarrar" },
+  escapar: { teclado: "Shift — Escapar!", toque: "Esquiva — Escapar!" },
 };
 
 /** Por que o comando não saiu, em poucas palavras. */
@@ -57,9 +59,11 @@ export const ROTULO_DO_BLOQUEIO: Record<MotivoDoBloqueio, string> = {
   recarga: "Ainda recarregando",
   noAr: "Uma voadora por salto",
   noChao: "Solte a defesa para agir",
+  agarrado: "Agarrado: só a esquiva escapa",
 };
 
-export const LEGENDA = "Setas: mover • Espaço: pular • Z: atacar • V: forte • X: defender • Shift: esquiva • C: interagir";
+export const LEGENDA = "Setas: mover • Espaço: pular • Z: atacar • V: forte (colado na guarda, agarrar) • X: defender • Shift: esquiva • C: interagir";
+export const ROTULO_DA_PRORROGACAO = "PRORROGAÇÃO · A FAIXA AFROUXOU";
 
 function caixa(g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, raio: number): void {
   g.beginPath();
@@ -107,7 +111,19 @@ function placa(g: CanvasRenderingContext2D, p: Partida, i: 0 | 1, estado: Estado
 
   const nome = estado.nomes[i].toUpperCase();
   const noChao = l.estado === "caido" || l.estado === "levantando";
-  const situacao = noChao ? " · NO CHÃO" : naEscada(l) ? " · NA ESCADA" : l.estado === "defesa" ? " · DEFENDENDO" : l.estado === "carregando" ? " · COM A ESCADA" : "";
+  const situacao = noChao
+    ? " · NO CHÃO"
+    : naEscada(l)
+      ? " · NA ESCADA"
+      : l.estado === "defesa"
+        ? " · DEFENDENDO"
+        : l.estado === "carregando"
+          ? " · COM A ESCADA"
+          : l.estado === "agarrado"
+            ? " · AGARRADO"
+            : l.estado === "arremessado"
+              ? " · VOANDO"
+              : "";
   const papel = `${i === 0 ? "VOCÊ" : "COMPUTADOR"}${situacao}`;
   const bordaInterna = direita ? x + largura - 10 : x + 10;
   g.textBaseline = "alphabetic";
@@ -221,7 +237,7 @@ function pertoDoPersonagem(g: CanvasRenderingContext2D, estado: EstadoDoHud, tel
   let mostrouDica = false;
   if (estado.dica !== null && !(estado.dica === "puxarFaixa" && p.lutadores[0].puxando)) {
     const texto = estado.teclado ? ROTULO_DA_DICA[estado.dica].teclado : ROTULO_DA_DICA[estado.dica].toque;
-    const destaque = estado.dica === "puxarFaixa" || estado.dica === "posicionarEscada" || estado.dica === "derrubarEscada";
+    const destaque = estado.dica === "puxarFaixa" || estado.dica === "posicionarEscada" || estado.dica === "derrubarEscada" || estado.dica === "agarrar" || estado.dica === "escapar";
     balao(g, tela, estado.cabecaDoJogador, texto, destaque ? AMARELO : PAPEL, 0);
     mostrouDica = true;
   }
@@ -285,6 +301,24 @@ function contagem(g: CanvasRenderingContext2D, p: Partida, estado: EstadoDoHud, 
   g.restore();
 }
 
+/** A prorrogação, discreta sob as placas: a partida passou do tempo esperado e a faixa afrouxou. */
+function prorrogacao(g: CanvasRenderingContext2D, p: Partida, estado: EstadoDoHud, tela: Tela): void {
+  if (!p.prorrogacao || p.fase !== "luta") return;
+  g.save();
+  g.font = `700 10px ${FONTE_SANS}`;
+  g.textAlign = "center";
+  g.textBaseline = "alphabetic";
+  const largura = g.measureText(ROTULO_DA_PRORROGACAO).width + 18;
+  const x = (tela.largura - largura) / 2;
+  const y = estado.compacto ? 112 : 96;
+  g.fillStyle = PALCO;
+  caixa(g, x, y, largura, 18, 9);
+  g.fill();
+  g.fillStyle = AMARELO;
+  g.fillText(ROTULO_DA_PRORROGACAO, tela.largura / 2, y + 13);
+  g.restore();
+}
+
 function narrador(g: CanvasRenderingContext2D, estado: EstadoDoHud, tela: Tela): void {
   if (estado.fala === null) return;
   const { texto, t } = estado.fala;
@@ -327,6 +361,7 @@ export function desenharHud(g: CanvasRenderingContext2D, tela: Tela, p: Partida,
   g.setTransform(g.getTransform());
   placa(g, p, 0, estado, tela);
   placa(g, p, 1, estado, tela);
+  prorrogacao(g, p, estado, tela);
   medidorDaFaixa(g, p, estado, tela);
   pertoDoPersonagem(g, estado, tela, p);
   legenda(g, estado, tela, p);

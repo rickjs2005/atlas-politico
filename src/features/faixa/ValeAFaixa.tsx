@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 
 import { IntentLink } from "@/components/IntentLink";
 import { PROFILES } from "@/lib/domain/profiles";
+import { DIFICULDADES, type Dificuldade } from "@/lib/faixa/ia";
 import type { Dica, Entrada, LutadorSlug } from "@/lib/faixa/tipos";
 
 import { Controles } from "./Controles";
@@ -30,9 +31,9 @@ const TECLAS: readonly { teclas: readonly string[]; acao: string }[] = [
   { teclas: ["←", "→"], acao: "andar" },
   { teclas: ["Espaço"], acao: "pular" },
   { teclas: ["Z"], acao: "atacar (no ar, voadora)" },
-  { teclas: ["V"], acao: "golpe forte" },
+  { teclas: ["V"], acao: "golpe forte (colado em quem defende, agarrar)" },
   { teclas: ["X"], acao: "defender (segurar)" },
-  { teclas: ["Shift"], acao: "esquiva" },
+  { teclas: ["Shift"], acao: "esquiva (agarrado, escapar)" },
   { teclas: ["C"], acao: "interagir" },
   { teclas: ["↑", "↓"], acao: "subir e descer a escada" },
   { teclas: ["Esc"], acao: "pausar" },
@@ -65,7 +66,10 @@ function Teclas({ className = "" }: { className?: string }) {
   );
 }
 
-const TOQUE_RESUMO = "No celular: o direcional à esquerda; à direita, Pular, Atacar, Forte, Defender, Esquiva e Interagir, que muda de ícone conforme o que dá para fazer.";
+const TOQUE_RESUMO =
+  "No celular: o direcional à esquerda; à direita, Pular, Atacar, Forte (colado em quem defende, vira Agarrar), Defender, Esquiva (agarrado, vira Escapar) e Interagir, que muda de ícone conforme o que dá para fazer.";
+
+const NIVEIS = Object.keys(DIFICULDADES) as Dificuldade[];
 
 export function ValeAFaixa() {
   const [tela, setTela] = useState<Tela>("inicio");
@@ -170,7 +174,7 @@ export function ValeAFaixa() {
   }
 
   if (tela === "escolha") {
-    return <Escolha preferencias={preferencias} onEscolher={escolher} onVoltar={() => setTela("inicio")} />;
+    return <Escolha preferencias={preferencias} onEscolher={escolher} onDificuldade={(dificuldade) => mudarPreferencias({ dificuldade })} onVoltar={() => setTela("inicio")} />;
   }
 
   return (
@@ -178,6 +182,7 @@ export function ValeAFaixa() {
       key={`${jogador}-${semente}`}
       jogador={jogador}
       semente={semente}
+      dificuldade={preferencias.dificuldade}
       toque={toque}
       audio={audio}
       preferencias={preferencias}
@@ -192,7 +197,17 @@ export function ValeAFaixa() {
 // A escolha do personagem
 // ---------------------------------------------------------------------------
 
-function Escolha({ preferencias, onEscolher, onVoltar }: { preferencias: Preferencias; onEscolher: (slug: LutadorSlug) => void; onVoltar: () => void }) {
+function Escolha({
+  preferencias,
+  onEscolher,
+  onDificuldade,
+  onVoltar,
+}: {
+  preferencias: Preferencias;
+  onEscolher: (slug: LutadorSlug) => void;
+  onDificuldade: (dificuldade: Dificuldade) => void;
+  onVoltar: () => void;
+}) {
   return (
     <div className="palco flex flex-1 flex-col" data-faixa="escolha">
       <div className="page space-y-6 py-8 md:py-12">
@@ -201,6 +216,30 @@ function Escolha({ preferencias, onEscolher, onVoltar }: { preferencias: Prefere
           <h1 className="font-serif text-4xl font-medium tracking-tight sm:text-5xl">Quem sobe na escada?</h1>
           <p className="text-stage-ink-soft">O outro fica com o computador. Os dois têm as mesmas capacidades: muda a figura, não a chance.</p>
         </header>
+        {/* O nível muda só o computador (reação, erros, cautela, ousadia); as regras são as mesmas. */}
+        <fieldset className="max-w-3xl space-y-2" data-dificuldades>
+          <legend className="eyebrow pb-1 text-highlight">Computador</legend>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Dificuldade do computador">
+            {NIVEIS.map((nivel) => {
+              const ativo = preferencias.dificuldade === nivel;
+              return (
+                <button
+                  key={nivel}
+                  type="button"
+                  onClick={() => onDificuldade(nivel)}
+                  aria-pressed={ativo}
+                  data-dificuldade={nivel}
+                  className={`min-h-10 border px-3 text-sm font-semibold transition-colors ${ativo ? "border-action bg-action text-action-ink" : "border-stage-line bg-stage-raised text-stage-ink hover:border-action"}`}
+                >
+                  {DIFICULDADES[nivel].rotulo}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-sm text-stage-ink-soft" data-dificuldade-descricao>
+            {DIFICULDADES[preferencias.dificuldade].rotulo}: {DIFICULDADES[preferencias.dificuldade].descricao}. As regras, o alcance e a resistência não mudam.
+          </p>
+        </fieldset>
         <ul className="grid gap-4 sm:grid-cols-2 sm:max-w-3xl">
           {PROFILES.map((perfil) => (
             <li key={perfil.slug}>
@@ -270,6 +309,7 @@ function Retrato({ slug }: { slug: LutadorSlug }) {
 interface RingueProps {
   jogador: LutadorSlug;
   semente: number;
+  dificuldade: Dificuldade;
   toque: boolean;
   audio: React.RefObject<Audio | null>;
   preferencias: Preferencias;
@@ -280,7 +320,7 @@ interface RingueProps {
 
 const RESUMO_INICIAL: Resumo = { fase: "contagem", dica: null, vencedor: null, naEscada: false, carregando: false, noAr: false, teclado: true, tempo: 0 };
 
-function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, onTrocar, onRevanche }: RingueProps) {
+function Ringue({ jogador, semente, dificuldade, toque, audio, preferencias, onPreferencias, onTrocar, onRevanche }: RingueProps) {
   const computador = outroDe(jogador);
   const raiz = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -299,6 +339,8 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
     let cancelado = false;
     let instancia: Motor | null = null;
     const reduzir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Só para os testes de navegador: com `?computador=parado` o adversário não age; com `defendendo`, só defende.
+    const modoDeTeste = new URLSearchParams(window.location.search).get("computador");
     import("./motor")
       .then(({ criarMotor }) => {
         if (cancelado) return;
@@ -308,11 +350,11 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
             jogador,
             computador,
             semente,
+            dificuldade,
             reduzirMovimento: reduzir,
             toque,
             audio: audio.current,
-            // Só para os testes de navegador: com `?computador=parado`, o adversário não age.
-            computadorParado: new URLSearchParams(window.location.search).get("computador") === "parado",
+            computadorDeTeste: modoDeTeste === "parado" || modoDeTeste === "defendendo" ? modoDeTeste : undefined,
             aoMudar: setResumo,
             // Perda de foco e aba escondida: o painel de pausa abre, se nada mais estiver aberto.
             aoPedirPausa: () => setPainel((atual) => atual ?? "pausa"),
@@ -333,7 +375,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
     };
     // A semente muda só pela revanche, que reinicia o motor sem recriá-lo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jogador, computador, toque, audio]);
+  }, [jogador, computador, dificuldade, toque, audio]);
 
   // A partida para enquanto há algo por cima dela; parar solta todos os comandos.
   const parada = tutorial || painel !== null || resumo.fase === "fim";
@@ -391,6 +433,7 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
       data-pausado={parada ? "sim" : "nao"}
       data-pronto={pronto ? "sim" : "nao"}
       data-na-escada={resumo.naEscada ? "sim" : "nao"}
+      data-dificuldade={dificuldade}
       onPointerDown={() => {
         if (!parada) raiz.current?.focus({ preventScroll: true });
       }}
@@ -440,7 +483,8 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
         <Janela titulo="Como se ganha" id="tutorial">
           <ul className="space-y-1.5 text-sm">
             <li>
-              <strong>Derrube.</strong> Golpes tiram equilíbrio; a zero, o adversário cai. Defender reduz o dano; a esquiva escapa.
+              <strong>Derrube.</strong> Golpes tiram equilíbrio; a zero, o adversário cai. Defender reduz o dano; a esquiva escapa. Colado em quem defende, o golpe forte agarra e
+              arremessa (quem é agarrado escapa com a esquiva).
             </li>
             <li>
               <strong>Escada.</strong> Pegue a caída, leve até a marca amarela, posicione, suba pela seta. Atacar a base de uma escada ocupada chacoalha e, três vezes, derruba.
@@ -487,8 +531,9 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
           <Teclas />
           {toque && <p className="text-xs text-stage-ink-soft">{TOQUE_RESUMO}</p>}
           <p className="text-xs text-stage-ink-soft">
-            Z em sequência emenda soco, direto e chute; V é lento e forte; Z no ar é a voadora, uma por salto. Atacar perto da escada em que o adversário sobe chacoalha a escada e,
-            três vezes, derruba. Derrubar não vence: só a faixa vence, e cair tira um quarto do progresso, não tudo.
+            Z em sequência emenda soco, direto e chute; V é lento e forte, e colado em quem defende vira o agarrão: segura e arremessa, a não ser que o agarrado escape com Shift; Z
+            no ar é a voadora, uma por salto. Atacar perto da escada em que o adversário sobe chacoalha a escada e, três vezes, derruba. Derrubar não vence: só a faixa vence, e
+            cair tira um quarto do progresso, não tudo. Passados dois minutos e meio de luta, a prorrogação: a faixa afrouxa e puxar leva menos.
           </p>
           <button type="button" onClick={() => setPainel("pausa")} className="btn-acao" autoFocus>
             Voltar
@@ -499,8 +544,8 @@ function Ringue({ jogador, semente, toque, audio, preferencias, onPreferencias, 
       {resumo.fase === "fim" && (
         <Janela titulo={venceu ? "Vale a faixa!" : "A faixa foi para o outro lado"} id="fim" eyebrow={venceu ? "Vitória" : "Derrota"}>
           <p className="text-sm text-stage-ink-soft" data-resultado={venceu ? "vitoria" : "derrota"}>
-            {venceu ? `${NOMES[jogador]} subiu, puxou e tirou a faixa` : `${NOMES[computador]} chegou ao topo antes`} em {Math.round(resumo.tempo)} segundos.{" "}
-            {venceu ? "Posse no ringue." : "O computador quer a revanche tanto quanto você."}
+            {venceu ? `${NOMES[jogador]} subiu, puxou e tirou a faixa` : `${NOMES[computador]} chegou ao topo antes`} em {Math.round(resumo.tempo)} segundos, no nível{" "}
+            {DIFICULDADES[dificuldade].rotulo.toLowerCase()}. {venceu ? "Posse no ringue." : "O computador quer a revanche tanto quanto você."}
           </p>
           <div className="grid gap-2 sm:grid-cols-2">
             <button type="button" onClick={revanche} className="btn-acao" data-revanche autoFocus>

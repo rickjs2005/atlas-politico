@@ -1372,6 +1372,16 @@ A conversa que abre a missão é um grafo pequeno em TypeScript (`src/lib/game/e
 
 **Consequência.** `src/features/faixa/torcida.ts` (novo), `audio.ts`, `motor.ts`, `preferencias.ts`, `ValeAFaixa.tsx`; `narracao.ts` apagado; `src/lib/faixa/falas.ts` sem a tabela da narração; testes e [VALE-A-FAIXA.md](VALE-A-FAIXA.md) ajustados.
 
+## D-160. Vale a Faixa, terceira rodada: agarrão, três níveis, prorrogação, passos e compressor, sem engenharia reversa
+
+**Decisão (19 de outubro de 2026).** O pedido mandava investigar WWE 2K Battlegrounds e WWE 2K25 com o REA (rea.tools) e trazer o que servisse. A investigação nativa não foi possível, e o pedido previa isso: o REA não estava instalado, e nenhum dos jogos existe na máquina (Steam, Xbox e Loja conferidos). O REA não foi instalado: sem alvo, a instalação só mudaria a configuração do agente (pede aprovação e reinício) sem produzir nada. O método passou a ser o código do atlas mais o que guias públicos descrevem do jogo observado, sem números, e tudo o que entrou é desenho próprio, assim identificado em [VALE-A-FAIXA.md](VALE-A-FAIXA.md). Entraram: (1) o agarrão, contextual no mesmo comando do golpe forte, colado em quem defende: a guarda não o segura, um golpe interrompe a preparação, a esquiva escapa durante o seguro, e o arremesso derruba; com recarga longa; (2) três níveis do computador (fácil, normal, difícil), escolhidos na tela de escolha e guardados, que mudam só o perfil (atraso de reação, erros, cautela, ousadia, fuga) e nunca as regras; (3) a prorrogação aos 150 s de luta, que afrouxa a faixa até puxar levar 60% do tempo aos 240 s, para a partida não se arrastar sem decidir nada por tempo; (4) soltar a guarda e apertar uma ação no mesmo instante não perde a ação; (5) passos no tapete pelo ciclo real da caminhada, degraus ao subir, sons de agarrão e arremesso, e um compressor no canal mestre contra a saturação.
+
+**Por quê.** A guarda era uma parede sem resposta além de esperar; o agarrão fecha o triângulo (guarda segura golpe, agarrão vence guarda, golpe interrompe agarrão) sem tecla nova nem botão novo. Um nível só deixava a partida ou fácil ou dura demais conforme a pessoa; os níveis mudam só a cabeça do computador, para a simetria das regras continuar valendo. A prorrogação cobre o caso de duas pessoas (ou pessoa e computador) que só se interrompem.
+
+**O que não entrou, e por quê.** Engenharia reversa de qualquer binário: sem o jogo e sem a ferramenta, e com a regra do pedido de não baixar jogos nem contornar proteções. Gravações de áudio: continuam sem conjunto com licença conferida (D-159). Um "breaker" por adivinhação como no WWE 2K: a fuga é a esquiva, que já existe, para manter o esquema de um comando por ação.
+
+**Consequência.** `src/lib/faixa/tipos.ts`, `regras.ts`, `ia.ts`, `falas.ts`; `src/features/faixa/motor.ts`, `audio.ts`, `preferencias.ts`, `ValeAFaixa.tsx`, `Controles.tsx`, `desenho/hud.ts`, `desenho/lutador.ts`; testes de regras (agarrão, prorrogação, níveis, laço de passo fixo) e jornadas de navegador (agarrão com `?computador=defendendo`, escolha do nível) e [VALE-A-FAIXA.md](VALE-A-FAIXA.md).
+
 ## Pontos em aberto
 
 | Tema | Decide-se em |

@@ -6,8 +6,9 @@
 // Coordenadas locais: origem nos pés, `x` para a frente (para onde olha) e
 // `y` para baixo, como na tela. Quem olha para a esquerda é espelhado. A
 // pose sai do estado do lutador (regras.ts) e do tempo nele: parado,
-// caminhada, golpe, empurrão, defesa, atingido, caído e levantando, carregando
-// a escada, subindo, no topo, puxando a faixa, caindo, vitória e derrota.
+// caminhada, golpe, o agarrão (quem segura, quem está seguro e quem voa),
+// defesa, atingido, caído e levantando, carregando a escada, subindo, no
+// topo, puxando a faixa, caindo, vitória e derrota.
 
 import { FLAVIO_HEAD, LULA_HEAD } from "@/features/game/draw/character-faces";
 import { drawHead, type HeadSpec } from "@/features/game/draw/character-head";
@@ -200,6 +201,61 @@ export function poseDe(l: Lutador, tempo: number, ritmo: number, movimento: bool
         if (u > 0.6) pose.expressao = "neutra";
         if (forte && u < 0.6) pose.expressao = "esforco";
       }
+      break;
+    }
+    case "agarrando": {
+      // Os braços vão à frente na preparação, seguram alto no seguro, e descem no arremesso; depois, a guarda.
+      const r = REGRAS.agarrao;
+      const fase = faseDoAtaque(l);
+      const fimDoSeguro = r.antecipacao + r.seguro;
+      const preparo: Postura = { tronco: 0.42, dx: 8, bracoF: [Math.PI / 2 + 0.2, 0.15], bracoT: [Math.PI / 2 - 0.1, 0.2], pernaF: [0.55, -0.4], pernaT: [-0.4, 0.15], quadrilY: -M.quadril + 6 };
+      const seguro: Postura = { tronco: -0.18, dx: 2, bracoF: [1.9, 0.9], bracoT: [1.75, 1.0], pernaF: [0.35, -0.45], pernaT: [-0.3, 0.2], quadrilY: -M.quadril + 3 };
+      const arremesso: Postura = { tronco: 0.55, dx: 14, bracoF: [0.2, 0.3], bracoT: [0.1, 0.35], pernaF: [0.7, -0.35], pernaT: [-0.55, 0.1], quadrilY: -M.quadril + 9 };
+      pose.expressao = "esforco";
+      if (fase === "antecipacao") {
+        misturar(pose, GUARDA_POSTURA, preparo, easeOut(t / r.antecipacao));
+      } else if (l.agarrou && t < fimDoSeguro) {
+        const tremor = movimento ? Math.sin(tempo * 32) * 0.04 : 0;
+        misturar(pose, preparo, seguro, easeOut((t - r.antecipacao) / 0.12));
+        pose.bracoF[0] += tremor;
+        pose.bracoT[0] -= tremor;
+        pose.suor = 1;
+      } else if (l.agarrou && t < fimDoSeguro + r.arremesso) {
+        misturar(pose, seguro, arremesso, easeIn((t - fimDoSeguro) / r.arremesso));
+        pose.expressao = "raiva";
+        pose.suor = 1;
+      } else {
+        const u = easeOut((t - fimDoSeguro - r.arremesso) / r.recuperacao);
+        misturar(pose, l.agarrou ? arremesso : preparo, GUARDA_POSTURA, u);
+        if (u > 0.6) pose.expressao = "neutra";
+      }
+      break;
+    }
+    case "agarrado": {
+      // Seguro pelo paletó: os pés saem do chão, braços e pernas se debatem.
+      const w = movimento ? Math.sin(tempo * 26) * 0.25 : 0;
+      pose.tronco = -0.3;
+      pose.cabecaGiro = -0.2;
+      pose.bracoF = [2.3 + w, 0.4];
+      pose.bracoT = [0.3 - w, 0.5];
+      pose.pernaF = [0.5 + w * 0.5, -1.1];
+      pose.pernaT = [-0.1 - w * 0.5, -0.8];
+      pose.expressao = "susto";
+      pose.piscar = 0.3;
+      pose.suor = 1;
+      break;
+    }
+    case "arremessado": {
+      // Voa de costas, girando, até cair.
+      const w = movimento ? Math.sin(tempo * 28) * 0.3 : 0;
+      pose.giro = -0.6 - Math.min(1.2, t * 2.6);
+      pose.tronco = -0.2;
+      pose.bracoF = [2.7 + w, 0.2];
+      pose.bracoT = [0.2 - w, 0.3];
+      pose.pernaF = [0.8 + w, -0.6];
+      pose.pernaT = [-0.3 - w, 0.4];
+      pose.expressao = "susto";
+      pose.suor = 1;
       break;
     }
     case "pulando": {
@@ -847,6 +903,8 @@ export function desenharRetrato(canvas: HTMLCanvasElement, slug: LutadorSlug, te
     recargaForte: 0,
     recargaDerrubada: 0,
     recargaEsquiva: 0,
+    recargaAgarrao: 0,
+    agarrou: false,
     golpeDaSequencia: 0,
     desdeOUltimoGolpe: 10,
     proximoGolpe: false,

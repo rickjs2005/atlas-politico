@@ -1,19 +1,24 @@
 // O som do Vale a Faixa, sintetizado na hora com a Web Audio API: nenhum
 // arquivo, nenhuma música licenciada. Dois canais com volume próprio: os
-// efeitos (socos, chutes, voadora, guarda, erro, pulo e aterrissagem, escada,
-// queda, sino, vitória, derrota) e a torcida (torcida.ts), que acompanha o
-// estado real da partida em camadas. Só começa depois de um gesto da pessoa
-// (`ativar`), pausa com a partida e volta ao silêncio ao reiniciar ou sair.
+// efeitos (passos, socos, chutes, voadora, agarrão e arremesso, guarda, erro,
+// pulo e aterrissagem, escada e seus degraus, queda, sino, vitória, derrota)
+// e a torcida (torcida.ts), que acompanha o estado real da partida em
+// camadas. Só começa depois de um gesto da pessoa (`ativar`), pausa com a
+// partida e volta ao silêncio ao reiniciar ou sair.
 //
 // Um mesmo efeito não toca duas vezes em menos de 50 ms, para não acumular
-// nem distorcer.
+// nem distorcer; um compressor no canal mestre segura os picos quando muita
+// coisa toca junto (a queda com a torcida gritando), sem saturar.
 
 import { criarTorcida, type Reacao, type Torcida } from "./torcida";
 
 export type Som =
+  | "passo"
   | "soco"
   | "chute"
   | "forte"
+  | "agarrao"
+  | "arremesso"
   | "voadora"
   | "bloqueio"
   | "erro"
@@ -84,7 +89,15 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
       contexto = new Contexto();
       mestre = contexto.createGain();
       mestre.gain.value = ganhoMestre();
-      mestre.connect(contexto.destination);
+      // O compressor segura os picos: muitos sons juntos não saturam a saída.
+      const compressor = contexto.createDynamicsCompressor();
+      compressor.threshold.value = -14;
+      compressor.knee.value = 18;
+      compressor.ratio.value = 4;
+      compressor.attack.value = 0.003;
+      compressor.release.value = 0.16;
+      mestre.connect(compressor);
+      compressor.connect(contexto.destination);
       efeitos = contexto.createGain();
       efeitos.gain.value = volumeEfeitos;
       efeitos.connect(mestre);
@@ -148,9 +161,26 @@ export function criarAudio(volumeDeEfeitos: number, volumeDaTorcida: number, mud
   };
 
   const sons: Record<Som, () => void> = {
+    passo() {
+      // Um passo no tapete: baixo e curto, com o tom variando um pouco a cada vez.
+      const variacao = 0.9 + Math.random() * 0.2;
+      tom("sine", 95 * variacao, 50, 0.07, 0.22);
+      sopro(0.04, 0.16, 420 * variacao, 160);
+    },
     soco() {
       sopro(0.09, 0.9, 1400, 300);
       tom("sine", 130, 55, 0.13, 0.9);
+    },
+    agarrao() {
+      // O agarrão: o paletó amassado, um sopro curto e grave.
+      sopro(0.11, 0.55, 700, 260);
+      sopro(0.08, 0.3, 2400, 900, "bandpass", 0.03);
+      tom("sine", 150, 90, 0.1, 0.4);
+    },
+    arremesso() {
+      // O arremesso: o sopro que sobe com o corpo voando; a queda toca ao cair.
+      sopro(0.3, 0.7, 500, 2600, "bandpass");
+      tom("triangle", 160, 260, 0.22, 0.25);
     },
     chute() {
       sopro(0.12, 1, 1100, 220);

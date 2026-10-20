@@ -18,8 +18,9 @@ export type Indice = 0 | 1;
  * Os comandos, iguais para a pessoa e para o computador. Tudo é "está
  * pressionado". Andar, subir e descer, pular, atacar (contextual: a sequência
  * de golpes no chão, a voadora no ar, a derrubada perto da escada ocupada),
- * o golpe forte, defender, a esquiva e interagir (contextual: pegar,
- * posicionar ou largar a escada; no topo, puxar a faixa).
+ * o golpe forte (contextual: colado em quem defende, o agarrão), defender, a
+ * esquiva (agarrado, a fuga) e interagir (contextual: pegar, posicionar ou
+ * largar a escada; no topo, puxar a faixa).
  */
 export interface Entrada {
   esquerda: boolean;
@@ -49,7 +50,8 @@ export const ENTRADA_VAZIA: Entrada = {
 
 /**
  * Os estados de um lutador. Cada um exclui os outros: ninguém ataca caído,
- * carrega a escada subindo nela ou continua lutando depois do fim.
+ * carrega a escada subindo nela ou continua lutando depois do fim. Agarrando
+ * é quem segura; agarrado, quem está seguro; arremessado, quem voa até cair.
  */
 export type EstadoDoLutador =
   | "parado"
@@ -59,6 +61,9 @@ export type EstadoDoLutador =
   | "aterrissando"
   | "golpe"
   | "forte"
+  | "agarrando"
+  | "agarrado"
+  | "arremessado"
   | "derrubada"
   | "defesa"
   | "esquiva"
@@ -76,7 +81,7 @@ export type EstadoDoLutador =
 export type FaseDoAtaque = "antecipacao" | "ativo" | "recuperacao";
 
 /** Os ataques, para o som, os efeitos e o desenho. */
-export type TipoDeGolpe = "soco" | "direto" | "chute" | "forte" | "voadora";
+export type TipoDeGolpe = "soco" | "direto" | "chute" | "forte" | "voadora" | "agarrao";
 
 /** Um comando guardado por um instante, para sair assim que o lutador ficar livre. */
 export type ComandoGuardado = "golpe" | "pulo" | "forte" | "esquiva";
@@ -109,6 +114,9 @@ export interface Lutador {
   recargaForte: number;
   recargaDerrubada: number;
   recargaEsquiva: number;
+  recargaAgarrao: number;
+  /** O agarrão de agora pegou o adversário: ele está seguro até o arremesso ou a fuga. */
+  agarrou: boolean;
   /** O golpe da sequência em andamento: 1, 2 ou 3 (o terceiro é o chute). Zero fora de ataque. */
   golpeDaSequencia: 0 | 1 | 2 | 3;
   /** Segundos desde o fim do último golpe: passada a janela, a sequência recomeça do 1. */
@@ -174,12 +182,14 @@ export interface Partida {
   vencedor: Indice | null;
   /** Intensidade da torcida, de 0 a 1. */
   torcida: number;
+  /** A luta passou do tempo esperado: a faixa afrouxa e puxar leva menos. */
+  prorrogacao: boolean;
   /** O que aconteceu no último passo. Quem lê, limpa. */
   eventos: Evento[];
 }
 
 /** Por que um comando não saiu: a interface explica. */
-export type MotivoDoBloqueio = "carregando" | "naEscada" | "recarga" | "noAr" | "noChao";
+export type MotivoDoBloqueio = "carregando" | "naEscada" | "recarga" | "noAr" | "noChao" | "agarrado";
 
 export type Evento =
   | { tipo: "inicio" }
@@ -189,6 +199,10 @@ export type Evento =
   | { tipo: "voadora"; quem: Indice }
   | { tipo: "aterrissagem"; quem: Indice; x: number; pesada: boolean }
   | { tipo: "esquiva"; quem: Indice }
+  | { tipo: "agarrou"; quem: Indice; alvo: Indice; x: number }
+  | { tipo: "arremesso"; quem: Indice; alvo: Indice; x: number }
+  | { tipo: "escapou"; quem: Indice }
+  | { tipo: "prorrogacao" }
   | { tipo: "acaoBloqueada"; quem: Indice; motivo: MotivoDoBloqueio }
   | { tipo: "derrubada"; quem: Indice; x: number; tombou: boolean }
   | { tipo: "queda"; quem: Indice; x: number; longa: boolean }
@@ -211,6 +225,7 @@ export type Evento =
  * A dica contextual, perto do personagem: o que dá para fazer agora. Pegar,
  * posicionar e largar são o comando de interação; subir é a seta para cima;
  * puxar é o comando de interação segurado no topo; derrubar é o ataque, perto
- * da escada em que o adversário está.
+ * da escada em que o adversário está; agarrar é o golpe forte, colado em quem
+ * defende; escapar é a esquiva, enquanto se está agarrado.
  */
-export type Dica = "pegarEscada" | "posicionarEscada" | "soltarEscada" | "subir" | "puxarFaixa" | "derrubarEscada" | null;
+export type Dica = "pegarEscada" | "posicionarEscada" | "soltarEscada" | "subir" | "puxarFaixa" | "derrubarEscada" | "agarrar" | "escapar" | null;

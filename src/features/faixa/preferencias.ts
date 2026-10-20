@@ -1,8 +1,9 @@
 // As preferências do Vale a Faixa, no navegador: os volumes dos efeitos e da
 // torcida, o silêncio geral, se o tutorial já foi visto, o último personagem
-// escolhido e o placar da pessoa contra o computador. Nada vai ao endereço
-// nem a servidor algum.
+// escolhido, a dificuldade do computador e o placar da pessoa contra ele.
+// Nada vai ao endereço nem a servidor algum.
 
+import type { Dificuldade } from "@/lib/faixa/ia";
 import type { LutadorSlug } from "@/lib/faixa/tipos";
 
 export const CHAVE_DAS_PREFERENCIAS = "atlas-politico:faixa:preferencias";
@@ -13,6 +14,7 @@ export interface Preferencias {
   mudo: boolean;
   tutorialVisto: boolean;
   personagem: LutadorSlug | null;
+  dificuldade: Dificuldade;
   partidas: number;
   vitorias: number;
 }
@@ -23,6 +25,7 @@ export const PREFERENCIAS_PADRAO: Preferencias = {
   mudo: false,
   tutorialVisto: false,
   personagem: null,
+  dificuldade: "normal",
   partidas: 0,
   vitorias: 0,
 };
@@ -42,6 +45,7 @@ export function preferenciasDe(bruto: string | null): Preferencias {
       mudo: lido.mudo === true,
       tutorialVisto: lido.tutorialVisto === true,
       personagem: lido.personagem === "lula" || lido.personagem === "flavio-bolsonaro" ? lido.personagem : null,
+      dificuldade: lido.dificuldade === "facil" || lido.dificuldade === "dificil" ? lido.dificuldade : "normal",
       partidas: contagem(lido.partidas),
       vitorias: contagem(lido.vitorias),
     };

@@ -5,17 +5,45 @@
 // propósito uma parte das vezes. Determinístico pela semente, para os testes.
 //
 // Usa os mesmos comandos da pessoa e obedece às mesmas regras: nada de ler
-// a entrada do adversário, de defesa perfeita ou de alcance a mais. Alterna
-// entre aproximar, atacar (a sequência, o golpe forte, a voadora), defender,
-// esquivar, recuar, buscar e posicionar a escada, subir, disputar a faixa e
-// interromper quem sobe.
+// a entrada do adversário, de defesa perfeita ou de alcance a mais. Reage ao
+// que está visível (a preparação de um golpe, a escada em pé, o outro caído),
+// nunca ao que o adversário vai apertar. Alterna entre aproximar, atacar (a
+// sequência, o golpe forte, o agarrão, a voadora), defender, esquivar,
+// escapar do agarrão, recuar, buscar e posicionar a escada, subir, disputar a
+// faixa e interromper quem sobe.
+//
+// A dificuldade muda só o perfil: o atraso de reação, a chance de errar de
+// propósito, a cautela (defender e esquivar) e a ousadia (o forte, o
+// agarrão, a voadora). As regras e o alcance são os mesmos em todo nível.
 
 import { REGRAS, livre, naEscada, naZona, noAr, noChao, outro, podeDerrubar } from "./regras";
 import { ENTRADA_VAZIA, type Entrada, type Indice, type Partida } from "./tipos";
 
-export type EstadoDaIA = "aproximar" | "atacar" | "defender" | "esquivar" | "recuar" | "recuperar" | "buscarEscada" | "posicionar" | "subir" | "disputarFaixa" | "interromper" | "hesitar";
+export type EstadoDaIA = "aproximar" | "atacar" | "defender" | "esquivar" | "escapar" | "recuar" | "recuperar" | "buscarEscada" | "posicionar" | "subir" | "disputarFaixa" | "interromper" | "hesitar";
 
 type Pulso = "golpe" | "forte" | "pulo" | "esquiva" | "interagir";
+
+export type Dificuldade = "facil" | "normal" | "dificil";
+
+/** O perfil do computador: o que a dificuldade muda. */
+export interface PerfilDaIA {
+  /** Chance de uma decisão ser um erro proposital, de 0 a 1. */
+  descuido: number;
+  /** Multiplica o atraso de reação: acima de 1, mais lento. */
+  reacao: number;
+  /** Multiplica a chance de defender e esquivar. */
+  cautela: number;
+  /** Multiplica a chance do golpe forte, do agarrão e da voadora. */
+  ousadia: number;
+  /** Chance de escapar do agarrão com a esquiva, de 0 a 1. */
+  fuga: number;
+}
+
+export const DIFICULDADES: Record<Dificuldade, PerfilDaIA & { rotulo: string; descricao: string }> = {
+  facil: { rotulo: "Fácil", descricao: "reage devagar e erra bastante", descuido: 0.3, reacao: 1.7, cautela: 0.6, ousadia: 0.7, fuga: 0.3 },
+  normal: { rotulo: "Normal", descricao: "reage como uma pessoa e erra às vezes", descuido: 0.14, reacao: 1, cautela: 1, ousadia: 1, fuga: 0.55 },
+  dificil: { rotulo: "Difícil", descricao: "reage rápido, defende mais e arrisca mais", descuido: 0.05, reacao: 0.65, cautela: 1.3, ousadia: 1.25, fuga: 0.8 },
+};
 
 export interface MemoriaDaIA {
   estado: EstadoDaIA;
@@ -26,17 +54,17 @@ export interface MemoriaDaIA {
   segurar: Entrada;
   /** Um toque único, consumido no próximo passo. */
   pulso: Pulso | null;
-  /** Um segundo toque, que sai alguns passos depois do primeiro (a voadora depois do pulo). */
+  /** Um segundo toque, que sai alguns passos depois do primeiro (a voadora depois do pulo, a fuga depois de notar o agarrão). */
   pulsoSeguinte: { comando: Pulso; em: number } | null;
-  /** Chance de uma decisão ser um erro proposital, de 0 a 1. */
-  descuido: number;
+  perfil: PerfilDaIA;
   /** Quantas decisões foram erros, para os testes. */
   erros: number;
   decisoes: number;
 }
 
-export function criarMemoria(semente: number, descuido = 0.14): MemoriaDaIA {
-  return { estado: "hesitar", reacao: 0.4, semente: semente | 0, segurar: { ...ENTRADA_VAZIA }, pulso: null, pulsoSeguinte: null, descuido, erros: 0, decisoes: 0 };
+export function criarMemoria(semente: number, dificuldade: Dificuldade | Partial<PerfilDaIA> = "normal"): MemoriaDaIA {
+  const perfil: PerfilDaIA = typeof dificuldade === "string" ? DIFICULDADES[dificuldade] : { ...DIFICULDADES.normal, ...dificuldade };
+  return { estado: "hesitar", reacao: 0.4, semente: semente | 0, segurar: { ...ENTRADA_VAZIA }, pulso: null, pulsoSeguinte: null, perfil, erros: 0, decisoes: 0 };
 }
 
 /** Um número de 0 a 1, determinístico pela semente (mulberry32). */
@@ -82,12 +110,23 @@ function decidirAgora(p: Partida, eu: Indice, m: MemoriaDaIA): void {
     case "levantando":
     case "atingido":
     case "caindoDaEscada":
+    case "arremessado":
     case "aterrissando":
     case "esquiva":
     case "vitoria":
     case "derrota":
       m.estado = "recuperar";
       m.reacao = 0.15;
+      return;
+    case "agarrando":
+      m.estado = "atacar";
+      m.reacao = 0.1;
+      return;
+    case "agarrado":
+      // Seguro: nota o agarrão e, parte das vezes, escapa com a esquiva um instante depois.
+      m.estado = "escapar";
+      if (l.recargaEsquiva === 0 && r() < m.perfil.fuga) m.pulsoSeguinte = { comando: "esquiva", em: 0.08 + r() * 0.18 };
+      m.reacao = 0.5;
       return;
     case "pulando":
       // No ar, indo para o adversário: a voadora, quando ele está à frente e perto.
@@ -156,7 +195,7 @@ function decidirAgora(p: Partida, eu: Indice, m: MemoriaDaIA): void {
   }
 
   // Um erro proposital: hesitar parado, bater no vazio ou pular sem motivo.
-  if (r() < m.descuido) {
+  if (r() < m.perfil.descuido) {
     m.erros += 1;
     const sorte = r();
     if (sorte < 0.45) {
@@ -230,15 +269,33 @@ function decidirAgora(p: Partida, eu: Indice, m: MemoriaDaIA): void {
     m.reacao = 0.2;
     return;
   }
+  const { cautela, ousadia } = m.perfil;
   const oAtacando = (o.estado === "golpe" || o.estado === "forte") && o.t < 0.2;
-  const oVulneravel = o.estado === "aterrissando" || (o.estado === "forte" && o.t > REGRAS.forte.antecipacao) || o.estado === "esquiva";
-  if (l.equilibrio < 30 && dist < 140) {
+  const oAgarrando = o.estado === "agarrando" && o.t < REGRAS.agarrao.antecipacao;
+  const oVulneravel = o.estado === "aterrissando" || (o.estado === "forte" && o.t > REGRAS.forte.antecipacao) || o.estado === "esquiva" || (o.estado === "agarrando" && o.t > REGRAS.agarrao.antecipacao + REGRAS.agarrao.seguro);
+  // A preparação visível do agarrão: a guarda não o segura; a esquiva escapa, e um golpe o interrompe.
+  if (oAgarrando && dist < 120) {
     const sorte = r();
-    if (sorte < 0.35 && l.recargaEsquiva === 0) {
+    if (sorte < 0.6 * cautela && l.recargaEsquiva === 0) {
       m.estado = "esquivar";
       m.pulso = "esquiva";
       m.reacao = 0.4;
-    } else if (sorte < 0.7) {
+      return;
+    }
+    if (sorte < 0.85 && l.recargaGolpe === 0) {
+      m.estado = "atacar";
+      m.pulso = "golpe";
+      m.reacao = 0.3;
+      return;
+    }
+  }
+  if (l.equilibrio < 30 && dist < 140) {
+    const sorte = r();
+    if (sorte < 0.35 * cautela && l.recargaEsquiva === 0) {
+      m.estado = "esquivar";
+      m.pulso = "esquiva";
+      m.reacao = 0.4;
+    } else if (sorte < 0.7 * cautela) {
       m.estado = "defender";
       m.segurar.defesa = true;
       m.reacao = 0.4 + r() * 0.4;
@@ -250,7 +307,7 @@ function decidirAgora(p: Partida, eu: Indice, m: MemoriaDaIA): void {
     return;
   }
   // De média distância, às vezes vem de voadora.
-  if (dist > 130 && dist < 230 && !noAr(o) && r() < 0.22) {
+  if (dist > 130 && dist < 230 && !noAr(o) && r() < 0.22 * ousadia) {
     m.estado = "atacar";
     m.pulso = "pulo";
     m.pulsoSeguinte = { comando: "golpe", em: 0.22 + r() * 0.1 };
@@ -268,31 +325,41 @@ function decidirAgora(p: Partida, eu: Indice, m: MemoriaDaIA): void {
   // Ao alcance: reage à preparação do outro, pune a recuperação, ou bate.
   if (oAtacando) {
     const sorte = r();
-    if (sorte < 0.35) {
+    if (sorte < 0.35 * cautela) {
       m.estado = "defender";
       m.segurar.defesa = true;
       m.reacao = 0.35;
       return;
     }
-    if (sorte < 0.55 && l.recargaEsquiva === 0) {
+    if (sorte < 0.55 * cautela && l.recargaEsquiva === 0) {
       m.estado = "esquivar";
       m.pulso = "esquiva";
       m.reacao = 0.4;
       return;
     }
   }
-  if (oVulneravel && l.recargaForte === 0 && r() < 0.7) {
+  if (oVulneravel && l.recargaForte === 0 && r() < 0.7 * ousadia) {
     m.estado = "atacar";
     m.pulso = "forte";
     m.reacao = 0.6;
     return;
   }
-  // Contra a guarda, esperar um pouco rende mais do que bater nela; às vezes, o forte.
+  // Contra a guarda: colado, o agarrão (o mesmo comando do forte); de longe, esperar rende mais do que bater nela; às vezes, o forte.
   if (o.estado === "defesa") {
-    if (l.recargaForte === 0 && r() < 0.3) {
+    const sorte = r();
+    if (dist <= REGRAS.agarrao.alcance && l.recargaAgarrao === 0 && sorte < 0.55 * ousadia) {
+      m.estado = "atacar";
+      m.pulso = "forte";
+      m.reacao = 0.7;
+    } else if (l.recargaForte === 0 && sorte < 0.3 * ousadia) {
       m.estado = "atacar";
       m.pulso = "forte";
       m.reacao = 0.6;
+    } else if (dist > REGRAS.agarrao.alcance - 6 && l.recargaAgarrao === 0 && sorte < 0.75) {
+      // Chega mais perto, para o agarrão alcançar.
+      m.estado = "aproximar";
+      irPara(m, o.x, l.x, REGRAS.agarrao.alcance - 16);
+      m.reacao = 0.15;
     } else {
       m.estado = "hesitar";
       m.reacao = 0.25 + r() * 0.2;
@@ -301,7 +368,7 @@ function decidirAgora(p: Partida, eu: Indice, m: MemoriaDaIA): void {
   }
   if (l.recargaGolpe === 0) {
     m.estado = "atacar";
-    m.pulso = r() < 0.15 && l.recargaForte === 0 ? "forte" : "golpe";
+    m.pulso = r() < 0.15 * ousadia && l.recargaForte === 0 ? "forte" : "golpe";
     m.reacao = 0.3 + r() * 0.25;
     return;
   }
@@ -309,9 +376,9 @@ function decidirAgora(p: Partida, eu: Indice, m: MemoriaDaIA): void {
   m.reacao = 0.1;
 }
 
-/** A entrada do computador neste passo. */
+/** A entrada do computador neste passo. O atraso de reação corre mais devagar nos níveis fáceis. */
 export function decidir(p: Partida, eu: Indice, m: MemoriaDaIA, dt: number): Entrada {
-  m.reacao -= dt;
+  m.reacao -= dt / m.perfil.reacao;
   if (m.reacao <= 0) decidirAgora(p, eu, m);
   if (m.pulsoSeguinte !== null) {
     m.pulsoSeguinte.em -= dt;

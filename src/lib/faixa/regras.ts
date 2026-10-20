@@ -12,9 +12,12 @@
 // Os comandos: andar com aceleração curta; pular, com gravidade e uma só
 // voadora por salto; atacar é contextual (a sequência soco, direto e chute no
 // chão; a voadora no ar; a derrubada perto da escada em que o adversário
-// está); o golpe forte, lento e arriscado; defender, segurado; a esquiva
-// curta, com recarga; interagir pega, posiciona ou larga a escada e, no topo,
-// segurado, puxa a faixa; subir e descer são as setas, alinhado à base.
+// está); o golpe forte, lento e arriscado, que colado em quem defende vira o
+// agarrão (segura, e arremessa quem não escapa com a esquiva); defender,
+// segurado; a esquiva curta, com recarga; interagir pega, posiciona ou larga
+// a escada e, no topo, segurado, puxa a faixa; subir e descer são as setas,
+// alinhado à base. Passado o tempo esperado de luta, a prorrogação: a faixa
+// afrouxa e puxar leva menos, para a partida não se arrastar.
 
 import { ENTRADA_VAZIA, type ComandoGuardado, type Dica, type Entrada, type Escada, type Evento, type Indice, type Lutador, type LutadorSlug, type MotivoDoBloqueio, type Partida, type TipoDeGolpe } from "./tipos";
 
@@ -66,6 +69,13 @@ export const REGRAS = {
   recargaDoGolpe: 0.08,
   /** O golpe forte: preparação visível, impacto maior, recuperação longa. Arriscado. */
   forte: { antecipacao: 0.34, ativo: 0.1, recuperacao: 0.52, dano: 36, recuo: 420, danoBloqueado: 12, recuoBloqueado: 200, recarga: 0.5, alcance: 86 },
+  /**
+   * O agarrão: o golpe forte colado em quem defende. A preparação é visível e
+   * qualquer golpe a interrompe; pegou, segura por um instante em que só a
+   * esquiva escapa; depois arremessa (quem voa cai no tapete). Errou, fica
+   * exposto na recuperação. Recarga longa: não vira a resposta para tudo.
+   */
+  agarrao: { alcance: 64, antecipacao: 0.26, seguro: 0.42, arremesso: 0.16, recuperacao: 0.4, recarga: 1.6, impulso: 300, recuo: 520 },
   /** O pulo: impulso, gravidade, e a aterrissagem curta em que não se ataca. */
   pulo: { impulso: 560, gravidade: 1650, aterrissagem: 0.1 },
   /** A voadora: só no ar, uma por salto, ativa por um trecho da trajetória, com aterrissagem longa. */
@@ -109,6 +119,8 @@ export const REGRAS = {
   },
   /** A faixa: 9 s de comando segurado no topo, com a escada parada; cair tira um quarto do progresso; sem puxar, escorre devagar. */
   faixa: { altura: 345, puxar: 9, perdaAoCair: 0.25, perdaSemPuxar: 0.03, aviso: 0.7 },
+  /** A prorrogação: a partir de 150 s de luta a faixa afrouxa, e aos 240 s puxar leva 60% do tempo. A partida não se arrasta. */
+  prorrogacao: { aos: 150, ate: 240, fator: 0.6 },
   contagem: 2.6,
   atingido: 0.3,
   /** Recuo acima do qual bater nas cordas devolve e tira equilíbrio. */
@@ -138,6 +150,8 @@ function novoLutador(slug: LutadorSlug, x: number, direcao: 1 | -1): Lutador {
     recargaForte: 0,
     recargaDerrubada: 0,
     recargaEsquiva: 0,
+    recargaAgarrao: 0,
+    agarrou: false,
     golpeDaSequencia: 0,
     desdeOUltimoGolpe: 10,
     proximoGolpe: false,
@@ -173,6 +187,7 @@ export function criarPartida(jogador: LutadorSlug, computador: LutadorSlug, seme
     faixaBalanco: 0,
     vencedor: null,
     torcida: 0.3,
+    prorrogacao: false,
     eventos: [],
   };
 }
@@ -189,8 +204,21 @@ export const noChao = (l: Lutador): boolean => l.estado === "caido" || l.estado 
 
 export const noAr = (l: Lutador): boolean => l.estado === "pulando" || l.estado === "voadora";
 
+/** Preso no agarrão de alguém, ou voando depois do arremesso: ninguém o acerta nem o separa. */
+export const agarradoOuVoando = (l: Lutador): boolean => l.estado === "agarrado" || l.estado === "arremessado";
+
 /** Pode agir por conta própria: andar, atacar, defender, pular, interagir. */
 export const livre = (l: Lutador): boolean => l.estado === "parado" || l.estado === "andando";
+
+/** Segundos de luta, sem a contagem. */
+export const tempoDeLuta = (p: Partida): number => Math.max(0, p.tempo - REGRAS.contagem);
+
+/** Quanto mais depressa a faixa cede na prorrogação: 1 até os 150 s de luta, e até 1/0,6 aos 240 s. */
+export function ritmoDaPuxada(p: Partida): number {
+  const r = REGRAS.prorrogacao;
+  const u = Math.max(0, Math.min(1, (tempoDeLuta(p) - r.aos) / (r.ate - r.aos)));
+  return 1 / (1 - (1 - r.fator) * u);
+}
 
 /** A posição é válida para a escada ficar em pé sob a faixa. */
 export const naZona = (x: number): boolean => Math.abs(x) <= REGRAS.escada.zona;
@@ -217,17 +245,28 @@ export function podeSubir(p: Partida, i: Indice): boolean {
   return p.escada.estado === "emPe" && Math.abs(l.x - p.escada.x) <= REGRAS.escada.subir && !naEscada(p.lutadores[outro(i)]);
 }
 
-/** O que dá para fazer agora com a escada ou a faixa, para a dica perto do personagem. */
+/** O adversário defende, colado e à frente: o golpe forte vira o agarrão. */
+export function podeAgarrar(p: Partida, i: Indice): boolean {
+  const l = p.lutadores[i];
+  const alvo = p.lutadores[outro(i)];
+  if (alvo.estado !== "defesa" || l.recargaAgarrao > 0) return false;
+  const dx = alvo.x - l.x;
+  return Math.abs(dx) <= REGRAS.agarrao.alcance && (Math.sign(dx) === l.direcao || Math.abs(dx) < 20);
+}
+
+/** O que dá para fazer agora com a escada, a faixa ou o adversário, para a dica perto do personagem. */
 export function dicaDe(p: Partida, i: Indice): Dica {
   if (p.fase !== "luta") return null;
   const l = p.lutadores[i];
   const esc = p.escada;
   if (l.estado === "carregando") return naZona(l.x) ? "posicionarEscada" : "soltarEscada";
   if (l.estado === "noTopo") return "puxarFaixa";
+  if (l.estado === "agarrado") return l.recargaEsquiva === 0 ? "escapar" : null;
   if (!livre(l)) return null;
   if (esc.estado === "caida" && Math.abs(l.x - esc.x) <= REGRAS.escada.pegar) return "pegarEscada";
   if (podeSubir(p, i)) return "subir";
   if (podeDerrubar(p, i) && l.recargaDerrubada === 0) return "derrubarEscada";
+  if (podeAgarrar(p, i)) return "agarrar";
   return null;
 }
 
@@ -239,6 +278,7 @@ function entrar(l: Lutador, estado: Lutador["estado"]): void {
   l.estado = estado;
   l.t = 0;
   l.acertou = false;
+  l.agarrou = false;
   if (estado !== "noTopo") l.puxando = false;
   if (estado !== "golpe") {
     l.golpeDaSequencia = 0;
@@ -250,10 +290,18 @@ function entrar(l: Lutador, estado: Lutador["estado"]): void {
   }
 }
 
+/** Quem segurava alguém e foi tirado do agarrão solta: o agarrado volta a ficar livre. */
+function soltarAgarrado(p: Partida, i: Indice): void {
+  const l = p.lutadores[i];
+  const alvo = p.lutadores[outro(i)];
+  if (l.estado === "agarrando" && alvo.estado === "agarrado") entrar(alvo, "parado");
+}
+
 function derrubar(p: Partida, i: Indice, recuo: number, longa: boolean): void {
   const l = p.lutadores[i];
   if (p.fase === "fim" || l.estado === "caido") return;
   if (l.estado === "carregando") soltarEscada(p, i);
+  soltarAgarrado(p, i);
   entrar(l, "caido");
   l.equilibrio = 0;
   l.vx = recuo;
@@ -363,7 +411,7 @@ function acertar(p: Partida, i: Indice, golpe: TipoDeGolpe, alcance: number, dan
   const l = p.lutadores[i];
   const j = outro(i);
   const alvo = p.lutadores[j];
-  if (noChao(alvo) || naEscada(alvo) || alvo.estado === "vitoria" || alvo.estado === "derrota") return false;
+  if (noChao(alvo) || naEscada(alvo) || agarradoOuVoando(alvo) || alvo.estado === "vitoria" || alvo.estado === "derrota") return false;
   const dx = alvo.x - l.x;
   const naFrente = Math.sign(dx) === l.direcao || Math.abs(dx) < 20;
   // A voadora vem de cima: pega quem está no chão abaixo dela; os golpes do chão não pegam quem pulou alto.
@@ -383,6 +431,8 @@ function acertar(p: Partida, i: Indice, golpe: TipoDeGolpe, alcance: number, dan
   alvo.semRecuperar = REGRAS.pausaDaRecuperacao;
   alvo.golpesRecebidos += 1;
   if (alvo.estado === "carregando") soltarEscada(p, j);
+  // Um golpe na preparação do agarrão o interrompe; quem estava seguro fica livre.
+  soltarAgarrado(p, j);
   if (forte) alvo.invulneravel = REGRAS.protecaoDoForte;
   p.eventos.push({ tipo: "golpe", quem: i, alvo: j, golpe, bloqueado: false, forte, x: alvo.x - l.direcao * 14, y: Math.max(80, alvo.y + 140) });
   if (alvo.equilibrio <= 0) {
@@ -474,12 +524,64 @@ function avancarDerrubada(p: Partida, i: Indice): void {
   }
 }
 
-/** A fase de um ataque em andamento (golpe, forte, derrubada ou voadora), para o desenho. */
+/**
+ * O agarrão, por fases: a preparação (interrompível por qualquer golpe), o
+ * instante em que pega quem está à frente e colado (defendendo, parado ou
+ * andando: quem largou a guarda tarde demais ainda é pego), o seguro (só a
+ * esquiva do agarrado escapa) e o arremesso, que o faz voar até cair.
+ * Errou, segue direto para a recuperação, exposto.
+ */
+function avancarAgarrao(p: Partida, i: Indice): void {
+  const l = p.lutadores[i];
+  const j = outro(i);
+  const alvo = p.lutadores[j];
+  const r = REGRAS.agarrao;
+  const fimDoSeguro = r.antecipacao + r.seguro;
+  const fimDoArremesso = fimDoSeguro + r.arremesso;
+  if (l.t >= r.antecipacao && !l.agarrou && !l.acertou) {
+    const dx = alvo.x - l.x;
+    const naFrente = Math.sign(dx) === l.direcao || Math.abs(dx) < 20;
+    const pegavel = alvo.estado === "defesa" || livre(alvo);
+    if (pegavel && naFrente && Math.abs(dx) <= REGRAS.agarrao.alcance + 10 && alvo.invulneravel === 0) {
+      l.agarrou = true;
+      alvo.vel = 0;
+      alvo.vx = 0;
+      alvo.direcao = l.direcao === 1 ? -1 : 1;
+      entrar(alvo, "agarrado");
+      p.eventos.push({ tipo: "agarrou", quem: i, alvo: j, x: alvo.x });
+    } else {
+      // No vazio: pula o seguro e o arremesso e fica na recuperação.
+      l.acertou = true;
+      l.t = fimDoArremesso;
+      p.eventos.push({ tipo: "golpeNoVazio", quem: i, golpe: "agarrao" });
+    }
+  }
+  if (l.agarrou && alvo.estado === "agarrado") {
+    alvo.x = l.x + l.direcao * (REGRAS.corpo - 2);
+    alvo.y = l.t < fimDoSeguro ? Math.min(14, (l.t - r.antecipacao) * 80) : 14;
+    if (l.t >= fimDoSeguro && !l.acertou) {
+      l.acertou = true;
+      alvo.golpesRecebidos += 1;
+      alvo.semRecuperar = REGRAS.pausaDaRecuperacao;
+      entrar(alvo, "arremessado");
+      alvo.vy = r.impulso;
+      alvo.vx = l.direcao * r.recuo;
+      p.eventos.push({ tipo: "arremesso", quem: i, alvo: j, x: alvo.x });
+    }
+  }
+  if (l.t >= fimDoArremesso + r.recuperacao) {
+    entrar(l, "parado");
+    l.recargaAgarrao = r.recarga;
+  }
+}
+
+/** A fase de um ataque em andamento (golpe, forte, derrubada, agarrão ou voadora), para o desenho. */
 export function faseDoAtaque(l: Lutador): "antecipacao" | "ativo" | "recuperacao" | null {
   let r: { antecipacao: number; ativo: number } | null = null;
   if (l.estado === "golpe") r = golpeDe(l);
   else if (l.estado === "forte") r = REGRAS.forte;
   else if (l.estado === "derrubada") r = REGRAS.derrubada;
+  else if (l.estado === "agarrando") r = { antecipacao: REGRAS.agarrao.antecipacao, ativo: REGRAS.agarrao.seguro + REGRAS.agarrao.arremesso };
   else if (l.estado === "voadora") {
     if (l.t < REGRAS.voadora.ativoDe) return "antecipacao";
     if (l.t < REGRAS.voadora.ativoAte) return "ativo";
@@ -640,6 +742,13 @@ function agir(p: Partida, i: Indice, e: Entrada, comando: ComandoGuardado | null
     return false;
   }
   if (comando === "forte") {
+    // Colado em quem defende, o golpe forte vira o agarrão: a guarda não o segura.
+    if (podeAgarrar(p, i)) {
+      olharParaOAdversario();
+      l.vel = 0;
+      entrar(l, "agarrando");
+      return true;
+    }
     if (l.recargaForte > 0) {
       bloquear(p, i, "recarga");
       return false;
@@ -675,6 +784,7 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
   l.recargaForte = Math.max(0, l.recargaForte - dt);
   l.recargaDerrubada = Math.max(0, l.recargaDerrubada - dt);
   l.recargaEsquiva = Math.max(0, l.recargaEsquiva - dt);
+  l.recargaAgarrao = Math.max(0, l.recargaAgarrao - dt);
   l.semRecuperar = Math.max(0, l.semRecuperar - dt);
   l.virando = Math.max(0, l.virando - dt);
   l.desdeOUltimoGolpe += dt;
@@ -688,8 +798,8 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
     l.equilibrio = Math.min(REGRAS.equilibrio, l.equilibrio + REGRAS.recuperacao * dt);
   }
 
-  // O recuo é horizontal e decai sozinho; na escada não há recuo.
-  if (!naEscada(l)) {
+  // O recuo é horizontal e decai sozinho; na escada, agarrado e voando não há recuo.
+  if (!naEscada(l) && !agarradoOuVoando(l)) {
     l.x += l.vx * dt;
     l.vx *= Math.exp(-7 * dt);
     if (Math.abs(l.vx) < 4) l.vx = 0;
@@ -739,8 +849,13 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
     }
     case "defesa": {
       olharParaOAdversario();
-      if (!e.defesa) entrar(l, "parado");
-      else if (apertado !== null) bloquear(p, i, "noChao");
+      if (!e.defesa) {
+        // Soltar a guarda e apertar uma ação no mesmo instante: a ação sai no passo seguinte.
+        entrar(l, "parado");
+        guardar(apertado);
+      } else if (apertado !== null) {
+        bloquear(p, i, "noChao");
+      }
       break;
     }
     case "golpe":
@@ -750,6 +865,41 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
     case "forte":
       guardar(apertado);
       avancarForte(p, i);
+      break;
+    case "agarrando":
+      guardar(apertado === "forte" ? null : apertado);
+      avancarAgarrao(p, i);
+      break;
+    case "agarrado": {
+      // Seguro: só a esquiva escapa, e só enquanto o outro ainda não arremessou.
+      if (apertou("esquiva")) {
+        if (l.recargaEsquiva > 0) {
+          bloquear(p, i, "recarga");
+        } else {
+          const agarrador = adversario;
+          entrar(agarrador, "parado");
+          agarrador.recargaAgarrao = REGRAS.agarrao.recarga;
+          agarrador.recargaGolpe = Math.max(agarrador.recargaGolpe, 0.3);
+          agarrador.recargaForte = Math.max(agarrador.recargaForte, 0.5);
+          l.y = 0;
+          esquivar(p, i, e);
+          p.eventos.push({ tipo: "escapou", quem: i });
+        }
+      } else if (apertado !== null) {
+        bloquear(p, i, "agarrado");
+      }
+      break;
+    }
+    case "arremessado":
+      // Voa com a força do arremesso e cai no tapete, derrubado.
+      l.vy -= REGRAS.pulo.gravidade * dt;
+      l.y += l.vy * dt;
+      l.x += l.vx * dt;
+      if (l.y <= 0) {
+        l.y = 0;
+        l.vy = 0;
+        derrubar(p, i, l.vx * 0.35, true);
+      }
       break;
     case "derrubada":
       avancarDerrubada(p, i);
@@ -856,7 +1006,7 @@ function atualizarLutador(p: Partida, i: Indice, e: Entrada, dt: number): void {
       l.puxando = e.interagir;
       if (l.puxando && !puxava) p.eventos.push({ tipo: "puxando", quem: i, puxada: l.puxada });
       if (l.puxando && p.escada.balanco <= REGRAS.escada.balancoMaximo) {
-        l.puxada = Math.min(1, l.puxada + dt / REGRAS.faixa.puxar);
+        l.puxada = Math.min(1, l.puxada + (dt * ritmoDaPuxada(p)) / REGRAS.faixa.puxar);
         p.faixaBalanco = Math.min(1, p.faixaBalanco + dt * 2);
         p.escada.balanco = Math.min(0.35, p.escada.balanco + dt * 0.5);
         if (l.puxada >= REGRAS.faixa.aviso && !l.avisouFaltaPouco) {
@@ -912,7 +1062,7 @@ function atualizarEscada(p: Partida, dt: number): void {
 /** Dois lutadores em pé no chão não ocupam o mesmo lugar; quem bate nas cordas volta. */
 function resolverPosicoes(p: Partida): void {
   const [a, b] = p.lutadores;
-  const separaveis = (l: Lutador) => !naEscada(l) && !noAr(l) && l.estado !== "caindoDaEscada" && !noChao(l);
+  const separaveis = (l: Lutador) => !naEscada(l) && !noAr(l) && l.estado !== "caindoDaEscada" && !noChao(l) && !agarradoOuVoando(l) && l.estado !== "agarrando";
   if (separaveis(a) && separaveis(b)) {
     const dx = b.x - a.x;
     const sobra = REGRAS.corpo - Math.abs(dx);
@@ -950,7 +1100,7 @@ function atualizarTorcida(p: Partida, dt: number): void {
   }
   if (p.fase === "fim") alvo = 1;
   for (const evento of p.eventos) {
-    if (evento.tipo === "golpe" || evento.tipo === "derrubada" || evento.tipo === "queda" || evento.tipo === "escadaCaiu") p.torcida = Math.min(1, p.torcida + 0.12);
+    if (evento.tipo === "golpe" || evento.tipo === "derrubada" || evento.tipo === "queda" || evento.tipo === "escadaCaiu" || evento.tipo === "arremesso") p.torcida = Math.min(1, p.torcida + 0.12);
   }
   p.torcida += (alvo - p.torcida) * Math.min(1, dt * 1.6);
 }
@@ -990,6 +1140,10 @@ export function avancar(p: Partida, dt: number, entradas: readonly [Entrada, Ent
   atualizarEscada(p, dt);
   resolverPosicoes(p);
   atualizarTorcida(p, dt);
+  if (!p.prorrogacao && tempoDeLuta(p) >= REGRAS.prorrogacao.aos) {
+    p.prorrogacao = true;
+    p.eventos.push({ tipo: "prorrogacao" });
+  }
 }
 
 /** Os eventos de um tipo, para quem lê a partida. */
